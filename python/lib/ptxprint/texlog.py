@@ -174,7 +174,7 @@ def summarizeTexLog(logText):
                         messageSummary.append(f"  Try {j}. {responses[r]}")
 
     # Look for Unbalanced or Unfilled pages
-    uf_matches = re.findall(r'Underfill\[(A|B)\]: \[(\d+)\]', logText)
+    uf_matches = re.findall(r'Underfill\[(A|B)\]:\s*\[(\d+)\]', logText)
     unique_page_numbers = []
     if len(uf_matches):
         # Extract unique page numbers and sort them in ascending order

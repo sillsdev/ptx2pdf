@@ -6,10 +6,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
-refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
-restre = re.compile(r"^\s*\\(\S+)\s*(\d+)(.*?)$")
-
 class Liststore(list):
     """ structure: 
     """
@@ -34,6 +30,10 @@ class Liststore(list):
         super().append(rl)
         return rl.iter
         
+
+adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
+refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
+restre = re.compile(r"^\s*(?:(?:mrk=|\\)(\S+)\s*)?(?:(?:expand=)?(\d+)(.*?))?$")
 
 
 class AdjList:
@@ -94,32 +94,59 @@ class AdjList:
         res = k[:3] + (k[5], row[2], k[3], k[4], k[6])
         return res
 
+    def parseline(self, l, lineno=0):
+        c = ""
+        if '%' in l:
+            c = l[l.find("%")+1:].strip()
+            l = l[:l.find("%")]
+        m = adjre.match(l)
+        val = None
+        if m:
+            try:
+                val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1),
+                                m.group(4), None, self.centre, c]
+            except ValueError:
+                val = None
+            if val is not None:
+                n = restre.match(c)
+                if n:
+                    val[4] = n.group(1)
+                    if n.group(2):
+                        val[5] = int(n.group(2))
+                    val[6] = n.group(3)
+            logger.log(7, f"{lineno}: {val}")
+        return val
+
     def readAdjlist(self, fname):
         self.adjfile = fname
         allvals = []
         self.liststore.clear()
         with open(fname, "r", encoding="utf-8") as inf:
-            for l in inf.readlines():
-                c = ""
-                if '%' in l:
-                    c = l[l.find("%")+1:].strip()
-                    l = l[:l.find("%")]
-                m = adjre.match(l)
-                if m:
-                    try:
-                        val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1),
-                                        m.group(4), None, self.centre, c]
-                    except ValueError:
-                        val = None
-                    if val is not None:
-                        n = restre.match(c)
-                        if n:
-                            val[4] = n.group(1)
-                            val[5] = int(n.group(2))
-                            val[6] = n.group(3)
-                        allvals.append(val)
+            for i,l in enumerate(inf.readlines()):
+                val = self.parseline(l, lineno=i+1)
+                if val is not None:
+                    allvals.append(val)
         for a in sorted(allvals, key=self.calckey):
             self.liststore.append(a)
+
+    def genline(self, r):
+        cv = r[1].replace(":", ".").replace(" ", "")
+        if r[2] > 1:
+            line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
+        else:
+            line = "{0[0]} {1} {0[3]}".format(r, cv)
+
+        extras = []
+        if r[4]:
+            extras.append(f"mrk={r[4]}")
+        if r[5] != self.centre:
+            extras.append(f"expand={r[5]}")
+        if r[6]:
+            extras.append(r[6].strip())
+
+        if extras:
+            line += " % " + " ".join(extras)
+        return line
 
     def createAdjlist(self, fname=None):
         if fname is None:
@@ -132,14 +159,29 @@ class AdjList:
         os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
         with open(fname, "w", encoding="utf-8") as outf:
             for r in self.liststore:
-                cv = r[1].replace(":", ".").replace(" ", "")
-                if r[2] > 1:
-                    line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
-                else:
-                    line = "{0[0]} {1} {0[3]}".format(r, cv)
-                if r[4]: # and r[5] != self.centre or r[6]:
-                    line += " % \\{4} {5} {6}".format(*r)
+                line = self.genline(r)
                 outf.write(line + "\n")
+
+    def _createUIExtensionLines(self, r):
+        ref = rf"{r[0]}{r[1]}={r[2]}"
+        triggerItems = []
+
+        if r[5] != self.centre:
+            triggerItems.append(rf"\zexp {r[5]}\*")
+
+        for trig in self._parseTriggersFromComment(r[6]):
+            trig = trig.strip()
+            if trig and not trig.startswith("\\"):
+                trig = "\\" + trig
+            triggerItems.append(trig)
+
+        if not triggerItems:
+            return []
+
+        res = ["", rf"\AddTrigger {ref}"]
+        res.extend(triggerItems)
+        res.append(r"\EndTrigger")
+        return res
 
     def createTriggerlist(self, fname=None):
         if fname is None:
@@ -149,16 +191,13 @@ class AdjList:
         if not len(self.liststore):
             self.remove_file(fname)
             return
+
         os.makedirs(os.path.dirname(fname), exist_ok=True)
         with open(fname, 'w', encoding='utf-8') as outf:
             for r in self.liststore:
-                if r[5] == self.centre:
-                    continue
-                lines = [""]
-                lines.append(rf"\AddTrigger {r[0]}{r[1]}={r[2]}")
-                lines.append(rf"\zexp {r[5]}\*")
-                lines.append(r"\EndTrigger")
-                outf.write("\n".join(lines))
+                lines = self._createUIExtensionLines(r)
+                if lines:
+                    outf.write("\n".join(lines))
 
     def remove_file(self, fname):
         try:
@@ -250,3 +289,38 @@ class AdjList:
             res.append(r.iter)
         self.changeval(parref, mydoit, insert=insert)
         return res
+
+    def _parseTriggersFromComment(self, comment):
+        if not comment:
+            return []
+        return re.findall(r"(?:^|\s)trig=([^\s]+)", comment)
+
+    def _setTriggersInComment(self, comment, triggers):
+        # remove existing trig=... tokens, then append normalized list
+        base = re.sub(r"(?:^|\s)trig=[^\s]+", "", comment or "").strip()
+        trigPart = " ".join(f"trig={t}" for t in triggers)
+        if base and trigPart:
+            return base + " " + trigPart
+        return base or trigPart
+
+    def getTriggers(self, parref):
+        res = []
+        def mydoit(r, i):
+            res.extend(self._parseTriggersFromComment(r[6]))
+        self.changeval(parref, mydoit, insert=False)
+        return res
+
+    def addTrigger(self, parref, content, enabled=True, insert=True):
+        def mydoit(r, i):
+            triggers = set(self._parseTriggersFromComment(r[6]))
+            if content is None:
+                triggers.clear()
+            elif enabled:
+                triggers.add(content)
+            else:
+                triggers.discard(content)
+            newComment = self._setTriggersInComment(r[6], sorted(triggers))
+            if newComment != r[6]:
+                self.liststore.set_value(r.iter, 6, newComment)
+                self.changed = True
+        self.changeval(parref, mydoit, insert=insert)

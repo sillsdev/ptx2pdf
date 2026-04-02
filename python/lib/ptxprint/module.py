@@ -101,7 +101,7 @@ class Module:
 
     def parse(self, piclist=None):
         logger.log(5, self.doc.xml.outUsx(None))
-        self.doc.xml.book = "MOD"
+        # self.doc.xml.book = "MOD"
         count = 0
         self.removes = set((e for e in exclusionmap.values() if self.testexclude(e)))
         skipme = 0
@@ -164,7 +164,7 @@ class Module:
                     raise SyntaxError(f"{e} at {s} at line {eloc.pos.l} char {eloc.pos.c}")
                 currp = None
                 for r in refs:
-                    p = self.get_passage(r, removes=self.removes, strippara= s=="refnp")
+                    p = self.get_passage(r, removes=self.removes, strippara = s=="refnp", context=eloc)
                     if not len(p):
                         continue
                     (curri, currp) = eloc._getindex()
@@ -195,7 +195,7 @@ class Module:
                     p.parent = currp
                     currp.insert(curri, p)
 
-    def get_passage(self, ref, removes={}, strippara=False):
+    def get_passage(self, ref, removes={}, strippara=False, context=None):
         if ref.first.book is None:
             return []
         try:
@@ -203,10 +203,11 @@ class Module:
         except SyntaxError:
             book = None
         if book is None:
-            return []
+            raise ValueError(f"Missing book {ref.first.book.upper()} at line {context.pos.l + 1 if context is not None else ''}"
+                             f" char {context.pos.c if context is not None else ''}")
         res = book.xml.getrefs(ref, titles=False, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
                                     chapters= not any('chapter' in x[3] for x in removes))
-        if True:        # this should be a filter test
+        if len(res.getroot()):        # this should be a filter test
             firstp = res.getroot()[0]
             firstp.attrib.pop('vid', None)
         for e, isin in res.iterusx():
@@ -222,4 +223,5 @@ class Module:
                             e.parent[i-1].tail = (e.parent[i-1].tail or "") + e.tail
                     e.parent.remove(e)
                     break
+        logger.debug(f"Getting {ref} resulting\n{res.outUsx(None)}")
         return res.getroot()

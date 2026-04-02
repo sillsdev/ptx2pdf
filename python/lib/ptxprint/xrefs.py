@@ -81,14 +81,18 @@ def revrsf(ref, vrsf):
     if engvrs is None:
         engvrs = cached_versification("eng")
     vrs = cached_versification(vrsf)
-    if isinstance(ref, (list, RefList)):
-        res = RefList()
-        for r in ref:
-            oref = engvrs.remap(r, None, reverse=True)
-            res.append(vrs.remap(oref, None))
-    else:
-        oref = engvrs.remap(ref, None, reverse=True)
+
+    def _rvrs(r):
+        oref = engvrs.remap(r, None, reverse=True)
         res = vrs.remap(oref, None)
+        return res
+
+    if isinstance(ref, (list, RefList)):
+        res = RefList([_rvrs(r) for r in ref])
+    elif isinstance(ref, RefRange):
+        res = RefRange(_rvrs(ref.first), _rvrs(ref.last))
+    else:
+        res = _rvrs(ref)
     return res
 
 class BaseXrefs:
@@ -161,7 +165,7 @@ class XrefFileXrefs(BaseXrefs):
                 v.simplify()
                 if not len(v):
                     continue
-                kf = revrsf(k.first, vrsf)
+                kf = revrsf(k, vrsf)
                 shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
                 info = {
                     "colnobook":    revrsf(k, vrsf).str(env=nbenv) if not self.shortrefs else shortref,
@@ -293,7 +297,7 @@ class XMLXrefs(BaseXrefs):
             nbkenv = self.env.copy(nobook=True)
             for k, v in xmldat.items():
                 res = self._procnested(v, k, vrsf=vrsf)
-                kf = revrsf(k.first, vrsf)
+                kf = revrsf(k, vrsf)
                 shortref = str(kf.verse) if k.first.verse == k.last.verse else "{}-{}".format(kf.verse, revrsf(k.last, vrsf).str(kf, env=nbkenv))
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):

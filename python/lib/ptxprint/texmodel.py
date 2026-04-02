@@ -440,6 +440,8 @@ class TexModel:
             swap = False # FixMe! self.dict['document/diglotswapside'] == 'true'
             # ratio = float(self.dict['document/diglotprifraction']) # FixMe!
             ratio = 0.5
+            if self.dict['document/diglotadjcenter']:
+                ratio = float(self.dict['poly/fraction'])
             # print(f"{ratio=}")
             if ratio > 0.5:
                 lhfil = "\\ifdiglot\\ifseriesdiglot\\else\\hskip 0pt plus {}fil\\fi\\fi".format(f2s(ratio/(1-ratio)-1))
@@ -599,6 +601,8 @@ class TexModel:
         res.append(template.format(fname))
         if bkindex is None:
             return res
+        if bkindex >= len(self.dict['project/books']) or self.dict['project/books'][bkindex] is None:
+            return ""
         if diglots:
             for k, v in self.dict['diglots_'].items():
                 res.append(r"\zglot|{}\*".format(k))
@@ -651,6 +655,8 @@ class TexModel:
                     res.append(r"\PtxFilePath={"+saferelpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        if fname is None:
+                            continue
                         dname = None
                         beforelast = []
                         if extra != "":
@@ -785,9 +791,9 @@ class TexModel:
         if self.frontperiphs is None or not len(self.frontperiphs):
             self.frontperiphs = {}
             for a in ('FRT', 'INT'):
-                frtfile = os.path.join(self.printer.project.path, self.printer.getBookFilename(a))
+                frtfile = self.printer.getBookSrcPath(a)
                 logger.debug(f"Trying periphs file {frtfile}")
-                if not os.path.exists(frtfile):
+                if frtfile is None:
                     continue
                 with open(frtfile, encoding="utf-8") as inf:
                     mode = 0        # default
@@ -840,12 +846,12 @@ class TexModel:
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
+                logger.log(7, "\n".join(fcontent))
 
     def addInt(self, outfname):
-        intfname = self.printer.getBookFilename('INT')
-        if intfname is None or not len(intfname):
+        intfile = self.printer.getBookSrcPath('INT')
+        if intfile is None:
             return
-        intfile = os.path.join(self.printer.project.path, intfname)
         def addperiphid(m):
             if m.group(2).lower() in _periphids:
                 return m.group(1) + f'|id="{_periphids[m.group(2).lower()]}"\n'
@@ -860,7 +866,7 @@ class TexModel:
             dat = regex.sub(r"(\\periph\s*([^\n|]+))\n", addperiphid, dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
-        logger.debug(f"INT file {intfname} processed to {outfname}")
+        logger.debug(f"INT file {intfile} processed to {outfname}")
         return outfname
 
     def flattenModule(self, infpath, outdir, text=None, noaction=False):
@@ -871,10 +877,15 @@ class TexModel:
         if not noaction:
             usfms = self.printer.get_usfms()
             mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-            mod.parse(self.printer.picinfos)
-            res = mod.doc
-            if res.xml.errors:
-                self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
+            try:
+                mod.parse(self.printer.picinfos)
+            except ValueError as e:
+                self.printer.doError(f"Module error: {e}")
+                res = ""
+            else:
+                res = mod.doc
+                if res.xml.errors:
+                    self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         else:
             res = ""
         if text is not None:
@@ -886,6 +897,7 @@ class TexModel:
     def runConversion(self, infpath, outdir, noaction=False):
         outfpath = infpath
         script = self.dict['project/selectscript']
+        logger.debug(f"{script} {infpath} {outfpath}, ?={self.dict['project/processscript']}")
         if self.dict['project/processscript'] and script and os.path.exists(script):
             outfpath = os.path.join(outdir, os.path.basename(infpath))
             doti = outfpath.rfind(".")
@@ -912,7 +924,9 @@ class TexModel:
                             sys.argv = sys._argv
                             hasrun = True
                 if not hasrun:
+                    logger.debug(f"running: {cmd}")
                     checkoutput(cmd) # dont't pass cmd as list when shell=True
+        logger.debug(f"{outfpath=}")
         return outfpath
 
     def _getText(self, data, doc, bk, logmsg=""):
@@ -944,38 +958,29 @@ class TexModel:
         printer = self.printer
         if not len(self.changes):
             if self.asBool('project/usechangesfile'):
-                # print("Applying PrntDrftChgs:", os.path.join(prjdir, 'PrintDraftChanges.txt'))
-                #cpath = self.printer.configPath(self.printer.configName())
-                #self.changes = self.readChanges(os.path.join(cpath, 'changes.txt'), bk)
                 def printError(msg, **kw):
                     self.printer.doError(msg, show=not self.printer.get("c_quickRun"))
                 self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
                                             bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
-        #adjlistfile = printer.getAdjListFilename(bk)
-        #if adjlistfile is not None:
-        #    adjchangesfile = os.path.join(printer.project.srcPath(printer.cfgid), "AdjLists",
-        #                        adjlistfile.replace(".adj", "_changes.txt"))
-        #    chs = self.readChanges(adjchangesfile, bk, makeranges=True, passes=["adjust"])
-        #    for k, v in chs.items():
-        #        self.changes.setdefault(k, []).extend(v)
         draft = "-" + (printer.cfgid or "draft")
-        fname = printer.getBookFilename(bk)
-        if fname is None:
-            infpath = os.path.join(prjdir, bk)  # assume module
-            infpath = self.flattenModule(infpath, outdir)
-            if isinstance(infpath, tuple) and infpath[0] is None:
-                self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
-                        secondary=str(infpath[1]), 
-                        title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
-                        show=not self.printer.get("c_quickRun"))
-                return None
-        else:
-            infpath = os.path.join(prjdir, fname)
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
         else:
             self.dict["/nocustomsty"] = ""
+        infpath = printer.getBookSrcPath(bk)
+        if infpath is None:
+            if re.match(".*?[/\\.]", bk):
+                infpath = os.path.join(prjdir, bk)  # assume module
+                infpath = self.flattenModule(infpath, outdir)
+                if isinstance(infpath, tuple) and infpath[0] is None:
+                    self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
+                            secondary=str(infpath[1]), 
+                            title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
+                            show=not self.printer.get("c_quickRun"))
+                    return None
+        if infpath is None:
+            raise FileNotFoundError(f"Can't find file for {bk}")
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir, noaction=noaction)
         outfname = os.path.basename(infpath)
@@ -987,7 +992,7 @@ class TexModel:
         if doti > 0:
             outfname = outfname[:doti] + draft + outextra + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
-        if not noaction:
+        if not noaction or not os.path.exists(outfpath):
             self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
             os.makedirs(outdir, exist_ok=True)
             codepage = self.ptsettings.get('Encoding', 65001)
@@ -1140,7 +1145,7 @@ class TexModel:
     def _makeUSFM(self, txt, bk, reason=""):
         syntaxErrors = []
         doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar, informat="usfm")
-        # doc.xml.canonicalise(version="3.1")
+        doc.xml.canonicalise(version="3.1")
         if doc.xml.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
             errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
@@ -1319,7 +1324,7 @@ class TexModel:
         # in "\\r .+?[\r\n]+": "\s(\d)" > "~\1"  # Don't allow the line to break in the middle of a \r reference
         # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo # [\p{Nd}\p{L}])(\p{Nd})\s
         self.localChanges.append(makeChange(r"(?<![\p{Nd}\p{L}])(\p{Nd})\s(\p{L})", r"\1\u00A0\2", context=make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\]+)"))))
-        self.localChanges.append(makeChange(r"(?<!\\\S*)(\p{L})\s(\p{Nd}+[:.]\p{Nd}+)", r"\1\u00A0\2", context=make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\\]+)"))))
+        self.localChanges.append(makeChange(r"(?<!\\\S*)(\p{L}+)\s(\p{Nd}+[:.]\p{Nd}+)", r"\1\u00A0\2", context=make_contextsfn(None, regex.compile(r"(\\(?:[xf]t|ref)\s[^\|\\]+)"))))
                         
         # Temporary fix to stop blowing up when \fp is found in notes (need a longer term TeX solution from DG or MH)
         # Solved on the TeX side on 11-Aug-2023, so we no longer need this hack below:
@@ -1448,9 +1453,8 @@ class TexModel:
         # Glossary entries for the key terms appearing like footnotes
         prjid = printer.project.prjid
         prjdir = printer.project.path
-        fname = printer.getBookFilename("GLO", prjid)
-        infname = os.path.join(prjdir, fname)
-        if os.path.exists(infname):
+        infname = printer.getBookSrcPath("GLO", prjid)
+        if infname is not None:
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
                 # Note that this will only pick up the first para of glossary entries
@@ -1483,7 +1487,7 @@ class TexModel:
         new_glosses = set()
         def capturek(e, state):
             if e.tag == "char" and e.get("style", "") == "k":
-                nkval=getk(e, attrib="key").lower() 
+                nkval = getk(e, attrib="key").lower()
                 state = (nkval in self.found_glosses and nkval not in self.processed_glosses)
                 if state:
                   self.processed_glosses.add(nkval)
@@ -1614,10 +1618,10 @@ class TexModel:
                         continue
 
                     if len(pgs):
-                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[kno][a-z]".split("|"):
                             pages = [x[0] for x in pgs[art]]
                         else:
-                            pages = [x[0] for x in pgs['']]
+                            pages = [x[0] for x in pgs.get('zz', pgs.get('', [[]]))]
                         plurals = pluralstr(plstr, pages)
                         artinfo = cinfo["copyrights"].get(
                             art.lower(), {'copyright': {'en': art}, 'sensitive': {'en': art}}

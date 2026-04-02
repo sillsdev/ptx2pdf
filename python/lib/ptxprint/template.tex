@@ -69,14 +69,14 @@
 {document/marginalverses}\input ptxplus-marginalverses.tex
 {document/marginalverses}\columnshift={document/columnshift}pt
 {document/marginalverses}\VerseBoxWidth={document/columnshift}pt
-{document/marginalverses}\def\colshiftmode{{{document/marginalposn}}}
+{document/marginalverses}\def\colshiftmode{{{document/marginalposn}}}\def\vhyphenmode{{{texpert/vhyphenmode}}}
 %{document/marginalverses}\def\AfterVerseSpaceFactor{{0}}
 \def\PageFullFactor{{{texpert/pagefullfactor}}}
 {paper/allowunbalanced}\def\BalanceThreshold{{{texpert/bottomrag}}}
 
 %%%%% Text Spacing %%%%%
 {document/nogrid}\NoGridtrue
-{document/nogrid}{document/varlinespacing}\def\ColAdjskip{{0pt plus 2pt}}
+{document/nogrid}{document/varlinespacing}\def\ColAdjskip{{0pt plus {texpert/interlinestretch}pt minus {texpert/interlineshrink}pt}}
 \def\LineSpaceBase{{{texpert/linespacebase}}}
 \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
 \def\VerticalSpaceFactor{{1.0}}

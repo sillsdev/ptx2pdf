@@ -5,6 +5,7 @@
 \input marginnotes.tex
 %+cmargin_verse
 \newdimen\VerseBoxWidth \VerseBoxWidth=0pt
+\def\vhyphenmode{bottom}
 \def\getverseboxwidth{\setbox2=\hbox{\cstyle{v}{\endash 000}}\global\VerseBoxWidth=\wd2}
 \newif\ifrsh@ft % Does AfterVerseSpaceFactor go right or left of the verse number -- too much happening after setting to use ift@mp
 \def\getnum#1#2{\setbox0=\hbox{\global #1=0#2}}
@@ -20,11 +21,19 @@
   \ifnum \ifx\colshiftmode\@nner\ift@mp 0\else 1\fi\else\ifx\colshiftmode\@uter\ift@mp 1\else 0\fi\else\ifx\colshiftmode\r@ght 1\else 0\fi\fi\fi =0
     \rsh@fttrue\else\rsh@ftfalse
   \fi
+  \ifx\vhyphenmode\gr@dnone\versehyphenfalse\versehyphenupfalse\else
+    \ifx\vhyphenmode\@top\versehyphenuptrue\else
+    \ifx\vhyphenmode\@bottom\versehyphenupfalse\else
+    \ifx\vhyphenmode\l@ft\ifrsh@ft\versehyphenuptrue\else\versehyphenupfalse\fi\else
+    \ifx\vhyphenmode\r@ght\ifrsh@ft\versehyphenupfalse\else\versehyphenuptrue\fi
+  \fi\fi\fi\fi\fi
+  \trace{v}{hyphenmode=\vhyphenmode, hyphen=\ifversehyphenup up\else down\fi}%
   \ifx\v@rsefrom\v@rseto \setbox2=\vtop{\everypar={}\hbox to \VerseBoxWidth{%
         \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\mysimpleprintv@rse
         \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
     \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ifrsh@ft left\else right\fi, pad to \the\VerseBoxWidth}%
     \def\t@@mp{bottom}%
+    \dimen1=-\dp\pstr@t
   \else
     \s@tsideskips{v}{-1pt}%
     \ifrsh@ft \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
@@ -33,14 +42,15 @@
     \setbox2=\vtop{\everypar={}\hbox to \VerseBoxWidth{%
         \ifrsh@ft\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\box2
         \ifrsh@ft\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
-    \def\t@@mp{top}%
+    \def\t@@mp{bottom}%
+    \dimen1=-\dp2 \divide\dimen1 by 2 \advance\dimen1 by -\dp\pstr@t
   \fi
   \trace{v}{verse \mt@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ifrsh@ft left\else right\fi}%
   \getp@ram{spacebeside}{v}{v+\styst@k}%
   \ifx\p@ram\relax \getp@ram{spacebefore}{v}{v+\styst@k}%
     \ifx\p@ram\relax \dimen0=1pt\else\dimen0=\p@ram\IndentUnit \divide\dimen0 by 12\fi
   \else \dimen0=\p@ram\fi
-  \ifversion{5}{\d@marginnote{2}{\mt@mp}{v}{\colshiftmode}{\t@@mp}{\the\dimen0}{-\dp\pstr@t}}{\d@marginnote{2}{\mt@mp}{v}{\colshiftmode}{center}{\the\dimen0}{0pt}}%
+  \ifversion{5}{\d@marginnote{2}{\mt@mp}{v}{\colshiftmode}{\t@@mp}{\the\dimen0}{\the\dimen1}}{\d@marginnote{2}{\mt@mp}{v}{\colshiftmode}{center}{\the\dimen0}{\the\dimen1}}%
   \outputmvmkr
 }
 

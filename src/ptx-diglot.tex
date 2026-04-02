@@ -38,6 +38,8 @@
 %\def\TRshipout#1{\shipout#1}
 \def\TRshipout#1{}
 \def\b@xbotmark{}
+\newcount\r@a@trialdepth
+\r@a@trialdepth=0
 
 \xdef\f@rstb@dy{0pt}%
 \def\TextBorderColumns{} % If unset, then border all scripture. If set, only border the ones set. E.g. for when a 
@@ -119,7 +121,7 @@
 %LRspecificVarIf lists **internal boolean variables** that need to carry over from one paragraph to the next. 
 %For global config values, insert name in LRspecificDef, and add line(s) for newsideSpecificIf into initcolumndef@ults
 \def\LRspecificVarIf{dr@ppednumber,dr@ppedother}
-\def\LRspecificVarDef{ch@pterc@tnum} % \def based variables that need to carry over from one par to the next
+\def\LRspecificVarDef{ch@pterc@tnum,@@lastc@rref,dc@rref} % \def based variables that need to carry over from one par to the next
 
 %Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
 \def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts,dropped@ther@lines} 
@@ -174,7 +176,8 @@
      \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}%
     \fi
   \else
-   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected (\the\csname #1\endcsname)}%
+    \trace{S}{SpS: #1 (\the\csname #1\endcsname) <= \the\csname #1\sfx\endcsname}%
+    \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected (\the\csname #1\endcsname)}%
   \fi
 }
 
@@ -325,6 +328,8 @@
 \diglotSepNotestrue%
 \newif\ifdiglotBalNotes %If a left column footnote steals space from the right column also
 \diglotBalNotesfalse%
+\newif\ifdiglotMergedNotesRTL % Let user control if merged footnotes should be RTL or LTR
+\diglotMergedNotesRTLfalse
 \newif\iftrialfailed
 \global\def\n@xtc@mmand{}%
 
@@ -519,8 +524,8 @@
   %\splittopskip=0pt
   \setbox1=\vsplit0 to \trialheight
   \setbox1=\vbox{\unvbox1}%
-  \ifnum 1=\ifdim \ht1=0pt \ifdim\dp1=0pt 1 \else 0\fi \else 0\fi
-    \trace{D}{Nothing wants to split from top of box: trial failed}%
+  \ifnum 1=\ifdim \ht1<1sp \ifdim\dp1<1sp 1 \else 0\fi \else 0\fi
+    \trace{D}{Nothing positive wants to split from top of box: trial failed}% Rejecting negative heights saves us from at least some EEKs! Yey!
     \ifdiglotDebugFollowContents\showbox\galleyexc@ss \fi
     \trialfailedtrue
     \global\trialheight=-\@bls
@@ -680,9 +685,11 @@
     \global\output{\diglot@any@trial}
     \unvcopy\galley
     \unpenalty
-    \traceifset{run@a@trial}%
+    \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
+    \traceifset{run@a@trial\the\r@a@trialdepth}%
     \penalty\endtri@lpen@lty
-    \traceifcheck{run@a@trial}%
+    \traceifcheck{run@a@trial\the\r@a@trialdepth}%
+    \advance\r@a@trialdepth by -1
     \relax\relax
     \let\after@run@a@trial=\relax
   \else
@@ -1062,6 +1069,14 @@
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \ifintrial
+    %\showlists
+    \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}% (expected penalty \the\endtri@lpen@lty)}%
+    %\endgraf\vfill\penalty\endtri@lpen@lty % Doesn't help 
+    \relax
+    %\setbox0\vbox{\pagediscards}%
+    %\showbox0
+  \fi
   \ifdiglotcolh@scontent %Only actually save lastpenalty if there is some real content before it. 
     \global\savedpenalty=\tmpcount
   \else
@@ -1070,10 +1085,6 @@
     \fi
   \fi
   \tmpcount=\lastnodetype
-  \ifintrial
-    %\showlists
-    \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}%
-  \fi
   \traceNum{D}{Initial savepenalty \the\savedpenalty, \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
   \IfTr@ce{C}{{%
     \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
@@ -1204,6 +1215,11 @@
   \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
   \diglot@run@trials
   \global\allNeedEmptyingfalse
+  \csname aftereverychunkhook\endcsname% A potentially useful hook
+  \ifcsname afterthischunkhook\endcsname % One-shot hook.
+    \afterthischunkhook
+    \global\let\afterthischunkhook\undefined
+  \fi
 }
 
 \def\polyglotcolumn#1{%
@@ -1904,7 +1920,7 @@
       \ifdim \csname @fn#1ht\endcsname>0pt \advance\dimen1 by 2\dimen2 \fi % certainly needed when calculating by oldpartian+@curXht, not sure about other times.
       \trace{D}{Colour for #1(\bg@fillht - \ifloc@lht loc\else glo\fi) is \csname bg@#1@col\endcsname, \the\dimen1, \the\ht\partial, \the\dp\partial, \the\baselineskip}%
       %\hbox to 0pt{\vrule height 1pt width 100pt\hss}%
-      \traceifcheck{ins@backgrounds-c}%
+      %\traceifcheck{ins@backgrounds-c}%
       \ifdim\f@rstb@dy>0pt \def\pf@x{\lower\dimexpr\f@rstb@dy+\tbskip@jd+\csname textb@dr@top@pad#1\endcsname \relax}\else\let\pf@x\empty\fi
       \traceifset{ins@backgrounds-h}%
       \hbox to 0pt {%
@@ -2471,7 +2487,10 @@
   \else%
      % RTLness will have been asserted (or not) when the note was defined.
      \setbox\notechunk\vbox{%
-       \ifdiglot\RTLfalse\fi
+       \ifdiglot%might be monoglot..
+         \ifdiglotMergedNotesRTL \RTLtrue\else\RTLfalse\fi % At the moment, we ask for user control here. Getting it wrong gives bad results, and it must match where the (paragraph-form) notes are coming from.
+         \RTLfalse
+       \fi
        \def\c@rrdstat{L}%
        \traceNum{d}{Inserting Notes}%
        \f@rstnotetrue%
@@ -2482,7 +2501,7 @@
 %
   \traceifcheck{@do@writep@ge@simplecols-c}%
   \traceifset{@do@writep@ge@simplecols-d}%
-  \tracing{I}%
+  %\tracing{I}%
   \ifunprintable 
     \abortpage
   \else
@@ -2507,9 +2526,10 @@
      \availht=\textheight
      \traceifset{@@setppagecontents-a}%
      \ifvoid\topins\else
-         \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
-        \advance\availht-\ht\topins \advance\availht-\skip\topins
-         \unvbox\topins \vskip\skip\topins \fi%
+       \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
+       \advance\availht-\ht\topins \advance\availht-\skip\topins
+       \unvbox\topins \vskip\skip\topins
+     \fi%
     %
      \advance\availht-\ht\topchunk\advance\availht-\ht\botchunk
      \ifvoid\bottomins\else % \kern-\dimen0

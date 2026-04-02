@@ -84,7 +84,7 @@ def out_sty(base, outf, keyfield="Marker"):
 
 class PTXTag(Tag):
     def __new__(cls, s, **kw):
-        if (m := re.match(r"^(\S+)\^(\d+)$", s)):
+        if (m := re.match(r"^(\S+?)\^(\d+)$", s)):
             t = m.group(1)
             stretch = int(m.group(2))
         else:
@@ -249,9 +249,6 @@ class UsfmCollection:
         bkfile = self.bkmapper(bk)
         if bkfile is None:
             return None
-        bkfile = os.path.join(self.basedir, bkfile)
-        if not os.path.exists(bkfile):
-            return None
         mtime = os.stat(bkfile).st_mtime
         if mtime > self.times.get(bk, 0):
             if self.changes is not None:
@@ -280,9 +277,6 @@ class UsfmCollection:
                 tocs = [""] * 3
                 bkfile = self.bkmapper(bk)
                 if bkfile is None or not len(bkfile):
-                    continue
-                bkfile = os.path.join(self.basedir, bkfile)
-                if not os.path.exists(bkfile):
                     continue
                 nochap = True
                 with open(bkfile, encoding="utf-8") as inf:
@@ -394,7 +388,7 @@ class Usfm:
     def asUsfm(self, grammar=None, file=None, **kw):
         if grammar is None:
             grammar = self.grammar
-        return self.xml.outUsfm(file=file, grammar=grammar, emitter=PTXEmitter, **kw)
+        return self.xml.outUsfm(file=file, grammar=grammar, emitter=PTXEmitter, notilde=True, **kw)
 
     def outUsx(self, fname):
         return self.xml.outUsx(fname)
@@ -468,6 +462,9 @@ class Usfm:
                     currv = p.get("number", curr.last.verse)
                     currc = curr.first.chapter if curr is not None else 0
                     curr = get_ref(bk, currc, currv)
+                    if curr.first != curr.last and curr.last.verse is not None and curr.last.verse < 200 and curr.first not in self.bridges:
+                        for r in curr:
+                            self.bridges[r] = curr
                 # add to bridges if a RefRange
             elif p.tag == "char":
                 s = p.get("style")
@@ -563,7 +560,7 @@ class Usfm:
                 else:
                     pel = el.parent[pindex-1]
                     t = pel.tail
-                    pel.tail = pel.tail.strip()
+                    pel.tail = pel.tail.rstrip()
                     w = t[len(pel.tail):]
                 newel.tail = w
                 el.parent.insert(el.parent.index(el)+1, newel)
@@ -749,10 +746,9 @@ class Usfm:
         for x, isin in iterusx(root, blocks=enters, unblocks=True, filt=[hastext]):
             if x.tag == "ms" and x.get('style', '') == "xts":
                 continue
-            if isin:
-                t = x.text
-            else:
-                t = x.tail
+            t = x.text if isin else x.tail
+            if isempty(t):
+                continue
             r = x.pos.ref if hasattr(x.pos, 'ref') else None
             if r is not None and r != currstate[0]:
                 currstate = [r, set(strongs.getstrongs(r))]
@@ -774,8 +770,6 @@ class Usfm:
                         i = 0
                     else:
                         x.tail = b[0] + "\u200B"
-                        # if x.parent is None:
-                            # breakpoint()
                         i = list(x.parent).index(x) + 1
                     lastw = x
                     for a in range(1, len(b), 2):
@@ -796,6 +790,7 @@ class Usfm:
                         else:
                             lastw.tail += b[a] + (b[a+1] if a < len(b) - 2 else "")
                     matched = True
+                t = x.text if isin else x.tail
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
 
     def getcvpara(self, c, v):
@@ -825,6 +820,8 @@ class Usfm:
                         killme = kval.lower() not in glosses
                 if killme:
                     root.remove(e)
+            elif e.tag == "chapter":
+                killme = False
 
     def apply_adjlist(self, bk, adjlist):
         if adjlist is None:
@@ -853,11 +850,20 @@ class Usfm:
     def runchecks(self):
         root = self.getroot()
         errors = []
+        hascontent = False
         for eloc, isin, cref in iterusxref(root):
             if isin:
                 if eloc.tag == "note":
                     if not eloc.get('caller', ''):
                         errors.append((cref, "Missing note caller"))
+                if eloc.tag not in ("book", "para") and not isempty(eloc.text):
+                    hascontent = True
+                if not hascontent and eloc.tag == "para" and self.grammar.marker_categories.get(eloc.get("style"), "").lower() in ("versepara", "introduction", "section") and not isempty(eloc.text):
+                    hascontent = True
+            elif not hascontent and not isempty(eloc.tail):
+                hascontent = True
+        if not hascontent:
+            errors.append((Ref(), "Empty file"))
         return errors
 
 

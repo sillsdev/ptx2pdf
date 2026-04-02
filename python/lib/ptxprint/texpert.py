@@ -31,7 +31,7 @@ texpertOptions = {
     "PageAlign":          O("bookstartpage", "LAY", 
                             {"page": _("Next page"), "multi": _("Same page"), "odd": _("Odd page")}, r"\def{0}{{{1}}}", 
                             _("Where to start a new book"), _("Does a scripture book start on a new page, the same page as the previous book (if <65% of page has been used), or an odd page")),
-    "PageFullFactor":     O("pagefullfactor", "LAY", (0.65,  0.30, 0.9, 0.05, 0.05, 2), r"\def\{0}{{1}}", _("Page full factor"), 
+    "PageFullFactor":     O("pagefullfactor", "LAY", (0.65,  0.30, 0.9, 0.05, 0.05, 2), r"\def{0}{{1}}", _("Page full factor"), 
                             _("This setting is related to how full a page needs to be to force the next book to start on a new page."),
                             valfn=lambda v: f2s(float(v or "0.65"))),
     "IntroPageAlign":     O("intropagealign", "LAY",
@@ -39,6 +39,10 @@ texpertOptions = {
                             _("Where to start a new intro page"), _("Does an intro page start on a new page, the same page as the previous book, an odd page, or group all adjacent intro pages into an odd paged group")),
     "bottomRag":          O("bottomrag", "LAY", (3, 0, 10, 1, 1, 0), "", _("Unbalanced Lines (Max)"),
                             _("Maximum number of unbalanced lines allowed in 2-column layout. Recommended range 1-5.")),
+    "interlinestretch":   O("interlinestretch", "LAY", (2, 0, 10, .1, 1, 1), "", _("Variable line spacing maximum stretch"),
+                            _("Maximum stretch to insert between lines in variable line spacing in pts")),
+    "interlineshrink":    O("interlineshrink", "LAY", (0.3, 0, 3, .1, 1, 2), "", _("Variable line spacing maximum shrink"),
+                            _("Maximum shrink to insert between lines in variable line spacing in pts")),
     "squashgridbox":      O("squashgrid", "LAY", True, None, _("No Top Space"), 
                             _("Don’t insert space above headings at the start of a column")),
     "lastbooknoeject":    O("lastnoeject", "LAY", False, None, _("Suppress pagebreak after bookend-final"), 
@@ -62,8 +66,9 @@ texpertOptions = {
     "DoubleSided":          O("doublesided", "LAY", True, None, _("Double Sided Layout"), 
                             _("This setting can be disabled to turn off inner/outer margins, forcing the inner/outer gutter, and Notelines to always appear on the same side of the printed page.")),
 
-    "versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
-    "versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
+    #"versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
+    #"versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
+    "vhyphenmode":        O("vhyphenmode", "CVS", {"bottom": _("Always down"), "top": _("Always up"), "left": _("Up on left"), "right": _("Up on right"), "none": _("No hyphens")}, None, _("Position of marginal verse hyphen if any"), _("Insert or not a marginal verse hyphen in verse ranges, whether on the first or second line")),
     "marginalVerseIsMargin": O("mverseismargin", "CVS", False, None, _("Gutter space reduction for marginal verses"), _("If false, the space for marginal verses is taken from the column. If true, some space for marginal verses is taken from the margins or rule gutter")),
     "CalcChapSize":       O("calcchapsize", "CVS", True, None, _("Auto Calc Optimum Chapter Size"),
                             _("Attempt to automatically calculate drop chapter number size")),
@@ -71,10 +76,10 @@ texpertOptions = {
                               _("Hanging verses into a chapter number can result in clashes, depending on the after-chapter space. If so, then turn off hanging verse numbers for the first verse (in poetry only). ")),
     "HangVA":             O("hangva", "CVS", False, None, _("Alternate verse numbers also hang"),
                             _("If there is an alternative verse and the current verse is hanging, does the alternate hang?")),
-    "AfterChapterSpaceFactor":  O("afterchapterspace", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), r"\def\{0}{{{1}}}", _("After chapter space factor"),
+    "AfterChapterSpaceFactor":  O("afterchapterspace", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), r"\def{0}{{{1}}}", _("After chapter space factor"),
                             _("This sets the gap between the chapter number and the text following. The setting here is a multiple of the main body text size as specified in layout."),
                             valfn=lambda v: f2s(asfloat(v, 0.25) * 12)),
-    "AfterVerseSpaceFactor": O("afterversespace", "CVS", (0.15, -0.20, 1.0, 0.01, 0.10, 2), r"\def\{0}{{{1}}}", _("After verse space factor"),
+    "AfterVerseSpaceFactor": O("afterversespace", "CVS", (0.15, -0.20, 1.0, 0.01, 0.10, 2), r"\def{0}{{{1}}}", _("After verse space factor"),
                             _("This sets the gap between the verse number and the text following. The setting here is a multiple of the main body text size as specified in layout."),
                             valfn=lambda v:f2s(asfloat(v, 0.15) * 12)),
 
@@ -160,6 +165,8 @@ texpertOptions = {
     "FootnoteMulC":       O("footnotemulc", "NTS", (0, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
 
+    "diglotMergedNotesRTL":         O("mergednotesrtl", "DIG", False, None, _("Diglot/polyglot merged paragraphed notes are RTL"),
+                            _("When merged notes are not shown as individual paragraphs, the result must be arranged as though RTL or LTR (however the induvidual notes are structured). This defines the paragraph alignment.")),
     "ReVersify":          O("reversify", "DIG", True, "", _("Adjust Versification of Projects"),
                             _("If versification differs between projects, adjust diglot/polyglot projects to match the primary (L) project.")),
     "ShowVPvrse":         O("showvpvrse", "DIG", True, "", _("Keep existing verse numbers (as \\vp)"),
@@ -334,7 +341,7 @@ class TeXpert:
                     res.append(self.generateOutput(opt, k, v))
             elif n.startswith("fcb_"):
                 if v is not None and v != list(opt.val.keys())[0]:
-                    res.append(self.generateOutput(opt, k, v))
+                    res.append(self.generateOutput(opt, k, v, default=r"\def{0}{{{1}}}"))
         return "\n".join(line for line in res if line)
 
     @classmethod

@@ -77,6 +77,8 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         server = run_broadway(broadway_display)
         os.environ['GDK_BACKEND'] = "broadway"
         os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
+    else:
+        setup_wm(args.nox11)
     from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
     from ptxprint.gtktesting import GtkTester
     from ptxprint.utils import setup_i18n
@@ -111,7 +113,7 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         server.terminate()
         server.wait()
 
-def main(doitfn=None):
+def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
 
@@ -161,10 +163,14 @@ def main(doitfn=None):
     # Miscellaneous & Experimental
     parser.add_argument('-N', '--nointernet', action="store_true", help="Disable all internet access")
     parser.add_argument('-n', '--port', type=int, help="Port to listen on")
+    parser.add_argument('--nox11', action='store_true', help="Don't switch to X11")
     parser.add_argument('-D', '--define', action=DictAction, help="Set UI component=value (repeatable)")
     parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir, no config)")
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
     parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
+
+    if argsfn is not None:
+        argsfn(parser)
 
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         from ptxprint.gtkutils import HelpTextViewWindow
@@ -178,10 +184,9 @@ def main(doitfn=None):
     config = configparser.ConfigParser(interpolation=None)
     envopts = os.getenv('PTXPRINT_OPTS', None)
     args = None
-    argsline = None
-    if envopts is not None:
+    if argsline is None and envopts is not None:
         argsline = envopts
-    elif config.has_option('init', 'commandargs'):
+    elif argsline is None and config.has_option('init', 'commandargs'):
         argsline = config.get('init', 'commandargs')
         config.remove_option('init', 'commandargs')
     if argsline is not None:
@@ -229,6 +234,8 @@ def main(doitfn=None):
     from ptxprint.runjob import RunJob, isLocked
     from ptxprint.project import ProjectList
 
+    if viewClass is None:
+        viewClass = ViewModel
     savetreedirs = False
     ptxdir = None
     # necessary for the side effect of setting pt_bindir :(
@@ -238,7 +245,7 @@ def main(doitfn=None):
             args.projects.append(pdir)
         savetreedirs = True
 
-    if (args.extras & 4) == 0 and os.path.exists(conffile):
+    if (args.extras & 16) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:
             if config.has_option("init", "project"):
@@ -282,7 +289,9 @@ def main(doitfn=None):
     if args.lang is None:
         args.lang = getnsetlang(config)
 
-    if (args.extras & 2) != 0 or not len(args.projects):
+    if sys.platform.startswith("linux") and not args.nox11:
+        os.environ['GDK_BACKEND'] = 'x11'
+    if (args.extras & 8) != 0 or not len(args.projects):
         # print("No Paratext Settings directory found - sys.exit(1)")
         if not args.print and args.test is None:
             from ptxprint.gtkview import getPTDir
@@ -404,17 +413,17 @@ def main(doitfn=None):
 
     if args.test is not None:
         runtest(prjTree, config, macrosdir, project, doit, args)
-    elif args.print or args.action is not None:
-        mainw = ViewModel(prjTree, config, macrosdir, args)
+    elif args.print or args.action is not None or retview:
+        mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()
         if args.pid:
-            mainw.setPrjid(args.pid, project.guid, loadConfig=False)
+            mainw.setPrjid(args.pid, project.guid, loadConfig=False, startup=True)
             mainw.setConfigId(args.config or "Default")
         res = 0
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
-        if args.print:
+        if args.print or retview:
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)
@@ -433,6 +442,8 @@ def main(doitfn=None):
                 mainw.docreatediff = True
                 if args.difffile.lower() == 'last':
                     mainw.set("s_keepVersions", "1")
+            if retview:
+                return mainw
             mainw.savePics()
             mainw.saveStyles()
             job = doit(mainw, noview=True, nothreads=True)
@@ -499,6 +510,7 @@ def main(doitfn=None):
         if loops >= 0:
             if savetreedirs:
                 mainw.prjTree.addToConfig(config)
+            log.debug(f"Writing user config to {conffile}")
             with open(conffile, "w", encoding="utf-8") as outf:
                 config.write(outf)
 

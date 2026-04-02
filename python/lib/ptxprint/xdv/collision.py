@@ -11,7 +11,7 @@ class PointExtractorPen(BasePen):
         self.size = size
 
     def _add_pt(self, x, y):
-        self.points.append((x*self.size + self.ox, y*self.size + self.oy))
+        self.points.append((x*self.size + self.ox, self.oy - y*self.size))
 
     def _moveTo(self, pt):
         self._add_pt(*pt)
@@ -124,7 +124,8 @@ def glyph_collision(font1, font2, gid1, gid2, p1, p2, s1, s2, threshold):
     gs2 = font2.getGlyphSet()
     hull1 = get_glyph_hull(gs1, gn1, p1, s1)
     hull2 = get_glyph_hull(gs2, gn2, p2, s2)
-    return hulls_collide(hull1, hull2, threshold)
+    res = hulls_collide(hull1, hull2, threshold)
+    return res
 
 # Example Usage:
 # hull_A = get_glyph_hull("myfont.ttf", "A")

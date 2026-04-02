@@ -52,6 +52,7 @@ from ptxprint.tatweel import TatweelDialog
 from ptxprint.gtkpolyglot import PolyglotSetup
 from ptxprint.report import Report
 from ptxprint.gtktesting import GtkTester
+from ptxprint.printers import init_printers, printer_from_label
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -258,7 +259,7 @@ btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 _ui_experimental = """
 """.split()
 
-_processing_needed = """c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang""".split()
+_processing_needed = """c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after t_chapfrom t_chapto r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang btn_chooseBibleModule""".split()
 
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
@@ -282,7 +283,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_PoD lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
+_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Printers lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -531,7 +532,7 @@ _signals = {
 
 _olst = ["fr_savedLayout", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_Viewer", 
-         "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_PoD"]  # "tb_Help"
+         "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_Printers"]  # "tb_Help"
 
 _dlgtriggers = {
     "dlg_multiBookSelect":  "onChooseBooksClicked",
@@ -642,6 +643,7 @@ class WindowGeometry:
 
         x, y = dialog.get_position()
         width, height = dialog.get_size()
+        logger.debug(f"Size {width=} {height=}")
 
         screen = dialog.get_screen()
         monitor_num = screen.get_monitor_at_window(gdk_win)
@@ -693,9 +695,10 @@ class WindowGeometry:
 # --- Helper Class to Manage Asynchronous Window Restoration ---
 class WindowRestorer:
     """Manages the state and asynchronous process of restoring one window."""
-    def __init__(self, screen, dialog, savedGeom, onDoneCallback):
+    def __init__(self, screen, dialog, name, savedGeom, onDoneCallback):
         self.screen = screen
         self.dialog = dialog
+        self.name = name
         self.geom = savedGeom
         self.onDone = onDoneCallback
         
@@ -739,12 +742,17 @@ class WindowRestorer:
         try: self.dialog.unmaximize()
         except Exception as e: logging.debug(f"Failed to unmaximize: {e}")
         
+        self.dialog.set_size_request(-1, -1)
         self.dialog.resize(self.geom.width, self.geom.height)
+        #self.dialog.set_default_size(self.geom.width, self.geom.height)
         self.geom.width, self.geom.height = self.dialog.get_size()
         posx = max(self.geom.x, self.targetRect.x)
         posx = min(posx, self.targetRect.x + self.targetRect.width - self.geom.width)
         posy = max(self.geom.y, self.targetRect.y)
         posy = min(posy, self.targetRect.y + self.targetRect.height - self.geom.height)
+        logger.debug(f"Moving dialog to {posx}, {posy} within {self.targetRect.x}+{self.targetRect.width}, {self.targetRect.y}+{self.targetRect.height}")
+        display = Gdk.Display.get_default()
+        self.dialog.set_role(f"ptxprint-{self.name}")
         try: self.dialog.move(posx, posy)
         except Exception as e: logging.debug(f"Failed to move/resize: {e}")
         
@@ -855,6 +863,7 @@ class GtkViewModel(ViewModel):
         self.finddata = {}
         self.widgetnames = {}
         self.setup_book_button_styles()
+        self.printers = init_printers(self)
         nid = None
         for node in tree.iter():
             if 'translatable' in node.attrib:
@@ -897,7 +906,7 @@ class GtkViewModel(ViewModel):
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder()
         self.builder.add_from_string(xml_text) # this is where the error/warning/critial msgs come from
-        self.builder.connect_signals(self)
+        self.builder.connect_signals_full(self.connect_signal, self)
         self.mw = self.builder.get_object("ptxprint")
         logger.debug("Glade loaded in gtkview")
 
@@ -911,6 +920,7 @@ class GtkViewModel(ViewModel):
 
             def do_startup(self):
                 Gtk.Application.do_startup(self)
+                GLib.set_prgname("org.sil.ptxprint")
                 self.win = self.view.builder.get_object("mainapp_win")
                 if not sys.platform.startswith("win"):
                     mb = self.view._add_mac_menu(self)
@@ -922,7 +932,8 @@ class GtkViewModel(ViewModel):
                 #Gtk.Application.do_activate(self)
                 pass
 
-            def on_window_destory(self, widget):
+            def on_window_destroy(self, widget):
+                self.win.destroy()
                 self.release()
 
         self.mainapp = MacApp(self)
@@ -1065,6 +1076,19 @@ class GtkViewModel(ViewModel):
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
                 self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
         self.connectSimpleClicked()
+        tv = self.builder.get_object("tv_zvarEdit")
+        tv.connect("key-press-event", self.on_variables_keypress)
+
+        value_col = tv.get_columns()[1]          # or find by title
+        renderer = value_col.get_cells()[0]      # usually the CellRendererText
+
+        self.var_value_renderer = renderer
+        self.var_value_renderer.connect("editing-started", self._on_var_editing_started)
+        self.var_value_renderer.connect("editing-canceled", self._on_var_editing_canceled)
+
+        self._var_editable = None
+        self._var_edit_path = None
+
         logger.debug("Static controls initialized")
 
         self.resetProjectsList()
@@ -1081,8 +1105,91 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
+
+        if self.args.experimental & 1:
+            self.builder.get_object("tb_Printers").set_visible(True)
         logger.debug("Project list loaded")
 
+        return True
+
+    @staticmethod
+    def connect_signal(builder, obj, name, handler, connect_obj, flags, self):
+        p = None
+        if "/" in handler:
+            b = handler.split("/")
+            if b[0] == "printers":
+                p = self.printers[b[1]]
+                hname = b[2]
+        else:
+            p = self
+            hname = handler
+        fn = getattr(p, hname, None)
+        if fn is None:
+            raise NotImplementedError(f"No method {handler} found for signal {name}")
+        obj.connect(name, fn)
+
+    def _on_var_editing_started(self, renderer, editable, path_str):
+        self._var_editable = editable
+        self._var_edit_path = Gtk.TreePath.new_from_string(path_str)
+        editable.connect("key-press-event", self.on_variables_keypress)
+
+    def _on_var_editing_canceled(self, renderer):
+        self._var_editable = None
+        self._var_edit_path = None
+
+    def on_variables_keypress(self, widget, event):
+        if event.keyval not in (Gdk.KEY_Tab, Gdk.KEY_ISO_Left_Tab):
+            return False
+
+        is_shift = (event.keyval == Gdk.KEY_ISO_Left_Tab) or bool(event.state & Gdk.ModifierType.SHIFT_MASK)
+
+        # If we're called from the cell editor, widget is a Gtk.Entry, not the TreeView
+        if isinstance(widget, Gtk.Entry):
+            tv = self.builder.get_object("tv_zvarEdit")
+        else:
+            tv = widget
+
+        model = tv.get_model()
+        if model is None:
+            return False
+
+        num_rows = len(model)
+        if num_rows == 0:
+            return True
+
+        # Prefer the path we are editing (more accurate), else fall back to cursor
+        path = getattr(self, "_var_edit_path", None)
+        col = None
+        if path is None:
+            path, col = tv.get_cursor()
+            if path is None:
+                return True
+        else:
+            cur_path, col = tv.get_cursor()
+
+        # 1) FORCE COMMIT before moving
+        if isinstance(widget, Gtk.Entry):
+            try:
+                widget.editing_done()
+                widget.remove_widget()
+            except Exception:
+                pass
+        else:
+            try:
+                self.var_value_renderer.stop_editing(False)
+            except Exception:
+                pass
+
+        idx = path.get_indices()[0]
+        new_idx = (idx - 1) % num_rows if is_shift else (idx + 1) % num_rows
+        new_path = Gtk.TreePath.new_from_indices([new_idx])
+
+        # 2) Move AFTER GTK processes the edit (idle is better than an arbitrary timeout)
+        def _move():
+            tv.set_cursor(new_path, col, True)
+            return False
+
+        GLib.idle_add(_move)
         return True
 
     def connectSimpleClicked(self):
@@ -1119,6 +1226,8 @@ class GtkViewModel(ViewModel):
                     _connect(widget, "changed", self.onSimpleClicked, wtype, wname)
                 elif wtype in ("SpinButton", "GtkSpinButton"):
                     _connect(widget, "value-changed", self.onSimpleClicked, wtype, wname)
+                elif wtype in ("Button", "GtkButton"):
+                    _connect(widget, "clicked", self.onSimpleClicked, wtype, wname)
                 else:
                     print(f">>> Skipping (unsupported type): {wtype} {widget_name} {wname}")
 
@@ -1377,7 +1486,7 @@ class GtkViewModel(ViewModel):
         scroll.add(self.adjView.view)
         logger.debug("Setting project")
         if self.pendingPid is not None:
-            self.setPrjid(*self.pendingPid)
+            self.setPrjid(*self.pendingPid, startup=True)
             self.pendingPid = None
         logger.debug("Setting config")
         if self.pendingConfig is not None:
@@ -1454,7 +1563,7 @@ class GtkViewModel(ViewModel):
         window geometry.
         """
         self.doConfigNameChange(None)
-
+        logger.debug(f"Main width={self.mainapp.win.get_size().width}")
         # Hook the save-on-exit event BEFORE restoring. This ensures that
         # if the app is opened and closed quickly, the save is still hooked.
         # The flag prevents connecting the signal more than once.
@@ -1469,6 +1578,7 @@ class GtkViewModel(ViewModel):
 
         if self.pdf_viewer is not None:
             self.pdf_viewer.hide_unused()
+        logger.debug(f"Main width={self.mainapp.win.get_size().width}")
 
     def emission_hook(self, w, *a):     # sigid, detail, self, *a):
         if self.testing is None or self.testing.paused:
@@ -1956,9 +2066,14 @@ class GtkViewModel(ViewModel):
         # elif dest == "sbcats":
             # self.sbcatlist.clear()
 
+    def getWidgetId(self, widget):
+        return Gtk.Buildable.get_name(widget)       # because I can never remember this incantation
+
     def onDestroy(self, btn, *a):
         if self.testing is not None:
             self.testing.finalise()
+        logger.debug(f"Main width={self.mainapp.win.get_size().width}")
+        self.builder.get_object("mainapp_win").destroy()
         self.mainapp.quit()
 
     def onKeyPress(self, dlg, event):
@@ -1975,6 +2090,7 @@ class GtkViewModel(ViewModel):
             self.pendingerror=(txt, kw)
         else:
             doError(txt, **kw)
+        self.pauseNoUpdate()
 
     def doStatus(self, txt=""): 
         btn = self.builder.get_object("btn_dismissStatusLine")
@@ -2094,6 +2210,16 @@ class GtkViewModel(ViewModel):
                     fileLocked = False
         if len(self.getNewBooks()):
             self.pauseNoUpdate()
+        if self.get("c_processScript"):
+            pdffile = self.project.printPath(self.baseTeXPDFnames(diff=False)[0]+".pdf")
+            xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
+            pauseme = not os.path.exists(xdvname) or os.lstat(xdvname).st_size == 0
+            if os.path.exists(pdffile):
+                pdftime = os.lstat(pdffile).st_mtime
+                scripttime = os.lstat(self.get("btn_selectScript")).st_mtime
+                pauseme = scripttime > pdftime
+            if pauseme:
+                self.pauseNoUpdate()
         self.onSaveConfig(None)
         self.checkUpdates()
 
@@ -2101,11 +2227,11 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_find").set_placeholder_text(_("Processing..."))
         self.builder.get_object("t_find").set_text("")
         try:
-            self.callback(self, noaction=self.get("c_noupdate"))
+            job = self.callback(self, noaction=self.get("c_noupdate"))
         except Exception as e:
             if "SyntaxError" in str(type(e)):
             # if "SyntaxError" in type(e):
-                s = _("Failed due to an error in the USFM file.") + "\n" + \
+                s = _("Failed due to an error in the generated USFM file.") + "\n" + \
                     _("Run the Basic Checks in Paratext and try again.") + "\n"
             else:
                 s = traceback.format_exc()
@@ -2114,13 +2240,19 @@ class GtkViewModel(ViewModel):
             unlockme()
             self.builder.get_object("t_find").set_placeholder_text("Search for settings")
             self.builder.get_object("t_find").set_text("")
-        self.unpauseNoUpdate()
-
+            self.pauseNoUpdate()
+        else:
+            if job is None or getattr(job, "res", 0) == 0:
+                self.unpauseNoUpdate()
+            else:
+                self.pauseNoUpdate()
+                
     def onMainAppWinDeleted(self, widget, event): # Main App dialog (X button)
+        self.saveWindowGeometry()
         self.onDestroy(widget)
 
-
     def onCancel(self, btn):
+        self.saveWindowGeometry()
         self.onDestroy(btn)
 
     def warnStrongsInText(self, btn):
@@ -2749,8 +2881,8 @@ class GtkViewModel(ViewModel):
             return
         bk = self.get("ecb_examineBook")
         if pgid == "tb_FrontMatter":
-            ptFRT = os.path.exists(os.path.join(self.project.path, self.getBookFilename("FRT", self.project.prjid)))
-            self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT)
+            ptFRT = self.getBookSrcPath("FRT", self.project.prjid)
+            self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT is not None)
             dialog = self.builder.get_object("dlg_generateFRT")
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
@@ -2866,6 +2998,14 @@ class GtkViewModel(ViewModel):
             self.onThumbColorChange()
         elif pgid == "tb_Pictures":
             self.onPLpageChanged(None, None, pgnum=-1)
+        elif pgid == "tb_Printers":
+            pnum = self.get("nbk_printers")
+            nbkw = self.builder.get_object("nbk_printers")
+            ppage = nbkw.get_nth_page(pnum)
+            lw = nbkw.get_tab_label(ppage)
+            lid = self.getWidgetId(lw)
+            k = printer_from_label(lid)
+            self.printers[k].prepare()
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
@@ -2943,7 +3083,7 @@ class GtkViewModel(ViewModel):
             return
         elif pgid == "tb_FinalSFM":
             fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.project.printPath(self.cfgid), fndict[pgid][0], fname)
+            fpath = os.path.join(self.project.printPath(self.cfgid), fname)
             genBtn.set_sensitive(True)
             doti = fpath.rfind(".")
             if doti > 0:
@@ -3265,6 +3405,10 @@ class GtkViewModel(ViewModel):
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
+        sview = self.builder.get_object("tb_FinalSFM").get_child()
+        if isinstance(sview, Gtk.Viewport):
+            sview = sview.get_child()
+        sview.override_font(p)
         self.picListView.modify_font(p)
 
         w = self.builder.get_object("cr_zvar_value")
@@ -3615,25 +3759,25 @@ class GtkViewModel(ViewModel):
                 l.set_tooltip_markup(tips[k])
             featbox.attach(l, 0, i, 1, 1)
             l.show()
-            inival = int(setfeats.get(k, "0"))
+            inival = int(setfeats.get(k, -1))
             if k in vals:
                 if len(vals[k]) < 3:
                     obj = Gtk.CheckButton()
                     if k in vals and len(vals[k]) > 1:
                         obj.set_tooltip_text(vals[k][1])
-                    obj.set_active(inival)
+                    obj.set_active(max(inival, 0))
                 else:
                     obj = Gtk.ComboBoxText()
                     for j, n in sorted(vals[k].items()):
                         obj.append(str(j), n)
-                    obj.set_active(inival)
+                    obj.set_active(inival+1)
                     obj.set_entry_text_column(1)
             elif k == "aalt":
                 obj = makeSpinButton(0, 100, 0)
-                obj.set_value(inival)
+                obj.set_value(max(inival, 0))
             else:
                 obj = Gtk.CheckButton()
-                obj.set_active(inival)
+                obj.set_active(max(inival, 0))
             obj.set_halign(Gtk.Align.START)
             featbox.attach(obj, 1, i, 1, 1)
             obj.show()
@@ -3672,13 +3816,13 @@ class GtkViewModel(ViewModel):
             for i, (k, v) in enumerate(sorted(feats.items())):
                 obj = featbox.get_child_at(1, i)
                 if isinstance(obj, Gtk.CheckButton):
-                    val = 1 if obj.get_active() else 0
+                    val = 1 if obj.get_active() else None
                 elif isinstance(obj, Gtk.SpinButton):
-                    val = int(obj.get_value())
+                    val = int(obj.get_value()) or None
                 elif isinstance(obj, Gtk.ComboBoxText):
-                    val = obj.get_active_id()
-                if val is not None and ((self.currdefaults is not None and str(self.currdefaults.get(k, 0)) != str(val))\
-                                        or (self.currdefaults is None and str(val) != "0")):
+                    val = int(obj.get_active_id())
+                    val = val - 1 if val else None
+                if val is not None and str(self.currdefaults.get(k, None)) != str(val):
                     results.append("{}={}".format(k, val))
             self.set("t_fontFeatures", ", ".join(results), mod=False)
         for i in range(numrows-1, -1, -1):
@@ -4121,7 +4265,7 @@ class GtkViewModel(ViewModel):
             self.updateConfigIdentity(cfg)
         dialog.hide()
 
-    def setPrjid(self, prjid, prjguid, saveCurrConfig=False):
+    def setPrjid(self, prjid, prjguid, saveCurrConfig=False, startup=False):
         if not self.initialised:
             self.pendingPid = (prjid, prjguid)
         else:
@@ -4130,6 +4274,7 @@ class GtkViewModel(ViewModel):
             i = m.get_iter_first()
             while i is not None:
                 if m.get_value(i,0) == prjid and m.get_value(i, 1) == prjguid:
+                    # shame startup doesn't propagate
                     w.set_active_iter(i)
                     break
                 i = m.iter_next(i)
@@ -4144,7 +4289,7 @@ class GtkViewModel(ViewModel):
             self.doConfigNameChange(None)
             
     def setPrjConfig(self, prjid, prjguid, configid):
-        self.setPrjid(prjid, prjguid)
+        self.setPrjid(prjid, prjguid, startup=True)
         # while (Gtk.events_pending()):
             # Gtk.main_iteration_do(False)        
         self.setConfigId(configid)
@@ -4534,9 +4679,12 @@ class GtkViewModel(ViewModel):
         buf = self.fileViews[pg][0]
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         label = self.builder.get_object("l"+_allpgids[pg][2:])
-        txtcol = " color='crimson'" if not currentText == self.uneditedText[pg] else ""
+        if not currentText == self.uneditedText[pg]:
+            txtcol = " color='crimson'" 
+            self.pauseNoUpdate()
+        else:
+            txtcol = ""
         label.set_markup("<span{}>".format(txtcol)+label.get_text()+"</span>")
-        self.pauseNoUpdate()
 
     def _editProcFile(self, fname, loc, intro=""):
         fpath = self._locFile(fname, loc)
@@ -4567,7 +4715,7 @@ class GtkViewModel(ViewModel):
         
     def onEditMaps(self, btn):
         mapbkid = self.get("fcb_ptxMapBook") 
-        mapfile = os.path.join(self.project.path, self.getBookFilename(mapbkid))
+        mapfile = self.getBookSrcPath(mapbkid)
         if len(mapfile):
             self._editProcFile(str(mapfile), "prj")
             self.onRefreshViewerTextClicked(None)
@@ -6049,7 +6197,7 @@ class GtkViewModel(ViewModel):
                 self.set('ecb_booklist', bls)
             self.doStatus(_("Strong's Index generated in: {}").format(bkid))
             if self.get("c_strongsOpenIndex"):
-                fpath = os.path.join(self.project.path, self.getBookFilename(bkid))
+                fpath = self.getBookSrcPath(bkid)
                 startfile(fpath)
         dialog.hide()
         
@@ -6416,15 +6564,17 @@ class GtkViewModel(ViewModel):
         self.styleEditor.editMarker()
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         self.i18nizeURIs()
-        
-    def onvarEdit(self, tv, path, text): #cr, path, text, tv):
+
+    def onvarEdit(self, renderer, path, text):
+        tv = self.builder.get_object("tv_zvarEdit")
         model = tv.get_model()
         it = model.get_iter_from_string(path)
-        if it:
-            model.set(it, 1, text.strip())
-            self.setvar(model.get(it, 0)[0], text.strip())
+        text = (text or "").strip()
+        if model.get(it, 1)[0] != text:
+            model.set(it, 1, text)
+            self.setvar(model.get(it, 0)[0], text)
             self.changed()
-
+        
     def onzvarAdd(self, btn):
         def responseToDialog(entry, dialog, response):
             dialog.response(response)
@@ -7065,6 +7215,25 @@ Thank you,
 
     def onMoveEndOfAyahClicked(self, wid):
         self.set('c_verseNumbers', not self.get("c_decorator_endayah"))
+        if not self.get("c_decorator_endayah") or self.loadingConfig:
+            return
+        fnstyle = None
+        for a in (("Footnotes", "f"), ("Xrefs", "x")):
+            if not self.get("c_include"+a[0]):
+                continue
+            s = self.styleEditor.asStyle(a[1])
+            if 'callerstyle' not in s or 'notecallerstyle' not in s:
+                if fnstyle is None:
+                    fnstyle = self.styleEditor.asStyle("fncaller")
+                    if not len(fnstyle):
+                        vstyle = self.styleEditor.asStyle("v")
+                        self.styleEditor.addMarker("fncaller", "fncaller")
+                        self.styleEditor.sheet["fncaller"].update(vstyle)
+                        self.styleEditor.setval("fncaller", "name", "fncaller")
+                        self.styleEditor.setval("fncaller", "TextProperties", "publishable")
+                for b in ("", "note"):
+                    if b+'callerstyle' not in s:
+                        self.styleEditor.setval(a[1], b+'callerstyle', 'fncaller')
         
     def onGridSettingChanged(self, wid, status):
         if self.loadingConfig:
@@ -7157,15 +7326,6 @@ Thank you,
     def getPgNum(self):
         return self.pdf_viewer.getpnum(1, 1)
 
-    def onPgNumChanged(self, widget, x):
-        value = self.get("t_pgNum", "1").strip()
-        pg = int(value) if value.isdigit() else 1
-        pg = self.pdf_viewer.closestpnum(pg)
-        if value != str(pg):
-            self.set("t_pgNum", str(pg), mod=False) # We need to do this here to stop it looping endlessly
-        pnum = self.pdf_viewer.getpnum(pg, pg)
-        self.pdf_viewer.show_pdf(pnum, self.rtl, setpnum=False)
-
     def onPdfAdjOverlayChanged(self, widget):
         self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))
         
@@ -7202,13 +7362,50 @@ Thank you,
         x = n.split("_")[-1]
         self.pdf_viewer.set_page(x)
 
-    def onEditingPgNum(self, w, x):  # From 'key-release' event on t_pgNum
-        if self.loadingConfig:
-            return
-        if hasattr(self, "pgnum_timer") and self.pgnum_timer:
-            GLib.source_remove(self.pgnum_timer)
-        self.pgnum_timer = GLib.timeout_add(500, self.onPgNumChanged, None, None)
-        
+    def onPgNumChanged(self, widget, *args):
+        txt = widget.get_text().strip()
+        if not txt:
+            return False
+
+        try:
+            typedPg = int(txt)
+        except ValueError:
+            return False
+
+        # cancel previous delayed jump
+        if getattr(self, "_pgNumTimerId", None):
+            GLib.source_remove(self._pgNumTimerId)
+            self._pgNumTimerId = None
+
+        self._pgNumTimerId = GLib.timeout_add(300, self._jumpToTypedPgNum, typedPg)
+        return False
+
+    def onEditingPgNum(self, widget, *args):
+        txt = widget.get_text().strip()
+        if not txt:
+            return False
+        try:
+            typedPg = int(txt)
+        except ValueError:
+            return False
+        if getattr(self, "_pgNumTimerId", None):
+            GLib.source_remove(self._pgNumTimerId)
+            self._pgNumTimerId = None
+        return self._jumpToTypedPgNum(typedPg)
+
+    def _jumpToTypedPgNum(self, typedPg):
+        self._pgNumTimerId = None
+        if self.pdf_viewer is None or self.pdf_viewer.document is None:
+            return False
+        typedPg = self.pdf_viewer.closestpnum(typedPg)
+        if self.pdf_viewer.parlocs is not None:
+            cpage = self.pdf_viewer.parlocs.pnums.get(typedPg, typedPg)
+        else:
+            cpage = typedPg
+        cpage = max(1, min(int(cpage), int(self.pdf_viewer.numpages or 1)))
+        self.pdf_viewer.show_pdf(cpage)
+        return False
+
     def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",
@@ -7297,12 +7494,13 @@ Thank you,
             "dlg_preview": self.builder.get_object("dlg_preview")
         }
 
+        logger.debug(f"Saving Window Geometry for {len(dialogs)} dialogs. From {getcaller(1)}")
         for name, dialog in dialogs.items():
             geom = WindowGeometry.fromDialog(dialog)
             if geom:
                 geom.toConfig(self.userconfig, name)
-
-        self.saveConfig(force=True)
+        # don't do this since it writes out adjlists etc. which may mess with other apps
+        # self.saveConfig(force=True)
 
     def restoreWindowGeometry(self):
         """Restores window geometries using a sequential, state-managed approach."""
@@ -7321,7 +7519,7 @@ Thank you,
                 name, dialog, view = next(iterator)
                 savedGeom = WindowGeometry.fromConfig(self.userconfig, name)
                 # Chain the next task in the callback
-                restorer = WindowRestorer(screen, dialog, savedGeom, onDoneCallback=lambda: windowCB(iterator, view))
+                restorer = WindowRestorer(screen, dialog, name, savedGeom, onDoneCallback=lambda: windowCB(iterator, view))
                 restorer.run()
             except StopIteration:
                 # All tasks are done, now ensure main window has focus
@@ -7413,7 +7611,10 @@ Thank you,
         if response == Gtk.ResponseType.OK and not self.builder.get_object("lb_mapFilename").get_label().startswith("<"):
             self.addAnotherMapClicked(None)
             mapbkid = self.get("fcb_ptxMapBook") 
-            outfile = os.path.join(self.project.path, self.getBookFilename(mapbkid))
+            outfile = self.getBookSrcPath(mapbkid)
+            if outfile is None:
+                outfname = self.getBookFilename(mapbkid)
+                outfile = os.path.join(self.project.srcPath(self.cfgid), outfname)
             new_map_usfm = "\n".join(self.mapusfm)
             # 1. If the file already exists, open in append mode ("a") and just add the new content
             if os.path.exists(outfile):

@@ -34,9 +34,9 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\underf@ll#1#2#3{%
-  \ifdim#1<\dimexpr #2 - \baselineskip\relax\ifinendbook\else
-    \immediate\write-1{Underfill[#3]: [\the\pageno] \the #1 \the #2}%
-  \fi\fi
+  \ifdim#1<\dimexpr #2 - .5 \baselineskip\relax
+    \immediate\write-1{Underfill[#3]: [\the\pageno] ht=\the #1, space=\the #2, baseline=\the\baselineskip}%
+  \fi
 }
 \newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
 \def\onecol{%
@@ -200,7 +200,9 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \advance\und@rfill -\dimen3 % from c@lcboxheights
-    \underf@ll{\ht\colA}{\availht}{A}%
+    \ifinendbook\else   % end of a book has single column left overs. Ignore them
+      \underf@ll{\ht\colA}{\availht}{A}%
+    \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
     \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%
     \onecolp@gects % setup pagecontents
@@ -1254,11 +1256,12 @@
   \trace{i}{s@tpage: Saving inserts}%
   \s@veinserts{chunk}%
   \global\partialfr@medfalse
-  \s@veallnotes{1}%
   \xdef\oldb@tmark{\botmark}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
   %\tracingassigns=1
   \nextshipout
+  \let\\=\clearn@teboxes \the\n@tecl@sses % Some circumstances leads to the note boxes being left as is (so they can be added to by extra text). That's irelevant now we've written the page.
+  \s@veallnotes{1}% Save blanked notes!
   %\tracingassigns=0
   \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
   \ifcsname page-\the\pageno\endcsname
@@ -1463,6 +1466,12 @@
       \ifvoid1 \ht\colB=\dimen3\if\XrefNotes\relax\else\ht\xr@fbox=\dimen3\fi\else \dimen3=\ht\colB\fi
     \fi
     %\und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+    \trace{o}{A=\the\ht\colA+\the\dp\colA, B=\the\ht\colB+\the\dp\colB}%
+    \ifdim\ht\colA < \ht\colB
+      \underf@ll{\ht\colA}{\ht\colB}{A}%
+    \else
+      \underf@ll{\ht\colB}{\ht\colA}{B}%
+    \fi
     %\underf@ll{\ht\colA}{\availht}{A}%
     %\underf@ll{\ht\colB}{\availht}{B}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
@@ -1501,9 +1510,9 @@
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
             \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
           \else 
-            \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
+            \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\ifNoGrid\else\vfil\fi}\rshiftc@lumn{0}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-            \vbox to \dimen3{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+            \vbox to \dimen3{\unvbox\colB\ifNoGrid\else\vfil\fi}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
         \kern\lastd@pth}%
       \trace{et}{Apply border from savepartialpaged (writing partial)}%
       \doTextB@rder{\colA}%
@@ -1587,6 +1596,7 @@
 \def\pr@pinserts{%
   \ifdim\ht\topins>0pt
     \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
+    \advance\baselineskip by \ColAdjskip
     \dimen1=\ht\topins\advance\dimen1\dp\topins \dimen0=\baselineskip
     \m@d \ifdim\dimen0<\baselineskip
       \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1 \dp\topins=0pt
@@ -1679,19 +1689,20 @@
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, boxA=\the\ht\colA, boxB=\the\ht\colB, colbox=\the\ht\xr@fbox}%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht%\advance\dimen2\bmg@p
+      %\dimen3=\ifdim\ht\colA > \ht\colB \relax\ht\colA \else\ht\colB\fi
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\box\partial}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
-      \trace{p}{Text depth = \the\dimen3}%
+      \trace{p}{Text depth = \the\dimen3, htA=\the\ht\colA+\the\dp\colA, htb=\the\ht\colB+\the\dp\colB, avail=\the\availht \space from \the\dimen3, baselineskip=\the\baselineskip}%
       \setbox\colA\hbox to \dimen1{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB\vfil}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\unvbox\colB}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \trace{et}{Apply border from twocoltrial (shipout)}%
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 
@@ -2202,14 +2213,14 @@
       \fi\fi
       \trace{p}{Text depth = \the\dimen3}%
       \setbox\colA\hbox to \dimen1{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colC\vfil}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colC}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colB}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colC\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\unvbox\colB}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
+          \vbox to \dimen3{\unvbox\colC}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \trace{et}{Apply border from threecoltrial (shipout)}%
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 
@@ -2341,14 +2352,14 @@
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
       \setbox\colA\hbox to \dimen5{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colC\vfil}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colC}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{1}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colB}\rshiftc@lumn{1}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{0}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colC\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\unvbox\colB}\rshiftc@lumn{0}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
+          \vbox to \dimen3{\unvbox\colC}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \kern\lastd@pth%
       \trace{et}{Apply border from savepartialpaget (writing partial)}%
       \doTextB@rder{\colA}%

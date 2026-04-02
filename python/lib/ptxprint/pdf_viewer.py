@@ -2,7 +2,7 @@ import gi, os, datetime, ctypes, math, gc
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
-import cairo, re, time, sys
+import cairo, re, time, sys, json
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
@@ -49,7 +49,8 @@ mstr = {
     'tryminus':   _("Try Shrink -1 line"),
     'plusline':   _("Expand +1 line"),
     'rp':         _("Reset Adjustments"),
-    'shrnkboth':  _("Shrink -1 line and Text"),
+    'shrnkboth':  _("Shrink Both"),
+    'expandboth': _("Expand Both"),
     'st':         _("Shrink Text"),
     'et':         _("Expand Text"),
     'es':         _("Edit Style"),
@@ -67,6 +68,7 @@ mstr = {
     'shrinkpic':  _("Shrink by 1 line"),
     'growpic':    _("Grow by 1 line"),
     'shwdtl':     _("Show Details..."),
+    'custom':     _("Custom"),
 }
 
 def mm_pts(n):
@@ -188,6 +190,8 @@ class PDFViewer:
                 else:
                     v.hide()
             for k, v in sorted(extras.items()):
+                if k == ' Original':
+                    continue
                 n = k.strip()
                 if n not in self.boxcodes:
                     i = len(self.boxcodes)
@@ -801,8 +805,10 @@ class PDFContentViewer(PDFFileViewer):
         self.collisionpages = []
         self.spacepages = []
         self.riverpages = []
-        
-        # This may end up in page rendering code. Just collect data for now
+        # UI extensions loaded from <config>/UIExtensions.json
+        self.uiExtensions = []
+        self.uiExtensionsLoaded = False
+        self.uiExtensionsCfgDir = None
         display = Gdk.Display.get_default()
         screen = display.get_default_screen()
         window = screen.get_root_window()
@@ -839,9 +845,52 @@ class PDFContentViewer(PDFFileViewer):
         self.spacethreshold = float(self.model.get("s_spaceEms", 3.0))
         self.charthreshold = float(self.model.get("s_charSpaceEms", 0))
 
+    def loadUIExtensions(self, force=False):
+        cfgDir = self.model.project.srcPath(self.model.cfgid)
+        if not cfgDir:
+            return
+        if not force and self.uiExtensionsLoaded and self.uiExtensionsCfgDir == cfgDir:
+            return
+
+        self.uiExtensionsCfgDir, self.uiExtensionsLoaded, self.uiExtensions = cfgDir, True, []
+        extFile = os.path.join(cfgDir, "UIExtensions.json")
+        if not os.path.exists(extFile):
+            return
+        try:
+            data = json.load(open(extFile, "r", encoding="utf-8", errors="ignore"))
+            if not isinstance(data, list):
+                return
+            seen = set()
+            for e in data:
+                if not isinstance(e, dict):
+                    continue
+                entryId, entryType, menuEntry = e.get("id"), e.get("type"), e.get("menuEntry")
+                if not entryId or not entryType or not menuEntry or entryId in seen:
+                    continue
+                seen.add(entryId)
+                self.uiExtensions.append({
+                    "id": entryId,
+                    "type": entryType,
+                    "menuEntry": menuEntry,
+                    "tooltip": e.get("tooltip"),
+                    "content": e.get("content")
+                })
+        except Exception as ex:
+            logger.warning(f"UIExtensions.json read failed: {extFile}: {ex}")
+            self.uiExtensions = []
+
+    def onUITriggerToggled(self, widget, triggerContent, entryId, info, parref, pgindx):
+        if self.adjlist is None:
+            return
+        adjRef = self.parInfoToAdjRef(parref)
+        self.adjlist.addTrigger(adjRef, triggerContent, enabled=widget.get_active(), insert=True)
+        self.show_pdf()
+        self.hitPrint()
+
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False, **kw):
         self.settingsChanged()
-        
+        self.loadUIExtensions()
+        self.adjlist = adjlist
         self.isdiglot = isdiglot
         if pdf_path is None or not os.path.exists(pdf_path):
             self.document = None
@@ -864,9 +913,6 @@ class PDFContentViewer(PDFFileViewer):
             font_desc = Pango.FontDescription(fontR + " 12")  # Font name and size
             self.cr.set_property("font-desc", font_desc)
         
-        self.adjlist = adjlist
-        # print(f"In load_pdf. No longer calling: updatePgCtrlButtons")
-        # self.model.updatePgCtrlButtons(None)
         return True
 
     def _add_toctree(self, tocts, toci, parent):
@@ -998,6 +1044,11 @@ class PDFContentViewer(PDFFileViewer):
                 left += gutter
         return (left, right)
 
+    def parInfoToAdjRef(self, parInfo):
+        ref = getattr(parInfo, "ref", "") or ""
+        parnum = getattr(parInfo, "parnum", 1) or 1
+        return f"{ref}[{parnum}]" if parnum > 1 else ref
+    
     def _draw_guides(self, page, pindex, context, zoomlevel):
         def drawline(x, y, width, height, col):
             context.set_source_rgba(col[0], col[1], col[2], 1)
@@ -1495,16 +1546,25 @@ class PDFContentViewer(PDFFileViewer):
             p, r, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
         return p, pnum, a
 
-    def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
+    def addMenuItem(self, menu, label, fn, *args, sensitivity=None, tooltip=None):
         if label is None:
             res = Gtk.SeparatorMenuItem.new()
         else:
-            res = Gtk.MenuItem(label=label)
+            # We must use a Gtk.Label to support Pango markup (colors)
+            res = Gtk.MenuItem()
+            lbl = Gtk.Label(label=label) 
+            lbl.set_use_markup(True) 
+            lbl.set_xalign(0.0) 
+            res.add(lbl)
+
             if sensitivity is not None:
                 res.set_sensitive(sensitivity)
+            if tooltip is not None:
+                res.set_tooltip_text(tooltip)
             if fn is not None:
                 res.connect("activate", fn, *args)
-        res.show()
+        
+        res.show_all() # Important to show the child label
         menu.append(res)
         return res
 
@@ -1545,16 +1605,26 @@ class PDFContentViewer(PDFFileViewer):
             
     def menuFitToScreen(self, x):
         self.set_zoom_fit_to_screen(True)
-        
-    def on_button_release(self, widget, event):
-        # This handles the release of the middle-mouse button for panning
-        if event.button == 2: # middle click
-            self.is_dragging = False
-            return True
 
+    def on_button_release(self, widget, event):
         # Check the state of the modifier keys
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         shift_pressed = event.state & Gdk.ModifierType.SHIFT_MASK
+
+        # This handles the release of the middle-mouse button for panning or resetting
+        if event.button == 2: # middle click
+            self.is_dragging = False
+            if (ctrl_pressed or shift_pressed):
+                parref, pgindx, _ = self.get_parloc(widget, event)
+                if isinstance(parref, ParInfo):
+                    parnum = getattr(parref, 'parnum', 0) or 0
+                    parnum = f"[{parnum}]" if parnum > 1 else ""
+                    ref = parref.ref
+                    self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
+                    if self.adjlist:
+                        info = self.adjlist.getinfo(ref + parnum, insert=True)
+                        self.on_reset_adjustments(widget, 'para', pgindx, info, parref)
+            return True
 
         # Check if we are in the main content viewer and if any modifier key was pressed
         if (ctrl_pressed or shift_pressed):
@@ -1605,9 +1675,19 @@ class PDFContentViewer(PDFFileViewer):
             
         return False
 
+    def hasActiveUIExtensions(self, adjRef):
+        return
+        # to be implemented when there are OTHER kinds of UI Extensions (apart from Triggers)
+        
     def show_context_menu(self, widget, event):
         self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         self.last_click_time = time.time()
+        
+        # Color-coded bars using a vertical block character
+        bar = "\u258C"
+        # Blue for Line operations, Pinkish-Red for Text operations
+        b_bar = f'<span foreground="#A099FF">{bar}</span>'
+        r_bar = f'<span foreground="#FF9999">{bar}</span>'
 
         menu = Gtk.Menu()
         self.clear_menu(menu)
@@ -1622,68 +1702,140 @@ class PDFContentViewer(PDFFileViewer):
             self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
             if self.adjlist is not None:
                 info = self.adjlist.getinfo(ref + parnum, insert=True)
-        logger.debug(f"{event.x=},{event.y=}")
+            logger.debug(f"{event.x=},{event.y=}")
 
-        if len(info) and re.search(r'[.:]', parref.ref):
-            if ref[3:4] in "LRABCDEFG":
-                pref = ref[3:4]
-                o = 4
-            else:
-                pref = "L"
-                o = 3
-            l = info[0]
-            if l[0] not in '+-':
-                l = '+' + l
-            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
-            self.addMenuItem(menu, hdr, None, info, sensitivity=False)
-            self.addMenuItem(menu, None, None)
+            if len(info) and re.search(r'[.:]', parref.ref):
+                if ref[3:4] in "LRABCDEFG":
+                    pref = ref[3:4]
+                    o = 4
+                else:
+                    pref = "L"
+                    o = 3
+                l = info[0]
+                if l[0] not in '+-':
+                    l = '+' + l
+                hdr = f"{ref[:o]} {ref[o:]}{parnum} \\{parref.mrk} {l} {info[1]}%"
+                self.addMenuItem(menu, hdr, None, info, sensitivity=False)
+                self.addMenuItem(menu, None, None)
 
-            shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
-            shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
-            self.addMenuItem(menu, f"{mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", self.on_shrink_both, info, parref, sensitivity=not info[1] <= shrLim)
-            self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
-            self.addMenuItem(menu, f"{mstr['st']} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
-            self.addMenuItem(menu, None, None)
-            
-            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
-            expLim = min(self.expandLimit, info[1]+self.expandStep)
-            self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+                shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
+                shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
+                
+                # Shrink Line: Blue bar
+                self.addMenuItem(menu, f"{b_bar}    {shrinkText} ({parref.lines - 1})", 
+                                 self.on_shrink_paragraph, info, parref,
+                                 tooltip="Shift + Left-Click")
+                
+                # Shrink Text: Red bar
+                self.addMenuItem(menu, f"{r_bar}    {mstr['st']} ({shrLim}%)", 
+                                 self.on_shrink_text, info, parref, 
+                                 sensitivity=not info[1] <= shrLim,
+                                 tooltip="Ctrl + Left-Click")
+                                 
+                # Shrink Both: Uses Blue and Red bar
+                self.addMenuItem(menu, f"{b_bar}{r_bar} {mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", 
+                                 self.on_shrink_both, info, parref, 
+                                 sensitivity=not info[1] <= shrLim,
+                                 tooltip="Ctrl + Shift + Left-Click")
+                
+                self.addMenuItem(menu, None, None)
+                
+                # Expand Line: Blue bar
+                self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})       {b_bar}", 
+                                 self.on_expand_paragraph, info, parref,
+                                 tooltip="Shift + Right-Click")
+                
+                # Expand Text: Red bar
+                expLim = min(self.expandLimit, info[1]+self.expandStep)
+                self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)       {r_bar}", 
+                                 self.on_expand_text, info, parref, 
+                                 sensitivity=not info[1] >= expLim,
+                                 tooltip="Ctrl + Right-Click")
 
-            reset_menu = Gtk.Menu()
-            self.clear_menu(reset_menu)
-            for k, v in reset.items():
-                if k == "sprd" and not self.spread_mode or \
-                   k == "sprd" and len(self.get_spread(pgindx)) < 2 or \
-                   k == "col"  and not self.model.get('c_doublecolumn', True):
-                    continue
-                menu_item = Gtk.MenuItem(label=f"{v}")
-                menu_item.connect("activate", self.on_reset_adjustments, k, pgindx, info, parref)
-                menu_item.set_sensitive((k == "para" and not (info[1] == 100 and int(l.replace("+","")) == 0)) \
-                                     or (k == "col" ) or (k == "page") \
-                                     or (k == "sprd" and self.spread_mode and len(self.get_spread(pgindx))))
-                menu_item.show()
-                reset_menu.append(menu_item)
-            self.addSubMenuItem(menu, mstr['rp'], reset_menu)            
-            self.addMenuItem(menu, None, None)
-            
-            if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
-                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
+                # Expand Both: Uses Blue and Red bar
+                self.addMenuItem(menu, f"{mstr['expandboth']} ({int(info[1])+self.expandBothAmt(info)}%)   {r_bar}{b_bar}", 
+                                 self.on_expand_both, info, parref, 
+                                 sensitivity=not info[1] >= expLim,
+                                 tooltip="Ctrl + Shift + Right-Click")
+                
+                self.addMenuItem(menu, None, None)
 
-            if parref and parref.mrk is not None:
-                # self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None))
+                # Custom submenu (only show if UIExtensions.json has entries)
+                self.loadUIExtensions()
+                if self.uiExtensions:
+                    customMenu = Gtk.Menu()
+                    self.clear_menu(customMenu)
+                    adjRef = self.parInfoToAdjRef(parref)
+                    enabled = set(self.adjlist.getTriggers(adjRef)) if self.adjlist is not None else set()
+                    activeContents = {
+                        entry.get("content")
+                        for entry in self.uiExtensions
+                        if entry.get("type") == "trigger" and entry.get("content")
+                    }
+                    hasActiveCustom = bool(enabled & activeContents)
 
-            if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
-                # self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
+                    for entry in self.uiExtensions:
+                        entryType = entry["type"]
+                        menuText = entry["menuEntry"]
+                        content = entry.get("content")
+                        entryId = entry["id"]
+                        tooltip = entry.get("tooltip")
 
-            # self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen)
-            if not self.model.get("c_updatePDF"):
-                # self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
+                        if entryType == "trigger" and content:
+                            item = Gtk.CheckMenuItem.new_with_label(menuText)
+                            item.set_active(content in enabled)
+                            item.connect("toggled", self.onUITriggerToggled, content, entryId, info, parref, pgindx)
+                        else:
+                            item = Gtk.MenuItem.new_with_label(menuText)
+                            item.connect("activate", self.onUIExtensionSelected, entryType, content, entryId, info, parref, pgindx)
+                        if tooltip:
+                            item.set_tooltip_text(tooltip)
+                        customMenu.append(item)
+                        item.show()
+                    customItem = Gtk.MenuItem()
+                    customLabel = Gtk.Label()
+                    customLabel.set_use_markup(True)
+                    customLabel.set_xalign(0)
+                    labelText = GLib.markup_escape_text(mstr["custom"])
+                    customLabel.set_markup(f"<b>{labelText}</b>" if hasActiveCustom else labelText)
+                    customItem.add(customLabel)
+                    customItem.set_submenu(customMenu)
+                    menu.append(customItem)
+                    customItem.show_all()
+                    self.addMenuItem(menu, None, None)
+    
+                reset_menu = Gtk.Menu()
+                self.clear_menu(reset_menu)
+                for k, v in reset.items():
+                    if k == "sprd" and not self.spread_mode or \
+                            k == "sprd" and len(self.get_spread(pgindx)) < 2 or \
+                            k == "col" and not self.model.get('c_doublecolumn', True):
+                        continue
+                    menu_item = Gtk.MenuItem(label=f"{v}")
+                    if k == 'para':
+                        menu_item.set_tooltip_text("Ctrl/Shift + Middle-Click")
+                    menu_item.connect("activate", self.on_reset_adjustments, k, pgindx, info, parref)
+                    menu_item.set_sensitive((k == "para" and not (info[1] == 100 and int(l.replace("+","")) == 0)) \
+                                            or (k == "col" ) or (k == "page") \
+                                            or (k == "sprd" and self.spread_mode and len(self.get_spread(pgindx))))
+                    menu_item.show()
+                    reset_menu.append(menu_item)
+                self.addSubMenuItem(menu, mstr['rp'], reset_menu)
+                self.addMenuItem(menu, None, None)
 
-        # New section for image context menu which is a lot more complicated
+                if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
+                    self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
+
+                if parref and parref.mrk is not None:
+                    self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None))
+
+                if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
+                    self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
+
+                self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen)
+                if not self.model.get("c_updatePDF"):
+                    self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
+
         elif parref is not None and isinstance(parref, FigInfo):
             showmenu = True
             imgref = parref.ref.strip('-preverse')
@@ -1718,62 +1870,62 @@ class PDFContentViewer(PDFFileViewer):
                 if showmenu:
                     self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, (pic, parref))
 
-                    frame_menu = Gtk.Menu()
-                    self.clear_menu(frame_menu)
-                    for frame_opt in frame.values():
-                        menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f"   {frame_opt}")
-                        if frame_opt == frame[curr_frame]:
+                frame_menu = Gtk.Menu()
+                self.clear_menu(frame_menu)
+                for frame_opt in frame.values():
+                    menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f" {frame_opt}")
+                    if frame_opt == frame[curr_frame]:
+                        menu_item.set_sensitive(False)
+                    menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
+                    menu_item.show()
+                    frame_menu.append(menu_item)
+                self.addSubMenuItem(menu, mstr['frmsz'], frame_menu)
+
+                vpos_menu = Gtk.Menu()
+                self.clear_menu(vpos_menu)
+                for k, vpos_opt in vpos.items():
+                    if k in dsplyOpts[pic['size']][0]:
+                        menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f" {vpos_opt}")
+                        if vpos_opt == vpos[curr_vpos]:
                             menu_item.set_sensitive(False)
-                        menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
+                        menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
                         menu_item.show()
-                        frame_menu.append(menu_item)
-                    self.addSubMenuItem(menu, mstr['frmsz'], frame_menu)
+                        vpos_menu.append(menu_item)
+                self.addSubMenuItem(menu, mstr['vpos'], vpos_menu)
 
-                    vpos_menu = Gtk.Menu()
-                    self.clear_menu(vpos_menu)
-                    for k, vpos_opt in vpos.items():
-                        if k in dsplyOpts[pic['size']][0]:
-                            menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f"   {vpos_opt}")
-                            if vpos_opt == vpos[curr_vpos]:
+                if curr_frame != 'span':
+                    hpos_menu = Gtk.Menu()
+                    self.clear_menu(hpos_menu)
+                    p = pic.get('pgpos', 'o')
+                    for k, hpos_opt in hpos.items():
+                        if k in dsplyOpts[pic['size']][1]:
+                            menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f" {hpos_opt}")
+                            if hpos_opt == hpos[curr_hpos]:
                                 menu_item.set_sensitive(False)
-                            menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
+                            menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
                             menu_item.show()
-                            vpos_menu.append(menu_item)
-                    self.addSubMenuItem(menu, mstr['vpos'], vpos_menu)
+                            hpos_menu.append(menu_item)
+                    self.addSubMenuItem(menu, mstr['hpos'], hpos_menu)
 
-                    if curr_frame != 'span':
-                        hpos_menu = Gtk.Menu()
-                        self.clear_menu(hpos_menu)
-                        p = pic.get('pgpos', 'o')
-                        for k, hpos_opt in hpos.items():
-                            if k in dsplyOpts[pic['size']][1]:
-                                menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f"   {hpos_opt}")
-                                if hpos_opt == hpos[curr_hpos]:
-                                    menu_item.set_sensitive(False)
-                                menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
-                                menu_item.show()
-                                hpos_menu.append(menu_item)
-                        self.addSubMenuItem(menu, mstr['hpos'], hpos_menu)
+                mirror_menu = Gtk.Menu()
+                self.clear_menu(mirror_menu)
+                curr_mirror = pic.get('mirror', '')
+                for mirror_opt in mirror.values():
+                    menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f" {mirror_opt}")
+                    if mirror_opt == mirror[curr_mirror]:
+                        menu_item.set_sensitive(False) 
+                    menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
+                    menu_item.show()
+                    mirror_menu.append(menu_item)
+                self.addSubMenuItem(menu, mstr['mirror'], mirror_menu)
 
-                    mirror_menu = Gtk.Menu()
-                    self.clear_menu(mirror_menu)
-                    curr_mirror = pic.get('mirror', '')
-                    for mirror_opt in mirror.values():
-                        menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f"   {mirror_opt}")
-                        if mirror_opt == mirror[curr_mirror]:
-                            menu_item.set_sensitive(False)                    
-                        menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
-                        menu_item.show()
-                        mirror_menu.append(menu_item)
-                    self.addSubMenuItem(menu, mstr['mirror'], mirror_menu)
+                self.addMenuItem(menu, None, None)
+                self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref))
+                self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref))
+                self.addMenuItem(menu, None, None)
 
-                    self.addMenuItem(menu, None, None)
-                    self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref))
-                    self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref))
-                    self.addMenuItem(menu, None, None)
-
-                    self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
-                    self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
+                self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
+                self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
             if showmenu:
                 if sys.platform.startswith("win"):
                     self.addMenuItem(menu, None, None)
@@ -1924,6 +2076,7 @@ class PDFContentViewer(PDFFileViewer):
         dialog.hide()
         if response != Gtk.ResponseType.OK:
             self.model.set("t_sliceRef", "", mod=False)
+        self.model.pauseNoUpdate()
         self.hitPrint()
 
     def shrinkBothAmt(self, info):
@@ -1941,6 +2094,14 @@ class PDFContentViewer(PDFFileViewer):
                 self.adjlist.increment(info[2], offset)
         self.show_pdf()
         self.hitPrint()
+
+    def expandBothAmt(self, info):
+        # Half of the remaining room up to expandLimit (integer step), but
+        # when we’re close to the limit, just go straight to the limit.
+        offset = int(0.5 * (self.expandLimit - info[1]) + 0.1)
+        if offset < self.expandStep:
+            offset = self.expandLimit - info[1]
+        return offset
 
     def on_expand_both(self, widget, info, parref):
         if self.adjlist is not None:
@@ -2016,6 +2177,14 @@ class PDFContentViewer(PDFFileViewer):
         self.show_pdf()
         self.hitPrint()
 
+    def onUIExtensionSelected(self, widget, entryType, content, entryId, info, parref, pgindx):
+        # Next stage: send (entryType, content) to the adjustment mechanism
+        logger.debug(
+            f"UI extension selected: id={entryId} type={entryType} content={content} "
+            f"ref={getattr(parref, 'ref', '?')} page={pgindx}"
+        )
+        self.model.doStatus(_("Custom action selected: {0}").format(entryId))
+        
     def edit_style(self, widget, a):
         (mkr, pref) = a
         if pref != self.currpref:
