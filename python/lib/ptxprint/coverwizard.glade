@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- coverwizardV3.glade — GTK3 UI definition for the PTXprint Cover Wizard V3 -->
+<!-- coverwizardV3.glade — PTXprint Cover Wizard V3
+     Fixes in this version:
+       - gtk+ version set to 3.24
+       - GtkStack inside sw_wizard wrapped in GtkViewport (GtkStack is not GtkScrollable)
+       - GtkLabel (l_summary) inside Step-7 GtkScrolledWindow wrapped in GtkViewport
+       - GtkTextView (t_backtext) in sw_backtext implements GtkScrollable — no viewport needed
+       - All GtkComboBoxText, GtkButton, GtkColorButton, GtkEntry in rows
+         have valign="center" so they do not stretch vertically
+       - hexpand used instead of expand=True on horizontal children
+-->
 <interface>
-  <requires lib="gtk+" version="3.20"/>
+  <requires lib="gtk+" version="3.24"/>
 
   <object class="GtkWindow" id="w_coverwizard">
     <property name="title">PTXprint Cover Wizard</property>
@@ -59,1026 +68,789 @@
             <property name="spacing">0</property>
             <property name="expand">True</property>
 
-            <!-- LEFT: wizard pages -->
+            <!-- LEFT: wizard scrolled panel.
+                 GtkStack is NOT GtkScrollable, so it must sit inside a
+                 GtkViewport, which is the direct child of the GtkScrolledWindow. -->
             <child>
               <object class="GtkScrolledWindow" id="sw_wizard">
                 <property name="hscrollbar_policy">never</property>
                 <property name="vscrollbar_policy">automatic</property>
-                <property name="width_request">400</property>
+                <property name="width_request">420</property>
                 <property name="expand">False</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="margin_start">16</property>
                 <property name="margin_end">12</property>
                 <child>
-                  <object class="GtkStack" id="st_steps">
-                    <property name="transition_type">slide-left-right</property>
-                    <property name="transition_duration">200</property>
-                    <property name="expand">True</property>
-
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <!-- STEP 1: Spine + binding                         -->
-                    <!-- ═══════════════════════════════════════════════ -->
+                  <object class="GtkViewport">
+                    <property name="shadow_type">none</property>
                     <child>
-                      <object class="GtkBox" id="pg_step1_spine">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">10</property>
-                        <property name="margin_bottom">12</property>
+                      <object class="GtkStack" id="st_steps">
+                        <property name="transition_type">slide-left-right</property>
+                        <property name="transition_duration">200</property>
+                        <property name="expand">True</property>
 
+                        <!-- ════════════════════════════════════════ -->
+                        <!-- STEP 1                                   -->
+                        <!-- ════════════════════════════════════════ -->
                         <child>
-                          <object class="GtkLabel">
-                            <property name="label"><![CDATA[<b>Step 1 — Will this book have a spine?</b>]]></property>
-                            <property name="use_markup">True</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label">A spine is the narrow strip visible when books are shelved. Thin booklets are usually saddle-stitched and have no printable spine.</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                            <style><class name="dim-label"/></style>
-                          </object>
-                        </child>
-
-                        <!-- Page count -->
-                        <child>
-                          <object class="GtkBox">
-                            <property name="orientation">horizontal</property>
-                            <property name="spacing">8</property>
+                          <object class="GtkBox" id="pg_step1_spine">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">10</property>
+                            <property name="margin_bottom">12</property>
                             <child>
                               <object class="GtkLabel">
-                                <property name="label">Approximate page count:</property>
+                                <property name="label"><![CDATA[<b>Step 1 — Will this book have a spine?</b>]]></property>
+                                <property name="use_markup">True</property>
                                 <property name="xalign">0</property>
+                                <property name="wrap">True</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkEntry" id="t_pagecount">
-                                <property name="text">0</property>
-                                <property name="width_chars">6</property>
-                                <property name="input_purpose">number</property>
-                                <signal name="changed" handler="onPagecountChanged"/>
+                              <object class="GtkLabel">
+                                <property name="label">A spine is the narrow strip visible when books are shelved. Thin booklets are usually saddle-stitched and have no printable spine.</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                                <style><class name="dim-label"/></style>
                               </object>
                             </child>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkLabel" id="l_spinehint">
-                            <property name="label">Typically spine text is only used at ~80+ pages.</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                            <style><class name="dim-label"/></style>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkRadioButton" id="r_spine_no">
-                            <property name="label">No (thin booklet / under ~80 pages)</property>
-                            <property name="active">True</property>
-                            <signal name="toggled" handler="onSpineToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="r_spine_yes">
-                            <property name="label">Yes (printed book with spine)</property>
-                            <property name="group">r_spine_no</property>
-                            <signal name="toggled" handler="onSpineToggled"/>
-                          </object>
-                        </child>
-
-                        <!-- Binding type: only when spine enabled -->
-                        <child>
-                          <object class="GtkRevealer" id="rv_binding_type">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
+                            <!-- Page count -->
                             <child>
-                              <object class="GtkBox">
-                                <property name="orientation">vertical</property>
-                                <property name="spacing">6</property>
-                                <property name="margin_top">4</property>
-                                <property name="margin_start">12</property>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="label">Binding type:</property>
-                                    <property name="xalign">0</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_binding_paperback">
-                                    <property name="label">Paperback (same size as paper)</property>
-                                    <property name="active">True</property>
-                                    <signal name="toggled" handler="onBindingTypeToggled"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_binding_hardcover">
-                                    <property name="label">Hardcover (cover extends beyond paper and wraps)</property>
-                                    <property name="group">r_binding_paperback</property>
-                                    <signal name="toggled" handler="onBindingTypeToggled"/>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkSeparator">
-                            <property name="orientation">horizontal</property>
-                            <property name="margin_top">4</property>
-                            <property name="margin_bottom">4</property>
-                          </object>
-                        </child>
-
-                        <!-- RTL binding: checkbox only, no sub-radios needed -->
-                        <child>
-                          <object class="GtkCheckButton" id="c_RTLbookBinding">
-                            <property name="label">This book uses right-to-left (RTL) binding</property>
-                            <property name="tooltip_text">RTL scripts (such as Arabic, Hebrew, Urdu) typically have the binding on the right side of the cover.</property>
-                            <signal name="toggled" handler="onRTLBindingToggled"/>
-                          </object>
-                        </child>
-
-                      </object>
-                      <packing>
-                        <property name="name">pg_step1_spine</property>
-                        <property name="title">Step 1</property>
-                      </packing>
-                    </child>
-
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <!-- STEP 2: Artwork coverage + image pickers        -->
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <child>
-                      <object class="GtkBox" id="pg_step2_coverage">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">8</property>
-                        <property name="margin_bottom">12</property>
-
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label"><![CDATA[<b>Step 2 — Where should the main picture/decoration appear?</b>]]></property>
-                            <property name="use_markup">True</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label">Choose where your artwork or decoration will be placed.</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                            <style><class name="dim-label"/></style>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkRadioButton" id="r_cov_wrap_all">
-                            <property name="label">Wrap all (one image across front + back)</property>
-                            <property name="active">True</property>
-                            <signal name="toggled" handler="onCoverageToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="r_cov_front_only">
-                            <property name="label">Front only</property>
-                            <property name="group">r_cov_wrap_all</property>
-                            <signal name="toggled" handler="onCoverageToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="r_cov_front_spine">
-                            <property name="label">Front + spine</property>
-                            <property name="group">r_cov_wrap_all</property>
-                            <signal name="toggled" handler="onCoverageToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="r_cov_back_only">
-                            <property name="label">Back only</property>
-                            <property name="group">r_cov_wrap_all</property>
-                            <signal name="toggled" handler="onCoverageToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="r_cov_back_spine">
-                            <property name="label">Back + spine</property>
-                            <property name="group">r_cov_wrap_all</property>
-                            <signal name="toggled" handler="onCoverageToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="r_cov_front_back_separate">
-                            <property name="label">Front and back (separate images)</property>
-                            <property name="group">r_cov_wrap_all</property>
-                            <signal name="toggled" handler="onCoverageToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="r_cov_none">
-                            <property name="label">No image (colour/text only)</property>
-                            <property name="group">r_cov_wrap_all</property>
-                            <signal name="toggled" handler="onCoverageToggled"/>
-                          </object>
-                        </child>
-
-                        <!-- Primary image picker (always shown when not "none") -->
-                        <child>
-                          <object class="GtkRevealer" id="rv_img_primary">
-                            <property name="reveal_child">True</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <object class="GtkFrame">
-                                <property name="label">Primary image</property>
-                                <property name="margin_top">6</property>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">6</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="margin_start">8</property>
-                                    <property name="margin_end">8</property>
-                                    <!-- File chooser row -->
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">6</property>
-                                        <child>
-                                          <object class="GtkButton" id="btn_img_primary_choose">
-                                            <property name="label">Choose image…</property>
-                                            <signal name="clicked" handler="onImgPrimaryChooseClicked"/>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_img_primary_status">
-                                            <property name="label">(no file chosen)</property>
-                                            <property name="ellipsize">start</property>
-                                            <property name="max_width_chars">28</property>
-                                            <style><class name="dim-label"/></style>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <!-- Fit mode row -->
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="label">Fit:</property>
-                                            <property name="width_request">40</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="cb_img_primary_fit">
-                                            <property name="expand">True</property>
-                                            <signal name="changed" handler="onImgPrimaryFitChanged"/>
-                                            <items>
-                                              <item id="stretch">Stretch / Shrink</item>
-                                              <item id="crop">Crop</item>
-                                              <item id="none">None (100% as-is)</item>
-                                            </items>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <!-- Opacity row -->
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="label">Opacity:</property>
-                                            <property name="width_request">55</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkScale" id="sl_img_primary_opacity">
-                                            <property name="orientation">horizontal</property>
-                                            <property name="adjustment">adj_img_primary_opacity</property>
-                                            <property name="draw_value">True</property>
-                                            <property name="value_pos">right</property>
-                                            <property name="digits">0</property>
-                                            <property name="expand">True</property>
-                                            <signal name="value-changed" handler="onImgPrimaryOpacityChanged"/>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                        <!-- Secondary image picker (only for front_back_separate) -->
-                        <child>
-                          <object class="GtkRevealer" id="rv_img_secondary">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <object class="GtkFrame">
-                                <property name="label">Back cover image (separate)</property>
-                                <property name="margin_top">4</property>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">6</property>
-                                    <property name="margin_top">6</property>
-                                    <property name="margin_bottom">6</property>
-                                    <property name="margin_start">8</property>
-                                    <property name="margin_end">8</property>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">6</property>
-                                        <child>
-                                          <object class="GtkButton" id="btn_img_secondary_choose">
-                                            <property name="label">Choose image…</property>
-                                            <signal name="clicked" handler="onImgSecondaryChooseClicked"/>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_img_secondary_status">
-                                            <property name="label">(no file chosen)</property>
-                                            <property name="ellipsize">start</property>
-                                            <property name="max_width_chars">28</property>
-                                            <style><class name="dim-label"/></style>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="label">Fit:</property>
-                                            <property name="width_request">40</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="cb_img_secondary_fit">
-                                            <property name="expand">True</property>
-                                            <signal name="changed" handler="onImgSecondaryFitChanged"/>
-                                            <items>
-                                              <item id="stretch">Stretch / Shrink</item>
-                                              <item id="crop">Crop</item>
-                                              <item id="none">None (100% as-is)</item>
-                                            </items>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="label">Opacity:</property>
-                                            <property name="width_request">55</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkScale" id="sl_img_secondary_opacity">
-                                            <property name="orientation">horizontal</property>
-                                            <property name="adjustment">adj_img_secondary_opacity</property>
-                                            <property name="draw_value">True</property>
-                                            <property name="value_pos">right</property>
-                                            <property name="digits">0</property>
-                                            <property name="expand">True</property>
-                                            <signal name="value-changed" handler="onImgSecondaryOpacityChanged"/>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                      </object>
-                      <packing>
-                        <property name="name">pg_step2_coverage</property>
-                        <property name="title">Step 2</property>
-                      </packing>
-                    </child>
-
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <!-- STEP 3: Background colour                       -->
-                    <!-- Opacity on same row as colour picker            -->
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <child>
-                      <object class="GtkBox" id="pg_step3_background">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">10</property>
-                        <property name="margin_bottom">12</property>
-
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label"><![CDATA[<b>Step 3 — Background colour or shading</b>]]></property>
-                            <property name="use_markup">True</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label">This colour fills the whole spread behind everything else.</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                            <style><class name="dim-label"/></style>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkRadioButton" id="r_bg_white">
-                            <property name="label">White (no background colour)</property>
-                            <property name="active">True</property>
-                            <signal name="toggled" handler="onBgToggled"/>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkRadioButton" id="r_bg_solid">
-                            <property name="label">Solid colour</property>
-                            <property name="group">r_bg_white</property>
-                            <signal name="toggled" handler="onBgToggled"/>
-                          </object>
-                        </child>
-
-                        <!-- Colour + opacity on same row, inside revealer -->
-                        <child>
-                          <object class="GtkRevealer" id="rv_bgcolor">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <!-- Single horizontal row: label | picker | opacity label | scale -->
                               <object class="GtkBox">
                                 <property name="orientation">horizontal</property>
-                                <property name="spacing">10</property>
-                                <property name="margin_top">2</property>
-                                <property name="margin_start">24</property>
+                                <property name="spacing">8</property>
                                 <child>
                                   <object class="GtkLabel">
-                                    <property name="label">Colour:</property>
+                                    <property name="label">Approximate page count:</property>
+                                    <property name="valign">center</property>
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkColorButton" id="cb_bgcolor">
-                                    <signal name="color-set" handler="onBgcolorSet"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="label">Opacity:</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkScale" id="sl_bg_opacity">
-                                    <property name="orientation">horizontal</property>
-                                    <property name="adjustment">adj_opacity</property>
-                                    <property name="draw_value">True</property>
-                                    <property name="value_pos">right</property>
-                                    <property name="digits">0</property>
-                                    <property name="width_request">120</property>
-                                    <property name="expand">False</property>
-                                    <signal name="value-changed" handler="onBgOpacityChanged"/>
+                                  <object class="GtkEntry" id="t_pagecount">
+                                    <property name="text">0</property>
+                                    <property name="width_chars">6</property>
+                                    <property name="input_purpose">number</property>
+                                    <property name="valign">center</property>
+                                    <signal name="changed" handler="onPagecountChanged"/>
                                   </object>
                                 </child>
                               </object>
                             </child>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkRadioButton" id="r_bg_gradient">
-                            <property name="label">Gradient shading (coming soon)</property>
-                            <property name="group">r_bg_white</property>
-                            <property name="sensitive">False</property>
-                            <signal name="toggled" handler="onBgToggled"/>
-                          </object>
-                        </child>
-
-                      </object>
-                      <packing>
-                        <property name="name">pg_step3_background</property>
-                        <property name="title">Step 3</property>
-                      </packing>
-                    </child>
-
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <!-- STEP 4: Front content                           -->
-                    <!-- Each element has its own position dropdown      -->
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <child>
-                      <object class="GtkBox" id="pg_step4_front">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">8</property>
-                        <property name="margin_bottom">12</property>
-
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label"><![CDATA[<b>Step 4 — Front cover text &amp; illustration</b>]]></property>
-                            <property name="use_markup">True</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label">Each element has its own vertical position. Enable optional elements with the checkboxes below.</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                            <style><class name="dim-label"/></style>
-                          </object>
-                        </child>
-
-                        <!-- Title (required) — with position dropdown -->
-                        <child>
-                          <object class="GtkFrame">
-                            <property name="label">Title * (required)</property>
                             <child>
-                              <object class="GtkBox">
-                                <property name="orientation">vertical</property>
-                                <property name="spacing">4</property>
+                              <object class="GtkLabel" id="l_spinehint">
+                                <property name="label">Typically spine text is only used at ~80+ pages.</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                                <style><class name="dim-label"/></style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_spine_no">
+                                <property name="label">No (thin booklet / under ~80 pages)</property>
+                                <property name="active">True</property>
+                                <signal name="toggled" handler="onSpineToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_spine_yes">
+                                <property name="label">Yes (printed book with spine)</property>
+                                <property name="group">r_spine_no</property>
+                                <signal name="toggled" handler="onSpineToggled"/>
+                              </object>
+                            </child>
+                            <!-- Binding type (spine only) -->
+                            <child>
+                              <object class="GtkRevealer" id="rv_binding_type">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
+                                    <property name="margin_top">4</property>
+                                    <property name="margin_start">12</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="label">Binding type:</property>
+                                        <property name="xalign">0</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="r_binding_paperback">
+                                        <property name="label">Paperback (same size as paper)</property>
+                                        <property name="active">True</property>
+                                        <signal name="toggled" handler="onBindingTypeToggled"/>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="r_binding_hardcover">
+                                        <property name="label">Hardcover (cover extends beyond paper and wraps)</property>
+                                        <property name="group">r_binding_paperback</property>
+                                        <signal name="toggled" handler="onBindingTypeToggled"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator">
+                                <property name="orientation">horizontal</property>
                                 <property name="margin_top">4</property>
                                 <property name="margin_bottom">4</property>
-                                <property name="margin_start">8</property>
-                                <property name="margin_end">8</property>
+                              </object>
+                            </child>
+                            <!-- RTL binding checkbox -->
+                            <child>
+                              <object class="GtkCheckButton" id="c_RTLbookBinding">
+                                <property name="label">This book uses right-to-left (RTL) binding</property>
+                                <property name="tooltip_text">RTL scripts (such as Arabic, Hebrew, Urdu) typically have the binding on the right side of the cover.</property>
+                                <signal name="toggled" handler="onRTLBindingToggled"/>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="name">pg_step1_spine</property>
+                            <property name="title">Step 1</property>
+                          </packing>
+                        </child>
+
+                        <!-- ════════════════════════════════════════ -->
+                        <!-- STEP 2                                   -->
+                        <!-- ════════════════════════════════════════ -->
+                        <child>
+                          <object class="GtkBox" id="pg_step2_coverage">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">8</property>
+                            <property name="margin_bottom">12</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label"><![CDATA[<b>Step 2 — Where should the main picture/decoration appear?</b>]]></property>
+                                <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label">Choose where your artwork or decoration will be placed.</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                                <style><class name="dim-label"/></style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_cov_wrap_all">
+                                <property name="label">Wrap all (one image across front + back)</property>
+                                <property name="active">True</property>
+                                <signal name="toggled" handler="onCoverageToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_cov_front_only">
+                                <property name="label">Front only</property>
+                                <property name="group">r_cov_wrap_all</property>
+                                <signal name="toggled" handler="onCoverageToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_cov_front_spine">
+                                <property name="label">Front + spine</property>
+                                <property name="group">r_cov_wrap_all</property>
+                                <signal name="toggled" handler="onCoverageToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_cov_back_only">
+                                <property name="label">Back only</property>
+                                <property name="group">r_cov_wrap_all</property>
+                                <signal name="toggled" handler="onCoverageToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_cov_back_spine">
+                                <property name="label">Back + spine</property>
+                                <property name="group">r_cov_wrap_all</property>
+                                <signal name="toggled" handler="onCoverageToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_cov_front_back_separate">
+                                <property name="label">Front and back (separate images)</property>
+                                <property name="group">r_cov_wrap_all</property>
+                                <signal name="toggled" handler="onCoverageToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_cov_none">
+                                <property name="label">No image (colour/text only)</property>
+                                <property name="group">r_cov_wrap_all</property>
+                                <signal name="toggled" handler="onCoverageToggled"/>
+                              </object>
+                            </child>
+                            <!-- Primary image picker -->
+                            <child>
+                              <object class="GtkRevealer" id="rv_img_primary">
+                                <property name="reveal_child">True</property>
+                                <property name="transition_type">slide-down</property>
                                 <child>
-                                  <object class="GtkEntry" id="t_title">
-                                    <property name="placeholder_text">Enter the book title…</property>
-                                    <signal name="changed" handler="onTitleChanged"/>
+                                  <object class="GtkFrame">
+                                    <property name="label">Primary image</property>
+                                    <property name="margin_top">6</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">5</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="margin_start">8</property>
+                                        <property name="margin_end">8</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">6</property>
+                                            <child>
+                                              <object class="GtkButton" id="btn_img_primary_choose">
+                                                <property name="label">Choose image…</property>
+                                                <property name="valign">center</property>
+                                                <signal name="clicked" handler="onImgPrimaryChooseClicked"/>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="l_img_primary_status">
+                                                <property name="label">(no file chosen)</property>
+                                                <property name="ellipsize">start</property>
+                                                <property name="max_width_chars">26</property>
+                                                <property name="valign">center</property>
+                                                <style><class name="dim-label"/></style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">8</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="label">Fit:</property>
+                                                <property name="width_request">50</property>
+                                                <property name="valign">center</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBoxText" id="cb_img_primary_fit">
+                                                <property name="hexpand">True</property>
+                                                <property name="valign">center</property>
+                                                <signal name="changed" handler="onImgPrimaryFitChanged"/>
+                                                <items>
+                                                  <item id="stretch">Stretch / Shrink</item>
+                                                  <item id="crop">Crop</item>
+                                                  <item id="none">None (100% as-is)</item>
+                                                </items>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">8</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="label">Opacity:</property>
+                                                <property name="width_request">50</property>
+                                                <property name="valign">center</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkScale" id="sl_img_primary_opacity">
+                                                <property name="orientation">horizontal</property>
+                                                <property name="adjustment">adj_img_primary_opacity</property>
+                                                <property name="draw_value">True</property>
+                                                <property name="value_pos">right</property>
+                                                <property name="digits">0</property>
+                                                <property name="hexpand">True</property>
+                                                <property name="valign">center</property>
+                                                <signal name="value-changed" handler="onImgPrimaryOpacityChanged"/>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
+                              </object>
+                            </child>
+                            <!-- Secondary image picker -->
+                            <child>
+                              <object class="GtkRevealer" id="rv_img_secondary">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
+                                <child>
+                                  <object class="GtkFrame">
+                                    <property name="label">Back cover image (separate)</property>
+                                    <property name="margin_top">4</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">5</property>
+                                        <property name="margin_top">6</property>
+                                        <property name="margin_bottom">6</property>
+                                        <property name="margin_start">8</property>
+                                        <property name="margin_end">8</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">6</property>
+                                            <child>
+                                              <object class="GtkButton" id="btn_img_secondary_choose">
+                                                <property name="label">Choose image…</property>
+                                                <property name="valign">center</property>
+                                                <signal name="clicked" handler="onImgSecondaryChooseClicked"/>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="l_img_secondary_status">
+                                                <property name="label">(no file chosen)</property>
+                                                <property name="ellipsize">start</property>
+                                                <property name="max_width_chars">26</property>
+                                                <property name="valign">center</property>
+                                                <style><class name="dim-label"/></style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">8</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="label">Fit:</property>
+                                                <property name="width_request">50</property>
+                                                <property name="valign">center</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBoxText" id="cb_img_secondary_fit">
+                                                <property name="hexpand">True</property>
+                                                <property name="valign">center</property>
+                                                <signal name="changed" handler="onImgSecondaryFitChanged"/>
+                                                <items>
+                                                  <item id="stretch">Stretch / Shrink</item>
+                                                  <item id="crop">Crop</item>
+                                                  <item id="none">None (100% as-is)</item>
+                                                </items>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">8</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="label">Opacity:</property>
+                                                <property name="width_request">50</property>
+                                                <property name="valign">center</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkScale" id="sl_img_secondary_opacity">
+                                                <property name="orientation">horizontal</property>
+                                                <property name="adjustment">adj_img_secondary_opacity</property>
+                                                <property name="draw_value">True</property>
+                                                <property name="value_pos">right</property>
+                                                <property name="digits">0</property>
+                                                <property name="hexpand">True</property>
+                                                <property name="valign">center</property>
+                                                <signal name="value-changed" handler="onImgSecondaryOpacityChanged"/>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="name">pg_step2_coverage</property>
+                            <property name="title">Step 2</property>
+                          </packing>
+                        </child>
+
+                        <!-- ════════════════════════════════════════ -->
+                        <!-- STEP 3                                   -->
+                        <!-- ════════════════════════════════════════ -->
+                        <child>
+                          <object class="GtkBox" id="pg_step3_background">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">10</property>
+                            <property name="margin_bottom">12</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label"><![CDATA[<b>Step 3 — Background colour or shading</b>]]></property>
+                                <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label">This colour fills the whole spread behind everything else.</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                                <style><class name="dim-label"/></style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_bg_white">
+                                <property name="label">White (no background colour)</property>
+                                <property name="active">True</property>
+                                <signal name="toggled" handler="onBgToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_bg_solid">
+                                <property name="label">Solid colour</property>
+                                <property name="group">r_bg_white</property>
+                                <signal name="toggled" handler="onBgToggled"/>
+                              </object>
+                            </child>
+                            <!-- Colour picker + opacity on one row -->
+                            <child>
+                              <object class="GtkRevealer" id="rv_bgcolor">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="orientation">horizontal</property>
-                                    <property name="spacing">8</property>
+                                    <property name="spacing">10</property>
+                                    <property name="margin_top">2</property>
+                                    <property name="margin_start">24</property>
                                     <child>
                                       <object class="GtkLabel">
-                                        <property name="label">Position:</property>
-                                        <property name="xalign">0</property>
-                                        <property name="width_request">60</property>
+                                        <property name="label">Colour:</property>
+                                        <property name="valign">center</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkComboBoxText" id="cb_title_position">
-                                        <property name="expand">True</property>
-                                        <signal name="changed" handler="onTitlePositionChanged"/>
-                                        <items>
-                                          <item id="top">Top</item>
-                                          <item id="center">Centre</item>
-                                          <item id="bottom">Bottom</item>
-                                        </items>
+                                      <object class="GtkColorButton" id="cb_bgcolor">
+                                        <property name="valign">center</property>
+                                        <signal name="color-set" handler="onBgcolorSet"/>
                                       </object>
                                     </child>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_title_box">
-                                        <property name="label">In a box</property>
-                                        <signal name="toggled" handler="onTitleBoxToggled"/>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                        <!-- Subtitle (optional) -->
-                        <child>
-                          <object class="GtkCheckButton" id="c_subtitle_enable">
-                            <property name="label">Include a subtitle</property>
-                            <signal name="toggled" handler="onSubtitleEnableToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRevealer" id="rv_subtitle">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <object class="GtkFrame">
-                                <property name="margin_start">16</property>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">4</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="margin_start">8</property>
-                                    <property name="margin_end">8</property>
-                                    <child>
-                                      <object class="GtkEntry" id="t_subtitle">
-                                        <property name="placeholder_text">Subtitle…</property>
-                                        <signal name="changed" handler="onSubtitleChanged"/>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="label">Position:</property>
-                                            <property name="width_request">60</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="cb_subtitle_position">
-                                            <property name="expand">True</property>
-                                            <signal name="changed" handler="onSubtitlePositionChanged"/>
-                                            <items>
-                                              <item id="top">Top</item>
-                                              <item id="center">Centre</item>
-                                              <item id="bottom">Bottom</item>
-                                            </items>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                        <!-- Language / translation name (optional) -->
-                        <child>
-                          <object class="GtkCheckButton" id="c_langname_enable">
-                            <property name="label">Include language / translation name</property>
-                            <signal name="toggled" handler="onLangnameEnableToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRevealer" id="rv_langname">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <object class="GtkFrame">
-                                <property name="margin_start">16</property>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">4</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="margin_start">8</property>
-                                    <property name="margin_end">8</property>
-                                    <child>
-                                      <object class="GtkEntry" id="t_langname">
-                                        <property name="placeholder_text">Language / translation name…</property>
-                                        <signal name="changed" handler="onLangnameChanged"/>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="label">Position:</property>
-                                            <property name="width_request">60</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="cb_langname_position">
-                                            <property name="expand">True</property>
-                                            <signal name="changed" handler="onLangnamePositionChanged"/>
-                                            <items>
-                                              <item id="top">Top</item>
-                                              <item id="center">Centre</item>
-                                              <item id="bottom">Bottom</item>
-                                            </items>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                        <!-- Foreground illustration (optional) -->
-                        <child>
-                          <object class="GtkCheckButton" id="c_fgimage_enable">
-                            <property name="label">Include a foreground picture / illustration</property>
-                            <signal name="toggled" handler="onFgimageEnableToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRevealer" id="rv_fgimage">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <object class="GtkFrame">
-                                <property name="margin_start">16</property>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">4</property>
-                                    <property name="margin_top">4</property>
-                                    <property name="margin_bottom">4</property>
-                                    <property name="margin_start">8</property>
-                                    <property name="margin_end">8</property>
-                                    <!-- File chooser -->
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">6</property>
-                                        <child>
-                                          <object class="GtkButton" id="btn_fgimage_choose">
-                                            <property name="label">Choose image…</property>
-                                            <signal name="clicked" handler="onFgimageChooseClicked"/>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_fgimage_status">
-                                            <property name="label">(no file chosen)</property>
-                                            <property name="ellipsize">start</property>
-                                            <property name="max_width_chars">24</property>
-                                            <style><class name="dim-label"/></style>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <!-- Position -->
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="orientation">horizontal</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="label">Position:</property>
-                                            <property name="width_request">60</property>
-                                          </object>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="cb_fgimage_position">
-                                            <property name="expand">True</property>
-                                            <signal name="changed" handler="onFgimagePositionChanged"/>
-                                            <items>
-                                              <item id="top">Top</item>
-                                              <item id="center">Centre</item>
-                                              <item id="bottom">Bottom</item>
-                                            </items>
-                                          </object>
-                                        </child>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                      </object>
-                      <packing>
-                        <property name="name">pg_step4_front</property>
-                        <property name="title">Step 4</property>
-                      </packing>
-                    </child>
-
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <!-- STEP 5: Spine content (conditional)             -->
-                    <!-- Horizontal option hidden unless >= 500 pages    -->
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <child>
-                      <object class="GtkBox" id="pg_step5_spine_content">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">10</property>
-                        <property name="margin_bottom">12</property>
-
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label"><![CDATA[<b>Step 5 — Spine text</b>]]></property>
-                            <property name="use_markup">True</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label">Choose what text appears on the spine.</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                            <style><class name="dim-label"/></style>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkCheckButton" id="c_spine_title">
-                            <property name="label">Show title on spine</property>
-                            <property name="active">True</property>
-                            <signal name="toggled" handler="onSpineContentToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="c_spine_subtitle">
-                            <property name="label">Show subtitle on spine</property>
-                            <property name="sensitive">False</property>
-                            <signal name="toggled" handler="onSpineContentToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="c_spine_langname">
-                            <property name="label">Show language name on spine</property>
-                            <signal name="toggled" handler="onSpineContentToggled"/>
-                          </object>
-                        </child>
-
-                        <child>
-                          <object class="GtkExpander" id="ex_spine_advanced">
-                            <property name="label">Advanced spine options</property>
-                            <property name="margin_top">6</property>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="orientation">vertical</property>
-                                <property name="spacing">6</property>
-                                <property name="margin_top">6</property>
-                                <property name="margin_start">12</property>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="label">Text orientation:</property>
-                                    <property name="xalign">0</property>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_spine_text_v_ttb">
-                                    <property name="label">Vertical (top to bottom)</property>
-                                    <property name="active">True</property>
-                                    <signal name="toggled" handler="onSpineOrientationToggled"/>
-                                  </object>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_spine_text_v_btt">
-                                    <property name="label">Vertical (bottom to top)</property>
-                                    <property name="group">r_spine_text_v_ttb</property>
-                                    <signal name="toggled" handler="onSpineOrientationToggled"/>
-                                  </object>
-                                </child>
-                                <!-- Horizontal: shown/hidden in Python based on pagecount -->
-                                <child>
-                                  <object class="GtkRadioButton" id="r_spine_text_horizontal">
-                                    <property name="label">Horizontal (500+ pages only)</property>
-                                    <property name="group">r_spine_text_v_ttb</property>
-                                    <property name="visible">False</property>
-                                    <signal name="toggled" handler="onSpineOrientationToggled"/>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="name">pg_step5_spine_content</property>
-                        <property name="title">Step 5</property>
-                      </packing>
-                    </child>
-
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <!-- STEP 6: Back content                            -->
-                    <!-- Back text wraps in preview; logo renders real   -->
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <child>
-                      <object class="GtkBox" id="pg_step6_back">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">8</property>
-                        <property name="margin_bottom">12</property>
-
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label"><![CDATA[<b>Step 6 — Back cover content</b>]]></property>
-                            <property name="use_markup">True</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                          </object>
-                        </child>
-
-                        <!-- Back text -->
-                        <child>
-                          <object class="GtkCheckButton" id="c_backtext_enable">
-                            <property name="label">Include back cover text (blurb)</property>
-                            <signal name="toggled" handler="onBacktextEnableToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRevealer" id="rv_backtext">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <object class="GtkScrolledWindow" id="sw_backtext">
-                                <property name="height_request">80</property>
-                                <property name="margin_start">24</property>
-                                <property name="shadow_type">in</property>
-                                <property name="hscrollbar_policy">never</property>
-                                <property name="vscrollbar_policy">automatic</property>
-                                <property name="expand">False</property>
-                                <child>
-                                  <object class="GtkTextView" id="t_backtext">
-                                    <property name="wrap_mode">word</property>
-                                    <property name="expand">False</property>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                        <!-- ISBN -->
-                        <child>
-                          <object class="GtkCheckButton" id="c_isbn_enable">
-                            <property name="label">Include ISBN / barcode area</property>
-                            <signal name="toggled" handler="onIsbnEnableToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRevealer" id="rv_isbn">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <object class="GtkEntry" id="t_isbn">
-                                <property name="placeholder_text">ISBN number…</property>
-                                <property name="margin_start">24</property>
-                                <signal name="changed" handler="onIsbnChanged"/>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-
-                        <!-- Logo -->
-                        <child>
-                          <object class="GtkCheckButton" id="c_logo_enable">
-                            <property name="label">Include a logo or emblem</property>
-                            <signal name="toggled" handler="onLogoEnableToggled"/>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkRevealer" id="rv_logo">
-                            <property name="reveal_child">False</property>
-                            <property name="transition_type">slide-down</property>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="orientation">vertical</property>
-                                <property name="spacing">6</property>
-                                <property name="margin_start">24</property>
-                                <!-- File chooser row -->
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="orientation">horizontal</property>
-                                    <property name="spacing">8</property>
-                                    <child>
-                                      <object class="GtkButton" id="btn_logo_choose">
-                                        <property name="label">Choose logo file…</property>
-                                        <signal name="clicked" handler="onLogoChooseClicked"/>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_logo_status">
-                                        <property name="label">(no file chosen)</property>
-                                        <property name="ellipsize">start</property>
-                                        <property name="max_width_chars">26</property>
-                                        <style><class name="dim-label"/></style>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                                <!-- Scale slider row -->
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="orientation">horizontal</property>
-                                    <property name="spacing">8</property>
                                     <child>
                                       <object class="GtkLabel">
-                                        <property name="label">Scale:</property>
-                                        <property name="width_request">45</property>
+                                        <property name="label">Opacity:</property>
+                                        <property name="valign">center</property>
                                       </object>
                                     </child>
                                     <child>
-                                      <object class="GtkScale" id="sl_logo_scale">
+                                      <object class="GtkScale" id="sl_bg_opacity">
                                         <property name="orientation">horizontal</property>
-                                        <property name="adjustment">adj_logo_scale</property>
+                                        <property name="adjustment">adj_opacity</property>
                                         <property name="draw_value">True</property>
                                         <property name="value_pos">right</property>
                                         <property name="digits">0</property>
-                                        <property name="expand">True</property>
-                                        <signal name="value-changed" handler="onLogoScaleChanged"/>
+                                        <property name="width_request">130</property>
+                                        <property name="valign">center</property>
+                                        <signal name="value-changed" handler="onBgOpacityChanged"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_bg_gradient">
+                                <property name="label">Gradient shading (coming soon)</property>
+                                <property name="group">r_bg_white</property>
+                                <property name="sensitive">False</property>
+                                <signal name="toggled" handler="onBgToggled"/>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="name">pg_step3_background</property>
+                            <property name="title">Step 3</property>
+                          </packing>
+                        </child>
+
+                        <!-- ════════════════════════════════════════ -->
+                        <!-- STEP 4                                   -->
+                        <!-- ════════════════════════════════════════ -->
+                        <child>
+                          <object class="GtkBox" id="pg_step4_front">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">8</property>
+                            <property name="margin_bottom">12</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label"><![CDATA[<b>Step 4 — Front cover text &amp; illustration</b>]]></property>
+                                <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label">Each element has its own vertical position. Enable optional elements with the checkboxes below.</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                                <style><class name="dim-label"/></style>
+                              </object>
+                            </child>
+                            <!-- Title -->
+                            <child>
+                              <object class="GtkFrame">
+                                <property name="label">Title * (required)</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">4</property>
+                                    <property name="margin_top">4</property>
+                                    <property name="margin_bottom">4</property>
+                                    <property name="margin_start">8</property>
+                                    <property name="margin_end">8</property>
+                                    <child>
+                                      <object class="GtkEntry" id="t_title">
+                                        <property name="placeholder_text">Enter the book title…</property>
+                                        <property name="valign">center</property>
+                                        <signal name="changed" handler="onTitleChanged"/>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">horizontal</property>
+                                        <property name="spacing">8</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label">Position:</property>
+                                            <property name="width_request">60</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="cb_title_position">
+                                            <property name="hexpand">True</property>
+                                            <property name="valign">center</property>
+                                            <signal name="changed" handler="onTitlePositionChanged"/>
+                                            <items>
+                                              <item id="top">Top</item>
+                                              <item id="center">Centre</item>
+                                              <item id="bottom">Bottom</item>
+                                            </items>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_title_box">
+                                            <property name="label">In a box</property>
+                                            <property name="valign">center</property>
+                                            <signal name="toggled" handler="onTitleBoxToggled"/>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <!-- Subtitle -->
+                            <child>
+                              <object class="GtkCheckButton" id="c_subtitle_enable">
+                                <property name="label">Include a subtitle</property>
+                                <signal name="toggled" handler="onSubtitleEnableToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRevealer" id="rv_subtitle">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
+                                <child>
+                                  <object class="GtkFrame">
+                                    <property name="margin_start">16</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">4</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <property name="margin_start">8</property>
+                                        <property name="margin_end">8</property>
+                                        <child>
+                                          <object class="GtkEntry" id="t_subtitle">
+                                            <property name="placeholder_text">Subtitle…</property>
+                                            <property name="valign">center</property>
+                                            <signal name="changed" handler="onSubtitleChanged"/>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">8</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="label">Position:</property>
+                                                <property name="width_request">60</property>
+                                                <property name="valign">center</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBoxText" id="cb_subtitle_position">
+                                                <property name="hexpand">True</property>
+                                                <property name="valign">center</property>
+                                                <signal name="changed" handler="onSubtitlePositionChanged"/>
+                                                <items>
+                                                  <item id="top">Top</item>
+                                                  <item id="center">Centre</item>
+                                                  <item id="bottom">Bottom</item>
+                                                </items>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <!-- Language name -->
+                            <child>
+                              <object class="GtkCheckButton" id="c_langname_enable">
+                                <property name="label">Include language / translation name</property>
+                                <signal name="toggled" handler="onLangnameEnableToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRevealer" id="rv_langname">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
+                                <child>
+                                  <object class="GtkFrame">
+                                    <property name="margin_start">16</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">4</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <property name="margin_start">8</property>
+                                        <property name="margin_end">8</property>
+                                        <child>
+                                          <object class="GtkEntry" id="t_langname">
+                                            <property name="placeholder_text">Language / translation name…</property>
+                                            <property name="valign">center</property>
+                                            <signal name="changed" handler="onLangnameChanged"/>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">8</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="label">Position:</property>
+                                                <property name="width_request">60</property>
+                                                <property name="valign">center</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBoxText" id="cb_langname_position">
+                                                <property name="hexpand">True</property>
+                                                <property name="valign">center</property>
+                                                <signal name="changed" handler="onLangnamePositionChanged"/>
+                                                <items>
+                                                  <item id="top">Top</item>
+                                                  <item id="center">Centre</item>
+                                                  <item id="bottom">Bottom</item>
+                                                </items>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <!-- Foreground illustration -->
+                            <child>
+                              <object class="GtkCheckButton" id="c_fgimage_enable">
+                                <property name="label">Include a foreground picture / illustration</property>
+                                <signal name="toggled" handler="onFgimageEnableToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRevealer" id="rv_fgimage">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
+                                <child>
+                                  <object class="GtkFrame">
+                                    <property name="margin_start">16</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">4</property>
+                                        <property name="margin_top">4</property>
+                                        <property name="margin_bottom">4</property>
+                                        <property name="margin_start">8</property>
+                                        <property name="margin_end">8</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">6</property>
+                                            <child>
+                                              <object class="GtkButton" id="btn_fgimage_choose">
+                                                <property name="label">Choose image…</property>
+                                                <property name="valign">center</property>
+                                                <signal name="clicked" handler="onFgimageChooseClicked"/>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="l_fgimage_status">
+                                                <property name="label">(no file chosen)</property>
+                                                <property name="ellipsize">start</property>
+                                                <property name="max_width_chars">22</property>
+                                                <property name="valign">center</property>
+                                                <style><class name="dim-label"/></style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="spacing">8</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="label">Position:</property>
+                                                <property name="width_request">60</property>
+                                                <property name="valign">center</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBoxText" id="cb_fgimage_position">
+                                                <property name="hexpand">True</property>
+                                                <property name="valign">center</property>
+                                                <signal name="changed" handler="onFgimagePositionChanged"/>
+                                                <items>
+                                                  <item id="top">Top</item>
+                                                  <item id="center">Centre</item>
+                                                  <item id="bottom">Bottom</item>
+                                                </items>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>
@@ -1086,68 +858,307 @@
                               </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="name">pg_step4_front</property>
+                            <property name="title">Step 4</property>
+                          </packing>
                         </child>
 
-                      </object>
-                      <packing>
-                        <property name="name">pg_step6_back</property>
-                        <property name="title">Step 6</property>
-                      </packing>
-                    </child>
-
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <!-- STEP 7: Review & Finish                         -->
-                    <!-- ═══════════════════════════════════════════════ -->
-                    <child>
-                      <object class="GtkBox" id="pg_step7_review">
-                        <property name="orientation">vertical</property>
-                        <property name="spacing">10</property>
-                        <property name="margin_bottom">12</property>
+                        <!-- ════════════════════════════════════════ -->
+                        <!-- STEP 5                                   -->
+                        <!-- ════════════════════════════════════════ -->
                         <child>
-                          <object class="GtkLabel">
-                            <property name="label"><![CDATA[<b>Step 7 — Review your cover</b>]]></property>
-                            <property name="use_markup">True</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="label">Check the preview on the right, then click Finish to save your cover settings.</property>
-                            <property name="xalign">0</property>
-                            <property name="wrap">True</property>
-                            <style><class name="dim-label"/></style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkScrolledWindow">
-                            <property name="expand">True</property>
-                            <property name="hscrollbar_policy">never</property>
-                            <property name="vscrollbar_policy">automatic</property>
+                          <object class="GtkBox" id="pg_step5_spine_content">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">10</property>
+                            <property name="margin_bottom">12</property>
                             <child>
-                              <object class="GtkLabel" id="l_summary">
-                                <property name="label">Summary will appear here.</property>
+                              <object class="GtkLabel">
+                                <property name="label"><![CDATA[<b>Step 5 — Spine text</b>]]></property>
+                                <property name="use_markup">True</property>
                                 <property name="xalign">0</property>
-                                <property name="yalign">0</property>
                                 <property name="wrap">True</property>
-                                <property name="selectable">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label">Choose what text appears on the spine.</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                                <style><class name="dim-label"/></style>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_spine_title">
+                                <property name="label">Show title on spine</property>
+                                <property name="active">True</property>
+                                <signal name="toggled" handler="onSpineContentToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_spine_subtitle">
+                                <property name="label">Show subtitle on spine</property>
+                                <property name="sensitive">False</property>
+                                <signal name="toggled" handler="onSpineContentToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_spine_langname">
+                                <property name="label">Show language name on spine</property>
+                                <signal name="toggled" handler="onSpineContentToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkExpander" id="ex_spine_advanced">
+                                <property name="label">Advanced spine options</property>
+                                <property name="margin_top">6</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
+                                    <property name="margin_top">6</property>
+                                    <property name="margin_start">12</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="label">Text orientation:</property>
+                                        <property name="xalign">0</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="r_spine_text_v_ttb">
+                                        <property name="label">Vertical (top to bottom)</property>
+                                        <property name="active">True</property>
+                                        <signal name="toggled" handler="onSpineOrientationToggled"/>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="r_spine_text_v_btt">
+                                        <property name="label">Vertical (bottom to top)</property>
+                                        <property name="group">r_spine_text_v_ttb</property>
+                                        <signal name="toggled" handler="onSpineOrientationToggled"/>
+                                      </object>
+                                    </child>
+                                    <!-- Shown only when pagecount >= 500 (controlled in Python) -->
+                                    <child>
+                                      <object class="GtkRadioButton" id="r_spine_text_horizontal">
+                                        <property name="label">Horizontal (500+ pages only)</property>
+                                        <property name="group">r_spine_text_v_ttb</property>
+                                        <property name="visible">False</property>
+                                        <signal name="toggled" handler="onSpineOrientationToggled"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="name">pg_step5_spine_content</property>
+                            <property name="title">Step 5</property>
+                          </packing>
                         </child>
-                      </object>
-                      <packing>
-                        <property name="name">pg_step7_review</property>
-                        <property name="title">Step 7</property>
-                      </packing>
-                    </child>
 
-                  </object><!-- /st_steps -->
+                        <!-- ════════════════════════════════════════ -->
+                        <!-- STEP 6                                   -->
+                        <!-- ════════════════════════════════════════ -->
+                        <child>
+                          <object class="GtkBox" id="pg_step6_back">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">8</property>
+                            <property name="margin_bottom">12</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label"><![CDATA[<b>Step 6 — Back cover content</b>]]></property>
+                                <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                              </object>
+                            </child>
+                            <!-- Back text -->
+                            <child>
+                              <object class="GtkCheckButton" id="c_backtext_enable">
+                                <property name="label">Include back cover text (blurb)</property>
+                                <signal name="toggled" handler="onBacktextEnableToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRevealer" id="rv_backtext">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
+                                <child>
+                                  <!-- GtkTextView implements GtkScrollable — no GtkViewport needed -->
+                                  <object class="GtkScrolledWindow" id="sw_backtext">
+                                    <property name="height_request">80</property>
+                                    <property name="margin_start">24</property>
+                                    <property name="shadow_type">in</property>
+                                    <property name="hscrollbar_policy">never</property>
+                                    <property name="vscrollbar_policy">automatic</property>
+                                    <property name="expand">False</property>
+                                    <child>
+                                      <object class="GtkTextView" id="t_backtext">
+                                        <property name="wrap_mode">word</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <!-- ISBN -->
+                            <child>
+                              <object class="GtkCheckButton" id="c_isbn_enable">
+                                <property name="label">Include ISBN / barcode area</property>
+                                <signal name="toggled" handler="onIsbnEnableToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRevealer" id="rv_isbn">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
+                                <child>
+                                  <object class="GtkEntry" id="t_isbn">
+                                    <property name="placeholder_text">ISBN number…</property>
+                                    <property name="margin_start">24</property>
+                                    <property name="valign">center</property>
+                                    <signal name="changed" handler="onIsbnChanged"/>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <!-- Logo -->
+                            <child>
+                              <object class="GtkCheckButton" id="c_logo_enable">
+                                <property name="label">Include a logo or emblem</property>
+                                <signal name="toggled" handler="onLogoEnableToggled"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkRevealer" id="rv_logo">
+                                <property name="reveal_child">False</property>
+                                <property name="transition_type">slide-down</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">6</property>
+                                    <property name="margin_start">24</property>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">horizontal</property>
+                                        <property name="spacing">8</property>
+                                        <child>
+                                          <object class="GtkButton" id="btn_logo_choose">
+                                            <property name="label">Choose logo file…</property>
+                                            <property name="valign">center</property>
+                                            <signal name="clicked" handler="onLogoChooseClicked"/>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_logo_status">
+                                            <property name="label">(no file chosen)</property>
+                                            <property name="ellipsize">start</property>
+                                            <property name="max_width_chars">24</property>
+                                            <property name="valign">center</property>
+                                            <style><class name="dim-label"/></style>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="orientation">horizontal</property>
+                                        <property name="spacing">8</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="label">Scale:</property>
+                                            <property name="width_request">45</property>
+                                            <property name="valign">center</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkScale" id="sl_logo_scale">
+                                            <property name="orientation">horizontal</property>
+                                            <property name="adjustment">adj_logo_scale</property>
+                                            <property name="draw_value">True</property>
+                                            <property name="value_pos">right</property>
+                                            <property name="digits">0</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="valign">center</property>
+                                            <signal name="value-changed" handler="onLogoScaleChanged"/>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="name">pg_step6_back</property>
+                            <property name="title">Step 6</property>
+                          </packing>
+                        </child>
+
+                        <!-- ════════════════════════════════════════ -->
+                        <!-- STEP 7                                   -->
+                        <!-- ════════════════════════════════════════ -->
+                        <child>
+                          <object class="GtkBox" id="pg_step7_review">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">10</property>
+                            <property name="margin_bottom">12</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label"><![CDATA[<b>Step 7 — Review your cover</b>]]></property>
+                                <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="label">Check the preview on the right, then click Finish to save your cover settings.</property>
+                                <property name="xalign">0</property>
+                                <property name="wrap">True</property>
+                                <style><class name="dim-label"/></style>
+                              </object>
+                            </child>
+                            <!-- GtkLabel is not GtkScrollable — must wrap in GtkViewport -->
+                            <child>
+                              <object class="GtkScrolledWindow">
+                                <property name="expand">True</property>
+                                <property name="hscrollbar_policy">never</property>
+                                <property name="vscrollbar_policy">automatic</property>
+                                <child>
+                                  <object class="GtkViewport">
+                                    <property name="shadow_type">none</property>
+                                    <child>
+                                      <object class="GtkLabel" id="l_summary">
+                                        <property name="label">Summary will appear here.</property>
+                                        <property name="xalign">0</property>
+                                        <property name="yalign">0</property>
+                                        <property name="wrap">True</property>
+                                        <property name="selectable">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="name">pg_step7_review</property>
+                            <property name="title">Step 7</property>
+                          </packing>
+                        </child>
+
+                      </object><!-- /st_steps -->
+                    </child>
+                  </object><!-- /GtkViewport -->
                 </child>
               </object><!-- /sw_wizard -->
             </child>
 
-            <!-- RIGHT: Preview -->
+            <!-- RIGHT: preview -->
             <child>
               <object class="GtkFrame" id="fr_preview">
                 <property name="label">Preview</property>
@@ -1193,7 +1204,7 @@
             </child>
             <child>
               <object class="GtkBox">
-                <property name="expand">True</property>
+                <property name="hexpand">True</property>
               </object>
             </child>
             <child>
