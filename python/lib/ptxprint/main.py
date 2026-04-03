@@ -145,7 +145,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
     parser.add_argument('-l', '--logging', help="Logging level [DEBUG, INFO, WARN, ERROR, number]")
     parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
-    parser.add_argument('--timeout', type=int, default=1200, help="XeTeX runtime timeout (seconds)")
+    parser.add_argument('-to', '--timeout', type=int, default=1200, help="XeTeX runtime timeout (seconds)")
     parser.add_argument('--debug', action="store_true", help="Enable debug output")
 
     # Font Settings

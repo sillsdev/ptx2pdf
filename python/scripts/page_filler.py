@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable
 from collections import deque, defaultdict
 from configparser import ConfigParser
-import heapq, re, os, logging, random, itertools, argparse
+import heapq, re, os, logging, random, itertools, argparse, threading
 import multiprocessing as mp
 from math import sqrt, log10
 from time import time
@@ -51,6 +51,7 @@ class BuildParams:
     cfgid: str
     scriptsdir: str
     loglevel: int
+    timeout: int
 
 @dataclass
 class PageState:
@@ -153,7 +154,7 @@ class SolveResult:
 class Hooks:
 
     badness_stretch_tolerance   = 80   # avoid ±2
-    badness_spacing_tolerance   = 50   # paragraph spacing distortion
+    badness_spacing_tolerance   = 1    # paragraph spacing distortion
     badness_shrink_preference   = 20   # + = prefer shrink, - = prefer stretch
     badness_header_aversion     = 60   # avoid headers
     badness_line_density_factor = 1.0  # wide vs narrow text
@@ -175,8 +176,8 @@ class Hooks:
         pages = []
         firstbad = None
         for i in range(self.printer.parlocs.numPages()):
-            u = self.printer.underfills[i+1]
-            if firstbad is None and u is not None and u not in ([0], [0,0]) and i > base_page:
+            u = self.printer.underfills[i]
+            if firstbad is None and u is not None and len(u) and u not in ([0], [0,0]) and i > base_page:
                 firstbad = i
             pages.append(PageState(i, u))
         plines = self.printer.get_plines()
@@ -210,56 +211,6 @@ class Hooks:
     def is_header(self, paragraph: ParagraphRef):
         return self.printer.pid_isheader(paragraph)
 
-    def design_badness_1(self,
-                         paragraph: ParagraphRef,
-                         expansion: float,
-                         stretch: int,
-                         delta: int,
-                         result: bool = False) -> float:
-
-        isshrink = delta < 0
-        bigstretch = abs(delta) > 1
-        distortion = abs(expansion - 1.0)
-        badness = self.printer.badnesses.get(paragraph, 0)
-        lines = self.basestate.layout.paragraph_total_lines[paragraph]
-        is_header = self.printer.pid_isheader(paragraph)
-        rtl = self.printer.rtl
-        pwidth = self.printer.get_para(paragraph).lastwidth
-        pwidth = 1 - pwidth if rtl else pwidth
-        res = 0.0
-
-        if bigstretch:
-            res += self.badness_stretch_tolerance * 2 * (delta ** 2)
-
-        density = self.badness_line_density_factor
-        res += self.badness_spacing_tolerance * (distortion * lines * density) ** 2
-        if not result:
-            error = pwidth if not isshrink else (1.0 - pwidth)
-            res += self.badness_lastline_weight * (error ** 4)
-
-        if stretch != 0:
-            res += max(0, self.badness_shrink_preference if stretch > 0 else -self.badness_shrink_preference)
-        line_penalty = self.badness_line_weight * ((20 / min(lines, 20)) ** 0.5 - 1)
-        res += line_penalty
-
-        if not isshrink:
-            wrongness = max(0.0, 0.5 - pwidth)
-        else:
-            wrongness = max(0.0, pwidth - 0.5)
-        res += 0.5 * self.badness_spacing_tolerance * wrongness ** 2
-        wrongness2 = 0.4 if bigstretch else 0
-        res += 0.5 * self.badness_spacing_tolerance * wrongness2 ** 2
-
-        if is_header:
-            if pwidth >= 0.9:
-                res += self.badness_header_aversion * (1.0 - pwidth)
-            else:
-                res += self.badness_header_aversion
-
-        if not result:
-            logger.log(15, f"{paragraph=}, {res=} {expansion=}, {stretch=}, {lines=}, {pwidth=}, {wrongness=}, {is_header=} {rtl=}")
-        return res
-
     def design_badness(self,
                        paragraph: ParagraphRef,
                        expansion: float,
@@ -274,7 +225,10 @@ class Hooks:
         distortion = abs(expansion - 1.0)
 
         p = self.printer.get_para(paragraph)
+        rtl = self.printer.rtl
         pwidth = p.lastwidth if p is not None else 0.
+        if rtl:
+            pwidth = 1.0 - pwidth
         tex_badness = self.printer.badnesses.get(paragraph, 0)
         lines = self.basestate.layout.paragraph_total_lines.get(paragraph, 0)
         is_header = self.printer.pid_isheader(paragraph)
@@ -286,17 +240,17 @@ class Hooks:
         short_factor = (20 / min(lines + 1, 20)) ** 0.5
 
         if delta > 0:
-            res += 12 * delta * short_factor   # adding lines is more visible
+            res += self.badness_shrink_preference * delta * short_factor   # adding lines is more visible
         elif delta < 0:
-            res += 8 * abs(delta) * short_factor  # removing lines less visible
+            res -= delta * short_factor  # removing lines less visible
 
         # --- 2. Concentration penalty (multiple line changes in same paragraph) ---
         if abs(delta) >= 2:
-            res += 25 * (abs(delta) - 1)
+            res += 25 * (abs(delta) - 1) * short_factor
 
         # --- 3. Spacing distortion (expansion/compression across paragraph) ---
         density = self.badness_line_density_factor
-        res += self.badness_spacing_tolerance * (distortion * lines * density) ** 2
+        res += self.badness_spacing_tolerance * (distortion * 100) ** 2
 
         # --- 4. Effort to cause line change (pwidth-driven, your correct model) ---
         if delta != 0:
@@ -305,7 +259,7 @@ class Hooks:
             else:
                 effort = pwidth         # short line = hard to shrink
 
-            res += self.badness_lastline_weight * (effort ** 4)
+            res += self.badness_lastline_weight * (effort ** 4) * short_factor * abs(stretch)
 
         # --- 5. Wrong-direction penalty (soft guidance, not dominant) ---
         PIVOT = 0.7
@@ -316,11 +270,11 @@ class Hooks:
         else:
             wrongness = 0.0
 
-        res += 0.5 * self.badness_spacing_tolerance * (wrongness ** 2)
+        res += 0.5 * self.badness_spacing_tolerance * (wrongness ** 2) * short_factor * abs(stretch)
 
         # --- 6. Short paragraph sensitivity ---
-        line_penalty = self.badness_line_weight * ((20 / min(lines + 1, 20)) ** 0.5 - 1)
-        res += line_penalty
+        #line_penalty = self.badness_line_weight * ((20 / min(lines + 1, 20)) ** 0.5 - 1)
+        #res += line_penalty
 
         # --- 7. TeX paragraph badness (log-compressed) ---
         # Only apply if modifying paragraph
@@ -423,15 +377,21 @@ class TypesetterSolver:
                 return state
             self.hooks.progress(page, self.itercount)
             oldstate = state
-            state = self.solve_page(state, page, start_page)
+            try:
+                state = self.solve_page(state, page, start_page)
+            except TimeoutError:
+                return HumanFixRequest(page, "Timed out")
             if not state.passed:
-                if oldstate.layout.first_failing_page == page - 1:
+                if state.layout.first_failing_page is not None and state.layout.first_failing_page < page:
                     if page < testloop:
                         logger.log(15, f"{testloop=} page {state.layout.first_failing_page}")
                         testloop = min(page, testloop)
                         wantprobe = not self.noprobe
                         self.noprobe = True
                         continue
+                    else:
+                        logger.log(15, f"{page=} >= {testloop=} and bail")
+                        return HumanFixRequest(page, "Caught in page loop")
                 if stop:
                     return HumanFixRequest(page, "Couldn't solve page")
                 else:
@@ -460,19 +420,18 @@ class TypesetterSolver:
                 continue
             key = tuple(sorted(combo.items()))
             if key in self.tried:
+                logger.log(12, f"tried cache hit {key=}")
                 continue
             self.tried.add(key)
             if page < len(state.layout.pages) and state.layout.pages[page].column_free_lines is not None \
                     and any(x > 5 for x in state.layout.pages[page].column_free_lines) \
                     and self.itercount - startcount > 200:
+                logger.log(15, f"Failing page for large gap")
                 break
-            if state.layout.pages[page].column_free_lines is not None \
-                    and state.layout.pages[page].column_free_lines[0] == 0 \
-                    and any(state.layout.paragraph_pages.get(p, {}).get(page, 0) == 1 for p in combo.keys()):
-                continue
             new_state = self.run_layout(page_base_params, state, combo, page, start)
             free = new_state.layout.pages[page].column_free_lines
             if new_state.layout.first_failing_page is not None and new_state.layout.first_failing_page < page:
+                logger.log(15, "{state.layout.first_failing_page=} < {page} set it to {new_state.layout.first_failing_page}")
                 state.layout.first_failing_page = new_state.layout.first_failing_page
                 continue
             if not self.noprobe and (free is None or all(x == 0 for x in free)):
@@ -489,6 +448,7 @@ class TypesetterSolver:
                 return new_state
             state = new_state
         logger.log(15, "page_failed page=%s", page)
+        state = self.run_layout(page_base_params, state, {}, page, start)
         state.passed = False
         return state
 
@@ -544,7 +504,7 @@ class TypesetterSolver:
         self.itercount += 1
         logger.log(15, "layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
                 page, self.itercount, not self.noprobe,
-                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and i <= page}),
+                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and i <= page+2}),
                 combo)
         self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
         return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
@@ -608,6 +568,9 @@ class TypesetterSolver:
                     combo = {p: d for p, (_, d) in zip(pars, choice)}
                     # have we done the same net col line change before?
                     col_deltas = [0, 0, 0, 0, 0, 0]
+                    # skip if another page has modified this para
+                    if any(self.base_params.get(p, (1.0, 0)) != (1.0, 0) for p in combo.keys()):
+                        continue
                     for p, d in combo.items():
                         # mask = 1 = col1, 2 = col2, 3 = both
                         # col_deltas: 0 = first, 1 = both, 2 = last, 3 = col1 only, 4 = col2 only
@@ -623,19 +586,20 @@ class TypesetterSolver:
                         else:
                             logger.log(12, "Can't find mask for {p}")
                             col_deltas[5] += d
-                    if 0 < col_deltas[0] + col_deltas[1] < collengths[0]:
+                    if collengths[0] > 0 and 0 <= col_deltas[0] + col_deltas[1] + col_deltas[3] < collengths[0]:
                         logger.log(12, f"Rejecting against col 1 {col_deltas} {combo}")
                         continue
-                    if 0 < sum(col_deltas) < collengths[1]:
+                    if collengths[1] > 0 and 0 <= sum(col_deltas) < collengths[1]:
                         logger.log(12, f"Rejecting against col 2 {col_deltas}, {combo}")
                         continue
                     sig = tuple(col_deltas)
-                    if score < seen_col_sigs.get(sig, 10000):
-                        seen_col_sigs[sig] = score
+                    (oldscore, oldcombo) = seen_col_sigs.get(sig, (10000, None))
+                    if score < oldscore:
+                        seen_col_sigs[sig] = (score, combo)
                     else:
                         continue
-                    all_combos.append((score, combo))
-        all_combos.sort(key=lambda x: (x[0], len(x[1])))
+        all_combos = sorted(list(seen_col_sigs.values()), key=lambda x: (x[0], len(x[1])))
+        logger.log(12, f"{all_combos=}")
         for _, combo in all_combos:
             yield combo
 
@@ -682,6 +646,7 @@ class GrowList(list):
         if index >= len(self):
             self.extend([None] * (index - len(self) + 1))
 
+
 class PTXprinter:
 
     reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+)\]\s+ht=([\d.]+)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
@@ -689,6 +654,7 @@ class PTXprinter:
     def __init__(self, build_params, nid):
         super().__init__()
         self.nid = nid
+        self.timedout = False
         self.view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
@@ -811,6 +777,8 @@ class PTXprinter:
         return Grammar.marker_categories.get(mrk, '') in ("sectionpara", "title")
 
     def run_layout(self, parparms, floats):
+        if self.timedout:
+            raise TimeoutError()
         tname = self.view.getLocalTriggerFilename(self.bk)
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
@@ -897,6 +865,7 @@ class PTXprinter:
             pass
         self.parlocs.getnbadspaces()
 
+
 class Worker(mp.Process):
 
     def __init__(self, task_queue, results_queue, build_params, nid, stop=False):
@@ -939,11 +908,20 @@ class Worker(mp.Process):
             if bk is None:
                 break
             self._setup_logger(bk)
+            printer.timedout = False
+            if self.build_params.timeout is not None:
+                def trigger_timeout():
+                    printer.timedout = True
+                watchdog = threading.Timer(self.build_params.timeout, trigger_timeout)
+                watchdog.start()
             res = printer.solve(bk, stop=self.stop)
+            if self.build_params.timeout is not None:
+                watchdog.cancel()
             if res is None:     # skip absent book
                 self.results_queue.put((self.nid, f"{bk} does not exist"))
             else:
                 self.results_queue.put((self.nid, *res))
+
 
 class MultiView:
     # look like a ViewModel
@@ -954,6 +932,7 @@ class MultiView:
         self.scriptsdir = odir
         self.args = args
         self.loglevel = None
+        self.timeout = args.timeout if args.timeout > 0 else None
         if self.args.logging:
             try:
                 self.loglevel = int(args.logging)
@@ -985,7 +964,8 @@ class MultiView:
             numproc = mp.cpu_count() - 2    # we run each cpu pretty hard
         self.numproc = numproc
         self.task_list = self.books
-        self.build_params = BuildParams(*[getattr(self, a) for a in 'prjtree config macrosdir args pid guid cfgid scriptsdir loglevel'.split(' ')])
+        self.build_params = BuildParams(*[getattr(self, a) for a in 'prjtree config'
+                    ' macrosdir args pid guid cfgid scriptsdir loglevel timeout'.split(' ')])
 
     def add_job(self, bk):
         self.task_list.append(bk)
@@ -1040,9 +1020,7 @@ def main():
     view.initScheduler(view.args.jobs)
     results = view.run_all(view.args.stop)
     print("\n".join(str(r) for r in results))
-    #if len(results) > 1:
-    #    view.runview()
-    
+
 
 if __name__ == "__main__":
     main()
