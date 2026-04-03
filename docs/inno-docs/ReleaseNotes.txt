@@ -1,8 +1,17 @@
-PTXprint 3.0.17 Release Notes
-27 Mar 2026
+PTXprint 3.0.18 Release Notes
+03 Apr 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.18 (3 Apr 2026)
+  * Solve issue of lineskiplimit causing mangled small textborder boxes
+  * Improve cover wizard UI
+  * Wire up Pretore behind -E 1
+  * Make page_filler more robust
+  * page_filler to support verse ranges
+  * Remove default timeout from page_filler
+  * Handle radio buttons when no gui
 
 Bug fixes and Improvements in 3.0.17 (27 Mar 2026)
   * Merge pull request #1138 from sillsdev/feature/dmg-ux
