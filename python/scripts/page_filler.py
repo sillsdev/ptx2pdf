@@ -358,12 +358,12 @@ class TypesetterSolver:
         self.frozen_paragraphs = set()
         self.noprobe = False
 
-    def solve(self, state, start_page: int = -1, stop: bool = True):
+    def solve(self, state, start_page:int=-1, stop:bool=True, restart:bool=False):
         self.init_state = state
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
         page = start_page + 1
-        layout = self.initial_probes(state, page)
+        layout = self.initial_probes(state, page, restart=restart)
         state.layout = layout
         wantprobe = False
         testloop = 10000
@@ -429,7 +429,10 @@ class TypesetterSolver:
                 logger.log(15, f"Failing page for large gap")
                 break
             new_state = self.run_layout(page_base_params, state, combo, page, start)
-            free = new_state.layout.pages[page].column_free_lines
+            if page < len(new_state.layout.pages):
+                free = new_state.layout.pages[page].column_free_lines
+            else:
+                free = None
             if new_state.layout.first_failing_page is not None and new_state.layout.first_failing_page < page:
                 logger.log(15, "{state.layout.first_failing_page=} < {page} set it to {new_state.layout.first_failing_page}")
                 state.layout.first_failing_page = new_state.layout.first_failing_page
@@ -452,16 +455,16 @@ class TypesetterSolver:
         state.passed = False
         return state
 
-    def initial_probes(self, state, page):
+    def initial_probes(self, state, page, restart=False):
         paragraphs = self.paragraph_order
+        unity = (1.0, 0)
         probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1), (1.0, 0)]
         newstate = state
         for e, s in probes:
             params = dict(state.paragraph_params)
             for p in paragraphs:
-                #if p not in self.frozen_paragraphs:
-                params[p] = (e, s)
-            # logger.log(15, f"{params=}")
+                if (e, s) != unity or not restart or paragraphs.get(p, unity) != unity:
+                    params[p] = (e, s)
             layout = self.hooks.run_layout(params, state.float_anchors, -1)
             self.itercount += 1
             logger.log(15, "probe_run iter=%s e=%s s=%s", self.itercount, e, s)
@@ -671,7 +674,7 @@ class PTXprinter:
                     if os.path.isfile(fp):
                         os.unlink(fp)
 
-    def solve(self, bk, stop=False):
+    def solve(self, bk, stop=False, restart=False):
         self.bk = bk        # needed by run()
         if bk not in self.view.getAllBooks().keys():
             return None
@@ -689,7 +692,12 @@ class PTXprinter:
         self.view.saveStyles()
         self.hooks = Hooks(self, None)
         self.job = None
-        init_layout = self.hooks.run_layout({}, {}, -1)
+        if restart:
+            adjlist = self.view.get_adjlist(bk, save=False)
+            parms = adjlist.get_params()
+        else:
+            parms = {}
+        init_layout = self.hooks.run_layout(parms, {}, -1)
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
         state = EngineState({p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
@@ -697,7 +705,7 @@ class PTXprinter:
         print(f"Solving {bk}")
         starttime = time()
         solver = TypesetterSolver(self.hooks, pids)
-        res = solver.solve(state, start_page=-1, stop=stop)
+        res = solver.solve(state, start_page=-1, stop=stop, restart=restart)
         endtime = time()
         unlockme()
         self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
@@ -786,7 +794,7 @@ class PTXprinter:
         logger.log(12, f"{parparms=}")
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
-            self.adjs.setval(s[:3], f"{r[1]}.{r[2]}", para, p[1], None, expand=int(p[0]*100), append=True)
+            self.adjs.setval(s[:3], f"{r[1]}.{r[2]}{r[5]}", para, p[1], None, expand=int(p[0]*100), append=True)
         self.adjs.createAdjlist()
         tname = self.view.getLocalTriggerFilename(self.bk)
         tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
@@ -914,7 +922,7 @@ class Worker(mp.Process):
                     printer.timedout = True
                 watchdog = threading.Timer(self.build_params.timeout, trigger_timeout)
                 watchdog.start()
-            res = printer.solve(bk, stop=self.stop)
+            res = printer.solve(bk, stop=self.stop, restart=self.build_params.args.restart)
             if self.build_params.timeout is not None:
                 watchdog.cancel()
             if res is None:     # skip absent book
@@ -1012,6 +1020,7 @@ class MultiView:
 def add_cli_args(parser):
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
     parser.add_argument("-S", "--stop", action="store_true", default=False, help="Stop book at first bad page")
+    parser.add_argument("-r", "--restart", action="store_true", default=False, help="Start with the current adjustments")
     for a in parser._actions:
         if a.dest == "timeout":
             a.default = 0

@@ -290,6 +290,14 @@ class AdjList:
         self.changeval(parref, mydoit, insert=insert)
         return res
 
+    def get_params(self):
+        res = {}
+        for r in self.liststore:
+            # book, c:v, para:int, stretch, mkr, expand:int, comment%
+            rk = f"{r[0]}{r[1].replace(':', '.')}[r{2}]"
+            res[rk] = (r[5], r[3])
+        return res
+
     def _parseTriggersFromComment(self, comment):
         if not comment:
             return []
