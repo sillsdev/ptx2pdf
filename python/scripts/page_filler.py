@@ -1012,6 +1012,10 @@ class MultiView:
 def add_cli_args(parser):
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
     parser.add_argument("-S", "--stop", action="store_true", default=False, help="Stop book at first bad page")
+    for a in parser._actions:
+        if a.dest == "timeout":
+            a.default = 0
+            break
 
 
 def main():
