@@ -128,8 +128,10 @@ class WorkingCoverState:
         self.spine_pub_logo_enabled: bool = False
         self.spine_pub_logo_path: str = ""
         self.spine_pub_logo_scale: int = 100
+        self.spine_pub_logo_vpos_pct: int = 50
         self.spine_pub_logo_rotation: str = "none"   # none | cw | ccw
         self.spine_publisher_vpos_pct: int = 90
+        self.pub_orientation: str = "v_ttb"
         
         # Step 6
         self.backtext_enabled: bool = False
@@ -451,44 +453,145 @@ class CoverWizardApp:
         self._rv_img_secondary.set_reveal_child(isSep)
 
     def _updateSpineHorizVisibility(self):
-        show = self.state.pagecount >= 500
-        self._r_spine_horiz.set_visible(show)
-        self._r_spine_horiz.set_sensitive(show)
-        if not show and self.state.spine_orientation == "horizontal":
+        """Reset horizontal orientation if page count drops below 500."""
+        if self.state.pagecount < 500 and self.state.spine_orientation == "horiz":
             self.state.spine_orientation = "v_ttb"
-            self._r_spine_v_ttb.set_active(True)
-
+            self._cb_spine_orientation.set_active(0)
+            
     def _updateSummary(self):
         s = self.state
         s.computeSpineWidth()
-        lines = [f"Spine:        {'Yes' if s.spine_enabled else 'No'} ({s.pagecount} pages)"]
+        lines = []
+
+        # ── Page 1: Book & spine ─────────────────────────────────────
         if s.spine_enabled:
-            lines.append(f"Binding:      {s.binding_type}")
-            lines.append(f"Spine width:  {s.spine_width_computed_mm:.1f} mm ({s.spine_width_mode})")
-        lines.append(f"RTL:          {'Yes' if s.rtl_binding else 'No'}")
-        lines.append(f"Coverage:     {s.coverage_pattern}")
-        lines.append(f"Background:   {s.bg_mode}" +
-                     (f" {s.bg_color} op={s.bg_opacity}%" if s.bg_mode=="solid" else ""))
-        lines.append(f"Title:        {s.title or '(empty)'} [pos {s.title_position_pct}%]" +
-                     (" [boxed]" if s.title_in_box else ""))
-        if s.subtitle_enabled:
-            lines.append(f"Subtitle:     {s.subtitle or '(empty)'} [pos {s.subtitle_position_pct}%]")
-        if s.langname_enabled:
-            lines.append(f"Language:     {s.langname or '(empty)'} [pos {s.langname_position_pct}%]")
+            spine_mm = f"{s.spine_width_computed_mm:.1f} mm"
+            binding  = "hardcover" if s.binding_type == "hardcover" else "paperback"
+            lines.append(f"Book:         {s.pagecount} pages · {binding} with spine ({spine_mm})")
+        else:
+            lines.append(f"Book:         {s.pagecount} pages · no spine")
+        extras = []
+        if s.rtl_binding:
+            extras.append("RTL binding")
+        if extras:
+            lines.append(f"              {' · '.join(extras)}")
+
+        # ── Page 2: Coverage & images ────────────────────────────────
+        cov_labels = {
+            "wrap_all":            "full-spread image",
+            "front_only":          "front image only",
+            "front_spine":         "front + spine image",
+            "back_only":           "back image only",
+            "back_spine":          "back + spine image",
+            "front_back_separate": "separate front & back images",
+            "none":                "no cover image",
+        }
+        cov = cov_labels.get(s.coverage_pattern, s.coverage_pattern)
+        img_parts = [cov]
+        if s.coverage_pattern != "none":
+            if s.img_primary_path:
+                img_parts.append(os.path.basename(s.img_primary_path))
+            if s.img_primary_opacity < 100:
+                img_parts.append(f"{s.img_primary_opacity}% opacity")
+            if s.coverage_pattern == "front_back_separate" and s.img_secondary_path:
+                img_parts.append(f"back: {os.path.basename(s.img_secondary_path)}")
+        if s.border_enabled:
+            img_parts.append(f"border: {s.border_style}")
+        lines.append(f"Images:       {' · '.join(img_parts)}")
+
+        # ── Page 3: Background ───────────────────────────────────────
+        if s.bg_mode == "solid":
+            op_str = f" {s.bg_opacity}% opacity" if s.bg_opacity < 100 else ""
+            lines.append(f"Background:   solid colour {s.bg_color}{op_str}")
+        elif s.bg_mode == "gradient":
+            lines.append(f"Background:   gradient")
+        # white = default, skip
+
+        # ── Page 4: Front cover text ─────────────────────────────────
+        if s.title:
+            title_str = f'"{s.title}"'
+            attrs = []
+            if s.title_size_pct != 100:
+                attrs.append(f"{s.title_size_pct}%")
+            if s.title_in_box:
+                attrs.append("boxed")
+            if attrs:
+                title_str += f" ({', '.join(attrs)})"
+            lines.append(f"Title:        {title_str}  [pos {s.title_position_pct}%]")
+        else:
+            lines.append(f"Title:        (not set)")
+
+        if s.subtitle_enabled and s.subtitle:
+            sub_attrs = []
+            if s.subtitle_size_pct != 80:
+                sub_attrs.append(f"{s.subtitle_size_pct}%")
+            sub_str = f'"{s.subtitle}"'
+            if sub_attrs:
+                sub_str += f" ({', '.join(sub_attrs)})"
+            lines.append(f"Subtitle:     {sub_str}  [pos {s.subtitle_position_pct}%]")
+
+        if s.langname_enabled and s.langname:
+            lines.append(f"Language:     \"{s.langname}\"  [pos {s.langname_position_pct}%]")
+
         if s.fgimage_enabled:
-            fn = os.path.basename(s.fgimage_path) or "(none)"
-            lines.append(f"Fg image:     {fn} [pos {s.fgimage_position_pct}%]")
+            fg_str = os.path.basename(s.fgimage_path) if s.fgimage_path else "(no file)"
+            lines.append(f"Fg image:     {fg_str}  [pos {s.fgimage_position_pct}%]")
+
+        # ── Page 5: Spine text (only if spine exists) ────────────────
         if s.spine_enabled:
-            parts = [x for x,b in [("title",s.spine_title),("subtitle",s.spine_subtitle),
-                                    ("language",s.spine_langname)] if b]
-            lines.append(f"Spine text:   {', '.join(parts) or '(none)'} [{s.spine_orientation}]")
+            spine_parts = []
+            if s.spine_title:    spine_parts.append("title")
+            if s.spine_subtitle and s.subtitle_enabled: spine_parts.append("subtitle")
+            if s.spine_langname: spine_parts.append("language")
+            orient_labels = {"v_ttb": "↓", "v_btt": "↑", "horiz": "→"}
+            orient = orient_labels.get(s.spine_orientation, s.spine_orientation)
+            if spine_parts:
+                spine_str = ", ".join(spine_parts)
+                size_str = f" {s.spine_text_size_pct}%" if s.spine_text_size_pct != 100 else ""
+                lines.append(f"Spine text:   {spine_str}{size_str} {orient}  "
+                             f"[pos {s.spine_text_vpos_pct}%]")
+            else:
+                lines.append(f"Spine text:   (none selected)")
+
+            if s.spine_publisher_enabled:
+                pub_parts = []
+                if s.spine_publisher.strip():
+                    pub_parts.append(f'"{s.spine_publisher.strip()}"')
+                if s.spine_pub_logo_enabled:
+                    logo_name = os.path.basename(s.spine_pub_logo_path) \
+                                if s.spine_pub_logo_path else "(no file)"
+                    rot = "" if s.spine_pub_logo_rotation == "none" \
+                          else f" {s.spine_pub_logo_rotation}"
+                    pub_parts.append(f"logo: {logo_name}{rot}")
+                if pub_parts:
+                    lines.append(f"Publisher:    {' · '.join(pub_parts)}")
+
+        # ── Page 6: Back cover ───────────────────────────────────────
+        back_parts = []
         if s.backtext_enabled:
-            lines.append(f"Back text:    {s.backtext.strip()[:50] or '(empty)'}")
+            snippet = s.backtext.strip()[:35]
+            if len(s.backtext.strip()) > 35:
+                snippet += "…"
+            back_parts.append(f'text: "{snippet}"' if snippet else "text (empty)")
         if s.isbn_enabled:
-            lines.append(f"ISBN:         {s.isbn or '(empty)'}")
+            isbn_str = s.isbn if s.isbn else "(no number)"
+            back_parts.append(f"ISBN: {isbn_str}")
         if s.logo_enabled:
-            fn = os.path.basename(s.logo_path) or "(none)"
-            lines.append(f"Logo:         {fn} scale={s.logo_scale}%")
+            logo_name = os.path.basename(s.logo_path) if s.logo_path else "(no file)"
+            logo_attrs = []
+            if s.logo_scale != 100:
+                logo_attrs.append(f"{s.logo_scale}%")
+            if s.logo_hpos != "centre":
+                logo_attrs.append(s.logo_hpos)
+            logo_str = logo_name
+            if logo_attrs:
+                logo_str += f" ({', '.join(logo_attrs)})"
+            back_parts.append(f"logo: {logo_str}")
+        if back_parts:
+            lines.append(f"Back cover:   {' · '.join(back_parts)}")
+        else:
+            lines.append(f"Back cover:   (nothing added)")
+
         self._l_summary.set_text("\n".join(lines))
 
     # ── Pixbuf cache ──────────────────────────────────────────────────
@@ -946,114 +1049,93 @@ class CoverWizardApp:
 
     def _buildPage5(self):
         p = 5
-        self._pack(p, makeLabel("Step 5 — Spine text", bold=True))
-        self._pack(p, makeLabel("Choose what text appears on the spine.", dim=True))
+        self._pack(p, makeLabel("Step 5 — Spine text and Publisher Details", bold=True))
+        self._pack(p, makeLabel("Choose what needs to appear on the spine.", dim=True))
 
         self._c_spine_title = makeCheck("Show title on spine")
         self._c_spine_title.set_active(True)
         self._c_spine_title.connect("toggled", self.onSpineContentToggled)
         self._pack(p, self._c_spine_title)
-
         self._c_spine_subtitle = makeCheck("Show subtitle on spine")
         self._c_spine_subtitle.set_sensitive(False)
         self._c_spine_subtitle.connect("toggled", self.onSpineContentToggled)
         self._pack(p, self._c_spine_subtitle)
-
         self._c_spine_langname = makeCheck("Show language name on spine")
         self._c_spine_langname.connect("toggled", self.onSpineContentToggled)
         self._pack(p, self._c_spine_langname)
 
-        orient_box = makeVBox(6)
-        orient_box.set_margin_top(6); orient_box.set_margin_start(12)
-        orient_box.pack_start(makeLabel("Text orientation:"), False, False, 0)
-
-        self._r_spine_v_ttb = makeRadio("Vertical (top to bottom)")
-        self._r_spine_v_ttb.set_active(True)
-        self._r_spine_v_ttb.connect("toggled", self.onSpineOrientationToggled)
-        orient_box.pack_start(self._r_spine_v_ttb, False, False, 0)
-
-        self._r_spine_v_btt = makeRadio("Vertical (bottom to top)", group=self._r_spine_v_ttb)
-        self._r_spine_v_btt.connect("toggled", self.onSpineOrientationToggled)
-        orient_box.pack_start(self._r_spine_v_btt, False, False, 0)
-
-        self._r_spine_horiz = makeRadio("Horizontal (500+ pages only)", group=self._r_spine_v_ttb)
-        self._r_spine_horiz.connect("toggled", self.onSpineOrientationToggled)
-        self._r_spine_horiz.set_visible(False)
-        orient_box.pack_start(self._r_spine_horiz, False, False, 0)
-
-        # Main spine text styling
-        sep_st = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        sep_st.set_margin_top(4); sep_st.set_margin_bottom(4); sep_st.show()
-        self._pack(p, sep_st)
+        # ── Spine text style ──────────────────────────────────────────
+        sep2 = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        sep2.set_margin_top(6); sep2.set_margin_bottom(6); sep2.show()
+        self._pack(p, sep2)
         self._pack(p, makeLabel("Spine text style:", bold=True))
-
-        # Outer: left controls | right vertical position slider
         st_outer = makeHBox(0)
         st_outer.set_margin_end(4)
-
-        st_left = makeVBox(4)
+        st_left = makeVBox(6)
         st_left.set_hexpand(True)
 
-        row_st_style = makeHBox(6)
-        row_st_style.pack_start(makeLabel("Colour:"), False, False, 0)
+        row_st = makeHBox(6)
+        row_st.pack_start(makeLabel("Colour:"), False, False, 0)
         self._cb_spine_text_color = makeColorButton(self.state.spine_text_color)
         self._cb_spine_text_color.connect("color-set", self.onSpineTextColorChanged)
-        row_st_style.pack_start(self._cb_spine_text_color, False, False, 0)
-        row_st_style.pack_start(makeLabel("Size:"), False, False, 0)
+        row_st.pack_start(self._cb_spine_text_color, False, False, 0)
+        row_st.pack_start(makeLabel("Size:"), False, False, 0)
         self._sl_spine_text_size = makeHScale(100, 50, 200)
         self._sl_spine_text_size.set_size_request(100, -1)
         self._sl_spine_text_size.set_hexpand(False)
         self._sl_spine_text_size.connect("value-changed", self.onSpineTextSizeChanged)
-        row_st_style.pack_start(self._sl_spine_text_size, False, False, 0)
-        row_st_style.pack_start(makeLabel("%"), False, False, 0)
-        st_left.pack_start(row_st_style, False, False, 0)
+        row_st.pack_start(self._sl_spine_text_size, False, False, 0)
+        row_st.pack_start(makeLabel("%"), False, False, 0)
+        st_left.pack_start(row_st, False, False, 0)
+
+        row_st_orient = makeHBox(6)
+        row_st_orient.pack_start(makeLabel("Orientation:"), False, False, 0)
+        self._cb_spine_orientation = makeCombo([
+            ("v_ttb", "Vertical (top to bottom)"),
+            ("v_btt", "Vertical (bottom to top)"),
+            ("horiz", "Horizontal (500+ pages only)"),
+        ])
+        self._cb_spine_orientation.connect("changed", self.onSpineOrientationComboChanged)
+        row_st_orient.pack_start(self._cb_spine_orientation, True, True, 0)
+        st_left.pack_start(row_st_orient, False, False, 0)
 
         st_outer.pack_start(st_left, True, True, 0)
-
         st_right = makeVBox(2)
         st_right.set_margin_start(8)
         self._sl_spine_text_vpos = makeVScale(self.state.spine_text_vpos_pct, 0, 100)
+        self._sl_spine_text_vpos.set_size_request(60, 80)
         self._sl_spine_text_vpos.set_tooltip_text(
             "Vertical position of spine text (0% = top, 100% = bottom)")
         self._sl_spine_text_vpos.connect("value-changed", self.onSpineTextVposChanged)
-        st_right.pack_start(self._sl_spine_text_vpos, True, True, 0)
+        st_right.pack_start(self._sl_spine_text_vpos, False, False, 0)
         st_outer.pack_start(st_right, False, False, 0)
-
         self._pack(p, st_outer)
+        
+        # ── Publisher name on spine ───────────────────────────────────
+        sep3 = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        sep3.set_margin_top(6); sep3.set_margin_bottom(6); sep3.show()
+        self._pack(p, sep3)
 
-        ex = Gtk.Expander(label="Advanced spine options")
-        ex.set_margin_top(6)
-        ex.add(orient_box)
-        ex.show_all()
-        self._pack(p, ex)
-
-        sep_pub = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        sep_pub.set_margin_top(8); sep_pub.set_margin_bottom(4); sep_pub.show()
-        self._pack(p, sep_pub)
-
-        # Publisher section
         self._c_spine_publisher = makeCheck("Include publisher name on spine")
         self._c_spine_publisher.connect("toggled", self.onSpinePublisherToggled)
         self._pack(p, self._c_spine_publisher)
 
-        # Outer horizontal box: left controls | right vertical position slider
-        pub_outer = makeHBox(0)
-        pub_outer.set_margin_start(24)
-        pub_outer.set_margin_top(4); pub_outer.set_margin_bottom(4)
-        pub_outer.set_margin_end(4)
+        pub_revealed = makeVBox(6)
+        pub_revealed.set_margin_start(24)
+        pub_revealed.set_margin_top(4)
+        pub_revealed.set_margin_end(4)
 
-        # Left side
+        pub_outer = makeHBox(0)
+
         pub_left = makeVBox(6)
         pub_left.set_hexpand(True)
 
-        # Publisher name entry
-        row_pub_name = makeHBox()
-        row_pub_name.pack_start(makeLabel("Publisher name:"), False, False, 0)
-        self._t_spine_publisher = makeEntry("Publisher name…", width=20)
+        row_pub_name = makeHBox(8)
+        row_pub_name.pack_start(makeLabel("Name:"), False, False, 0)
+        self._t_spine_publisher = makeEntry("Publisher name…")
         self._t_spine_publisher.connect("changed", self.onSpinePublisherNameChanged)
         row_pub_name.pack_start(self._t_spine_publisher, True, True, 0)
         pub_left.pack_start(row_pub_name, False, False, 0)
-
 
         row_pub_style = makeHBox(6)
         row_pub_style.pack_start(makeLabel("Colour:"), False, False, 0)
@@ -1069,15 +1151,51 @@ class CoverWizardApp:
         row_pub_style.pack_start(makeLabel("%"), False, False, 0)
         pub_left.pack_start(row_pub_style, False, False, 0)
 
+        row_pub_orient = makeHBox(6)
+        row_pub_orient.pack_start(makeLabel("Orientation:"), False, False, 0)
+        self._cb_pub_orientation = makeCombo([
+            ("v_ttb", "Vertical (top to bottom)"),
+            ("v_btt", "Vertical (bottom to top)"),
+            ("horiz", "Horizontal"),
+        ])
+        self._cb_pub_orientation.connect("changed", self.onPubOrientationChanged)
+        row_pub_orient.pack_start(self._cb_pub_orientation, True, True, 0)
+        pub_left.pack_start(row_pub_orient, False, False, 0)
 
-        # Publisher logo
+        pub_outer.pack_start(pub_left, True, True, 0)
+
+        pub_right = makeVBox(2)
+        pub_right.set_margin_start(8)
+        self._sl_spine_publisher_vpos = makeVScale(90, 0, 100)
+        self._sl_spine_publisher_vpos.set_size_request(60, 80)
+        self._sl_spine_publisher_vpos.set_tooltip_text(
+            "Vertical position on spine (0% = top, 100% = bottom)")
+        self._sl_spine_publisher_vpos.connect("value-changed", self.onSpinePublisherVposChanged)
+        pub_right.pack_start(self._sl_spine_publisher_vpos, False, False, 0)
+        pub_outer.pack_start(pub_right, False, False, 0)
+
+        pub_revealed.pack_start(pub_outer, False, False, 0)
+        self._rv_spine_publisher = makeRevealer(pub_revealed)
+        self._pack(p, self._rv_spine_publisher)
+
+        # ── Publisher logo on spine ───────────────────────────────────
+        sep4 = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        sep4.set_margin_top(6); sep4.set_margin_bottom(6); sep4.show()
+        self._pack(p, sep4)
+
         self._c_spine_pub_logo = makeCheck("Include publisher logo on spine")
         self._c_spine_pub_logo.connect("toggled", self.onSpinePubLogoToggled)
-        pub_left.pack_start(self._c_spine_pub_logo, False, False, 0)
+        self._pack(p, self._c_spine_pub_logo)
 
-        # Logo controls (revealed when checkbox ticked)
-        logo_inner = makeVBox(4)
-        logo_inner.set_margin_start(16)
+        logo_revealed = makeVBox(6)
+        logo_revealed.set_margin_start(24)
+        logo_revealed.set_margin_top(4)
+        logo_revealed.set_margin_end(4)
+
+        logo_outer = makeHBox(0)
+
+        logo_left = makeVBox(6)
+        logo_left.set_hexpand(True)
 
         row_logo_file = makeHBox(6)
         self._btn_spine_pub_logo = makeButton("Choose logo…")
@@ -1090,7 +1208,7 @@ class CoverWizardApp:
         self._l_spine_pub_logo_status.get_style_context().add_class("dim-label")
         self._l_spine_pub_logo_status.show()
         row_logo_file.pack_start(self._l_spine_pub_logo_status, True, True, 0)
-        logo_inner.pack_start(row_logo_file, False, False, 0)
+        logo_left.pack_start(row_logo_file, False, False, 0)
 
         row_logo_scale = makeHBox(6)
         row_logo_scale.pack_start(makeLabel("Scale:"), False, False, 0)
@@ -1098,39 +1216,34 @@ class CoverWizardApp:
         self._sl_spine_pub_logo_scale.connect("value-changed", self.onSpinePubLogoScaleChanged)
         row_logo_scale.pack_start(self._sl_spine_pub_logo_scale, True, True, 0)
         row_logo_scale.pack_start(makeLabel("%"), False, False, 0)
-        logo_inner.pack_start(row_logo_scale, False, False, 0)
+        logo_left.pack_start(row_logo_scale, False, False, 0)
 
         row_logo_rot = makeHBox(6)
         row_logo_rot.pack_start(makeLabel("Rotation:"), False, False, 0)
         self._cb_spine_pub_logo_rot = makeCombo([
-            ("none",  "None"),
-            ("cw",    "Clockwise 90°"),
-            ("ccw",   "Anti-clockwise 90°"),
+            ("none", "None"),
+            ("cw",   "Clockwise 90°"),
+            ("ccw",  "Anti-clockwise 90°"),
         ])
         self._cb_spine_pub_logo_rot.connect("changed", self.onSpinePubLogoRotChanged)
         row_logo_rot.pack_start(self._cb_spine_pub_logo_rot, True, True, 0)
-        logo_inner.pack_start(row_logo_rot, False, False, 0)
+        logo_left.pack_start(row_logo_rot, False, False, 0)
 
-        self._rv_spine_pub_logo = makeRevealer(logo_inner)
-        pub_left.pack_start(self._rv_spine_pub_logo, False, False, 0)
+        logo_outer.pack_start(logo_left, True, True, 0)
 
-        pub_outer.pack_start(pub_left, True, True, 0)
+        logo_right = makeVBox(2)
+        logo_right.set_margin_start(8)
+        self._sl_spine_pub_logo_vpos = makeVScale(50, 0, 100)
+        self._sl_spine_pub_logo_vpos.set_size_request(60, 80)
+        self._sl_spine_pub_logo_vpos.set_tooltip_text(
+            "Vertical position of logo on spine (0% = top, 100% = bottom)")
+        self._sl_spine_pub_logo_vpos.connect("value-changed", self.onSpinePubLogoVposChanged)
+        logo_right.pack_start(self._sl_spine_pub_logo_vpos, False, False, 0)
+        logo_outer.pack_start(logo_right, False, False, 0)
 
-
-        ### Then replace the publisher section's pub_right vscale label and also add colour+size controls for the publisher text.
-        # Right side: vertical position slider
-        pub_right = makeVBox(2)
-        pub_right.set_margin_start(8)
-        self._sl_spine_publisher_vpos = makeVScale(90, 0, 100)
-        self._sl_spine_publisher_vpos.set_tooltip_text(
-            "Vertical position on spine (0% = top, 100% = bottom)")
-        self._sl_spine_publisher_vpos.connect("value-changed", self.onSpinePublisherVposChanged)
-        pub_right.pack_start(self._sl_spine_publisher_vpos, True, True, 0)
-        pub_outer.pack_start(pub_right, False, False, 0)
-
-        self._rv_spine_publisher = makeRevealer(pub_outer)
-        self._pack(p, self._rv_spine_publisher)
-        
+        logo_revealed.pack_start(logo_outer, False, False, 0)
+        self._rv_spine_pub_logo = makeRevealer(logo_revealed)
+        self._pack(p, self._rv_spine_pub_logo)
     # ─────────────────────────────────────────────────────────────────
     # Page 6 builder
     # ─────────────────────────────────────────────────────────────────
@@ -1491,20 +1604,13 @@ class CoverWizardApp:
         self.state.spine_langname = self._c_spine_langname.get_active()
         self._refresh()
 
-    def onSpineOrientationToggled(self, widget):
-        if not widget.get_active(): return
-        if self._r_spine_v_ttb.get_active():   self.state.spine_orientation = "v_ttb"
-        elif self._r_spine_v_btt.get_active(): self.state.spine_orientation = "v_btt"
-        else:                                   self.state.spine_orientation = "horizontal"
-        self._refresh()
-
     def onSpinePublisherToggled(self, widget):
         self.state.spine_publisher_enabled = widget.get_active()
         self._rv_spine_publisher.set_reveal_child(self.state.spine_publisher_enabled)
         self._refresh()
-
+        
     def onSpinePublisherNameChanged(self, widget):
-        self.state.spine_publisher_name = widget.get_text()
+        self.state.spine_publisher = widget.get_text()
         self._refresh()
 
     def onSpinePublisherLogoToggled(self, widget):
@@ -1557,6 +1663,19 @@ class CoverWizardApp:
         self.state.spine_publisher_size_pct = int(widget.get_value())
         self._refresh()
 
+    def onSpineOrientationComboChanged(self, widget):
+        self.state.spine_orientation = widget.get_active_id() or "v_ttb"
+        # Keep the old radio buttons in sync if they still exist elsewhere
+        self._refresh()
+
+    def onPubOrientationChanged(self, widget):
+        self.state.pub_orientation = widget.get_active_id() or "v_ttb"
+        self._refresh()
+
+    def onSpinePubLogoVposChanged(self, widget):
+        self.state.spine_pub_logo_vpos_pct = int(widget.get_value())
+        self._refresh()
+        
     # ─────────────────────────────────────────────────────────────────
     # Signal handlers — Step 6
     # ─────────────────────────────────────────────────────────────────
@@ -1945,97 +2064,39 @@ class CoverWizardApp:
 
         BASE_FONT = 8.0
         fsize = BASE_FONT * (s.spine_publisher_size_pct / 100.0)
-        cx = sx + sw / 2
-        cy = sy + (s.spine_publisher_vpos_pct / 100.0) * sh
 
-        # Publisher name text
+        # Publisher name text — uses spine_publisher_vpos_pct
         if s.spine_publisher.strip():
+            pub_cx = sx + sw / 2
+            pub_cy = sy + (s.spine_publisher_vpos_pct / 100.0) * sh
             r, g, b = hexToRgb(s.spine_publisher_color)
             cr.set_source_rgba(r, g, b, 0.88)
             cr.select_font_face("Sans", 0, 0)
             cr.set_font_size(fsize)
             cr.save()
-            # Publisher text always runs along the spine (same orientation as main text)
-            if s.spine_orientation == "v_btt":
-                cr.translate(cx, cy); cr.rotate(-math.pi / 2)
-            else:
-                cr.translate(cx, cy); cr.rotate(math.pi / 2)
+            if s.pub_orientation == "v_btt":
+                cr.translate(pub_cx, pub_cy); cr.rotate(-math.pi / 2)
+            elif s.pub_orientation == "horiz":
+                cr.translate(pub_cx, pub_cy)
+            else:  # v_ttb default
+                cr.translate(pub_cx, pub_cy); cr.rotate(math.pi / 2)
             e = cr.text_extents(s.spine_publisher.strip())
             cr.move_to(-e.width / 2, e.height / 2)
             cr.show_text(s.spine_publisher.strip())
             cr.restore()
 
-        # Publisher logo
+        # Publisher logo — uses spine_pub_logo_vpos_pct independently
         if s.spine_pub_logo_enabled and s.spine_pub_logo_path:
             pb = self._loadPixbuf(s.spine_pub_logo_path)
             if pb:
+                logo_cx = sx + sw / 2
+                logo_cy = sy + (s.spine_pub_logo_vpos_pct / 100.0) * sh
                 REF = sw * 0.85
                 baseFit = min(REF / max(pb.get_width(), 1),
                               REF / max(pb.get_height(), 1))
                 finalScale = baseFit * (s.spine_pub_logo_scale / 100.0)
                 drawW = pb.get_width()  * finalScale
                 drawH = pb.get_height() * finalScale
-                cr.save()
-                cr.translate(cx, cy)
-                if s.spine_pub_logo_rotation == "cw":
-                    cr.rotate(math.pi / 2)
-                elif s.spine_pub_logo_rotation == "ccw":
-                    cr.rotate(-math.pi / 2)
-                # Centre the logo on the position point
-                cr.translate(-drawW / 2, -drawH / 2)
-                cr.scale(finalScale, finalScale)
-                Gdk.cairo_set_source_pixbuf(cr, pb, 0, 0)
-                cr.paint()
-                cr.restore()
-
-    def _old_drawSpineText(self, cr, s, sx, sy, sw, sh):
-        parts = []
-        if s.spine_title:   parts.append(s.title.strip() or "Title")
-        if s.spine_subtitle and s.subtitle_enabled: parts.append(s.subtitle.strip() or "Subtitle")
-        if s.spine_langname: parts.append(s.langname.strip() or "Language")
-        txt = " • ".join(parts)
-        if not txt: return
-        cr.set_source_rgba(0.05,0.05,0.2,0.88)
-        cr.select_font_face("Sans",0,0); cr.set_font_size(9)
-        cx,cy = sx+sw/2, sy+sh/2
-        cr.save()
-        if s.spine_orientation == "v_ttb":
-            cr.translate(cx,cy); cr.rotate(math.pi/2)
-        elif s.spine_orientation == "v_btt":
-            cr.translate(cx,cy); cr.rotate(-math.pi/2)
-        else:
-            cr.translate(cx,cy)
-        e = cr.text_extents(txt)
-        cr.move_to(-e.width/2, e.height/2); cr.show_text(txt)
-        cr.restore()
-        
-        # if s.spine_publisher_enabled and s.spine_publisher_name.strip():
-        # Publisher name
-        if s.spine_publisher.strip():
-            cr.set_source_rgba(0.05, 0.05, 0.2, 0.80)
-            cr.select_font_face("Sans", 0, 0); cr.set_font_size(8)
-            pub_cx = sx + sw / 2
-            pub_cy = sy + (s.spine_publisher_vpos_pct / 100.0) * sh
-            cr.save()
-            cr.translate(pub_cx, pub_cy)
-            cr.rotate(math.pi / 2)   # always vertical on spine
-            e = cr.text_extents(s.spine_publisher.strip())
-            cr.move_to(-e.width / 2, e.height / 2)
-            cr.show_text(s.spine_publisher.strip())
-            cr.restore()
-
-        # Publisher logo on spine
-        if s.spine_pub_logo_enabled and s.spine_pub_logo_path:
-            pb = self._loadPixbuf(s.spine_pub_logo_path)
-            if pb:
-                REF = sw * 0.8   # logo should fit within spine width
-                baseFit = min(REF / max(pb.get_width(), 1),
-                              REF / max(pb.get_height(), 1))
-                finalScale = baseFit * (s.spine_pub_logo_scale / 100.0)
-                drawW = pb.get_width()  * finalScale
-                drawH = pb.get_height() * finalScale
-                logo_cx = sx + sw / 2
-                logo_cy = sy + (s.spine_publisher_vpos_pct / 100.0) * sh
                 cr.save()
                 cr.translate(logo_cx, logo_cy)
                 if s.spine_pub_logo_rotation == "cw":

@@ -741,7 +741,7 @@ class PTXprinter:
         init_layout = self.hooks.run_layout(parms, {}, -1)
         if init_layout is None:
             return (False, f"Failed: {bk}")
-        if init_layout.first_failing_page is None:
+        if restart and init_layout.first_failing_page is None:
             return (True, f"Complete {bk} Already good")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
