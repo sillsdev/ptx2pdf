@@ -12,6 +12,7 @@ import gi
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
+import cairo
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -111,27 +112,25 @@ class WorkingCoverState:
 
         # Step 5
         # spine text styling
-        self.spine_text_size_pct: int = 100
+        self.spine_text_size_pct: int = 150
         self.spine_text_color: str = "#0d0d20"
-        self.spine_text_vpos_pct: int = 40      # % down the spine
+        self.spine_text_vpos_pct: int = 50      # % down the spine
         self.spine_title: bool = True
         self.spine_subtitle: bool = False
         self.spine_langname: bool = False
         self.spine_orientation: str = "v_ttb"
-        self.spine_publisher_enabled: bool = False
-        self.spine_publisher_name: str = ""
-        self.spine_publisher_logo_ref: bool = False  # Reference logo set on Page 6
         # publisher on spine
+        self.spine_publisher_enabled: bool = False
         self.spine_publisher_size_pct: int = 75
+        self.spine_publisher_vpos_pct: int = 85
         self.spine_publisher_color: str = "#0d0d20"
         self.spine_publisher: str = ""
+        self.pub_orientation: str = "v_ttb"
         self.spine_pub_logo_enabled: bool = False
         self.spine_pub_logo_path: str = ""
-        self.spine_pub_logo_scale: int = 100
-        self.spine_pub_logo_vpos_pct: int = 50
+        self.spine_pub_logo_scale: int = 70
+        self.spine_pub_logo_vpos_pct: int = 90
         self.spine_pub_logo_rotation: str = "none"   # none | cw | ccw
-        self.spine_publisher_vpos_pct: int = 90
-        self.pub_orientation: str = "v_ttb"
         
         # Step 6
         self.backtext_enabled: bool = False
@@ -254,10 +253,6 @@ def makeVScale(val, lo, hi):
     s.show()
     return s
 
-def makeAdj(val, lo, hi, step=1, page=10):
-    return Gtk.Adjustment(value=val, lower=lo, upper=hi,
-                          step_increment=step, page_increment=page)
-
 def makeCombo(items):
     cb = Gtk.ComboBoxText()
     for item_id, item_label in items:
@@ -350,8 +345,6 @@ class CoverWizardApp:
         self.state = WorkingCoverState()
         self._pixbufCache = {}
 
-        # Track which auto-spine input was last touched: "gsm" or "um"
-        self._spine_auto_src = "gsm"
         # Guard re-entrant spinner updates
         self._updating_spinners = False
 
@@ -378,7 +371,6 @@ class CoverWizardApp:
         self.window     = w("w_coverwizard")
         self.st_steps   = w("st_steps")
         self.da_preview = w("da_preview")
-        # self.l_progress = w("l_progress")
         self.btn_back   = w("btn_back")
         self.btn_next   = w("btn_next")
         self.btn_finish = w("btn_finish")
@@ -412,9 +404,7 @@ class CoverWizardApp:
         self._pages[page_num].pack_start(widget, expand, fill, padding)
 
     def _refresh(self):
-        total   = len(self.st_steps)
-        # current = self._stepIndex + 1
-        # self._l_step1_heading.set_markup(f"<b>Step {current} of {total} — Book &amp; spine setup</b>")
+        total   = len(self._steps)
         self.btn_back.set_sensitive(self._stepIndex > 0)
         self.btn_next.set_sensitive(self._stepIndex < total - 1)
         onLast  = self._stepIndex == total - 1
@@ -423,7 +413,6 @@ class CoverWizardApp:
         if self._steps[self._stepIndex] == "pg_step4_front" and not titleOk:
             self.btn_next.set_sensitive(False)
         self._updateCoverageWidgets()
-        # self._updateStatusBar() 
         self._updateSpineHorizVisibility()
         self._updateSummary()
         self.da_preview.queue_draw()
@@ -470,11 +459,8 @@ class CoverWizardApp:
             lines.append(f"Book:         {s.pagecount} pages · {binding} with spine ({spine_mm})")
         else:
             lines.append(f"Book:         {s.pagecount} pages · no spine")
-        extras = []
         if s.rtl_binding:
-            extras.append("RTL binding")
-        if extras:
-            lines.append(f"              {' · '.join(extras)}")
+            lines.append(f"              RTL binding")
 
         # ── Page 2: Coverage & images ────────────────────────────────
         cov_labels = {
@@ -786,7 +772,7 @@ class CoverWizardApp:
             ("Han1",       "Han 1"),
             ("Han2",       "Han 2"),
             ("Han3",       "Han 3"),
-            ("Hana",       "Han a"),
+            ("Han4",       "Han 4"),
             ("Han5",       "Han 5"),
             ("Vectorian1", "Vectorian 1"),
             ("Vectorian2", "Vectorian 2"),
@@ -1042,7 +1028,7 @@ class CoverWizardApp:
         fg_frame = makeFrame(None, fg_outer, margin_start=16)
         self._rv_fgimage = makeRevealer(fg_frame)
         self._pack(p, self._rv_fgimage)
-        
+
     # ─────────────────────────────────────────────────────────────────
     # Page 5 builder
     # ─────────────────────────────────────────────────────────────────
@@ -1260,15 +1246,12 @@ class CoverWizardApp:
         self._t_backtext.set_wrap_mode(Gtk.WrapMode.WORD)
         self._t_backtext.show()
         sw_bt = Gtk.ScrolledWindow()
-        # sw_bt.set_size_request(-1, 80)
-        sw_bt.set_min_content_height(60)   # minimum visible height
-        sw_bt.set_max_content_height(300)  # optional ceiling
-        sw_bt.set_propagate_natural_height(True)  # key: grow to fit content
-        sw_bt.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
-        # sw_bt.set_vscrollbar_policy(Gtk.PolicyType.NEVER)  # no scrollbar; just expand
+        sw_bt.set_min_content_height(60)
+        sw_bt.set_max_content_height(300)
+        sw_bt.set_propagate_natural_height(True)
+        sw_bt.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         sw_bt.set_margin_start(24)
         sw_bt.set_shadow_type(Gtk.ShadowType.IN)
-        sw_bt.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         sw_bt.set_hexpand(False)
         sw_bt.add(self._t_backtext)
         sw_bt.show()
@@ -1426,7 +1409,6 @@ class CoverWizardApp:
     def onGsmChanged(self, widget):
         """GSM spinner changed: derive µm from gsm and update the other spinner."""
         if self._updating_spinners: return
-        self._spine_auto_src = "gsm"
         self.state.paper_gsm = widget.get_value()
         derived_um = gsmToUm(self.state.paper_gsm)
         self.state.paper_thickness_um = derived_um
@@ -1439,7 +1421,6 @@ class CoverWizardApp:
     def onThicknessChanged(self, widget):
         """µm spinner changed: derive gsm from µm and update the other spinner."""
         if self._updating_spinners: return
-        self._spine_auto_src = "um"
         self.state.paper_thickness_um = widget.get_value()
         derived_gsm = umToGsm(self.state.paper_thickness_um)
         self.state.paper_gsm = derived_gsm
@@ -1469,16 +1450,19 @@ class CoverWizardApp:
 
     def onCoverageToggled(self, widget):
         if not widget.get_active(): return
-        mapping = {
-            id(self._r_cov_wrap_all):            "wrap_all",
-            id(self._r_cov_front_only):          "front_only",
-            id(self._r_cov_front_spine):         "front_spine",
-            id(self._r_cov_back_only):           "back_only",
-            id(self._r_cov_back_spine):          "back_spine",
-            id(self._r_cov_front_back_separate): "front_back_separate",
-            id(self._r_cov_none):                "none",
-        }
-        self.state.coverage_pattern = mapping.get(id(widget), "wrap_all")
+        patterns = [
+            (self._r_cov_none,                "none"),
+            (self._r_cov_wrap_all,            "wrap_all"),
+            (self._r_cov_front_only,          "front_only"),
+            (self._r_cov_front_spine,         "front_spine"),
+            (self._r_cov_back_only,           "back_only"),
+            (self._r_cov_back_spine,          "back_spine"),
+            (self._r_cov_front_back_separate, "front_back_separate"),
+        ]
+        for radio, pattern in patterns:
+            if widget is radio:
+                self.state.coverage_pattern = pattern
+                break
         self._refresh()
 
     def _chooseImage(self, key):
@@ -1491,10 +1475,8 @@ class CoverWizardApp:
         self._refresh()
 
     def _onImgFitChanged(self, key, widget):
-        # Updated to handle all 7 fit options (including the new crop variants)
-        fits = ["stretch", "crop_centre", "crop_top", "crop_bottom", "crop_left", "crop_right"]
-        active = widget.get_active()
-        setattr(self.state, f"img_{key}_fit", fits[active] if 0 <= active < len(fits) else "stretch")
+        fit = widget.get_active_id() or "stretch"
+        setattr(self.state, f"img_{key}_fit", fit)
         self._refresh()
 
     def _onImgOpacityChanged(self, key, widget):
@@ -1613,10 +1595,6 @@ class CoverWizardApp:
         self.state.spine_publisher = widget.get_text()
         self._refresh()
 
-    def onSpinePublisherLogoToggled(self, widget):
-        self.state.spine_publisher_logo_ref = widget.get_active()
-        self._refresh()
-
     def onSpinePubLogoToggled(self, widget):
         self.state.spine_pub_logo_enabled = widget.get_active()
         self._rv_spine_pub_logo.set_reveal_child(self.state.spine_pub_logo_enabled)
@@ -1665,7 +1643,6 @@ class CoverWizardApp:
 
     def onSpineOrientationComboChanged(self, widget):
         self.state.spine_orientation = widget.get_active_id() or "v_ttb"
-        # Keep the old radio buttons in sync if they still exist elsewhere
         self._refresh()
 
     def onPubOrientationChanged(self, widget):
@@ -1869,7 +1846,6 @@ class CoverWizardApp:
             cr.set_source_rgb(1,1,1); cr.rectangle(x,y,w,h); cr.fill()
             cr.set_source_rgba(r,g,b,s.bg_opacity/100); cr.rectangle(x,y,w,h); cr.fill()
         else:
-            import cairo
             pat = cairo.LinearGradient(x,y,x+w,y)
             pat.add_color_stop_rgb(0.0,0.85,0.90,0.98)
             pat.add_color_stop_rgb(0.5,0.60,0.72,0.92)
@@ -2115,26 +2091,24 @@ class CoverWizardApp:
 
         # Back text with word-wrap + clip
         if s.backtext_enabled:
-            PAD_X = 10
-            FS = 7
-            boxW = bw - PAD_X*2
+            boxW = bw - PAD*2
             raw = s.backtext.strip() if s.backtext.strip() else "Back text here"
-            cpl = max(10, int((boxW - 8) / (FS * 0.55)))
+            cpl = max(10, int((boxW - 8) / (7 * 0.55)))
             lines = wrapText(raw, cpl)
-            line_h = FS + 3
-            blkH = max(20, len(lines) * line_h + 8)   # grow with content, 8px padding top+bottom
-            blkH = min(blkH, bh // 2)                 # hard ceiling: never more than half the panel
+            line_h = 10   # FS(7) + 3
+            blkH = max(20, len(lines) * line_h + 8)
+            blkH = min(blkH, bh // 2)
 
             cr.set_source_rgba(0.93, 0.93, 0.88, 0.82)
-            cr.rectangle(bx+PAD_X, curY, boxW, blkH); cr.fill()
+            cr.rectangle(bx+PAD, curY, boxW, blkH); cr.fill()
             cr.save()
-            cr.rectangle(bx+PAD_X, curY, boxW, blkH); cr.clip()
+            cr.rectangle(bx+PAD, curY, boxW, blkH); cr.clip()
             cr.set_source_rgba(0.15, 0.15, 0.15, 0.88)
-            cr.select_font_face("Sans", 0, 0); cr.set_font_size(FS)
+            cr.select_font_face("Sans", 0, 0); cr.set_font_size(7)
             for i, ln in enumerate(lines):
                 ly = curY + (i + 1) * line_h
                 if ly > curY + blkH - 2: break
-                cr.move_to(bx + PAD_X + 4, ly); cr.show_text(ln)
+                cr.move_to(bx + PAD + 4, ly); cr.show_text(ln)
             cr.restore()
             curY += blkH + 8
 
