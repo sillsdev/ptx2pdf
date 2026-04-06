@@ -7,11 +7,11 @@ from configparser import ConfigParser
 import heapq, re, os, logging, random, itertools, argparse, threading
 import multiprocessing as mp
 from math import sqrt, log10
-from time import time
+from time import time, asctime
 from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob, unlockme
-from ptxprint.utils import refSort
+from ptxprint.utils import refSort, bookcodes
 from ptxprint.view import ViewModel
 from ptxprint.project import ProjectList
 from usfmtc.usfmparser import Grammar
@@ -35,6 +35,12 @@ BadKey  = Tuple[ParagraphRef, Expansion, Stretch]
 
 def cmp(x, y):
     return -1 if x < y else 0 if x == y else 1
+
+bkltrs = "".join([chr(x) for (a, b) in [(65, 91), (97, 123), (33, 65)] for x in range(a, b)])
+
+def printbk(bk, page):
+    bkc = bkltrs[int(bookcodes[bk])-1] if bk is not None else ""
+    print(bkc+str(page), flush=True, end="")
 
 # -----------------------------
 # LAYOUT RESULTS
@@ -172,7 +178,11 @@ class Hooks:
                    paragraph_params: Dict[ParagraphRef, ParamSig],
                    float_anchors: Dict[Any, VerseRef],
                    base_page: int) -> LayoutRunResult:
-        self.printer.run_layout(paragraph_params, float_anchors)
+        try:
+            self.printer.run_layout(paragraph_params, float_anchors)
+        except FileNotFoundError as e:
+            print(f"run_layout failed {e}")
+            return None
         pages = []
         firstbad = None
         for i in range(self.printer.parlocs.numPages()):
@@ -196,6 +206,9 @@ class Hooks:
         res = [p for p, v in state.layout.paragraph_pages.items()
                     if any(k in range(first, last+1) for k in v.keys())]
         return res
+
+    def get_lines_for_para_page(self, para: ParagraphRef, page: PageIndex):
+        return self.printer.get_lines_para_page(para, page)
 
     def get_paras_for_col(self, page, col, state=None):
         if state is None:
@@ -232,6 +245,7 @@ class Hooks:
         tex_badness = self.printer.badnesses.get(paragraph, 0)
         lines = self.basestate.layout.paragraph_total_lines.get(paragraph, 0)
         is_header = self.printer.pid_isheader(paragraph)
+        is_just = self.printer.pid_isjustified(paragraph)
 
         res = 0.0
 
@@ -239,7 +253,7 @@ class Hooks:
         # Prefer removing lines slightly over adding, especially for short paragraphs
         short_factor = (20 / min(lines + 1, 20)) ** 0.5
 
-        if delta > 0:
+        if delta > 0 and is_just:
             res += self.badness_shrink_preference * delta * short_factor   # adding lines is more visible
         elif delta < 0:
             res -= delta * short_factor  # removing lines less visible
@@ -357,23 +371,30 @@ class TypesetterSolver:
         self.itercount = 0
         self.frozen_paragraphs = set()
         self.noprobe = False
+        self.bk = None
 
-    def solve(self, state, start_page:int=-1, stop:bool=True, restart:bool=False):
+    def solve(self, state, start_page:int=-1, stop:bool=True, restart:bool=False, book=None):
+        self.bk = book
         self.init_state = state
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
+        if restart:
+            self.base_params = dict(state.paragraph_params)
         page = start_page + 1
         layout = self.initial_probes(state, page, restart=restart)
         state.layout = layout
         wantprobe = False
         testloop = 10000
+        failed_pages = []
         while True:
             layout = state.layout
             # if layout.first_failing_page < page:
             #     return None
             page = layout.first_failing_page
             if page is None:
-                logger.log(15, "solve_complete pages=%s", len(layout.pages))
+                logger.log(15, f"solve_complete pages=%s, underfills=%s", len(layout.pages),
+                        str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None}))
+                state.failures = failed_pages
                 return state
             self.hooks.progress(page, self.itercount)
             oldstate = state
@@ -399,8 +420,10 @@ class TypesetterSolver:
                         state.layout.next_bad()
                     if state.layout.first_failing_page is None:
                         return HumanFixRequest(page, "Couldn't solve all the pages")
+                    failed_pages.append(page)
                     paras = self.get_candidate_paragraphs(state, page)
                     logger.warning(f"Could not solve page {page+1} after {paras[0] if len(paras) else 'UNK'} trying {state.layout.first_failing_page+1}")
+                    start_page = state.layout.first_failing_page
                     continue
             solved = self.hooks.get_paragraphs_for_pages(page, page)
             #self.frozen_paragraphs.update(solved)
@@ -413,7 +436,7 @@ class TypesetterSolver:
         # logger.log(15, f"shape_cache={','.join('+'.join((str(k), str(v))) for k, v in self.shape_cache.items() if k[1] != 0)}")
         # logger.log(15, f"candidates={paragraphs}")
         combos = self.generate_combos(paragraphs, state, page)
-        print(page, flush=True, end="")
+        printbk(self.bk, page)
         startcount = self.itercount
         for combo in combos:
             if not combo and self.itercount > 0:
@@ -434,7 +457,7 @@ class TypesetterSolver:
             else:
                 free = None
             if new_state.layout.first_failing_page is not None and new_state.layout.first_failing_page < page:
-                logger.log(15, "{state.layout.first_failing_page=} < {page} set it to {new_state.layout.first_failing_page}")
+                logger.log(15, f"{state.layout.first_failing_page=} < {page} set it to {new_state.layout.first_failing_page}")
                 state.layout.first_failing_page = new_state.layout.first_failing_page
                 continue
             if not self.noprobe and (free is None or all(x == 0 for x in free)):
@@ -463,7 +486,7 @@ class TypesetterSolver:
         for e, s in probes:
             params = dict(state.paragraph_params)
             for p in paragraphs:
-                if (e, s) != unity or not restart or paragraphs.get(p, unity) != unity:
+                if (e, s) != unity or not restart or params.get(p, unity) == unity:
                     params[p] = (e, s)
             layout = self.hooks.run_layout(params, state.float_anchors, -1)
             self.itercount += 1
@@ -474,8 +497,8 @@ class TypesetterSolver:
     def run_layout(self, page_base_params, state, combo, page, start):
         params = dict(page_base_params)
         #params = dict(self.base_params)
-        for p, d in combo.items():
-            params[p] = self.shape_cache[(p, d)]
+        for p, (d, s) in combo.items():
+            params[p] = (self.shape_cache[(p, d)], s)
         probe_params = dict(params)
         ps = state.layout.get_pars(page)
         last_para = ps[-1] if ps is not None and len(ps) else None
@@ -504,6 +527,8 @@ class TypesetterSolver:
                 self.noprobe = True
         # logger.log(15, "BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
         layout = self.hooks.run_layout(probe_params, state.float_anchors, start)
+        if layout is None:
+            return None
         self.itercount += 1
         logger.log(15, "layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
                 page, self.itercount, not self.noprobe,
@@ -523,6 +548,8 @@ class TypesetterSolver:
                 continue
             delta = new - base
             e, s = params[p]
+            if isinstance(e, tuple):
+                e, s = e
             #logger.log(15, f"{p} {base=}, {delta=}, ({e=}, {s=})")
             self.probe_cache[(p, e, s)] = delta
             key = (p, delta)
@@ -537,8 +564,17 @@ class TypesetterSolver:
         pset = set(paragraphs)
         lpars = state.layout.get_pars(page)
         first_para = lpars[0] if len(lpars) else None
+        first_para_adj = 0
         if first_para is not None and page - 1 not in state.layout.paragraph_pages[first_para]:
             first_para = None
+        if first_para is not None:
+            l = self.hooks.get_lines_for_para_page(first_para, page)
+            if state.paragraph_params.get(first_para, (1.0, 0)) != (1.0, 0):
+                first_para_adj = 1
+            elif l == 0:
+                pass
+            elif l < 4:
+                first_para_adj = (1 - l)
         last_para = lpars[-1] if len(lpars) else None
         for (p, d), (e, s) in self.shape_cache.items():
             if p not in pset or d == 0:
@@ -568,19 +604,21 @@ class TypesetterSolver:
                 delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, _ in choice) + 5 * len(choice)
-                    combo = {p: d for p, (_, d) in zip(pars, choice)}
+                    combo = {p: (d, s) for p, (s, d) in zip(pars, choice)}
                     # have we done the same net col line change before?
                     col_deltas = [0, 0, 0, 0, 0, 0]
                     # skip if another page has modified this para
                     if any(self.base_params.get(p, (1.0, 0)) != (1.0, 0) for p in combo.keys()):
                         continue
-                    for p, d in combo.items():
+                    for p, (d, _) in combo.items():
                         # mask = 1 = col1, 2 = col2, 3 = both
                         # col_deltas: 0 = first, 1 = both, 2 = last, 3 = col1 only, 4 = col2 only
                         mask = state.layout.paragraph_pages[p].get(page, 0)
                         if mask == 3:
                             col_deltas[1] += d
                         elif p == first_para:
+                            if first_para_adj == 1 or first_para_adj < 0 and first_para_adj >= d:
+                                break
                             col_deltas[0] += d
                         elif p == last_para and (d > 1 or page+1 in state.layout.paragraph_pages[p]):
                             col_deltas[2] += d
@@ -589,18 +627,19 @@ class TypesetterSolver:
                         else:
                             logger.log(12, "Can't find mask for {p}")
                             col_deltas[5] += d
-                    if collengths[0] > 0 and 0 <= col_deltas[0] + col_deltas[1] + col_deltas[3] < collengths[0]:
-                        logger.log(12, f"Rejecting against col 1 {col_deltas} {combo}")
-                        continue
-                    if collengths[1] > 0 and 0 <= sum(col_deltas) < collengths[1]:
-                        logger.log(12, f"Rejecting against col 2 {col_deltas}, {combo}")
-                        continue
-                    sig = tuple(col_deltas)
-                    (oldscore, oldcombo) = seen_col_sigs.get(sig, (10000, None))
-                    if score < oldscore:
-                        seen_col_sigs[sig] = (score, combo)
                     else:
-                        continue
+                        if collengths[0] > 0 and 0 <= col_deltas[0] + col_deltas[1] + col_deltas[3] < collengths[0]:
+                            logger.log(12, f"Rejecting against col 1 {col_deltas} {combo}")
+                            continue
+                        if collengths[1] > 0 and 0 <= sum(col_deltas) < collengths[1]:
+                            logger.log(12, f"Rejecting against col 2 {col_deltas}, {combo}")
+                            continue
+                        sig = tuple(col_deltas)
+                        (oldscore, oldcombo) = seen_col_sigs.get(sig, (10000, None))
+                        if score < oldscore:
+                            seen_col_sigs[sig] = (score, combo)
+                        else:
+                            continue
         all_combos = sorted(list(seen_col_sigs.values()), key=lambda x: (x[0], len(x[1])))
         logger.log(12, f"{all_combos=}")
         for _, combo in all_combos:
@@ -693,19 +732,25 @@ class PTXprinter:
         self.hooks = Hooks(self, None)
         self.job = None
         if restart:
+            #printbk(bk, -1)
             adjlist = self.view.get_adjlist(bk, save=False)
             parms = adjlist.get_params()
         else:
             parms = {}
+        unlockme()
         init_layout = self.hooks.run_layout(parms, {}, -1)
+        if init_layout is None:
+            return (False, f"Failed: {bk}")
+        if init_layout.first_failing_page is None:
+            return (True, f"Complete {bk} Already good")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
-        state = EngineState({p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
+        state = EngineState(parms if restart else {p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
         self.hooks.basestate = state
         print(f"Solving {bk}")
         starttime = time()
         solver = TypesetterSolver(self.hooks, pids)
-        res = solver.solve(state, start_page=-1, stop=stop, restart=restart)
+        res = solver.solve(state, start_page=-1, stop=stop, restart=restart, book=bk)
         endtime = time()
         unlockme()
         self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
@@ -714,9 +759,73 @@ class PTXprinter:
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
         else:
-            retval = (True, f"Complete {bk} after {solver.itercount} runs after {endtime-starttime}s")
+            retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
         return retval
         
+    def run_layout(self, parparms, floats, genfiles=False):
+        if self.timedout:
+            raise TimeoutError()
+        tname = self.view.getLocalTriggerFilename(self.bk)
+        fname = self.view.getAdjListFilename(self.bk)
+        adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
+        self.adjs = AdjList(100, 95, 105, fname=adjfname)
+        logger.log(12, f"{parparms=}")
+        for s, p in parparms.items():
+            (r, para) = self.pidkey(s)
+            if isinstance(p[0], tuple):
+                score = p[1]
+                p = p[0]
+            else:
+                score = None
+            self.adjs.setval(s[:3], f"{r[1]}.{r[2]}{r[5]}", para, p[1], None, expand=int(p[0]*100), append=True)
+            if score is not None:
+                self.adjs.addTrigger(f"{s[:3]}{r[1]}.{r[2]}{r[5]}", f"{score:.3f}", key="badness", append=False)
+        self.adjs.createAdjlist()
+        tname = self.view.getLocalTriggerFilename(self.bk)
+        tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
+        self.adjs.createTriggerlist(fname=tpath)
+
+        if self.job is None:
+            self.job = RunJob(self.view, self.view.scriptsdir, self.macrosdir, self.view.args)
+            self.job.norun = True
+            self.job.nopdf = True
+            self.job.silent = True
+            self.job.doit(noview=True, noaction=not genfiles)
+            self.job.maxRuns = 1
+
+        if floats is not None and len(floats):
+            piclist = self.view.picinfos.copy()
+            for k, v in floats.items():
+                key = re.sub(r"-preverse$", "", k)
+                if v.ref is not None:
+                    p = piclist.pop(key)
+                    piclist[v.ref] = p
+                if v.col is not None:
+                    p = piclist.get(key, None)
+                    if p is None:
+                        continue
+                    pos = p['pgpos']
+                    if v.col == 2:
+                        pos = pos[0] + "r" if pos in ("tl", "bl") else pos
+                    elif v.col == 1:
+                        pos = pos[0] + "l" if pos in ("tr", "br") else pos
+                    p['pgpos'] = pos
+            self.job.piclist = piclist
+        else:
+            self.job.piclist = None
+
+        if not hasattr(self.job, 'outfname'):
+            raise FileNotFoundError(self.view.getBooks())
+        self.job.run_xetex(self.job.outfname, self.job.pdffile)
+        parlocsfile = self.job.outfname.replace(".tex", ".parlocs")
+        self.parlocs = Paragraphs()
+        self.parlocs.readParlocs(parlocsfile, self.rtl)
+        self.pidmap = {p.pid(): i for i, p in enumerate(self.parlocs) if isinstance(p, ParInfo)}
+        self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
+        logfile = self.job.outfname.replace(".tex", ".log")
+        self.parselog(logfile)
+        print(".", flush=True, end="")
+
     def get_pidmap(self):
         res = {}
         for p in self.parlocs:
@@ -765,6 +874,13 @@ class PTXprinter:
         p = self.parlocs[self.pidmap[pid]]
         return max([r.pagenum for r in p.rects]) - 1
 
+    def get_lines_para_page(self, pid, page):
+        p = self.parlocs[self.pidmap[pid]]
+        for r in p.rects:
+            if r.pagenum == page + 1:
+                return r.lines
+        return 0
+
     def isheader_column_start(self, pid):
         pi = self.get_para_ind(pid)
         if pi < len(self.parlocs):
@@ -781,63 +897,17 @@ class PTXprinter:
             return self.isheader(p.mrk)
         return False
 
+    def pid_isjustified(self, pid):
+        pind = self.get_para_ind(pid)
+        if pind < len(self.parlocs):
+            p = self.parlocs[pind]
+            just = self.view.styleEditor.getval(p.mrk, 'justification', None)
+            if just is not None and just.lower() != 'justified':
+                return False
+        return True
+
     def isheader(self, mrk):
         return Grammar.marker_categories.get(mrk, '') in ("sectionpara", "title")
-
-    def run_layout(self, parparms, floats):
-        if self.timedout:
-            raise TimeoutError()
-        tname = self.view.getLocalTriggerFilename(self.bk)
-        fname = self.view.getAdjListFilename(self.bk)
-        adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
-        self.adjs = AdjList(100, 95, 105, fname=adjfname)
-        logger.log(12, f"{parparms=}")
-        for s, p in parparms.items():
-            (r, para) = self.pidkey(s)
-            self.adjs.setval(s[:3], f"{r[1]}.{r[2]}{r[5]}", para, p[1], None, expand=int(p[0]*100), append=True)
-        self.adjs.createAdjlist()
-        tname = self.view.getLocalTriggerFilename(self.bk)
-        tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
-        self.adjs.createTriggerlist(fname=tpath)
-
-        if self.job is None:
-            self.job = RunJob(self.view, self.view.scriptsdir, self.macrosdir, self.view.args)
-            self.job.norun = True
-            self.job.nopdf = True
-            self.job.silent = True
-            self.job.doit(noview=True)
-            self.job.maxRuns = 1
-
-        if floats is not None and len(floats):
-            piclist = self.view.picinfos.copy()
-            for k, v in floats.items():
-                key = re.sub(r"-preverse$", "", k)
-                if v.ref is not None:
-                    p = piclist.pop(key)
-                    piclist[v.ref] = p
-                if v.col is not None:
-                    p = piclist.get(key, None)
-                    if p is None:
-                        continue
-                    pos = p['pgpos']
-                    if v.col == 2:
-                        pos = pos[0] + "r" if pos in ("tl", "bl") else pos
-                    elif v.col == 1:
-                        pos = pos[0] + "l" if pos in ("tr", "br") else pos
-                    p['pgpos'] = pos
-            self.job.piclist = piclist
-        else:
-            self.job.piclist = None
-
-        self.job.run_xetex(self.job.outfname, self.job.pdffile)
-        parlocsfile = self.job.outfname.replace(".tex", ".parlocs")
-        self.parlocs = Paragraphs()
-        self.parlocs.readParlocs(parlocsfile, self.rtl)
-        self.pidmap = {p.pid(): i for i, p in enumerate(self.parlocs) if isinstance(p, ParInfo)}
-        self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
-        logfile = self.job.outfname.replace(".tex", ".log")
-        self.parselog(logfile)
-        print(".", flush=True, end="")
 
     def parselog(self, fname):
         self.underfills = GrowList()
@@ -876,11 +946,12 @@ class PTXprinter:
 
 class Worker(mp.Process):
 
-    def __init__(self, task_queue, results_queue, build_params, nid, stop=False):
+    def __init__(self, task_queue, results_queue, build_params, log_config, nid, stop=False):
         super().__init__()
         self.task_queue = task_queue
         self.results_queue = results_queue
         self.build_params = build_params
+        self.log_config = log_config
         self.nid = nid
         self.stop = stop
 
@@ -892,22 +963,10 @@ class Worker(mp.Process):
         log_dir = project.printPath(self.build_params.cfgid, ext=ext)
         os.makedirs(log_dir, exist_ok=True)
         log_file = os.path.join(log_dir, f"ptxprint_{bk}.log")
-        
-        # Get the ROOT logger
-        root_logger = logging.getLogger()
-        root_logger.setLevel(self.build_params.loglevel)
 
-        # CRITICAL: Remove old handlers from previous books 
-        # so the "global" logger doesn't keep writing to old files
-        while root_logger.handlers:
-            root_logger.handlers[0].close()
-            root_logger.removeHandler(root_logger.handlers[0])
-
-        # Add the NEW file handler for the current book
-        fh = logging.FileHandler(log_file, mode='w', encoding='utf-8')
-        fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-        root_logger.addHandler(fh)
-        logging.info("Opened log file")
+        logging.basicConfig(filename=log_file, filemode="w", encoding="utf-8",
+                force=True, **self.log_config)
+        logging.info(f"Opened log file {asctime()}")
 
     def run(self):
         printer = PTXprinter(self.build_params, self.nid)
@@ -926,9 +985,23 @@ class Worker(mp.Process):
             if self.build_params.timeout is not None:
                 watchdog.cancel()
             if res is None:     # skip absent book
-                self.results_queue.put((self.nid, f"{bk} does not exist"))
+                self.results_queue.put((bk, self.nid, f"{bk} does not exist"))
             else:
-                self.results_queue.put((self.nid, *res))
+                self.results_queue.put((bk, self.nid, *res))
+            logging.info(f"Finished {asctime()}")
+
+
+    def runview(self):
+        view = ViewModel(self.prjtree, self.config, self.scriptsdir, self.args)
+        view.setup_ini()
+        view.setPrjid(self.pid, self.guid, loadConfig=False, startup=True)
+        view.setConfigId(self.cfgid)
+        view.set("ecb_booklist", self.args.books)
+        view.set("r_book", "multiple")
+        runjob = RunJob(view, self.scriptsdir, self.macrosdir, self.args)
+        runjob.nothreads = True
+        runjob.silent = True
+        runjob.doit(noview=True, noaction=False)
 
 
 class MultiView:
@@ -967,13 +1040,14 @@ class MultiView:
     def bklen(self, bk):
         return chaps[bk]
 
-    def initScheduler(self, numproc=None):
+    def initScheduler(self, numproc, log_config):
         if numproc is None:
             numproc = mp.cpu_count() - 2    # we run each cpu pretty hard
         self.numproc = numproc
         self.task_list = self.books
         self.build_params = BuildParams(*[getattr(self, a) for a in 'prjtree config'
                     ' macrosdir args pid guid cfgid scriptsdir loglevel timeout'.split(' ')])
+        self.log_config = log_config
 
     def add_job(self, bk):
         self.task_list.append(bk)
@@ -989,10 +1063,10 @@ class MultiView:
             input_q.put(None)
 
         if self.numproc == 1:
-            worker = Worker(input_q, results_q, self.build_params, None, stop=stop)
+            worker = Worker(input_q, results_q, self.build_params, self.log_config, None, stop=stop)
             worker.run()
         else:
-            workers = [Worker(input_q, results_q, self.build_params, i, stop=stop) for i in range(self.numproc)]
+            workers = [Worker(input_q, results_q, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
             for w in workers:
                 w.start()
 
@@ -1005,18 +1079,6 @@ class MultiView:
                 w.join()
         return results
 
-    def runview(self):
-        view = ViewModel(self.prjtree, self.config, self.scriptsdir, self.args)
-        view.setup_ini()
-        view.setPrjid(self.pid, self.guid, loadConfig=False, startup=True)
-        view.setConfigId(self.cfgid)
-        view.set("ecb_booklist", self.args.books)
-        view.set("r_book", "multiple")
-        runjob = RunJob(view, self.scriptsdir, self.macrosdir, self.args)
-        runjob.nothreads = True
-        runjob.silent = True
-        runjob.doit(noview=True, noaction=False)
-
 def add_cli_args(parser):
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
     parser.add_argument("-S", "--stop", action="store_true", default=False, help="Stop book at first bad page")
@@ -1026,14 +1088,27 @@ def add_cli_args(parser):
             a.default = 0
             break
 
+def get_logging_params():
+    root = logging.getLogger()
+    handler = root.handlers[0] if root.handlers else None
+    params = {
+        'level': root.getEffectiveLevel(),
+        'format': None,
+        'datefmt': None,
+    }
+    if handler:
+        if handler.formatter:
+            params['format'] = handler.formatter._fmt
+            params['datefmt'] = handler.formatter.datefmt
+    return params
 
 def main():
     from ptxprint.main import main as ptxmain
     view = ptxmain(doitfn=None, argsline=None, retview=True, argsfn=add_cli_args, viewClass=MultiView)
-    view.initScheduler(view.args.jobs)
+    log_config = get_logging_params()
+    view.initScheduler(view.args.jobs, log_config)
     results = view.run_all(view.args.stop)
-    print("\n".join(str(r) for r in results))
-
+    print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))
 
 if __name__ == "__main__":
     main()

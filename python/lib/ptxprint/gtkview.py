@@ -7363,6 +7363,8 @@ Thank you,
         self.pdf_viewer.set_page(x)
 
     def onPgNumChanged(self, widget, *args):
+        if widget is None:
+            widget = self.builder.get_object("t_pgNum")
         txt = widget.get_text().strip()
         if not txt:
             return False

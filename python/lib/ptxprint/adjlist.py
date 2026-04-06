@@ -33,7 +33,7 @@ class Liststore(list):
 
 adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
 refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
-restre = re.compile(r"^\s*(?:(?:mrk=|\\)(\S+)\s*)?(?:(?:expand=)?(\d+)(.*?))?$")
+restre = re.compile(r"^\s*(?:(?:mrk=|\\)(\S+)\s*)?(?:(?:expand=)?(\d+))?(.*?)$")
 
 
 class AdjList:
@@ -114,6 +114,8 @@ class AdjList:
                     if n.group(2):
                         val[5] = int(n.group(2))
                     val[6] = n.group(3)
+                else:
+                    logger.warning(f"Unparsed adjlist content {c} at {lineno} of {l}")
             logger.log(7, f"{lineno}: {val}")
         return val
 
@@ -169,7 +171,7 @@ class AdjList:
         if r[5] != self.centre:
             triggerItems.append(rf"\zexp {r[5]}\*")
 
-        for trig in self._parseTriggersFromComment(r[6]):
+        for trig in self._parseTriggersFromComment("trig", r[6]):
             trig = trig.strip()
             if trig and not trig.startswith("\\"):
                 trig = "\\" + trig
@@ -294,40 +296,43 @@ class AdjList:
         res = {}
         for r in self.liststore:
             # book, c:v, para:int, stretch, mkr, expand:int, comment%
-            rk = f"{r[0]}{r[1].replace(':', '.')}[r{2}]"
-            res[rk] = (r[5], r[3])
+            rk = f"{r[0]}{r[1].replace(':', '.')}[{r[2]}]"
+            res[rk] = (r[5]/100, int(r[3]))
         return res
 
-    def _parseTriggersFromComment(self, comment):
+    def _parseTriggersFromComment(self, key, comment):
         if not comment:
             return []
-        return re.findall(r"(?:^|\s)trig=([^\s]+)", comment)
+        return re.findall(rf"(?:^|\s){key}=([^\s]+)", comment)
 
-    def _setTriggersInComment(self, comment, triggers):
+    def _setTriggersInComment(self, key, comment, triggers):
         # remove existing trig=... tokens, then append normalized list
-        base = re.sub(r"(?:^|\s)trig=[^\s]+", "", comment or "").strip()
-        trigPart = " ".join(f"trig={t}" for t in triggers)
+        base = re.sub(rf"(?:^|\s){key}=[^\s]+", "", comment or "").strip()
+        trigPart = " ".join(f"{key}={t}" for t in triggers)
         if base and trigPart:
             return base + " " + trigPart
         return base or trigPart
 
-    def getTriggers(self, parref):
+    def getTriggers(self, parref, key="trig"):
         res = []
         def mydoit(r, i):
-            res.extend(self._parseTriggersFromComment(r[6]))
+            res.extend(self._parseTriggersFromComment(key, r[6]))
         self.changeval(parref, mydoit, insert=False)
         return res
 
-    def addTrigger(self, parref, content, enabled=True, insert=True):
+    def addTrigger(self, parref, content, append=True, enabled=True, insert=True, key="trig"):
         def mydoit(r, i):
-            triggers = set(self._parseTriggersFromComment(r[6]))
+            if append:
+                triggers = set(self._parseTriggersFromComment(key, r[6]))
+            else:
+                triggers = set()
             if content is None:
                 triggers.clear()
             elif enabled:
                 triggers.add(content)
             else:
                 triggers.discard(content)
-            newComment = self._setTriggersInComment(r[6], sorted(triggers))
+            newComment = self._setTriggersInComment(key, r[6], sorted(triggers))
             if newComment != r[6]:
                 self.liststore.set_value(r.iter, 6, newComment)
                 self.changed = True

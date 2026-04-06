@@ -169,6 +169,7 @@ class RunJob:
         self.coverfile = None
         self.extrafiles = {}
         self.piclist = None
+        self.outfname = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -322,7 +323,7 @@ class RunJob:
         self.books += donebooks
         self.info["project/bookids"] = [r[0][0].first.book if r[1] else "MOD" for r in jobs]
         self.info["project/books"] = donebooks
-        res = self.sharedjob(jobs, False)
+        res = self.sharedjob(jobs)
         if self.info['notes/ifxrexternalist']:
             res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
         return [os.path.join(self.tmpdir, out) for out in donebooks if out is not None] + res

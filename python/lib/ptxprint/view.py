@@ -1536,7 +1536,8 @@ class ViewModel:
         self.isChanged = False
 
     def saveAdjlists(self, force=False):
-        for bk, adj in self.adjlists.items():
+        for bk in self.getBooks():
+            adj = self.get_adjlist(bk, save=False)
             adj.save()
 
     def saveStyles(self, force=False):
