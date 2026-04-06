@@ -42,6 +42,8 @@ def printbk(bk, page):
     bkc = bkltrs[int(bookcodes[bk])-1] if bk is not None else ""
     print(bkc+str(page), flush=True, end="")
 
+all_probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1), (1.0, 0)]
+
 # -----------------------------
 # LAYOUT RESULTS
 # -----------------------------
@@ -175,11 +177,12 @@ class Hooks:
         logger.log(15, f"Badness parameters = {vals}")
 
     def run_layout(self,
+                   solver: Optional["Typesetter"],
                    paragraph_params: Dict[ParagraphRef, ParamSig],
                    float_anchors: Dict[Any, VerseRef],
                    base_page: int) -> LayoutRunResult:
         try:
-            self.printer.run_layout(paragraph_params, float_anchors)
+            self.printer.run_layout(solver, paragraph_params, float_anchors)
         except FileNotFoundError as e:
             print(f"run_layout failed {e}")
             return None
@@ -373,7 +376,7 @@ class TypesetterSolver:
         self.noprobe = False
         self.bk = None
 
-    def solve(self, state, start_page:int=-1, stop:bool=True, restart:bool=False, book=None):
+    def solve(self, state, start_page:int=-1, stop:bool=True, restart:bool=False, book=None, found=None):
         self.bk = book
         self.init_state = state
         if not self.baseline_lines:
@@ -381,7 +384,7 @@ class TypesetterSolver:
         if restart:
             self.base_params = dict(state.paragraph_params)
         page = start_page + 1
-        layout = self.initial_probes(state, page, restart=restart)
+        layout = self.initial_probes(state, page, restart=restart, found=found)
         state.layout = layout
         wantprobe = False
         testloop = 10000
@@ -478,17 +481,19 @@ class TypesetterSolver:
         state.passed = False
         return state
 
-    def initial_probes(self, state, page, restart=False):
+    def initial_probes(self, state, page, restart=False, found=None):
         paragraphs = self.paragraph_order
         unity = (1.0, 0)
-        probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1), (1.0, 0)]
+        probes = all_probes[:6]
         newstate = state
         for e, s in probes:
+            if found is not None and (e, s) in found:
+                continue
             params = dict(state.paragraph_params)
             for p in paragraphs:
                 if (e, s) != unity or not restart or params.get(p, unity) == unity:
                     params[p] = (e, s)
-            layout = self.hooks.run_layout(params, state.float_anchors, -1)
+            layout = self.hooks.run_layout(self, params, state.float_anchors, -1)
             self.itercount += 1
             logger.log(15, "probe_run iter=%s e=%s s=%s", self.itercount, e, s)
             self.collect_probes(layout, paragraphs, params)
@@ -497,8 +502,8 @@ class TypesetterSolver:
     def run_layout(self, page_base_params, state, combo, page, start):
         params = dict(page_base_params)
         #params = dict(self.base_params)
-        for p, (d, s) in combo.items():
-            params[p] = (self.shape_cache[(p, d)], s)
+        for p, d in combo.items():
+            params[p] = self.shape_cache[(p, d)]
         probe_params = dict(params)
         ps = state.layout.get_pars(page)
         last_para = ps[-1] if ps is not None and len(ps) else None
@@ -526,7 +531,7 @@ class TypesetterSolver:
             if not found_any:
                 self.noprobe = True
         # logger.log(15, "BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
-        layout = self.hooks.run_layout(probe_params, state.float_anchors, start)
+        layout = self.hooks.run_layout(self, probe_params, state.float_anchors, start)
         if layout is None:
             return None
         self.itercount += 1
@@ -548,8 +553,6 @@ class TypesetterSolver:
                 continue
             delta = new - base
             e, s = params[p]
-            if isinstance(e, tuple):
-                e, s = e
             #logger.log(15, f"{p} {base=}, {delta=}, ({e=}, {s=})")
             self.probe_cache[(p, e, s)] = delta
             key = (p, delta)
@@ -604,13 +607,15 @@ class TypesetterSolver:
                 delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, _ in choice) + 5 * len(choice)
-                    combo = {p: (d, s) for p, (s, d) in zip(pars, choice)}
+                    combo = {p: d for p, (s, d) in zip(pars, choice)}
                     # have we done the same net col line change before?
                     col_deltas = [0, 0, 0, 0, 0, 0]
                     # skip if another page has modified this para
                     if any(self.base_params.get(p, (1.0, 0)) != (1.0, 0) for p in combo.keys()):
                         continue
-                    for p, (d, _) in combo.items():
+                    for p, d in combo.items():
+                        if (p, d) not in self.shape_cache:
+                            break
                         # mask = 1 = col1, 2 = col2, 3 = both
                         # col_deltas: 0 = first, 1 = both, 2 = last, 3 = col1 only, 4 = col2 only
                         mask = state.layout.paragraph_pages[p].get(page, 0)
@@ -738,7 +743,7 @@ class PTXprinter:
         else:
             parms = {}
         unlockme()
-        init_layout = self.hooks.run_layout(parms, {}, -1)
+        init_layout = self.hooks.run_layout(None, parms, {}, -1)
         if init_layout is None:
             return (False, f"Failed: {bk}")
         if restart and init_layout.first_failing_page is None:
@@ -750,7 +755,21 @@ class PTXprinter:
         print(f"Solving {bk}")
         starttime = time()
         solver = TypesetterSolver(self.hooks, pids)
-        res = solver.solve(state, start_page=-1, stop=stop, restart=restart, book=bk)
+        found_probes = set()
+        if restart:
+            for r in adjlist.liststore:
+                if not r[6]:
+                    continue
+                for a in range(-2, 3):
+                    k = f"{'p' if a > 0 else 'm'}{abs(a)}"
+                    v = adjlist._parseTriggersFromComment(k, r[6])
+                    if len(v) and (m := re.match(r"^(\d+)([+-]\d)?", v[0])):
+                        e = int(m.group(1)) / 100
+                        s = int(m.group(2)) if m.group(2) else 0
+                        key = r[1] + f"[{r[2]}]" if r[2] else "[1]"
+                        solver.shape_cache[(key, a)] = (e, s)
+                        found_probes.add((e, s))
+        res = solver.solve(state, start_page=-1, stop=stop, restart=restart, book=bk, found=found_probes)
         endtime = time()
         unlockme()
         self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
@@ -762,7 +781,7 @@ class PTXprinter:
             retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
         return retval
         
-    def run_layout(self, parparms, floats, genfiles=False):
+    def run_layout(self, solver, parparms, floats, genfiles=False):
         if self.timedout:
             raise TimeoutError()
         tname = self.view.getLocalTriggerFilename(self.bk)
@@ -772,14 +791,14 @@ class PTXprinter:
         logger.log(12, f"{parparms=}")
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
-            if isinstance(p[0], tuple):
-                score = p[1]
-                p = p[0]
-            else:
-                score = None
             self.adjs.setval(s[:3], f"{r[1]}.{r[2]}{r[5]}", para, p[1], None, expand=int(p[0]*100), append=True)
-            if score is not None:
-                self.adjs.addTrigger(f"{s[:3]}{r[1]}.{r[2]}{r[5]}", f"{score:.3f}", key="badness", append=False)
+            if solver is not None:
+                key = f"{s[:3]}{r[1]}.{r[2]}{r[5]}"
+                for a in range(-2, 3):
+                    if a != 0 and (s, a) in solver.shape_cache:
+                        e, t = solver.shape_cache[(s, a)]
+                        v = f"{int(e*100)}" if t == 0 else f"{int(e*100)}{t:+1d}"
+                        self.adjs.addTrigger(key, v, key=f"{'p' if a > 0 else 'm'}{abs(a)}", append=False)
         self.adjs.createAdjlist()
         tname = self.view.getLocalTriggerFilename(self.bk)
         tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
