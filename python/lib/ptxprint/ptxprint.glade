@@ -2797,7 +2797,7 @@ If in doubt, click Cancel.</property>
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PTXprint: Download &amp; Install Image Sets</property>
     <property name="type-hint">dialog</property>
-    <property name="default-width">760</property>
+    <property name="default-width">900</property>
     <property name="default-height">400</property>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -4347,9 +4347,10 @@ of References:</property>
                       <object class="GtkEntry" id="t_artRefRange">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="activates-default">True</property>
+                        <property name="activates-default">False</property>
                         <property name="placeholder-text" translatable="yes">e.g. LUK ACT HEB JAS</property>
                         <signal name="changed" handler="onImageRefRangeChanged" swapped="no"/>
+                        <signal name="activate" handler="btnImageRefreshClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -4387,12 +4388,13 @@ of References:</property>
                         <property name="name">Image Selection Dialog: Search for an image by keyword</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="activates-default">True</property>
+                        <property name="activates-default">False</property>
                         <property name="primary-icon-name">edit-find-symbolic</property>
                         <property name="primary-icon-activatable">False</property>
                         <property name="primary-icon-sensitive">False</property>
                         <property name="placeholder-text" translatable="yes">(lamb|sheep)+shepherd</property>
                         <signal name="changed" handler="onImageSearchChanged" swapped="no"/>
+                        <signal name="activate" handler="btnImageRefreshClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -4550,6 +4552,21 @@ appear at the top of the list.</property>
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkLabel" id="l_imgLoadCount">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">center</property>
+                        <property name="margin-top">4</property>
+                        <property name="margin-bottom">2</property>
+                        <property name="label"></property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">8</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkSeparator">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -4557,7 +4574,7 @@ appear at the top of the list.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">8</property>
+                        <property name="top-attach">9</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -4695,8 +4712,8 @@ used on websites. </property>
                     <property name="row-spacing">3</property>
                     <property name="column-spacing">6</property>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
+                      <object class="GtkLabel" id="lb_imgKeywords">
+                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="valign">start</property>
@@ -4708,8 +4725,8 @@ used on websites. </property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
+                      <object class="GtkLabel" id="lb_imgRefs">
+                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="tooltip-text" translatable="yes">Note that if a reference only contains
 a book and chapter number (with no
@@ -4717,6 +4734,7 @@ specific verse mentioned), then the
 illustration will be placed in the middle
 of the chapter.</property>
                         <property name="halign">end</property>
+                        <property name="valign">start</property>
                         <property name="label" translatable="yes">Reference:</property>
                       </object>
                       <packing>
@@ -4725,8 +4743,8 @@ of the chapter.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
+                      <object class="GtkLabel" id="lb_imgDesc">
+                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="valign">start</property>
@@ -4739,7 +4757,7 @@ of the chapter.</property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="l_imgKeywords">
-                        <property name="visible">True</property>
+                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">shepherd, sheep, lamb, shoulder, carry</property>
@@ -4753,7 +4771,7 @@ of the chapter.</property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="l_imgRefs">
-                        <property name="visible">True</property>
+                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">MAT 12:15, LUK 22:7; ACT 8:3</property>
@@ -4767,7 +4785,7 @@ of the chapter.</property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="l_imgDesc">
-                        <property name="visible">True</property>
+                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>

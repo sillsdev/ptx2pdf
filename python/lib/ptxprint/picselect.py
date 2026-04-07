@@ -3,7 +3,7 @@ import os
 import re
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
-from gi.repository import Gtk, Gdk, GdkPixbuf
+from gi.repository import Gtk, Gdk, GdkPixbuf, GLib
 import zipfile, json
 import logging
 
@@ -132,6 +132,8 @@ class ThumbnailDialog:
         self.tilesize = 100
         self.selected_thumbnails = set()
         self.reftext = None
+        self._idleLoadId = None
+        self.dlg.connect("key-press-event", self._onDialogKeyPress)
 
     def run(self):
         uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
@@ -210,6 +212,7 @@ class ThumbnailDialog:
             w = Gtk.ToggleButton()
             w.connect("toggled", self.on_thumbnail_toggled, imageid)
             w.connect("enter-notify-event", self.on_thumbnail_entered, imageid)
+            w.connect("button-press-event", self._onThumbnailRightClicked, imageid)
             self.image_tiles[imageid] = (w, False, os.path.join(imagesdir, imagefile))
         logger.debug(f"tiles set up for {self.imageset}")
 
@@ -268,6 +271,10 @@ class ThumbnailDialog:
     def disable_refresh(self):
         b = self.view.builder.get_object("btn_imgRefresh").set_sensitive(False)
 
+    def _setLabelRowVisible(self, header_id, value_id, visible):
+        self.view.builder.get_object(header_id).set_visible(visible)
+        self.view.builder.get_object(value_id).set_visible(visible)
+
     def refresh(self):
         self.update_reflist()
         self.fill()
@@ -280,10 +287,7 @@ class ThumbnailDialog:
         status = "(0 images selected)"
         self.view.set("l_artStatusLine", status)
 
-    def fill(self):
-        imagesdir = self.get_imgdir()
-        if imagesdir is None:
-            return
+    def _build_imageids(self, imagesdir):
         imageids = set()
         self.imgrefs = {}
         for imagefile in os.listdir(imagesdir):
@@ -300,12 +304,27 @@ class ThumbnailDialog:
                     continue
                 for r in refs:
                     if r in self.reflist:
-                        # logger.debug(f"Testing {imageid}: {refs}, {r} in {self.reflist}")
                         self.imgrefs[imageid] = r
                         break
                 else:
                     continue
             imageids.add(imageid)
+        return imageids
+
+    def fill(self):
+        imagesdir = self.get_imgdir()
+        if imagesdir is None:
+            return
+        imageids = self._build_imageids(imagesdir)
+        if not imageids and self.reflist:
+            self.reflist = []
+            self.reftext = ""
+            self.view.set('t_artRefRange', '')
+            imageids = self._build_imageids(imagesdir)
+        if not imageids and self.filters:
+            self.filters = set()
+            self.view.set('t_artSearch', '')
+            imageids = self._build_imageids(imagesdir)
         self.set_images(imagesdir, sorted(imageids))
         self.disable_refresh()
 
@@ -317,17 +336,28 @@ class ThumbnailDialog:
         res = self.imgrefs[imgid].astag() if imgid in self.imgrefs else "zzzz"+imgid
         return (pop, res)
 
+    _INITIAL_LOAD = 30
+
     def set_images(self, fbase, imageids):
-        # logger.debug(f"Setting up for images: {imageids}")
-        #children = sorted(self.grid.get_children(),
-        #        key = lambda c:(self.grid.child_get_property(c, "top_attach"), self.grid.child_get_property(c, "left-attach")))
+        # Cancel any in-progress idle load
+        if self._idleLoadId is not None:
+            GLib.source_remove(self._idleLoadId)
+            self._idleLoadId = None
+
         for c in self.grid.get_children():
             c.hide()
             self.grid.remove(c)
+
         sortby = self.view.get('r_imgSort')
-        images = sorted(imageids, key=lambda s:self.imgkey(s, mode=sortby))
-        logger.debug(f"Setting up grid for {images}")
-        for i, imgid in enumerate(images):
+        images = sorted(imageids, key=lambda s: self.imgkey(s, mode=sortby))
+        total_showing = len(images)
+        total_all = len(self.image_tiles)
+
+        # Load the first batch synchronously so the dialog opens with images visible
+        initial = images[:self._INITIAL_LOAD]
+        deferred = images[self._INITIAL_LOAD:]
+
+        for i, imgid in enumerate(initial):
             w, isLoaded, fpath = self.image_tiles[imgid]
             if not isLoaded:
                 fill_me(w, fpath, self.tilesize)
@@ -335,14 +365,127 @@ class ThumbnailDialog:
             self.grid.attach(w, i % self.gridcols, i // self.gridcols, 1, 1)
             w.show()
         self.grid.queue_resize()
-        logger.debug(f"Image grid complete")
+
+        self._loadQueue = [(imgid, i + self._INITIAL_LOAD) for i, imgid in enumerate(deferred)]
+        self._loadTotal = total_showing
+        self._loadTotalAll = total_all
+        self._loadLoaded = len(initial)
+
+        if self._loadQueue:
+            self._updateLoadCount(loading=True)
+            self._idleLoadId = GLib.idle_add(self._idleLoadNext)
+        else:
+            self._updateLoadCount(loading=False)
+
+    def _idleLoadNext(self):
+        if not self._loadQueue:
+            self._idleLoadId = None
+            self._updateLoadCount(loading=False)
+            return False
+
+        imgid, pos = self._loadQueue.pop(0)
+        w, isLoaded, fpath = self.image_tiles[imgid]
+        if not isLoaded:
+            fill_me(w, fpath, self.tilesize)
+            self.image_tiles[imgid] = (w, True, fpath)
+        self.grid.attach(w, pos % self.gridcols, pos // self.gridcols, 1, 1)
+        w.show()
+        self._loadLoaded += 1
+
+        if not self._loadQueue:
+            self._idleLoadId = None
+            self._updateLoadCount(loading=False)
+            return False
+
+        self._updateLoadCount(loading=True)
+        return True
+
+    def _updateLoadCount(self, loading=False):
+        if loading:
+            msg = _("Loading {} / {}…".format(self._loadLoaded, self._loadTotal))
+        elif self._loadTotal == self._loadTotalAll:
+            msg = _("Showing all {} images".format(self._loadTotal))
+        else:
+            msg = _("Showing {} / {} images".format(self._loadTotal, self._loadTotalAll))
+        self.view.set('l_imgLoadCount', msg)
+
+    _PREVIEW_SIZE = 400
+
+    def _onDialogKeyPress(self, _, event):
+        if (event.keyval == Gdk.KEY_Escape
+                and hasattr(self, '_previewPopover')
+                and self._previewPopover.get_visible()):
+            self._previewPopover.hide()
+            return True  # consume — prevent dialog from closing
+        return False
+
+    def _setupPreviewPopover(self):
+        css = Gtk.CssProvider()
+        css.load_from_data(b"""
+            popover.imgpreview-popover {
+                background-color: #808080;
+                border-radius: 4px;
+            }
+            popover.imgpreview-popover label {
+                color: #f0f0f0;
+            }
+        """)
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        self._previewPopover = Gtk.Popover()
+        self._previewPopover.set_position(Gtk.PositionType.RIGHT)
+        self._previewPopover.get_style_context().add_class("imgpreview-popover")
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        box.set_margin_start(8)
+        box.set_margin_end(8)
+        box.set_margin_top(8)
+        box.set_margin_bottom(8)
+        self._previewImage = Gtk.Image()
+        box.pack_start(self._previewImage, False, False, 0)
+        self._previewLabel = Gtk.Label()
+        self._previewLabel.set_line_wrap(True)
+        self._previewLabel.set_max_width_chars(45)
+        self._previewLabel.set_halign(Gtk.Align.START)
+        box.pack_start(self._previewLabel, False, False, 0)
+        self._previewPopover.add(box)
+
+    def _onThumbnailRightClicked(self, button, event, imageid):
+        if event.button != 3:
+            return False
+        if not hasattr(self, '_previewPopover'):
+            self._setupPreviewPopover()
+        fpath = self.image_tiles[imageid][2]
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(fpath)
+            w, h = pixbuf.get_width(), pixbuf.get_height()
+            if w >= h:
+                new_w, new_h = self._PREVIEW_SIZE, int(self._PREVIEW_SIZE * h / w)
+            else:
+                new_h, new_w = self._PREVIEW_SIZE, int(self._PREVIEW_SIZE * w / h)
+            self._previewImage.set_from_pixbuf(
+                pixbuf.scale_simple(new_w, new_h, GdkPixbuf.InterpType.BILINEAR))
+        except Exception:
+            return True
+        parts = [imageid]
+        if self.langdata:
+            desc = self.langdata.get(imageid, {}).get("title", "")
+            if desc:
+                parts.append(desc)
+        if self.imagedata:
+            refs = re.sub(":0", "", "; ".join(
+                self.imagedata["images"].get(imageid, {}).get('refs', [])))
+            if refs:
+                parts.append(refs)
+        self._previewLabel.set_text("\n".join(parts))
+        self._previewPopover.set_relative_to(button)
+        self._previewPopover.show_all()
+        return True  # consume event; prevent any default right-click handling
 
     def on_thumbnail_toggled(self, button, imageid):
-        if self.langdata is None:
-            return
         bibrefs = self.get_refs(imageid, default=[None])
         bibref = bibrefs[0] if len(bibrefs) else None
-        val = (imageid, bibref, self.langdata.get(imageid, {}).get("title", ""))
+        title = self.langdata.get(imageid, {}).get("title", "") if self.langdata else ""
+        val = (imageid, bibref, title)
 
         if button.get_active():
             self.selected_thumbnails.add(val)
@@ -360,16 +503,19 @@ class ThumbnailDialog:
             self.view.set("l_imgIDArtist", imageid)
         if self.langdata:
             desc = self.langdata.get(imageid, {}).get("title", "")
-            self.view.set("l_imgDesc", desc if len(desc) else "")
             kwds = ", ".join(self.langdata.get(imageid, {}).get("kwds", []))
-            self.view.set('l_imgKeywords', kwds if len(kwds) else "")
         else:
-            self.view.set("l_imgDesc", "")
-            self.view.set('l_imgKeywords', "")
+            desc = ""
+            kwds = ""
+        self.view.set("l_imgDesc", desc)
+        self.view.set('l_imgKeywords', kwds)
+        self._setLabelRowVisible("lb_imgDesc", "l_imgDesc", bool(desc))
+        self._setLabelRowVisible("lb_imgKeywords", "l_imgKeywords", bool(kwds))
 
         if self.imagedata:
             refs = "; ".join(self.imagedata["images"].get(imageid, {}).get('refs', []))
             refs = re.sub(":0", "", refs)
-            self.view.set('l_imgRefs', refs if len(refs) else "")
         else:
-            self.view.set('l_imgRefs', "")
+            refs = ""
+        self.view.set('l_imgRefs', refs)
+        self._setLabelRowVisible("lb_imgRefs", "l_imgRefs", bool(refs))

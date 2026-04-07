@@ -5951,6 +5951,8 @@ class GtkViewModel(ViewModel):
             col.set_min_width(min_w)
             col.set_expand(expand)
             col.set_resizable(True)
+            col.set_clickable(True)
+            col.set_sort_column_id(col_idx)
             tv.append_column(col)
 
     def _onImagesetRowToggled(self, renderer, path):
