@@ -14,6 +14,9 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
 import cairo
 
+from ptxprint.utils import coltoonemax, coltotex
+from PIL import Image
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # State
@@ -56,6 +59,14 @@ def umToGsm(um: float) -> float:
 
 
 class WorkingCoverState:
+    modelmap = {
+        "": "coverbleed",
+        "spine_width_computed_mm": "spinewidth",
+        "": "coverartbleed",
+        "": "spineoverlapback",
+        "": "spineoverlapfront"
+    }
+
     def __init__(self):
         # Step 1
         self.spine_enabled: bool = False
@@ -144,6 +155,125 @@ class WorkingCoverState:
         self.isbn: str = ""
         self.isbn_hpos: str = "inner"   # inner | centre | outer
 
+    def saveConfig(self, config):
+        for k, v in vars(self).items():
+            if isinstance(v, (int, str)):
+                config.set("coverwiz", k, str(v))
+            elif isinstance(v, bool):
+                config.set("coverwiz", k, "true" if v else "false")
+
+    def updateView(self, view):
+        def setfront(k, v, all=False):
+            view.styleEditor.setval("cat:coverwhole|esb" if all else "cat:coverfront|esb", k, v)
+        if self.border_enabled:
+            setfront("BorderStyle", "ornaments")
+            setfront("Border", "All")
+            setfront("BorderRef", self.border_style)
+            setfront("BorderColor", self.border_color)
+        else:
+            setfront("Border", None)
+            for a in "Style Ref Color".split():
+                setfront("Border"+a, "")
+        setfront("BgColor", coltotex(coltoonemax(self.bg_color)), all=True)
+        setfront("Alpha", self.bg_opacity / 100, all=True)
+        for d in (True, False):
+            for c in ("BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha"):
+                setfront(c, None, all=d)
+        if self.img_primary_path:
+            wrap_all = self.coverage_pattern=="wrap_all"
+            setfront("BgImage", self.img_primary_path, all=wrap_all)
+            setfront("BgImageScaleTo", "colbleed", all=wrap_all)
+            setfront("BgImageScale", "1x1" if self.img_primary_fit == "stretch" else "1", all=wrap_all)
+            setfront("BgImageAlpha", self.img_primary_alpha / 100, all=wrap_all)
+            setfront("BgImageAlpha", 1 - (self.img_primary_alpha / 100), all=not wrap_all)
+        for m in (('mt1', 'title'), ('mt2', 'subtitle')):
+            sz = view.styleEditor.getval(m[0], 'FontSize', 1.0)
+            view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'FontSize', sz * getattr(self, m[1]+"_size_pct") / 100)
+            view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'Color', coltotext(coltoonemax(getattr(self, m[1]+"_color"))))
+            view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'FontSize', sz * 0.65 * getattr(self, "spine_text_size_pct") / 100)
+            view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'Color', coltotext(coltoonemax(getattr(self, "spine_text_color"))))
+        view.setvar('maintitle', self.title)
+        if self.subtitle_enabled:
+            view.setvar('subtitle', self.subtitle)
+        if self.langname_enabled:
+            view.setvar('languagename', self.langname)
+        if self.isbn_enabled:
+            view.setvar('isbn', self.isbn)
+        self.createCoverPeriphs(view)
+
+    def getBorderVal(self, view, mkr, vh, key):
+        val = view.styleEditor.getval(mkr, f"{key}{vh}Padding", None)
+        if val is None:
+            val = view.styleEditor.getval(mkr, f"{key}Padding", 0)
+        return val
+
+    def get_image_height(self, path, pht, pwd):
+        im = Image.open(path)
+        scale = 1
+        if scale * im.size[0] > pwd:
+            scale *= pwd / im.size[0]
+        if scale * im.size[1] > pht:
+            scale = pht / im.size[1]
+        return scale * im.size[1]
+
+    def createCoverPeriphs(self, view):
+        pwidth, pheight = view.calcPageSize()
+        linefactor = float(view.get("s_linespacing")) * 72 / 25.4
+        for a in ('front', 'spine', 'back'):
+            res = []
+            res.append(fr'\periph {a}|id="cover{a}"')
+            if a == 'front':
+                bits = []
+                vremove = 0
+                hremove = 0
+                for p in ("Box", "Border"):
+                    for v in ("T", "B"):
+                        vremove += self.getBorderVal(view, f"cat:cover{a}|esb", v, p)
+                    for v in ("L", "R"):
+                        hremove += self.getBorderVal(view, f"cat:cover{a}|esb", v, p)
+                theight = pheight - vremove
+                twidth = pwidth - hremove
+                title_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
+                bits.append(theight * self.title_position_pct / 100, title_height * linefactor, r"\mt1 \zvar|maintitle\*")
+                if self.subtitle_enabled:
+                    subtitle_height = view.styleEditor.getval(f"cat:cover{a}|mt2", "LineSpacing", 1.0)
+                    bits.append(theight * self.subtitle_position_pct / 100, subtitle_height * linefactor, r"\mt2 \zvar|subtitle\*")
+                if self.langname_enabled:
+                    langname_height = view.styleEditor.getval(f"cat:cover{a}|mt3", "LineSpacing", 1.0)
+                    bits.append(theight * self.langname_position_pct / 100, langname_height * linefactor, r"\mt3 \zvar|languagename\*")
+                if self.fgimage_enabled:
+                    fgimage_height = self.get_image_height(self.fgimage_path, twidth, theight)
+                    bits.append(theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig|src="{self.fgimage_path}" size="col", pgpos="pc"\fig*')
+                basepos = 0
+                for b in sorted(bits):
+                    if b[0] > basepos:
+                        res.append(fr"\zgap|{b[0]-basepos}mm\*")
+                        basepos = b[0] + b[1]
+                    else:
+                        basepos += b[1]
+                    res.append(b[2])
+                res.append(r"\vfill")
+                res.append(r"\endgraf")
+            elif a == 'spine':
+                theight = self.spine_width_computed_mm
+                text_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
+                res.append(rf"\mt2 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*")
+            elif a == "back":
+                back_height = view.styleEditor.getval(f"cat:cover{a}|m", "LineSpacing", 1.0)
+                positions = {"inner": "pi", "center": "pc", "outer": "po"}
+                res.append(r"\zgap|1in\*")
+                res.append(rf"\m {self.backtext}")
+                if self.logo_enabled:
+                    res.append(rf"\zgap|{self.logo_vpos_pct / 100 * pheight}\*")
+                    res.append(rf'\fig|src="{self.logo_path}" pgpos="{positions[self.logo_hpos]}" size="col" scale="self.logo_scale / 100"\fig*')
+                res.append(r"\vfill")
+                if self.isbn_enabled:
+                    res.append(r'\ztruetext')
+                    res.append(fr'\esb\cat ISBNbox\cat*\pc \zISBNbarcode|var="isbn" pgpos="positions[self.isbn_hpos]" height="medium"\*\esbe')
+                    res.append(r'\zgap 10pt\*')
+                    res.append(r'\ztruetext*')
+            view.periphs['cover'+a] = "\n".join(res)
+
     def computeSpineWidth(self):
         if self.spine_width_mode == "manual":
             self.spine_width_computed_mm = max(0.0, self.spine_width_mm)
@@ -153,7 +283,7 @@ class WorkingCoverState:
             self.spine_width_computed_mm = (pages / 2.0) * thickness_mm
 
     def toDict(self):
-        return {k: v for k, v in self.__dict__.items()}
+        return {k: v for k, v in self.__dict__.items() if isinstance(v, (int, bool, str))}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
