@@ -14649,7 +14649,23 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="margin-top">2</property>
             <property name="margin-bottom">2</property>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="btn_fillPages">
+                <property name="label" translatable="yes">Fill Pages</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Tries to fill the pages for the entire
+job specified, stopping on the first
+page failure. And starting from the
+first underfilled page in each book.
+
+Warning: CPU-hungry. Go to lunch!</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
             <child>
               <object class="GtkBox">

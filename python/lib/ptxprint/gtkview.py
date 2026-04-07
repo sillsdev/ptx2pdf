@@ -7860,3 +7860,6 @@ Thank you,
         if self.get("c_noupdate") and self.get("c_colophon"):
             self.set("c_colophon", False)
             self.doStatus(_("Colophon updates have also been disabled in 'Layout Only' mode"))
+
+    def onFillPagesClicked(self, widget, *a):
+        pass
