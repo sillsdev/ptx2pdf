@@ -478,42 +478,116 @@ class CoverWizardApp:
         # Guard re-entrant spinner updates
         self._updating_spinners = False
 
-        gladePath = os.path.join(os.path.dirname(__file__), "coverwizard.glade")
-        builder = Gtk.Builder()
-        try:
-            builder.add_from_file(gladePath)
-        except Exception as exc:
-            dlg = Gtk.MessageDialog(message_type=Gtk.MessageType.ERROR,
-                                    buttons=Gtk.ButtonsType.CLOSE,
-                                    text=f"Cannot load UI:\n{gladePath}\n\n{exc}")
-            dlg.run(); dlg.destroy(); sys.exit(1)
+        # ── Build window hierarchy programmatically (no .glade file) ────
+        self.window = Gtk.Window(title="PTXprint Cover Wizard")
+        self.window.set_position(Gtk.WindowPosition.CENTER)
+        self.window.set_default_size(1180, 760)
+        self.window.connect("destroy", self.onWindowDestroy)
 
-        builder.connect_signals(self)
+        bx_root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.window.add(bx_root)
 
-        def w(n): return builder.get_object(n)
+        # ── Main content (wizard left, preview right) ─────────────────
+        bx_main = Gtk.Box()
+        bx_main.set_vexpand(True)
+        bx_root.pack_start(bx_main, True, True, 0)
 
-        # Hide old static header labels and separator
-        for widget_id in ("l_header_title", "l_header_sub", "l_progress", "sep_header"):
-            widget = w(widget_id)
-            widget.hide()
-            widget.set_no_show_all(True)
+        # Left: scrolled wizard panel
+        sw_wizard = Gtk.ScrolledWindow()
+        sw_wizard.set_size_request(440, -1)
+        sw_wizard.set_margin_start(16)
+        sw_wizard.set_margin_end(12)
+        sw_wizard.set_margin_top(12)
+        sw_wizard.set_margin_bottom(12)
+        sw_wizard.set_hexpand(False)
+        sw_wizard.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
 
-        self.window     = w("w_coverwizard")
-        self.st_steps   = w("st_steps")
-        self.da_preview = w("da_preview")
-        self.btn_back   = w("btn_back")
-        self.btn_next   = w("btn_next")
-        self.btn_finish = w("btn_finish")
+        vp_wizard = Gtk.Viewport()
+        vp_wizard.set_shadow_type(Gtk.ShadowType.NONE)
+        sw_wizard.add(vp_wizard)
 
-        self._pages = {
-            1: w("pg_step1_spine"),
-            2: w("pg_step2_coverage"),
-            3: w("pg_step3_background"),
-            4: w("pg_step4_front"),
-            5: w("pg_step5_spine_content"),
-            6: w("pg_step6_back"),
-            7: w("pg_step7_review"),
-        }
+        self.st_steps = Gtk.Stack()
+        self.st_steps.set_hexpand(True)
+        self.st_steps.set_vexpand(True)
+        self.st_steps.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT)
+        vp_wizard.add(self.st_steps)
+
+        self._pages = {}
+        for num, name, title in (
+            (1, "pg_step1_spine",         "Step 1"),
+            (2, "pg_step2_coverage",      "Step 2"),
+            (3, "pg_step3_background",    "Step 3"),
+            (4, "pg_step4_front",         "Step 4"),
+            (5, "pg_step5_spine_content", "Step 5"),
+            (6, "pg_step6_back",          "Step 6"),
+            (7, "pg_step7_review",        "Step 7"),
+        ):
+            page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+            page.set_margin_bottom(12)
+            self.st_steps.add_titled(page, name, title)
+            self._pages[num] = page
+
+        bx_main.pack_start(sw_wizard, False, True, 0)
+
+        # Right: preview frame
+        fr_preview = Gtk.Frame()
+        fr_preview.set_size_request(400, -1)
+        fr_preview.set_margin_end(16)
+        fr_preview.set_margin_top(12)
+        fr_preview.set_margin_bottom(12)
+        fr_preview.set_hexpand(True)
+        fr_preview.set_label_align(0.0, 0.5)
+
+        self.da_preview = Gtk.DrawingArea()
+        self.da_preview.set_hexpand(True)
+        self.da_preview.set_vexpand(True)
+        self.da_preview.connect("draw", self.onPreviewDraw)
+        fr_preview.add(self.da_preview)
+
+        bx_main.pack_start(fr_preview, True, True, 0)
+
+        # ── Navigation footer ─────────────────────────────────────────
+        bx_root.pack_start(Gtk.Separator(), False, True, 0)
+
+        bx_nav = Gtk.Box(spacing=8)
+        bx_nav.set_margin_start(16)
+        bx_nav.set_margin_end(16)
+        bx_nav.set_margin_top(8)
+        bx_nav.set_margin_bottom(8)
+
+        btn_cancel = Gtk.Button(label="Cancel")
+        btn_cancel.set_valign(Gtk.Align.CENTER)
+        btn_cancel.connect("clicked", self.onCancelClicked)
+        bx_nav.pack_start(btn_cancel, False, True, 0)
+
+        spacer = Gtk.Box()
+        spacer.set_hexpand(True)
+        bx_nav.pack_start(spacer, True, True, 0)
+
+        btn_advanced = Gtk.Button(label="Advanced\u2026")
+        btn_advanced.set_valign(Gtk.Align.CENTER)
+        btn_advanced.set_sensitive(False)
+        btn_advanced.connect("clicked", self.onAdvancedClicked)
+        bx_nav.pack_start(btn_advanced, False, True, 0)
+
+        self.btn_back = Gtk.Button(label="\u2190 Back")
+        self.btn_back.set_valign(Gtk.Align.CENTER)
+        self.btn_back.set_sensitive(False)
+        self.btn_back.connect("clicked", self.onBackClicked)
+        bx_nav.pack_start(self.btn_back, False, True, 0)
+
+        self.btn_next = Gtk.Button(label="Next \u2192")
+        self.btn_next.set_valign(Gtk.Align.CENTER)
+        self.btn_next.connect("clicked", self.onNextClicked)
+        bx_nav.pack_start(self.btn_next, False, True, 0)
+
+        self.btn_finish = Gtk.Button(label="Finish")
+        self.btn_finish.set_valign(Gtk.Align.CENTER)
+        self.btn_finish.set_sensitive(False)
+        self.btn_finish.connect("clicked", self.onFinishClicked)
+        bx_nav.pack_start(self.btn_finish, False, True, 0)
+
+        bx_root.pack_start(bx_nav, False, True, 0)
 
         self._buildPage1()
         self._buildPage2()
