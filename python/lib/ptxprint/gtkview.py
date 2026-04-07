@@ -448,7 +448,7 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
-    "scale-slider":("s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
+    "scale-slider":("s_viewEditFontSize", ),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
@@ -541,7 +541,6 @@ _dlgtriggers = {
     "dlg_overlayCredit":    "onOverlayCreditClicked",
     "dlg_sbPosition":       "onSBpositionClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
-    # "dlg_generateCover":    "onGenerateCoverClicked",
     "dlg_borders":          "onSBborderClicked",
     # "dlg_DBLbundle":        "onDBLbundleClicked",
     # "dlg_preview":          "????",
@@ -1092,8 +1091,6 @@ class GtkViewModel(ViewModel):
         combo.set_cell_data_func(renderer, self.set_project_style)
 
         # self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
-        self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
-        self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
         self.builder.get_object("scr_previewPDF").set_visible(False)
         self.getInitValues(addtooltips=self.args.identify)
         self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
@@ -6354,151 +6351,6 @@ class GtkViewModel(ViewModel):
     def onCoverWizardClicked():
         return  # TODO: implement cover wizard dialog
     
-    def _on_OLD_GenerateCoverClicked(self, btn):
-        metadata = {"langiso":       "<Ethnologue code>", 
-                    "languagename":  "<Language>", 
-                    "maintitle":     "<Title>", 
-                    "subtitle" :     "<Subtitle>", 
-                    "isbn":          ""}
-    
-        dialog = self.builder.get_object("dlg_generateCover")
-        for a in (('front', True), ('whole', False)):
-            img = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImage', '')
-            scl = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo', '')
-            if img:
-                self.set("btn_coverSelectImage", img, mod=False)
-                self.set("lb_coverImageFilename", img, mod=False)
-                self.set("c_coverImageFront", a[1], mod=False)
-                self.set("fcb_coverImageSize", self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo ', scl), mod=False)
-                break
-        if self.styleEditor.getval('cat:coverfront|esb', 'Border', '') == 'All':
-            ornaments = self.styleEditor.getval('cat:coverfront|esb', 'BorderRef', '')
-            self.set('fcb_coverBorder', ornaments, mod=False)
-            bc = textocol(self.styleEditor.getval('cat:coverfront|esb', 'BorderColor', 'xFFFFFF'))
-            self.set('col_coverBorder', bc, mod=False)
-            self.set('c_coverBorder', True, mod=False)
-        else:
-            self.set('c_coverBorder', False, mod=False)
-        fgc = textocol(self.styleEditor.getval('cat:coverwhole|esb', 'BgColor', 'xFFFFFF'))
-        self.set('col_coverShading', fgc, mod=False)
-        self.set('c_coverShading', fgc != "rgb(255,255,255)", mod=False)
-        mtsize = float(self.styleEditor.getval('mt1', 'FontSize', 1))
-        # breakpoint()
-        fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 1))
-        logger.debug(f"{mtsize=} {fsize=}")
-        self.set('s_coverTextScale', fsize / mtsize, mod=False)
-        self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')), mod=False)
-        
-        # if Front Matter contains one or more cover periphs, then turn OFF the auto-overwrite,
-        # but if there are no \periphs relating to the cover, then turn it ON and disable control.
-        coverPeriphs = ['coverfront', 'coverspine', 'coverback', 'coverwhole']
-        lt = _(" \\periphs in Front Matter")
-        hasCoverPeriphs = self.isPeriphInFrontMatter(periphnames=coverPeriphs)
-        w = self.builder.get_object("c_coverOverwritePeriphs")
-        w.set_sensitive(True if hasCoverPeriphs else False)
-        w.set_label(_("Overwrite")+lt if hasCoverPeriphs else _("Create")+lt)
-        self.set('c_coverOverwritePeriphs', False if hasCoverPeriphs else True, mod=False)
-        response = dialog.run()
-
-        if response == Gtk.ResponseType.CANCEL:
-            dialog.hide()
-            return
-        elif response == Gtk.ResponseType.OK: # Create Cover Settings clicked
-            # Enable ESBs
-            self.set("c_sidebars", True)
-            # Scale the font size of mt1 and mt2 for front and spine
-            scaleText = float(self.get('s_coverTextScale'))
-            # Set foreground (text) color
-            fg = coltotex(self.get('col_coverText'))
-            for m in ['mt1', 'mt2']:
-                sz = float(self.styleEditor.getval(m, 'FontSize', 1.0))
-                for cvr in ['front', 'spine']:
-                    sf = 1 if cvr == 'front' else 0.65
-                    self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'FontSize', sz*scaleText*sf, mapin=False)
-                    self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'Color', fg)
-
-            if self.get('c_coverBorder'):
-                # Set border colour
-                bc = coltotex(self.get('col_coverBorder'))
-                self.set("c_useOrnaments", True)
-                ornaments = self.get('fcb_coverBorder')
-                self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', 'ornaments')
-                self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', ornaments)
-                self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', bc)
-                self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
-            else:
-                self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', '')
-                self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', '')
-                self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', '')
-                self.styleEditor.setval('cat:coverfront|esb', 'Border', 'None')
-
-            # Set background color
-            if self.get('c_coverShading'):
-                s = self.get('s_coverShadingAlpha')
-                self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', coltotex(self.get('col_coverShading')))
-                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', s)
-            else:
-                self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', '1 1 1')
-                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', '0.001')
-                
-            for c in ['front', 'whole']:
-                for p in ['BgImage', 'BgImageScale', 'BgImageScaleTo', 'BgImageAlpha']:
-                    self.styleEditor.setval(f'cat:cover{c}|esb', p, None)
-            if self.get('c_coverSelectImage'):
-                img = self.get('lb_coverImageFilename')
-                scaleto = self.get('fcb_coverImageSize')
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img.strip('"'))
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', '1x1')
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScaleTo', scaleto)
-
-            if self.get('c_coverSelectImage'):
-                i = self.get('s_coverImageAlpha')
-                invi = 1.001 - float(i)
-                frnt = self.get('c_coverImageFront')
-                self.styleEditor.setval('cat:coverfront|esb' if frnt else 'cat:coverwhole|esb', 'BgImageAlpha', i)
-                self.styleEditor.setval('cat:coverwhole|esb' if frnt else 'cat:coverfront|esb', 'BgImageAlpha', invi)
-                # if not frnt:
-                    # self.styleEditor.setval('cat:coverback|esb', 'Alpha', 0.001)
-                    # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 0.001)
-                # else:
-                    # self.styleEditor.setval('cat:coverback|esb', 'Alpha', 1)
-                    # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 1)
-
-            if self.get('c_coverOverwritePeriphs'):
-                self.createCoverPeriphs(noDiglot = r'\zglot|\*' if len(self.diglotViews) else "")
-            self.set("c_frontmatter", True)
-
-            dialog.hide()
-
-            if not self.get('c_coverOverwritePeriphs'):
-                return
-            # See if any of the meta-data fields are missing in the zvars, and if so
-            # add them and ask the user to fill them in.
-            if not self.warnedMissingZvars:
-                missing = False
-                for k, v in metadata.items():
-                    if self.getvar(k, default=None) is None:
-                        missing = True
-                        self.setvar(k, v)
-                if missing:
-                    mpgnum = self.notebooks['Main'].index("tb_Peripherals")
-                    self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-                    _errText = _("Please fill in any missing <Values> on") + "\n" + \
-                               _("the Peripherals tab before proceeding.") + "\n" + \
-                               _("Update the ISBN number or delete the entry.")
-                    self.doError("Missing details for cover page", secondary=_errText, \
-                              title="PTXprint", copy2clip=False, show=True)
-                    self.warnedMissingZvars = True
-                    return
-            # Switch briefly to the Front Matter tab so that the updated content is activated and
-            # gets saved/updated. But then switch back to the Cover tab immediately after so the 
-            # view is back to where they clicked on the Generate Cover button to begin with.
-            mpgnum = self.notebooks['Main'].index("tb_Viewer")
-            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-            self.builder.get_object("nbk_Viewer").set_current_page(0)
-            mpgnum = self.notebooks['Main'].index("tb_Cover")
-            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-
     def createCoverPeriphs(self, **kw):
         self.periphs['coverfront'] = r'''
 {noDiglot}
@@ -6862,22 +6714,6 @@ class GtkViewModel(ViewModel):
         self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
         self.changed()
 
-    def onCoverSelectImageClicked(self, btn):
-        picpath = self.project.path
-        def update_preview(dialog):
-            picpath = dialog.get_preview_filename()
-            try:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(picpath, 200, 300)
-            except Exception as e:
-                pixbuf = None
-            return pixbuf
-
-        picfiles = self.fileChooser(_("Choose Image"),
-                                  filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
-                                   multiple=False, basedir=picpath, preview=update_preview)
-        self.set("lb_coverImageFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
-        self.changed()
-
     def onDeleteTempFolders(self, btn):
         notDeleted = []
         for p in self.project.configs.keys():
@@ -7011,13 +6847,6 @@ class GtkViewModel(ViewModel):
             ex = f"{t1}\n{t2}"
             l = f"{ov}\n{ex}" if overview else ex
         self.builder.get_object("l_txlExample").set_label(l)
-
-    def editCoverSidebarStyle(self, btn, foo):
-        posn = Gtk.Buildable.get_name(btn)[3:]
-        self.styleEditor.selectMarker(f"cat:cover{posn}|esb")
-        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.wiggleCurrentTabLabel()
 
     def onFillRequestIllustrationsForm(self, btn):
         # These 3 are intentionally NOT filled in. They will need 
