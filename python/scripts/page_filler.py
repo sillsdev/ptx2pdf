@@ -795,10 +795,15 @@ class PTXprinter:
             if solver is not None:
                 key = f"{s[:3]}{r[1]}.{r[2]}{r[5]}"
                 for a in range(-2, 3):
-                    if a != 0 and (s, a) in solver.shape_cache:
+                    if a == 0:
+                        continue
+                    keyv = f"{'p' if a > 0 else 'm'}{abs(a)}"
+                    if (s, a) in solver.shape_cache:
                         e, t = solver.shape_cache[(s, a)]
                         v = f"{int(e*100)}" if t == 0 else f"{int(e*100)}{t:+1d}"
-                        self.adjs.addTrigger(key, v, key=f"{'p' if a > 0 else 'm'}{abs(a)}", append=False)
+                        self.adjs.addTrigger(key, v, key=keyv, append=False)
+                    else:
+                        self.adjs.addTrigger(key, None, key=keyv, append=False)
         self.adjs.createAdjlist()
         tname = self.view.getLocalTriggerFilename(self.bk)
         tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
