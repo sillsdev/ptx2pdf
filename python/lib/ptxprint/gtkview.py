@@ -2992,6 +2992,11 @@ class GtkViewModel(ViewModel):
             self.onThumbColorChange()
         elif pgid == "tb_Pictures":
             self.onPLpageChanged(None, None, pgnum=-1)
+            # Re-trigger row_select so the preview renders correctly now that
+            # the tab is visible (first visit the widget had no allocated size)
+            sel = self.picListView.selection
+            if sel.count_selected_rows() > 0:
+                self.picListView.row_select(sel)
         elif pgid == "tb_Printers":
             pnum = self.get("nbk_printers")
             nbkw = self.builder.get_object("nbk_printers")
