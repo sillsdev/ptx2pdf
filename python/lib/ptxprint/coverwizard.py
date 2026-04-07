@@ -119,6 +119,7 @@ class WorkingCoverState:
         self.fgimage_enabled: bool = False
         self.fgimage_path: str = ""
         self.fgimage_position_pct: int = 55      # centre-lower
+        self.fgimage_size_pct: int = 80          # percentage of available width
         self.fgimage_bg_trans: int = 100  # 0=fully transparent, 100=opaque
 
         # Step 5
@@ -1209,12 +1210,19 @@ class CoverWizardApp:
         row_fgfile.pack_start(self._l_fgimage_status, True, True, 0)
         fg_left.pack_start(row_fgfile, False, False, 0)
 
-        row_fg_trans = makeHBox(6)
-        row_fg_trans.pack_start(makeLabel("Transparency:"), False, False, 0)
-        self._sl_fgimage_bg_trans = makeHScale(100, 0, 100)
+        row_fg_trans = makeHBox(4)
+        row_fg_trans.pack_start(makeLabel("Transp:"), False, False, 0)
+        self._sl_fgimage_bg_trans = makeHScale(self.state.fgimage_bg_trans, 0, 100)
+        self._sl_fgimage_bg_trans.set_hexpand(True)
         self._sl_fgimage_bg_trans.set_tooltip_text("0% = fully transparent, 100% = opaque")
         self._sl_fgimage_bg_trans.connect("value-changed", self.onFgimageBgTransChanged)
         row_fg_trans.pack_start(self._sl_fgimage_bg_trans, True, True, 0)
+        row_fg_trans.pack_start(makeLabel("%  Size:"), False, False, 0)
+        self._sl_fgimage_size = makeHScale(self.state.fgimage_size_pct, 10, 150)
+        self._sl_fgimage_size.set_hexpand(True)
+        self._sl_fgimage_size.set_tooltip_text("Image size as % of available width")
+        self._sl_fgimage_size.connect("value-changed", self.onFgimageSizeChanged)
+        row_fg_trans.pack_start(self._sl_fgimage_size, True, True, 0)
         row_fg_trans.pack_start(makeLabel("%"), False, False, 0)
         fg_left.pack_start(row_fg_trans, False, False, 0)
 
@@ -1306,8 +1314,11 @@ class CoverWizardApp:
         sep3.set_margin_top(6); sep3.set_margin_bottom(6); sep3.show()
         self._pack(p, sep3)
 
+        # TODO: implement publisher-on-spine rendering, then re-enable this control
         self._c_spine_publisher = makeCheck("Include publisher name on spine")
         self._c_spine_publisher.connect("toggled", self.onSpinePublisherToggled)
+        self._c_spine_publisher.set_sensitive(False)
+        self._c_spine_publisher.set_tooltip_text("Coming soon — publisher name on spine is not yet implemented.")
         self._pack(p, self._c_spine_publisher)
 
         pub_revealed = makeVBox(6)
@@ -1780,6 +1791,10 @@ class CoverWizardApp:
         self.state.fgimage_bg_trans = int(widget.get_value())
         self._refresh()
 
+    def onFgimageSizeChanged(self, widget):
+        self.state.fgimage_size_pct = int(widget.get_value())
+        self._refresh()
+
     # ─────────────────────────────────────────────────────────────────
     # Signal handlers — Step 5
     # ─────────────────────────────────────────────────────────────────
@@ -2146,7 +2161,8 @@ class CoverWizardApp:
         if s.fgimage_enabled and s.fgimage_path:
             pb = self._loadPixbuf(s.fgimage_path)
             if pb:
-                maxW, maxH = fw*0.80, fh*0.40
+                szFrac = s.fgimage_size_pct / 100.0
+                maxW, maxH = fw * szFrac, fh * szFrac
                 sc = min(maxW/pb.get_width(), maxH/pb.get_height())
                 iw,ih = pb.get_width()*sc, pb.get_height()*sc
                 iy = self._pctToY(s.fgimage_position_pct, fy, fh, ih)
