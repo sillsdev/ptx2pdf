@@ -212,6 +212,19 @@ texpertOptions = {
     "ShowHboxErrorBars":  O("showhboxerrorbars", "PDF", False, "", _("Show Error Bars For Overfull Lines"),
                             _("Enable this option to have TeX make overfull lines stand out."),
                             valfn = lambda v:"%" if v else ""),
+ # s_spineOverlapBack
+    "spineOverlapBack":   O("spineoverlapback", "PDF", (0, 0.00, 50.00, 0.50, 1.00, 1), "", _("Spine Overlap onto Back Cover (mm)"),
+                            _("If you want the spine graphic or colour to spill over onto the back cover page, then set the amount of overlap here.")),
+ # s_spineOverlapFront
+    "spineOverlapFront":  O("spineoverlapfront", "PDF", (0, 0.00, 50.00, 0.50, 1.00, 1), "", _("Spine Overlap onto Front Cover (mm)"),
+                            _("If you want the spine graphic or colour to spill over onto the front cover page, then set the amount of overlap here.")),
+ # s_coverBleed
+    "Bleed":              O("bleed", "PDF", (5, 0.00, 25.00, 0.50, 1.00, 1), "", _("Cover Bleed (mm)"),
+                            _("Bleed is the section of artwork that goes beyond where the paper is cut. This ensures that the image goes right to the edge of the cover after it has been trimmed.")),
+ # s_coverArtBleed
+    "ArtBleed":           O("artbleed", "PDF", (0, 0.00, 25.00, 0.50, 1.00, 1), "", _("Hard Cover Art Bleed (mm)"),
+                            _("Art Bleed is specifically for hard cover binding and is the setting which enables images to go beyond the size of the cover in order to wrap around the hard cover and stuck down under the inner backing sheet.")),
+
     # "ProperCase":         O("lowercase", "PDF", False, "", _("Title"),
                             # _("Description in Tooltip")),
 

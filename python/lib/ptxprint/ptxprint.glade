@@ -3,7 +3,7 @@
 
 The MIT License (MIT)
 
-Copyright (c) SIL International
+Copyright (c) SIL Global
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ THE SOFTWARE.
   <!-- interface-license-type mit -->
   <!-- interface-name ptxprint -->
   <!-- interface-description USFM typesetting -->
-  <!-- interface-copyright SIL International -->
+  <!-- interface-copyright SIL Global -->
   <object class="GtkRecentChooserMenu">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -2763,192 +2763,6 @@ If in doubt, click Cancel.</property>
       <action-widget response="-6">btn_gnr8pl_cancel</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkListStore" id="ls_imagesets">
-    <columns>
-      <!-- column-name selected -->
-      <column type="gboolean"/>
-      <!-- column-name id -->
-      <column type="gchararray"/>
-      <!-- column-name name -->
-      <column type="gchararray"/>
-      <!-- column-name artist -->
-      <column type="gchararray"/>
-      <!-- column-name style -->
-      <column type="gchararray"/>
-      <!-- column-name filesize -->
-      <column type="gchararray"/>
-      <!-- column-name license -->
-      <column type="gchararray"/>
-      <!-- column-name description -->
-      <column type="gchararray"/>
-      <!-- column-name url -->
-      <column type="gchararray"/>
-      <!-- column-name license_text -->
-      <column type="gchararray"/>
-      <!-- column-name requires_terms_acceptance -->
-      <column type="gboolean"/>
-      <!-- column-name status_text -->
-      <column type="gchararray"/>
-      <!-- column-name is_selectable -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
-  <object class="GtkDialog" id="dlg_getImageSet">
-    <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Download &amp; Install Image Sets</property>
-    <property name="type-hint">dialog</property>
-    <property name="default-width">900</property>
-    <property name="default-height">400</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="margin-left">3</property>
-            <property name="margin-right">3</property>
-            <property name="margin-start">3</property>
-            <property name="margin-end">3</property>
-            <property name="margin-top">3</property>
-            <property name="margin-bottom">3</property>
-            <property name="layout-style">end</property>
-            <child>
-              <object class="GtkButton" id="btn_imgSet_ok">
-                <property name="label">OK</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="always-show-image">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn_imgSet_cancel">
-                <property name="label">Cancel</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="always-show-image">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="margin-left">8</property>
-            <property name="margin-right">8</property>
-            <property name="margin-start">8</property>
-            <property name="margin-end">8</property>
-            <property name="margin-top">8</property>
-            <property name="margin-bottom">4</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">6</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">Select one or more image sets to download and install. Hover over License or Description for full details.</property>
-                <property name="wrap">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkCheckButton" id="c_imgSet_selectAll">
-                <property name="label" translatable="yes">Select All / None</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="draw-indicator">True</property>
-                <signal name="toggled" handler="onImagesetSelectAllToggled" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkScrolledWindow">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="hscrollbar-policy">automatic</property>
-                <property name="vscrollbar-policy">automatic</property>
-                <property name="shadow-type">in</property>
-                <child>
-                  <object class="GtkTreeView" id="tv_imagesets">
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="model">ls_imagesets</property>
-                    <property name="headers-visible">True</property>
-                    <property name="headers-clickable">False</property>
-                    <property name="enable-grid-lines">horizontal</property>
-                    <property name="has-tooltip">True</property>
-                    <signal name="query-tooltip" handler="onImagesetQueryTooltip" swapped="no"/>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLinkButton" id="btn_installFromZip">
-                <property name="label" translatable="yes">Install from ZIP file...</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="uri">about:blank</property>
-                <property name="tooltip-text" translatable="yes">Install an image set from a local ZIP file.
-Useful for offline installations or shared image sets
-at workshops (avoids repeated large downloads).</property>
-                <property name="halign">start</property>
-                <signal name="activate-link" handler="onInstallFromZipActivated" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="-5">btn_imgSet_ok</action-widget>
-      <action-widget response="-6">btn_imgSet_cancel</action-widget>
-    </action-widgets>
-  </object>
   <object class="GtkDialog" id="dlg_multiBookSelector">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">Select Books To Export to PDF</property>
@@ -4308,7 +4122,7 @@ image properties selected.</property>
                 <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <!-- n-columns=2 n-rows=9 -->
+                  <!-- n-columns=2 n-rows=10 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -4347,10 +4161,9 @@ of References:</property>
                       <object class="GtkEntry" id="t_artRefRange">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="activates-default">False</property>
                         <property name="placeholder-text" translatable="yes">e.g. LUK ACT HEB JAS</property>
-                        <signal name="changed" handler="onImageRefRangeChanged" swapped="no"/>
                         <signal name="activate" handler="btnImageRefreshClicked" swapped="no"/>
+                        <signal name="changed" handler="onImageRefRangeChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -4388,13 +4201,12 @@ of References:</property>
                         <property name="name">Image Selection Dialog: Search for an image by keyword</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="activates-default">False</property>
                         <property name="primary-icon-name">edit-find-symbolic</property>
                         <property name="primary-icon-activatable">False</property>
                         <property name="primary-icon-sensitive">False</property>
                         <property name="placeholder-text" translatable="yes">(lamb|sheep)+shepherd</property>
-                        <signal name="changed" handler="onImageSearchChanged" swapped="no"/>
                         <signal name="activate" handler="btnImageRefreshClicked" swapped="no"/>
+                        <signal name="changed" handler="onImageSearchChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -4558,7 +4370,6 @@ appear at the top of the list.</property>
                         <property name="halign">center</property>
                         <property name="margin-top">4</property>
                         <property name="margin-bottom">2</property>
-                        <property name="label"></property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -4713,7 +4524,6 @@ used on websites. </property>
                     <property name="column-spacing">6</property>
                     <child>
                       <object class="GtkLabel" id="lb_imgKeywords">
-                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="valign">start</property>
@@ -4726,7 +4536,6 @@ used on websites. </property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="lb_imgRefs">
-                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="tooltip-text" translatable="yes">Note that if a reference only contains
 a book and chapter number (with no
@@ -4744,7 +4553,6 @@ of the chapter.</property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="lb_imgDesc">
-                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="valign">start</property>
@@ -4757,7 +4565,6 @@ of the chapter.</property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="l_imgKeywords">
-                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">shepherd, sheep, lamb, shoulder, carry</property>
@@ -4771,7 +4578,6 @@ of the chapter.</property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="l_imgRefs">
-                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">MAT 12:15, LUK 22:7; ACT 8:3</property>
@@ -4785,7 +4591,6 @@ of the chapter.</property>
                     </child>
                     <child>
                       <object class="GtkLabel" id="l_imgDesc">
-                        <property name="visible">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
@@ -9892,6 +9697,192 @@ of the Page, or at the top-left Margin.</property>
     <action-widgets>
       <action-widget response="-5">btn_guides_ok</action-widget>
       <action-widget response="-6">btn_guides_cancel</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkListStore" id="ls_imagesets">
+    <columns>
+      <!-- column-name selected -->
+      <column type="gboolean"/>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name artist -->
+      <column type="gchararray"/>
+      <!-- column-name style -->
+      <column type="gchararray"/>
+      <!-- column-name filesize -->
+      <column type="gchararray"/>
+      <!-- column-name license -->
+      <column type="gchararray"/>
+      <!-- column-name description -->
+      <column type="gchararray"/>
+      <!-- column-name url -->
+      <column type="gchararray"/>
+      <!-- column-name license_text -->
+      <column type="gchararray"/>
+      <!-- column-name requires_terms_acceptance -->
+      <column type="gboolean"/>
+      <!-- column-name status_text -->
+      <column type="gchararray"/>
+      <!-- column-name is_selectable -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
+  <object class="GtkDialog" id="dlg_getImageSet">
+    <property name="can-focus">False</property>
+    <property name="title" translatable="yes">PTXprint: Download &amp; Install Image Sets</property>
+    <property name="default-width">900</property>
+    <property name="default-height">400</property>
+    <property name="type-hint">dialog</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">3</property>
+            <property name="margin-right">3</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_imgSet_ok">
+                <property name="label">OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_imgSet_cancel">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-left">8</property>
+            <property name="margin-right">8</property>
+            <property name="margin-start">8</property>
+            <property name="margin-end">8</property>
+            <property name="margin-top">8</property>
+            <property name="margin-bottom">4</property>
+            <property name="orientation">vertical</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">Select one or more image sets to download and install. Hover over License or Description for full details.</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_imgSet_selectAll">
+                <property name="label" translatable="yes">Select All / None</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="draw-indicator">True</property>
+                <signal name="toggled" handler="onImagesetSelectAllToggled" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkTreeView" id="tv_imagesets">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="has-tooltip">True</property>
+                    <property name="model">ls_imagesets</property>
+                    <property name="headers-clickable">False</property>
+                    <property name="enable-grid-lines">horizontal</property>
+                    <signal name="query-tooltip" handler="onImagesetQueryTooltip" swapped="no"/>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLinkButton" id="btn_installFromZip">
+                <property name="label" translatable="yes">Install from ZIP file...</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Install an image set from a local ZIP file.
+Useful for offline installations or shared image sets
+at workshops (avoids repeated large downloads).</property>
+                <property name="halign">start</property>
+                <property name="uri">about:blank</property>
+                <signal name="activate-link" handler="onInstallFromZipActivated" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_imgSet_ok</action-widget>
+      <action-widget response="-6">btn_imgSet_cancel</action-widget>
     </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_impprojects">
@@ -20783,7 +20774,6 @@ publications (so that the book
 is bound on the right hand side).</property>
                                             <property name="halign">start</property>
                                             <property name="draw-indicator">True</property>
-                                            <signal name="toggled" handler="onCoverSettingsChanged" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
@@ -36252,6 +36242,164 @@ output and tweak adjust lists.</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">3</property>
                         <child>
+                          <object class="GtkBox" id="bx_coverRow">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">3</property>
+                            <property name="margin-bottom">3</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="GtkCheckButton" id="c_makeCoverPage">
+                                <property name="label" translatable="yes">Create Cover Page</property>
+                                <property name="name">Create an outer Cover</property>
+                                <property name="width-request">143</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-start">6</property>
+                                <property name="xalign">0</property>
+                                <property name="draw-indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_coverGenerate">
+                                <property name="label" translatable="yes">Cover Wizard...</property>
+                                <property name="name">Generate Cover (Basic settings to create a cover)</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Creating a cover from nothing takes a lot of effort.
+This tool enables you to create various kinds of
+covers which can easily be enhanced. </property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="xalign">0</property>
+                                <signal name="clicked" handler="onCoverWizardClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="valign">end</property>
+                                <property name="margin-left">10</property>
+                                <property name="margin-start">10</property>
+                                <property name="spacing">14</property>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_style_cat:coverback|esb">
+                                    <property name="label">Back Cover</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
+on the Styles tab for the Back Cover.</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to view the Styles tab</property>
+                                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_style_cat:coverspine|esb">
+                                    <property name="label">Spine</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
+on the Styles tab for the Spine.</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to view the Styles tab</property>
+                                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_style_cat:coverfront|esb">
+                                    <property name="label">Front Cover</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
+on the Styles tab for the Front Cover.</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to view the Styles tab</property>
+                                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
+                                    <property name="label">Cover Spread</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
+on the Styles tab for the Front Cover.</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to view the Styles tab</property>
+                                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
                           <!-- n-columns=4 n-rows=1 -->
                           <object class="GtkGrid" id="gr_importFrontPDF">
                             <property name="width-request">710</property>
@@ -36261,7 +36409,6 @@ output and tweak adjust lists.</property>
                             <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
-                            <property name="margin-bottom">3</property>
                             <property name="column-spacing">12</property>
                             <child>
                               <object class="GtkCheckButton" id="c_inclFrontMatter">
@@ -36328,7 +36475,7 @@ cover using the online Canva.com tool (link provided).</property>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">False</property>
-                            <property name="position">0</property>
+                            <property name="position">1</property>
                           </packing>
                         </child>
                         <child>
@@ -36572,7 +36719,7 @@ the style of leader you wish to apply.</property>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">1</property>
+                            <property name="position">2</property>
                           </packing>
                         </child>
                         <child>
@@ -36599,7 +36746,7 @@ between books. For example:
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">2</property>
+                            <property name="position">3</property>
                           </packing>
                         </child>
                         <child>
@@ -36709,7 +36856,7 @@ after any front matter material).</property>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">3</property>
+                            <property name="position">4</property>
                           </packing>
                         </child>
                         <child>
@@ -36778,7 +36925,7 @@ show/edit the Maps module.</property>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">4</property>
+                            <property name="position">5</property>
                           </packing>
                         </child>
                         <child>
@@ -36795,7 +36942,7 @@ show/edit the Maps module.</property>
                             <property name="label-xalign">0.009999999776482582</property>
                             <property name="shadow-type">none</property>
                             <child>
-                              <!-- n-columns=3 n-rows=4 -->
+                              <!-- n-columns=3 n-rows=3 -->
                               <object class="GtkGrid" id="gr_colophon">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -36806,6 +36953,7 @@ show/edit the Maps module.</property>
                                 <property name="column-spacing">6</property>
                                 <child>
                                   <object class="GtkLabel">
+                                    <property name="width-request">148</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Enter your Colophon text here - using standard
@@ -36847,7 +36995,7 @@ in order to get accurate Image Copyright Attribution.</property>
                                 </child>
                                 <child>
                                   <object class="GtkScrolledWindow" id="scroll_colophon">
-                                    <property name="height-request">110</property>
+                                    <property name="height-request">100</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="hexpand">True</property>
@@ -36888,7 +37036,7 @@ but :// used in URLs will still be preserved</property>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
                                     <property name="width">2</property>
-                                    <property name="height">4</property>
+                                    <property name="height">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -36943,17 +37091,6 @@ on its own page - regardless of this setting. </property>
                                     <property name="top-attach">1</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="vexpand">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
                               </object>
                             </child>
                             <child type="label">
@@ -36986,7 +37123,7 @@ on subsequent runs.</property>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">5</property>
+                            <property name="position">6</property>
                           </packing>
                         </child>
                         <child>
@@ -37060,11 +37197,11 @@ file is selected, then these will appear in alphabetical order.</property>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">6</property>
+                            <property name="position">7</property>
                           </packing>
                         </child>
                         <child>
-                          <!-- n-columns=2 n-rows=5 -->
+                          <!-- n-columns=2 n-rows=3 -->
                           <object class="GtkGrid" id="gr_frontmatter">
                             <property name="width-request">710</property>
                             <property name="visible">True</property>
@@ -37100,12 +37237,12 @@ table of variable names and values.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">3</property>
+                                <property name="top-attach">2</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkViewport">
-                                <property name="height-request">160</property>
+                                <property name="height-request">100</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="hexpand">True</property>
@@ -37190,44 +37327,7 @@ table of variable names and values.</property>
                               <packing>
                                 <property name="left-attach">1</property>
                                 <property name="top-attach">0</property>
-                                <property name="height">5</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_delzvar">
-                                <property name="label" translatable="yes">Del</property>
-                                <property name="name">Delete a peripheral variable</property>
-                                <property name="width-request">60</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Delete the currently
-selected variable(s).</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onzvarDel" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_addzvar">
-                                <property name="label" translatable="yes">Add</property>
-                                <property name="name">Add a peripheral variable</property>
-                                <property name="width-request">60</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Add a new variable.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onzvarAdd" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
+                                <property name="height">3</property>
                               </packing>
                             </child>
                             <child>
@@ -37257,21 +37357,71 @@ as they might vary from one publication to another.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="vexpand">True</property>
+                                <property name="halign">end</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_delzvar">
+                                    <property name="label" translatable="yes">Del</property>
+                                    <property name="name">Delete a peripheral variable</property>
+                                    <property name="width-request">60</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Delete the currently
+selected variable(s).</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <signal name="clicked" handler="onzvarDel" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_addzvar">
+                                    <property name="label" translatable="yes">Add</property>
+                                    <property name="name">Add a peripheral variable</property>
+                                    <property name="width-request">60</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Add a new variable.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <signal name="clicked" handler="onzvarAdd" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">4</property>
+                                <property name="top-attach">1</property>
                               </packing>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">7</property>
+                            <property name="position">8</property>
                           </packing>
                         </child>
                       </object>
@@ -37296,13 +37446,13 @@ main scripture pages.</property>
                     </child>
                     <child>
                       <object class="GtkBox" id="tb_Cover">
-                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <property name="valign">start</property>
                         <property name="margin-bottom">6</property>
                         <property name="orientation">vertical</property>
                         <property name="homogeneous">True</property>
-                        <signal name="focus" handler="onGotCoverFocus" swapped="no"/>
                         <child>
                           <object class="GtkFrame">
                             <property name="visible">True</property>
@@ -37313,1117 +37463,7 @@ main scripture pages.</property>
                             <property name="margin-bottom">6</property>
                             <property name="label-xalign">0.019999999552965164</property>
                             <child>
-                              <object class="GtkBox" id="bx_cover">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="orientation">vertical</property>
-                                <child>
-                                  <object class="GtkFrame">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="margin-end">6</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
-                                    <property name="label-xalign">0.019999999552965164</property>
-                                    <child>
-                                      <!-- n-columns=5 n-rows=4 -->
-                                      <object class="GtkGrid" id="gr_spine">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin-left">12</property>
-                                        <property name="margin-right">6</property>
-                                        <property name="margin-start">12</property>
-                                        <property name="margin-end">6</property>
-                                        <property name="margin-top">6</property>
-                                        <property name="margin-bottom">6</property>
-                                        <property name="row-spacing">6</property>
-                                        <property name="column-spacing">8</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">To calculate the spine width you need to
-either use the Weight or Thickness of the
-paper. Select one or the other, but keep in
-mind that the exact thickness (in microns)
-will result in the most accurate calculation.	</property>
-                                            <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Set Paper:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_paperWidthOrThick">
-                                            <property name="name">Set the paper thickness to calculate spine width</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">Set the paper weight (GSM)
-or thickness (microns).</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-top">4</property>
-                                            <property name="margin-bottom">4</property>
-                                            <property name="width-chars">6</property>
-                                            <property name="text" translatable="yes">70</property>
-                                            <property name="xalign">1</property>
-                                            <property name="adjustment">a_paperThickness</property>
-                                            <property name="climb-rate">5</property>
-                                            <property name="value">70</property>
-                                            <signal name="value-changed" handler="onCoverSettingsChanged" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBox" id="fcb_rotateSpineText">
-                                            <property name="name">Orientation (rotation) of cover spine text</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="can-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Adjust the spine 
-text orientation.
-</property>
-                                            <property name="halign">start</property>
-                                            <property name="model">ls_rotateSpineText</property>
-                                            <property name="wrap-width">1</property>
-                                            <property name="has-entry">True</property>
-                                            <property name="entry-text-column">0</property>
-                                            <property name="id-column">1</property>
-                                            <property name="active-id">270</property>
-                                            <signal name="changed" handler="onCoverSettingsChanged" swapped="no"/>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry">
-                                                <property name="can-focus">False</property>
-                                                <property name="width-chars">14</property>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">4</property>
-                                            <property name="top-attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-start">20</property>
-                                            <property name="label" translatable="yes">Rotate Spine:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_coverAdjust">
-                                            <property name="name">Adjust thickness of spine to compensate for cover thickness</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">Adjust the thickness of spine to 
-include the thickness of the cover.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="width-chars">8</property>
-                                            <property name="text" translatable="yes">0.14</property>
-                                            <property name="xalign">1</property>
-                                            <property name="adjustment">a_coverAdjust</property>
-                                            <property name="climb-rate">5</property>
-                                            <property name="digits">2</property>
-                                            <property name="value">0.14</property>
-                                            <signal name="value-changed" handler="onCoverSettingsChanged" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">4</property>
-                                            <property name="top-attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Adjust the thickness of spine to 
-include the thickness of the cover.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-left">20</property>
-                                            <property name="margin-start">20</property>
-                                            <property name="label" translatable="yes">Cover Thickness
-Adjustment (mm):</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_totalPages">
-                                            <property name="name">Total number of pages in publication</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">The number of pages is filled in
-automatically but can also be 
-manually adjusted.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="width-chars">6</property>
-                                            <property name="text" translatable="yes">70</property>
-                                            <property name="xalign">1</property>
-                                            <property name="adjustment">a_totalPages</property>
-                                            <property name="climb-rate">5</property>
-                                            <property name="value">100</property>
-                                            <signal name="value-changed" handler="onCoverSettingsChanged" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkBox">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="orientation">vertical</property>
-                                            <child>
-                                              <object class="GtkRadioButton" id="r_paperCalc_weight">
-                                                <property name="label" translatable="yes">Weight (GSM)</property>
-                                                <property name="name">Set paper weight (GSM) for spine width calculation</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">Weight of the paper being
-used to print the publication.
-Measured in Grams per Square
-Meter (GSM). Normal copy
-paper is around 70-80 GSM.</property>
-                                                <property name="halign">start</property>
-                                                <property name="active">True</property>
-                                                <property name="draw-indicator">True</property>
-                                                <property name="group">r_paperCalc_thick</property>
-                                                <signal name="clicked" handler="onCoverSettingsChanged" swapped="no"/>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkRadioButton" id="r_paperCalc_thick">
-                                                <property name="label" translatable="yes">Thickness (microns)</property>
-                                                <property name="name">Set paper thickness (microns) for spine width calculation</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">To be more precise in the calculation
-of the spine thickness, the precise
-paper thickness can be entered (in 
-micons) rather than relying on GSM.</property>
-                                                <property name="halign">start</property>
-                                                <property name="active">True</property>
-                                                <property name="draw-indicator">True</property>
-                                                <property name="group">r_paperCalc_weight</property>
-                                                <signal name="clicked" handler="onCoverSettingsChanged" swapped="no"/>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_overridePageCount">
-                                            <property name="label" translatable="yes">Override Total Page Count:</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">The number of pages is filled in
-automatically but can also be 
-manually adjusted.</property>
-                                            <property name="halign">end</property>
-                                            <property name="draw-indicator">True</property>
-                                            <signal name="clicked" handler="onOverridePageCountClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">1</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_spineWidth">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">34.526 mm</property>
-                                            <attributes>
-                                              <attribute name="weight" value="bold"/>
-                                              <attribute name="foreground" value="#1a1a5f5fb4b4"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">The width of the spine (mm) is
-automatically calculated using
-the values above.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-left">14</property>
-                                            <property name="margin-start">14</property>
-                                            <property name="label" translatable="yes">Total Spine Width:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkExpander">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <child>
-                                              <!-- n-columns=5 n-rows=1 -->
-                                              <object class="GtkGrid">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="column-spacing">8</property>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="tooltip-text" translatable="yes">If you want the spine graphic or
-colour to spill over onto the back
-cover page, then set the amount
-of overlap here (mm).</property>
-                                                    <property name="label" translatable="yes">Overlap onto
-Back Cover (mm):</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">1</property>
-                                                    <property name="top-attach">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkSpinButton" id="s_spineOverlapBack">
-                                                    <property name="name">Adjust thickness of spine to compensate for cover thickness</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="tooltip-text" translatable="yes">If you want the spine graphic or
-colour to spill over onto the back
-cover page, then set the amount
-of overlap here (mm).</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="width-chars">6</property>
-                                                    <property name="text" translatable="yes">0.0</property>
-                                                    <property name="xalign">1</property>
-                                                    <property name="adjustment">a_spineOverlapBack</property>
-                                                    <property name="climb-rate">0.5</property>
-                                                    <property name="digits">1</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">2</property>
-                                                    <property name="top-attach">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="tooltip-text" translatable="yes">If you want the spine graphic or
-colour to spill over onto the front
-cover page, then set the amount
-of overlap here (mm).</property>
-                                                    <property name="margin-start">17</property>
-                                                    <property name="label" translatable="yes">Overlap onto
-Front Cover (mm):</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">3</property>
-                                                    <property name="top-attach">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkSpinButton" id="s_spineOverlapFront">
-                                                    <property name="name">Adjust thickness of spine to compensate for cover thickness</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="tooltip-text" translatable="yes">If you want the spine graphic or
-colour to spill over onto the front
-cover page, then set the amount
-of overlap here (mm).</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="width-chars">6</property>
-                                                    <property name="text" translatable="yes">0.0</property>
-                                                    <property name="xalign">1</property>
-                                                    <property name="adjustment">a_spineOverlapFront</property>
-                                                    <property name="climb-rate">0.5</property>
-                                                    <property name="digits">1</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">4</property>
-                                                    <property name="top-attach">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="width-request">95</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">0</property>
-                                                    <property name="top-attach">0</property>
-                                                  </packing>
-                                                </child>
-                                              </object>
-                                            </child>
-                                            <child type="label">
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">Spine Overlap</property>
-                                                <attributes>
-                                                  <attribute name="weight" value="bold"/>
-                                                  <attribute name="foreground" value="#72729f9fcfcf"/>
-                                                </attributes>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">3</property>
-                                            <property name="width">5</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">4</property>
-                                            <property name="top-attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child type="label">
-                                      <object class="GtkCheckButton" id="c_inclSpine">
-                                        <property name="label" translatable="yes">Include Spine</property>
-                                        <property name="name">SUse Spine on Cover Page</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw-indicator">True</property>
-                                        <signal name="toggled" handler="onCoverSettingsChanged" swapped="no"/>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox" id="bx_coverPreview">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin-left">6</property>
-                                    <property name="margin-right">6</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="margin-end">6</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
-                                    <property name="vexpand">True</property>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="vexpand">True</property>
-                                        <property name="orientation">vertical</property>
-                                        <property name="spacing">6</property>
-                                        <child>
-                                          <object class="GtkButton" id="btn_coverGenerate">
-                                            <property name="label" translatable="yes">1. Create Cover Settings...</property>
-                                            <property name="name">Generate Cover (Basic settings to create a cover)</property>
-                                            <property name="width-request">170</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Creating a cover from nothing takes a lot of effort.
-This tool enables you to create various kinds of
-covers which can easily be enhanced. </property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="xalign">0</property>
-                                            <signal name="clicked" handler="onGenerateCoverClicked" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_editFrontMatter2">
-                                            <property name="label" translatable="yes">2. Edit Cover Content...</property>
-                                            <property name="name">Edit Front Matter (where cover content is defiined)</property>
-                                            <property name="width-request">170</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
-show the Front Matter file where
-the content for the Cover page
-can be adjusted as needed.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-right">6</property>
-                                            <property name="xalign">0</property>
-                                            <signal name="clicked" handler="editFrontMatterClicked" swapped="no"/>
-                                            <accelerator key="c" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkExpander">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="vexpand">True</property>
-                                            <child>
-                                              <!-- n-columns=2 n-rows=3 -->
-                                              <object class="GtkGrid">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="margin-start">6</property>
-                                                <property name="margin-end">6</property>
-                                                <property name="margin-top">6</property>
-                                                <property name="margin-bottom">6</property>
-                                                <property name="vexpand">True</property>
-                                                <property name="row-spacing">6</property>
-                                                <property name="column-spacing">3</property>
-                                                <child>
-                                                  <object class="GtkSpinButton" id="s_coverArtBleed">
-                                                    <property name="name">Generate cover: Art Bleed setting</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="tooltip-text" translatable="yes">Art Bleed is specifically for hard cover binding
-and is the setting which enables images to go
-beyond the size of the cover in order to wrap
-around the hard cover and stuck down under
-the inner backing sheet. (Units: mm)</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="width-chars">6</property>
-                                                    <property name="text" translatable="yes">5.0</property>
-                                                    <property name="xalign">1</property>
-                                                    <property name="adjustment">a_coverArtBleed</property>
-                                                    <property name="climb-rate">1</property>
-                                                    <property name="digits">1</property>
-                                                    <property name="value">5</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">1</property>
-                                                    <property name="top-attach">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkSpinButton" id="s_coverBleed">
-                                                    <property name="name">Generate cover: Bleed setting</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="tooltip-text" translatable="yes">Bleed is the section of artwork that 
-goes beyond where the paper is cut. 
-This ensures that the image goes right
-to the edge of the cover after it has 
-been trimmed. (Units: mm)</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="width-chars">6</property>
-                                                    <property name="text" translatable="yes">5.0</property>
-                                                    <property name="xalign">1</property>
-                                                    <property name="adjustment">a_coverBleed</property>
-                                                    <property name="climb-rate">1</property>
-                                                    <property name="digits">1</property>
-                                                    <property name="value">5</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">1</property>
-                                                    <property name="top-attach">1</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="tooltip-text" translatable="yes">Bleed is the section of artwork that 
-goes beyond where the paper is cut. 
-This ensures that the image goes right
-to the edge of the cover after it has 
-been trimmed. (Units: mm)</property>
-                                                    <property name="halign">end</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="label" translatable="yes">Bleed:</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">0</property>
-                                                    <property name="top-attach">1</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkCheckButton" id="c_coverCropMarks">
-                                                    <property name="label" translatable="yes">Show Cover Crop Marks</property>
-                                                    <property name="name">Generate cover: Include bleed area and cropmarks</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">When printing and binding books in bulk
-crop marks are usually required to indicate
-where to trim the publication.
-
-Including the spine will force crop marks
-to be shown on the cover page. So if you 
-cannot uncheck this option, then disable 
-the 'Include Spine' setting (above) and retry.</property>
-                                                    <property name="halign">end</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="margin-end">6</property>
-                                                    <property name="margin-top">6</property>
-                                                    <property name="margin-bottom">6</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw-indicator">True</property>
-                                                    <signal name="clicked" handler="onCropMarksClicked" swapped="no"/>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">0</property>
-                                                    <property name="top-attach">0</property>
-                                                    <property name="width">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="tooltip-text" translatable="yes">Art Bleed is specifically for hard cover binding
-and is the setting which enables images to go
-beyond the size of the cover in order to wrap
-around the hard cover and stuck down under
-the inner backing sheet. (Units: mm)</property>
-                                                    <property name="halign">end</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="label" translatable="yes">Art Bleed:</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">0</property>
-                                                    <property name="top-attach">2</property>
-                                                  </packing>
-                                                </child>
-                                              </object>
-                                            </child>
-                                            <child type="label">
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="margin-end">30</property>
-                                                <property name="label" translatable="yes">Crop Marks + Bleed Settings</property>
-                                                <attributes>
-                                                  <attribute name="weight" value="bold"/>
-                                                  <attribute name="foreground" value="#72729f9ecfcf"/>
-                                                </attributes>
-                                              </object>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <object class="GtkBox">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">end</property>
-                                            <property name="margin-start">10</property>
-                                            <child>
-                                              <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
-                                                <property name="label">Cover Spread</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="focus-on-click">False</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
-on the Styles tab for the Front Cover.</property>
-                                                <property name="halign">center</property>
-                                                <property name="valign">end</property>
-                                                <property name="margin-end">10</property>
-                                                <property name="relief">none</property>
-                                                <property name="uri">Click to view the Styles tab</property>
-                                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLinkButton" id="lb_style_cat:coverspine|esb">
-                                                <property name="label">Spine</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="focus-on-click">False</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
-on the Styles tab for the Spine.</property>
-                                                <property name="halign">center</property>
-                                                <property name="valign">center</property>
-                                                <property name="margin-start">10</property>
-                                                <property name="relief">none</property>
-                                                <property name="uri">Click to view the Styles tab</property>
-                                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">True</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">4</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkViewport" id="vp_coverBack">
-                                        <property name="width-request">180</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <child>
-                                          <object class="GtkEventBox" id="eb_back">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <signal name="button-release-event" handler="editCoverSidebarStyle" swapped="no"/>
-                                            <child>
-                                              <object class="GtkBox" id="bx_LHScover">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="hexpand">True</property>
-                                                <property name="orientation">vertical</property>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="vexpand">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_coverBackBlurb1">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="label" translatable="yes">Back Cover</property>
-                                                    <attributes>
-                                                      <attribute name="weight" value="bold"/>
-                                                      <attribute name="stretch" value="expanded"/>
-                                                      <attribute name="scale" value="1.2"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">1</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_coverBackBlurb2">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="label" translatable="yes">
-The text for this
-section can be set
-in the Front Matter
-settings of the
-View+Edit tab.
-</property>
-                                                    <attributes>
-                                                      <attribute name="weight" value="bold"/>
-                                                      <attribute name="stretch" value="expanded"/>
-                                                      <attribute name="scale" value="1"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="vexpand">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">6</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_coverBackISBN">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="halign">end</property>
-                                                    <property name="margin-start">10</property>
-                                                    <property name="margin-end">10</property>
-                                                    <property name="label" translatable="yes">ISBN Bar
-  Code</property>
-                                                    <attributes>
-                                                      <attribute name="weight" value="book"/>
-                                                      <attribute name="scale" value="0.90000000000000002"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">7</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLinkButton" id="lb_style_cat:coverback|esb">
-                                                    <property name="label">Back Cover</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="focus-on-click">False</property>
-                                                    <property name="receives-default">True</property>
-                                                    <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
-on the Styles tab for the Back Cover.</property>
-                                                    <property name="halign">center</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="relief">none</property>
-                                                    <property name="uri">Click to view the Styles tab</property>
-                                                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">8</property>
-                                                  </packing>
-                                                </child>
-                                              </object>
-                                            </child>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkViewport" id="vp_spine">
-                                        <property name="width-request">20</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">center</property>
-                                        <child>
-                                          <object class="GtkEventBox" id="eb_spine">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <signal name="button-release-event" handler="editCoverSidebarStyle" swapped="no"/>
-                                            <child>
-                                              <object class="GtkBox">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="orientation">vertical</property>
-                                                <child>
-                                                  <object class="GtkLabel" id="lb_spineTitle">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="vexpand">True</property>
-                                                    <property name="label" translatable="yes">Main Title   -   Subtitle</property>
-                                                    <property name="justify">center</property>
-                                                    <property name="angle">270</property>
-                                                    <property name="xalign">0.5</property>
-                                                    <property name="yalign">0.5</property>
-                                                    <attributes>
-                                                      <attribute name="weight" value="bold"/>
-                                                      <attribute name="stretch" value="expanded"/>
-                                                      <attribute name="scale" value="0.80000000000000004"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <placeholder/>
-                                                </child>
-                                              </object>
-                                            </child>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkViewport" id="vp_coverFront">
-                                        <property name="width-request">180</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <child>
-                                          <object class="GtkEventBox" id="eb_front">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <signal name="button-release-event" handler="editCoverSidebarStyle" swapped="no"/>
-                                            <child>
-                                              <object class="GtkBox" id="bx_RHScover">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="hexpand">True</property>
-                                                <property name="orientation">vertical</property>
-                                                <property name="homogeneous">True</property>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="vexpand">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_coverMainRHS">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="label" translatable="yes">Main Title</property>
-                                                    <attributes>
-                                                      <attribute name="weight" value="bold"/>
-                                                      <attribute name="stretch" value="expanded"/>
-                                                      <attribute name="scale" value="2"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">1</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_coverSubtitleRHS">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="label" translatable="yes">Subtitle</property>
-                                                    <attributes>
-                                                      <attribute name="weight" value="bold"/>
-                                                      <attribute name="stretch" value="expanded"/>
-                                                      <attribute name="scale" value="1.3999999999999999"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="vexpand">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">3</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="vexpand">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">4</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="vexpand">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">5</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="vexpand">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">6</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="l_coverLowerTitleRHS">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="label" translatable="yes">Optional Lower Title</property>
-                                                    <attributes>
-                                                      <attribute name="weight" value="book"/>
-                                                      <attribute name="scale" value="1.2"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">7</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLinkButton" id="lb_style_cat:coverfront|esb">
-                                                    <property name="label">Front Cover</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="focus-on-click">False</property>
-                                                    <property name="receives-default">True</property>
-                                                    <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
-on the Styles tab for the Front Cover.</property>
-                                                    <property name="halign">center</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="relief">none</property>
-                                                    <property name="uri">Click to view the Styles tab</property>
-                                                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">8</property>
-                                                  </packing>
-                                                </child>
-                                              </object>
-                                            </child>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">3</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkCheckButton" id="c_makeCoverPage">
-                                <property name="label" translatable="yes">Create Cover</property>
-                                <property name="name">Create an outer Cover</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                <signal name="toggled" handler="onCoverSettingsChanged" swapped="no"/>
-                              </object>
+                              <placeholder/>
                             </child>
                           </object>
                           <packing>
@@ -38439,6 +37479,7 @@ on the Styles tab for the Front Cover.</property>
                     </child>
                     <child type="tab">
                       <object class="GtkLabel" id="lb_Cover">
+                        <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
                         <property name="no-show-all">True</property>
                         <property name="tooltip-text" translatable="yes">Set parameters for the cover

@@ -283,7 +283,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Printers lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
+_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover tb_Printers lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -393,9 +393,7 @@ _sensitivities = {
     "c_txlQuestionsInclude":   ["gr_txlQuestions"],
     # "c_txlQuestionsOverview":  ["c_txlBoldOverview"],
     "c_filterCats":            ["gr_filterCats"],
-    "c_makeCoverPage":         ["bx_cover", "c_coverSeparatePDF"],
-    "c_inclSpine":             ["gr_spine"],
-    "c_overridePageCount":     ["s_totalPages"],
+    "c_makeCoverPage":         ["btn_coverGenerate"],
     "r_impSource": {
         "r_impSource_pdf":     ["btn_impSource_pdf", "lb_impSource_pdf"],
         "r_impSource_config":  ["fcb_impProject", "ecb_impConfig", "l_impProject", "l_impConfig", ]},
@@ -413,11 +411,8 @@ _sensitivities = {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
         "r_sbiPosn_cutout":    ["fcb_sbi_posn_cutout", "s_sbiCutoutLines", "l_sbiCutoutLines"]},
-    "c_coverBorder":           ["fcb_coverBorder", "col_coverBorder", "l_coverBorder"],
-    "c_coverShading":          ["col_coverShading", "s_coverShadingAlpha", "l_coverShading"],
-    "c_coverSelectImage":      ["fcb_coverImageSize", "c_coverImageFront", "s_coverImageAlpha", "btn_coverSelectImage", "lb_coverImageFilename"],
     "c_layoutAnalysis":        ["btn_findButton"],
-    "c_styTextProperties":     ["scr_styleSettings"],
+    "c_styTextProperties":     ["scr_styleSettings"]
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -431,7 +426,6 @@ _nonsensitivities = {
     # "c_lockFontSize2Baseline": ["l_linespacing", "s_linespacing", "btn_adjust_spacing"],
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     # "c_decorator_endayah" :    ["lb_style_v"],
-    "c_inclSpine":             ["c_coverCropMarks"],
     "c_lockUI4Layout":         ["ecb_pagesize", "c_mirrorpages", "s_indentUnit", "s_fontsize", "btn_adjust_spacing",
                                 "c_lockFontSize2Baseline", "c_pagegutter", "s_pagegutter", "s_linespacing", 
                                 "btn_adjust_spacing", "c_outerGutter", "c_doublecolumn", "s_colgutterfactor", 
@@ -547,7 +541,7 @@ _dlgtriggers = {
     "dlg_overlayCredit":    "onOverlayCreditClicked",
     "dlg_sbPosition":       "onSBpositionClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
-    "dlg_generateCover":    "onGenerateCoverClicked",
+    # "dlg_generateCover":    "onGenerateCoverClicked",
     "dlg_borders":          "onSBborderClicked",
     # "dlg_DBLbundle":        "onDBLbundleClicked",
     # "dlg_preview":          "????",
@@ -2497,14 +2491,17 @@ class GtkViewModel(ViewModel):
                     continue
                 state = self.get(k)
                 for w in v:
-                    # print(w)
-                    self.builder.get_object(w).set_sensitive(state)
+                    obj = self.builder.get_object(w)
+                    if obj is not None:
+                        obj.set_sensitive(state)
             for k, v in _nonsensitivities.items():
                 if k.startswith("r_"):
                     continue
                 state = not self.get(k)
                 for w in v:
-                    self.builder.get_object(w).set_sensitive(state)
+                    obj = self.builder.get_object(w)
+                    if obj is not None:
+                        obj.set_sensitive(state)
         self.colorTabs()
         self.updateMarginGraphics()
         self.sensiVisible('c_lockUI4Layout') # Why does this do nothing? Is it in the wrong place?
@@ -3850,7 +3847,7 @@ class GtkViewModel(ViewModel):
             'NTS': 'Footnotes, Cross-references, Study Notes',
             'DIG': 'Diglot',
             'PIC': 'Pictures, Figures, Images, Sidebars', 
-            'PDF': 'PDF Options, Show/Hide',
+            'PDF': 'PDF Options, Covers, Show/Hide',
             'PRV': 'Preview Pane: Adjustment and Analysis Settings',
             'OTH': 'Other Miscellaneous Settings' }
 
@@ -6354,7 +6351,10 @@ class GtkViewModel(ViewModel):
                 startfile(fpath)
         dialog.hide()
         
-    def onGenerateCoverClicked(self, btn):
+    def onCoverWizardClicked():
+        return  # TODO: implement cover wizard dialog
+    
+    def _on_OLD_GenerateCoverClicked(self, btn):
         metadata = {"langiso":       "<Ethnologue code>", 
                     "languagename":  "<Language>", 
                     "maintitle":     "<Title>", 
@@ -7012,59 +7012,6 @@ class GtkViewModel(ViewModel):
             l = f"{ov}\n{ex}" if overview else ex
         self.builder.get_object("l_txlExample").set_label(l)
 
-    def onCoverSettingsChanged(self, btn):
-        if self.sensiVisible("c_makeCoverPage") and not self.get('c_frontmatter'):
-            self.doStatus(_("Local Front Matter has been enabled as it is required for printing a Cover."))
-            self.set('c_frontmatter', True)
-        self.colorTabs()
-        hbx = self.builder.get_object("bx_coverPreview")
-        b = self.builder.get_object("vp_coverBack")
-        s = self.builder.get_object("vp_spine")
-        f = self.builder.get_object("vp_coverFront")
-        for v in [b,s,f]:
-            hbx.remove(v)
-        if self.get("c_RTLbookBinding"):
-            for v in [b,s,f]:
-                hbx.pack_end(v, False, False, 0)
-        else:
-            for v in [f,s,b]:
-                hbx.pack_end(v, False, False, 0)
-        
-        rotateDegrees = float(self.get("fcb_rotateSpineText"))
-        self.builder.get_object("lb_spineTitle").set_angle(rotateDegrees)
-        if rotateDegrees != 0:
-            self.builder.get_object("lb_spineTitle").set_label(_("Main Title   -   Subtitle"))
-        else:
-            self.builder.get_object("lb_spineTitle").set_label(_("Main\nTitle\n\nSubtitle"))
-        if rotateDegrees == 90:
-            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'l')
-        elif rotateDegrees == 270:
-            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'r')
-        else:
-            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'F')
-        
-        pgs = float(self.get("s_totalPages"))
-        adj = float(self.get("s_coverAdjust"))
-        thck = float(self.get("s_paperWidthOrThick"))
-        if self.get("r_paperCalc") == "weight":
-            # Value below is from Pretore's paper thickness calculations 
-            #                     (GSM/um, 36/43, 40/47, 50/60, 60/70)
-            thck = thck / .845 
-        self.spine = (thck * pgs / 2000) + adj
-
-        showSpine = self.sensiVisible("c_inclSpine")
-        self.set('c_coverCropMarks', showSpine)
-        for w in ["vp_spine", "lb_style_cat:coverspine|esb"]:
-            self.builder.get_object(w).set_visible(showSpine)
-            
-        self.builder.get_object("lb_style_cat:coverspine|esb").set_visible(self.get("c_inclSpine"))
-        # Calculate the actual page width (in mm) based on page size
-        pw = convert2mm(re.sub(r"^(.*?)\s*[,xX].*$", r"\1", self.get("ecb_pagesize") or "148mm"))
-        # 180 is the width (pixels) of the front/back page in the UI
-        thick = self.spine * 180 / pw
-        self.builder.get_object("vp_spine").set_size_request(thick, -1)
-        self.builder.get_object("l_spineWidth").set_label(f"{self.spine:.3f}mm")
-
     def editCoverSidebarStyle(self, btn, foo):
         posn = Gtk.Buildable.get_name(btn)[3:]
         self.styleEditor.selectMarker(f"cat:cover{posn}|esb")
@@ -7226,11 +7173,6 @@ Thank you,
             logger.debug(f"Opening Pre-populated Permission Request Form: {url}")
             self.openURL(url)
             
-    def onOverridePageCountClicked(self, btn):
-        override = self.sensiVisible('c_overridePageCount')
-        if not override:
-            self.set('s_totalPages', self.getPageCount(), mod=False)
-
     def getPageCount(self):
         if self.getBooks() == [] or self.project is None:
             return
@@ -7278,23 +7220,6 @@ Thank you,
                 startfile(techref)
                 
         logger.debug(f"{techref=}")
-
-    def onCropMarksClicked(self, btn):
-        if not self.get("c_coverCropMarks"):
-            self.set("s_coverBleed", 0, mod=False)
-            self.set("s_coverArtBleed", 0, mod=False)
-
-    def onGotCoverFocus(self, widget, event):
-        if not self.get('c_overridePageCount'):
-            self.set('s_totalPages', self.getPageCount(), mod=False)
-            
-    def isCoverTabOpen(self):
-        if not self.get("c_makeCoverPage"):
-            return False
-        if self.builder.get_object("nbk_Main").get_current_page() == self.notebooks["Main"].index("tb_Cover"):
-            return True
-        else:
-            return False
 
     def onGetPicturesClicked(self, btn): # Catalogue...
         dialog = self.builder.get_object("dlg_imagePicker")
