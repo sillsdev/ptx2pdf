@@ -2763,10 +2763,42 @@ If in doubt, click Cancel.</property>
       <action-widget response="-6">btn_gnr8pl_cancel</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkListStore" id="ls_imagesets">
+    <columns>
+      <!-- column-name selected -->
+      <column type="gboolean"/>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name artist -->
+      <column type="gchararray"/>
+      <!-- column-name style -->
+      <column type="gchararray"/>
+      <!-- column-name filesize -->
+      <column type="gchararray"/>
+      <!-- column-name license -->
+      <column type="gchararray"/>
+      <!-- column-name description -->
+      <column type="gchararray"/>
+      <!-- column-name url -->
+      <column type="gchararray"/>
+      <!-- column-name license_text -->
+      <column type="gchararray"/>
+      <!-- column-name requires_terms_acceptance -->
+      <column type="gboolean"/>
+      <!-- column-name status_text -->
+      <column type="gchararray"/>
+      <!-- column-name is_selectable -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
   <object class="GtkDialog" id="dlg_getImageSet">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Install an Image Set...</property>
+    <property name="title" translatable="yes">PTXprint: Download &amp; Install Image Sets</property>
     <property name="type-hint">dialog</property>
+    <property name="default-width">760</property>
+    <property name="default-height">400</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
@@ -2821,26 +2853,21 @@ If in doubt, click Cancel.</property>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="margin-left">6</property>
-            <property name="margin-right">6</property>
-            <property name="margin-start">6</property>
-            <property name="margin-end">6</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
+            <property name="margin-left">8</property>
+            <property name="margin-right">8</property>
+            <property name="margin-start">8</property>
+            <property name="margin-end">8</property>
+            <property name="margin-top">8</property>
+            <property name="margin-bottom">4</property>
             <property name="orientation">vertical</property>
+            <property name="spacing">6</property>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="margin-left">12</property>
-                <property name="margin-right">12</property>
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
-                <property name="margin-top">12</property>
-                <property name="margin-bottom">12</property>
-                <property name="label" translatable="yes">Illustrations have been packaged 
-for use in Scripture publications.</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">Select one or more image sets to download and install. Hover over License or Description for full details.</property>
+                <property name="wrap">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2849,147 +2876,13 @@ for use in Scripture publications.</property>
               </packing>
             </child>
             <child>
-              <!-- n-columns=2 n-rows=4 -->
-              <object class="GtkGrid">
+              <object class="GtkCheckButton" id="c_imgSet_selectAll">
+                <property name="label" translatable="yes">Select All / None</property>
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="margin-left">8</property>
-                <property name="margin-right">8</property>
-                <property name="margin-start">8</property>
-                <property name="margin-end">8</property>
-                <property name="margin-top">8</property>
-                <property name="margin-bottom">8</property>
-                <property name="row-spacing">6</property>
-                <property name="column-spacing">6</property>
-                <child>
-                  <object class="GtkButton" id="btn_locateImageSet">
-                    <property name="label" translatable="yes">Locate...</property>
-                    <property name="name">Locate DBL bundle</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">After downloading an Image Set
-you need to tell PTXprint where the
-.zip file is saved so it can be installed.</property>
-                    <property name="use-underline">True</property>
-                    <signal name="clicked" handler="onLocateImageSetClicked" swapped="no"/>
-                    <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Locate the downloaded Image Set 
-file (.zip) which is likely to be located 
-in your 'Downloads' folder.
-
-DO NOT UNZIP THE FILE - this will
-be done for you automatically.</property>
-                    <property name="halign">end</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Option 2:&lt;/b&gt; Locate an
-Image Set .zip File
-to be installed:</property>
-                    <property name="use-markup">True</property>
-                    <property name="justify">right</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="lb_imageSetFilename">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="opacity">0.80</property>
-                    <property name="halign">start</property>
-                    <property name="justify">right</property>
-                    <property name="wrap">True</property>
-                    <property name="wrap-mode">char</property>
-                    <property name="ellipsize">middle</property>
-                    <property name="max-width-chars">50</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">If you don't already have appropriate
-scripture illustrations, then you can
-download an Image Set which contains
-low-resolution illustrations for trial
-publications from one of the links.
-
-If you already have an Image Set (.zip)
-file downloaded then skip this first step.</property>
-                    <property name="halign">end</property>
-                    <property name="margin-left">6</property>
-                    <property name="margin-start">6</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Option 1:&lt;/b&gt; Download and
-Install Image Set from 
-the Online Repository</property>
-                    <property name="use-markup">True</property>
-                    <property name="justify">right</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="label" translatable="yes">Filename:</property>
-                    <property name="justify">right</property>
-                    <attributes>
-                      <attribute name="foreground" value="#808000008080"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label" translatable="yes">OR</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="c_downloadImages">
-                    <property name="label" translatable="yes">Download Sample
-B/W Image Set</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="draw-indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="draw-indicator">True</property>
+                <signal name="toggled" handler="onImagesetSelectAllToggled" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2997,9 +2890,54 @@ B/W Image Set</property>
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="hscrollbar-policy">automatic</property>
+                <property name="vscrollbar-policy">automatic</property>
+                <property name="shadow-type">in</property>
+                <child>
+                  <object class="GtkTreeView" id="tv_imagesets">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="model">ls_imagesets</property>
+                    <property name="headers-visible">True</property>
+                    <property name="headers-clickable">False</property>
+                    <property name="enable-grid-lines">horizontal</property>
+                    <property name="has-tooltip">True</property>
+                    <signal name="query-tooltip" handler="onImagesetQueryTooltip" swapped="no"/>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLinkButton" id="btn_installFromZip">
+                <property name="label" translatable="yes">Install from ZIP file...</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="uri">about:blank</property>
+                <property name="tooltip-text" translatable="yes">Install an image set from a local ZIP file.
+Useful for offline installations or shared image sets
+at workshops (avoids repeated large downloads).</property>
+                <property name="halign">start</property>
+                <signal name="activate-link" handler="onInstallFromZipActivated" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
           </object>
           <packing>
-            <property name="expand">False</property>
+            <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>

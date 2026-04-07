@@ -5850,74 +5850,209 @@ class GtkViewModel(ViewModel):
             return False
 
     def onImageSetClicked(self, btn):
+        if not hasattr(self, '_imagesetTvSetupDone'):
+            self._setupImagesetTreeview()
+            self._imagesetTvSetupDone = True
+        self._populateImagesetList()
+        # Reset Select All/None toggle without firing the handler
+        sel_all = self.builder.get_object("c_imgSet_selectAll")
+        sel_all.handler_block_by_func(self.onImagesetSelectAllToggled)
+        sel_all.set_active(False)
+        sel_all.handler_unblock_by_func(self.onImagesetSelectAllToggled)
+
         dialog = self.builder.get_object("dlg_getImageSet")
         response = dialog.run()
         dialog.hide()
-        if response == Gtk.ResponseType.OK:
-            if self.get("c_downloadImages"):
-                imgset = "ccsampleimages.zip" # this will eventually be a variable, or even a list of img sets to download.
-                self.doStatus(_("Downloading Image Set: '{}'   Please wait...".format(imgset)))
+        if response != Gtk.ResponseType.OK:
+            return
+
+        store = self.builder.get_object("ls_imagesets")
+        # COL: 0=selected, 1=id, 7=description, 8=url, 9=license_text, 10=requires_terms
+        selected_rows = [(row[1], row[8], row[10]) for row in store if row[0] and row[12]]
+        if not selected_rows:
+            return
+
+        any_installed = False
+        for imgset_id, url, requires_terms in selected_rows:
+            filename = url.split("/")[-1]
+            self.doStatus(_("Downloading '{}' — please wait...".format(imgset_id)))
+            while Gtk.events_pending():
+                Gtk.main_iteration()
+            try:
+                urlfile = urllib.request.urlopen(url)
+                tzdir = extraDataDir("imagesets", "../zips", create=True)
+                zfile = os.path.join(tzdir, filename)
+                with open(zfile, 'wb') as f:
+                    f.write(urlfile.read())
+            except urllib.error.URLError:
+                self.doStatus(_("ERROR: Download of '{}' failed. Check internet connection.".format(imgset_id)))
                 while Gtk.events_pending():
                     Gtk.main_iteration()
-                try:
-                    urlfile = urllib.request.urlopen(r"https://software.sil.org/downloads/r/ptxprint/{}".format(imgset))
-                    tzdir = extraDataDir("imagesets", "../zips", create=True)
-                    zfile = os.path.join(tzdir, imgset)
-                    with open(zfile, 'wb') as f:
-                        f.write(urlfile.read())
-                except urllib.error.URLError:
-                    self.doStatus(_("ERROR: Downloading Image Set failed. Check internet connection and try again."))
-                    while Gtk.events_pending():
-                        Gtk.main_iteration()
-                    return
-                self.onHideStatusMsgClicked(None)
-            else:
-                zfile = self.get("btn_locateImageSet")
+                continue
+
             imgsetname = unpackImageset(zfile, self.project.path)
-            if imgsetname is not None and imgsetname != "":
+            if imgsetname is None:
+                self.doError("Failed Image Set", secondary=f"'{imgset_id}' failed to download and/or install.")
+                continue
+            if imgsetname == "":
+                f = os.path.join(self.project.path, "local", "figures")
+                self.doStatus(_("Unzipped images to {}".format(f)))
+                continue
+
+            if requires_terms:
                 uddir = extraDataDir("imagesets", imgsetname, create=False)
                 if not self.displayReadmeFile(imgsetname, uddir):
-                    # remove the unpacked imageset!
                     try:
-                        if len(uddir):
+                        if uddir and len(uddir):
                             rmtree(uddir)
-                            self.doStatus(_("Image Set '{}' removed due to not agreeing to terms and conditions of use.".format(imgsetname)))
-                        return
+                            self.doStatus(_("Image Set '{}' removed — terms not accepted.".format(imgsetname)))
                     except OSError:
-                        self.doStatus(_("Cannot delete folder from disk! Image Set: {}".format(imgsetname)))
-                else:
-                    # add imgsetname to ecb_artPictureSet before selecting it.
-                    lsp = self.builder.get_object("ecb_artPictureSet")
-                    allimgsets = [x[0] for x in lsp.get_model()]
-                    # Check if imgsetname is already in the list (case insensitive)
-                    if imgsetname.casefold() not in [p.casefold() for p in allimgsets]:
-                        for i, p in enumerate(allimgsets):
-                            if imgsetname.casefold() > p.casefold():
-                                lsp.insert_text(i, imgsetname)
-                                break
-                            else:
-                                lsp.append_text(imgsetname)
-                    self.set("ecb_artPictureSet", imgsetname, mod=False)
-                    self.doStatus(_("Installed the downloaded Image Set: {}".format(imgsetname)))
-                    self.onGetPicturesClicked(None)
-            elif imgsetname == "":
-                f = os.path.join(self.project.path, "local","figures")
-                self.doStatus(_("Unzipped images to {}".format(f)))
-                pass
+                        self.doStatus(_("Cannot delete folder! Image Set: {}".format(imgsetname)))
+                    continue
+
+            self._registerInstalledImageset(imgsetname)
+            any_installed = True
+            self.doStatus(_("Installed Image Set: {}".format(imgsetname)))
+
+        if any_installed:
+            self.onGetPicturesClicked(None)
+        self.onHideStatusMsgClicked(None)
+
+    def _setupImagesetTreeview(self):
+        tv = self.builder.get_object("tv_imagesets")
+        store = self.builder.get_object("ls_imagesets")
+        tv.set_model(store)
+
+        # Column indices in ls_imagesets:
+        # 0=selected, 1=id, 2=name, 3=artist, 4=style, 5=filesize,
+        # 6=license, 7=description, 8=url, 9=license_text,
+        # 10=requires_terms, 11=status_text, 12=is_selectable
+
+        r_toggle = Gtk.CellRendererToggle()
+        r_toggle.connect("toggled", self._onImagesetRowToggled)
+        col_sel = Gtk.TreeViewColumn("", r_toggle)
+        col_sel.add_attribute(r_toggle, "active", 0)
+        col_sel.add_attribute(r_toggle, "activatable", 12)
+        tv.append_column(col_sel)
+
+        for title, col_idx, min_w, expand in [
+            ("Status",      11, 70,  False),
+            ("Name",         2, 130, False),
+            ("Artist",       3, 90,  False),
+            ("Style",        4, 60,  False),
+            ("Size",         5, 60,  False),
+            ("License",      6, 90,  False),
+            ("Description",  7, 120, True),
+        ]:
+            r = Gtk.CellRendererText()
+            if expand:
+                r.set_property("ellipsize", Pango.EllipsizeMode.END)
+            col = Gtk.TreeViewColumn(title, r, text=col_idx)
+            col.set_min_width(min_w)
+            col.set_expand(expand)
+            col.set_resizable(True)
+            tv.append_column(col)
+
+    def _onImagesetRowToggled(self, renderer, path):
+        store = self.builder.get_object("ls_imagesets")
+        it = store.get_iter(path)
+        if store.get_value(it, 12):  # is_selectable
+            store.set_value(it, 0, not store.get_value(it, 0))
+
+    def onImagesetSelectAllToggled(self, btn):
+        store = self.builder.get_object("ls_imagesets")
+        active = btn.get_active()
+        for row in store:
+            if row[12]:  # is_selectable
+                row[0] = active
+
+    def onImagesetQueryTooltip(self, tv, x, y, keyboard_mode, tooltip):
+        if keyboard_mode:
+            path, col = tv.get_cursor()
+            if path is None:
+                return False
+        else:
+            bx, by = tv.convert_widget_to_bin_window_coords(x, y)
+            result = tv.get_path_at_pos(bx, by)
+            if result is None:
+                return False
+            path, col, _cx, _cy = result
+
+        store = tv.get_model()
+        it = store.get_iter(path)
+        cols = tv.get_columns()
+        if col not in cols:
+            return False
+        col_idx = cols.index(col)
+
+        # Visual column order: 0=toggle, 1=status, 2=name, 3=artist,
+        #                      4=style, 5=size, 6=license, 7=description
+        if col_idx == 6:    # License column → show full license_text (model col 9)
+            text = store.get_value(it, 9)
+        elif col_idx == 7:  # Description column → show full description (model col 7)
+            text = store.get_value(it, 7)
+        else:
+            return False
+
+        if not text:
+            return False
+        tooltip.set_text(text)
+        tv.set_tooltip_cell(tooltip, path, col, None)
+        return True
+
+    def _populateImagesetList(self):
+        store = self.builder.get_object("ls_imagesets")
+        store.clear()
+        catalog = self._loadImagesetsCatalog()
+        installed = set(getImageSets() or [])
+        for item in catalog:
+            imgid = item.get("id", "")
+            already_installed = imgid in installed
+            store.append([
+                False,                                              # 0  selected
+                imgid,                                             # 1  id
+                item.get("name", ""),                              # 2  name
+                item.get("artist", ""),                            # 3  artist
+                item.get("style", ""),                             # 4  style
+                item.get("filesize", ""),                          # 5  filesize
+                item.get("license", ""),                           # 6  license
+                item.get("description", ""),                       # 7  description
+                item.get("url", ""),                               # 8  url
+                item.get("license_text", ""),                      # 9  license_text
+                item.get("requires_terms_acceptance", False),      # 10 requires_terms
+                "\u2713 Installed" if already_installed else "",   # 11 status_text
+                not already_installed,                             # 12 is_selectable
+            ])
+
+    def _loadImagesetsCatalog(self):
+        catalog_path = os.path.join(os.path.dirname(__file__), "imagesets.json")
+        try:
+            with open(catalog_path, 'r', encoding='utf-8') as f:
+                return json.load(f).get("imagesets", [])
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+            return []
+
+    def _registerInstalledImageset(self, imgsetname):
+        """Add imgsetname to the picture-set combo box if not already present."""
+        lsp = self.builder.get_object("ecb_artPictureSet")
+        allimgsets = [x[0] for x in lsp.get_model()]
+        if imgsetname.casefold() not in [p.casefold() for p in allimgsets]:
+            for i, p in enumerate(allimgsets):
+                if imgsetname.casefold() < p.casefold():
+                    lsp.insert_text(i, imgsetname)
+                    break
             else:
-                if self.get("c_downloadImages"):
-                    self.doError("Failed Image Set", secondary="The Image Set failed to download and/or install.")
-                else:
-                    self.doError("Faulty Image Set", secondary="Please check that you have selected a valid Image Set (ZIP) file.")
+                lsp.append_text(imgsetname)
+        self.set("ecb_artPictureSet", imgsetname, mod=False)
 
     def displayReadmeFile(self, imgsetname, uddir):
-        readme_path = os.path.join(uddir ,"readme.txt")
+        readme_path = os.path.join(uddir, "readme.txt")
         try:
             with open(readme_path, 'r') as f:
                 readme_content = f.read()
-        except FileNotFoundError: # ?Why don't we assume that if there is no readme.txt file, that the images are free to use?
-            self.doError("Error: readme.txt not found.", secondary=f"The file containing the terms and conditions of use for these images could not be located. Therefore the '{imgsetname}' image set will be deleted.")
-            return False # ?Should we invert this behaviour?
+        except FileNotFoundError:
+            # No readme.txt — treat as freely available; no terms to accept.
+            return True
 
         dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL,
             Gtk.MessageType.INFO, Gtk.ButtonsType.YES_NO, "readme")
@@ -5926,10 +6061,41 @@ class GtkViewModel(ViewModel):
         dialog.set_property("text", f"\nImage Set: {imgsetname}\n\n" + readme_content)
         response = dialog.run()
         dialog.destroy()
-        if response == Gtk.ResponseType.YES:
-            return True
+        return response == Gtk.ResponseType.YES
+
+    def onInstallFromZipActivated(self, btn):
+        """Handler for the 'Install from ZIP file...' link button in dlg_getImageSet."""
+        imgsetfile = self.fileChooser("Select an Image Set ZIP file",
+                filters={"Image Sets": {"patterns": ["*.zip"], "mime": "text/plain", "default": True},
+                         "All Files": {"pattern": "*"}},
+                multiple=False, basedir=os.path.join(self.project.path, "Bundles"))
+        if imgsetfile is None:
+            return True  # suppress browser open
+
+        zfile = imgsetfile[0]
+        imgsetname = unpackImageset(zfile, self.project.path)
+        if imgsetname is not None and imgsetname != "":
+            uddir = extraDataDir("imagesets", imgsetname, create=False)
+            if not self.displayReadmeFile(imgsetname, uddir):
+                try:
+                    if uddir and len(uddir):
+                        rmtree(uddir)
+                        self.doStatus(_("Image Set '{}' removed — terms not accepted.".format(imgsetname)))
+                except OSError:
+                    self.doStatus(_("Cannot delete folder! Image Set: {}".format(imgsetname)))
+                return True
+            self._registerInstalledImageset(imgsetname)
+            self.doStatus(_("Installed Image Set: {}".format(imgsetname)))
+            self.onGetPicturesClicked(None)
+            # Refresh the list so the newly installed set shows as "✓ Installed"
+            self._populateImagesetList()
+        elif imgsetname == "":
+            f = os.path.join(self.project.path, "local", "figures")
+            self.doStatus(_("Unzipped images to {}".format(f)))
         else:
-            return False
+            self.doError("Faulty Image Set",
+                         secondary="Please check that you have selected a valid Image Set (ZIP) file.")
+        return True  # suppress browser open
 
     def onLocateDBLbundleClicked(self, btn):
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
@@ -5956,21 +6122,6 @@ class GtkViewModel(ViewModel):
             self.set("t_DBLprojName", "", mod=False)
             self.DBLfile = None
             self.builder.get_object("btn_locateDBLbundle").set_tooltip_text("")
-    
-    def onLocateImageSetClicked(self, btn):
-        imgsetfile = self.fileChooser("Select an Image Set file", 
-                filters = {"Image Sets": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
-                           "All Files": {"pattern": "*"}},
-                multiple = False, basedir=os.path.join(self.project.path, "Bundles"))
-        if imgsetfile is not None:
-            # imgsetfile = [x.relative_to(prjdir) for x in imgsetfile]
-            self.imgsetfile = imgsetfile[0]
-            self.builder.get_object("lb_imageSetFilename").set_label(os.path.basename(imgsetfile[0]))
-            self.builder.get_object("btn_locateImageSet").set_tooltip_text(str(imgsetfile[0]))
-        else:
-            self.builder.get_object("lb_imageSetFilename").set_label("")
-            self.imgsetfile = None
-            self.builder.get_object("btn_locateImageSet").set_tooltip_text("")
     
     def onParagraphednotesClicked(self, btn):
         status = not (self.get("c_fneachnewline") and self.get("c_xreachnewline"))

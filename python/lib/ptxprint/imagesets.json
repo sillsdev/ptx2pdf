@@ -1,0 +1,28 @@
+{
+    "imagesets": [
+        {
+            "id": "ccsamples",
+            "name": "CC Sample B/W Images",
+            "artist": "David Healey & Gordon Thompson",
+            "style": "b/w",
+            "description": "Low-resolution black & white illustrations for trial Scripture publications. Suitable for community checking and initial drafts.",
+            "url": "https://software.sil.org/downloads/r/ptxprint/ccsampleimages.zip",
+            "filesize": "~12 MB",
+            "license": "CC BY-SA 4.0",
+            "license_text": "This image set is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. You are free to share and adapt the material for any purpose, provided you give appropriate credit and distribute your contributions under the same license. See https://creativecommons.org/licenses/by-sa/4.0/ for details.",
+            "requires_terms_acceptance": false
+        },
+        {
+            "id": "Biblica NT",
+            "name": "Biblica NT Images",
+            "artist": "Biblica",
+            "style": "b/w lineart",
+            "description": "501 black & white line-art illustrations covering the New Testament (Matthew through Revelation). Contributed and copyright controlled by Biblica.",
+            "url": "https://software.sil.org/downloads/r/ptxprint/biblica_nt.zip",
+            "filesize": "~73.5 MB",
+            "license": "CC BY-NC 4.0",
+            "license_text": "The images in this imageset are contributed and copyright controlled by Biblica. They are made available under a Creative Commons 4.0 license: CC-BY-NC.\n\nFor full details of what a particular license means, please see https://creativecommons.org/about/cclicenses/\n\nThe NonCommercial restriction on images is defined by Creative Commons as \"not primarily intended for or directed towards commercial advantage or monetary compensation\". Thus, for example, publication primarily for commercial gain is not allowed, while charging for publications to cover costs or less is allowed. Notice that the inclusion of NC in the license means that the publication must also be licensed with a non commercial restriction.",
+            "requires_terms_acceptance": true
+        }
+    ]
+}
