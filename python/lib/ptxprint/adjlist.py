@@ -50,6 +50,7 @@ class AdjList:
         self.changed = False
         self.adjfile = fname
         self.trigfile = tname
+        self.ftime = None
 
     def clear(self):
         self.liststore.clear()
@@ -130,6 +131,7 @@ class AdjList:
                     allvals.append(val)
         for a in sorted(allvals, key=self.calckey):
             self.liststore.append(a)
+        self.ftime = os.lstat(fname).st_ctime
 
     def genline(self, r):
         cv = r[1].replace(":", ".").replace(" ", "")
@@ -163,6 +165,7 @@ class AdjList:
             for r in self.liststore:
                 line = self.genline(r)
                 outf.write(line + "\n")
+        self.ftime = os.lstat(fname).st_ctime
 
     def _createUIExtensionLines(self, r):
         ref = rf"{r[0]}{r[1]}={r[2]}"

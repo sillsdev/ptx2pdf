@@ -275,6 +275,9 @@ class WorkingCoverState:
                     res.append(r'\ztruetext*')
             view.periphs['cover'+a] = "\n".join(res)
 
+    def update_texmodel(self, model):
+        model.dict["cover/spinewidth"] = self.pine_width_computed_mm
+
     def computeSpineWidth(self):
         if self.spine_width_mode == "manual":
             self.spine_width_computed_mm = max(0.0, self.spine_width_mm)

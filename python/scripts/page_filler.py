@@ -397,6 +397,7 @@ class TypesetterSolver:
             if page is None:
                 logger.log(15, f"solve_complete pages=%s, underfills=%s", len(layout.pages),
                         str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None}))
+                state = self.run_layout(self.base_params, state, {}, page, start_page, cache=True)
                 state.failures = failed_pages
                 return state
             self.hooks.progress(page, self.itercount)
@@ -486,6 +487,7 @@ class TypesetterSolver:
         unity = (1.0, 0)
         probes = all_probes[:6]
         newstate = state
+        layout = state.layout
         for e, s in probes:
             if found is not None and (e, s) in found:
                 continue
@@ -499,7 +501,7 @@ class TypesetterSolver:
             self.collect_probes(layout, paragraphs, params)
         return layout
 
-    def run_layout(self, page_base_params, state, combo, page, start):
+    def run_layout(self, page_base_params, state, combo, page, start, cache=False):
         params = dict(page_base_params)
         #params = dict(self.base_params)
         for p, d in combo.items():
@@ -531,7 +533,7 @@ class TypesetterSolver:
             if not found_any:
                 self.noprobe = True
         # logger.log(15, "BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
-        layout = self.hooks.run_layout(self, probe_params, state.float_anchors, start)
+        layout = self.hooks.run_layout(self if cache else None, probe_params, state.float_anchors, start)
         if layout is None:
             return None
         self.itercount += 1
@@ -792,7 +794,9 @@ class PTXprinter:
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
             self.adjs.setval(s[:3], f"{r[1]}.{r[2]}{r[5]}", para, p[1], None, expand=int(p[0]*100), append=True)
-            if solver is not None:
+        if solver is not None:
+            for s in solver.paragraph_order:
+                (r, para) = self.pidkey(s)
                 key = f"{s[:3]}{r[1]}.{r[2]}{r[5]}"
                 for a in range(-2, 3):
                     if a == 0:
