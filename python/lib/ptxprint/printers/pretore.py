@@ -280,15 +280,6 @@ class Pretore:
         
         # Apply printer-specific variations
         sampleData = {
-            "Pretore": basePrices,  # Base
-            "Snowfall": {
-                qty: price * 1.12 for qty, price in basePrices.items()  # +12% variation
-            },
-            "Pothi": {
-                qty: price * 0.88 for qty, price in basePrices.items()  # -12% variation
-            }
-        }
-        sampleData = {
             "Pretore": {50: 12.50, 100: 9.90, 250: 7.40, 500: 6.10, 1000: 5.20},
             "Snowfall": {50: 13.20, 100: 9.20, 250: 7.00, 500: 5.40, 1000: 4.60},
             "Pothi": {50: 8.80, 100: 7.40, 250: 7.10, 500: 6.50, 1000: 6.00}

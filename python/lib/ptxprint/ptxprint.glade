@@ -38487,7 +38487,6 @@ individually in plastic film?</property>
                                           <object class="GtkButton" id="btn_prnl_multiQuote">
                                             <property name="label" translatable="yes">Multi-Quote Comparison...</property>
                                             <property name="visible">True</property>
-                                            <property name="sensitive">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
                                             <property name="tooltip-text" translatable="yes">Show a price comparison curve for this
@@ -39028,11 +39027,12 @@ We supply high-quality hardcovers, flex covers and paperbacks. For missionary or
                                       <placeholder/>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLinkButton">
+                                        <property name="label" translatable="yes">Visit Snowfall Press Website</property>
                                         <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Not yet implemented</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="uri">https://www.snowfallpress.com/</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -39049,7 +39049,7 @@ We supply high-quality hardcovers, flex covers and paperbacks. For missionary or
                                   </packing>
                                 </child>
                                 <child type="tab">
-                                  <object class="GtkLabel" id="l_pr_snowfall">
+                                  <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="label" translatable="yes">Snowfall, US</property>
@@ -39070,11 +39070,12 @@ We supply high-quality hardcovers, flex covers and paperbacks. For missionary or
                                       <placeholder/>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLinkButton">
+                                        <property name="label" translatable="yes">Visit Pothi.com Website</property>
                                         <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Not yet implemented</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="uri">https://pothi.com/</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
