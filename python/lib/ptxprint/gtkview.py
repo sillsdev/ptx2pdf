@@ -2438,7 +2438,7 @@ class GtkViewModel(ViewModel):
         self.configNoUpdate = True
         currConf = self.userconfig.get("projects", self.project.prjid, fallback=self.get("ecb_savedConfig"))
         self.cb_savedConfig.remove_all()
-        savedConfigs = sorted(self.project.configs.keys())
+        savedConfigs = sorted(self.project.configs.keys(), key=str.lower)
         if len(savedConfigs):
             for cfgName in savedConfigs:
                 self.cb_savedConfig.append_text(cfgName)
