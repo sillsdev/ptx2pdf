@@ -4,6 +4,7 @@ from shutil import copy
 from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
 from ptxprint.printers import allcurrencies
+from ptxprint.printers.pricing_graph import PricingGraphViewer
 from zipfile import ZipFile, ZIP_DEFLATED
 
 querymap = {
@@ -270,3 +271,34 @@ class Pretore:
         if curr in self.rates:
             self.currency = curr
             self.updatequote(None)
+
+    def show_multi_quote_comparison(self, btn, *a):
+        """Show pricing comparison graph with sample/collected quotes."""
+        # For now, use sample data with ±15% variation for each printer
+        # Base prices from Pretore
+        basePrices = {50: 12.50, 100: 9.90, 250: 7.40, 500: 6.10, 1000: 5.20, 2000: 4.85}
+        
+        # Apply printer-specific variations
+        sampleData = {
+            "Pretore": basePrices,  # Base
+            "Snowfall": {
+                qty: price * 1.12 for qty, price in basePrices.items()  # +12% variation
+            },
+            "Pothi": {
+                qty: price * 0.88 for qty, price in basePrices.items()  # -12% variation
+            }
+        }
+        sampleData = {
+            "Pretore": {50: 12.50, 100: 9.90, 250: 7.40, 500: 6.10, 1000: 5.20},
+            "Snowfall": {50: 13.20, 100: 9.20, 250: 7.00, 500: 5.40, 1000: 4.60},
+            "Pothi": {50: 8.80, 100: 7.40, 250: 7.10, 500: 6.50, 1000: 6.00}
+        }
+        
+        currencySymbol = allcurrencies.get(self.currency, "€")
+        viewer = PricingGraphViewer(
+            sampleData,
+            parentWindow=self.view.mainapp.win,
+            currencySymbol=currencySymbol
+        )
+        viewer.show()
+

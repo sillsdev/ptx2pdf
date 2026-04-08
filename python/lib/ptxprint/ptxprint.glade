@@ -38487,13 +38487,14 @@ individually in plastic film?</property>
                                           <object class="GtkButton" id="btn_prnl_multiQuote">
                                             <property name="label" translatable="yes">Multi-Quote Comparison...</property>
                                             <property name="visible">True</property>
-                                            <property name="sensitive">False</property>
+                                            <property name="sensitive">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
                                             <property name="tooltip-text" translatable="yes">Show a price comparison curve for this
 publication at different print volumes.
 e.g. 50, 100, 500, 1000, 2000 copies</property>
                                             <property name="valign">center</property>
+                                            <signal name="clicked" handler="printers/pretore/show_multi_quote_comparison" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
