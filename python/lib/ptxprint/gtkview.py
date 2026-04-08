@@ -7451,6 +7451,12 @@ Thank you,
         if not prvw:
             return
         try:
+            # Set up the Fill Pages menu button with its dropdown menu
+            fillPagesBtn = self.builder.get_object("btn_fillPages")
+            fillPagesMenu = self.builder.get_object("fillPagesMenu")
+            if fillPagesBtn and fillPagesMenu:
+                fillPagesBtn.set_popup(fillPagesMenu)
+            
             if showPreview:
                 prvw.set_modal(False)
                 prvw.set_keep_above(False)
@@ -7695,5 +7701,18 @@ Thank you,
             self.set("c_colophon", False)
             self.doStatus(_("Colophon updates have also been disabled in 'Layout Only' mode"))
 
+    def onResumeFillClicked(self, widget, *a):
+        """Resume filling from current position (Resume Fill menu option)"""
+        # Button label stays as "Auto Fill..." - no need to update
+        # TODO: Implement resume fill logic
+        pass
+
+    def onRestartFillClicked(self, widget, *a):
+        """Restart filling from beginning (Restart Fill menu option)"""
+        # Button label stays as "Auto Fill..." - no need to update
+        # TODO: Implement restart fill logic
+        pass
+
     def onFillPagesClicked(self, widget, *a):
+        """Deprecated: Use onResumeFillClicked or onRestartFillClicked instead"""
         pass
