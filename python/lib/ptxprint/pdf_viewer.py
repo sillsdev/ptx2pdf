@@ -2154,7 +2154,8 @@ class PDFContentViewer(PDFFileViewer):
         for row in model:
             row_ref = (row[0] + str(row[1]), int(row[2]))
             if row_ref in refs2del:
-                model.remove(row.iter)
+                row[3] = "0"    # stretch
+                row[5] = 100    # expand
             
         self.show_pdf()
         self.hitPrint()

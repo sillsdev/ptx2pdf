@@ -7729,14 +7729,14 @@ Thank you,
         results = mview.run_all(True)
         print(results)
         for i, bk in enumerate(mview.books):
-            self.adjlists.pop(a, None)
+            self.adjlists.pop(bk, None)
             a = self.get_adjlist(bk, save=False)
             if i == 0:
                 self.adjView.set_model(a)
-        # self.onOK(None)
+        self.onOK(None)
 
     def onResumeFillClicked(self, widget, *a):
         self._onFillPagesClicked(resume=True)
 
     def onRestartFillClicked(self, widget, *a):
-        self._onFillPagesClicked()
+        self._onFillPagesClicked(resume=False)

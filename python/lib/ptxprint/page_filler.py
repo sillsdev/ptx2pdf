@@ -1082,8 +1082,8 @@ class MultiView:
     def initScheduler(self, numproc, log_config=None):
         if numproc is None:
             numproc = mp.cpu_count() - 2    # we run each cpu pretty hard
-        self.numproc = numproc
         self.task_list = self.books
+        self.numproc = min(numproc, len(self.task_list))
         self.build_params = BuildParams(*[getattr(self, a) for a in 'prjtree config'
                     ' macrosdir args pid guid cfgid scriptsdir loglevel timeout'.split(' ')])
         self.log_config = log_config
@@ -1104,16 +1104,16 @@ class MultiView:
         if self.numproc == 1:
             worker = Worker(input_q, results_q, self.build_params, self.log_config, None, stop=stop)
             worker.run()
+            results = []
+            while not results_q.empty():
+                results.append(results_q.get())
         else:
             workers = [Worker(input_q, results_q, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
             for w in workers:
                 w.start()
-
-        results = []
-        for _ in range(len(self.task_list)):
-            results.append(results_q.get())
-
-        if self.numproc != 1:
+            results = []
+            for _ in range(len(self.task_list)):
+                results.append(results_q.get())
             for w in workers:
                 w.join()
         return results
