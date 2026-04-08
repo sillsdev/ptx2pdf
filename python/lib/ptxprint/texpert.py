@@ -68,9 +68,9 @@ texpertOptions = {
     "DoubleSided":          O("doublesided", "LAY", True, None, _("Double Sided Layout"), 
                             _("This setting can be disabled to turn off inner/outer margins, forcing the inner/outer gutter, and Notelines to always appear on the same side of the printed page.")),
 
-    "MaxProcesses":         O("maxproc", "LAY", (int(cpu_count()) * 0.9, 1, cpu_count(), 1, 1, 1), None, _("Maximum parallel processes"),
+    "MaxProcesses":         O("maxproc", "LAY", (int(cpu_count() * 0.9), 1, cpu_count(), 1, 1, 1), None, _("Maximum parallel processes"),
                             _("The maximum number of parallel processes to use for example when page filling")),
-    "MaxFillTime":          O("maxfilltime", "LAY", (0, 100, 0.1, 1, 1), None, _("Maximum Filling Time (mins)"),
+    "MaxFillTime":          O("maxfilltime", "LAY", (0, 100, 0.1, 1, 1, 1), None, _("Maximum Filling Time (mins)"),
                             _("Stop page filling a book after this many minutes")),
 
     #"versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),

@@ -10,7 +10,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
 from shutil import rmtree, copy2
-import datetime, time, locale, urllib.request, json, hashlib
+import datetime, time, locale, urllib.request, json, hashlib, argparse
 from ptxprint.utils import universalopen, refKey, refSort, chgsHeader, saferelpath, startfile
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -53,6 +53,7 @@ from ptxprint.gtkpolyglot import PolyglotSetup
 from ptxprint.report import Report
 from ptxprint.gtktesting import GtkTester
 from ptxprint.printers import init_printers, printer_from_label
+from ptxprint.page_filler import MultiView
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -4715,7 +4716,7 @@ class GtkViewModel(ViewModel):
     def onEditMaps(self, btn):
         mapbkid = self.get("fcb_ptxMapBook") 
         mapfile = self.getBookSrcPath(mapbkid)
-        if len(mapfile):
+        if mapfile is not None and len(mapfile):
             self._editProcFile(str(mapfile), "prj")
             self.onRefreshViewerTextClicked(None)
             self.builder.get_object('l_Settings1').set_label(os.path.basename(mapfile))
@@ -7713,6 +7714,29 @@ Thank you,
         # TODO: Implement restart fill logic
         pass
 
-    def onFillPagesClicked(self, widget, *a):
-        """Deprecated: Use onResumeFillClicked or onRestartFillClicked instead"""
-        pass
+    def _onFillPagesClicked(self, resume=False):
+        self.saveAdjlists()
+        args = argparse.Namespace(**vars(self.args))
+        args.restart = resume
+        tout = float(self.get("s_maxfilltime"))
+        if tout > 0:
+            args.timeout = 60 * tout
+        mview = MultiView(self.prjTree, self.userconfig, self.scriptsdir, args=args, odir=self.scriptsdir, view=self)
+        numproc = int(self.get("s_maxproc"))
+        if numproc == 0:
+            numproc = 1
+        mview.initScheduler(numproc, None)
+        results = mview.run_all(True)
+        print(results)
+        for i, bk in enumerate(mview.books):
+            self.adjlists.pop(a, None)
+            a = self.get_adjlist(bk, save=False)
+            if i == 0:
+                self.adjView.set_model(a)
+        # self.onOK(None)
+
+    def onResumeFillClicked(self, widget, *a):
+        self._onFillPagesClicked(resume=True)
+
+    def onRestartFillClicked(self, widget, *a):
+        self._onFillPagesClicked()

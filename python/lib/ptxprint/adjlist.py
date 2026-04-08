@@ -42,18 +42,20 @@ class AdjList:
         self.highdiff = highdiff
         self.centre = centre
 
-        # book, c:v, para:int, stretch, mkr, expand:int, comment%
+        # book, c:v, para:int, stretch, mkr, expand:int, params, comment%
         if gtk is None:
             self.liststore = Liststore()
         else:
-            self.liststore = gtk.ListStore(str, str, int, str, str, int, str)
+            self.liststore = gtk.ListStore(str, str, int, str, str, int, str, str)
         self.changed = False
         self.adjfile = fname
         self.trigfile = tname
         self.ftime = None
+        self.db = []
 
     def clear(self):
         self.liststore.clear()
+        self.db = []
 
     def __len__(self):
         return len(self.liststore)
@@ -68,31 +70,38 @@ class AdjList:
 
     def sort(self):
         allvals = [[*r] for r in self.liststore]
+        alldb = self.db[:]
         self.liststore.clear()
-        for a in sorted(allvals, key=self.calckey):
-            self.liststore.append(a)
+        for a in sorted(range(len(allvals)), key=lambda x:self.calckey(allvals[x])):
+            self.liststore.append(allvals[a])
+            self.db.append(alldb[a])
 
-    def setval(self, bk, cv, para, stretch, mkr, expand=None, append=False, force=False, comment=""):
-        row = [bk, cv, para, stretch, mkr, expand or self.centre, comment]
+    def setval(self, bk, cv, para, stretch, mkr, expand=None, append=False, force=False, comment="", **kw):
+        dstr = " ".join("{}={}".format(k, v) for k, v in kw.items())
+        row = [bk, cv, para, stretch, mkr, expand or self.centre, dstr, comment]
         if append:
             self.liststore.append(row)
+            self.db.append(kw)
             return
         i = self.find(bk, cv, para)
         if isinstance(i, int):
             if i >= 0:
                 self.liststore.insert(i, row=row)
+                self.db.insert(i, kw)
             else:
                 self.liststore.append(row)
+                self.db.append(kw)
         elif not force:       # got an iterator
             for j, k in enumerate(i):
                 if row[j] != k:
                     self.liststore.set_value(i.iter, j, row[j])
         else:
             self.liststore[i.iter] = row
+            self.db[i.iter] = comment
 
     def calckey(self, row):
         k = refKey("{0} {1}".format(*row))
-        res = k[:3] + (k[5], row[2], k[3], k[4], k[6])
+        res = k[:3] + (k[5], row[2], k[3], k[4])
         return res
 
     def parseline(self, l, lineno=0):
@@ -105,35 +114,46 @@ class AdjList:
         if m:
             try:
                 val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1),
-                                m.group(4), None, self.centre, c]
+                                m.group(4), None, self.centre, "", c]
             except ValueError:
                 val = None
+            dbval = {}
             if val is not None:
-                n = restre.match(c)
-                if n:
-                    val[4] = n.group(1)
-                    if n.group(2):
-                        val[5] = int(n.group(2))
-                    val[6] = n.group(3)
-                else:
-                    logger.warning(f"Unparsed adjlist content {c} at {lineno} of {l}")
-            logger.log(7, f"{lineno}: {val}")
-        return val
+                bits = re.split(r"\s*(\S+\s*=\s*\S+)\s*", c)
+                if bits is not None and len(bits):
+                    rest = " ".join(bits[0::2])
+                    val[7] = rest
+                    for b in bits[1::2]:
+                        (k, v) = (s.strip() for s in b.split("="))
+                        if k == "expand":
+                            val[5] = int(v)
+                        elif k == "mrk":
+                            val[4] = v
+                        else:
+                            dbval[k] = v
+                    val[6] = " ".join(f"{k}={v}" for k, v in dbval.items())
+            logger.log(7, f"{lineno}: {val}, {dbval}")
+        return val, dbval
 
     def readAdjlist(self, fname):
         self.adjfile = fname
         allvals = []
+        dbvals = []
         self.liststore.clear()
         with open(fname, "r", encoding="utf-8") as inf:
             for i,l in enumerate(inf.readlines()):
-                val = self.parseline(l, lineno=i+1)
+                val, dbval = self.parseline(l, lineno=i+1)
                 if val is not None:
                     allvals.append(val)
-        for a in sorted(allvals, key=self.calckey):
-            self.liststore.append(a)
+                    dbvals.append(dbval)
+        for a in sorted(range(len(allvals)), key=lambda x:self.calckey(allvals[x])):
+            self.liststore.append(allvals[a])
+            self.db.append(dbvals[a])
         self.ftime = os.lstat(fname).st_ctime
 
-    def genline(self, r):
+    def genline(self, i):
+        r = self.liststore[i]
+        d = self.db[i]
         cv = r[1].replace(":", ".").replace(" ", "")
         if r[2] > 1:
             line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
@@ -145,8 +165,10 @@ class AdjList:
             extras.append(f"mrk={r[4]}")
         if r[5] != self.centre:
             extras.append(f"expand={r[5]}")
-        if r[6]:
-            extras.append(r[6].strip())
+        for k, v in d.items():
+            extras.append(f"{k}={v}")
+        if r[7]:
+            extras.append(r[7].strip())
 
         if extras:
             line += " % " + " ".join(extras)
@@ -162,23 +184,21 @@ class AdjList:
             return
         os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
         with open(fname, "w", encoding="utf-8") as outf:
-            for r in self.liststore:
-                line = self.genline(r)
+            for i in range(len(self.liststore)):
+                line = self.genline(i)
                 outf.write(line + "\n")
         self.ftime = os.lstat(fname).st_ctime
 
-    def _createUIExtensionLines(self, r):
+    def _createUIExtensionLines(self, i):
+        r = self.liststore[i]
+        d = self.db[i]
         ref = rf"{r[0]}{r[1]}={r[2]}"
         triggerItems = []
 
         if r[5] != self.centre:
             triggerItems.append(rf"\zexp {r[5]}\*")
 
-        for trig in self._parseTriggersFromComment("trig", r[6]):
-            trig = trig.strip()
-            if trig and not trig.startswith("\\"):
-                trig = "\\" + trig
-            triggerItems.append(trig)
+        triggeritems = self._getTriggersFromRow(i)
 
         if not triggerItems:
             return []
@@ -199,8 +219,8 @@ class AdjList:
 
         os.makedirs(os.path.dirname(fname), exist_ok=True)
         with open(fname, 'w', encoding='utf-8') as outf:
-            for r in self.liststore:
-                lines = self._createUIExtensionLines(r)
+            for i in range(len(self.liststore)):
+                lines = self._createUIExtensionLines(i)
                 if lines:
                     outf.write("\n".join(lines))
 
@@ -249,8 +269,9 @@ class AdjList:
         elif rk > cpk:
             if insert:
             # book, c:v, para, stretch, mkr, expand, comment%
-                r = [cp[0], cp[1], cp[2], "0", "", 100, ""]
+                r = [cp[0], cp[1], cp[2], "0", "", 100, "", ""]
                 self.liststore.insert(i, r)
+                self.db.insert(i, {})
                 r = self.liststore[i]         # since the row is turned into something else
                 self.changed = True
                 doit(r, i)
@@ -303,12 +324,27 @@ class AdjList:
             res[rk] = (r[5]/100, int(r[3]))
         return res
 
-    def _parseTriggersFromComment(self, key, comment):
-        if not comment:
-            return []
-        return re.findall(rf"(?:^|\s){key}=([^\s]+)", comment)
+    def get_cache(self):
+        shapes = {}
+        probes = {}
+        found = set()
+        ckeyre = re.compile(r"([pm])(\d)")
+        cvalre = re.compile(r"(\d+)([+-]\d+)?")
+        for i, r in enumerate(self.liststore):
+            rk = f"{r[0]}{r[1].replace(':', '.')}[{r[2]}]"
+            for k, v in self.db[i].items():
+                if (m := ckeyre.match(k)) is None: continue
+                d = int(m.group(2)) if m.group(1) == "p" else -int(m.group(2))
+                n = cvalre.match(v)
+                if n is None: continue
+                e = int(n.group(1)) / 100
+                s = int(n.group(2)) if n.group(2) else 0
+                shapes[(rk, d)] = (e, s)
+                probes[(rk, e, s)] = d
+        return shapes, probes
 
     def _setTriggersInComment(self, key, comment, triggers):
+
         # remove existing trig=... tokens, then append normalized list
         base = re.sub(rf"(?:^|\s){key}=[^\s]+", "", comment or "").strip()
         trigPart = " ".join(f"{key}={t}" for t in triggers)
@@ -316,27 +352,53 @@ class AdjList:
             return base + " " + trigPart
         return base or trigPart
 
+    def _getTriggersFromRow(self, i):
+        d = self.db[i]
+        return [v if v.startswith("\\") else "\\"+v for k, v in d.items() if k.startswith("trig")]
+
     def getTriggers(self, parref, key="trig"):
         res = []
         def mydoit(r, i):
-            res.extend(self._parseTriggersFromComment(key, r[6]))
+            return self._getTriggersFromRow(i)
         self.changeval(parref, mydoit, insert=False)
         return res
 
     def addTrigger(self, parref, content, append=True, enabled=True, insert=True, key="trig"):
         def mydoit(r, i):
             if append:
-                triggers = set(self._parseTriggersFromComment(key, r[6]))
+                triggers = set(self._getTriggersFromRow(i))
             else:
                 triggers = set()
+            l = len(triggers)
             if content is None:
                 triggers.clear()
+            elif isinstance(content, (list, tuple)):
+                if enabled:
+                    triggers.update(content)
+                else:
+                    triggers.difference_update(content)
             elif enabled:
                 triggers.add(content)
             else:
                 triggers.discard(content)
-            newComment = self._setTriggersInComment(key, r[6], sorted(triggers))
-            if newComment != r[6]:
-                self.liststore.set_value(r.iter, 6, newComment)
+            if len(triggers) != l:
+                for k, v in list(self.db[i].items()):
+                    if k.startswith(key):
+                        del self.db[k]
+                for j, t in enumerated(sorted(triggers)):
+                    k = key if j == 0 else key+str(j)
+                    self.db[i][k] = t
+                r[6] = " ".join(f"{k}={v}" for k, v in self.db[i].items())
                 self.changed = True
         self.changeval(parref, mydoit, insert=insert)
+
+    def setdb(self, parref, key, value, insert=True):
+        def mydoit(r, i):
+            d = self.db[i]
+            if key in d and value is None:
+                del d[key]
+            elif value is not None:
+                d[key] = value
+            r[6] = " ".join(f"{k}={v}" for k, v in d.items())
+        self.changeval(parref, mydoit, insert=insert)
+
