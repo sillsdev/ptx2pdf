@@ -1,8 +1,9 @@
 import importlib
 
 printerlist = {
-    'pretore': ('Pretore', 'l_pr_pretore'),
-    'print_gallery': ('PrintGallery', 'l_pr_print_gallery')
+    'pretore':       ('Pretore',      'l_pr_pretore'),
+    'print_gallery': ('PrintGallery', 'l_pr_print_gallery'),
+    'pothi':         ('Pothi',        'l_pr_pothi'),
 }
 
 def init_printers(view):
