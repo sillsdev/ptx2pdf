@@ -867,7 +867,7 @@ class GtkViewModel(ViewModel):
                 node.text = _(node.text)
             if node.tag == "property" and nid is not None and not nid.startswith("lb_") and not nid.startswith("l_"):
                 n = node.get('name')
-                if n in ("name", "tooltip-text", "label"):
+                if n in ("name", "tooltip-text", "label") and node.text:
                     self.finddata[node.text.lower()] = (nid, 1 if  n == "tooltip-text" else 4)
                 if n == 'name':
                     self.widgetnames[nid] = node.text
@@ -2985,6 +2985,14 @@ class GtkViewModel(ViewModel):
             adj.sort()
             adj.changed = True
 
+    def onChangedPrinterTab(self, nbk_printers, scrollObject, pgnum=-1):
+        ppage = nbk_printers.get_nth_page(pgnum)
+        lw = nbk_printers.get_tab_label(ppage)
+        lid = self.getWidgetId(lw)
+        k = printer_from_label(lid)
+        if k:
+            self.printers[k].prepare()
+
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
         if pgid == "tb_Viewer": # Viewer tab
@@ -2999,13 +3007,8 @@ class GtkViewModel(ViewModel):
             if sel.count_selected_rows() > 0:
                 self.picListView.row_select(sel)
         elif pgid == "tb_Printers":
-            pnum = self.get("nbk_printers")
             nbkw = self.builder.get_object("nbk_printers")
-            ppage = nbkw.get_nth_page(pnum)
-            lw = nbkw.get_tab_label(ppage)
-            lid = self.getWidgetId(lw)
-            k = printer_from_label(lid)
-            self.printers[k].prepare()
+            self.onChangedPrinterTab(nbkw, None, nbkw.get_current_page())
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")

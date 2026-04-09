@@ -273,6 +273,8 @@ class Pretore:
             self.updatequote(None)
 
     def show_multi_quote_comparison(self, btn, *a):
+        # SAMPLE CODE ONLY - replace with real data collection for graphing
+        # Aligning currencies and including shipping will also complicate things
         """Show pricing comparison graph with sample/collected quotes."""
         # For now, use sample data with ±15% variation for each printer
         # Base prices from Pretore
