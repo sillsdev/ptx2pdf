@@ -55,7 +55,7 @@ from ptxprint.gtktesting import GtkTester
 from ptxprint.printers import init_printers, printer_from_label
 from ptxprint.page_filler import MultiView
 import ptxprint.scriptsnippets as scriptsnippets
-import configparser, logging
+import configparser, logging, threading
 import webbrowser
 import unicodedata
 from threading import Thread
@@ -7724,19 +7724,29 @@ Thank you,
         tout = float(self.get("s_maxfilltime"))
         if tout > 0:
             args.timeout = 60 * tout
-        mview = MultiView(self.prjTree, self.userconfig, self.scriptsdir, args=args, odir=self.scriptsdir, view=self)
+        self.mview = MultiView(self.prjTree, self.userconfig, self.scriptsdir, args=args, odir=self.scriptsdir, view=self)
         numproc = int(self.get("s_maxproc"))
         if numproc == 0:
             numproc = 1
-        mview.initScheduler(numproc, None)
-        results = mview.run_all(True)
+        self.mview.initScheduler(numproc, None)
+
+        self.fillThread = threading.Thread(target=self._fillPages_run, daemon=True)
+        self.fillThread.start()
+
+    def _fillPages_run(self):
+        results = self.mview.run_all(True)
         print(results)
-        for i, bk in enumerate(mview.books):
+        GLib.idle_add(self._fillPages_finish, results)
+
+    def _fillPages_finish(self, results):
+        for i, bk in enumerate(self.getBooks()):
             self.adjlists.pop(bk, None)
             a = self.get_adjlist(bk, save=False)
             if i == 0:
                 self.adjView.set_model(a)
         self.onOK(None)
+        return False
+        
 
     def onResumeFillClicked(self, widget, *a):
         self._onFillPagesClicked(resume=True)

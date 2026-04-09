@@ -1079,11 +1079,28 @@ class MultiView:
     def bklen(self, bk):
         return chaps[bk]
 
+    def _get_logging_params(self):
+        root = logging.getLogger()
+        handler = root.handlers[0] if root.handlers else None
+        params = {
+            'level': root.getEffectiveLevel(),
+            'format': None,
+            'datefmt': None,
+        }
+        if handler:
+            if handler.formatter:
+                params['format'] = handler.formatter._fmt
+                params['datefmt'] = handler.formatter.datefmt
+        return params
+
     def initScheduler(self, numproc, log_config=None):
+        if self.args.logging is not None and log_config is None:
+            log_config = self._get_logging_params()
         if numproc is None:
-            numproc = mp.cpu_count() - 2    # we run each cpu pretty hard
+            # numproc = min(mp.cpu_count() - 2, len(self.books))    # we run each cpu pretty hard
+            numproc = mp.cpu_count() - 2
         self.task_list = self.books
-        self.numproc = min(numproc, len(self.task_list))
+        self.numproc = numproc
         self.build_params = BuildParams(*[getattr(self, a) for a in 'prjtree config'
                     ' macrosdir args pid guid cfgid scriptsdir loglevel timeout'.split(' ')])
         self.log_config = log_config
@@ -1119,7 +1136,6 @@ class MultiView:
         return results
 
 def add_cli_args(parser):
-    parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
     parser.add_argument("-S", "--stop", action="store_true", default=False, help="Stop book at first bad page")
     parser.add_argument("-r", "--restart", action="store_true", default=False, help="Start with the current adjustments")
     for a in parser._actions:
@@ -1127,25 +1143,11 @@ def add_cli_args(parser):
             a.default = 0
             break
 
-def get_logging_params():
-    root = logging.getLogger()
-    handler = root.handlers[0] if root.handlers else None
-    params = {
-        'level': root.getEffectiveLevel(),
-        'format': None,
-        'datefmt': None,
-    }
-    if handler:
-        if handler.formatter:
-            params['format'] = handler.formatter._fmt
-            params['datefmt'] = handler.formatter.datefmt
-    return params
-
 def main():
     from ptxprint.main import main as ptxmain
     view = ptxmain(doitfn=None, argsline=None, retview=True, argsfn=add_cli_args, viewClass=MultiView)
     log_config = get_logging_params()
-    view.initScheduler(view.args.jobs, log_config)
+    view.initScheduler(view.args.jobs, None)
     results = view.run_all(view.args.stop)
     print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))
 
