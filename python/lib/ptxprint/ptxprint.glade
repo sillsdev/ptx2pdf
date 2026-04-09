@@ -39680,11 +39680,11 @@ Comprehensive Print on Demand digital book printing solutions with custom bindin
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">Page size of the printed book.
-Verified sizes (formula validated against real Pothi.com quotes):
-  A5, 5.5×8.5 inch, A4
-Unverified sizes (pricing data not yet collected):
-  5×7 inch, 5×8 inch, 6×9 inch, 7×9 inch, 8×11 inch
-The calculator will show a warning and suppress output for unverified sizes.</property>
+All sizes are B&amp;W verified (formula validated against real Pothi.com quotes).
+Full Color pricing:
+  Reliable (2+ data pts): A5, 5.5×8.5 inch
+  Estimate (1 data pt):   5×7, 5×8, 6×9, 7×9, 8×11 inch
+  No data yet:            A4 (B&amp;W prices still shown correctly)</property>
                                             <property name="active">0</property>
                                           </object>
                                           <packing>
@@ -39770,8 +39770,9 @@ Saddle stitching is ₹25 cheaper than soft cover at the same page count.</prope
                                             <property name="tooltip-text" translatable="yes">Interior printing method:
   B&amp;W interior (colored cover)  — black and white interior, full-color cover
   Full Color (Interior &amp; Cover) — full color throughout
-Full color adds a fixed setup charge (≈₹114.55) plus ≈₹2.10 per page.
-Coated paper surcharge (₹1.15/page) only applies with Full Color.</property>
+Full color adds a size-specific per-page premium (₹2.20–₹3.55/page depending on size).
+Coated paper surcharge (₹1.15/page) only applies with Full Color.
+A4 Full Color pricing has not yet been collected.</property>
                                             <property name="active">0</property>
                                           </object>
                                           <packing>
