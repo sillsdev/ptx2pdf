@@ -590,6 +590,7 @@
   \edef\cl@ss{#1\g@tndstat}%
   \edef\tmp{#1}\ifx\tmp\l@stnoteclass\lastn@tetrue\else\ifversion{6}{\lastn@tetrue}{\lastn@tefalse}\fi
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
+  \ifx\th@cl@ss\relax\errmessage{note-\cl@ss\space does not exist}\fi%
   \trace{f}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%

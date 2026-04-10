@@ -977,7 +977,7 @@
     \fi
     }\iftemp
       \trace{D}{m@rks on trial chunk}%
-      \m@rksonpagetrue %here are marks in this trial column. Don't set it globally as it might not stick.
+      \m@rksonpagetrue %there are marks in this trial column. Don't set it globally as it might not stick.
     \fi
   \fi
   \loc@lhttrue\dglt@calc@vailht
@@ -1337,6 +1337,7 @@
 \def\g@tdstat{\@g@tdst@t\c@rrdstat}% Normal access routine for above
 \def\@g@tndstat#1{\ifdiglotSepNotes \if L#1\else#1\fi\fi} %if notes are merged, there should be no R (etc)  suffix notes.
 \def\g@tndstat{\@g@tndstat{\c@rrdstat}} %if notes are merged, there should be no R (etc)  suffix notes.
+\def\g@tbdstat#1{#1} % What is the column-width / border-related diglot state?
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\xdef\c@rrdstat{#1}%
@@ -1747,6 +1748,8 @@
     \fi
     \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1 \space jd:\the\thisjointDelta}%
 }
+\def\check@diglot@body#1{\x@\ifx \csname isb@dy#1\endcsname\tr@e \global\diglotfirstb@dytrue\fi}%
+
 \def\@prepare@layout@simplecols{%
     \bgroup
       \trace{d}{@prepare@layout@simplecols \l@gdims{\partial} \ifdiglotb@dy body\else intro\fi}%
@@ -1760,7 +1763,7 @@
       \ifdiglotb@dy\else% Notice if the chunk is the fist body chunk
         \trace{D}{Checking if there's bodytext here}%
         \global\diglotfirstb@dyfalse
-        \def\col@do##1{\x@\ifx \csname isb@dy##1\endcsname\tr@e \global\diglotfirstb@dytrue\fi}%
+        \let\col@do\check@diglot@body
         \x@\each@col\cts@list\E
       \fi
     \egroup
@@ -1825,12 +1828,13 @@
   
 \def\@@simplecols#1{%Set the columns. TextBorderColumns might have 2 widths, e.g. bordered main text (narrow) and unbordered notes (full column width)
     \hbox to\columnshift{}\ifx\l@stcol\empty\else\unhcopy1 \fi
-    \trace{D}{@@simplecols #1 \the\csname column#1width\endcsname, bdr:\csname @textborder@#1\endcsname, box:\the\ht\csname #1box\endcsname+\the\dp\csname #1box\endcsname}%
+    \edef\bdr@dstat{\g@tbdstat{#1}}
+    \trace{D}{@@simplecols #1(\bdr@dstat) \the\csname column\bdr@dstat width\endcsname, bdr:\csname @textborder@\bdr@dstat \endcsname, box:\the\ht\csname #1box\endcsname+\the\dp\csname #1box\endcsname}%
     \ifx\TextBorderColumns\empty
-      \hbox to \csname column#1width\endcsname{\x@\copy\csname #1box\endcsname
+      \hbox to \csname column\bdr@dstat width\endcsname{\x@\copy\csname #1box\endcsname
         \hss}%
     \else
-      \hbox to \csname column#1fullwidth\endcsname{\ifm@intextcolumn \kern\csname textb@dr@left@pad#1\endcsname\fi\x@\copy\csname #1box\endcsname%indent if a main text column
+      \hbox to \csname column\bdr@dstat fullwidth\endcsname{\ifm@intextcolumn \kern\csname textb@dr@left@pad\bdr@dstat \endcsname\fi\x@\copy\csname #1box\endcsname%indent if a main text column
         \hss}%
     \fi
   \xdef\l@stcol{#1}}
@@ -2792,7 +2796,9 @@
 %
   \fi
   \makevtop{255}%
-  \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
+  \ifnum 1=\ifdiglotDebugFollowContents 1 \else \ifnum\diglotDbgJoinboxes=\TRACEcount 1 \else 0 \fi\fi
+     \showbox255
+  \fi
   \trace{D}{dp:\the\dp255}%
   \tmpcount=\outputpenalty %
   \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
@@ -3610,6 +3616,8 @@
     \x@\newb@x\csname whole#1\endcsname
     \x@\newb@x\csname excess#1\endcsname
     \x@\newb@x\csname picb@x#1\endcsname
+    \newcolins@rt{\loc@T#1}% column top insert
+    \newcolins@rt{\loc@B#1}% column bottom insert
 }
 %For a normal polyglot, the normal mechanism is probably faster, but for
 % complexlayouts, it's better to prefer extended registers
@@ -3619,8 +3627,6 @@
     \message{Defining #1 as an additional polyglot column.}%
     \ifcsname @newdim@n\endcsname\else\@@s@tnewd@m@n\fi
     \ifcsname @newc@unt\endcsname\else\@@s@tnewc@unt\fi
-    \newcolins@rt{\loc@T#1}% column top insert
-    \newcolins@rt{\loc@B#1}% column bottom insert
     \let\old@cts\digl@tc@ntentlist
     \let\digl@tc@ntentlist=\diglot@list
     \add@to@digl@tc@ntentlist{#1}%

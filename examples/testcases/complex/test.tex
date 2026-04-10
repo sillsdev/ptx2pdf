@@ -10,24 +10,26 @@
 \def\regular{"Gentium Plus"}
 \def\bold{"Gentium Plus/B"}
 \def\italic{"Gentium Plus/I"}
-\PaperHeight=148mm
+\PaperHeight=298mm
 \PaperWidth=210mm
 \baselineskip=12pt
 \showboxbreadth=100
 \newPolyglotCol{L}
 \newPolyglotCol{R}
 \newPolyglotCol{A}
-\def\DiglotLFraction{0.3}
+\def\DiglotLFraction{0.33333}
 \def\DiglotRFraction{0.5}
 \def\DiglotAFraction{1}
-\polyglotpages{LLL/A,RR/A}
+\polyglotpages{LLL/A/RR}
 \diglottrue
 \stylesheet{usfm_sb.sty}
 \stylesheet{ptx2pdf.sty}
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1}
 \tracinggroups=0
-\tracingassigns=0
+\tracingassigns=1
 \tracingmacros=0
+%\scrollmode
+%\diglotDebugFollowContentstrue
 \ptxfile{mergedGal.usfm}
 \bye

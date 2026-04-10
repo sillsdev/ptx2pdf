@@ -36,7 +36,9 @@
 \let\e@ch@col\e@ch@col@fast
 \plugin@startif{polyglot-complexpages}
 \plugins@needed{polyglot-simplepages} % 
-
+\def\@preswap@complexpages#1{}%
+\def\@postswap@complexpages#1{}%
+\def\x@flist{}% pseudocolumns
 % Configuration variables
 \def\unbalLcost{1.0} % cost per 0.01 minumumbaselinskip of an unblanced row (default: unbalanced line = 100pts). Leave this as is!
 \def\WScost{3.0} % cost per 1pt of whitespace (default: avoiding 33.4 pt of whitespace a the end of the page worth one row being unbalanced by 1 @minb@seline)
@@ -62,7 +64,7 @@
   \@new@followon{#1}{\s@ffix}% Sanity-check the suggestion. x@fch@r is the\currentgrouplevel)passed implicitly 
 } 
 
-\def\l@stf@llowon{%
+\def\l@stf@llowon{%call: \tmp as a column. Return: \tmp as the last follow-on for that column
   \let\nxt\relax
   \ifcsname f@llow@n\tmp\endcsname
     \x@\let\x@\l@ftmp\csname f@llow@n\tmp\endcsname
@@ -75,7 +77,7 @@
   \nxt
 }
     
-\def\@new@followon#1#2{% source, following-on. x@fch@r provides the character. Sanity check the suggestion.
+\def\@new@followon#1#2{% source, following-on. x@fch@r provides the suggested character. Sanity check the suggestion.
   \trace{dmc}{@new@followon #1 #2 \x@fch@r}%
   \temptrue
   \ifcsname \x@fch@r isDiglotColumn\endcsname\tempfalse\fi
@@ -91,17 +93,10 @@
   \iftemp
     \trace{dmc}{Assigning \x@fch@r\space as the follow-on column to #2 (in the #1 chain)}%
     \ifcsname \x@fch@r box\endcsname\else
-      \@newpolyglotboxes{\x@fch@r}%
-      {\edef\sfx{\x@fch@r}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}%
-      \newsp@cialpen{dgl@tPen\x@fch@r trialEnd}%
-      \x@\mkn@wct\csname f@llowOfs\x@fch@r\endcsname\E % where does the split start?
-      \x@\mkn@wct\csname f@llowOfs\x@fch@r\endcsname\E % where does the split start?
+      \@@new@followon{#1}%
     \fi
-    \x@\xdef\csname f@llowing\x@fch@r\endcsname{#1}\x@\global\x@\let\csname \x@fch@r isFolowOn\endcsname\tr@e
-    %\x@\xdef\csname f@llows\x@fch@r\endcsname{#2}% f@llows is backwards in the chain - needed? 
-    \x@\xdef\csname f@llow@n#2\endcsname{\x@fch@r}%f@llow@n is next in the chain
-    \x@\xdef\csname f@llow@n\x@fch@r\endcsname{}% and the chain stops here.
     \global\f@llow@n=\count255
+    \@@setup@followon{#1}{#2}%
     \let\n@xt\sw@llowtwo
   \else
     \advance\count255 -1
@@ -113,6 +108,25 @@
   \fi
   \xdef\all@list{\all@list\x@fch@r}%
   \n@xt{#1}{#2}%
+}
+\def\@@new@followon#1{%This is a genuinely new followon
+  \@newpolyglotboxes{\x@fch@r}%
+  {\edef\sfx{\x@fch@r}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}%
+  \xdef\x@flist{\x@flist\x@fch@r}% Maintain a list of pseudocolumns
+  \newsp@cialpen{dgl@tPen\x@fch@r trialEnd}%
+  \x@\mkn@wct\csname f@llowOfs\x@fch@r\endcsname\E % where does the split start?
+  \x@\mkn@wct\csname partial\x@fch@r penalty\endcsname\E % what was the penalty the partial/excess split?
+  \x@\mkn@wct\csname \x@fch@r boxpenalty\endcsname\E % penalty after Xbox
+  \x@\mkn@wht\csname \x@fch@r ht\endcsname\E %  Xbox dimension
+}
+\def\@@setup@followon#1#2{%Set up the follow-on chain and mactos that need to reflect the original
+  \x@\gdef\csname b@selineskip\x@fch@r\x@\endcsname\x@{\csname b@selineskip#1\endcsname}% Make sure the baselineskip points to the right place.
+  \x@\gdef\csname gridding@scent\x@fch@r\x@\endcsname\x@{\csname gridding@scent#1\endcsname}% similarly gridding@scent
+  \x@\gdef\csname m@rknum\x@fch@r\x@\endcsname\x@{\csname m@rknum#1\endcsname}% etc 
+  \x@\xdef\csname f@llowing\x@fch@r\endcsname{#1}\x@\global\x@\let\csname \x@fch@r isFolowOn\endcsname\tr@e
+  %\x@\xdef\csname f@llows\x@fch@r\endcsname{#2}% f@llows is backwards in the chain - needed? 
+  \x@\xdef\csname f@llow@n#2\endcsname{\x@fch@r}%f@llow@n is next in the chain
+  \x@\xdef\csname f@llow@n\x@fch@r\endcsname{}% and the chain stops here.
 }
 
 \def\cle@rf@llow@ns#1{%
@@ -169,7 +183,11 @@
   \x@\xdef\csname \ins@name-col\endcsname{#2}%Map from column name to column, so we don't need to try to parse the name
   \x@\def\x@\tmp\x@{}%
   \tracingassigns=1
-  \x@\gdef\csname unp@ck-#1#2\x@\endcsname\x@{\csname unp@ck-#1#2\x@\endcsname\x@\box\csname \ins@name\endcsname}%
+  \ifcsname unp@ck-#1#2\endcsname
+    \x@\gdef\csname unp@ck-#1#2\x@\x@\x@\endcsname\x@\x@\x@{\csname unp@ck-#1#2\x@\endcsname\x@\box\csname \ins@name\endcsname}%
+  \else
+    \x@\gdef\csname unp@ck-#1#2\x@\endcsname\x@{\x@\box\csname \ins@name\endcsname}%
+  \fi
   \tracingassigns=0
 }
 
@@ -209,8 +227,8 @@
 \def\polyglot@eachtime@setup@complexpages{%Called each time polyglotpages changed.
   \trace{dmc}{polyglot@eachtime@setup@complexpages}%
   \ifx\t@rgetcols\empty\else
-    \trace{dmcr}{t@rgetcols: \t@rgetcols}%
-    \let\d@\und@fit
+    \trace{dmcr}{@rgetcols: \t@rgetcols}%
+    \let\d@\und@fit %undefine 
     \x@\cstackdown\t@rgetcols,\E
   \fi
   \ifx\diglot@list\empty\else
@@ -221,13 +239,14 @@
     
     \complex@onetime@setup
   \fi
+  \global\let\x@flist\empty
   \trace{dmcr}{polyglot@eachtime@setup@complexpages end}%
 }
 \def\complex@onetime@setup{%
   \global\let\complex@onetime@setup\empty
   \addtostartptxhooks{\complex@eachtime@setup}%
 }
-\def\complex@eachtime@setup{
+\def\complex@eachtime@setup{%
   \trace{dmc}{complex@e@t@s-t@gpageinsertnames}%
   \let\d@\t@gpageinsertnames \x@\cstackdown\pageins@rts\E
   \trace{dmc}{complex@e@t@s-mktmpinsdim@n}%
@@ -284,7 +303,7 @@
     \trace{dmc}{revp@lyp@gecols\p@lyr@wstring\space is \csname revp@lyp@gecols\p@lyr@wstring\endcsname}%
   \fi
   \advance\p@lyr@wno by 1 
-  }
+}
 \def\mkn@wht#1\E{\globdim@n#1}% Because direct use doesn't work inside an ifcsname for some reason - and sometimes we need the \E parsing
 \def\mkn@wct#1\E{\globc@unt#1}% 
 
@@ -485,7 +504,7 @@
   \let\d@=\complexr@vpolyp@ges
   \cstackup#1,\E
   \trace{dmc}{Row string list is:\r@wstrings}%
-  \def\tmp{0-0}%Just one column? that's a job for simplecols
+  \def\tmp{0-0}%Just one column? surely that's a job for simplecols!
   \ifx\r@wstrings\tmp
     \edef\diglotlayout{simplecols}
   \else %Anything else is considered a complex page. complexpages doesn't sync page-to-page, while simplepages does.
@@ -495,6 +514,7 @@
   \catcode47=\sl@shcode\relax 
   \catcode`\-=\d@shcode\relax
   \let\col@do\@t@gcolinsertnames \x@\each@col\all@list\E
+  \trace{dmc}{polyglotpages end (tc:\t@rgetcols, xl:\x@flist)}%
 }
 
 \def\polyglotpages{% Just in case, switch some catcodes.
@@ -590,21 +610,26 @@
 }
 
 
-\def\@@cplx@measure#1\E{%Measure the current row height of the row #1 
-  \let\col@do\max@boxsz\def\v@lpfx{}\def\v@lsfx{box}\dimen1=0pt
-  \x@\let\x@\tmp\csname cts@#1\endcsname
-  \x@\each@col\tmp\E
-  \csname #1@ht\endcsname=\dimen1
-  \advance\dimen0 by \dimen1
-}
-\def\@cplx@measure{%Measure the current page sizes of the assigned chunks
-  \dimen0=0pt
-  \let\d@\@@cplx@measure
-  \x@\cstackdown\r@wstrings,\E
-}
+%\def\@@cplx@measure#1\E{%Measure the current row height of the row #1 
+  %\let\col@do\max@boxsz\def\v@lpfx{}\def\v@lsfx{box}\dimen1=0pt
+  %\x@\let\x@\tmp\csname cts@#1\endcsname
+  %\x@\each@col\tmp\E
+  %\csname #1@ht\endcsname=\dimen1
+  %\advance\dimen0 by \dimen1
+%}
+%\def\@cplx@measure{%Measure the current page sizes of the assigned chunks
+  %\dimen0=0pt
+  %%\let\d@\@@cplx@measure
+  %\x@\cstackdown\r@wstrings,\E
+%}
 
 
-
+\def\g@tndstat@complex{\x@\@g@tndstat\x@{\csname f@llowing\c@rrdstat\endcsname}} %if notes are merged, there should be no R (etc)  suffix notes.
+\def\g@tbdstat@complex#1{\csname f@llowing#1\endcsname} % What is the column-width / border-related diglot state?
+\let\g@tndstatOrig\g@tndstat
+\let\g@tndstat\g@tndstat@complex
+\let\g@tbdstatOrig\g@tbdstat
+\let\g@tbdstat\g@tbdstat@complex
 \def\complex@ssplit#1{% Slow, but reliable.
   \ins@meas@trialfullfalse
   %\ins@meas@trialnofulltrue
@@ -857,16 +882,27 @@
 
 \def\@prepare@layout@complexpages{%
   \trace{d}{@prepare@layout@complexpages \l@gdims{\partial} \ifdiglotb@dy body\else intro\fi}%
-  \@prepare@layout@simplecols 
-  \bgroup
-    \ifdiglotb@dy\else% Notice if the chunk is the fist body chunk
-      \trace{D}{Checking if there's bodytext here}%
-      \global\diglotfirstb@dyfalse
-      \def\col@do##1{\x@\ifx \csname isb@dy##1\endcsname\tr@e \global\diglotfirstb@dytrue\fi}%
-      \x@\each@col\cts@list\E
-    \fi
-  \egroup
- }
+  %\@prepare@layout@simplecols  NO: it does things in the wrong order for us here.
+  % joint calcs and delta? Not relevant here
+  %
+  %save Lht and Rht (as "nxtchunkXht) and reset Xht
+  \let\col@do\save@reset@ht
+  \x@\each@col\diglot@list\E
+  \iftextborder\ifnum\TextBorderMode>0 
+    \ifdiglotfirstb@dy
+      \let\col@do\complex@first@textborder
+      \x@\each@col\digl@tc@ntentlist\E
+      \global\diglotfirstb@dyfalse\global\diglotb@dytrue
+    \else\ifdiglotb@dy
+        \let\col@do\complex@textborder
+        \x@\each@col\cplx@proc@all\E
+    \fi\fi
+  \fi\fi
+  % column gutter & c-g-skip? needs to be handled per-row.
+  % per-column footnoteboxen need unwrapping and applying to the relevant column
+  %TODO: join text and 
+  %
+}
 
 \def\cplx@pre@me@sureins@trial#1{%
   \me@sureins@trial{#1}{\csname excess#1\endcsname}%
@@ -876,11 +912,12 @@
     % If there's enough space we may not  even 
     %need to do detailed (line-by-line) measuring.
     %Measure the cell /here/ or not? Not!
-    %\p@lyp@geno=\csname thep@geno#1\endcsname
-    %\x@\let\x@\tmp\csname lastcell#1-\the\p@lyp@geno\endcsname
-      %\ifdim\ht\csname excess#1\endcsname+\dp\csname excess#1\endcsname < 
+    %TODO: account (no reflow) for diglotfirstb@dy if there is a border -
+    %insert as 2 skips/skip+kern, 1st (discardable) as pre-skip, 2nd as border
+    %width and padding.
   \else 
     %TODO: Reflow 
+    %TODO: account (in reflow) for diglotfirstb@dy if there is a border
     \me@suretrue % the layout cannot be laid up without splits, which means there must be measuring
     \ifnum\csname @columns@#1\endcsname>1 
       \ifdim \ht\csname partial#1\endcsname>0pt
@@ -944,7 +981,7 @@
   \trace{dmc}{resetting fntoks}%
   \fntoks{}%
   \def\htfntyp{tst}% Mainly we need the test height functions, not the page-height functions
-  \let\col@do\us@tmphtfn \x@\each@col#1#2\E
+  \let\col@do\us@tmphtfn \edef\tmp{#1#2}\x@\each@col\tmp\E
   \x@\let\csname tmp#1ht\endcsname\relax
   \def\tmpb{#2}%
   \ifx\tmpb\empty
@@ -1027,7 +1064,7 @@
       \else
         \trace{dmc}{insert #1 (total #2) will show in column \tgtc@l}%
         \xdef\t@rgetcols{\t@rgetcols\tgtc@l-col-#1,}% Keep a list
-        \x@\let\csname \tgtc@l-col-#1\endcsname\relax
+        \global\x@\let\csname \tgtc@l-col-#1\endcsname\relax
         \x@\let\x@\tmpf\csname tr@iling\tgtc@l\endcsname
         \ifx\tmpf\relax\let\tmpf\empty\fi
         \if x\typ@\relax
@@ -1073,9 +1110,16 @@
 \globdimen\cplx@bestcost
 \globdimen\cplx@trycost
 \def\diglot@run@trials@complexpages{% This receives control after all columns are gathered.
+  \special{color push rgb 0 1 0}%
+  \trace{dmc}{Running trials for active content:\digl@tc@ntentlist}% 
   %As columns are gathered via the output routine, by definition the currentpage must be empty
   %Material to typeset is in excessX and wholeX (intially equal in content)
-  \trace{dmc}{Running trials for active content:\digl@tc@ntentlist}% 
+  \ifdiglotb@dy\else% Notice if the chunk is the fist body chunk
+    \trace{D}{Checking if there's bodytext here}%
+    \global\diglotfirstb@dyfalse
+    \let\col@do\check@diglot@body
+    \x@\each@col\digl@tc@ntentlist\E
+  \fi
   \let\inserts@npage\false
   \let\active@inserts\empty
   \refl@wcolsfalse\me@surefalse % can we skip any bits?
@@ -1116,7 +1160,7 @@
   %FIXME: Reflow columns intelegently.
   % - Preserve historic measurements.
   % - Save line counts from previous chunk as min@X@cut
-  %
+  % - insert gap for textborder
   % Need to know the p@gehtloss, and maybe the page won't be full.
   \pagefullfalse
   \p@lyp@geno=0 \relax
@@ -1141,40 +1185,50 @@
     \x@\cstackdown\r@wstrings,\E
     \global\cplx@bestcost=\maxdimen
     \gdef\cplx@bestpath{}%
+    \def\cplx@trydeet{}%
     \def\cplx@path{}\cplx@trycost=0pt
     \p@lyp@geno=0 
     \let\col@do\gen@ins@dims@endstop% We'll frequently hit the endstops, so remember them.
     \x@\each@col\digl@tc@ntentlist\E
-    \let\this@c@cut\relax
+    \let\this@c@cut\relax % cplx@trypage is recursive. Signal that this is the first node.
     \trace{dmc}{costs}%
     \tracetimset{costs}%
     \cplx@trypage
-    \tracetimcheck{costs}{Best path: \cplx@bestpath}%
+    \tracetimcheck{costs}{Best path: \cplx@bestpath/\cplx@verses: \the\cplx@bestcost}%
     \let\col@do\apply@splits
     \x@\each@col\cplx@proc@all\E
   \else
-    \trace{dmc}{No measure for this chunk.}%
+    \trace{dmc}{No detail measure for this chunk.}%
   \fi
-  %which actually need a galley trial?
+  % All measured now (if needed). Various options:
+  %  1. All data fits, and page is NOT full.
+  %  2. page is full and (maybe) there's residue
+  %  3. page is pseudo-full, either:
+  %    a. All data fits, but page does not have space for extra lines and there's one or more title(s)
+  %    b. page is not itself full, but what's left won't fit, due to insert/note.
+  %State 1 already checked. Need to check for states 3a and b  and also:
+  %which actually need a galley trial? (i.e. have inserts)
   \trace{dmc}{check@galley}%
   \let\g@lleylist\empty
   \let\col@do\check@galley
   \x@\each@col\cplx@proc@all\E
-  \trace{dmc}{Go for final layout}%
-  \global\late@stage@reflowfalse
-  \let\tri@llist\g@lleylist
-  \def\refl@wlist{}% List of columns needing to reflow.
-  \ifx\empty\tri@llist\else
-    \triall@@pcount=1
-    %\tracingmacros=1
-   \diglot@run@nxt@trial
-  \fi
-  \@prepare@layout@complexpages
   \ifpagefull
+    \trace{dmc}{Go for final layout (\g@lleylist)}%
+    \global\late@stage@reflowfalse
+    \let\tri@llist\g@lleylist
+    \def\refl@wlist{}% List of columns needing to reflow.
+    \ifx\empty\tri@llist\else
+      \triall@@pcount=1
+      %\tracingmacros=1
+      \diglot@run@nxt@trial
+    \fi
+    \special{color push rgb 0 0 1}%
+    \@prepare@layout@complexpages
     \complex@layout
   \else 
     \complex@notfull
   \fi
+  %\special{color push rgb 1 0 0}%
   %\def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}\def\v@lopfx{@}\def\v@losfx{egap}%
   %\dimen1=0pt
   %\let\col@do=\max@val
@@ -1188,11 +1242,13 @@
   \@complex@layout
 }
 \def\@complex@layout{%
-  \hbox to \textwidth\bgroup
+  %\special{color push rgb 1 0 0}%
+  \setbox\partial=\vbox{%
+    \box\partial
     \p@lyr@wno=0
     \@@complex@layout
-  \egroup
-  \@@p@geout
+  }%
+  \complex@@p@geout
   \advance\p@lyp@geno by 1
   \ifnum \p@lyp@geno<\p@lyp@ges
     \let\nxt\@complex@layout
@@ -1202,31 +1258,70 @@
   \nxt
 }
 
+\def\@parpgwrite#1{\ifhmode\beginL\fi\pdfsavepos \write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{#1}}\ifhmode\endL\fi}%
+\def\complex@@p@geout{%
+  \traceifset{complex@@p@geout}%
+  \def\pagecontents{%
+     \ifvoid\topins\else
+       \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
+       \advance\availht-\ht\topins \advance\availht-\skip\topins
+       \unvbox\topins \vskip\skip\topins
+     \fi%
+     \box\partial
+     \ifvoid\botchunk\else\box\botchunk\fi
+     \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
+       \trace{i}{Using bottomins \the\ht\bottomins x\the\wd\bottomins}%
+       \vskip\skip\bottomins \unvbox\bottomins \fi%
+     \ifvoid\notechunk\else\box\notechunk\fi
+     \ifvoid\verybottomins\else % \kern-\dimen0
+       \trace{i}{Using verybottomins \the\ht\verybottomins x\the\wd\verybottomins}%
+       \@parpgwrite{verybottomins}%
+       \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
+      \@parpgwrite{pageend}%
+      \makefootbox
+     }%pagecontents
+  \plainoutput
+  \traceifcheck{complex@@p@geout}%
+}
+      
+    
 \def\@@complex@layout{%
   \edef\this@p@lyr@wstring{\p@lyr@wstring}%
-  \x@\let\x@\r@wstring\csname cts@\this@p@lyr@wstring\endcsname
+  \x@\let\x@\r@wstring\csname cplx@proc\this@p@lyr@wstring\endcsname
+  \dimen1=\csname \this@p@lyr@wstring @ht\endcsname %FIXME: this is probably wrong
+  \setbox1\hbox{\makediglotgutter{\dimen1}{\z@}{\dimen1}}%
   \trace{dmc}{Layout \r@wstring}%
-  \let\l@stcol\empty
-  \let\col@do\@@complex@columnchunk
-  \x@\each@col\r@wstring\E
+  \setbox0\hbox{\let\l@stcol\empty
+    \let\col@do\@@complex@columnchunk
+    \x@\each@col\r@wstring\E
+  }\trace{dmc}{...Laid out:\l@gdims{0}}%
+  \box0
   \advance\p@lyr@wno by 1
   \ifnum\p@lyr@wno<\csname p@lyr@wcount-\the\p@lyp@geno\endcsname
     \let\nxt\@@complex@layout
+    \vskip 0.5\@minb@seline
+    \hrule
+    \vskip 0.5\@minb@seline
   \else
     \let\nxt\relax
-    \@@complex@box
+    %\@@complex@box % Does something need to happen to the new box? (e.g. put current note state onto a page?)
   \fi
   \nxt
 }
 
 \def\@@complex@columnchunk#1{%
   \edef\c@rrdstat{#1}%
-  \setbox\csname #1box\endcsname\vbox{%
-    \setLRspecific
+  \trace{dmc}{Laying out #1\l@gdims{\csname #1box\endcsname}}%
+  \setbox\csname #1box\endcsname\vbox{\lineskip=0pt \baselineskip=0pt \lineskiplimit=-1pt %
+    \setLRspecifictrial
     \csname unp@ck-t#1\endcsname
-    \setbox\csname #1box\endcsname\vbox{\unvbox\csname #1box\endcsname\unvbox\csname partial#1\endcsname}%
+    %\vbox to 0pt{\lineskip=0pt \lineskiplimit=-1pt \baselineskip=0pt \smash{\hbox{#1box}}%
+    %\smash{\hbox{ #1box}}\vss}%
+    \setbox0\box\csname #1box\endcsname%
+    \vbox{\lineskip 0pt \lineskiplimit -1pt \setbox1\hbox{\vrule width \wd0 height 1pt depth 0pt}\setbox2\hbox to 0pt{\vrule width 1pt height \ht0 depth \dp0 \hss}\copy1\hbox{\copy2 \box0 \box2}\box1}
     \csname unp@ck-b#1\endcsname
-  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
+    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
+  }%
   \@@simplecols{#1}%
 }
 
@@ -1244,29 +1339,56 @@
   \csname #1@cmax\endcsname=\numexpr \dimen0/\@minb@seline \relax
 }
 \def\check@galley#1{%
+  \ifdim\ht\csname excess#1\endcsname>\z@
+    \pagefulltrue
+  \fi
   \ifdim\ht\csname partial#1\endcsname>\z@
     %\tracingassigns=1 \tracingmacros=1\relax
     %\x@\let\x@\f@llowing\csname f@llowing#1\endcsname
     \x@\let\x@\@s@h\csname split@insheights#1\endcsname%
-    \ifdim \@s@h{\csname s@ve#1cut\endcsname}=\@s@h{0}\else
+    \ifdim \@s@h{\csname s@ve#1cut\endcsname}=\@s@h{0}
+      \trace{dmc}{No need to reprocess #1}%
+      \setbox\csname #1box\endcsname\copy\csname partial#1\endcsname
+    \else
       \edef\g@lleylist{\g@lleylist#1}%
-      
     \fi
+  \else
+    \setbox\csname #1box\endcsname\copy\csname partial#1\endcsname
+    \trace{dmc}{Nothing to set for #1}%
   \fi
 }
 
 \def\cplx@trypage{% Do the chunks for the next page, determining the lowest cost 
   %\tracingmacros=1
-  \x@\let\x@\p@gehtloss\csname p@gehtloss-\the\p@lyp@geno\endcsname
-  \x@\let\x@\tmp\csname p@lypgcts-\the\p@lyp@geno\endcsname
-  \trace{dmcr}{cplx@trypage p@lypgcts-\the\p@lyp@geno=\tmp, \cplx@path}%
-  \ifx\tmp\empty\else
-    \x@\cplx@trycosts\tmp,\E
-  \fi
+  \bgroup % Need to protect p@gehtloss
+    \x@\let\x@\p@gehtloss\csname p@gehtloss-\the\p@lyp@geno\endcsname
+    \x@\let\x@\tmp\csname p@lypgcts-\the\p@lyp@geno\endcsname
+    \trace{dmcr}{cplx@trypage p@lypgcts-\the\p@lyp@geno=\tmp, \cplx@path}%
+    \ifx\tmp\empty\else
+      \x@\cplx@trycosts\tmp,\E
+    \fi
+  \egroup
 }
 \def\apply@splits#1{%
+  \x@\let\x@\f@llowing\csname f@llowing#1\endcsname
   \x@\let\x@\p@tl\csname partial#1\endcsname
-  \setbox\p@tl\vsplit \csname excess\csname f@llowing#1\endcsname\endcsname to \csname s@ve#1cut\endcsname\@minb@seline\relax
+  \x@\let\x@\@xcs\csname excess\f@llowing\endcsname 
+  \savingvdiscards=1
+  \trace{d}{Splitting #1 to \csname s@ve#1cut\endcsname x\the\@minb@seline}%
+  \ifdiglotDebugFollowContents
+    \showbox\@xcs
+  \fi
+  \setbox\p@tl\vsplit \@xcs to \csname s@ve#1cut\endcsname\@minb@seline\relax
+  \setbox3=\vbox{\splitdiscards\count255=\lastpenalty
+        \count255=\lastpenalty \ifnum \count255>9999 \unpenalty\unskip\unskip\count255=\lastpenalty\fi %
+        \trace{D}{Resetting partial#1penalty from \the\csname partial#1penalty\endcsname to \the\count255}%
+        \global\csname partial#1penalty\endcsname=\count255 
+  }%
+  \ifdiglotDebugFollowContents\showbox3 \fi
+  \ifvoid\@xcs \x@\edef\csname saved#1penalty\endcsname{\csname saved\f@llowing penalty\endcsname}%
+  \else
+    \x@\edef\csname saved#1penalty\endcsname{0}%
+  \fi
   \setbox\p@tl\vbox{\unvbox\p@tl}%
   \trace{dmc}{partial#1 is \l@gdims{\p@tl}}%
 }  
@@ -1276,6 +1398,9 @@
 \globcount\this@increment
 \def\cplx@trycosts#1,#2\E{% e.g. 0-1, 1-0, etc.
   \bgroup
+    \ifx\this@c@cut\relax\else
+      \edef\cplx@path{\cplx@path,\this@p@lyr@wstring:\the\this@c@cut}%
+    \fi
     \edef\this@p@lyr@wstring{#1}%
     \edef\othr@p@lyr@wstrings{#2}%
     \ifx\empty\this@p@lyr@wstring
@@ -1289,9 +1414,7 @@
         \cplx@final@costs
       \fi
     \else
-      \ifx\this@c@cut\relax\else% Not the initial state, so there's something to save 
-        \edef\cplx@path{\cplx@path,\this@p@lyr@wstring:\the\this@c@cut}%
-      \fi
+      \let\l@st@p@lyr@wstring\this@p@lyr@wstring
       \x@\let\x@\this@c@cut\csname #1@cut\endcsname %row-id
       \x@\let\x@\this@c@cmax\csname #1@cmax\endcsname
       \ifx\empty\othr@p@lyr@wstrings
@@ -1304,9 +1427,13 @@
         \fi
       \fi
       %\x@\p@rser@wstring#1\E
-      \let\col@do\try@cut %Cut all the columns
-      \x@\x@\x@\each@col\csname p@lyp@gecols\this@p@lyr@wstring\endcsname\E
+      %\edef\cplx@path{\cplx@path,\this@p@lyr@wstring:\the\this@c@cut}%
+      %\let\col@do\try@cut %Cut all the columns
+      %\x@\x@\x@\each@col\csname p@lyp@gecols\this@p@lyr@wstring\endcsname\E
       \message{<}%
+      % First, remember the pre-entry conditions
+      \o@cplx@trycost=\cplx@trycost
+      \o@p@gehtloss=\p@gehtloss
       \@cplx@trycosts % and see if we go deeper in
       \message{>}%
     \fi
@@ -1321,15 +1448,21 @@
   \advance\cplx@trycost by \WScost\dimexpr \textheight-\p@gehtloss\relax
 }
 \def\cplx@final@costs{%
-  \cplx@minv=9999 \cplx@maxv=0
+  \cplx@minv=9999 \cplx@maxv=-1
+  \let\v@list\empty
   \let\col@do\cplx@minmaxv
   \x@\each@col\digl@tc@ntentlist\E
   \message{@\cplx@path}%
-  \ifnum\cplx@minv=9999 \else
+  \ifnum\cplx@minv=9999 
+    \xdef\cplx@verses{noV}%
+  \else
     \advance\cplx@trycost by \unbalVcost\dimexpr \numexpr (\cplx@maxv-\cplx@minv)*(\cplx@maxv-\cplx@minv)\relax pt\relax
+    \xdef\cplx@verses{\v@list: v\the\cplx@minv-v\the\cplx@maxv}%
   \fi
   \ifdim \cplx@trycost <\cplx@bestcost
     \@cplx@b@stcost
+  \else
+    \trace{dmc}{rej path \cplx@path  (\cplx@verses) \the\cplx@trycost}%
   \fi
 }
 \def\@cplx@b@stcost{%
@@ -1342,7 +1475,7 @@
   %\tracingassigns=1
   \x@\each@col\cplx@proc@all\E
   %\tracingassigns=0
-  \trace{dmc}{best path (\meaning\cplx@proc@all/\all@list: \cplx@path: \the\cplx@trycost}%
+  \trace{dmc}{best path (\cplx@path/\cplx@verses/\cplx@trydeet: \the\cplx@trycost}%
 }
 \globdimen\o@cplx@trycost %Old try cost
 \globdimen\o@p@gehtloss %Old pageht 
@@ -1354,46 +1487,76 @@
 \def\cplx@minmaxv#1{%This gets run by each@col with *CONTENT* columns, not display columns. What's the last verse of the last display column from this column?
   \def\tmp{#1}\l@stf@llowon
   \count255=\csname split@vrs\tmp\endcsname{\csname \tmp @cut\endcsname}%
-  \ifnum\count255<\cplx@minv
-    \cplx@minv=\count255
-  \fi
-  \ifnum\count255>\cplx@maxv
-    \cplx@maxv=\count255
+  \edef\v@list{\v@list #1\the\count255}%
+  \ifnum\count255>-1
+    \ifnum\count255<\cplx@minv
+      \cplx@minv=\count255
+    \fi
+    \ifnum\count255>\cplx@maxv
+      \cplx@maxv=\count255
+    \fi
   \fi
 }
 \def\run@a@trial@prep@complexpages{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
-  \tracingmacros=1
+  %\tracingmacros=1
   \traceNum{d}{run@a@trial \show@dstat, \csname s@ve\c@rrdstat cut\endcsname, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty}%
   \x@\let\x@\f@llowing\csname f@llowing\c@rrdstat\endcsname
-  \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %last galley
+  \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %THIS galley (unlike original diglot)
   \x@\let\x@\@xcs\csname excess\f@llowing\endcsname %source
-  \tracingmacros=0
+  \trace{D}{Preparing for trial}%
+  \global\trialheight=\availht
+  \global\let\whichtrial=\after@a@trial % FIXME?
+  \global\setbox\trialbox=\box\voidb@x
+  \global\setbox\galleyexc@ss=\box\voidb@x
+  \global\trialfailedfalse
+  \global\intrialtrue
+  \global\deadcycles=0
+  \global\holdinginserts=0
+  \global\intrialtrue
+  \global\deadcycles=0
+  \temptrue
+  %\s@venotes{\g@tndstat}{1}% FIXME Here? or maybe upper level?
+  \s@veinserts{col}%
+  \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\global\@ftergalleyskip=\lastskip\unskip\penalty\endtri@lpen@lty}%
+  \global\trialheight=\csname \this@p@lyr@wstring @ht\endcsname
+  %\tracingmacros=0
 }
 \def\after@after@a@trial@complexpages{%
   \trace{d}{after@after@a@trial@simplecols iftrialfailed\iftrialfailed true\else false\fi,  tlc=\the\triall@@pcount, pf:\ifpagefull true\else false\fi [\tri@llist|\digl@tc@ntent@xcs]}%
   
 }
 
+\globdimen\d@cimaxdim % 0.1 of a maxdimen - values less than this can be multiplied by 10
+\d@cimaxdim=0.1\maxdimen 
+
 \globcount\incbl@cols % Incrementable column count - don't keep on increasing if there's nothing more to pull!
 \def\@cplx@trycosts{% This is the loop-code at a given level
-  % First, remember the entry conditions
-  \o@cplx@trycost=\cplx@trycost
-  \o@p@gehtloss=\p@gehtloss
   %Do whatever maths comes with this rowstring and cut number, including setting the offsets of followons
   \incbl@cols=0
   \let\col@do\try@cut
   \min@increment=\maxdimen
-  \x@\let\x@\tmp@proc\csname cplx@proc\p@lyr@wstring\endcsname
+  \x@\let\x@\tmp@proc\csname cplx@proc\this@p@lyr@wstring\endcsname
   \x@\each@col\tmp@proc\E
   \r@wminht=\maxdimen
   % Caclulate the impact of this try:
-  \tracingassigns=1 \tracingmacros=1
+  %\tracingassigns=1 \tracingmacros=1
   \csname htfunction-\this@p@lyr@wstring\endcsname
-  \tracingassigns=0 \tracingmacros=0
-  \ifdim \r@wminht=\maxdimen \else
-    \dimen0=10\dimexpr \csname \this@p@lyr@wstring @ht\endcsname-\r@wminht\relax 
-    \advance\cplx@trycost by \unbalLcost\numexpr \dimen0/\@minb@seline  % Apply unbalanced lines cost for this row
+  %\tracingassigns=0 \tracingmacros=0
+  \ifdim \csname \this@p@lyr@wstring @ht\endcsname>\textheight
+    \tempfalse\message{P}%
+  \else 
+    \ifdim \r@wminht=\maxdimen \else
+      \dimen0=\dimexpr \csname \this@p@lyr@wstring @ht\endcsname-\r@wminht\relax 
+      \edef\cplx@trydeet{\cplx@trydeet,\this@p@lyr@wstring:\the\dimen0}%
+      \ifdim\dimen0<\d@cimaxdim
+        \multiply \dimen0 by 10 
+        \advance\cplx@trycost by \unbalLcost\numexpr \dimen0/\@minb@seline  % Apply unbalanced lines cost for this row
+      \else
+        \trace{dmc}{Caught odd value for dimen0:\the\dimen0 (\the\csname \this@p@lyr@wstring @ht\endcsname - \the\r@wminht ~ \the\dimexpr \this@c@cut\@minb@seline\relax ), \the\this@c@cut/\the\this@c@cmax}%
+        \cplx@trycost=\maxdimen
+      \fi
+    \fi
   \fi
   \ifdim\cplx@trycost < \cplx@bestcost
     \temptrue\message{.}%
@@ -1413,20 +1576,25 @@
   \else
     \complex@lastrowfalse
   \fi
+  \let\c@nxt\relax
   \iftemp
-    % Go for next row..
-    % Save insert dimensions
-    \let\col@do\gen@ins@dims@offset
-    \x@\each@col\tmp@proc\E
-    \x@\x@\x@\cplx@trycosts\othr@p@lyr@wstrings\E
-    \temptrue % just in case it got turned off
-    % Next in the loop, or end?
-    \ifnum\incbl@cols=0
-      \tempfalse\message{0}%
-    \fi
-    \ifnum\this@c@cut<\this@c@cmax\else
-      \tempfalse\message{O}%
-    \fi
+    \let\c@nxt\@@cplx@trycosts
+  \fi
+  \c@nxt %Proceed to next row.
+}
+\def\@@cplx@trycosts{% Scoring says we can procede to next row, so try it.
+  % Go for next row..
+  % Save insert dimensions
+  \let\col@do\gen@ins@dims@offset
+  \x@\each@col\tmp@proc\E
+  \x@\x@\x@\cplx@trycosts\othr@p@lyr@wstrings\E
+  \temptrue % just in case it got turned off
+  % Next in the loop, or end?
+  \ifnum\incbl@cols=0
+    \tempfalse\message{0}%
+  \fi
+  \ifnum\this@c@cut<\this@c@cmax\else
+    \tempfalse\message{O}%
   \fi
   \let\c@nxt\relax
   \iftemp % Do we continue or abandon?
@@ -1449,6 +1617,7 @@
     \let\c@nxt\@cplx@trycosts
     \complex@lastrowfalse
   \fi
+  %Restore entry conditions
   \cplx@trycost=\o@cplx@trycost
   \csname p@gehtloss-\the\p@lyp@geno\endcsname=\o@p@gehtloss
   \c@nxt
@@ -1527,7 +1696,7 @@
   \fi
 }
 
-\def\gen@ins@dims@offset#1{%
+\def\gen@ins@dims@offset#1{%What is the offset to apply for X{0}, to go from L{n} to X[N-ofs}
   \def\ido@name{ins@dims@offset#1}%
   \x@\ifx\csname f@llow@n#1\endcsname\empty 
     \x@\let\csname \ido@name\endcsname\empty
@@ -1546,11 +1715,12 @@
     \let\tmpa\empty
     \x@\let\x@\tmp\csname split@insdims\f@llowing-\the\count255\endcsname%
     \ifx\tmp\relax\else
-      \let\@op-
+      \def\@op{-}%
       \let\d@\@gen@ins@dims@offset
       \x@\cstackdown\tmp,\E
     \fi
     \x@\let\csname \ido@name\endcsname\tmpa
+    %\trace{dmc}{\ido@name\space defined as \meaning\tmpa}%
   \fi
 }
 \def\gen@ins@dims@endstop#1{%generate pre-procressed code like gen@ins@dims@offset, but for the endstop - only call with main columns.
@@ -1559,7 +1729,7 @@
   \let\tmpa\empty
   \ifdim \csname split@insheights#1\endcsname{\count255}>0pt
     \x@\let\x@\tmp\csname split@insdims#1-\the\count255\endcsname%
-    \let\@op+
+    \def\@op{+}%
     \ifx\tmp\relax
       \message{Eh? \the\csname split@insheights#1\endcsname{\count255} but split@insdims#1-\the\count255 \space is invalid}%
     \else
@@ -1599,6 +1769,8 @@
 }
 
 \def\complex@availht{%
+  \p@lyp@geno=\csname thep@geno\c@rrdstat\endcsname
+  \trace{dmc}{complex@availht \the\p@lyp@geno, \c@rrdstat}%
   \complex@me@surepage
   \availht=\textheight
   \advance\availht -\csname p@gehtloss-\the\p@lyp@geno\endcsname
