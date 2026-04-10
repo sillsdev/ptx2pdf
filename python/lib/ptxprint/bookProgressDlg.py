@@ -7,6 +7,7 @@ delivered via the existing multiprocessing.Queue / GLib.io_add_watch infrastruct
 
 import math
 from gi.repository import Gtk, Gdk
+from ptxprint.utils import _
 
 # ---------------------------------------------------------------------------
 # Status constants
@@ -26,6 +27,7 @@ _STATUS_COLORS = {
     STATUS_FAILED:  "#FF4500",   # orangered — hard failure
 }
 
+stoplabel = _("Stop!")
 
 def _rgba(hex_color):
     """Parse a #RRGGBB hex string into a Gdk.RGBA."""
@@ -33,6 +35,16 @@ def _rgba(hex_color):
     r.parse(hex_color)
     return r
 
+css = """
+    progressbar trough, progressbar progress {
+        min-height: 8px; margin-top: 0px; margin-bottom: 0px;
+    }
+    progressbar text {
+        color: black;
+        font-size: 12px; padding-top: 2px; padding-bottom: 0px;
+        margin-top: -2px; margin-bottom: -2px;
+    }
+"""
 
 # ---------------------------------------------------------------------------
 # BookProgressCell
@@ -41,7 +53,7 @@ def _rgba(hex_color):
 class BookProgressCell:
     """Compact 2-line widget: coloured progress bar (with book+page text inside) + message label."""
 
-    def __init__(self, bookCode: str):
+    def __init__(self, bookCode: str, stylep=None):
         self.bookCode = bookCode
         self._hadBadPage = False
         self._status = STATUS_PENDING
@@ -50,8 +62,8 @@ class BookProgressCell:
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1)
         vbox.set_margin_start(3)
         vbox.set_margin_end(3)
-        vbox.set_margin_top(2)
-        vbox.set_margin_bottom(2)
+        vbox.set_margin_top(0)
+        vbox.set_margin_bottom(0)
         self.frame = vbox   # expose as .frame for grid attachment
 
         # Progress bar — text inside shows "BOK  p/total"
@@ -59,6 +71,7 @@ class BookProgressCell:
         self._bar.set_show_text(True)
         self._bar.set_fraction(0.0)
         self._bar.set_text(f"{bookCode}")
+        self._bar.get_style_context().add_provider(stylep, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         vbox.pack_start(self._bar, False, False, 0)
 
         # Single message label below the bar
@@ -73,20 +86,16 @@ class BookProgressCell:
     def _applyColor(self, status):
         self._status = status
         hex_col = _STATUS_COLORS.get(status, "#AAAAAA")
-        css = f"""
-            progressbar > trough > progress {{
-                background-color: {hex_col};
-            }}
-        """
         provider = Gtk.CssProvider()
-        provider.load_from_data(css.encode())
+        lcss = "progressbar trough, progressbar progress {{ background-color: {}; }}"
+        provider.load_from_data(lcss.format(hex_col).encode())
         self._bar.get_style_context().add_provider(
-            provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
         )
 
-    def _barText(self, page, total):
+    def _barText(self, page, total, msg=""):
         t = str(total) if total else "?"
-        return f"{self.bookCode}  {page}/{t}"
+        return f"{self.bookCode} {msg} {page}/{t}"
 
     def reset(self):
         """Return cell to pending/grey state for a new job."""
@@ -106,7 +115,13 @@ class BookProgressCell:
         if total is not None:
             self._total = total
 
-        if mode == "goodpage":
+        if mode == "probe":
+            self._bar.set_fraction(0)
+            self._bar.set_text(self._barText(page, event.total, msg="init"))
+            self._msgLabel.set_text("")
+            self._applyColor(STATUS_RUNNING)
+
+        elif mode == "goodpage":
             frac = (page / self._total) if self._total else 0.0
             self._bar.set_fraction(min(frac, 1.0))
             self._bar.set_text(self._barText(page, self._total))
@@ -142,30 +157,55 @@ class BookProgressCell:
 class BookProgressDialog:
     """Non-modal, persistent window showing per-book page-fill progress."""
 
-    COLUMNS = 3
+    COLUMNS = 4
 
-    def __init__(self, parentWindow):
+    def __init__(self, parentWindow, view):
         self._cells = {}   # bookCode -> BookProgressCell
+        self.view = view
 
         self.window = Gtk.Window(title="Page Fill Progress")
         self.window.set_transient_for(parentWindow)
         self.window.set_destroy_with_parent(False)
         self.window.set_deletable(False)
-        # Hide instead of destroy when user tries to close
         self.window.connect("delete-event", lambda w, e: (w.hide(), True)[1])
 
+        # Main vertical container
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.window.add(vbox)
+
+        # Scrolled Window for the grid
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        scrolled.set_min_content_height(60)
-        scrolled.set_min_content_width(180)
+        scrolled.set_min_content_height(100) # Increased slightly for better view
+        scrolled.set_min_content_width(200)
+        
+        # Pack the scrolled window (expand=True, fill=True)
+        vbox.pack_start(scrolled, True, True, 0)
 
         self.grid = Gtk.Grid(column_spacing=8, row_spacing=4)
         self.grid.set_margin_start(8)
         self.grid.set_margin_end(8)
-        self.grid.set_margin_top(8)
-        self.grid.set_margin_bottom(8)
+        self.grid.set_margin_top(1)
+        self.grid.set_margin_bottom(1)
         scrolled.add(self.grid)
-        self.window.add(scrolled)
+
+        # Action area at the bottom
+        button_box = Gtk.ButtonBox(orientation=Gtk.Orientation.HORIZONTAL)
+        button_box.set_layout(Gtk.ButtonBoxStyle.CENTER)
+        button_box.set_margin_bottom(8)
+        vbox.pack_start(button_box, False, False, 0)
+
+        # The Stop button
+        self.stop_button = Gtk.Button(label=stoplabel)
+        self.stop_button.connect("clicked", self.on_stop_clicked)
+        # Optional: Add a CSS class or icon if you want it to look urgent
+        # self.stop_button.get_style_context().add_class("destructive-action")
+        button_box.add(self.stop_button)
+
+        self.stylep = Gtk.CssProvider()
+        self.stylep.load_from_data(css)
+
+        self.window.show_all()
 
     def populate(self, bookList: list):
         """Rebuild cells for a new job. bookList contains 3-letter book codes."""
@@ -180,7 +220,7 @@ class BookProgressDialog:
 
         # Adapt column count to book count so small jobs get a compact window
         cols = min(self.COLUMNS, n)
-        rows = math.ceil(n / cols)
+        rows = math.ceil((n + cols - 1) / cols)
 
         # Size window proportionally — cells are compact (2 lines each)
         cell_w = 180
@@ -191,12 +231,14 @@ class BookProgressDialog:
         )
 
         for i, bk in enumerate(bookList):
-            cell = BookProgressCell(bk)
-            col = i % cols
-            row = i // cols
+            cell = BookProgressCell(bk, self.stylep)
+            col = i // rows
+            row = i % rows
             self.grid.attach(cell.frame, col, row, 1, 1)
             self._cells[bk] = cell
 
+        self.stop_button.set_sensitive("True")
+        self.stop_button.set_label(stoplabel)
         self.grid.show_all()
 
     def updateEvent(self, event):
@@ -217,3 +259,10 @@ class BookProgressDialog:
             self.hide()
         else:
             self.show()
+
+    def on_stop_clicked(self, button):
+        print("You pressed THE Button!")
+        button.set_sensitive(False)
+        button.set_label(_("Stopping..."))
+        self.view.onFillCancelled()
+

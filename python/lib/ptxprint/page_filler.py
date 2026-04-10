@@ -189,9 +189,10 @@ class Hooks:
                    paragraph_params: Dict[ParagraphRef, ParamSig],
                    float_anchors: Dict[Any, VerseRef],
                    base_page: int,
-                   prompt: str = ".") -> LayoutRunResult:
+                   prompt: str = ".",
+                   genfiles: bool = False) -> LayoutRunResult:
         try:
-            self.printer.run_layout(solver, paragraph_params, float_anchors, prompt=prompt)
+            self.printer.run_layout(solver, paragraph_params, float_anchors, prompt=prompt, genfiles=genfiles)
         except FileNotFoundError as e:
             print(f"run_layout failed {e}")
             return None
@@ -402,7 +403,10 @@ class TypesetterSolver:
         else:
             self.base_params = dict(state.paragraph_params)
         page = start_page + 1
-        layout = self.initial_probes(state, page, restart=restart)
+        try:
+            layout = self.initial_probes(state, page, restart=restart)
+        except TimeoutError:
+            return HumanFixRequest(page, "Timed out")
         state.layout = layout
         wantprobe = False
         testloop = 10000
@@ -510,7 +514,7 @@ class TypesetterSolver:
         probes = all_probes[:6]
         newstate = state
         layout = state.layout
-        for e, s in probes:
+        for i, (e, s) in enumerate(probes):
             params = dict(state.paragraph_params)
             for p in paragraphs:
                 if (e, s) == unity or (p, e, s) in self.probe_cache or (restart and p in params):
@@ -520,6 +524,9 @@ class TypesetterSolver:
             self.itercount += 1
             logger.log(15, "probe_run iter=%s e=%s s=%s", self.itercount, e, s)
             self.collect_probes(layout, paragraphs, params)
+            p = ProgressEvent(self.bk, i, "probe")
+            p.total = len(probes) - 1
+            self.hooks.progress(p)
         return layout
 
     def run_layout(self, page_base_params, state, combo, page, start):
@@ -768,7 +775,7 @@ class PTXprinter:
         else:
             parms = {}
         unlockme()
-        init_layout = self.hooks.run_layout(None, parms, {}, -1)
+        init_layout = self.hooks.run_layout(None, parms, {}, -1, genfiles=True)
         if init_layout is None:
             return (False, f"Failed: {bk}")
         if restart and init_layout.first_failing_page is None:
@@ -868,8 +875,9 @@ class PTXprinter:
     def progress(self, pEvent):
         if self.progress_queue is None:
             return
-        np = self.parlocs.numPages()
-        pEvent.total = np
+        if not pEvent.total:
+            np = self.parlocs.numPages()
+            pEvent.total = np
         self.progress_queue.put(pEvent)
 
     def get_pidmap(self):
@@ -995,78 +1003,14 @@ class PTXprinter:
         self.parlocs.getnbadspaces()
 
 
-class Worker(mp.Process):
-
-    def __init__(self, task_queue, results_queue, build_params, log_config, nid, progress_queue, stop=False):
-        super().__init__()
-        self.task_queue = task_queue
-        self.results_queue = results_queue
-        self.build_params = build_params
-        self.log_config = log_config
-        self.nid = nid
-        self.progress_queue = progress_queue
-        self.stop = stop
-
-    def _setup_logger(self, bk):
-        if self.build_params.loglevel is None:
-            return
-        ext = f"pbuild{self.nid}" if self.nid is not None else None
-        project = self.build_params.prjtree.findProject(self.build_params.pid)
-        log_dir = project.printPath(self.build_params.cfgid, ext=ext)
-        os.makedirs(log_dir, exist_ok=True)
-        log_file = os.path.join(log_dir, f"ptxprint_{bk}.log")
-
-        logging.basicConfig(filename=log_file, filemode="w", encoding="utf-8",
-                force=True, **self.log_config)
-        logging.info(f"Opened log file {asctime()}")
-
-    def run(self):
-        printer = PTXprinter(self.build_params, self.nid, progress_q = self.progress_queue)
-        while True:
-            bk = self.task_queue.get()
-            if bk is None:
-                break
-            if self.log_config:
-                self._setup_logger(bk)
-            printer.timedout = False
-            if self.build_params.timeout is not None:
-                def trigger_timeout():
-                    printer.timedout = True
-                watchdog = threading.Timer(self.build_params.timeout, trigger_timeout)
-                watchdog.start()
-            res = printer.solve(bk, stop=self.stop, restart=self.build_params.args.restart)
-            if self.build_params.timeout is not None:
-                watchdog.cancel()
-            if res is None:     # skip absent book
-                self.results_queue.put((bk, self.nid, f"{bk} does not exist"))
-            else:
-                self.results_queue.put((bk, self.nid, *res))
-            logging.info(f"Finished {asctime()}")
-
-
-    def runview(self):
-        view = ViewModel(self.prjtree, self.config, self.scriptsdir, self.args)
-        view.setup_ini()
-        view.setPrjid(self.pid, self.guid, loadConfig=False, startup=True)
-        view.setConfigId(self.cfgid)
-        view.set("ecb_booklist", self.args.books)
-        view.set("r_book", "multiple")
-        runjob = RunJob(view, self.scriptsdir, self.macrosdir, self.args)
-        runjob.nothreads = True
-        runjob.silent = True
-        runjob.doit(noview=True, noaction=False)
-
-
 class GLibCompatQueue:
     """A progress queue whose read side gives GLib.io_add_watch a real socket fd.
-
     Architecture:
       - Workers (child processes) call put() which writes to a plain mp.Queue.
         mp.Queue is picklable so Worker instances can be spawned on Windows.
       - The main process wraps the read side: a background thread drains the
         mp.Queue and forwards items over a socket pair, whose read end is a
         real socket fd that GLib.IOChannel.unix_new() accepts on Windows.
-
     The GLibCompatQueue itself is NOT pickled into workers — only the inner
     mp.Queue is passed (see __getstate__/__setstate__).
     """
@@ -1138,7 +1082,6 @@ class GLibCompatQueue:
     # When Worker (mp.Process) is pickled for spawning on Windows, only the
     # inner mp.Queue crosses the process boundary. The socket pair and relay
     # thread are main-process-only and are NOT pickled.
-
     def __getstate__(self):
         return {'_mp_queue': self._mp_queue}
 
@@ -1146,6 +1089,75 @@ class GLibCompatQueue:
         # In the child process: only restore put() capability via _mp_queue.
         # All other attributes are absent; get_nowait/_reader are not needed.
         self._mp_queue = state['_mp_queue']
+
+
+class Worker(mp.Process):
+
+    def __init__(self, queues, build_params, log_config, nid, stop=False):
+        super().__init__()
+        for k, v in queues.items():
+            setattr(self, k, v)
+        self.build_params = build_params
+        self.log_config = log_config
+        self.nid = nid
+        self.stop = stop
+
+    def _setup_logger(self, bk):
+        if self.build_params.loglevel is None:
+            return
+        ext = f"pbuild{self.nid}" if self.nid is not None else None
+        project = self.build_params.prjtree.findProject(self.build_params.pid)
+        log_dir = project.printPath(self.build_params.cfgid, ext=ext)
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, f"ptxprint_{bk}.log")
+
+        logging.basicConfig(filename=log_file, filemode="w", encoding="utf-8",
+                force=True, **self.log_config)
+        logging.info(f"Opened log file {asctime()}")
+
+    def run(self):
+        printer = PTXprinter(self.build_params, self.nid, progress_q = self.progress_q)
+        while True:
+            bk = self.task_q.get()
+            if bk is None or (self.cancel_event and self.cancel_event.is_set()):
+                break
+            if self.log_config:
+                self._setup_logger(bk)
+            printer.timedout = False
+            stop_monitoring = threading.Event()
+            def interrupter_thread():
+                while not stop_monitoring.is_set():
+                    if self.cancel_event.wait(timeout=0.5):
+                        printer.timedout = True
+                        break
+            threading.Thread(target=interrupter_thread, daemon=True).start()
+            if self.build_params.timeout is not None:
+                def trigger_timeout():
+                    printer.timedout = True
+                watchdog = threading.Timer(self.build_params.timeout, trigger_timeout)
+                watchdog.start()
+            res = printer.solve(bk, stop=self.stop, restart=self.build_params.args.restart)
+            if self.build_params.timeout is not None:
+                watchdog.cancel()
+            stop_monitoring.set()
+            if res is None:     # skip absent book
+                self.results_q.put((bk, self.nid, f"{bk} does not exist"))
+            else:
+                self.results_q.put((bk, self.nid, *res))
+            logging.info(f"Finished {asctime()}")
+
+
+    def runview(self):
+        view = ViewModel(self.prjtree, self.config, self.scriptsdir, self.args)
+        view.setup_ini()
+        view.setPrjid(self.pid, self.guid, loadConfig=False, startup=True)
+        view.setConfigId(self.cfgid)
+        view.set("ecb_booklist", self.args.books)
+        view.set("r_book", "multiple")
+        runjob = RunJob(view, self.scriptsdir, self.macrosdir, self.args)
+        runjob.nothreads = True
+        runjob.silent = True
+        runjob.doit(noview=True, noaction=False)
 
 
 class MultiView:
@@ -1214,9 +1226,12 @@ class MultiView:
         self.build_params = BuildParams(*[getattr(self, a) for a in 'prjtree config'
                     ' macrosdir args pid guid cfgid scriptsdir loglevel timeout'.split(' ')])
         self.log_config = log_config
-        self.input_q = mp.Queue()
-        self.results_q = mp.Queue()
-        self.progress_q = GLibCompatQueue() if progress else None
+        self.queues = {
+            'task_q':      mp.Queue(),
+            'results_q':    mp.Queue(),
+            'progress_q':   GLibCompatQueue() if progress else None,
+            'cancel_event': mp.Event()
+        }
 
     def add_job(self, bk):
         self.task_list.append(bk)
@@ -1224,37 +1239,49 @@ class MultiView:
     def run_all(self, stop=False):
         self.task_list.sort(key=self.bklen, reverse=True)   # longest first
         for t in self.task_list:
-            self.input_q.put(t)
+            self.queues['task_q'].put(t)
         for _ in range(self.numproc):
-            self.input_q.put(None)
+            self.queues['task_q'].put(None)
 
         if self.numproc == 1:
-            worker = Worker(self.input_q, self.results_q, self.build_params, self.log_config, None, self.progress_q, stop=stop)
+            worker = Worker(self.queues, self.build_params, self.log_config, None, stop=stop)
             worker.run()
             results = []
-            while not self.results_q.empty():
-                results.append(self.results_q.get())
+            while not self.queues['results_q'].empty():
+                results.append(self.queues['results_q'].get())
         else:
-            workers = [Worker(self.input_q, self.results_q, self.build_params, self.log_config, i, self.progress_q, stop=stop) for i in range(self.numproc)]
+            workers = [Worker(self.queues, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
             for w in workers:
                 w.start()
             results = []
             for _ in range(len(self.task_list)):
-                results.append(self.results_q.get())
+                results.append(self.queues['results_q'].get())
             for w in workers:
                 w.join()
         return results
 
+    def cancel(self):
+        try:
+            self.queues['task_q'].put(None)
+            while True:
+                j = self.queues['task_q'].get_nowait()
+                if j is None:
+                    break
+        except:
+            pass
+        ce = self.queues.get('cancel_event', None)
+        if ce is not None:
+            ce.set()
+
     def teardown(self):
-        for a in ("input_q", "results_q", 'progress_q'):
-            q = getattr(self, a, None)
-            if q is not None:
+        for k, q in self.queues.items():
+            if q is not None and isinstance(q, mp.queues.Queue):
                 try:
                     q.close()
                     q.join_thread()
                 except:
                     pass
-                setattr(self, a, None)
+                self.queues[k] = None
 
 def add_cli_args(parser):
     parser.add_argument("-S", "--stop", action="store_true", default=False, help="Stop book at first bad page")

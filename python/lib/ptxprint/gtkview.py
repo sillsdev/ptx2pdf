@@ -7719,9 +7719,9 @@ Thank you,
         if numproc == 0:
             numproc = 1
         self.mview.initScheduler(numproc, None, progress=True)
-        self._progress_watch_id = GLib.io_add_watch(self.mview.progress_q._reader.fileno(), GLib.IO_IN, self.onFillProgress)
+        self._progress_watch_id = GLib.io_add_watch(self.mview.queues['progress_q']._reader.fileno(), GLib.IO_IN, self.onFillProgress)
         if self.bkProgressDlg is None:
-            self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"))  
+            self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)  
         self.bkProgressDlg.populate(self.getBooks())
 
         self.fillThread = threading.Thread(target=self._fillPages_run, daemon=True)
@@ -7757,7 +7757,7 @@ Thank you,
     def onFillProgress(self, source, condition):
         if condition & (GLib.IO_HUP | GLib.IO_ERR):     # tearing down the queue
             return False
-        q = self.mview.progress_q
+        q = self.mview.queues['progress_q']
         try:
             while True:
                 event = q.get_nowait()
@@ -7766,8 +7766,10 @@ Thank you,
             pass
         return True         # Continue monitoring
 
+    def onFillCancelled(self):
+        self.mview.cancel()
+
     def _fill_progress(self, event):
-        # if getattr(self, "_progressDialog", None) is not None:
         if self.bkProgressDlg is None:
             return
         self.bkProgressDlg.updateEvent(event)

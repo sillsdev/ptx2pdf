@@ -76,7 +76,6 @@ class PrintGallery:
             
             # Initial calculation
             self.onInputChanged()
-            print("✓ Print Gallery setup complete")
             
         except Exception as e:
             print(f"ERROR in Print Gallery setup: {e}")
@@ -85,7 +84,6 @@ class PrintGallery:
 
     def prepare(self):
         """Called when the Print Gallery tab is selected."""
-        print("*** Print Gallery prepare() called ***")
         self.setup()
 
     def onInputChanged(self, widget=None):

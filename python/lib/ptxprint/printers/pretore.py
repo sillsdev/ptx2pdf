@@ -191,8 +191,8 @@ class Pretore:
         if result is None:
             print("Failed quote")
             return
-        self.amount = result['data']['summary']['amount']
         copies = int(self.get("s_prnl_copies"))
+        self.amount = result['cost'][str(copies)]
         amount = self.rates.get(self.currency, 1.0) * self.amount
         cs = allcurrencies.get(self.currency, "\u20AC")
         self.set('l_prnl_total', "{}{:.2f}".format(cs, amount))
@@ -207,6 +207,7 @@ class Pretore:
     def url_query(self, callback, endpoint, amt, *a):
         auth = self.accounts[self.user]['api_key']
         headers = {'User-Agent': "Mozilla/5.0 (Windows NT 11.0; Win64; x64)",
+                   'Content-Type': 'application/json',
                    'Authorization': f'Bearer {auth}'}
         if len(a):
             data = json.dumps(a[0], ensure_ascii=False).encode("utf-8")
