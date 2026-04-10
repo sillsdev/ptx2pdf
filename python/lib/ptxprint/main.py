@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import argparse, sys, os, re, configparser, shlex
-import site, logging, time, socket
+import site, logging, time, socket, multiprocessing
 from shutil import rmtree
 from zipfile import ZipFile
 
@@ -198,6 +198,11 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
     # setup_i18n()
 
+    multiprocessing.freeze_support()
+    try:
+        multiprocessing.set_start_method("spawn")
+    except RuntimeError:
+        pass
     logconffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_logging.cfg")
     if sys.platform.startswith("win") and args.logfile == 'ptxprint.log':
         args.logfile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint.log")

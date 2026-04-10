@@ -7705,18 +7705,6 @@ Thank you,
             self.set("c_colophon", False)
             self.doStatus(_("Colophon updates have also been disabled in 'Layout Only' mode"))
 
-    def onResumeFillClicked(self, widget, *a):
-        """Resume filling from current position (Resume Fill menu option)"""
-        # Button label stays as "Auto Fill..." - no need to update
-        # TODO: Implement resume fill logic
-        pass
-
-    def onRestartFillClicked(self, widget, *a):
-        """Restart filling from beginning (Restart Fill menu option)"""
-        # Button label stays as "Auto Fill..." - no need to update
-        # TODO: Implement restart fill logic
-        pass
-
     def _onFillPagesClicked(self, resume=False):
         self.saveAdjlists()
         args = argparse.Namespace(**vars(self.args))
@@ -7728,28 +7716,50 @@ Thank you,
         numproc = int(self.get("s_maxproc"))
         if numproc == 0:
             numproc = 1
-        self.mview.initScheduler(numproc, None)
+        self.mview.initScheduler(numproc, None, progress=True)
+        self._progress_watch_id = GLib.io_add_watch(self.mview.progress_q._reader.fileno(), GLib.IO_IN, self.onFillProgress)
 
         self.fillThread = threading.Thread(target=self._fillPages_run, daemon=True)
         self.fillThread.start()
 
     def _fillPages_run(self):
-        results = self.mview.run_all(True)
+        try:
+            results = self.mview.run_all(True)
+        finally:
+            self.mview.teardown()
         print(results)
+        self.mview = None
         GLib.idle_add(self._fillPages_finish, results)
 
     def _fillPages_finish(self, results):
+        if getattr(self, "_progress_watch_id", None) is not None:
+            GLib.source_remove(self._progress_watch_id)
+            self._progress_watch_id = None
         for i, bk in enumerate(self.getBooks()):
             self.adjlists.pop(bk, None)
             a = self.get_adjlist(bk, save=False)
             if i == 0:
                 self.adjView.set_model(a)
         self.onOK(None)
-        return False
+        return False            # make idle_add happy to stop it rerunning
         
-
     def onResumeFillClicked(self, widget, *a):
         self._onFillPagesClicked(resume=True)
 
     def onRestartFillClicked(self, widget, *a):
         self._onFillPagesClicked(resume=False)
+
+    def onFillProgress(self, source, condition):
+        if condition & (GLib.IO_HUP | GLib.IO_ERR):     # tearing down the queue
+            return False
+        q = self.mview.progress_q
+        try:
+            while True:
+                event = q.get_nowait()
+                self._fill_progress(event)
+        except queue.Empty:
+            pass
+        return True         # Continue monitoring
+
+    def _fill_progress(event):
+        print(event)

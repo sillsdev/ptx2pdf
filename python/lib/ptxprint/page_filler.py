@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from dataclasses import dataclass
-from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable
+from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable, Literal
 from collections import deque, defaultdict
 from configparser import ConfigParser
 import heapq, re, os, logging, random, itertools, argparse, threading
@@ -154,6 +154,14 @@ class HumanFixRequest:
 class SolveResult:
     state: Optional[EngineState] = None
     human_fix: Optional[HumanFixRequest] = None
+
+@dataclass
+class ProgressEvent:
+    book:   str
+    page:   int
+    mode:   Literal["complete", "failed", "badpage", "goodpage"]
+    msg:    Optional[str]
+    total:  Optional[int]
 
 # -----------------------------
 # HOOKS YOU IMPLEMENT
@@ -411,6 +419,7 @@ class TypesetterSolver:
                 self.noprobe = True
                 state = self.run_layout(self.base_params, state, {}, page, start_page)
                 state.failures = failed_pages
+                self.hooks.progress(ProgressEvent(book, page, "complete", f"Failed pages: {' '.join(failed_pages)}"))
                 return state
             self.hooks.progress(page, self.itercount)
             oldstate = state
@@ -437,10 +446,13 @@ class TypesetterSolver:
                     if state.layout.first_failing_page is None:
                         return HumanFixRequest(page, "Couldn't solve all the pages")
                     failed_pages.append(page)
+                    self.hooks.progress(ProgressEvent(book, page, "badpage")
                     paras = self.get_candidate_paragraphs(state, page)
                     logger.warning(f"Could not solve page {page+1} after {paras[0] if len(paras) else 'UNK'} trying {state.layout.first_failing_page+1}")
                     start_page = state.layout.first_failing_page
                     continue
+            else:
+                self.hooks.progress(ProgressEvent(book, page, "goodpage"))
             solved = self.hooks.get_paragraphs_for_pages(page, page)
             #self.frozen_paragraphs.update(solved)
             self.init_state = state
@@ -709,12 +721,13 @@ class GrowList(list):
 
 class PTXprinter:
 
-    reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+)\]\s+ht=([\d.]+)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
+    reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+?)\]\s+ht=([\d.]+?)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
 
-    def __init__(self, build_params, nid):
+    def __init__(self, build_params, nid, progress_q=None):
         super().__init__()
         self.nid = nid
         self.timedout = False
+        self.progress_queue = progress_q
         self.view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
@@ -853,6 +866,13 @@ class PTXprinter:
         logfile = self.job.outfname.replace(".tex", ".log")
         self.parselog(logfile)
         print(prompt, flush=True, end="")
+
+    def progress(self, pEvent):
+        if self.progress_queue is None:
+            return
+        np = self.parlocs.numPages()
+        pEvent.total = np
+        self.progress_queue.put(pEvent)
 
     def get_pidmap(self):
         res = {}
@@ -1093,7 +1113,7 @@ class MultiView:
                 params['datefmt'] = handler.formatter.datefmt
         return params
 
-    def initScheduler(self, numproc, log_config=None):
+    def initScheduler(self, numproc, log_config=None, progress=False):
         if self.args.logging is not None and log_config is None:
             log_config = self._get_logging_params()
         if numproc is None:
@@ -1104,36 +1124,48 @@ class MultiView:
         self.build_params = BuildParams(*[getattr(self, a) for a in 'prjtree config'
                     ' macrosdir args pid guid cfgid scriptsdir loglevel timeout'.split(' ')])
         self.log_config = log_config
+        self.input_q = mp.Queue()
+        self.results_q = mp.Queue()
+        if progress:
+            self.progress_q = mpQueue()
 
     def add_job(self, bk):
         self.task_list.append(bk)
 
     def run_all(self, stop=False):
-        mp.set_start_method('spawn', force=True)
         self.task_list.sort(key=self.bklen, reverse=True)   # longest first
-        input_q = mp.Queue()
-        results_q = mp.Queue()
         for t in self.task_list:
-            input_q.put(t)
+            self.input_q.put(t)
         for _ in range(self.numproc):
-            input_q.put(None)
+            self.input_q.put(None)
 
         if self.numproc == 1:
-            worker = Worker(input_q, results_q, self.build_params, self.log_config, None, stop=stop)
+            worker = Worker(self.input_q, self.results_q, self.build_params, self.log_config, None, stop=stop)
             worker.run()
             results = []
-            while not results_q.empty():
-                results.append(results_q.get())
+            while not self.results_q.empty():
+                results.append(self.results_q.get())
         else:
-            workers = [Worker(input_q, results_q, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
+            workers = [Worker(self.input_q, self.results_q, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
             for w in workers:
                 w.start()
             results = []
             for _ in range(len(self.task_list)):
-                results.append(results_q.get())
+                results.append(self.results_q.get())
             for w in workers:
                 w.join()
         return results
+
+    def teardown(self):
+        for a in ("input_q", "results_q", 'progress_q'):
+            q = getattr(self, a, None)
+            if q is not None:
+                try:
+                    q.close()
+                    q.join_thread()
+                except:
+                    pass
+                setattr(self, a, None)
 
 def add_cli_args(parser):
     parser.add_argument("-S", "--stop", action="store_true", default=False, help="Stop book at first bad page")
