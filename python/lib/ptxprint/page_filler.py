@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable, Literal
 from collections import deque, defaultdict
 from configparser import ConfigParser
-import heapq, re, os, logging, random, itertools, argparse, threading
+import heapq, re, os, logging, random, itertools, argparse, threading, socket, queue as _queue
 import multiprocessing as mp
 from math import sqrt, log10
 from time import time, asctime
@@ -160,8 +160,8 @@ class ProgressEvent:
     book:   str
     page:   int
     mode:   Literal["complete", "failed", "badpage", "goodpage"]
-    msg:    Optional[str]
-    total:  Optional[int]
+    msg:    Optional[str] = None
+    total:  Optional[int] = None
 
 # -----------------------------
 # HOOKS YOU IMPLEMENT
@@ -326,9 +326,8 @@ class Hooks:
 
         return res
 
-    def progress(self, pindex, itercount):
-        # print(f"Starting page {pindex} after {itercount} iterations")
-        pass
+    def progress(self, pevent):
+        self.printer.progress(pevent)
 
 # -----------------------------
 # SOLVER
@@ -419,9 +418,8 @@ class TypesetterSolver:
                 self.noprobe = True
                 state = self.run_layout(self.base_params, state, {}, page, start_page)
                 state.failures = failed_pages
-                self.hooks.progress(ProgressEvent(book, page, "complete", f"Failed pages: {' '.join(failed_pages)}"))
+                self.hooks.progress(ProgressEvent(book, page, "complete", f"Failed pages: {' '.join(str(p) for p in failed_pages)}" if failed_pages else None))
                 return state
-            self.hooks.progress(page, self.itercount)
             oldstate = state
             try:
                 state = self.solve_page(state, page, start_page)
@@ -446,7 +444,7 @@ class TypesetterSolver:
                     if state.layout.first_failing_page is None:
                         return HumanFixRequest(page, "Couldn't solve all the pages")
                     failed_pages.append(page)
-                    self.hooks.progress(ProgressEvent(book, page, "badpage")
+                    self.hooks.progress(ProgressEvent(book, page, "badpage"))
                     paras = self.get_candidate_paragraphs(state, page)
                     logger.warning(f"Could not solve page {page+1} after {paras[0] if len(paras) else 'UNK'} trying {state.layout.first_failing_page+1}")
                     start_page = state.layout.first_failing_page
@@ -999,13 +997,14 @@ class PTXprinter:
 
 class Worker(mp.Process):
 
-    def __init__(self, task_queue, results_queue, build_params, log_config, nid, stop=False):
+    def __init__(self, task_queue, results_queue, build_params, log_config, nid, progress_queue, stop=False):
         super().__init__()
         self.task_queue = task_queue
         self.results_queue = results_queue
         self.build_params = build_params
         self.log_config = log_config
         self.nid = nid
+        self.progress_queue = progress_queue
         self.stop = stop
 
     def _setup_logger(self, bk):
@@ -1022,7 +1021,7 @@ class Worker(mp.Process):
         logging.info(f"Opened log file {asctime()}")
 
     def run(self):
-        printer = PTXprinter(self.build_params, self.nid)
+        printer = PTXprinter(self.build_params, self.nid, progress_q = self.progress_queue)
         while True:
             bk = self.task_queue.get()
             if bk is None:
@@ -1056,6 +1055,97 @@ class Worker(mp.Process):
         runjob.nothreads = True
         runjob.silent = True
         runjob.doit(noview=True, noaction=False)
+
+
+class GLibCompatQueue:
+    """A progress queue whose read side gives GLib.io_add_watch a real socket fd.
+
+    Architecture:
+      - Workers (child processes) call put() which writes to a plain mp.Queue.
+        mp.Queue is picklable so Worker instances can be spawned on Windows.
+      - The main process wraps the read side: a background thread drains the
+        mp.Queue and forwards items over a socket pair, whose read end is a
+        real socket fd that GLib.IOChannel.unix_new() accepts on Windows.
+
+    The GLibCompatQueue itself is NOT pickled into workers — only the inner
+    mp.Queue is passed (see __getstate__/__setstate__).
+    """
+
+    class _Reader:
+        def __init__(self, sock):
+            self._sock = sock
+        def fileno(self):
+            return self._sock.fileno()
+
+    def __init__(self):
+        self._mp_queue = mp.Queue()
+        self._write_sock, self._read_sock = socket.socketpair()
+        self._write_sock.setblocking(False)
+        self._read_sock.setblocking(False)
+        self._reader = self._Reader(self._read_sock)
+        self._items = _queue.Queue()   # main-thread item buffer
+        # Background thread: drains _mp_queue, buffers items, pings socket
+        self._thread = threading.Thread(target=self._relay, daemon=True)
+        self._thread.start()
+
+    def _relay(self):
+        """Relay items from the mp.Queue to the socket-signalled buffer."""
+        while True:
+            try:
+                item = self._mp_queue.get(timeout=0.5)
+            except Exception:
+                continue
+            if item is None:        # sentinel — shut down
+                break
+            self._items.put(item)
+            try:
+                self._write_sock.send(b'\x01')
+            except (BlockingIOError, OSError):
+                pass
+
+    def put(self, item):
+        """Called by worker processes (or main process for single-book jobs)."""
+        self._mp_queue.put(item)
+
+    def get_nowait(self):
+        """Drain one signal byte then return the next item, or raise queue.Empty."""
+        try:
+            self._read_sock.recv(4096)
+        except (BlockingIOError, OSError):
+            pass
+        return self._items.get_nowait()
+
+    def close(self):
+        self._mp_queue.put(None)    # stop the relay thread
+        try:
+            self._mp_queue.close()
+            self._mp_queue.join_thread()
+        except Exception:
+            pass
+        try:
+            self._write_sock.close()
+        except OSError:
+            pass
+        try:
+            self._read_sock.close()
+        except OSError:
+            pass
+
+    def join_thread(self):
+        pass
+
+    # --- Pickling support ---
+    # When Worker (mp.Process) is pickled for spawning on Windows, only the
+    # inner mp.Queue crosses the process boundary. The socket pair and relay
+    # thread are main-process-only and are NOT pickled.
+
+    def __getstate__(self):
+        return {'_mp_queue': self._mp_queue}
+
+    def __setstate__(self, state):
+        # In the child process: only restore put() capability via _mp_queue.
+        # All other attributes are absent; get_nowait/_reader are not needed.
+        self._mp_queue = state['_mp_queue']
 
 
 class MultiView:
@@ -1126,8 +1216,7 @@ class MultiView:
         self.log_config = log_config
         self.input_q = mp.Queue()
         self.results_q = mp.Queue()
-        if progress:
-            self.progress_q = mpQueue()
+        self.progress_q = GLibCompatQueue() if progress else None
 
     def add_job(self, bk):
         self.task_list.append(bk)
@@ -1140,13 +1229,13 @@ class MultiView:
             self.input_q.put(None)
 
         if self.numproc == 1:
-            worker = Worker(self.input_q, self.results_q, self.build_params, self.log_config, None, stop=stop)
+            worker = Worker(self.input_q, self.results_q, self.build_params, self.log_config, None, self.progress_q, stop=stop)
             worker.run()
             results = []
             while not self.results_q.empty():
                 results.append(self.results_q.get())
         else:
-            workers = [Worker(self.input_q, self.results_q, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
+            workers = [Worker(self.input_q, self.results_q, self.build_params, self.log_config, i, self.progress_q, stop=stop) for i in range(self.numproc)]
             for w in workers:
                 w.start()
             results = []

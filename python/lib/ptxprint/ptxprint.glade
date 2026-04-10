@@ -14080,7 +14080,7 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Resume filling from current position or Restart from beginning.
 
-Tries to fill the pages for the entire job specified, stopping on the first page failure. 
+Tries to fill the pages for the entire job specified, stopping on the first page failure.
 Starting from the first underfilled page in each book (Resume) or from the beginning (Restart).
 
 Warning: CPU-hungry. Go to lunch!</property>
@@ -14090,6 +14090,22 @@ Warning: CPU-hungry. Go to lunch!</property>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_progressMonitor">
+                <property name="label" translatable="yes">Show progress</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Show/hide page fill progress monitor</property>
+                <property name="margin-start">2</property>
+                <signal name="clicked" handler="onProgressMonitorToggle" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -14186,7 +14202,7 @@ Ctrl + Scrollwheel - change zoom level</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
