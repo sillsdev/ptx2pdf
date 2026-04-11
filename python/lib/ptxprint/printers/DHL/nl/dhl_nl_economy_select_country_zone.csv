@@ -1,0 +1,38 @@
+country_code_iso2,country_name,dhl_zone
+AL,Albania,7
+AT,Austria,5
+BA,Bosnia and Herzegovina,7
+BE,Belgium,1
+BG,Bulgaria,6
+CH,Switzerland,7
+CZ,Czech Republic,5
+DE,Germany,2
+DK,Denmark,5
+EE,Estonia,6
+ES,Spain,4
+FI,Finland,6
+FR,France,2
+GB,United Kingdom,3
+GG,Guernsey,7
+GI,Gibraltar,7
+GR,Greece,6
+HR,Croatia,6
+HU,Hungary,6
+IE,Ireland,5
+IT,Italy,4
+JE,Jersey,7
+LU,Luxembourg,1
+LV,Latvia,6
+MK,North Macedonia,7
+MT,Malta,6
+NO,Norway,7
+PL,Poland,5
+PT,Portugal,4
+RO,Romania,6
+RS,Serbia,7
+SE,Sweden,5
+SI,Slovenia,6
+SK,Slovakia,6
+SM,San Marino,7
+TR,Türkiye,7
+VA,Vatican City,4

@@ -1,0 +1,221 @@
+country_code_iso2,country_name,dhl_zone
+AD,Andorra,7
+AE,United Arab Emirates,1
+AF,Afghanistan,10
+AG,Antigua,10
+AI,Anguilla,10
+AL,Albania,7
+AM,Armenia,10
+AO,Angola,10
+AR,Argentina,9
+AS,American Samoa,10
+AT,Austria,7
+AU,Australia,6
+AW,Aruba,10
+AZ,Azerbaijan,10
+BA,Bosnia and Herzegovina,7
+BB,Barbados,10
+BD,Bangladesh,1
+BE,Belgium,7
+BF,Burkina Faso,10
+BG,Bulgaria,7
+BH,Bahrain,4
+BI,Burundi,10
+BJ,Benin,10
+BM,Bermuda,10
+BN,Brunei,5
+BO,Bolivia,9
+BR,Brazil,9
+BS,Bahamas,10
+BT,Bhutan,1
+BW,Botswana,10
+BY,Belarus,10
+BZ,Belize,10
+CA,Canada,8
+CD,"Congo, Democratic Rep.",10
+CF,Central African Republic,10
+CG,Congo,10
+CH,Switzerland,7
+CI,Cote d'Ivoire,10
+CK,Cook Islands,10
+CL,Chile,9
+CM,Cameroon,10
+CN,China,3
+CO,Colombia,9
+CR,Costa Rica,10
+CU,Cuba,10
+CV,Cape Verde,10
+CW,Curacao,10
+CY,Cyprus,7
+CZ,Czech Republic,7
+DE,Germany,7
+DJ,Djibouti,10
+DK,Denmark,7
+DM,Dominica,10
+DO,Dominican Republic,10
+DZ,Algeria,10
+EC,Ecuador,9
+EE,Estonia,7
+EG,Egypt,10
+ER,Eritrea,10
+ES,Spain,7
+ET,Ethiopia,10
+FI,Finland,7
+FJ,Fiji,10
+FK,Falkland Islands,10
+FM,Micronesia,10
+FO,Faroe Islands,10
+FR,France,7
+GA,Gabon,10
+GB,United Kingdom,7
+GD,Grenada,10
+GE,Georgia,10
+GF,French Guiana,9
+GG,Guernsey,7
+GH,Ghana,10
+GI,Gibraltar,7
+GL,Greenland,10
+GM,Gambia,10
+GN,Guinea Republic,10
+GP,Guadeloupe,10
+GQ,Guinea-Equatorial,10
+GR,Greece,7
+GT,Guatemala,10
+GU,Guam,10
+GW,Guinea-Bissau,10
+GY,Guyana,9
+HK,Hong Kong SAR China,2
+HN,Honduras,10
+HR,Croatia,7
+HT,Haiti,10
+HU,Hungary,7
+IC,Canary Islands,7
+ID,Indonesia,5
+IE,Ireland,7
+IL,Israel,7
+IQ,Iraq,10
+IR,Iran,10
+IS,Iceland,10
+IT,Italy,7
+JE,Jersey,7
+JM,Jamaica,10
+JO,Jordan,4
+JP,Japan,5
+KE,Kenya,10
+KG,Kyrgyzstan,10
+KH,Cambodia,5
+KI,Kiribati,10
+KM,Comoros,10
+KP,Korea (North),10
+KR,Korea (South),5
+KW,Kuwait,4
+KY,Cayman Islands,10
+KZ,Kazakhstan,10
+LA,Lao P.D.R.,5
+LB,Lebanon,10
+LC,St. Lucia,10
+LI,Liechtenstein,7
+LK,Sri Lanka,1
+LR,Liberia,10
+LS,Lesotho,10
+LT,Lithuania,7
+LU,Luxembourg,7
+LV,Latvia,7
+LY,Libya,10
+MA,Morocco,10
+MC,Monaco,7
+MD,Moldova,10
+ME,Montenegro,7
+MG,Madagascar,10
+MH,Marshall Islands,10
+MK,North Macedonia,7
+ML,Mali,10
+MM,Myanmar,5
+MN,Mongolia,10
+MO,Macau SAR China,5
+MQ,Martinique,10
+MR,Mauritania,10
+MS,Montserrat,10
+MT,Malta,7
+MU,Mauritius,10
+MV,Maldives,1
+MW,Malawi,10
+MX,Mexico,8
+MY,Malaysia,2
+MZ,Mozambique,10
+NA,Namibia,10
+NC,New Caledonia,10
+NE,Niger,10
+NG,Nigeria,10
+NI,Nicaragua,10
+NL,Netherlands,7
+NO,Norway,7
+NP,Nepal,1
+NR,Nauru,10
+NU,Niue,10
+NZ,New Zealand,6
+OM,Oman,4
+PA,Panama,10
+PE,Peru,9
+PG,Papua New Guinea,6
+PH,Philippines,5
+PK,Pakistan,4
+PL,Poland,7
+PR,Puerto Rico,10
+PT,Portugal,7
+PW,Palau,10
+PY,Paraguay,9
+QA,Qatar,4
+RE,Reunion,10
+RO,Romania,7
+RS,Serbia,7
+RU,Russian Federation,10
+RW,Rwanda,10
+SA,Saudi Arabia,4
+SB,Solomon Islands,10
+SC,Seychelles,10
+SD,Sudan,10
+SE,Sweden,7
+SG,Singapore,2
+SI,Slovenia,7
+SK,Slovakia,7
+SL,Sierra Leone,10
+SM,San Marino,7
+SN,Senegal,10
+SO,Somalia,10
+SR,Suriname,9
+SS,South Sudan,10
+SV,El Salvador,10
+SX,St. Maarten,10
+SY,Syria,10
+SZ,Eswatini,10
+TD,Chad,10
+TG,Togo,10
+TH,Thailand,2
+TJ,Tajikistan,10
+TL,Timor-Leste,5
+TM,Turkmenistan,10
+TN,Tunisia,10
+TO,Tonga,10
+TR,Türkiye,7
+TT,Trinidad and Tobago,10
+TV,Tuvalu,10
+TW,Taiwan,5
+TZ,Tanzania,10
+UA,Ukraine,10
+UG,Uganda,10
+US,United States of America,8
+UY,Uruguay,9
+UZ,Uzbekistan,10
+VA,Vatican City,7
+VC,St. Vincent,10
+VE,Venezuela,9
+VN,Vietnam,5
+VU,Vanuatu,10
+WS,Samoa,10
+XK,Kosovo,7
+YE,Yemen,10
+YT,Mayotte,10
+ZA,South Africa,9
+ZM,Zambia,10
+ZW,Zimbabwe,10
