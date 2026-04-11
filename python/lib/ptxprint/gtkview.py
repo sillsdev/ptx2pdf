@@ -7767,7 +7767,8 @@ Thank you,
         return True         # Continue monitoring
 
     def onFillCancelled(self):
-        self.mview.cancel()
+        if self.mview is not None:
+            self.mview.cancel()
 
     def _fill_progress(self, event):
         if self.bkProgressDlg is None:
