@@ -159,7 +159,7 @@ class Pretore:
             self.set("l_prnl_userid", self.user)
         dialog.destroy()
 
-    def prepare_quote(self):
+    def prepare_quote(self, quantities=None):
         booktype = self.get("fcb_prnl_binding", default="307")
         qinfo = {}
         for k in querytypes[booktype]:
@@ -177,12 +177,14 @@ class Pretore:
             for bk in b[:-1]:
                 c = qinfo.setdefault(bk, {})
             c[b[-1]] = val
+        if quantities is not None:
+            qinfo["settings"]["quantity"] = quantities
         return booktype, qinfo
 
-    def submit_quote(self, qinfo, endpoint, cb=None, amt=100):
+    def submit_quote(self, qinfo, endpoint, cb=None):
         if cb is None:
             cb = self.updatequote
-        self.url_query(cb, endpoint, amt, qinfo)
+        self.url_query(cb, endpoint, qinfo)
         # thread = threading.Thread(target=self.url_query, args=(cb, endpoint, amt, qinfo))
         # thread.daemon = True
         # thread.start()
@@ -198,13 +200,29 @@ class Pretore:
         self.set('l_prnl_total', "{}{:.2f}".format(cs, amount))
         self.set('l_prnl_percopy', "{}{:.2f}".format(cs ,amount/copies))
 
+    def updateMultiQuote(self, result):
+        if result is None:
+            print("Failed quote")
+            return
+        currFactor = self.rates.get(self.currency, 1.0)
+        sampleData = {}
+        for k, v in result['cost'].items():
+            sampleData[int(k)] = v / int(k) * currFactor
+        currencySymbol = allcurrencies.get(self.currency, "€")
+        viewer = PricingGraphViewer(
+            {"Pretore" : sampleData},
+            parentWindow=self.view.mainapp.win,
+            currencySymbol=currencySymbol
+        )
+        viewer.show()
+
     def showCreateResults(self, result):
         self.updatequote(result)
         quoteid = result.get("number", _("Unknown"))
         self.set("l_prnl_orderRef", quoteid)
         self.set("l_prnl_zipFilename", os.path.basename(self.zipname))
 
-    def url_query(self, callback, endpoint, amt, *a):
+    def url_query(self, callback, endpoint, *a):
         auth = self.accounts[self.user]['api_key']
         headers = {'User-Agent': "Mozilla/5.0 (Windows NT 11.0; Win64; x64)",
                    'Content-Type': 'application/json',
@@ -226,13 +244,13 @@ class Pretore:
             print(f"Error: {e}\nHeaders: {e.headers}\nBody: {e.read().decode('utf-8')}")
         GLib.idle_add(callback, result)
 
-    def do_quote(self, command, cb=None, amt=100):
+    def do_quote(self, command, cb=None, quantities=None):
         if cb is None:
             cb = self.updatequote
-        booktype, qinfo = self.prepare_quote()
+        booktype, qinfo = self.prepare_quote(quantities=quantities)
         uuid = self.accounts[self.user]['UUID']
         endpoint = f"https://ptxprint.pretore.com/wp-json/emily/v1/calculation/{uuid}/{booktype}/{command}"
-        self.submit_quote(qinfo, endpoint, cb=cb, amt=amt)
+        self.submit_quote(qinfo, endpoint, cb=cb)
 
     def quote(self, btn, *a):
         self.setup()
@@ -274,25 +292,5 @@ class Pretore:
             self.updatequote(None)
 
     def show_multi_quote_comparison(self, btn, *a):
-        # SAMPLE CODE ONLY - replace with real data collection for graphing
-        # Aligning currencies and including shipping will also complicate things
-        """Show pricing comparison graph with sample/collected quotes."""
-        # For now, use sample data with ±15% variation for each printer
-        # Base prices from Pretore
-        basePrices = {50: 12.50, 100: 9.90, 250: 7.40, 500: 6.10, 1000: 5.20, 2000: 4.85}
-        
-        # Apply printer-specific variations
-        sampleData = {
-            "Pretore": {50: 12.50, 100: 9.90, 250: 7.40, 500: 6.10, 1000: 5.20},
-            "Snowfall": {50: 13.20, 100: 9.20, 250: 7.00, 500: 5.40, 1000: 4.60},
-            "Pothi": {50: 8.80, 100: 7.40, 250: 7.10, 500: 6.50, 1000: 6.00}
-        }
-        
-        currencySymbol = allcurrencies.get(self.currency, "€")
-        viewer = PricingGraphViewer(
-            sampleData,
-            parentWindow=self.view.mainapp.win,
-            currencySymbol=currencySymbol
-        )
-        viewer.show()
-
+        quantities = [50,100,250,500,1000]
+        self.do_quote("calculate", cb=self.updateMultiQuote, quantities=quantities)
