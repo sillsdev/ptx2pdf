@@ -1085,7 +1085,7 @@
     \fi
   \fi
   \tmpcount=\lastnodetype
-  \traceNum{D}{Initial savepenalty \the\savedpenalty, \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
+  \traceNum{D}{Initial savepenalty \the\savedpenalty \ifdiglotcolh@scontent colh@scontent\fi, lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}) , \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
   \IfTr@ce{C}{{%
     \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
     \x@\let\x@\tmpL\csname ch@pterwaiting\endcsname\ifx\tmpL\relax\let\tmpL\space\fi
@@ -1114,7 +1114,7 @@
   \ifb@dy\ifdim \pagetotal>0pt 
       \x@\global\x@\let\csname isb@dy\c@rrdstat\endcsname\tr@e
   \fi\fi
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal, \csname isb@dy\c@rrdstat\endcsname}%
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal, \csname isb@dy\c@rrdstat\endcsname}%
   \checkfort@c % as good a place as any
   %\ifnum\outputpenalty=-10000 %User-pagebreak
     %\global\savedpenalty=\outputpenalty
@@ -2683,7 +2683,7 @@
   \global\availhtR=\textheight%
   \global\availhtL=\textheight%
   \global\availht=\textheight%
-  \global\chunkDelta=0pt
+  \csname @reset@diglot@\diglotlayout\endcsname
   \global\pagefullfalse%
   \xdef\f@rstb@dy{0pt}%
   \p@gestartfalse
@@ -2692,15 +2692,6 @@
   \xdef\nextp@gefirstmark{}%
   \let\col@do=\reset@marks
   \x@\each@col\diglot@list\E% 
-  \def\v@lpfx{@cur}%
-  \let\col@do=\forget@boxdim
-  \x@\each@col\diglot@list\E
-  \def\v@lpfx{@fn}%
-  \x@\each@col\diglot@list\E
-  \def\v@lpfx{}\def\v@lsfx{box}%
-  \let\col@do=\void@boxes %
-  \x@\each@col\diglot@list\E
-  \resetc@rdstat%reset the current diglotstatus
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
   \xdef\firstRmark{}%
@@ -2710,7 +2701,6 @@
   \s@veinserts{col}%
   \s@veallnotes{1}%
   \s@veallnotes{2}%
-  \resetc@rdstat%reset the current diglotstatus
   \nextshipout
   \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
   \ifcsname page-\the\pageno\endcsname
@@ -2720,7 +2710,19 @@
   %\showthe\output
   %%somejunk
 }
-
+\def\@reset@diglot@simplecols{%Rsetting things that happend at end of page OR layout style switch
+  \trace{d}{@reset@diglot@simplecols: resetting things at end of diglot}%
+  \global\chunkDelta=0pt
+  \def\v@lpfx{@cur}%
+  \let\col@do=\forget@boxdim
+  \x@\each@col\diglot@list\E
+  \def\v@lpfx{@fn}%
+  \x@\each@col\diglot@list\E
+  \def\v@lpfx{}\def\v@lsfx{box}%
+  \let\col@do=\void@boxes %
+  \x@\each@col\diglot@list\E
+  \resetc@rdstat%reset the current diglotstatus
+}
 \def\diglotCollect{%
   %This gets called to collect material into the appropriate input queue.
   % assumes: \availht is correct, 
@@ -3456,6 +3458,7 @@
       }%
     \fi
     \trace{d}{Book end: Not writing page}%
+    \ifversion{8}{\csname @reset@diglot@\diglotlayout\endcsname}{}%This might be in the wrong place. Added so that at a new book things aren't misplaced.
     %\pr@sideswitch{end}{L}%
     \let\digl@tc@ntentlist\empty
   \fi
