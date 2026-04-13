@@ -1,5 +1,5 @@
 
-import os, json, threading, urllib
+import os, json, threading, urllib, time
 from shutil import copy
 from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
@@ -46,6 +46,8 @@ class Pretore:
         self.user = None
         self.rates = {}
         self.currency = "EUR"
+        self.thread = None
+        self.exchange_thread = None
 
     def get(self, wname, **kw):
         return self.view.get(wname, **kw)
@@ -63,12 +65,16 @@ class Pretore:
             with urllib.request.urlopen(req) as response:
                 if response.getcode() == 200:
                     data = json.loads(response.read().decode("utf-8"))
-                    self.rates = data.get('rates', {})
+                    rates = data.get('rates', {})
                 else:
                     print (f"Response code: {response.getcode()}")
         except Exception as e:
             print(f"Error: {e}")
-        return self.rates
+            return
+        GLib.idle_add(self.set_exchange_rates, rates)
+
+    def set_exchange_rates(self, rates):
+        self.rates = rates
 
     def setup(self):
         numpages = self.numpages()
@@ -80,7 +86,8 @@ class Pretore:
             w.remove_class("red-label")
         if self.user is not None:
             return
-        self.get_exchange_rates(force=True)
+        self.exchange_thread = threading.Thread(target=self.get_exchange_rates)
+        self.exchange_thread.start()
         self.configdir = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "printers", "pretore")
         os.makedirs(self.configdir, exist_ok=True)
 
@@ -184,15 +191,20 @@ class Pretore:
     def submit_quote(self, qinfo, endpoint, cb=None):
         if cb is None:
             cb = self.updatequote
-        self.url_query(cb, endpoint, qinfo)
-        # thread = threading.Thread(target=self.url_query, args=(cb, endpoint, amt, qinfo))
-        # thread.daemon = True
-        # thread.start()
+        if self.thread is None or not self.thread.is_alive():
+            self.thread = threading.Thread(target=self.url_query, args=(cb, endpoint, qinfo))
+            self.thread.daemon = True
+            self.thread.start()
+        self.thread.join(30)
+        if not self.thread.is_alive():
+            self.thread = None
 
-    def updatequote(self, result):
+    def updatequote(self, result, curr):
         if result is None:
             print("Failed quote")
             return
+        if curr is not None:
+            self.currency = curr
         copies = int(self.get("s_prnl_copies"))
         self.amount = result['cost'][str(copies)]
         amount = self.rates.get(self.currency, 1.0) * self.amount
@@ -200,10 +212,12 @@ class Pretore:
         self.set('l_prnl_total', "{}{:.2f}".format(cs, amount))
         self.set('l_prnl_percopy', "{}{:.2f}".format(cs ,amount/copies))
 
-    def updateMultiQuote(self, result):
+    def updateMultiQuote(self, result, curr):
         if result is None:
             print("Failed quote")
             return
+        if curr is not None:
+            self.currency = curr
         currFactor = self.rates.get(self.currency, 1.0)
         sampleData = {}
         for k, v in result['cost'].items():
@@ -242,7 +256,12 @@ class Pretore:
                     print (f"Response code: {response.getcode()}")
         except urllib.error.HTTPError as e:
             print(f"Error: {e}\nHeaders: {e.headers}\nBody: {e.read().decode('utf-8')}")
-        GLib.idle_add(callback, result)
+        curr = None
+        if self.exchange_thread is not None and self.exchange_thread.is_alive():
+            self.exchange_thread.join(10)       # wait another 10s for the exchange info
+            if self.exchange_thread.is_alive():
+                curr = "EUR"
+        GLib.idle_add(callback, result, curr)
 
     def do_quote(self, command, cb=None, quantities=None):
         if cb is None:
@@ -253,9 +272,10 @@ class Pretore:
         self.submit_quote(qinfo, endpoint, cb=cb)
 
     def quote(self, btn, *a):
+        btn.set_sensitive(False)
         self.setup()
         self.do_quote("calculate")
-        print(self.rates)
+        btn.set_sensitive(True)
 
     def createOrder(self, btn, *a):
         if getattr(self.view, 'pdfFiles', None) is None or not len(self.view.pdfFiles):
@@ -292,5 +312,7 @@ class Pretore:
             self.updatequote(None)
 
     def show_multi_quote_comparison(self, btn, *a):
+        btn.set_sensitive(False)
         quantities = [50,100,250,500,1000]
         self.do_quote("calculate", cb=self.updateMultiQuote, quantities=quantities)
+        btn.set_sensitive(True)

@@ -475,7 +475,8 @@ class CoverWizardApp:
         ("crop_right", "Crop Right")
     ]
 
-    def __init__(self):
+    def __init__(self, view=None):
+        self.view = view
         self.state = WorkingCoverState()
         self._pixbufCache = {}
 
@@ -1944,27 +1945,13 @@ class CoverWizardApp:
         dlg.run(); dlg.destroy()
 
     def onFinishClicked(self, widget):
-        d = self.state.toDict()
-        print("\n── Cover Wizard V5 finished ──")
-        print(json.dumps(d, indent=2))
-        out = os.path.join(os.getcwd(), "coverwizard_state.json")
-        try:
-            with open(out, "w", encoding="utf-8") as f:
-                json.dump(d, f, indent=2)
-            dlg = Gtk.MessageDialog(transient_for=self.window,
-                                    message_type=Gtk.MessageType.INFO,
-                                    buttons=Gtk.ButtonsType.OK,
-                                    text=f"Cover settings saved to:\n{out}")
-        except OSError as exc:
-            dlg = Gtk.MessageDialog(transient_for=self.window,
-                                    message_type=Gtk.MessageType.ERROR,
-                                    buttons=Gtk.ButtonsType.CLOSE,
-                                    text=f"Could not write file:\n{exc}")
-        dlg.run(); dlg.destroy()
-        self.window.destroy()
+        if self.view is not None:
+            self.state.updateView(view)
+        self.onWindowDestroy(self.window)
+
 
     def onWindowDestroy(self, widget):
-        Gtk.main_quit()
+        self.window.hide()
 
     # ─────────────────────────────────────────────────────────────────
     # Cairo preview

@@ -55,6 +55,7 @@ from ptxprint.gtktesting import GtkTester
 from ptxprint.printers import init_printers, printer_from_label
 from ptxprint.page_filler import MultiView
 from ptxprint.bookProgressDlg import BookProgressDialog
+from ptxprint.coverwizard import CoverWizardApp
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging, threading
 import webbrowser
@@ -851,6 +852,7 @@ class GtkViewModel(ViewModel):
         gladefile = os.path.join(pycodedir(), "ptxprint.glade")
         GObject.type_register(GtkSource.View)
         GObject.type_register(GtkSource.Buffer)
+        GObject.threads_init()
         tree = et.parse(gladefile)
         self.allControls = []
         modelbtns = set([v.widget for v in ModelMap.values() if v.widget is not None and v.widget.startswith("btn_")])
@@ -6359,7 +6361,8 @@ class GtkViewModel(ViewModel):
                 startfile(fpath)
         dialog.hide()
         
-    def onCoverWizardClicked():
+    def onCoverWizardClicked(self, btn):
+        app = CoverWizardApp()
         return  # TODO: implement cover wizard dialog
     
     def createCoverPeriphs(self, **kw):
