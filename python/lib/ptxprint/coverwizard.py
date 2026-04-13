@@ -175,7 +175,7 @@ class WorkingCoverState:
             setfront("Border", None)
             for a in "Style Ref Color".split():
                 setfront("Border"+a, "")
-        setfront("BgColor", coltotex(coltoonemax(self.bg_color)), all=True)
+        setfront("BgColor", self.bg_color.replace("#", "x"), all=True)
         setfront("Alpha", self.bg_opacity / 100, all=True)
         for d in (True, False):
             for c in ("BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha"):
@@ -190,9 +190,9 @@ class WorkingCoverState:
         for m in (('mt1', 'title'), ('mt2', 'subtitle')):
             sz = view.styleEditor.getval(m[0], 'FontSize', 1.0)
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'FontSize', sz * getattr(self, m[1]+"_size_pct") / 100)
-            view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'Color', coltotext(coltoonemax(getattr(self, m[1]+"_color"))))
+            view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'Color', getattr(self, m[1]+"_color").replace("#", "x"))
             view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'FontSize', sz * 0.65 * getattr(self, "spine_text_size_pct") / 100)
-            view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'Color', coltotext(coltoonemax(getattr(self, "spine_text_color"))))
+            view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'Color', getattr(self, "spine_text_color").replace("#", "X"))
         view.setvar('maintitle', self.title)
         if self.subtitle_enabled:
             view.setvar('subtitle', self.subtitle)
@@ -205,7 +205,7 @@ class WorkingCoverState:
     def getBorderVal(self, view, mkr, vh, key):
         val = view.styleEditor.getval(mkr, f"{key}{vh}Padding", None)
         if val is None:
-            val = view.styleEditor.getval(mkr, f"{key}Padding", 0)
+            val = float(view.styleEditor.getval(mkr, f"{key}Padding", 0))
         return val
 
     def get_image_height(self, path, pht, pwd):
@@ -235,16 +235,16 @@ class WorkingCoverState:
                 theight = pheight - vremove
                 twidth = pwidth - hremove
                 title_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
-                bits.append(theight * self.title_position_pct / 100, title_height * linefactor, r"\mt1 \zvar|maintitle\*")
+                bits.append((theight * self.title_position_pct / 100, title_height * linefactor, r"\mt1 \zvar|maintitle\*"))
                 if self.subtitle_enabled:
                     subtitle_height = view.styleEditor.getval(f"cat:cover{a}|mt2", "LineSpacing", 1.0)
-                    bits.append(theight * self.subtitle_position_pct / 100, subtitle_height * linefactor, r"\mt2 \zvar|subtitle\*")
+                    bits.append((theight * self.subtitle_position_pct / 100, subtitle_height * linefactor, r"\mt2 \zvar|subtitle\*"))
                 if self.langname_enabled:
                     langname_height = view.styleEditor.getval(f"cat:cover{a}|mt3", "LineSpacing", 1.0)
-                    bits.append(theight * self.langname_position_pct / 100, langname_height * linefactor, r"\mt3 \zvar|languagename\*")
+                    bits.append((theight * self.langname_position_pct / 100, langname_height * linefactor, r"\mt3 \zvar|languagename\*"))
                 if self.fgimage_enabled:
                     fgimage_height = self.get_image_height(self.fgimage_path, twidth, theight)
-                    bits.append(theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig|src="{self.fgimage_path}" size="col", pgpos="pc"\fig*')
+                    bits.append((theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig|src="{self.fgimage_path}" size="col", pgpos="pc"\fig*'))
                 basepos = 0
                 for b in sorted(bits):
                     if b[0] > basepos:
@@ -1946,7 +1946,7 @@ class CoverWizardApp:
 
     def onFinishClicked(self, widget):
         if self.view is not None:
-            self.state.updateView(view)
+            self.state.updateView(self.view)
         self.onWindowDestroy(self.window)
 
 

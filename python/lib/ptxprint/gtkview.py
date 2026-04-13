@@ -6362,7 +6362,7 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def onCoverWizardClicked(self, btn):
-        app = CoverWizardApp()
+        app = CoverWizardApp(view=self)
         return  # TODO: implement cover wizard dialog
     
     def createCoverPeriphs(self, **kw):
