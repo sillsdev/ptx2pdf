@@ -346,7 +346,7 @@ binaries = (binaries
       + [('python/lib/ptxprint/unicode/*.bz2', 'ptxprint/unicode')]
       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
       + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
-      + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
+      + [('fonts/' + f, 'fonts/' + f) for f in ['empties.ttf', 'SourceCodePro-Regular.ttf'] + [f'Charis-{x}.ttf' for x in 'Regular Bold Italic BoldItalic'.split()]]
       + [('src/mappings/*.tec', 'ptxprint/ptx2pdf/mappings')]
       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptxprint/PDFassets/reference')]
       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
