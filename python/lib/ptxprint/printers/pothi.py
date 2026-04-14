@@ -207,8 +207,8 @@ class Pothi:
             total      = priceAtQty * qty
 
             # --- Summary labels ---
-            discStr = f" ({discPct}% off)" if discPct else ""
-            self._widget("p_priceQAmt").set_text(fmtRupees(priceAtQty) + discStr)
+            discStr = f"({discPct}% off) " if discPct else ""
+            self._widget("p_priceQAmt").set_text(discStr + fmtRupees(priceAtQty))
             self._widget("p_priceTotalAmt").set_markup(f"<b>{fmtRupees(total)}</b>")
 
             # --- Breakdown labels ---

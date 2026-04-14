@@ -1102,8 +1102,7 @@ class GtkViewModel(ViewModel):
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
 
-        if self.args.experimental & 1:
-            self.builder.get_object("tb_Printers").set_visible(True)
+        self.builder.get_object("tb_Printers").set_visible(True)
         logger.debug("Project list loaded")
 
         return True
@@ -7089,7 +7088,7 @@ Thank you,
                 ref = p[1]
                 if ref is None:
                     ref = Ref("UNK 0:0")
-                if ref.verse == 0:
+                if not ref.verse:
                     ref.verse = ref.numverses() // 2 + 1
                 self.picinfos.addpic(suffix=self.digSuffix, anchor=p[1].str(env=Environment(cvsep='.')), src=p[0]+p[3],
                         ref=p[1].str(env=self.getRefEnv(nobook=True)), alt=p[2], size='col', pgpos='tl')

@@ -185,8 +185,8 @@ class WorkingCoverState:
             setfront("BgImage", self.img_primary_path, all=wrap_all)
             setfront("BgImageScaleTo", "colbleed", all=wrap_all)
             setfront("BgImageScale", "1x1" if self.img_primary_fit == "stretch" else "1", all=wrap_all)
-            setfront("BgImageAlpha", self.img_primary_alpha / 100, all=wrap_all)
-            setfront("BgImageAlpha", 1 - (self.img_primary_alpha / 100), all=not wrap_all)
+            setfront("BgImageAlpha", self.img_primary_opacity / 100, all=wrap_all)
+            setfront("BgImageAlpha", 1 - (self.img_primary_opacity / 100), all=not wrap_all)
         for m in (('mt1', 'title'), ('mt2', 'subtitle')):
             sz = view.styleEditor.getval(m[0], 'FontSize', 1.0)
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'FontSize', sz * getattr(self, m[1]+"_size_pct") / 100)
