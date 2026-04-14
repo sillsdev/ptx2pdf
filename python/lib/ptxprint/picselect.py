@@ -13,6 +13,8 @@ from ptxprint.utils import _, extraDataDir, appdirs, allbooks, chaps
 from usfmtc.reference import RefList, Ref
 from functools import reduce
 
+image_extensions = {'.jpg', '.jpeg', '.tif', '.tiff', '.png', '.gif', '.bmp'}
+
 startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 999],
                       reduce(lambda a,x: a + [a[-1]+x], (int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999), [0])))
 startchaps += [("special", startchaps[-1][1]+1)]
@@ -35,7 +37,7 @@ class TagableRef(Ref):
             v = self.verse - 126
         else:
             c = startbooks[self.book] + self.chapter
-            v = min(self.verse, 127)
+            v = min(self.verse or 0, 127)
         vals = [(c >> 5) & 63, ((v & 64) >> 6) + ((c & 31) << 1), v & 63]
         return subverse + "".join(self.b64codes[v] for v in vals)
 
@@ -79,7 +81,6 @@ def unpackImageset(filename, prjdir):
     return dirname
 
 def is_image_file(filename):
-    image_extensions = {'.jpg', '.jpeg', '.tif', '.tiff', '.png', '.gif', '.bmp'}
     return any(filename.lower().endswith(ext) for ext in image_extensions)
 
 def getImageSets():
@@ -207,10 +208,10 @@ class ThumbnailDialog:
         self.image_tiles = {}
         for imagefile in os.listdir(imagesdir):
             (imageid, imageext) = os.path.splitext(imagefile)
-            if not imageext.lower() in (".jpg", ".tif"):
+            if not imageext.lower() in image_extensions:
                 continue
             w = Gtk.ToggleButton()
-            w.connect("toggled", self.on_thumbnail_toggled, imageid)
+            w.connect("toggled", self.on_thumbnail_toggled, imageid, imageext)
             w.connect("enter-notify-event", self.on_thumbnail_entered, imageid)
             w.connect("button-press-event", self._onThumbnailRightClicked, imageid)
             self.image_tiles[imageid] = (w, False, os.path.join(imagesdir, imagefile))
@@ -292,7 +293,7 @@ class ThumbnailDialog:
         self.imgrefs = {}
         for imagefile in os.listdir(imagesdir):
             (imageid, imageext) = os.path.splitext(imagefile)
-            if not imageext.lower() in (".jpg", ".tif"):
+            if not imageext.lower() in image_extensions:
                 continue
             if len(self.artists) and imageid[:2].lower() not in self.artists:
                 continue
@@ -481,11 +482,11 @@ class ThumbnailDialog:
         self._previewPopover.show_all()
         return True  # consume event; prevent any default right-click handling
 
-    def on_thumbnail_toggled(self, button, imageid):
+    def on_thumbnail_toggled(self, button, imageid, imageext):
         bibrefs = self.get_refs(imageid, default=[None])
         bibref = bibrefs[0] if len(bibrefs) else None
         title = self.langdata.get(imageid, {}).get("title", "") if self.langdata else ""
-        val = (imageid, bibref, title)
+        val = (imageid, bibref, title, imageext)
 
         if button.get_active():
             self.selected_thumbnails.add(val)
