@@ -634,6 +634,7 @@
       \showbox\@xcs
     \fi
     \savingvdiscards=1
+    \trace{D}{Splitting to \the\availht}%
     \global\setbox\p@rtl=\vsplit\@xcs to \availht
     \edef\tmpbadness{\the\badness}%
     \global\p@rtlsettrue
@@ -670,13 +671,21 @@
     \else
       \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{0pt}%
     \fi
-    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip, tsr:\csname tri@lsplitRej\c@rrdstat\endcsname}%
-    \ifdim\ht\galley=0pt \ifdim\dp\galley=0pt
+    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip, tsr:\csname tri@lsplitRej\c@rrdstat\endcsname, P:\csname saved\c@rrdstat penalty\endcsname}%
+    \tempfalse
+    \ifdim\ht\galley<\z@
+      \trace{D}{How come galley has NEGATIVE size? (check with  scrollmode) \the\interactionmode}%
+      \temptrue
+    \fi
+    \ifdim\ht\galley=\z@ \ifdim\dp\galley=\z@
       \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
+      \temptrue
+    \fi\fi
+    \iftemp
       \ifnum\interactionmode=2
         \showbox\galley
       \fi
-    \fi\fi
+    \fi
     \tracetimset{any@trial}%
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 4}%
@@ -2139,6 +2148,7 @@
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \loc@lhtfalse\dglt@calc@vailht
   \advance\availht by -\m@xBelowBaseline
+  \ifversion{8}{\relax}{}%
   %\tracingassigns=0
   \ifdim\availht<\@maxb@seline %
     \global\pagefulltrue%
@@ -3308,7 +3318,7 @@
 \def\diglot@run@trials{% for X as L, R, (eventually others)
   %expects: collected input in partialX, excessX empty
   %Process: cycle through chunks  
-  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist) sp=\the\savedpenalty}%
+  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist) sp=\the\savedpenalty, lc=\the\triall@@pcount}%
   \let\tri@llist\digl@tc@ntentlist%
   %Before running trials, empty(eventually store?) old galleys
   \empty@partials
