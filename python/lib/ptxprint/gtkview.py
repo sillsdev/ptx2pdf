@@ -1044,9 +1044,9 @@ class GtkViewModel(ViewModel):
         imsets.remove_all()
         ims = getImageSets()
         if ims is not None:
-            for m in ims:
-                logger.debug(f"Found imageset: {m}")
-                imsets.append_text(m)
+            for imgid, name in ims:
+                logger.debug(f"Found imageset: {imgid}")
+                imsets.append(imgid, name)
             imsets.set_active(0)
 
         self.fileViews = []
@@ -6013,7 +6013,7 @@ class GtkViewModel(ViewModel):
         store = self.builder.get_object("ls_imagesets")
         store.clear()
         catalog = self._loadImagesetsCatalog()
-        installed = set(getImageSets() or [])
+        installed = set(imgid for imgid, _ in (getImageSets() or []))
         for item in catalog:
             imgid = item.get("id", "")
             already_installed = imgid in installed
@@ -6041,18 +6041,34 @@ class GtkViewModel(ViewModel):
         except (FileNotFoundError, json.JSONDecodeError, KeyError):
             return []
 
+    def _imagesetName(self, imgsetname):
+        """Return the display name for an installed imageset ID."""
+        for item in self._loadImagesetsCatalog():
+            if item.get('id') == imgsetname:
+                return item.get('name', imgsetname)
+        uddir = extraDataDir("imagesets", imgsetname)
+        if uddir:
+            illpath = os.path.join(uddir, "illustrations.json")
+            try:
+                with open(illpath, encoding='utf-8') as f:
+                    return json.load(f).get('name', imgsetname)
+            except Exception:
+                pass
+        return imgsetname
+
     def _registerInstalledImageset(self, imgsetname):
         """Add imgsetname to the picture-set combo box if not already present."""
         lsp = self.builder.get_object("ecb_artPictureSet")
-        allimgsets = [x[0] for x in lsp.get_model()]
-        if imgsetname.casefold() not in [p.casefold() for p in allimgsets]:
-            for i, p in enumerate(allimgsets):
-                if imgsetname.casefold() < p.casefold():
-                    lsp.insert_text(i, imgsetname)
+        if not lsp.set_active_id(imgsetname):
+            name = self._imagesetName(imgsetname)
+            model = lsp.get_model()
+            for i, row in enumerate(model):
+                if name.casefold() < row[0].casefold():
+                    lsp.insert(i, imgsetname, name)
                     break
             else:
-                lsp.append_text(imgsetname)
-        self.set("ecb_artPictureSet", imgsetname, mod=False)
+                lsp.append(imgsetname, name)
+            lsp.set_active_id(imgsetname)
 
     def displayReadmeFile(self, imgsetname, uddir):
         readme_path = os.path.join(uddir, "readme.txt")
@@ -6095,7 +6111,6 @@ class GtkViewModel(ViewModel):
                 return True
             self._registerInstalledImageset(imgsetname)
             self.doStatus(_("Installed Image Set: {}".format(imgsetname)))
-            self.onGetPicturesClicked(None)
             # Refresh the list so the newly installed set shows as "✓ Installed"
             self._populateImagesetList()
         elif imgsetname == "":
@@ -7099,7 +7114,9 @@ Thank you,
     def onImageSearchChanged(self, btn):
         t = self.get('t_artSearch')
         self.thumbnails.set_filter(t)
-        
+        if not t:
+            self.btnImageRefreshClicked(None)
+
     def onImageRefRangeChanged(self, btn):
         t = self.get('t_artRefRange')
         self.thumbnails.set_reflist(t)

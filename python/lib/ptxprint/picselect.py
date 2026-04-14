@@ -36,7 +36,7 @@ class TagableRef(Ref):
             c = startbooks["special"] + 1
             v = self.verse - 126
         else:
-            c = startbooks[self.book] + self.chapter
+            c = startbooks[self.book] + (self.chapter or 0)
             v = min(self.verse or 0, 127)
         vals = [(c >> 5) & 63, ((v & 64) >> 6) + ((c & 31) << 1), v & 63]
         return subverse + "".join(self.b64codes[v] for v in vals)
@@ -85,10 +85,27 @@ def is_image_file(filename):
 
 def getImageSets():
     uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
-    if os.path.exists(uddir):
-        return sorted([f for f in os.listdir(uddir) if os.path.isdir(os.path.join(uddir, f))])
-    else:
+    if not os.path.exists(uddir):
         return None
+    catalog_path = os.path.join(os.path.dirname(__file__), "imagesets.json")
+    try:
+        with open(catalog_path, encoding='utf-8') as f:
+            catalog = {e['id']: e.get('name', e['id']) for e in json.load(f).get('imagesets', [])}
+    except Exception:
+        catalog = {}
+    result = []
+    for d in sorted(f for f in os.listdir(uddir) if os.path.isdir(os.path.join(uddir, f))):
+        if d in catalog:
+            name = catalog[d]
+        else:
+            illpath = os.path.join(uddir, d, "illustrations.json")
+            try:
+                with open(illpath, encoding='utf-8') as inf:
+                    name = json.load(inf).get('name', d)
+            except Exception:
+                name = d
+        result.append((d, name))
+    return result or None
 
 def fill_me(parent, fpath, size):
     thumbnail_image = Gtk.Image()
@@ -154,7 +171,7 @@ class ThumbnailDialog:
             if imagesets is None or not len(imagesets):
                 return None
             else:
-                imgset = imagesets[0]
+                imgset = imagesets[0][0]
         else:
             self.view.getBooks()
             reflist = self.view.bookrefs
@@ -232,9 +249,11 @@ class ThumbnailDialog:
     def test_filter(self, imgid, filters):
         if self.langdata is None:
             return True
-        if any(x in filters for x in self.langdata.get(imgid, {}).get('kwds', [])):
+        entry = self.langdata.get(imgid, {})
+        if any(x.lower() in filters for x in entry.get('kwds', [])):
             return True
-        if any(x.lower() in filters for x in self.langdata.get(imgid, {}).get('title', '').split()):
+        title_words = re.findall(r'\w+', entry.get('title', '').lower())
+        if any(w in filters for w in title_words):
             return True
         return False
 

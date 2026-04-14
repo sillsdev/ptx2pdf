@@ -16,6 +16,10 @@ def _getcomboval(w, sub):
         if e is not None and isinstance(e, Gtk.Entry):
             return e.get_text()
     elif model is not None:
+        if sub < 0:
+            active_id = w.get_active_id()
+            if active_id is not None:
+                return active_id
         return model[i][w.get_entry_text_column() if sub < 0 else sub]
 
 def getWidgetVal(wid, w, default=None, asstr=False, sub=-1):
@@ -54,6 +58,8 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=-1):
     return v
 
 def _setcomboval(w, value, sub):
+        if sub < 0 and value and w.set_active_id(str(value)):
+            return
         model = w.get_model()
         e = w.get_child()
         for i, v in enumerate(model):
