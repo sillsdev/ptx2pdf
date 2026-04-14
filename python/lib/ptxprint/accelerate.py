@@ -15,9 +15,14 @@ def onTextEditKeypress(widget, event, bufView):
         # if i < len(bindings) and keyval in bindings[i]:
             # info = bindings[i][keyval]
             # info[0](buffer, view, model, info[1:])
-    if ((state & Gdk.ModifierType.CONTROL_MASK) != 0 or
-        (state & Gdk.ModifierType.MOD1_MASK) != 0):
-        if i < len(bindings) and keyval in bindings[i]:
+    ctrl = (state & Gdk.ModifierType.CONTROL_MASK) != 0
+    alt  = (state & Gdk.ModifierType.MOD1_MASK) != 0
+    if (ctrl or alt) and i < len(bindings) and keyval in bindings[i]:
+        # KEY_x is Alt-only (show unicode values); skip if Ctrl is held so
+        # Ctrl+X remains the standard cut operation
+        if keyval == Gdk.KEY_x and ctrl:
+            pass
+        else:
             info = bindings[i][keyval]
             info[0](buffer, view, model, info[1:])
 
