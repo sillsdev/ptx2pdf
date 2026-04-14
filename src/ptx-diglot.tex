@@ -2147,8 +2147,12 @@
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \loc@lhtfalse\dglt@calc@vailht
-  \advance\availht by -\m@xBelowBaseline
-  \ifversion{8}{\relax}{}%
+  \ifversion{8}{%
+    \advance\availht by -\m@xBelowBaseline
+    \relax
+  }{%
+    \advance\availht by -\m@xBelowBaseline
+  }%
   %\tracingassigns=0
   \ifdim\availht<\@maxb@seline %
     \global\pagefulltrue%
