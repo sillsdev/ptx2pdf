@@ -305,7 +305,7 @@ class ViewModel:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
         bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
-        bl.simplify(bookranges=True, sort=False)
+        bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
