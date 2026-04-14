@@ -136,7 +136,7 @@ def fill_me(parent, fpath, size):
 
 
 class ThumbnailDialog:
-    def __init__(self, dlg, view, gridbox, gridcols):
+    def __init__(self, dlg, view, gridbox):
         self.dlg = dlg
         self.view = view
         self.artists = set()
@@ -144,7 +144,6 @@ class ThumbnailDialog:
         self.filters = set()
         self.imageset = None
         self.grid = gridbox
-        self.gridcols = gridcols
         self.imagedata = None
         self.langdata = None
         self.tilesize = 100
@@ -231,7 +230,9 @@ class ThumbnailDialog:
             w.connect("toggled", self.on_thumbnail_toggled, imageid, imageext)
             w.connect("enter-notify-event", self.on_thumbnail_entered, imageid)
             w.connect("button-press-event", self._onThumbnailRightClicked, imageid)
-            self.image_tiles[imageid] = (w, False, os.path.join(imagesdir, imagefile))
+            fbc = Gtk.FlowBoxChild()
+            fbc.add(w)
+            self.image_tiles[imageid] = (w, fbc, False, os.path.join(imagesdir, imagefile))
         logger.debug(f"tiles set up for {self.imageset}")
 
     def add_artist(self, artid):
@@ -377,16 +378,15 @@ class ThumbnailDialog:
         initial = images[:self._INITIAL_LOAD]
         deferred = images[self._INITIAL_LOAD:]
 
-        for i, imgid in enumerate(initial):
-            w, isLoaded, fpath = self.image_tiles[imgid]
+        for imgid in initial:
+            w, fbc, isLoaded, fpath = self.image_tiles[imgid]
             if not isLoaded:
                 fill_me(w, fpath, self.tilesize)
-                self.image_tiles[imgid] = (w, True, fpath)
-            self.grid.attach(w, i % self.gridcols, i // self.gridcols, 1, 1)
-            w.show()
-        self.grid.queue_resize()
+                self.image_tiles[imgid] = (w, fbc, True, fpath)
+            self.grid.add(fbc)
+            fbc.show_all()
 
-        self._loadQueue = [(imgid, i + self._INITIAL_LOAD) for i, imgid in enumerate(deferred)]
+        self._loadQueue = list(deferred)
         self._loadTotal = total_showing
         self._loadTotalAll = total_all
         self._loadLoaded = len(initial)
@@ -403,13 +403,13 @@ class ThumbnailDialog:
             self._updateLoadCount(loading=False)
             return False
 
-        imgid, pos = self._loadQueue.pop(0)
-        w, isLoaded, fpath = self.image_tiles[imgid]
+        imgid = self._loadQueue.pop(0)
+        w, fbc, isLoaded, fpath = self.image_tiles[imgid]
         if not isLoaded:
             fill_me(w, fpath, self.tilesize)
-            self.image_tiles[imgid] = (w, True, fpath)
-        self.grid.attach(w, pos % self.gridcols, pos // self.gridcols, 1, 1)
-        w.show()
+            self.image_tiles[imgid] = (w, fbc, True, fpath)
+        self.grid.add(fbc)
+        fbc.show_all()
         self._loadLoaded += 1
 
         if not self._loadQueue:
@@ -474,7 +474,7 @@ class ThumbnailDialog:
             return False
         if not hasattr(self, '_previewPopover'):
             self._setupPreviewPopover()
-        fpath = self.image_tiles[imageid][2]
+        fpath = self.image_tiles[imageid][3]
         try:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(fpath)
             w, h = pixbuf.get_width(), pixbuf.get_height()

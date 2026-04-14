@@ -7082,7 +7082,7 @@ Thank you,
     def onGetPicturesClicked(self, btn): # Catalogue...
         dialog = self.builder.get_object("dlg_imagePicker")
         gridbox = self.builder.get_object("box_images")
-        self.thumbnails = ThumbnailDialog(dialog, self, gridbox, 5)
+        self.thumbnails = ThumbnailDialog(dialog, self, gridbox)
         res = self.thumbnails.run()
         if res:
             for p in res:
