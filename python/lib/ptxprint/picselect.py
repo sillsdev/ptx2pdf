@@ -504,6 +504,11 @@ class ThumbnailDialog:
     def on_thumbnail_toggled(self, button, imageid, imageext):
         bibrefs = self.get_refs(imageid, default=[None])
         bibref = bibrefs[0] if len(bibrefs) else None
+        if self.reflist and bibrefs:
+            for r in bibrefs:
+                if r is not None and r in self.reflist:
+                    bibref = r
+                    break
         title = self.langdata.get(imageid, {}).get("title", "") if self.langdata else ""
         val = (imageid, bibref, title, imageext)
 
