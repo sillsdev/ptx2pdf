@@ -198,7 +198,7 @@ class AdjList:
         if r[5] != self.centre:
             triggerItems.append(rf"\zexp {r[5]}\*")
 
-        triggeritems = self._getTriggersFromRow(i)
+        triggerItems = self._getTriggersFromRow(i)
 
         if not triggerItems:
             return []
