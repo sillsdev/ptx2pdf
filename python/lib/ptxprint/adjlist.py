@@ -204,7 +204,7 @@ class AdjList:
             return []
 
         res = ["", rf"\AddTrigger {ref}"]
-        res.extend(triggerItems)
+        res.extend(["\\"+x if not x.startswith("\\") else x for x in triggerItems])
         res.append(r"\EndTrigger")
         return res
 
@@ -354,7 +354,7 @@ class AdjList:
 
     def _getTriggersFromRow(self, i):
         d = self.db[i]
-        return [v if v.startswith("\\") else "\\"+v for k, v in d.items() if k.startswith("trig")]
+        return [v for k, v in d.items() if k.startswith("trig")]
 
     def getTriggers(self, parref, key="trig"):
         res = []
