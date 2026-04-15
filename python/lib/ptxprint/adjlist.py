@@ -359,7 +359,7 @@ class AdjList:
     def getTriggers(self, parref, key="trig"):
         res = []
         def mydoit(r, i):
-            return self._getTriggersFromRow(i)
+            res.extend(self._getTriggersFromRow(i))
         self.changeval(parref, mydoit, insert=False)
         return res
 
@@ -384,8 +384,8 @@ class AdjList:
             if len(triggers) != l:
                 for k, v in list(self.db[i].items()):
                     if k.startswith(key):
-                        del self.db[k]
-                for j, t in enumerated(sorted(triggers)):
+                        del self.db[i][k]
+                for j, t in enumerate(sorted(triggers)):
                     k = key if j == 0 else key+str(j)
                     self.db[i][k] = t
                 r[6] = " ".join(f"{k}={v}" for k, v in self.db[i].items())
