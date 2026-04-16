@@ -1391,7 +1391,7 @@ class GtkViewModel(ViewModel):
             tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)} 
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
-            progress, trough {min-height: 24px}
+            progressbar progress, progressbar trough {min-height: 24px}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 6pt}
             .mainnb tab:checked {background-color: lightsteelblue}
             .mainnb tab:checked label {font-weight: bold}
@@ -1417,7 +1417,7 @@ class GtkViewModel(ViewModel):
             .yellowlighted {background-color: rgb(255,255,102); background: rgb(255,255,102)}
             .attention {background-color: lightblue; background: lightblue}
             .warning {background: lightpink;font-weight: bold; color: darkred}
-            entry.progress, entry.trough {min-height: 24px} 
+            entry.progress, entry.trough {min-height: 24px}
             combobox.highlighted {border: 3px solid peachpuff; border-radius: 4px}
             """
         provider = Gtk.CssProvider()

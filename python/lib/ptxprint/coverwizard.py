@@ -192,7 +192,7 @@ class WorkingCoverState:
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'FontSize', sz * getattr(self, m[1]+"_size_pct") / 100)
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'Color', getattr(self, m[1]+"_color").replace("#", "x"))
             view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'FontSize', sz * 0.65 * getattr(self, "spine_text_size_pct") / 100)
-            view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'Color', getattr(self, "spine_text_color").replace("#", "X"))
+            view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'Color', getattr(self, "spine_text_color").replace("#", "x"))
         view.setvar('maintitle', self.title)
         if self.subtitle_enabled:
             view.setvar('subtitle', self.subtitle)
@@ -369,7 +369,9 @@ def makeHScale(val, lo, hi, digits=0):
     s.set_value_pos(Gtk.PositionType.RIGHT)
     s.set_digits(digits)
     s.set_hexpand(True)
+    s.set_vexpand(False)
     s.set_valign(Gtk.Align.CENTER)
+    s.set_size_request(-1, 30)
     s.show()
     return s
 
@@ -1088,7 +1090,7 @@ class CoverWizardApp:
     # ─────────────────────────────────────────────────────────────────
 
     def _makeTextElementBlock(self, key, frame_label, placeholder, default_color,
-                              default_size, default_pos_pct):
+                              default_size, default_pos_pct, size_hi=200):
         """
         Build a frame containing:
           LEFT SIDE (vbox):  text entry | colour+size row
@@ -1118,7 +1120,7 @@ class CoverWizardApp:
         setattr(self, f"_cb_{key}_color", col_btn)
 
         style_row.pack_start(makeLabel("Size:"), False, False, 0)
-        size_sl = makeHScale(default_size, 50, 200)
+        size_sl = makeHScale(default_size, 50, size_hi)
         size_sl.set_size_request(110, -1)
         size_sl.set_hexpand(False)
         size_sl.connect("value-changed", lambda w: self._onTextSizeChanged(key, w))
@@ -1160,7 +1162,7 @@ class CoverWizardApp:
         title_frame = self._makeTextElementBlock(
             "title", "Title * (required)", "Enter the book title…",
             self.state.title_color, self.state.title_size_pct,
-            self.state.title_position_pct)
+            self.state.title_position_pct, size_hi=400)
         self._pack(p, title_frame)
 
         # Subtitle
