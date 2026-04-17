@@ -349,6 +349,7 @@
       \prepb@rderdims
       \set@ref@dims
       \p@rsefigscale{fg}%
+      \let\crop@fig@pre\empty\let\crop@fig@post\empty\let\crop@fig@after\empty
       \dimen0=\fgfig@dim@wd
       \edef\fgfigsp@c{\fgfigsp@c \fgfig@scale@wd}%
       %\getsbp@ram{fgfigscale}%
@@ -593,7 +594,7 @@
     \ifx\cp@ram\relax 
       \x@\edef\csname \v@lpfx @scale@ref\endcsname{text}%
     \else
-      \trace{e}{Figure will be scaled relative to \v@lpfx}%
+      \trace{e}{Figure will be scaled relative to \cp@ram(\v@lpfx)}%
       \lowercase{\x@\edef\csname \v@lpfx @scale@ref\endcsname{\cp@ram}}%
     \fi
     \p@rsef@gsc@le #1xx\E
@@ -645,6 +646,10 @@
 % (set by sb@ins@rtpic) 
 %This p@rsef@gsc@le gets called with dimen1=\wd sidebar , \dimen0=scratch, \dimen2=scratch.
 % f@grefdim should do something more sane
+\def\p@rsef@gcrop#1x#2x#3\E{%
+  \def\cr@pX{#1}\def\cr@pY{#2}%
+}
+
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \f@grefdim{\v@lpfx}%
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
@@ -874,15 +879,33 @@
   \else
     \trace{e}{Sidebar has image}%
     \p@rsefigscale{bg}%
+    \let\crop@fig@pre\empty\let\crop@fig@post\empty\let\crop@fig@after\empty
     \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\scale@width}%
+    \getsbp@ram{bgfigoversize}%
+    \ifx\cp@ram\Img@Crop
+      \getsbp@ram{bgfigcropofs}%
+      \ifx\cp@ram\relax
+        \edef\crop@fig@pre{\special{pdf:literal q 0 0 \strip@pt{\dimexpr 0.99626401\dimexpr\scale@width\relax\relax} \strip@pt{\dimexpr 0.99626401\dimexpr\scale@height\relax\relax} re W n}}%
+        \edef\crop@fig@post{\special{pdf:literal Q}}%
+      \else
+        \x@\p@rsef@gcrop\cp@ram xx\E
+        \edef\crop@fig@pre{\setbox0\hbox\bgroup}%
+        \edef\crop@fig@post{\egroup
+          \special{pdf:literal q 0 0 \strip@pt{\dimexpr 0.99626401\dimexpr\scale@width\relax\relax} \strip@pt{\dimexpr 0.99626401\dimexpr\scale@height\relax\relax} re W n}%
+          \hskip-\cr@pX\dimexpr \wd0-\scale@width\relax\vbox{\dimen0=\cr@pY\dimexpr \ht0-\scale@height\relax \vskip \dimen0 \box0\vskip-\dimen0}%
+          \special{pdf:literal Q}}%
+      \fi
+      \edef\crop@fig@after{\wd0=\scale@width \ht0=\scale@height}%
+      \trace{e}{Cropping image:\crop@fig@pre - \crop@fig@post}%
+    \fi
     \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec|\fig@lskip|\fig@rskip\E}%
     \ch@ckfigdim
     \iftemp% It doesn't fit
       \trace{e}{Image oversize}%
-      \getsbp@ram{bgfigoversize}%
       \ifx\cp@ram\Img@Shrink\edef\t@mpfigspec{\bgf@gsp@c \resc@le|\scale@width}\else
         \ifx\cp@ram\Img@Distort\edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd \resc@le|\scale@width}\else
-          \ifx\cp@ram\Img@Crop\message{Image crop not supported}\tempfalse\else
+          \ifx\cp@ram\Img@Crop\tempfalse
+          \else
             \tempfalse % No action
           \fi
         \fi
@@ -1290,6 +1313,7 @@
 \let\BgImageColor=\BgImageColour%for Americans
 \def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
 \def\BgImageOversize       #1\relax{\initc@t\setsbp@ram{bgfigoversize}{#1}}
+\def\BgImageCropOfs      #1\relax{\initc@t\setsbp@ram{bgfigcropofs}{#1}}
 
 \def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\x@\checkh@x #1\end\setsbp@ram{bgcolour}{\rgb@out}\fi}%For British/Australian/NZ/etc.
 \def\SpaceBeside #1\relax{\initc@t\setsbp@ram{spacebeside}{#1}}
@@ -1331,7 +1355,10 @@
    \else\closein\t@stread
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \setbox0\hbox{\picfilecomm@nd "#1" #2}%
+    \setbox0\hbox{\crop@fig@pre
+      \picfilecomm@nd "#1" #2\relax
+      \crop@fig@post}%
+    \crop@fig@after
     \global\dimen3=\wd0
     \global\dimen4=\ht0
     \trace{e}{Image dims: \the\dimen3 x \the\dimen4}%
