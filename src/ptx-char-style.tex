@@ -477,14 +477,14 @@
   \x@\shdwmul#2 \E
   \edef\@@outlinw{\strip@pt{\dimexpr #4\FontSizeUnit \relax}}%
   \edef\@@outcol{#5}\edef\@@shadcol{#3}\edef\@@fgcol{#6}% 
-  \nonstopmode
-  \tracingassigns=1
+  %\nonstopmode
+  %\tracingassigns=1
   \everypar={}\everyhbox={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf
   \@do@shadow}%
   \ifdim \wd#1=0pt \else %\showbox#1 
     \setbox#1\hbox{\@@do@shadow{#1}}%
     \unhbox#1\fi
-  \tracingassigns=0
+  %\tracingassigns=0
   }%
   %\showbox\ulb@x
   \setbox#1\box\ulb@x

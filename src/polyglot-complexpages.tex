@@ -182,13 +182,13 @@
   \trace{dmc}{defining \ins@name-col as #2}%
   \x@\xdef\csname \ins@name-col\endcsname{#2}%Map from column name to column, so we don't need to try to parse the name
   \x@\def\x@\tmp\x@{}%
-  \tracingassigns=1
+  %\tracingassigns=1
   \ifcsname unp@ck-#1#2\endcsname
     \x@\gdef\csname unp@ck-#1#2\x@\x@\x@\endcsname\x@\x@\x@{\csname unp@ck-#1#2\x@\endcsname\x@\box\csname \ins@name\endcsname}%
   \else
     \x@\gdef\csname unp@ck-#1#2\x@\endcsname\x@{\x@\box\csname \ins@name\endcsname}%
   \fi
-  \tracingassigns=0
+  %\tracingassigns=0
 }
 
 \def\@@clsfynotes#1{%
@@ -704,6 +704,7 @@
   \egroup
   \count255=0
   % Assign the verse numbers and split-heights by a straight loop 
+  \trace{dmcr}{X{N,dim}=insHt/spltHt/spltVrs/insdims}%
   \loop
     \advance\count255 by 1
     \setbox0\copy\eb@x
@@ -869,7 +870,7 @@
   \loop
     \csname split@inc#1\endcsname{\count255}=\numexpr \this@increment -\count255 \relax
     \dimen1=\@s@h{\count255 -1}%
-    %\trace{dmcr}{inc#1(\the\count255)=\the\csname split@inc#1\endcsname{\count255} -> \the\this@increment}%
+    \trace{dmcr}{inc#1(\the\count255)=\the\csname split@inc#1\endcsname{\count255} -> \the\this@increment}%
     \ifdim\dimen0 =\dimen1\else
       \this@increment=\count255
       %\advance \this@increment by 1
@@ -1119,10 +1120,12 @@
     \global\diglotfirstb@dyfalse
     \let\col@do\check@diglot@body
     \x@\each@col\digl@tc@ntentlist\E
+    \trace{D}{\ifdiglotfirstb@dy first\else nofirst\fi body!}
   \fi
   \let\inserts@npage\false
   \let\active@inserts\empty
   \refl@wcolsfalse\me@surefalse % can we skip any bits?
+  \trace{dmc}{premeasure}%
   \let\col@do\cplx@pre@me@sureins@trial
   \ins@meas@trialnofullfalse \ins@meas@trialfullfalse % set flags to do a quick test and (if inserts found) drop through to a full one.
   %\tracingmacros=1
@@ -1186,6 +1189,7 @@
     \global\cplx@bestcost=\maxdimen
     \gdef\cplx@bestpath{}%
     \def\cplx@trydeet{}%
+    \def\row@trydeet{}%
     \def\cplx@path{}\cplx@trycost=0pt
     \p@lyp@geno=0 
     \let\col@do\gen@ins@dims@endstop% We'll frequently hit the endstops, so remember them.
@@ -1198,7 +1202,7 @@
     \let\col@do\apply@splits
     \x@\each@col\cplx@proc@all\E
   \else
-    \trace{dmc}{No detail measure for this chunk.}%
+    \trace{dmc}{No detailed measure for this chunk.}%
   \fi
   % All measured now (if needed). Various options:
   %  1. All data fits, and page is NOT full.
@@ -1330,12 +1334,22 @@
 
 \def\initspl@thts#1\E{%Per-row id
   \x@\p@rser@wstring #1\E
-  \dimen0=\dimexpr \textheight-\csname p@gehtloss-\the\p@lyp@geno\endcsname\relax
   \ifcsname min@#1@cut\endcsname % A reflowed chunk cannot end up *shorter* than it was.
     \csname #1@cut\endcsname=\csname min@#1@cut\endcsname
   \else
-    \csname #1@cut\endcsname=2 %Why would we cut <2 lines?
+    \def\this@c@cut{1}% Find the minimum cut length(=split@incr0) for the row.
+    \min@increment=\maxdimen
+    \x@\let\x@\tmp@proc\csname cplx@proc#1\endcsname
+    \let\col@do\chk@min@incrNof
+    \x@\each@col\tmp@proc\E
+    \ifnum\min@increment<\maxdimen
+      \csname #1@cut\endcsname=\min@increment 
+      \trace{dmc}{#1@cut (\tmp@proc) set to \the\min@increment}%
+    \else
+      \csname #1@cut\endcsname=1
+    \fi
   \fi
+  \dimen0=\dimexpr \textheight-\csname p@gehtloss-\the\p@lyp@geno\endcsname\relax
   \csname #1@cmax\endcsname=\numexpr \dimen0/\@minb@seline \relax
 }
 \def\check@galley#1{%
@@ -1400,6 +1414,8 @@
   \bgroup
     \ifx\this@c@cut\relax\else
       \edef\cplx@path{\cplx@path,\this@p@lyr@wstring:\the\this@c@cut}%
+      \advance\p@gehtloss by \csname \this@p@lyr@wstring @ht\endcsname
+      \edef\cplx@trydeet{\cplx@trydeet,\row@trydeet}%
     \fi
     \edef\this@p@lyr@wstring{#1}%
     \edef\othr@p@lyr@wstrings{#2}%
@@ -1430,7 +1446,7 @@
       %\edef\cplx@path{\cplx@path,\this@p@lyr@wstring:\the\this@c@cut}%
       %\let\col@do\try@cut %Cut all the columns
       %\x@\x@\x@\each@col\csname p@lyp@gecols\this@p@lyr@wstring\endcsname\E
-      \message{<}%
+      \message{<\this@p@lyr@wstring}%
       % First, remember the pre-entry conditions
       \o@cplx@trycost=\cplx@trycost
       \o@p@gehtloss=\p@gehtloss
@@ -1445,6 +1461,7 @@
 
 \def\cplx@p@gecost{%
   %Calculate the cost for the page = WScost * (spare page ht)
+  \trace{dmcr}{phl:\the\p@gehtloss}%
   \advance\cplx@trycost by \WScost\dimexpr \textheight-\p@gehtloss\relax
 }
 \def\cplx@final@costs{%
@@ -1544,11 +1561,11 @@
   \csname htfunction-\this@p@lyr@wstring\endcsname
   %\tracingassigns=0 \tracingmacros=0
   \ifdim \csname \this@p@lyr@wstring @ht\endcsname>\textheight
-    \tempfalse\message{P}%
+    \tempfalse\message{P!}%
   \else 
     \ifdim \r@wminht=\maxdimen \else
       \dimen0=\dimexpr \csname \this@p@lyr@wstring @ht\endcsname-\r@wminht\relax 
-      \edef\cplx@trydeet{\cplx@trydeet,\this@p@lyr@wstring:\the\dimen0}%
+      \edef\row@trydeet{\this@p@lyr@wstring:(\the\csname \this@p@lyr@wstring @ht\endcsname)\the\dimen0}%
       \ifdim\dimen0<\d@cimaxdim
         \multiply \dimen0 by 10 
         \advance\cplx@trycost by \unbalLcost\numexpr \dimen0/\@minb@seline  % Apply unbalanced lines cost for this row
@@ -1566,7 +1583,7 @@
   \ifdim\p@gehtloss > \textheight
     \tempfalse\message{P}%
     \ifcomplex@lastrow
-      \this@c@max=\this@c@cut
+      \this@c@cmax=\this@c@cut
       \advance\this@c@cut by \dimexpr (\textheight-\p@gehtloss)/\@minb@seline \relax
       \ifnum\this@c@cut < 1
         \this@c@cut=1
@@ -1665,10 +1682,7 @@
   \fi
   \ifnum \count255>\nspl@t\else %(<= in other words)
     \advance \incbl@cols by 1 % Increment the count of columns it's worth trying to increment. (if it stays 0, then that prunes the search tree) 
-    \tmpcount=\csname split@inc#1\endcsname{\this@c@cut}%
-    \ifnum \min@increment>\tmpcount
-      \min@increment=\tmpcount
-    \fi
+    \chk@min@incr{#1}%
   \fi
   \dimen1=\csname split@insheights#1\endcsname{\this@c@cut}%
   \ifdim \dimen1>\z@
@@ -1693,6 +1707,18 @@
       %Set things up... there might still be notes / other  insets later
       \x@\let\csname ins@dims@offset#1\endcsname\empty
     \fi
+  \fi
+}
+
+\def\chk@min@incrNof#1{%Only consider process list when they are also underlying columns 
+  \if\csname f@llowing#1\endcsname#1\relax\relax
+    \chk@min@incr{#1}%
+  \fi
+}
+\def\chk@min@incr#1{%
+  \tmpcount=\csname split@inc#1\endcsname{\this@c@cut}%
+  \ifnum \min@increment>\tmpcount
+    \min@increment=\tmpcount
   \fi
 }
 
@@ -1762,7 +1788,7 @@
   \trace{dmc}{complex@me@surepage \the\p@lyp@geno / \p@lyp@ges}%
   \csname p@gehtloss-\the\p@lyp@geno\endcsname=\ht\csname partial@poly@\the\p@lyp@geno\endcsname % Start with current page chunk...
   \csname p@gehtcalcs-\the\p@lyp@geno\endcsname
-  \trace{dmc}{Measuring \the\p@lyp@geno gives \the\csname p@gehtloss-\the\p@lyp@geno\endcsname}%
+  \trace{dmc}{Measuring pg\the\p@lyp@geno\space gives \the\csname p@gehtloss-\the\p@lyp@geno\endcsname}%
   \ifdim\csname p@gehtloss-\the\p@lyp@geno\endcsname> \textheight
     \pagefulltrue
   \fi
