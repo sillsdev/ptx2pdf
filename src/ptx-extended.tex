@@ -160,7 +160,12 @@
     \trace{e}{Feint box dims: \the\dimen0 +\the\dimen1 *\the\dimen2 , \the\dimen3, skip:\fb@tskip}%
     \hskip -\dimen3 % Backup so the expanded box is centred properly
     \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2 }%should be possible to get this working in pdf code, but this works.
-    \f@intthing{#1}{#2}{\c@de}%
+    \ifdim #1 pt >0pt 
+      \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2 }%should be possible to get this working in pdf code, but this works.
+      \f@intthing{#1}{#2}{\c@de}%
+    \else
+      \vrule height \dimen0 depth \dimen1 width 0pt
+    \fi
     \hss
   }%
   \egroup
