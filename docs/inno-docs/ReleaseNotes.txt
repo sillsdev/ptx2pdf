@@ -1,8 +1,27 @@
-PTXprint 3.0.18 Release Notes
-03 Apr 2026
+PTXprint 3.0.19 Release Notes
+19 Apr 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.19 (19 Apr 2026)
+  * Add (Auto) Fill Page feature to PDF Viewer and show book progress (parallel processing)
+  * Remove the Cover tab and add a Cover Wizard instead (peripherals tab)
+  * Add the Printers tab with cost comparisons graph (for Pretore, Print_Gallery, Pothi)
+  * Smarter choice of anchor ref if an image has multiple options (uses the filtered book ref)
+  * Improve picture catalogue to be more responsive and flexible
+  * Improve ImageSet downloader dialog to be dynamic
+  * When saving diglot content at a layout style break clear values for interleaving.
+  * Implement cropped background images and positioning thereof
+  * Add Charis to bundled fonts
+  * Fix support .png images in the picture catalogue, etc.
+  * Fix picture preview pane to also shows 1st image at startup #1096
+  * Fix configuration names should be sorted caseless
+  * Fix avoid EEK from mispalced marks on sections (diglot issue)
+  * Fix cover figure image shift bug
+  * Fix shortcuts not working as they should
+  * Fix don't sort the book list (allowing non-canonical book order as before)
+  * Fix cover wizard UI
 
 Bug fixes and Improvements in 3.0.18 (3 Apr 2026)
   * Solve issue of lineskiplimit causing mangled small textborder boxes
