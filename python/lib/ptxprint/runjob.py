@@ -325,7 +325,7 @@ class RunJob:
         self.info["project/books"] = donebooks
         res = self.sharedjob(jobs)
         if self.info['notes/ifxrexternalist']:
-            res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
+            res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks if out is not None]
         return [os.path.join(self.tmpdir, out) for out in donebooks if out is not None] + res
 
     def digdojob(self, jobs, diginfos):

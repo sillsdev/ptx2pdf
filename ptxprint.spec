@@ -102,7 +102,7 @@ def process_icons(icons, src, dest):
             foundit = True
             t = p[p.find(src) + len(src) + 1:].replace("/",r"\\")
             d = dest + "\\" + t if dest else t
-            s = src.replace("/", "\\") + "\\" + t + "\\" + f
+            s = src.replace("/", "\\") + "\\" + t + "\\" + f        # " make vim happy
 
         if not foundit:
             print(f"Failed to find source for {i}")
