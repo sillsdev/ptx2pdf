@@ -2497,3 +2497,10 @@ set stack_size=32768""".format(self.cfgid)
         self.report.generate_html(fpath, tm)
         return fpath
 
+    def createPrinterZip(self, fname):
+        with zipfile.ZipFile(fname, "w") as ozip:
+            for k, v in self.pdfFiles.items():
+                with open(v, "rb") as inf:
+                    d = inf.read()
+                ozip.write(f"{k}.pdf", d)
+

@@ -975,6 +975,7 @@ class GtkViewModel(ViewModel):
         self._picframe_connected = False
         self.fallbackPrj = None
         self.bkProgressDlg = None
+        self.coverwiz = None
 
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
@@ -6376,8 +6377,9 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def onCoverWizardClicked(self, btn):
-        app = CoverWizardApp(view=self)
-        return  # TODO: implement cover wizard dialog
+        if self.coverwiz is None:
+            self.coverwiz = CoverWizardApp(view=self)
+        self.coverwiz.run()
     
     def createCoverPeriphs(self, **kw):
         self.periphs['coverfront'] = r'''
