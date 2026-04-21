@@ -11917,7 +11917,7 @@ and 3, 4, 6, or 12 for inches.</property>
                     <property name="margin-bottom">6</property>
                     <property name="label-xalign">0.029999999329447746</property>
                     <child>
-                      <!-- n-columns=5 n-rows=3 -->
+                      <!-- n-columns=5 n-rows=4 -->
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -12127,6 +12127,38 @@ being too large for a given sidebar.</property>
                           <packing>
                             <property name="left-attach">4</property>
                             <property name="top-attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="label" translatable="yes">Crop Offset:</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="t_sbiBgCropOfs">
+                            <property name="name">Sidebar background image: Crop offset (XxY)</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Crop offset in the format XxY (e.g. 10x20).
+Only used when Oversize is set to Crop.
+Shifts the cropped region by X points horizontally
+and Y points vertically.</property>
+                            <property name="halign">start</property>
+                            <property name="width-chars">10</property>
+                            <property name="placeholder-text">e.g. 10x20</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">3</property>
+                            <property name="width">4</property>
                           </packing>
                         </child>
                         <child>

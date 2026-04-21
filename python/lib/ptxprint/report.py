@@ -432,7 +432,7 @@ class Report:
         for p, r in plocs.getRects():
             r.tspace = 0
             r.nspace = 0
-            r.nlines = 0
+            r.lines = 0
         for l, p, r in plocs.allxdvlines():
             count += 1
             if threshold != 0:  
@@ -441,7 +441,7 @@ class Report:
                     badlist.append(BadSpace(r.pagenum, l, *b))
                 r.tspace += tspaces
                 r.nspace += nspaces
-                r.nlines += 1
+                r.lines += 1
             if (collisions := l.has_collisions()):
                 for c in collisions:
                         collisions_list.append(l.ref)
