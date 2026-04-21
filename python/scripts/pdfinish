@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import argparse, sys, os, re, configparser
-import appdirs
 import site, logging
 from shutil import rmtree
 from zipfile import ZipFile

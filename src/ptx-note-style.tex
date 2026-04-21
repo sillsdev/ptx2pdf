@@ -162,6 +162,7 @@
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
   \ifinn@te \MSG{Note marker (\newn@testyle) found while still in note style, after \c@rref. End notes properly, notes may not nest.}\endn@testyle*\fi
   \trace{n}{startn@testyle \newn@testyle #1}%
+  \traceifset{startnotestyle}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
     \begingroup
@@ -176,7 +177,7 @@
   \else
     \leavevmode
     \advance\fmc@unt 1
-    \getp@ram{notebase}{\newn@testyle}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
+    \getp@ram{notebase}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\edef\n@tebase{\newn@testyle}\else\edef\n@tebase{\p@ram}\fi
     \csname before-\newn@testyle\endcsname
     \def\t@st{#1}%
     \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
@@ -260,6 +261,7 @@
  \endgroup
  \beginL\x@\write\x@\p@rlocs\x@{\n@tesize}\endL
  %\showboxbreadth=999\showlists
+ \traceifcheck{startnotestyle}%
  \n@xt}
 \newif\ifsp@cebefore
 \newif\ifskipn@testyle
@@ -316,12 +318,12 @@
   \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\undefined
     \x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \fi
-  \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
+  \ifhmode\def\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
-  \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
-    \ifdoingt@ble #3\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes\hsize=\t@blehsize}\else%
-      \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
-      \else\edef\@wrap{}%
+  \ifinextended #3\def\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
+    \ifdoingt@ble #3\def\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes\hsize=\t@blehsize}\else%
+      \ifhe@dings #3\def\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
+      \else\def\@wrap{}%
         \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax #3
         \else % there is a chapter number waiting
           \trace{n}{Note will be saved for chapter number}%
@@ -365,7 +367,8 @@
   \xdef\currn@tetype{#1}%
   \trace{n}{Footnote (\n@tetype) [\ch@pter:\v@rse] will \ifp@ranotes\else not \fi be paragraphed and \the\n@tewidth \space wide (page is \the\hsize)}%
   \global\floatingpenalty\@MM % make sure note does not float away from caller to another page
-  \the\d@note\bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
+  \the\d@note
+  \bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
     \ifFootNoteGlyphMetrics
       \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
     \else
@@ -426,6 +429,7 @@
   \s@tfont{#2}{#2}%
   \ifp@ranotes\else\@ch@ckadjustments\fi
   %\ifnum\interactionmode=1\showlists\fi
+  \traceifset{mnote}%
   \futurelet\next\fo@t}% use plain.tex footnote processor, see plain.tex 1166. It ensures that @foot after the following group.
 %-c_vmakenote
 
@@ -526,6 +530,8 @@
 % called at end of note
 \def\n@tesize{}
 \def\@foot{%This ends the group that starts with the footnote class.
+  \traceifcheck{mnote}%
+  \trace{f}{End of note}%
   \ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
   \t@gend{Note}%
   \par
@@ -538,7 +544,8 @@
     %\vskip \dimen0
   \fi
   \x@\xdef\csname n@te-\n@tetype-bls\endcsname{\the\baselineskip}%
-  \egroup\end@llpoppedstyles{N*}%
+  \egroup
+  \end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \ifDBGshownoteboxes\showbox9 \fi
   \ifp@ranotes\setbox8=\copy9\setbox7=\vbox{\unvbox8\global\setbox6=\lastbox}\setbox8=\hbox{\unhbox6}%
@@ -1325,7 +1332,8 @@
 \def\n@test@rt#1{\n@tewidth=\dimexpr \marginnoteswidth - \marginnotesgap\relax
   %\ifnum\tracingonce > 0 \tracingmacros=0\tracinggroups=0\tracingcommands=0\else\tracingmacros=1\tracinggroups=1\tracingcommands=1\fi \advance \tracingonce by 1
   \trace{M}{n@testart #1, starting with n@tewidth=\the\n@tewidth, group=\the\currentgrouplevel}%
-  \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup\aftergroup\flyflag\usespacebeforefalse
+  \traceifset{n@test@rt}%
+  \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup%\aftergroup\flyflag\usespacebeforefalse
     \global\p@ranotesfalse
     \s@tsideskips{#1}{-1pt}%
     \ifXrefSideAlign\testXrefSideL\getp@ram{justification}{#1}{#1}%
@@ -1339,6 +1347,7 @@
           \ifx\p@ram\l@ft\else
             \dimen1=\leftskip \leftskip=\rightskip \rightskip=\dimen1
         \fi\fi
+      \fi
     \fi
     \n@tewidth=\marginnoteswidth \advance\n@tewidth -\marginnotesgap \hsize=\n@tewidth
     \ifdim\parfillskip>0pt\hfil\fi
@@ -1355,6 +1364,7 @@
   \trace{M}{nm-box-#1 \x@\the\x@\ht\csname nm-box-#1\endcsname +\x@\the\x@\dp\csname nm-box-#1\endcsname *\x@\the\x@\wd\csname nm-box-#1\endcsname}%
   \d@marginnote{\x@\the\csname nm-box-#1\endcsname}{\t@@mp}{#1}{\MarginNoteSide}{bottom}{\the\dimen0}{\dimexpr -\dp\pstr@t -\baselineskip}%
   \baselineskip=\skip1
+  \traceifcheck{n@test@rt}%
 }
 
 %+cnote_declare
