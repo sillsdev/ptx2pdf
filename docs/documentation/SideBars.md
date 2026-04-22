@@ -172,7 +172,8 @@ This is discussed in detail in the
 
 Options relevant for normal sidebars (see [covers documentation](covers.md) for other options) :
 
-* `text` The rectangle occupied by /reserved for the text 
+* `text` The rectangle occupied by  the text 
+* `inner` The rectangle available to the text
 * `box` The background colour
 * `iborder` Inner edge of the border
 * `border` Outer edge of the border
@@ -451,8 +452,8 @@ If a value is given, rather than a simple 't', this is the smallest fraction of 
 will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
  a break IS possible. 
 
-*NB:* Breakable in out-of-body positions triggers a bug in the page output
-mechanism and *things go  horribly wrong* if this option is used.
+*NB:* At the last time of testing, `\Breakable` in out-of-body positions 
+triggers a bug in the page output mechanism and *things go  horribly wrong* if this option is used.
 
 ## Ending the category
 

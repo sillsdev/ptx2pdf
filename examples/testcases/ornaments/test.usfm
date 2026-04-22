@@ -19,13 +19,16 @@
 \pc The Test-Case Bible
 
 \periph wholecover|coverwhole
-\pc |<-------\hfil \the\hsize \hfil ------->|
+\rem |<-------\hfil \the\hsize \hfil ------->|
 \endgraf
 
 \periph back|coverback
 \pc The back
 \vfill
-\pc |<-------\hfil \the\hsize \hfil -------->|\endgraf
+\rem |<-------\hfil \the\hsize \hfil -------->|\endgraf
+\p This is some text going on the back cover. There shouldn't be anything really very interesting about it at all, except that it's got a leaf at the start, from a hook.
+\p Just like this paragraph has.
+\p
 \esb \cat ISBNbox\cat*
 \pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
 \esbe
