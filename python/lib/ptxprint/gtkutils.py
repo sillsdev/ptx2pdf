@@ -1,6 +1,6 @@
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GLib
 from ptxprint.utils import _, f2s
 from PIL import Image
 import logging, traceback
@@ -164,7 +164,7 @@ class HelpTextViewWindow(Gtk.Window):
         self.show_all()
         Gtk.main()
 
-def doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", debuglog=True, **kw):
+def doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", debuglog=True, autocloseSeconds=30, **kw):
     logger.error(text)
     if secondary:
         logger.error(secondary)
@@ -199,7 +199,25 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
         dialog.set_title(title)
         if secondary is not None:
             dialog.format_secondary_text(secondary)
+        if autocloseSeconds and not copy2clip:
+            _remaining = [autocloseSeconds]
+            _base_title = title or ""
+            def _tick():
+                if not dialog.get_visible():
+                    return GLib.SOURCE_REMOVE
+                dialog.set_title("{} [{}s]".format(_base_title, _remaining[0]))
+                _remaining[0] -= 1
+                if _remaining[0] < 0:
+                    dialog.response(Gtk.ResponseType.OK)
+                    return GLib.SOURCE_REMOVE
+                return GLib.SOURCE_CONTINUE
+            _tick()
+            timeout_id = GLib.timeout_add_seconds(1, _tick)
+        else:
+            timeout_id = None
         dialog.run()
+        if timeout_id is not None:
+            GLib.source_remove(timeout_id)
         dialog.destroy()
     else:
         print(text)
