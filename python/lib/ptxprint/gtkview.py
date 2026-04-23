@@ -7749,7 +7749,11 @@ Thank you,
         if numproc == 0:
             numproc = 1
         self.mview.initScheduler(numproc, None, progress=True)
-        self._progress_watch_id = GLib.io_add_watch(self.mview.queues['progress_q']._reader.fileno(), GLib.IO_IN, self.onFillProgress)
+        # Poll for progress events every 100 ms — simpler and more reliable
+        # on Windows than io_add_watch + socketpair.
+        if getattr(self, '_progress_watch_id', None) is not None:
+            GLib.source_remove(self._progress_watch_id)
+        self._progress_watch_id = GLib.timeout_add(100, self._pollFillProgress)
         if self.bkProgressDlg is None:
             self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)  
         self.bkProgressDlg.populate(self.getBooks())
@@ -7785,17 +7789,23 @@ Thank you,
     def onRestartFillClicked(self, widget, *a):
         self._onFillPagesClicked(resume=False)
 
-    def onFillProgress(self, source, condition):
-        if condition & (GLib.IO_HUP | GLib.IO_ERR):     # tearing down the queue
-            return False
-        q = self.mview.queues['progress_q']
+    def _pollFillProgress(self):
+        """GLib.timeout_add callback: drain all pending progress events."""
+        mview = getattr(self, 'mview', None)
+        if mview is None:
+            self._progress_watch_id = None
+            return GLib.SOURCE_REMOVE
+        q = mview.queues.get('progress_q')
+        if q is None:
+            self._progress_watch_id = None
+            return GLib.SOURCE_REMOVE
         try:
             while True:
                 event = q.get_nowait()
                 self._fill_progress(event)
         except queue.Empty:
             pass
-        return True         # Continue monitoring
+        return GLib.SOURCE_CONTINUE
 
     def onFillCancelled(self):
         if self.mview is not None:

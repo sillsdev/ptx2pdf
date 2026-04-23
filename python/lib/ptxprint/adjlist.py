@@ -111,6 +111,7 @@ class AdjList:
             l = l[:l.find("%")]
         m = adjre.match(l)
         val = None
+        dbval = {}
         if m:
             try:
                 val = [m.group(1)+m.group(2), m.group(3), int(m.group(5) or 1),

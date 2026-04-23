@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable, Literal
 from collections import deque, defaultdict
 from configparser import ConfigParser
-import heapq, re, os, logging, random, itertools, argparse, threading, socket, queue as _queue
+import heapq, re, os, logging, random, itertools, argparse, threading, queue as _queue
 import multiprocessing as mp
 from math import sqrt, log10
 from time import time, asctime
@@ -1014,75 +1014,34 @@ class PTXprinter:
 
 
 class GLibCompatQueue:
-    """A progress queue whose read side gives GLib.io_add_watch a real socket fd.
-    Architecture:
-      - Workers (child processes) call put() which writes to a plain mp.Queue.
-        mp.Queue is picklable so Worker instances can be spawned on Windows.
-      - The main process wraps the read side: a background thread drains the
-        mp.Queue and forwards items over a socket pair, whose read end is a
-        real socket fd that GLib.IOChannel.unix_new() accepts on Windows.
-    The GLibCompatQueue itself is NOT pickled into workers — only the inner
-    mp.Queue is passed (see __getstate__/__setstate__).
-    """
+    """A progress queue safe to share with worker processes on Windows.
 
-    class _Reader:
-        def __init__(self, sock):
-            self._sock = sock
-        def fileno(self):
-            return self._sock.fileno()
+    Workers (child processes) call put() which writes to the inner mp.Queue.
+    mp.Queue is picklable, so Worker instances can be spawned on Windows.
+
+    The main process polls for events using get_nowait(), called periodically
+    by a GLib.timeout_add callback — no socket pair or relay thread needed.
+
+    The GLibCompatQueue itself is NOT pickled into workers — only the inner
+    mp.Queue is passed (see __getstate__ / __setstate__).
+    """
 
     def __init__(self):
         self._mp_queue = mp.Queue()
-        self._write_sock, self._read_sock = socket.socketpair()
-        self._write_sock.setblocking(False)
-        self._read_sock.setblocking(False)
-        self._reader = self._Reader(self._read_sock)
-        self._items = _queue.Queue()   # main-thread item buffer
-        # Background thread: drains _mp_queue, buffers items, pings socket
-        self._thread = threading.Thread(target=self._relay, daemon=True)
-        self._thread.start()
-
-    def _relay(self):
-        """Relay items from the mp.Queue to the socket-signalled buffer."""
-        while True:
-            try:
-                item = self._mp_queue.get(timeout=0.5)
-            except Exception:
-                continue
-            if item is None:        # sentinel — shut down
-                break
-            self._items.put(item)
-            try:
-                self._write_sock.send(b'\x01')
-            except (BlockingIOError, OSError):
-                pass
 
     def put(self, item):
         """Called by worker processes (or main process for single-book jobs)."""
         self._mp_queue.put(item)
 
     def get_nowait(self):
-        """Drain one signal byte then return the next item, or raise queue.Empty."""
-        try:
-            self._read_sock.recv(4096)
-        except (BlockingIOError, OSError):
-            pass
-        return self._items.get_nowait()
+        """Return the next item without blocking, or raise queue.Empty."""
+        return self._mp_queue.get_nowait()
 
     def close(self):
-        self._mp_queue.put(None)    # stop the relay thread
         try:
             self._mp_queue.close()
             self._mp_queue.join_thread()
         except Exception:
-            pass
-        try:
-            self._write_sock.close()
-        except OSError:
-            pass
-        try:
-            self._read_sock.close()
-        except OSError:
             pass
 
     def join_thread(self):
@@ -1090,14 +1049,12 @@ class GLibCompatQueue:
 
     # --- Pickling support ---
     # When Worker (mp.Process) is pickled for spawning on Windows, only the
-    # inner mp.Queue crosses the process boundary. The socket pair and relay
-    # thread are main-process-only and are NOT pickled.
+    # inner mp.Queue crosses the process boundary.
     def __getstate__(self):
         return {'_mp_queue': self._mp_queue}
 
     def __setstate__(self, state):
         # In the child process: only restore put() capability via _mp_queue.
-        # All other attributes are absent; get_nowait/_reader are not needed.
         self._mp_queue = state['_mp_queue']
 
 

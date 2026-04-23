@@ -6,7 +6,7 @@ delivered via the existing multiprocessing.Queue / GLib.io_add_watch infrastruct
 """
 
 import math, logging
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GLib
 from ptxprint.utils import _
 
 logger = logging.getLogger(__name__)
@@ -179,9 +179,7 @@ class BookProgressDialog:
 
         # Scrolled Window for the grid
         scrolled = Gtk.ScrolledWindow()
-        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        scrolled.set_min_content_height(100) # Increased slightly for better view
-        scrolled.set_min_content_width(200)
+        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
         
         # Pack the scrolled window (expand=True, fill=True)
         vbox.pack_start(scrolled, True, True, 0)
@@ -235,10 +233,20 @@ class BookProgressDialog:
         self.stop_button.set_sensitive(True)
         self.stop_button.set_label(stoplabel)
         self.grid.show_all()
+        self.window.show_all()
 
-        # Let GTK measure real widget sizes, then resize window to fit
-        self.window.resize(1, 1)  # reset any previous size
-        self.window.queue_resize()
+        # After GTK has laid out the widgets, resize window to its natural size.
+        # idle_add ensures this runs after the current layout pass completes.
+        GLib.idle_add(self._fit_to_content)
+
+    def _fit_to_content(self):
+        """Resize window to exactly fit its content. Called once via idle_add after layout."""
+        min_w, nat_w = self.window.get_preferred_width()
+        min_h, nat_h = self.window.get_preferred_height()
+        screen = self.window.get_screen()
+        max_h = int(screen.get_height() * 0.85) if screen else 900
+        self.window.resize(nat_w, min(nat_h, max_h))
+        return False  # don't repeat
 
     def updateEvent(self, event):
         """Route a ProgressEvent to the correct BookProgressCell."""
