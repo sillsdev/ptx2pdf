@@ -7730,6 +7730,15 @@ Thank you,
 
     def _onFillPagesClicked(self, resume=False):
         self.saveAdjlists()
+        mview = getattr(self, 'mview', None)
+        if mview is not None:
+            for w in getattr(mview, 'workers', []):
+                if w.is_alive():
+                    logger.debug(f"Terminating orphaned worker {w.pid}")
+                    w.terminate()
+                    w.join(timeout=3)
+            mview.teardown()
+            self.mview = None
         args = argparse.Namespace(**vars(self.args))
         args.restart = resume
         tout = float(self.get("s_maxfilltime"))
@@ -7749,11 +7758,12 @@ Thank you,
         self.fillThread.start()
 
     def _fillPages_run(self):
+        mview = self.mview
         try:
-            results = self.mview.run_all(True)
+            results = mview.run_all(True)
         finally:
-            self.mview.teardown()
-        print(results)
+            mview.teardown()
+        logger.debug(f"page fill results: {results}")
         self.mview = None
         GLib.idle_add(self._fillPages_finish, results)
 

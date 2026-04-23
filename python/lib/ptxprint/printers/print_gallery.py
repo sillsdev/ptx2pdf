@@ -85,6 +85,9 @@ class PrintGallery:
     def prepare(self):
         """Called when the Print Gallery tab is selected."""
         self.setup()
+        numpages = self.view.getPageCount()
+        if numpages:
+            self._widget("pagesSpin").set_value(numpages)
 
     def onInputChanged(self, widget=None):
         """Handle changes to any input widget and update all output labels."""
@@ -170,6 +173,37 @@ class PrintGallery:
 
         except Exception as e:
             print(f"Error in onInputChanged: {e}")
+
+    def getPerCopyData(self, quantities):
+        """Return {qty: per_copy_price_INR} for the current settings at each quantity."""
+        try:
+            rawPages     = int(self._widget("pagesSpin").get_value())
+            sizeComboIdx = self._widget("sizeCombo").get_active()
+            printComboIdx = self._widget("printCombo").get_active()
+            paperComboIdx = self._widget("paperCombo").get_active()
+            lamComboIdx  = self._widget("lamCombo").get_active()
+            bindingCombo = self._widget("bindingCombo")
+            bindingComboIdx = bindingCombo.get_active()
+            isA5 = (sizeComboIdx == 0)
+            pages = ((rawPages + 3) // 4) * 4
+            interiorSheetsPerCopy = pages / 4
+            bindingRates = [RATES["perfect"], RATES["case"], RATES["staple"]]
+            bindingCost  = bindingRates[min(bindingComboIdx, len(bindingRates) - 1)]
+            printCost    = [RATES["bw"], RATES["color"]][printComboIdx] * PAPER_MULTIPLIERS[paperComboIdx]
+            lamCost      = RATES["lam"] if lamComboIdx == 1 else 0
+            result = {}
+            for rawCopies in quantities:
+                copies = rawCopies + 1 if (isA5 and rawCopies % 2 != 0) else rawCopies
+                coverCost    = (copies / 2 if isA5 else copies) * RATES["cover300"]
+                interiorSheets = (copies / 2 if isA5 else copies) * interiorSheetsPerCopy
+                interiorCost = interiorSheets * printCost
+                lamTotal     = copies * lamCost
+                bindTotal    = copies * bindingCost
+                total        = coverCost + interiorCost + lamTotal + bindTotal
+                result[rawCopies] = total / copies if copies > 0 else 0
+            return result
+        except Exception:
+            return {}
 
     def formatIndianCurrency(self, amount):
         """Format amount as Indian currency (₹X,XX,XXX.xx)."""

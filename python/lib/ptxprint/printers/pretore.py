@@ -1,5 +1,7 @@
 
-import os, json, threading, urllib, time
+import os, json, threading, urllib, time, logging
+
+logger = logging.getLogger(__name__)
 from shutil import copy
 from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
@@ -48,6 +50,8 @@ class Pretore:
         self.currency = "EUR"
         self.thread = None
         self.exchange_thread = None
+        self._autoDescription = None
+        self._widgetsDone = False
 
     def get(self, wname, **kw):
         return self.view.get(wname, **kw)
@@ -74,16 +78,87 @@ class Pretore:
         GLib.idle_add(self.set_exchange_rates, rates)
 
     def set_exchange_rates(self, rates):
+        rates["EUR"] = 1.0  # EUR is the base currency
         self.rates = rates
+        self._populateCurrencyCombo()
+
+    def _populateCurrencyCombo(self):
+        combo = self.view.builder.get_object("fcb_prnl_currency")
+        if combo is None:
+            return
+        current = self.currency
+        combo.remove_all()
+        for code in sorted(self.rates.keys()):
+            combo.append(code, code)
+        combo.set_active_id(current)
+
+    # Paper type ID → mm per page (single page, not leaf)
+    _paperThickness = {
+        "755": 0.050,   # 40 gsm ThinLeaf
+        "355": 0.060,   # 50 gsm Thinopaque
+        "364": 0.095,   # 80 gsm woodfree
+        "366": 0.105,   # 90 gsm woodfree
+        "575": 0.115,   # 100 gsm woodfree
+    }
+    # Binding type ID → cover thickness in mm (both covers combined)
+    _coverThickness = {
+        "307": 1.5,     # Paperback (light card)
+        "306": 8.0,     # Hardback (boards + liner)
+    }
+
+    def _updateThickness(self, *a):
+        numpages = self.numpages() or 0
+        paperID  = self.get("fcb_prnl_paperType") or "755"
+        bindID   = self.get("fcb_prnl_binding")   or "307"
+        mmPerPage = self._paperThickness.get(paperID, 0.050)
+        coverMm   = self._coverThickness.get(bindID, 1.5)
+        thickness = numpages * mmPerPage + coverMm
+        self.set("l_prnl_thickness", "{:.1f} mm".format(thickness))
+
+    def _updateButtonSensitivity(self, *a):
+        ok = bool(self.get("t_prnl_bookID")) and bool(self.get("t_prnl_description"))
+        for wid in ("btn_prnl_getQuote", "btn_prnl_createOrder", "btn_prnl_multiQuote"):
+            w = self.view.builder.get_object(wid)
+            if w:
+                w.set_sensitive(ok)
 
     def setup(self):
         numpages = self.numpages()
-        self.set("l_prnl_pages", str(numpages))
-        w = self.view.builder.get_object("l_prnl_pages").get_style_context()
-        if numpages < 120 or numpages > 2000:
-            w.add_class("red-label")
-        else:
-            w.remove_class("red-label")
+        if numpages is not None:
+            self.set("l_prnl_pages", str(numpages))
+            w = self.view.builder.get_object("l_prnl_pages").get_style_context()
+            if numpages < 120 or numpages > 2000:
+                w.add_class("red-label")
+            else:
+                w.remove_class("red-label")
+        if not self.get("t_prnl_bookID"):
+            prjid = getattr(self.view.project, 'prjid', None)
+            if prjid:
+                self.set("t_prnl_bookID", prjid)
+        bks = self.view.getBooks(files=True)
+        if bks:
+            if len(bks) == 1:
+                autoDesc = bks[0]
+            elif len(bks) <= 4:
+                autoDesc = ",".join(bks)
+            else:
+                autoDesc = "{}...{}".format(bks[0], bks[-1])
+            current = self.get("t_prnl_description")
+            if not current or current == self._autoDescription:
+                self.set("t_prnl_description", autoDesc)
+                self._autoDescription = autoDesc
+        self._updateThickness()
+        self._updateButtonSensitivity()
+        if not self._widgetsDone:
+            self._widgetsDone = True
+            for wid in ("t_prnl_bookID", "t_prnl_description"):
+                w = self.view.builder.get_object(wid)
+                if w:
+                    w.connect("changed", self._updateButtonSensitivity)
+            for wid in ("fcb_prnl_paperType", "fcb_prnl_binding"):
+                w = self.view.builder.get_object(wid)
+                if w:
+                    w.connect("changed", self._updateThickness)
         if self.user is not None:
             return
         self.exchange_thread = threading.Thread(target=self.get_exchange_rates)
@@ -199,6 +274,15 @@ class Pretore:
         if not self.thread.is_alive():
             self.thread = None
 
+    def _refreshCurrencyDisplay(self):
+        if not hasattr(self, 'amount') or self.amount is None:
+            return
+        copies = int(self.get("s_prnl_copies"))
+        amount = self.rates.get(self.currency, 1.0) * self.amount
+        cs = allcurrencies.get(self.currency, "\u20AC")
+        self.set('l_prnl_total', "{}{:.2f}".format(cs, amount))
+        self.set('l_prnl_percopy', "{}{:.2f}".format(cs, amount / copies))
+
     def updatequote(self, result, curr):
         if result is None:
             print("Failed quote")
@@ -207,12 +291,9 @@ class Pretore:
             self.currency = curr
         copies = int(self.get("s_prnl_copies"))
         self.amount = result['cost'][str(copies)]
-        amount = self.rates.get(self.currency, 1.0) * self.amount
-        cs = allcurrencies.get(self.currency, "\u20AC")
-        self.set('l_prnl_total', "{}{:.2f}".format(cs, amount))
-        self.set('l_prnl_percopy', "{}{:.2f}".format(cs ,amount/copies))
+        self._refreshCurrencyDisplay()
 
-    def updateMultiQuote(self, result, curr):
+    def updateMultiQuote(self, result, curr, extraData=None):
         if result is None:
             print("Failed quote")
             return
@@ -222,16 +303,21 @@ class Pretore:
         sampleData = {}
         for k, v in result['cost'].items():
             sampleData[int(k)] = v / int(k) * currFactor
+        allData = {"Pretore": sampleData}
+        if extraData:
+            allData.update(extraData)
         currencySymbol = allcurrencies.get(self.currency, "€")
         viewer = PricingGraphViewer(
-            {"Pretore" : sampleData},
+            allData,
             parentWindow=self.view.mainapp.win,
             currencySymbol=currencySymbol
         )
         viewer.show()
 
-    def showCreateResults(self, result):
-        self.updatequote(result)
+    def showCreateResults(self, result, curr):
+        if result is None:
+            logger.debug("showCreateResults: no result returned")
+            return
         quoteid = result.get("number", _("Unknown"))
         self.set("l_prnl_orderRef", quoteid)
         self.set("l_prnl_zipFilename", os.path.basename(self.zipname))
@@ -246,7 +332,7 @@ class Pretore:
         else:
             data = None
         result = None
-        print(f"{headers=}, {endpoint=}, {data=}")
+        logger.debug(f"{headers=}, {endpoint=}, {data=}")
         try:
             req = urllib.request.Request(endpoint, data=data, headers=headers)
             with urllib.request.urlopen(req) as response:
@@ -293,7 +379,7 @@ class Pretore:
         z.close
         
         # also make the zip, create a dialog to present the results
-        self.do_quote("create", cb=self.showCreateResults, amt=150)
+        self.do_quote("create", cb=self.showCreateResults)
 
     def configure(self, btn, *a):
         # setup the view to conform to pretore requirements
@@ -309,10 +395,29 @@ class Pretore:
         curr = self.get("fcb_prnl_currency")
         if curr in self.rates:
             self.currency = curr
-            self.updatequote(None)
+            self._refreshCurrencyDisplay()
 
     def show_multi_quote_comparison(self, btn, *a):
         btn.set_sensitive(False)
-        quantities = [50,100,250,500,1000]
-        self.do_quote("calculate", cb=self.updateMultiQuote, quantities=quantities)
+        quantities = sorted(set([50, 100, 250, 500, 1000, int(self.get("s_prnl_copies"))]))
+        extraData = {}
+        printers = self.view.printers
+        inrRate = self.rates.get("INR", None)
+        currRate = self.rates.get(self.currency, 1.0)
+        inrFactor = (currRate / inrRate) if inrRate else None
+        if self.view.get("c_pg_comparePrinters") and "print_gallery" in printers:
+            data = printers["print_gallery"].getPerCopyData(quantities)
+            if data and inrFactor is not None:
+                data = {k: v * inrFactor for k, v in data.items()}
+            if data:
+                extraData["Print Gallery"] = data
+        if self.view.get("c_pothi_comparePrinters") and "pothi" in printers:
+            data = printers["pothi"].getPerCopyData(quantities)
+            if data and inrFactor is not None:
+                data = {k: v * inrFactor for k, v in data.items()}
+            if data:
+                extraData["Pothi"] = data
+        def _cb(result, curr):
+            self.updateMultiQuote(result, curr, extraData=extraData)
+        self.do_quote("calculate", cb=_cb, quantities=quantities)
         btn.set_sensitive(True)

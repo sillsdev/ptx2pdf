@@ -38135,7 +38135,8 @@ Note that Pretore has a minimum
 print run of 50 copies.</property>
                                             <property name="halign">end</property>
                                             <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Copies To Be Ordered:</property>
+                                            <property name="xalign">1</property>
+                                            <property name="label" translatable="yes">Copies:</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
@@ -38568,7 +38569,7 @@ book including the cover binding.</property>
                                                 <property name="tooltip-text" translatable="yes">The final thickness of the finished
 book including the cover binding.</property>
                                                 <property name="halign">start</property>
-                                                <property name="label" translatable="yes">32 mm</property>
+                                                <property name="label" translatable="yes">-</property>
                                                 <attributes>
                                                   <attribute name="foreground" value="#1a1a5f5fb4b4"/>
                                                 </attributes>
@@ -38615,7 +38616,7 @@ excluding shipping.</property>
                                                 <property name="tooltip-text" translatable="yes">The cost of each book
 excluding shipping.</property>
                                                 <property name="halign">start</property>
-                                                <property name="label" translatable="yes">€7.52</property>
+                                                <property name="label" translatable="yes">-</property>
                                               </object>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -38661,7 +38662,7 @@ excluding shipping.</property>
                                                 <property name="tooltip-text" translatable="yes">The cost of the entire job
 excluding shipping.</property>
                                                 <property name="halign">start</property>
-                                                <property name="label" translatable="yes">€3,760</property>
+                                                <property name="label" translatable="yes">-</property>
                                                 <attributes>
                                                   <attribute name="weight" value="bold"/>
                                                 </attributes>
@@ -38838,8 +38839,7 @@ to the clipboard.</property>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Currency conversion
-not yet implemented.</property>
+                                                <property name="tooltip-text" translatable="yes">Select display currency. Rates are loaded from frankfurter.dev.</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                                 <property name="label" translatable="yes">Currency:</property>
@@ -38854,17 +38854,10 @@ not yet implemented.</property>
                                               <object class="GtkComboBoxText" id="fcb_prnl_currency">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Currency conversion
-not yet implemented.</property>
+                                                <property name="tooltip-text" translatable="yes">Select display currency. Rates are loaded from frankfurter.dev.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
                                                 <property name="has-entry">True</property>
-                                                <items>
-                                                  <item id="USD" translatable="yes">US Dollars</item>
-                                                  <item id="EUR" translatable="yes">Euros</item>
-                                                  <item id="GBP" translatable="yes">British Pounds</item>
-                                                  <item id="THB" translatable="yes">Thai Baht</item>
-                                                </items>
                                                 <signal name="changed" handler="printers/pretore/change_currency" swapped="no"/>
                                                 <child internal-child="entry">
                                                   <object class="GtkEntry">
@@ -39793,7 +39786,7 @@ Pothi.com requires even page counts. Constraints by binding:
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">end</property>
-                                            <property name="label" translatable="yes">Quantity:</property>
+                                            <property name="label" translatable="yes">Copies:</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
@@ -40268,6 +40261,20 @@ For 1500+ copies, contact Pothi.com directly for a custom quote.</property>
                                         <property name="position">4</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_pothi_comparePrinters">
+                                        <property name="label" translatable="yes">Compare with other Printers</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">5</property>
+                                      </packing>
+                                    </child>
                                     <!-- Link button -->
                                     <child>
                                       <object class="GtkLinkButton" id="p_pothiLink">
@@ -40280,7 +40287,7 @@ For 1500+ copies, contact Pothi.com directly for a custom quote.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">5</property>
+                                        <property name="position">6</property>
                                       </packing>
                                     </child>
                                   </object>

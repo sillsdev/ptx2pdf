@@ -567,7 +567,7 @@ class TypesetterSolver:
         self.itercount += 1
         logger.log(15, "layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
                 page, self.itercount, not self.noprobe,
-                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and i <= page+2}),
+                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
                 combo)
         self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
         return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
@@ -744,10 +744,20 @@ class PTXprinter:
             self.view.project.ext = f"pbuild{nid}"
             d = self.view.project.printPath(self.view.cfgid)
             if os.path.exists(d):
+                import time as _time
                 for f in os.listdir(d):
                     fp = os.path.join(d, f)
-                    if os.path.isfile(fp):
-                        os.unlink(fp)
+                    if not os.path.isfile(fp):
+                        continue
+                    for attempt in range(4):
+                        try:
+                            os.unlink(fp)
+                            break
+                        except PermissionError:
+                            if attempt < 3:
+                                _time.sleep(0.5)
+                            else:
+                                logger.warning(f"Cannot delete {fp} — file still locked; skipping")
 
     def solve(self, bk, stop=False, restart=False):
         self.bk = bk        # needed by run()
@@ -1232,6 +1242,7 @@ class MultiView:
             'progress_q':   GLibCompatQueue() if progress else None,
             'cancel_event': mp.Event()
         }
+        self.workers = []
 
     def add_job(self, bk):
         self.task_list.append(bk)
@@ -1243,21 +1254,34 @@ class MultiView:
         for _ in range(self.numproc):
             self.queues['task_q'].put(None)
 
+        results_q = self.queues['results_q']
+        ce = self.queues.get('cancel_event')
         if self.numproc == 1:
             worker = Worker(self.queues, self.build_params, self.log_config, None, stop=stop)
+            self.workers = [worker]
             worker.run()
             results = []
-            while not self.queues['results_q'].empty():
-                results.append(self.queues['results_q'].get())
+            while not results_q.empty():
+                results.append(results_q.get())
         else:
             workers = [Worker(self.queues, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
+            self.workers = workers
             for w in workers:
                 w.start()
             results = []
-            for _ in range(len(self.task_list)):
-                results.append(self.queues['results_q'].get())
+            expected = len(self.task_list)
+            while len(results) < expected:
+                if ce and ce.is_set():
+                    break
+                try:
+                    results.append(results_q.get(timeout=0.5))
+                except _queue.Empty:
+                    continue
             for w in workers:
-                w.join()
+                w.join(timeout=5)
+                if w.is_alive():
+                    w.terminate()
+        self.workers = []
         return results
 
     def cancel(self):
