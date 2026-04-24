@@ -752,7 +752,7 @@
     LBP:\the\Lboxpenalty, PLP:\the\partialLpenalty, SLP:\savedLpenalty,
     RBP:\the\Rboxpenalty, PRP:\the\partialRpenalty, SRP:\savedRpenalty,
     DCyc:\the\deadcycles,
-    LB:\the\ht\Lbox+\the\dp\Lbox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal iftrialfailed\iftrialfailed true\else false\fi}%
+    LB:\the\ht\Lbox+\the\dp\Lbox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal\space iftrialfailed\iftrialfailed true\else false\fi}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
    \showbox\trialbox\showbox\galleyexc@ss\showlists
   \fi
@@ -939,7 +939,7 @@
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
   \tracetimcheck{any@trial}{output}%
   \traceifset{diglot@any@trial}%
-  \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
+  \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl. \iftrialfailed already failed\fi}%
   \@bls=\csname b@selineskip\c@rrdstat\endcsname
   \ifnum\holdinginserts=0\relax\else
     \ifvoid\trialbox
@@ -1003,7 +1003,7 @@
     \xdef\@djustskip{\the\dimen0}%
     \trace{D}{Adjusted topskip correction \the\dimen0}%
   }%
-  \setbox255=\vbox{\vskip\@djustskip\penalty10000\unvbox255}%
+  \setbox255=\vbox{\ifdim \dimen0=0pt \else\vskip\@djustskip\penalty10000\fi\unvbox255}%
   \ifdiglotDebugFollowContents
     \showbox255
   \fi
@@ -1021,7 +1021,7 @@
     \fi
     \update@marks@partone
     \ifdim\TempDim<-0.3\@bls % Coarse test. main trial routine can be pickier if it wants
-      \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
+      \trace{D}{Initial Content does not fit (th:\the\trialheight, ẟ:\the\TempDim, av:\the\availht)}%
       \global\holdinginserts=1
       \global\trialfailedtrue
     \else

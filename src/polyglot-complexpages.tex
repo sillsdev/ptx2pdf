@@ -219,7 +219,7 @@
     \trace{dmc}{#1 is an endnote. Why is it appearing as an insert??}%Endnotes are fully expanded at the end of the book, so appear as normal text.
     \def\tmp@n@tetyp{i}%ignore
   \fi
-  \x@\edef\csname @n-\tmpn@te @typ\endcsname{\tmp@n@tetyp}%
+  \x@\xdef\csname @n-\tmpn@te @typ\endcsname{\tmp@n@tetyp}%
   \trace{dmc}{Recording @n-\tmpn@te @typ as \tmp@n@tetyp}%
   \let\col@do\@@clsfynotes \x@\each@col\all@list\E
 }
@@ -450,7 +450,9 @@
     \x@\xdef\csname lastcell#1-\the\p@lyp@geno\endcsname{\p@lyr@wstring} % Where do notes for L/R go on this page?
     \x@\xdef\csname lastcol#1-\the\p@lyp@geno\endcsname{\x@fch@r} % Where do notes for L/R go on this page?
     %\trace{dmc}{lastcol#1-\the\p@lyp@geno\space is \x@fch@r}%
+    \x@\xdef\csname ther@wno\x@fch@r\endcsname{\the\p@lyr@wno}%
     \x@\xdef\csname thep@geno\x@fch@r\endcsname{\the\p@lyp@geno}%
+    \x@\xdef\csname thec@ll\x@fch@r\endcsname{\p@lyr@wstring}%
     \advance\count255 by 1
     \edef\@tmpnam{decode@#1\the\count255}%
     \trace{dmc}{... #1\the\count255\space -> \x@fch@r}%
@@ -899,12 +901,16 @@
         \x@\each@col\cplx@proc@all\E
     \fi\fi
   \fi\fi
+  \let\\\complex@realnotehts\the\n@tecl@sses
   % column gutter & c-g-skip? needs to be handled per-row.
-  % per-column footnoteboxen need unwrapping and applying to the relevant column
+  % per-column footnoteboxen need unwrapping and applying to the relevant column, as part of layout
   %TODO: join text and 
   %
 }
 
+\def\complex@realnotehts#1{%
+  \csname note-#1ht\endcsname=\ht\csname note-#1\endcsname
+}
 \def\cplx@pre@me@sureins@trial#1{%
   \me@sureins@trial{#1}{\csname excess#1\endcsname}%
   \x@\ifx\csname f@llow@n#1\endcsname\empty% There is only a single occurance of
@@ -958,7 +964,7 @@
   \x@\ifx\csname tr@iling#1\endcsname\relax\else
     \x@\ifx\csname tr@iling#1\endcsname\empty\else
       \x@\let\x@\tmpb\csname tr@iling#1\endcsname % do this in 2 steps,or we end up needing too many expandafters for sanity.
-      \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmpb}%
+      \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\x@\tempfalse \tmpb \iftemp \advance\tmpdim\AboveNoteSpace \fi }%
     \fi
   \fi
   \trace{dmc}{currently: \the\fntoks}%
@@ -1081,7 +1087,7 @@
 }
 
 \def\extendchunkc@lc#1{%
-  \x@\x@\x@\def\x@\x@\x@\tmpf\x@\x@\x@{\x@\tmpf \btmp \ifdim\dimen1>0pt \advance\tmpdim\dimexpr \dimen1+#1\relax\fi}%
+  \x@\x@\x@\def\x@\x@\x@\tmpf\x@\x@\x@{\x@\tmpf \btmp \ifdim\dimen1>0pt \temptrue \advance\tmpdim\dimexpr \dimen1+#1\relax\fi}%
 }
 
 \def\g@ncolhtadditions#1{%define any (potential) extra column height for column #1 
@@ -1219,6 +1225,7 @@
   \ifpagefull
     \trace{dmc}{Go for final layout (\g@lleylist)}%
     \global\late@stage@reflowfalse
+    % TODO: Split list by page number, and save per-page notes, or run checkgalley and trials from complex@layout
     \let\tri@llist\g@lleylist
     \def\refl@wlist{}% List of columns needing to reflow.
     \ifx\empty\tri@llist\else
@@ -1246,6 +1253,7 @@
   \@complex@layout
 }
 \def\@complex@layout{%
+  \trace{dmc}{@complex@layout (\the\p@lyp@geno)}%
   %\special{color push rgb 1 0 0}%
   \setbox\partial=\vbox{%
     \box\partial
@@ -1259,12 +1267,15 @@
   \else
     \let\nxt\relax
   \fi
+  \trace{dmc}{@complex@layout (\the\p@lyp@geno)end}%
   \nxt
 }
 
 \def\@parpgwrite#1{\ifhmode\beginL\fi\pdfsavepos \write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{#1}}\ifhmode\endL\fi}%
 \def\complex@@p@geout{%
+  \trace{dmc}{complex@@p@geout}%
   \traceifset{complex@@p@geout}%
+  \def\c@rrdstat{L}%
   \def\pagecontents{%
      \ifvoid\topins\else
        \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
@@ -1285,51 +1296,72 @@
       \makefootbox
      }%pagecontents
   \plainoutput
+  \trace{dmc}{complex@@p@geout end}%
   \traceifcheck{complex@@p@geout}%
 }
       
     
 \def\@@complex@layout{%
+  \trace{dmc}{@@complex@layout}%
   \edef\this@p@lyr@wstring{\p@lyr@wstring}%
+  \trace{dmc}{htfunction-this@p@lyr@wstring:\x@\meaning\csname htfunction-\this@p@lyr@wstring\endcsname}%
+  \tracingassigns=1
+  \csname htfunction-\this@p@lyr@wstring\endcsname
+  \tracingassigns=0
   \x@\let\x@\r@wstring\csname cplx@proc\this@p@lyr@wstring\endcsname
   \dimen1=\csname \this@p@lyr@wstring @ht\endcsname %FIXME: this is probably wrong
-  \setbox1\hbox{\makediglotgutter{\dimen1}{\z@}{\dimen1}}%
+  \setbox1\hbox{\makediglotgutter{\dimen1}{\dimen1}{\z@}}%
   \trace{dmc}{Layout \r@wstring}%
   \setbox0\hbox{\let\l@stcol\empty
     \let\col@do\@@complex@columnchunk
     \x@\each@col\r@wstring\E
   }\trace{dmc}{...Laid out:\l@gdims{0}}%
+  %\showbox0
   \box0
   \advance\p@lyr@wno by 1
   \ifnum\p@lyr@wno<\csname p@lyr@wcount-\the\p@lyp@geno\endcsname
-    \let\nxt\@@complex@layout
     \vskip 0.5\@minb@seline
     \hrule
     \vskip 0.5\@minb@seline
+    \let\nxt\@@complex@layout
   \else
     \let\nxt\relax
     %\@@complex@box % Does something need to happen to the new box? (e.g. put current note state onto a page?)
   \fi
+  \trace{dmc}{@@complex@layout end}%
   \nxt
 }
 
 \def\@@complex@columnchunk#1{%
   \edef\c@rrdstat{#1}%
-  \trace{dmc}{Laying out #1\l@gdims{\csname #1box\endcsname}}%
-  \setbox\csname #1box\endcsname\vbox{\lineskip=0pt \baselineskip=0pt \lineskiplimit=-1pt %
+  \x@\let\x@\f@llowing\csname f@llowing#1\endcsname
+  \x@\let\x@\pfin@l\csname lastcol\f@llowing-\the\p@lyp@geno\endcsname
+  \setbox0\box\csname #1box\endcsname%
+  \trace{dmc}{Laying out #1\l@gdims{0}, \the\csname \this@p@lyr@wstring @ht\endcsname}%
+  \setbox\csname #1box\endcsname\vbox to \csname \this@p@lyr@wstring @ht\endcsname{\lineskip=0pt \baselineskip=0pt \lineskiplimit=-1pt %
     \setLRspecifictrial
     \csname unp@ck-t#1\endcsname
-    %\vbox to 0pt{\lineskip=0pt \lineskiplimit=-1pt \baselineskip=0pt \smash{\hbox{#1box}}%
+    %\vbox to 0pt{\lineskip=0pt \lineskiplimit=-1pt \baselineskip=0pt \smash{\hbox{#1box}}}%
     %\smash{\hbox{ #1box}}\vss}%
-    \setbox0\box\csname #1box\endcsname%
     \vbox{\lineskip 0pt \lineskiplimit -1pt \setbox1\hbox{\vrule width \wd0 height 1pt depth 0pt}\setbox2\hbox to 0pt{\vrule width 1pt height \ht0 depth \dp0 \hss}\copy1\hbox{\copy2 \box0 \box2}\box1}
+    %\vbox to 0pt{\box0\vss}%
     \csname unp@ck-b#1\endcsname
-    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses
+    \let\\=\cplx@ins@rtn@tecl@ss \the\n@tecl@sses
   }%
   \@@simplecols{#1}%
 }
 
 \def\complex@notfull{%TODO
+}
+
+\def\cplx@ins@rtn@tecl@ss#1{%Only insert footnotes in the correct column
+  \edef\tmp{@n-note-#1@typ}%
+  \x@\let\x@\typ@\csname \tmp\endcsname
+  \trace{dmc}{Notes #1 (type(\tmp) \typ@) on \the\p@lyp@geno / \pfin@l}% 
+  % 
+  \if n\typ@\relax
+    \ifx\c@rrdstat\pfin@l\ins@rtn@tecl@ss{#1}\fi
+  \fi
 }
 
 \def\initspl@thts#1\E{%Per-row id
@@ -1388,7 +1420,7 @@
   \x@\let\x@\p@tl\csname partial#1\endcsname
   \x@\let\x@\@xcs\csname excess\f@llowing\endcsname 
   \savingvdiscards=1
-  \trace{d}{Splitting #1 to \csname s@ve#1cut\endcsname x\the\@minb@seline}%
+  \trace{d}{Splitting #1(\csname thec@ll#1\endcsname)) to \csname s@ve#1cut\endcsname x\the\@minb@seline}%
   \ifdiglotDebugFollowContents
     \showbox\@xcs
   \fi
@@ -1404,7 +1436,13 @@
     \x@\edef\csname saved#1penalty\endcsname{0}%
   \fi
   \setbox\p@tl\vbox{\unvbox\p@tl}%
-  \trace{dmc}{partial#1 is \l@gdims{\p@tl}}%
+  \dimen0=\dimexpr \ht\p@tl + \dp\p@tl\relax
+  \csname #1test\endcsname=\dimen0
+  \x@\let\x@\tmp\csname \csname thec@ll#1\endcsname @ht\endcsname 
+  \ifdim \tmp< \dimen0
+    \tmp=\dimen0
+  \fi
+  \trace{dmc}{partial#1 is \l@gdims{\p@tl}=\the\csname #1test\endcsname}%
 }  
   
 \newif\ifcomplex@lastrow % What phase of the calc are we in? 
@@ -1517,7 +1555,7 @@
 \def\run@a@trial@prep@complexpages{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
   %\tracingmacros=1
-  \traceNum{d}{run@a@trial \show@dstat, \csname s@ve\c@rrdstat cut\endcsname, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty}%
+  \traceNum{d}{run@a@trial@prep@complexpages \show@dstat, \csname s@ve\c@rrdstat cut\endcsname, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty}%
   \x@\let\x@\f@llowing\csname f@llowing\c@rrdstat\endcsname
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %THIS galley (unlike original diglot)
   \x@\let\x@\@xcs\csname excess\f@llowing\endcsname %source
@@ -1536,12 +1574,19 @@
   %\s@venotes{\g@tndstat}{1}% FIXME Here? or maybe upper level?
   \s@veinserts{col}%
   \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\global\@ftergalleyskip=\lastskip\unskip\penalty\endtri@lpen@lty}%
-  \global\trialheight=\csname \this@p@lyr@wstring @ht\endcsname
+  %\global\trialheight=\csname \this@p@lyr@wstring @ht\endcsname
   %\tracingmacros=0
 }
 \def\after@after@a@trial@complexpages{%
-  \trace{d}{after@after@a@trial@simplecols iftrialfailed\iftrialfailed true\else false\fi,  tlc=\the\triall@@pcount, pf:\ifpagefull true\else false\fi [\tri@llist|\digl@tc@ntent@xcs]}%
-  
+  \trace{d}{after@after@a@trial@complexpages \c@rrdstat\space iftrialfailed\iftrialfailed true\else false\fi,  tlc=\the\triall@@pcount, pf:\ifpagefull true\else false\fi [\tri@llist|\digl@tc@ntent@xcs]}%
+  \x@\let\x@\tmp\csname \c@rrdstat box\endcsname
+  \csname \c@rrdstat test\endcsname=\dimexpr \ht\tmp + \dp\tmp\relax
+  \ifx\tri@llist\empty
+    \let\n@xt\relax
+  \else
+    \let\n@xt=\diglot@run@nxt@trial
+  \fi
+  \n@xt
 }
 
 \globdimen\d@cimaxdim % 0.1 of a maxdimen - values less than this can be multiplied by 10
@@ -1788,7 +1833,7 @@
   \trace{dmc}{complex@me@surepage \the\p@lyp@geno / \p@lyp@ges}%
   \csname p@gehtloss-\the\p@lyp@geno\endcsname=\ht\csname partial@poly@\the\p@lyp@geno\endcsname % Start with current page chunk...
   \csname p@gehtcalcs-\the\p@lyp@geno\endcsname
-  \trace{dmc}{Measuring pg\the\p@lyp@geno\space gives \the\csname p@gehtloss-\the\p@lyp@geno\endcsname}%
+  \trace{dmc}{Measuring pg\the\p@lyp@geno\space gives \the\csname p@gehtloss-\the\p@lyp@geno\endcsname (ph:\the\textheight)}%
   \ifdim\csname p@gehtloss-\the\p@lyp@geno\endcsname> \textheight
     \pagefulltrue
   \fi
@@ -1796,10 +1841,12 @@
 
 \def\complex@availht{%
   \p@lyp@geno=\csname thep@geno\c@rrdstat\endcsname
-  \trace{dmc}{complex@availht \the\p@lyp@geno, \c@rrdstat}%
-  \complex@me@surepage
-  \availht=\textheight
-  \advance\availht -\csname p@gehtloss-\the\p@lyp@geno\endcsname
+  \p@lyr@wno=\csname ther@wno\c@rrdstat\endcsname
+  \trace{dmc}{complex@availht \p@lyr@wstring, \c@rrdstat, \the\csname \p@lyr@wstring @ht\endcsname, \the\csname \c@rrdstat test\endcsname}%
+  %\complex@me@surepage
+  %\advance\availht -\csname p@gehtloss-\the\p@lyp@geno\endcsname
+  \availht=\csname \c@rrdstat test\endcsname
+  \advance\availht by \@minb@seline
 }
 \let\dglt@calc@vailht\complex@availht
 
