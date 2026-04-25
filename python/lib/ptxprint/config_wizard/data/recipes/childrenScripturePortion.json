@@ -1,0 +1,32 @@
+{
+  "id": "childrenScripturePortion",
+  "label": "Children's Scripture Portion",
+  "description": "Selected Scripture stories for children, A5, single column, 12pt body, with illustrations.",
+  "tags": ["children", "portion", "illustrated", "smallRun"],
+  "state": {
+    "audience": {
+      "purpose": "childrensScripture",
+      "copyCount": 150,
+      "ageGroup": "children",
+      "eyesightConsideration": "standard",
+      "readingContext": "personal",
+      "literacyLevel": "newReader",
+      "distributionModel": "donorFunded",
+      "budgetLevel": "low"
+    },
+    "production": { "method": "shortRunDigital" },
+    "trimBinding": {
+      "trimSize": "a5",
+      "bindingType": "perfectBound",
+      "paperType": "standard"
+    },
+    "content": { "scope": "portion" },
+    "peripherals": { "selected": ["tableOfContents", "illustrations"] },
+    "layout": {
+      "columns": 1,
+      "bodyFontSize": 12.0,
+      "bodyLeading": 15.0,
+      "marginPreset": "generous"
+    }
+  }
+}

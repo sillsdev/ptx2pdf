@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "fields": {
+    "audience.purpose": {
+      "type": "enum",
+      "required": true,
+      "values": ["pewBible", "evangelism", "personalReading", "trial", "study", "childrensScripture"]
+    },
+    "audience.copyCount": { "type": "integer", "required": true, "min": 1 },
+    "audience.ageGroup": {
+      "type": "enum",
+      "required": true,
+      "values": ["children", "youth", "adult", "elderly", "mixed"]
+    },
+    "audience.eyesightConsideration": {
+      "type": "enum",
+      "required": true,
+      "values": ["standard", "largePrint", "veryLargePrint"]
+    },
+    "audience.readingContext": {
+      "type": "enum",
+      "required": true,
+      "values": ["pulpit", "pew", "personal", "field", "study"]
+    },
+    "audience.literacyLevel": {
+      "type": "enum",
+      "required": true,
+      "values": ["newReader", "developing", "fluent"]
+    },
+    "audience.distributionModel": {
+      "type": "enum",
+      "required": true,
+      "values": ["sold", "donorFunded", "free"]
+    },
+    "audience.budgetLevel": {
+      "type": "enum",
+      "required": true,
+      "values": ["low", "medium", "high", "unconstrained"]
+    },
+    "production.method": {
+      "type": "enum",
+      "required": true,
+      "values": ["localPrinter", "officeDuplex", "podService", "shortRunDigital", "offset"],
+      "descriptions": {
+        "localPrinter": "Desktop printer. Best for 1–50 copies. Low setup cost, higher per-copy cost.",
+        "officeDuplex": "Office duplex laser. Best for 10–200 copies. Very low cost, limited finish quality.",
+        "podService": "Print-on-demand service (Lulu, IngramSpark, KDP). 1–500 copies. No setup fee, good distribution options.",
+        "shortRunDigital": "Short-run digital press. 50–2 000 copies. Moderate setup, good quality, faster than offset.",
+        "offset": "Offset press. 1 000+ copies. High setup cost, lowest per-copy cost at volume."
+      }
+    },
+    "production.podProvider": {
+      "type": "enum",
+      "required": false,
+      "values": ["lulu", "ingramSpark", "kdp", "other"]
+    },
+    "trimBinding.trimSize": {
+      "type": "enum",
+      "required": true,
+      "values": ["a4", "a5", "a6", "letter", "halfLetter", "fiveByEight", "sixByNine", "sevenByTen"],
+      "descriptions": {
+        "a4": "297×210 mm — large, suitable for study or reference use.",
+        "a5": "210×148 mm — popular compact size for personal or pew use.",
+        "a6": "148×105 mm — pocket-sized, good for pocket New Testaments.",
+        "letter": "279×216 mm — US standard, common for office printing.",
+        "halfLetter": "216×140 mm — US half-letter, compact for local printing.",
+        "fiveByEight": "203×127 mm — trade paperback pocket size.",
+        "sixByNine": "229×152 mm — standard trade paperback, good for POD services.",
+        "sevenByTen": "254×178 mm — large trade format, common for study Bibles."
+      }
+    },
+    "trimBinding.bindingType": {
+      "type": "enum",
+      "required": true,
+      "values": ["saddleStitch", "perfectBound", "caseBound", "spiral"],
+      "descriptions": {
+        "saddleStitch": "Stapled spine. Suitable for booklets up to ~64 pages. Lays flat.",
+        "perfectBound": "Glued square spine. Standard paperback. Good for 50–800 pages.",
+        "caseBound": "Hardcover. Durable, premium feel. Best for long print runs.",
+        "spiral": "Coil or comb binding. Lies completely flat. Good for reference use."
+      }
+    },
+    "trimBinding.paperType": {
+      "type": "enum",
+      "required": true,
+      "values": ["standard", "cream", "biblePaper28", "biblePaper36"],
+      "descriptions": {
+        "standard": "Standard 80–90 gsm white paper. Available everywhere.",
+        "cream": "Cream/off-white 80 gsm. Easier on the eyes for long reading.",
+        "biblePaper28": "28 gsm lightweight Bible paper. Very thin, reduces bulk significantly.",
+        "biblePaper36": "36 gsm Bible paper. Thin, less opaque than 28 gsm."
+      }
+    },
+    "content.scope": {
+      "type": "enum",
+      "required": true,
+      "values": ["wholeBible", "newTestament", "oldTestament", "portion", "custom"]
+    },
+    "layout.columns": { "type": "integer", "required": true, "values": [1, 2] },
+    "layout.bodyFontSize": { "type": "float", "required": true, "min": 6.0, "max": 24.0 },
+    "layout.bodyLeading": { "type": "float", "required": true, "min": 6.0, "max": 36.0 },
+    "layout.marginPreset": {
+      "type": "enum",
+      "required": true,
+      "values": ["tight", "standard", "generous"],
+      "descriptions": {
+        "tight": "Minimal margins. More text per page, smaller book. Harder to annotate.",
+        "standard": "Standard margins. Balanced readability and page economy.",
+        "generous": "Wide margins. Good for study use or annotation. Larger book."
+      }
+    }
+  },
+  "sectionRequiredFields": {
+    "audience": ["audience.purpose", "audience.copyCount", "audience.ageGroup",
+                 "audience.eyesightConsideration", "audience.readingContext",
+                 "audience.literacyLevel", "audience.distributionModel", "audience.budgetLevel"],
+    "production": ["production.method"],
+    "trimBinding": ["trimBinding.trimSize", "trimBinding.bindingType", "trimBinding.paperType"],
+    "content": ["content.scope"],
+    "peripherals": [],
+    "layout": ["layout.columns", "layout.bodyFontSize", "layout.bodyLeading", "layout.marginPreset"],
+    "review": []
+  },
+  "rules": [
+    {
+      "id": "offsetMinimumQuantity",
+      "severity": "warning",
+      "when": { "production.method": "offset" },
+      "require": { "audience.copyCount": { "min": 1000 } },
+      "message": "Offset printing is rarely economical below ~1 000 copies. Consider short-run digital or POD."
+    },
+    {
+      "id": "saddleStitchPageLimit",
+      "severity": "error",
+      "when": { "trimBinding.bindingType": "saddleStitch" },
+      "require": { "estimatedPageCount": { "max": 64 } },
+      "message": "Saddle-stitch binding is impractical above ~64 pages."
+    },
+    {
+      "id": "biblePaperOnlyOffset",
+      "severity": "warning",
+      "when": { "trimBinding.paperType": ["biblePaper28", "biblePaper36"] },
+      "require": { "production.method": "offset" },
+      "message": "Bible paper (lightweight) is generally only available through offset printers."
+    },
+    {
+      "id": "podTrimSizeIngramSpark",
+      "severity": "error",
+      "when": { "production.method": "podService", "production.podProvider": "ingramSpark" },
+      "require": { "trimBinding.trimSize": ["fiveByEight", "sixByNine", "sevenByTen", "a5"] },
+      "message": "IngramSpark does not offer the selected trim size."
+    },
+    {
+      "id": "podTrimSizeLulu",
+      "severity": "error",
+      "when": { "production.method": "podService", "production.podProvider": "lulu" },
+      "require": { "trimBinding.trimSize": ["a5", "fiveByEight", "sixByNine", "halfLetter"] },
+      "message": "Lulu does not offer the selected trim size."
+    },
+    {
+      "id": "podTrimSizeKdp",
+      "severity": "error",
+      "when": { "production.method": "podService", "production.podProvider": "kdp" },
+      "require": { "trimBinding.trimSize": ["fiveByEight", "sixByNine", "letter"] },
+      "message": "KDP does not offer the selected trim size."
+    },
+    {
+      "id": "largePrintFontFloor",
+      "severity": "warning",
+      "when": { "audience.eyesightConsideration": "largePrint" },
+      "require": { "layout.bodyFontSize": { "min": 12.0 } },
+      "message": "Large-print editions typically use at least 12pt body text."
+    },
+    {
+      "id": "veryLargePrintFontFloor",
+      "severity": "warning",
+      "when": { "audience.eyesightConsideration": "veryLargePrint" },
+      "require": { "layout.bodyFontSize": { "min": 16.0 } },
+      "message": "Very large print editions typically use at least 16pt body text."
+    },
+    {
+      "id": "childrenSingleColumn",
+      "severity": "warning",
+      "when": { "audience.ageGroup": "children" },
+      "require": { "layout.columns": 1 },
+      "message": "Children's editions typically use a single column for readability."
+    },
+    {
+      "id": "highCopiesLocalPrinter",
+      "severity": "warning",
+      "when": { "production.method": "localPrinter" },
+      "require": { "audience.copyCount": { "max": 100 } },
+      "message": "Local desktop printing is not recommended for more than ~100 copies."
+    },
+    {
+      "id": "officeDuplexMaxCopies",
+      "severity": "warning",
+      "when": { "production.method": "officeDuplex" },
+      "require": { "audience.copyCount": { "max": 300 } },
+      "message": "Office duplex printing is not recommended for more than ~300 copies."
+    },
+    {
+      "id": "caseBoundMinPages",
+      "severity": "warning",
+      "when": { "trimBinding.bindingType": "caseBound" },
+      "require": { "estimatedPageCount": { "min": 100 } },
+      "message": "Case binding is unusual for books under ~100 pages."
+    },
+    {
+      "id": "lowBudgetOffset",
+      "severity": "warning",
+      "when": { "audience.budgetLevel": "low", "production.method": "offset" },
+      "require": {},
+      "message": "Offset printing has high setup costs — consider whether the budget allows for it."
+    }
+  ],
+  "dependencies": [
+    { "section": "production",   "dependsOn": ["audience"] },
+    { "section": "trimBinding",  "dependsOn": ["production", "audience"] },
+    { "section": "content",      "dependsOn": ["audience"] },
+    { "section": "peripherals",  "dependsOn": ["audience", "content"] },
+    { "section": "layout",       "dependsOn": ["audience", "trimBinding"] },
+    { "section": "review",       "dependsOn": ["audience", "production", "trimBinding", "content", "peripherals", "layout"] }
+  ],
+  "filterRules": [
+    {
+      "id": "podLimitsTrimSizeLulu",
+      "field": "trimBinding.trimSize",
+      "when": { "production.method": "podService", "production.podProvider": "lulu" },
+      "allowedValues": ["a5", "fiveByEight", "sixByNine", "halfLetter"]
+    },
+    {
+      "id": "podLimitsTrimSizeIngramSpark",
+      "field": "trimBinding.trimSize",
+      "when": { "production.method": "podService", "production.podProvider": "ingramSpark" },
+      "allowedValues": ["fiveByEight", "sixByNine", "sevenByTen", "a5"]
+    },
+    {
+      "id": "podLimitsTrimSizeKdp",
+      "field": "trimBinding.trimSize",
+      "when": { "production.method": "podService", "production.podProvider": "kdp" },
+      "allowedValues": ["fiveByEight", "sixByNine", "letter"]
+    },
+    {
+      "id": "localPrinterBindingTypes",
+      "field": "trimBinding.bindingType",
+      "when": { "production.method": ["localPrinter", "officeDuplex"] },
+      "allowedValues": ["saddleStitch", "perfectBound", "spiral"]
+    },
+    {
+      "id": "podBindingTypes",
+      "field": "trimBinding.bindingType",
+      "when": { "production.method": "podService" },
+      "allowedValues": ["perfectBound"]
+    },
+    {
+      "id": "biblePaperRequiresOffset",
+      "field": "trimBinding.paperType",
+      "when": { "production.method": ["localPrinter", "officeDuplex", "podService", "shortRunDigital"] },
+      "allowedValues": ["standard", "cream"]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "perCopy": [
+    { "when": { "production.method": "offset", "audience.copyCount": { "min": 5000 } }, "value": "low" },
+    { "when": { "production.method": "offset" }, "value": "medium" },
+    { "when": { "production.method": "officeDuplex" }, "value": "low" },
+    { "when": { "production.method": "localPrinter" }, "value": "medium" },
+    { "when": { "production.method": "shortRunDigital" }, "value": "medium" },
+    { "when": { "production.method": "podService" }, "value": "high" }
+  ],
+  "total": [
+    { "when": { "production.method": "offset" }, "value": "high" },
+    { "when": { "audience.copyCount": { "min": 1000 } }, "value": "high" },
+    { "when": { "audience.copyCount": { "min": 200 } }, "value": "medium" },
+    { "when": {} , "value": "low" }
+  ]
+}

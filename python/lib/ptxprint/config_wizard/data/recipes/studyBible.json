@@ -1,0 +1,38 @@
+{
+  "id": "studyBible",
+  "label": "Study Bible",
+  "description": "Whole Bible with comprehensive study apparatus — study notes, cross-references, glossary, maps, and concordance. For 1 000+ copy runs.",
+  "tags": ["bible", "study", "offset", "fullApparatus"],
+  "state": {
+    "audience": {
+      "purpose": "study",
+      "copyCount": 1000,
+      "ageGroup": "adult",
+      "eyesightConsideration": "standard",
+      "readingContext": "study",
+      "literacyLevel": "fluent",
+      "distributionModel": "sold",
+      "budgetLevel": "high"
+    },
+    "production": { "method": "offset" },
+    "trimBinding": {
+      "trimSize": "sevenByTen",
+      "bindingType": "caseBound",
+      "paperType": "cream"
+    },
+    "content": { "scope": "wholeBible" },
+    "peripherals": {
+      "selected": [
+        "tableOfContents", "bookIntroductions", "crossReferences",
+        "studyNotes", "footnotes", "glossary", "maps", "concordance",
+        "weightsAndMeasures", "parallelPassages"
+      ]
+    },
+    "layout": {
+      "columns": 2,
+      "bodyFontSize": 9.0,
+      "bodyLeading": 11.0,
+      "marginPreset": "standard"
+    }
+  }
+}

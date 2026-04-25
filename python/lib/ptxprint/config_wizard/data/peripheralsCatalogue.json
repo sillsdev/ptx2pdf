@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    {
+      "id": "navigation",
+      "label": "Navigation & Reference",
+      "items": [
+        {
+          "id": "tableOfContents",
+          "label": "Table of Contents",
+          "estimatedPages": 2,
+          "note": "Lists books and page numbers. Recommended for most editions."
+        },
+        {
+          "id": "bookIntroductions",
+          "label": "Book Introductions",
+          "estimatedPagesPerBook": 1,
+          "note": "Brief intro text per book. Page count depends on scope."
+        },
+        {
+          "id": "crossReferences",
+          "label": "Cross-references",
+          "estimatedPagesDelta": 0,
+          "note": "Adds inline column space; doesn't add pages directly. Requires cross-ref data in project."
+        }
+      ]
+    },
+    {
+      "id": "study",
+      "label": "Study Helps",
+      "items": [
+        {
+          "id": "footnotes",
+          "label": "Footnotes",
+          "estimatedPagesDelta": 0,
+          "note": "Inline text notes. Adds space within existing pages."
+        },
+        {
+          "id": "studyNotes",
+          "label": "Study Notes",
+          "estimatedPagesDelta": 0,
+          "note": "Extended notes. Significantly increases page count for study editions."
+        },
+        {
+          "id": "glossary",
+          "label": "Glossary",
+          "estimatedPages": 8,
+          "note": "Defines key terms. Requires glossary file in project."
+        },
+        {
+          "id": "concordance",
+          "label": "Concordance",
+          "estimatedPages": 40,
+          "note": "Word index with references. Adds significant bulk."
+        },
+        {
+          "id": "strongsIndex",
+          "label": "Strong's Index",
+          "estimatedPages": 60,
+          "note": "Greek/Hebrew lexicon index. Large addition, for study Bibles."
+        },
+        {
+          "id": "weightsAndMeasures",
+          "label": "Weights & Measures",
+          "estimatedPages": 2,
+          "note": "Reference table of biblical units."
+        },
+        {
+          "id": "readingPlan",
+          "label": "Reading Plan",
+          "estimatedPages": 4,
+          "note": "Suggested daily reading schedule."
+        },
+        {
+          "id": "parallelPassages",
+          "label": "Parallel Passages",
+          "estimatedPages": 4,
+          "note": "Gospel harmony or parallel passage reference."
+        }
+      ]
+    },
+    {
+      "id": "visual",
+      "label": "Visual Content",
+      "items": [
+        {
+          "id": "maps",
+          "label": "Maps",
+          "estimatedPages": 8,
+          "note": "Geographic maps. Requires map files in project."
+        },
+        {
+          "id": "illustrations",
+          "label": "Illustrations",
+          "estimatedPagesDelta": 0,
+          "note": "Inline artwork. Affects page flow but not total page count directly."
+        }
+      ]
+    }
+  ]
+}

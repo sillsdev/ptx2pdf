@@ -1,0 +1,32 @@
+{
+  "id": "trialNewTestament",
+  "label": "Trial New Testament for Community Feedback",
+  "description": "A modest run of the New Testament, A5, perfect-bound, printed locally — for community review and feedback before a full publication.",
+  "tags": ["nt", "draft", "smallRun"],
+  "state": {
+    "audience": {
+      "purpose": "trial",
+      "copyCount": 50,
+      "ageGroup": "adult",
+      "eyesightConsideration": "standard",
+      "readingContext": "personal",
+      "literacyLevel": "fluent",
+      "distributionModel": "free",
+      "budgetLevel": "low"
+    },
+    "production": { "method": "localPrinter" },
+    "trimBinding": {
+      "trimSize": "a5",
+      "bindingType": "perfectBound",
+      "paperType": "standard"
+    },
+    "content": { "scope": "newTestament" },
+    "peripherals": { "selected": ["tableOfContents", "bookIntroductions"] },
+    "layout": {
+      "columns": 1,
+      "bodyFontSize": 10.5,
+      "bodyLeading": 12.5,
+      "marginPreset": "standard"
+    }
+  }
+}

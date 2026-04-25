@@ -1,0 +1,35 @@
+{
+  "id": "diglotNewTestament",
+  "label": "Diglot New Testament",
+  "description": "NT in two parallel languages, two columns (one per language), perfect-bound via POD or short-run digital.",
+  "tags": ["nt", "diglot", "pod", "doubleColumn"],
+  "state": {
+    "audience": {
+      "purpose": "personalReading",
+      "copyCount": 300,
+      "ageGroup": "adult",
+      "eyesightConsideration": "standard",
+      "readingContext": "personal",
+      "literacyLevel": "developing",
+      "distributionModel": "donorFunded",
+      "budgetLevel": "medium"
+    },
+    "production": { "method": "shortRunDigital" },
+    "trimBinding": {
+      "trimSize": "sixByNine",
+      "bindingType": "perfectBound",
+      "paperType": "standard"
+    },
+    "content": {
+      "scope": "newTestament",
+      "isDiglot": true
+    },
+    "peripherals": { "selected": ["tableOfContents", "bookIntroductions"] },
+    "layout": {
+      "columns": 2,
+      "bodyFontSize": 9.5,
+      "bodyLeading": 11.5,
+      "marginPreset": "standard"
+    }
+  }
+}

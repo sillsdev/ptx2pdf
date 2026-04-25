@@ -1,0 +1,32 @@
+{
+  "id": "pewBible",
+  "label": "Pew Bible",
+  "description": "Whole Bible, ~500 copies, 6×9, double-column, POD service (IngramSpark), with TOC, book introductions, and cross-references.",
+  "tags": ["bible", "pew", "pod", "doubleColumn"],
+  "state": {
+    "audience": {
+      "purpose": "pewBible",
+      "copyCount": 500,
+      "ageGroup": "adult",
+      "eyesightConsideration": "standard",
+      "readingContext": "pew",
+      "literacyLevel": "fluent",
+      "distributionModel": "donorFunded",
+      "budgetLevel": "medium"
+    },
+    "production": { "method": "podService", "podProvider": "ingramSpark" },
+    "trimBinding": {
+      "trimSize": "sixByNine",
+      "bindingType": "perfectBound",
+      "paperType": "cream"
+    },
+    "content": { "scope": "wholeBible" },
+    "peripherals": { "selected": ["tableOfContents", "bookIntroductions", "crossReferences"] },
+    "layout": {
+      "columns": 2,
+      "bodyFontSize": 9.5,
+      "bodyLeading": 11.5,
+      "marginPreset": "standard"
+    }
+  }
+}

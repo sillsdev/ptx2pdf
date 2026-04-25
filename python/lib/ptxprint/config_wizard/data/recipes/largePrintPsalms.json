@@ -1,0 +1,35 @@
+{
+  "id": "largePrintPsalms",
+  "label": "Large Print Psalms",
+  "description": "The Psalms in a large-print single-column layout for elderly or visually-impaired readers, with generous margins.",
+  "tags": ["ot", "largePrint", "elderly", "portion"],
+  "state": {
+    "audience": {
+      "purpose": "personalReading",
+      "copyCount": 100,
+      "ageGroup": "elderly",
+      "eyesightConsideration": "largePrint",
+      "readingContext": "personal",
+      "literacyLevel": "fluent",
+      "distributionModel": "donorFunded",
+      "budgetLevel": "medium"
+    },
+    "production": { "method": "shortRunDigital" },
+    "trimBinding": {
+      "trimSize": "a5",
+      "bindingType": "perfectBound",
+      "paperType": "cream"
+    },
+    "content": {
+      "scope": "portion",
+      "selectedBooks": ["PSA"]
+    },
+    "peripherals": { "selected": ["tableOfContents"] },
+    "layout": {
+      "columns": 1,
+      "bodyFontSize": 14.0,
+      "bodyLeading": 17.0,
+      "marginPreset": "generous"
+    }
+  }
+}

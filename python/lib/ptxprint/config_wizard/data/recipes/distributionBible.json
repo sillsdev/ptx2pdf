@@ -1,0 +1,32 @@
+{
+  "id": "distributionBible",
+  "label": "Distribution Bible (Offset)",
+  "description": "Whole Bible, 5 000+ copies, 6×9, double-column, offset press on Bible paper, with full apparatus — TOC, book intros, cross-references, glossary, and maps.",
+  "tags": ["bible", "offset", "largePrint", "fullApparatus"],
+  "state": {
+    "audience": {
+      "purpose": "personalReading",
+      "copyCount": 5000,
+      "ageGroup": "adult",
+      "eyesightConsideration": "standard",
+      "readingContext": "personal",
+      "literacyLevel": "fluent",
+      "distributionModel": "donorFunded",
+      "budgetLevel": "high"
+    },
+    "production": { "method": "offset" },
+    "trimBinding": {
+      "trimSize": "sixByNine",
+      "bindingType": "perfectBound",
+      "paperType": "biblePaper28"
+    },
+    "content": { "scope": "wholeBible" },
+    "peripherals": { "selected": ["tableOfContents", "bookIntroductions", "crossReferences", "glossary", "maps"] },
+    "layout": {
+      "columns": 2,
+      "bodyFontSize": 8.5,
+      "bodyLeading": 10.5,
+      "marginPreset": "tight"
+    }
+  }
+}

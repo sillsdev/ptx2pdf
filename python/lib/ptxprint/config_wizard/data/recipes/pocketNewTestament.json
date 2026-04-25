@@ -1,0 +1,32 @@
+{
+  "id": "pocketNewTestament",
+  "label": "Pocket New Testament",
+  "description": "NT in a compact size for easy distribution. Single column, A6, perfect-bound via POD or short-run digital.",
+  "tags": ["nt", "pocket", "distribution", "compact"],
+  "state": {
+    "audience": {
+      "purpose": "evangelism",
+      "copyCount": 200,
+      "ageGroup": "adult",
+      "eyesightConsideration": "standard",
+      "readingContext": "field",
+      "literacyLevel": "developing",
+      "distributionModel": "free",
+      "budgetLevel": "low"
+    },
+    "production": { "method": "shortRunDigital" },
+    "trimBinding": {
+      "trimSize": "a6",
+      "bindingType": "perfectBound",
+      "paperType": "standard"
+    },
+    "content": { "scope": "newTestament" },
+    "peripherals": { "selected": ["tableOfContents"] },
+    "layout": {
+      "columns": 1,
+      "bodyFontSize": 9.0,
+      "bodyLeading": 11.0,
+      "marginPreset": "tight"
+    }
+  }
+}
