@@ -498,7 +498,7 @@ class TypesetterSolver:
                 free = new_state.layout.pages[page].column_free_lines
             if new_state.layout.first_failing_page is None or new_state.layout.first_failing_page > page or free is None or not len(free) or all(x == 0 for x in free):
                 logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
-                logger.log(15, f"Winning params {",".join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
+                logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
                 self.base_params = dict(new_state.paragraph_params)
                 new_state.passed = True
                 return new_state
