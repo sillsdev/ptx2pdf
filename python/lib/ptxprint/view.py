@@ -1536,9 +1536,12 @@ class ViewModel:
         self.isChanged = False
 
     def saveAdjlists(self, force=False):
+        changed = False
         for bk in self.getBooks():
             adj = self.get_adjlist(bk, save=False)
-            adj.save()
+            changed |= adj.save()
+        if changed:
+            self.triggervcs = True
 
     def saveStyles(self, force=False):
         if not force and self.configLocked():
