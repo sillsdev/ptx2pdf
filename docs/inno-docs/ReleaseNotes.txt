@@ -4,7 +4,7 @@ PTXprint 3.0.20 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.20 - unreleased (26 Apr 2026)
+Bug fixes and Improvements in 3.0.20 - (26 Apr 2026)
   * Update VCS trigger when adjlist changes
   * Get marginal notes working
   * Try to get page_filler to finish the good work it starts
@@ -19,7 +19,7 @@ Bug fixes and Improvements in 3.0.20 - unreleased (26 Apr 2026)
   * Add DEBUG to pyinstaller output on windows build
   * Minor PDF navigation fixes
   * Fix nlines error
-  * Fix syntax error that only 3.11.0 seems to care about
+  * Fix syntax error that only Python 3.11.0 seems to care about
 
 Bug fixes and Improvements in 3.0.19 - unreleased (19 Apr 2026)
   * Add (Auto) Fill Page feature to PDF Viewer and show book progress (parallel processing)
