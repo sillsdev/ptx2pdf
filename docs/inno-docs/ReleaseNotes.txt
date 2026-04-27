@@ -6,16 +6,18 @@ _____________________________________________________________
 
 Bug fixes and Improvements in 3.0.20 - unreleased (26 Apr 2026)
   * Update VCS trigger when adjlist changes
-  * Trying to get page_filler to finish the good work it starts
+  * Get marginal notes working
+  * Try to get page_filler to finish the good work it starts
   * Incremental improvements to Printers tabs
   * Implement 'no whitespace' background image sizes for covers
-  * Auto-close warning message after 30s and carry on with job
   * Add tweaks needed for cropping images
   * QR codes in coloured contexts should not generate bad .XDV, but inherit that colour
-  * Get marginal notes working
   * Prepare to allow non crop mark bleeds (partly completed)
+  * Auto-close warning message after 30s and carry on with job
   * Add better colour support to covers, etc.
+  * Ensure 'Layout Only' is disabled when a config changes
   * Add DEBUG to pyinstaller output on windows build
+  * Minor PDF navigation fixes
   * Fix nlines error
   * Fix syntax error that only 3.11.0 seems to care about
 
