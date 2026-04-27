@@ -116,7 +116,7 @@ There are certain  parts of the algorithms that the processing that stand unchan
         * output page, reset `avail`
      * else:
         * Save current page state as **unconditional** or **conditional**.
-              *  If *unconditional*, simply apend box (es), save result and make conditional state void.
+              *  If *unconditional*, simply append box (es), save result and make conditional state void.
               *  If there was a previous conditional state, combine that with new conditional state, possibly using any saved spacing.
 * Else, if it does not fit:
     * reject galley for this page.
@@ -219,12 +219,12 @@ between columns, only when the processing changes one page to the next in the
 page-set.
 
 ## Other efficiency gains possible
-* **E<sub>2</sub>**  When a column contains no notes or other inserts, then trimming the column cannot add more notes. Thus vsplit is sufficient, and  there is no need to reprocess the content.
-* **E<sub>3</sub>** Rather than successively trimming one line from the galley at a time before reprocessing, a binary search pattern could be used. This would, however, require some modification of the loop, changing from 'first fill that fits' to a more complex method of scoring.
+* **E<sub>2</sub>**  When a column contains no notes or other inserts, then trimming the column cannot add more notes. Thus vsplit is sufficient, and  there is no need to reprocess the content. **DONE**
+* **E<sub>3</sub>** Rather than successively trimming one line from the galley at a time before reprocessing, a binary search pattern could be used. This would, however, require some modification of the loop, changing from 'first fill that fits' to a more complex method of scoring. **DONE**
 * **E<sub>4</sub>** Cache old results rather than discard them. Rationale: with the potential for multiple solutions inherent in a page with multiple texts, the code is performing, in effect, a multivariable optimisation, in which returning to a previously tested state for one or more columns might be the best solution. Eg. After run *N*, the page is too long by 1 line, with the  longer columns being `L` and `A`. `L` is shortened by 1 line and reprocessed removing a long footnote, producing a large gap. A better solution is to shorten `A`, return `L` to what it was at run *N*.   This need for back-tracking also strongly implies that the algorithm given above is overly simplistic.
 
 ## Scoring 
-* **E<sub>5</sub>**  *If notes are not per-column, or as an initial phase*, then a table of vsplit length -> final verse and layout acceptability  could be generated for each column. This can be used generate a preference-score for different arrangements to try actually expanding. E.g.: in a given chunk of text, (one version including a section heading),  for the layout `LL/RR`, having  573.99 pt of space, we might consider:
+* **E<sub>5</sub>**  **DONE** *If notes are not per-column, or as an initial phase*, then a table of vsplit length -> final verse and layout acceptability  could be generated for each column. This can be used generate a preference-score for different arrangements to try actually expanding. E.g.: in a given chunk of text, (one version including a section heading),  for the layout `LL/RR`, having  573.99 pt of space, we might consider:
 
 | Col/Cut-length|Max length|Unbalance|Final_verse|Note length
 |-------|----------|------|---|---|
@@ -278,19 +278,18 @@ Any time content is  moved from L1 to L2 that might move a note or other
 insert. A full split is more efficient if we know that there are notes/inserts.
 If all the notes/inserts are in the first half, then a full split on L1 is
 appropriate and a minimal split appropriate on L2. Therefore, we want at least
-a partial list of line-no/insert measurements.
+a partial list of line-no/insert measurements. [NEEDLESS - recursive split functional]
 
 # Summary of necessary routines
 * Process layout string and reversal string [DONE]  [TESTED]
      *  add/remove follow-on connections and create relevant boxes / dims
      * self-check routine
-* Identify which inputs end up in repeated columns, especially cross-page.
-* Something to determine possible split heights [DONE]
-* Analyse how inserts affect layout [DONE?]
+* Identify which inputs end up in repeated columns, especially cross-page. [DONE]
+* Something to determine possible split heights [DONE][TESTED]
+* Analyse how inserts affect layout [DONE?][TESTED]
 * Determine initial split lengths based on ratios. **COMPLEX**
-* Determine total galley lengths
-* Split into sub-galleys, with chaining through follow-ons
-
-* Eventually add a 'top-here', 'bottom-here' pseudo-column inserts, to supplement
-tL, etc. These can apply in monoglot dual columns too. Will go top/bottom exactly in the triggering column (measuring code is almost in place - see 'Could not identify column ...' message in code. To implement, may need to apply a pseudo-name to the insert dimensions).
+* Determine total galley lengths [DONE] [TESTED]
+* Split into sub-galleys, with chaining through follow-ons [DONE] [TESTED]
+* Eventually add a 'top-here', 'bottom-here' pseudo-column inserts, to supplement tL, etc.
+*  These can apply in monoglot dual columns too. Will go top/bottom exactly in the triggering column (measuring code is almost in place - see 'Could not identify column ...' message in code. To implement, may need to apply a pseudo-name to the insert dimensions).
 

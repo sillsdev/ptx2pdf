@@ -1282,7 +1282,7 @@
        \advance\availht-\ht\topins \advance\availht-\skip\topins
        \unvbox\topins \vskip\skip\topins
      \fi%
-     \box\partial
+     \unvbox\partial
      \ifvoid\botchunk\else\box\botchunk\fi
      \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
        \trace{i}{Using bottomins \the\ht\bottomins x\the\wd\bottomins}%
@@ -1839,7 +1839,7 @@
   \fi
 }
 
-\def\complex@availht{%
+\def\dglt@calc@vailht@complexpages{%%
   \p@lyp@geno=\csname thep@geno\c@rrdstat\endcsname
   \p@lyr@wno=\csname ther@wno\c@rrdstat\endcsname
   \trace{dmc}{complex@availht \p@lyr@wstring, \c@rrdstat, \the\csname \p@lyr@wstring @ht\endcsname, \the\csname \c@rrdstat test\endcsname}%
@@ -1848,7 +1848,7 @@
   \availht=\csname \c@rrdstat test\endcsname
   \advance\availht by \@minb@seline
 }
-\let\dglt@calc@vailht\complex@availht
+
 
 \def\g@noptions#1{%Generate the options-list for each table
   \ifnum \csname pre@meas@#1@inscount\endcsname<2
