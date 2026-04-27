@@ -170,6 +170,7 @@ class PDFViewer:
         z = self.viewers[p].zoomLevel
         self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
+        self.viewers[p].updatePageNavigation()
 
     def onmaximized(self):
         c = self.nbook.get_current_page()
@@ -224,6 +225,9 @@ class PDFViewer:
             v.show()
             self.nbook.set_current_page(i)
         self.hide_unused()
+        p = self.nbook.get_current_page()
+        if p < len(self.viewers) and self.viewers[p] is not None:
+            self.viewers[p].updatePageNavigation()
 
     def hide_unused(self):
         for i in range(1, self.nbook.get_n_pages()):
@@ -568,11 +572,11 @@ class PDFFileViewer:
             self.set_zoom_fit_to_screen(True)
             self.show_pdf()  # Redraw the current page
             return True
-        elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
-            self.set_page(self.swap4rtl("next"))
+        elif keyval == Gdk.KEY_Right:  # Right arrow (RTL-aware: decreases page in RTL layouts)
+            self.set_page("next")
             return True
-        elif keyval == Gdk.KEY_Left:  # Left arrow → Previous page
-            self.set_page(self.swap4rtl("previous"))
+        elif keyval == Gdk.KEY_Left:  # Left arrow (RTL-aware: increases page in RTL layouts)
+            self.set_page("previous")
             return True
             
     def updatePageNavigation(self):
