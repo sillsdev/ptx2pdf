@@ -25,7 +25,8 @@ dependencies = [
 "fonttools",
 "platformdirs",
 "Pillow",
-"numpy"
+"numpy",
+"markdown_it"
 ]
 
 [project.optional-dependencies]
