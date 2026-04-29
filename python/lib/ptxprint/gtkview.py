@@ -842,7 +842,16 @@ class GtkViewModel(ViewModel):
                 cmds = [runsplash_path, os.path.join(pycodedir(), 'splash.glade')]
             else:
                 cmds = [sys.executable, os.path.join(pycodedir(), "runsplash.py"), os.path.join(pycodedir(), "splash.glade")]
-            self.splash = subprocess.Popen(cmds)
+            try:
+                self.splash = subprocess.Popen(cmds)
+            except OSError as e:
+                self.splash = None
+                doError(_("PTXprint could not launch a required component (runsplash)."),
+                        secondary=_("This may indicate a corrupted or incomplete installation.\n\n"
+                                    "Please re-install PTXprint from:\n"
+                                    "https://software.sil.org/ptxprint/download/\n\n"
+                                    "Error: {}").format(e),
+                        autocloseSeconds=0)
         else:
             self.splash = None
 
