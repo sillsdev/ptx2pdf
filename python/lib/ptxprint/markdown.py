@@ -21,9 +21,6 @@ class MarkdownToUSX:
 
     def __init__(self, factory=ParentElement):
         self.md = MarkdownIt("commonmark").enable("table", "strikethrough")
-        self.root = factory("usx")
-        self.root.append(factory("book", parent=self.root, attrib={"code": "MOD", "style": "id"}))
-        self.curr = self.root
         self.factory = factory
 
     def _add_el(self, tag, style):
@@ -39,6 +36,9 @@ class MarkdownToUSX:
             self.curr.text = (self.curr.text or "") + text
 
     def compile(self, md_text: str):
+        root = self.factory("usx")
+        root.append(self.factory("book", parent=root, attrib={"code": "MOD", "style": "id"}))
+        self.curr = root
         tokens = self.md.parse(md_text)
         self.skip_para = False
         for t in tokens:
@@ -128,12 +128,11 @@ class MarkdownToUSX:
 
             elif t.type in ("html_block", "html_inline"):
                 pass
+        return root
 
-def MarkDown(fname):
+def MarkDown(text):
     md = MarkdownToUSX()
-    with open(fname, encoding="utf-8") as inf:
-        text = inf.read()
-    md.compile(text)
-    res = USX(md.root)
+    root = md.compile(text)
+    res = USX(root)
     return res
 

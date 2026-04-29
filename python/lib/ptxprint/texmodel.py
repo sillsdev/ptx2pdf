@@ -878,7 +878,9 @@ class TexModel:
         if not noaction:
             usfms = self.printer.get_usfms()
             if infpath.lower().endswith(".md"):
-                mod = MarkDown(infpath)
+                with open(fname, encoding="utf-8") as inf:
+                    text = inf.read()
+                mod = MarkDown(text)
                 res = mod
             else:
                 mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))

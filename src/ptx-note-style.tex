@@ -429,7 +429,7 @@
   \s@tfont{#2}{#2}%
   \ifp@ranotes\else\@ch@ckadjustments\fi
   %\ifnum\interactionmode=1\showlists\fi
-  \traceifset{mnote}%
+  %\traceifset{mnote}%
   \futurelet\next\fo@t}% use plain.tex footnote processor, see plain.tex 1166. It ensures that @foot after the following group.
 %-c_vmakenote
 
@@ -530,7 +530,7 @@
 % called at end of note
 \def\n@tesize{}
 \def\@foot{%This ends the group that starts with the footnote class.
-  \traceifcheck{mnote}%
+  %\traceifcheck{mnote}%
   \trace{f}{End of note}%
   \ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
   \t@gend{Note}%

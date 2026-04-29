@@ -8,6 +8,7 @@ from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.view import VersionStr
 from ptxprint.utils import _, f2s, coltoonemax, getcaller
+from ptxprint.gtkutils import background_msg, pump_gtk
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
 from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
@@ -384,7 +385,8 @@ class PDFFileViewer:
         if not self.load_pdf(fname, **kw):
             return False
         if hook is not None:
-            hook(self)
+            if not hook(self):
+                return False
         self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
@@ -1297,10 +1299,11 @@ class PDFContentViewer(PDFFileViewer):
 
     def loadnshow(self, fname, iscurrent, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
         def plocs(self):
-            self.load_parlocs(self.parlocfile, rtl=rtl)
+            res = self.load_parlocs(self.parlocfile, rtl=rtl)
             if page is not None and page in self.parlocs.pnums:
                 self.current_page = page
                 self.current_index = self.parlocs.pnums[page]
+            return res
         if parlocs is None:
             parlocs = self.parlocfile
         if parlocs is not None:
@@ -1329,22 +1332,35 @@ class PDFContentViewer(PDFFileViewer):
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
         try:
-            self.parlocs.readParlocs(fname, rtl=rtl)
-            self.parlocs.load_dests(self.document)
+            res = self.parlocs.readParlocs(fname, rtl=rtl, gui=True)
+            if res:
+                res = self.parlocs.load_dests(self.document)
         except (IndexError,):
             pass
-        if self.showanalysis:
-            self.load_analysis(fname)
+        if res and self.showanalysis:
+            res = self.load_analysis(fname)
+        return res
 
     def load_analysis(self, fname):
         xdvname = fname.replace(".parlocs", ".xdv")
-        print(f"Reading {xdvname}")
+        keepgoing = True
+        def dlgresponse(rid):
+            nonlocal keepgoing
+            if rid == Gtk.ResponseType.CANCEL:
+                keepgoing = False
+        dlg = background_msg(_("Analysing text. Press Cancel to stop"), dlgresponse)
         cthreshold = float(self.model.get("s_paddingwidth", 0.5))
         xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
                                     fontsize=float(self.model.get("s_fontsize", 1)),
                                     outlines=self.model.get("c_collisionPrecise", False))
+        i = 0
         for (opcode, data) in xdvreader.parse():
-            pass
+            i += 1
+            if not i % 100:
+                pump_gtk()
+                if not keep_going:
+                    return False
+
         if self.spacethreshold == 0:
             self.badspaces = self.parlocs.getnbadspaces()
             if len(self.badspaces):
@@ -1353,6 +1369,8 @@ class PDFContentViewer(PDFFileViewer):
         self.spacepages, self.collisionpages, self.riverpages = \
             self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
                     float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
+        dlg.response(Gtk.ResponseType.OK)
+        return True
 
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """

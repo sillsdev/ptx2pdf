@@ -227,3 +227,41 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
         s = traceback.format_stack()
         logger.debug(s)
 
+def pump_gtk():
+     while Gtk.events_pending():
+        Gtk.main_iteration()
+
+def background_msg(txt, resfn, timeout=0):
+    dialog = Gtk.MessageDialog(
+        message_type=Gtk.MessageType.QUESTION,
+        buttons=Gtk.ButtonsType.OK_CANCEL,
+        text=txt)
+
+    timeout_id = None
+    closed = False
+
+    def ontimeout():
+        nonlocal timeout_id, closed
+        timeout_id = None
+        if not closed:
+            dialog.destroy()
+        return False
+
+    if timeout > 0:
+        timeout_id = GLib.timeout_add(timeout, ontimeout)
+
+    def onresponse(dlg, rid):
+        nonlocal timeout_id, closed
+        if closed:
+            return
+        closed = True
+        if timeout_id is not None:
+            GLib.source_remove(timeout_id)
+        dialog.destroy()
+        resfn(rid)
+
+    dialog.connect("response", onresponse)
+    dialog.show_all()
+    return dialog
+
+

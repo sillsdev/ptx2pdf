@@ -20,7 +20,6 @@ from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
 from ptxprint.polyglot import PolyglotConfig
-from ptxprint.report import Report
 import ptxprint.pdfrw.errors
 import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
@@ -40,6 +39,8 @@ logger = logging.getLogger(__name__)
 VersionStr = "3.0.20"
 GitVersionStr = "3.0.20"
 ConfigVersion = "3.01"
+
+from ptxprint.report import Report
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 

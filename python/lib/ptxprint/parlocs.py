@@ -1,9 +1,11 @@
 import os, re, ctypes, math, heapq
 import logging
 from dataclasses import dataclass, InitVar, field
-from ptxprint.utils import refSort
+from ptxprint.utils import refSort, _
 from ptxprint.xdv.spacing_oddities import Line, Rivers
 from typing import Tuple, Optional
+from ptxprint.gtkutils import background_msg, pump_gtk
+from gi.repository import Gtk
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +198,7 @@ class PopplerDest(ctypes.Structure):
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
 
-    def readParlocs(self, fname, rtl=False):
+    def readParlocs(self, fname, rtl=False, gui=False):
         self.pindex = []        # first paragraph on a page
         self.pnums = {}         # from pagenumber to first page index
         self.pnumorder = []     # from pageindex to pagenumber
@@ -217,12 +219,22 @@ class Paragraphs(list):
         colinfos = {}
         innote = False
         pwidth = 0.
+        keepgoing = True
+        if gui:
+            def dlgresponse(rid):
+                nonlocal keepgoing
+                keepgoing = rid != Gtk.ResponseType.CANCEL
+            dlg = background_msg(_("Reading paragraph info. Press Cancel to stop"), dlgresponse)
         lines = ParlocLinesIterator(fname)
         for l in lines:
             m = self.parlinere.match(l)
             if not m:
                 continue
             logger.log(5, l[:-1])
+            if gui:
+                pump_gtk()
+                if not keepgoing:
+                    return False
             c = m.group(1)
             p = m.group(2).split("}{")
             if c == "pgstart":          # pageno, available height, pagewidth, pageheight
@@ -400,9 +412,12 @@ class Paragraphs(list):
             # "nontextstop":    # x, y
             # "parpicanchor":   # ref, picid, x, y
         self.sort(key=lambda x:x.sortKey())
+        if gui:
+            dlg.response(Gtk.ResponseType.OK)
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
-        
+        return True
+
     def numPages(self):
         return len(self.pindex)
         
@@ -526,6 +541,7 @@ class Paragraphs(list):
             n = n.next()
         dests_tree.destroy()
         logger.debug(f"{len(self.dests)=}")
+        return True
 
     def load_page(self, doc, page, pindex):
         currlast = None
