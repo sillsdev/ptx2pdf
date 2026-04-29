@@ -1331,6 +1331,7 @@ class PDFContentViewer(PDFFileViewer):
 
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
+        res = None
         try:
             res = self.parlocs.readParlocs(fname, rtl=rtl, gui=True)
             if res:

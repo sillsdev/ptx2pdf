@@ -1314,10 +1314,13 @@
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\xdef\c@rrdstat{#1}%
+ \ifcsname tri@lsplitRej#1\endcsname\else
+   \expandafter\xdef\csname tri@lsplitRej#1\endcsname{0pt}%
+ \fi
  \ifx\c@rrdstat\empty
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
- \else 
+ \else
    %\diglottrue % Is THIS necessary?
  \fi
 }
