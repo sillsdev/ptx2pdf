@@ -162,7 +162,7 @@ class TexModel:
         # '|': 'pipe'
 
     def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None):
-        from ptxprint.view import VersionStr, GitVersionStr
+        from ptxprint.version import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
         self.printer = printer

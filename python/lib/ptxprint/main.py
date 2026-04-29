@@ -236,7 +236,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     fontconfig_path = writefontsconf(args.fontpath,testsuite=args.testsuite)
     putenv("FONTCONFIG_FILE", fontconfig_path)
 
-    from ptxprint.view import ViewModel, VersionStr, doError
+    from ptxprint.version import VersionStr
+    from ptxprint.view import ViewModel, doError
     from ptxprint.runjob import RunJob, isLocked
     from ptxprint.project import ProjectList
 

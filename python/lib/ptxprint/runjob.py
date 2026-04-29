@@ -6,13 +6,14 @@ from threading import Thread
 from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
-from ptxprint.view import ViewModel, VersionStr, refKey
+from ptxprint.version import VersionStr
+from ptxprint.view import ViewModel
 from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
         saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, \
-        runChanges, swapext
+        runChanges, swapext, refKey
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.procpdf import procpdf

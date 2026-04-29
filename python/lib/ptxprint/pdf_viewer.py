@@ -6,7 +6,7 @@ import cairo, re, time, sys, json
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from ptxprint.view import VersionStr
+from ptxprint.version import VersionStr
 from ptxprint.utils import _, f2s, coltoonemax, getcaller
 from ptxprint.gtkutils import background_msg, pump_gtk
 from ptxprint.piclist import Piclist

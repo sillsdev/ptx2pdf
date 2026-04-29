@@ -26,7 +26,8 @@ import cairo
 
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
-from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
+from ptxprint.view import ViewModel, Path
+from ptxprint.version import VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton, doError
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
