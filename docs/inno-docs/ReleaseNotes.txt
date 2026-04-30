@@ -1,10 +1,17 @@
-PTXprint 3.0.21 Release Notes
-29 Apr 2026
+PTXprint 3.0.22 Release Notes
+30 Apr 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.21 - (29 Apr 2026)
+Bug fixes and Improvements in 3.0.22 - (30 Apr 2026)
+  * Attempt to improve page-fill and avoid some crashes
+  * Enable "downgrading" study notes to normal notes
+  * Make study notes in diglots calculate space better
+  * Define tri@lsplitRej once should be enough
+  * Fix typo that stopped special attributes from detecting properly
+
+Bug fixes and Improvements in 3.0.21 - unreleased (29 Apr 2026)
   * Only show the OK-Cancel dialog for larger (2MB+) PDFs
   * Move version stuff out of view into version.py
   * Study notes in diglots
