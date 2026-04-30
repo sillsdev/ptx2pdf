@@ -1314,9 +1314,6 @@
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\xdef\c@rrdstat{#1}%
- \ifcsname tri@lsplitRej#1\endcsname\else
-   \expandafter\xdef\csname tri@lsplitRej#1\endcsname{0pt}%
- \fi
  \ifx\c@rrdstat\empty
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
@@ -3600,6 +3597,7 @@
     \x@\xdef\csname m@rker#1\endcsname{}%
     \x@\xdef\csname digl@txcs#1\endcsname{}%
     \x@\xdef\csname mcstack#1\endcsname{\mcstack@mpty}%
+    \x@\xdef\csname tri@lsplitRej#1\endcsname{0pt}% Default value, in case of strange code-paths
     \newsp@cialpen{dgl@tPen#1trialEnd}%
     \header@defs{#1}% All the possible header contents
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
