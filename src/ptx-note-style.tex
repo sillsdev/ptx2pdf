@@ -753,6 +753,8 @@
 \def\ParagraphedNotes#1{\Par@gr@phedNotes{#1\g@tndstat}}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
 \def\StudyNotes#1{\x@\let\csname studynotes-#1\g@tndstat\endcsname=1}
+\def\NotStudyNotes#1{\x@\let\csname studynotes-#1\g@tndstat\endcsname\relax}
+
 \newif\ifp@ranotes
 \newif\ifColNotes \ColNotesfalse
 \def\checkp@ranotes#1{%
