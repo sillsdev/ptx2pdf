@@ -120,7 +120,7 @@ class MarkdownToUSX:
             elif t.type == "td":
                 if isopen:
                     self.column += 1
-                    align = self.alignments.get(t.style[11:], "")
+                    align = self.alignments.get(t.attrs.get('style', 'text-align:')[11:], "")
                     t = "h" if self.tablehead else "c"
                     self._add_el("cell", f"t{t}{align}{self.column}")
                 else:
