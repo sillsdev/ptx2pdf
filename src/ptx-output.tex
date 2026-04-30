@@ -668,10 +668,14 @@
 \def\reduceavailht#1{%
   \checkp@ranotes{#1}%
   %\TRACE{av: \the\availht =>}
-  \ifp@ranotes\let\n@xt=\reduceavailht@para
-    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
-  \else\let\n@xt=\reduceavailht@sep
-    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+  \ifst@dynotes
+    \let\n@xt=\reduceavailht@st@dy
+  \else
+    \ifp@ranotes\let\n@xt=\reduceavailht@para
+      \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
+    \else\let\n@xt=\reduceavailht@sep
+      \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+    \fi
   \fi
   \iff@rstnote\else\global\noteseentrue\fi\n@xt{#1}}
 %-c_reduceavailht
@@ -698,6 +702,32 @@
     \ifnum\DEBUGnotes=\the\pageno \showbox0 \fi
   \fi}
 %-c_reduceavailht_para
+\def\reduceavailht@st@dy#1{%
+  \edef\cl@sss{#1\g@tndstat}%
+  \trace{n}{class \cl@sss}%
+  \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
+  \ifvoid\th@cl@ss\trace{f}{studynotes[#1] empty}\else
+    \dimen0=0.5\ht\th@cl@ss
+    \advance\dimen0 -4\@minb@seline
+    \@@LOOP\temptrue
+      \setbox1=\copy\th@cl@ss
+      \setbox11=\vsplit1 to \dimen0
+      \setbox11=\vsplit1 to \dimen0
+      \ifdim\ht1>0pt
+        \advance\dimen0 by 0.5\ht1
+      \else\tempfalse
+      \fi
+      \iftemp\@@REPEAT
+    \global\advance\availht by -\dimen0
+    \iff@rstnote
+      \global\advance\availht by -\AboveNoteSpace
+      \global\f@rstnotefalse
+      \trace{f}{StudyNotes[#1] cost \the\dimen0 + \the\AboveNoteSpace + \BelowFootNoteRuleSpace}%
+    \else
+      \global\advance\availht by -\InterNoteSpace
+      \trace{f}{StudyNotes[#1] cost \the\dimen0 + \the\InterNoteSpace}%
+    \fi
+  \fi}
 
 \def\max@boxpara#1{%paragraph notes of type \v@lpfx#1 and find the max height amongst them
   \trace{n}{max@boxpara \v@lpfx\if #1L\else #1\fi}%
