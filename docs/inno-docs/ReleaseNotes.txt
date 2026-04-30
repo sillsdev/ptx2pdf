@@ -1,8 +1,21 @@
-PTXprint 3.0.20 Release Notes
-26 Apr 2026
+PTXprint 3.0.21 Release Notes
+29 Apr 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.21 - (29 Apr 2026)
+  * Only show the OK-Cancel dialog for larger (2MB+) PDFs
+  * Move version stuff out of view into version.py
+  * Study notes in diglots
+  * Reduce required fonts to Charis
+  * Make broken startup (runsplash) error message is more helpful
+  * Add long load message dialog with OK or Cancel option
+  * Add markdown-it-py dependency to pyproject.toml
+  * Add initial markdown support (requires markdown_it python module)
+  * Fix bug that prevented Diglot working after first setup
+  * Fix minor bugs in ptx-diglot.tex and load_parlocs
+  * Fix glossary as footnotes
 
 Bug fixes and Improvements in 3.0.20 - (26 Apr 2026)
   * Update VCS trigger when adjlist changes
