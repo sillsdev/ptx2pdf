@@ -428,6 +428,7 @@ class ViewModel:
             if a is None:
                 continue
             fpath = os.path.join(a, fname)
+            logger.log(5, f"Trying {bk} -> {fpath} {'success' if os.path.exists(fpath) else 'failed'}")
             if os.path.exists(fpath):
                 return fpath
         return None
