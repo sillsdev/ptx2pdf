@@ -1333,7 +1333,8 @@ class PDFContentViewer(PDFFileViewer):
         self.parlocs = Paragraphs()
         res = None
         try:
-            res = self.parlocs.readParlocs(fname, rtl=rtl, gui=True)
+            large_pdf = self.fname is not None and os.path.getsize(self.fname) > 2 * 1024 * 1024
+            res = self.parlocs.readParlocs(fname, rtl=rtl, gui=large_pdf)
             if res:
                 res = self.parlocs.load_dests(self.document)
         except (IndexError,):
