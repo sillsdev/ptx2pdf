@@ -1366,9 +1366,11 @@
   \ifNoGrid\else
     \bmg@p=\availht
     \dimen0=8 \baselineskip
-    \ifdim\dimen0>0.5pt
-        \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
-        \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
+    \ifdim\availht > -1000pt % Skip calc if we're in silly negative numbers
+      \ifdim\dimen0>0.5pt
+          \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
+          \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
+      \fi
     \fi
     \advance\bmg@p by -\availht
   \fi
@@ -1650,7 +1652,8 @@
   \fitonpagetrue
   \ifdim\availht<0pt
     \MSG{No space! vsize=\the\vsize}%
-    \ifdim\vsize > 2 \baselineskip \divide\vsize 2 \fitonpagefalse% drastic
+    \ifdim\vsize > 2 \baselineskip \global\vsize= 0.8\vsize %2% drastic
+      \fitonpagefalse
     \else\MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi\fi
   \iffitonpage
