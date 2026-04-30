@@ -669,7 +669,7 @@
       \noterule{\AboveStudyNoteSpace}{\BelowStudyNoteRuleSpace}{\textwidth}{%
       \StudyNoteRuleLeftIndent \vrule height \StudyNoteRuleThickness width \StudyNoteRuleWidth\textwidth \StudyNoteRuleRightIndent}%
       \global\f@rstnotefalse
-    \fi%\else\kern\InterNoteSpace\fi
+    \else\kern\InterNoteSpace\fi
     \setbox11=\vbox{\unvbox11}\setbox12=\vbox{\unvbox12}%
     \ifdim\ht12=0pt \setbox12=\vbox{\hbox to \wd11{}}\fi
     \dimen11=\ht11 \ifdim\dimen11<\ht12 \dimen11=\ht12\fi
