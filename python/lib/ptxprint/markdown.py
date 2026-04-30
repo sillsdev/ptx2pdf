@@ -19,9 +19,15 @@ class MarkdownToUSX:
         "center":   "c"
     }
 
-    def __init__(self, factory=ParentElement):
+    def __init__(self, factory=ParentElement, mode=None):
         self.md = MarkdownIt("commonmark").enable("table", "strikethrough")
         self.factory = factory
+        self.mode = mode
+        if mode == "intro":
+            typemap = self.typemap
+            typemap['paragraph'] = lambda t:("para", "ip")
+            typemap['heading'] = lambda t:("para", f"is{t[1]}")
+            self.typemap = typemap
 
     def _add_el(self, tag, style):
         el = self.factory(tag, parent=self.curr, attrib={"style": style})
@@ -65,7 +71,11 @@ class MarkdownToUSX:
 
             elif t.type == "list_item":
                 if isopen:
-                    el = self._add_el("para", "li")
+                    if self.mode == "intro":
+                        t = "ili"
+                    else:
+                        t = "li"
+                    el = self._add_el("para", t)
                     self.skip_para = True
                 else:
                     self.curr = self.curr.parent
