@@ -323,9 +323,6 @@ class Report:
             return False
         return True
 
-        def myhackylambda(view, widget):
-            return ("", logging.DEBUG)
-
     def get_general_info(self, view):
         widget_map = {
             "Project Name":               ("1. Project/Overview", "l_projectFullName", 1100, \
@@ -373,8 +370,6 @@ class Report:
             "Back Matter PDF(s)":         ("7. Peripheral Components", "c_inclBackMatter", 0, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
         }
-        
-        check_order = 100  # Not used, consider removing or integrating
         
         for title, (section, widget_id, order, widget_fn) in widget_map.items():
             if not view.get(widget_id, False):
