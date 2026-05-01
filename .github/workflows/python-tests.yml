@@ -9,6 +9,7 @@ on:
       - 'src/**'
       - 'test/**'
       - 'pyproject.toml'
+      - '.github/workflows/python-tests.yml'
   pull_request:
     branches:
       - master
@@ -17,6 +18,7 @@ on:
       - 'src/**'
       - 'test/**'
       - 'pyproject.toml'
+      - '.github/workflows/python-tests.yml'
   workflow_dispatch:
 
 # Required for publish-unit-test-result-action to post check runs and PR comments
