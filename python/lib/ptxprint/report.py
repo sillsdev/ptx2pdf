@@ -365,7 +365,6 @@ class Report:
             "Front Matter PDF(s)":        ("7. Peripheral Components", "c_inclFrontMatter", 0, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
             "Table of Contents":          ("7. Peripheral Components", "c_autoToC", 0, None),
-            "Thumb Tabs":                 ("6. Features", "c_thumbtabs", 0, None),
             "Front Matter":               ("7. Peripheral Components", "c_frontmatter", 0, \
                                             lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_colophon", False) else logging.DEBUG)),
             "Colophon":                   ("7. Peripheral Components", "c_colophon", 0, \
@@ -671,7 +670,7 @@ class Report:
         Calculates the max severity for each main section and generates an HTML summary line
         with clickable blocks.
         """
-        max_severities = {i: logging.NOTSET for i in range(1, 10)}
+        max_severities = {i: logging.NOTSET for i in range(1, 11)}
         for section_key, entries in self.sections.items():
             if not entries:
                 continue
@@ -686,7 +685,7 @@ class Report:
             if current_max_severity > max_severities[main_section_num]:
                 max_severities[main_section_num] = current_max_severity
         summary_blocks = []
-        for i in range(1, 10):
+        for i in range(1, 11):
             severity = max_severities[i]
             color_index = severity // 10
             color = logcolors[color_index]
@@ -754,7 +753,7 @@ class Report:
         return findings
 
     def get_log_analysis(self, view, log_content_string):
-        section_base = "Log File Analysis"
+        section_base = "10. Log File Analysis"
         if not log_content_string or not log_content_string.strip():
             self.add(section_base, "Log file content not available or empty.", severity=logging.WARN); return
         findings = self._analyze_log_file_content(log_content_string)
