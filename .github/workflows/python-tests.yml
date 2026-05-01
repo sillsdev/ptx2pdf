@@ -72,7 +72,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          # Must match Ubuntu 24.04's system Python so the python3-gi C
+          # extension (_gi.cpython-312-*.so) is ABI-compatible.
+          python-version: '3.12'
           cache: 'pip'
 
       - name: Install system dependencies
