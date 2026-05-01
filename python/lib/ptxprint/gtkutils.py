@@ -39,6 +39,10 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=-1):
         # v = w.get_font_name()
     elif wid.startswith("c_"):
         v = w.get_active()
+    elif wid.startswith("ct_"):
+        v = w.get_active()
+        if w.get_inconsistent():
+            v = 2
     elif wid.startswith("s_"):
         v = f2s(w.get_value())
     elif wid.startswith("btn_"):
@@ -90,6 +94,12 @@ def setWidgetVal(wid, w, value, noui=False, useMarkup=False, sub=-1):
             if isinstance(value, str):
                 value = value.lower() == "true"
             w.set_active(value)
+        elif wid.startswith("ct_"):
+            if isinstance(value, str):
+                value = value.lower() == "true"
+            w.set_active(value)
+            if value == 2:
+                w.set_inconsistent()
         elif wid.startswith("s_"):
             w.set_value(float(value or 0))
         elif wid.startswith("btn_"):

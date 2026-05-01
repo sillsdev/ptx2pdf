@@ -218,6 +218,7 @@ def create_triggers(notes):
         newv = verse != lastverse or chap != lastchap
         newe = extra != lastextra
         if (newv or newe):
+            titleadded = False
             # Flush the previous verse's buffered \ef before starting the new one
             if efel is not None:
                 results.append(usfmtxt(efel))
@@ -233,14 +234,16 @@ def create_triggers(notes):
                 efft.append(e)
             # If only one paragraph and a TATitle exists, append an arrow+jmp link to TA
             if len(r) < 2 and l['TATitle'] is not None and l['TATitle'].strip():
-                elj = ParentElement("char", parent=r[-1], attrib={"style": "jmp", "href": na})
+                elj = ParentElement("char", parent=efft, attrib={"style": "jmp", "href": na})
                 elj.text = l['TATitle']
-                if len(r[0]):
-                    r[0][-1].tail = (r[0][-1].tail or "") + " →"
+                print(f"{l['Reference']}(1) -> '{elj.text}'")
+                if len(efft):
+                    efft[-1].tail = (efft[-1].tail or "") + " →"
                 else:
-                    r[0].text = (r[0].text or "") + " →"
-                r[0].append(elj)
-            r = r[1:] if len(r) > 1 else []
+                    efft.text = (efft.text or "") + " →"
+                efft.append(elj)
+                titleadded = True
+            # r = r[1:] if len(r) > 1 else []
         if newv:
             if len(results):
                 results.append("\\EndTrigger\n")
@@ -262,9 +265,10 @@ def create_triggers(notes):
                 e.parent = efel
                 efel.append(e)
         # Append TATitle arrow+link to the last paragraph when more than one paragraph
-        if l['TATitle'] and len(r):
+        if not titleadded and l['TATitle'] is not None and l['TATitle'].strip() and len(r):
             elj = ParentElement("char", parent=r[-1], attrib={"style": "jmp", "href": na})
             elj.text = l['TATitle']
+            print(f"{l['Reference']} -> '{elj.text}'")
             if len(r[-1]):
                 r[-1][-1].tail = (r[-1][-1].tail or "") + " →"
             else:
@@ -318,10 +322,10 @@ def create_changes(words, cfgdir):
                     maxmark = max(markbase, maxmark)
                     markbase += 1
                     # Add an inline note pointing to the term's title in the TW definition
-                    extra = f'\\\\{f} - \\\\{f}q \\1\\\\{f}t →{t}\\\\{f}*{mark}'
+                    extra = f'\\\\{f} - \\\\{f}q {w["GLQuote"].replace("&", "...")}\\\\{f}t →{t}\\\\{f}*{mark}'
                     line = fr"at {book} {w['Reference']} '\b({w['GLQuote'].replace('&','.*?')})\b' > '\\w \1\\w*{mark}'"
                     outf.write(line + "\n")
-                    line = fr"at {book} {w['Reference']} '(?<=(?:{mark}){mark}' > '{extra}'"
+                    line = fr"at {book} {w['Reference']} '(?<!{mark}.*?){mark}' > '{extra}'"
                 else:
                     extra = ''
                     line = fr"at {book} {w['Reference']} '({w['GLQuote'].replace('&','.*?')})' > '\\w \1\\w*'"
