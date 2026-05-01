@@ -537,7 +537,7 @@
   \par
   \ifp@ranotes\@ch@ckadjustments
   \else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{n}{note(\n@tetype) spaceafter: \p@ram}%
-    \ifx\p@ram\relax\penalty0 \else\vskip\p@ram\verticalsp@ceunit\fi %FIXME Penalty0??? 
+    \ifx\p@ram\relax\nobreak \else\vskip\p@ram\verticalsp@ceunit\fi % prevent page break before first note body
     \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
     % surely we don't want a strut above and below?
     %\dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
