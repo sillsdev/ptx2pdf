@@ -36,7 +36,7 @@ import usfmtc
 from usfmtc.xmlutils import ParentElement
 
 def process_article(text):
-    """Convert one TW markdown word-definition file to a list of USX para elements.
+    r"""Convert one TW markdown word-definition file to a list of USX para elements.
 
     The markdown heading format is "Term Title, optional subtitle" on an s/s1 element.
     The portion before the first comma becomes the \k glossary key.
@@ -113,7 +113,7 @@ def addel(tag, style):
     return el
 
 def addkey(el, istext, key):
-    """Wrap the first occurrence of a TWL GLQuote inside el.text (istext=True) or el.tail
+    r"""Wrap the first occurrence of a TWL GLQuote inside el.text (istext=True) or el.tail
     (istext=False) with a \w char marker carrying the term's lemma attribute.
 
     If the entire text/tail IS the quote, the element itself is relabelled \w in-place.
@@ -174,7 +174,7 @@ md.typemap = typemap
 mdp = MarkdownToUSX()
 
 def create_triggers(notes):
-    """Build PTXprint pre-verse trigger USFM from the TN note rows.
+    r"""Build PTXprint pre-verse trigger USFM from the TN note rows.
 
     Each group of notes sharing the same chapter:verse is accumulated into a single
     \ef extended-footnote (efel). When the verse changes the buffered \ef is serialised
@@ -232,7 +232,7 @@ def create_triggers(notes):
                 e.parent = efft
                 efft.append(e)
             # If only one paragraph and a TATitle exists, append an arrow+jmp link to TA
-            if len(r) < 2 and l['TATitle']:
+            if len(r) < 2 and l['TATitle'] is not None and l['TATitle'].strip():
                 elj = ParentElement("char", parent=r[-1], attrib={"style": "jmp", "href": na})
                 elj.text = l['TATitle']
                 if len(r[0]):
@@ -290,7 +290,7 @@ with open(os.path.join(cfgdir, "triggers", ofile), "w", encoding="utf-8") as out
     outf.write("\n".join(results))
 
 def create_changes(words, cfgdir):
-    """Write changes.txt with PTXprint regex rules that wrap key terms in \w markers.
+    r"""Write changes.txt with PTXprint regex rules that wrap key terms in \w markers.
 
     The line format is:
         at BOOK C:V '(GLQuote)' > '\\w \\1\\w*[footnote]'
@@ -300,6 +300,7 @@ def create_changes(words, cfgdir):
     Returns the set of TWLink article paths referenced (used to build the GLO file).
     """
     articles = set()
+    maxmark = 0
     f = "x" if args.xref else "f"  # xref marker vs footnote marker
     with open(os.path.join(cfgdir, "changes.txt"), "w", encoding="utf-8") as outf:
         lastref = None
@@ -307,21 +308,30 @@ def create_changes(words, cfgdir):
             for w in ws:
                 if w['Reference'] != lastref:
                     usedset = set()
+                    markbase = 0xFDD0
                 lastref = w['Reference']
                 if w['TWTitle'] in usedset:
                     continue
                 t = re.sub(r'^([^,]+).*$', r'\1', w['TWTitle'] or "")
                 if t != w['GLQuote'] and w['TWTitle'] not in usedset:
+                    mark = chr(markbase)
+                    maxmark = max(markbase, maxmark)
+                    markbase += 1
                     # Add an inline note pointing to the term's title in the TW definition
-                    extra = f'\\\\{f} - \\\\{f}q \\1 \\\\{f}t →{t}\\\\{f}*'
+                    extra = f'\\\\{f} - \\\\{f}q \\1\\\\{f}t →{t}\\\\{f}*{mark}'
+                    line = fr"at {book} {w['Reference']} '\b({w['GLQuote'].replace('&','.*?')})\b' > '\\w \1\\w*{mark}'"
+                    outf.write(line + "\n")
+                    line = fr"at {book} {w['Reference']} '(?<=(?:{mark}){mark}' > '{extra}'"
                 else:
                     extra = ''
-                line = fr"at {book} {w['Reference']} '({w['GLQuote'].replace('&','.*?')})' > '\\w \1\\w*{extra}'"
+                    line = fr"at {book} {w['Reference']} '({w['GLQuote'].replace('&','.*?')})' > '\\w \1\\w*'"
                 article = w['TWLink'].replace("rc://*/tw/dict/bible/", "")
                 articles.add(article)
                 outf.write(line + "\n")
                 if args.dedup:
                     usedset.add(w['TWTitle'])
+        marks = "".join(chr(i) for i in range(0xFDD0, maxmark+1))
+        outf.write(f"'[{marks}]' > ''\n")
     return articles
 
 articles = create_changes(words, cfgdir)
@@ -352,7 +362,7 @@ gfname = os.path.join(args.projectdir, f"A9GLO{prj}.USFM")
 glossary.saveAs(gfname)
 
 def create_xxa(notearticles):
-    """Build the XXA auxiliary book from Translation Academy (TA) article directories.
+    r"""Build the XXA auxiliary book from Translation Academy (TA) article directories.
 
     Each article directory is expected to contain title.md (plain text title) and
     01.md (the main article body in markdown).  A \jmp anchor with the article id is
@@ -395,7 +405,7 @@ xfname = os.path.join(args.projectdir, f"94XXA{prj}.USFM")
 xxa.saveAs(xfname)
 
 def create_intro(notes):
-    """Build an INT introduction book from the 'front:intro' translation note if present.
+    r"""Build an INT introduction book from the 'front:intro' translation note if present.
 
     Uses MarkdownToUSX in "intro" mode, which maps paragraph → \ip and heading → \is*.
     Returns the USX object, or None if no front:intro note exists in this book's TN file.
