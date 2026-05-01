@@ -646,8 +646,8 @@ class ViewModel:
             if new.has_section(sect):
                 allopts.update(new.options(sect))
             for opt in allopts:
-                if config.has_option(sect, opt) and (not base.has_option(sect, opt)
-                        or config.get(sect, opt) != base.get(sect, opt)):
+                if this.has_option(sect, opt) and (not base.has_option(sect, opt)
+                        or this.get(sect, opt) != base.get(sect, opt)):
                     continue
                 if new.has_option(sect, opt):
                     this.set(sect, opt, new.get(sect, opt))
@@ -853,7 +853,7 @@ class ViewModel:
             return self.copyrightInfo
         with open(os.path.join(pycodedir(), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:
             self.copyrightInfo = json.load(inf)
-        fname = os.path.join(self.project.path, "shard", "ptxprint", "picCopyrights.json")
+        fname = os.path.join(self.project.path, "shared", "ptxprint", "picCopyrights.json")
         if os.path.exists(fname):
             with open(fname, encoding="utf-8", errors="ignore") as inf:
                 try:
