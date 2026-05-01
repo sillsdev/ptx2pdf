@@ -87,7 +87,13 @@ jobs:
             fonts-sil-andika
 
       - name: Install package
-        run: pip install -e .
+        run: |
+          pip install -e .
+          # The test harness spawns python/scripts/ptxprint as a subprocess via
+          # its #!/usr/bin/python3 shebang, which hits the system Python rather
+          # than the setup-python venv. Redirect the shebang to the venv Python
+          # so that installed dependencies (regex, fonttools, etc.) are found.
+          sudo ln -sf "$(which python3)" /usr/bin/python3
 
       - name: Install pytest
         run: pip install pytest
