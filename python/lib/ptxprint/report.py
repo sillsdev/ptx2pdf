@@ -288,6 +288,7 @@ class Report:
                         msg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
                     failed.setdefault(bk, []).append(msg)
             else:
+                self.get_usfm(view, doc, bk)
                 errors = doc.runchecks()
                 if len(errors):
                     for e in errors:
