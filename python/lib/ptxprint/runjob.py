@@ -445,8 +445,10 @@ class RunJob:
         logger.debug(f"{donebooks=}")
 
         # Pass all the needed parameters for the snippet from diginfo to info
-        for k,v in _diglotprinter.items():
-            self.info.printer.set(k, diginfo.printer.get(v))
+        if diginfos:
+            _diginfo = next(iter(diginfos.values()))
+            for k,v in _diglotprinter.items():
+                self.info.printer.set(k, _diginfo.printer.get(v))
         self.info["_isDiglot"] = True
         res = self.sharedjob(jobs, diglots=True)
         texfiles += res
