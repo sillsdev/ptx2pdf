@@ -802,7 +802,11 @@ class ViewModel:
         bk = None
         while res is None:
             bk = pts.getABook(bk)
+            if bk is None:
+                break
             abook = self.get_usfm(bk)
+            if abook is None:
+                continue
             res = abook.findScript()
         return res
 
