@@ -630,7 +630,7 @@ class RunJob:
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
             self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
-            if isinstance(self.runner, subprocess.Popen) and runner is not None:
+            if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
                 try:
                     #runner.wait(self.args.timeout)
                     self.runner.wait()
@@ -721,7 +721,7 @@ class RunJob:
             except subprocess.TimeoutExpired:
                 print("Timed out!")
             self.res = 4 if self.runner.returncode else 0
-            logger.debug(f"{runner.stdout.decode('UTF-8')}")
+            logger.debug(f"{self.runner.stdout.decode('UTF-8')}")
         elif isinstance(self.runner, subprocess.CompletedProcess):
             self.res = 4 if self.runner.returncode else 0
             logger.debug(f"{self.runner.stdout}")
