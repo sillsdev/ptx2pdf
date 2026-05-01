@@ -889,7 +889,7 @@ class RunJob:
                     loglines.append(l)
                     if len(loglines) > lines:
                         loglines.pop(0)
-        except:
+        except Exception:
             loglines.append("Logfile missing: "+fname)
         return (loglines, rerunres)
 
