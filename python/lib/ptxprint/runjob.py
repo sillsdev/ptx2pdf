@@ -555,7 +555,7 @@ class RunJob:
         outpath = os.path.join(self.tmpdir, '..', self.outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
-        self.pdffile = outpath + ".pdf".format(pdfext)
+        self.pdffile = outpath + f"{pdfext}.pdf"
         logger.debug(f"{self.pdffile} exists({os.path.exists(self.pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:
