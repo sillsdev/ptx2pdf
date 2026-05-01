@@ -678,7 +678,9 @@ class WindowGeometry:
             x=gi("x", -1), y=gi("y", -1), width=gi("width", 800), height=gi("height", 600),
             maximized=gb("maximized", False),
             monitor=gi("monitor", 0),
-            mon_x=gi("mon_x", 0), mon_y=gi("mon_y", 0), mon_w=gi("mon_w", 0), mon_h=gi("mon_h", 0)
+            mon_x=gi("mon_x", 0), mon_y=gi("mon_y", 0), mon_w=gi("mon_w", 0), mon_h=gi("mon_h", 0),
+            outer_w=gi("outer_w", 0), outer_h=gi("outer_h", 0),
+            dx=gi("dx", 0), dy=gi("dy", 0)
         )
 
     def toConfig(self, userconfig, name):
@@ -830,7 +832,7 @@ class GtkViewModel(ViewModel):
             # Set DPI awareness
             try:
                 windll.shcore.SetProcessDpiAwareness(2)  # DPI_AWARENESS_PER_MONITOR_AWARE
-            except:
+            except Exception:
                 windll.user32.SetProcessDPIAware()  # Fallback for older Windows versions
 
         if not self.args.quiet:
