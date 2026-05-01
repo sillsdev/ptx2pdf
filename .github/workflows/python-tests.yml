@@ -1,0 +1,104 @@
+name: Python Tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'python/**'
+      - 'src/**'
+      - 'test/**'
+      - 'pyproject.toml'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'python/**'
+      - 'src/**'
+      - 'test/**'
+      - 'pyproject.toml'
+  workflow_dispatch:
+
+jobs:
+  # ── Job 1: Pure Python unit tests (no XeTeX required) ──────────────────────
+  unit-tests:
+    name: Unit Tests (test_usfmx)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install package
+        run: pip install -e .
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Run unit tests
+        working-directory: test
+        run: pytest test_usfmx.py -v
+
+  # ── Job 2: Integration tests — runs XeTeX, diffs PDFs against baselines ────
+  integration-tests:
+    name: Integration Tests (test_projects)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-xetex \
+            texlive-fonts-recommended \
+            texlive-fonts-extra \
+            fonts-sil-charis \
+            fonts-sil-doulos \
+            fonts-sil-andika
+
+      - name: Install package
+        run: pip install -e .
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Run integration tests
+        working-directory: test
+        run: >
+          pytest test_projects.py -v
+          --tb=short
+          -S 10
+        env:
+          # Suppress GTK/display errors in headless environment
+          DISPLAY: ""
+
+      - name: Upload diff PDFs on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pdf-diffs
+          path: test/projects/**/local/**/*_diff.pdf
+          if-no-files-found: ignore
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ptxprint-logs
+          path: test/ptxprint_*.log
+          if-no-files-found: ignore
