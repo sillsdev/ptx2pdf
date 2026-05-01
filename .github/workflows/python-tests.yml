@@ -84,15 +84,22 @@ jobs:
             texlive-fonts-extra \
             fonts-sil-charis \
             fonts-sil-doulos \
-            fonts-sil-andika
+            fonts-sil-andika \
+            libgirepository1.0-dev \
+            libcairo2-dev \
+            gir1.2-gtk-3.0 \
+            python3-gi \
+            python3-gi-cairo \
+            xvfb
 
       - name: Install package
         run: |
-          pip install -e .
+          # Install with gui extras so pygobject/pycairo are pulled in
+          pip install -e ".[gui]"
           # The test harness spawns python/scripts/ptxprint as a subprocess via
           # its #!/usr/bin/python3 shebang, which hits the system Python rather
           # than the setup-python venv. Redirect the shebang to the venv Python
-          # so that installed dependencies (regex, fonttools, etc.) are found.
+          # so that installed dependencies (regex, fonttools, gi, etc.) are found.
           sudo ln -sf "$(which python3)" /usr/bin/python3
 
       - name: Install pytest
@@ -101,13 +108,11 @@ jobs:
       - name: Run integration tests
         working-directory: test
         run: >
+          xvfb-run --auto-servernum
           pytest test_projects.py -v
           --tb=short
           -S 10
           --junit-xml=../integration-test-results.xml
-        env:
-          # Suppress GTK/display errors in headless environment
-          DISPLAY: ""
 
       - name: Publish integration test results
         uses: EnricoMi/publish-unit-test-result-action@v2
