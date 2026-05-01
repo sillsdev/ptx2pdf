@@ -63,7 +63,7 @@ def doError(txt, secondary=None, **kw):
     logger.error(txt)
     if secondary is not None:
         print(secondary)
-        logger.error(txt)
+        logger.error(secondary)
 
 class ViewModel:
     _attributes = {
