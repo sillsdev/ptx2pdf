@@ -56,7 +56,9 @@ from ptxprint.gtktesting import GtkTester
 from ptxprint.printers import init_printers, printer_from_label
 from ptxprint.page_filler import MultiView
 from ptxprint.bookProgressDlg import BookProgressDialog
-from ptxprint.coverwizard import CoverWizardApp
+from ptxprint.wizards.cover.coverwizard import CoverWizardApp
+from ptxprint.wizards.configuration import launchWizard
+
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging, threading
 import webbrowser
@@ -7834,3 +7836,7 @@ Thank you,
         widget.set_label("Hide progress" if visible else "Show progress")
 
 
+    def onConfigWizardClicked(self, widget):
+        launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),
+             projectDir=self.project.path, configName=self.cfgid,
+             ptxprintVersion=VersionStr, onApply=lambda _: self.saveConfig())
