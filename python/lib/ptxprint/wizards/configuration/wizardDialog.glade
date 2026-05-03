@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <!-- PTXprint Publication Wizard dialog shell.
+       Pages are built dynamically by WizardController; only the chrome is defined here.
+       Each page widget is a GtkScrolledWindow so the GtkStack itself does not scroll. -->
+  <requires lib="gtk+" version="3.18"/>
+
+  <object class="GtkDialog" id="dlg_wizard">
+    <property name="title" translatable="yes">Publication Wizard</property>
+    <property name="default_width">900</property>
+    <property name="default_height">620</property>
+    <property name="resizable">True</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="use_header_bar">0</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="dlg_wizard-vbox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">0</property>
+
+        <!-- Progress strip -->
+        <child>
+          <object class="GtkBox" id="bx_progressStrip">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">6</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">6</property>
+            <property name="margin_start">20</property>
+            <property name="margin_end">20</property>
+            <child>
+              <!-- Dots drawn dynamically by controller into this DrawingArea -->
+              <object class="GtkDrawingArea" id="da_progressDots">
+                <property name="height_request">20</property>
+                <property name="width_request">200</property>
+                <property name="hexpand">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lbl_stepCount">
+                <property name="label">Step 1 of 14</property>
+                <property name="xalign">1</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+          </packing>
+        </child>
+
+        <child>
+          <object class="GtkSeparator">
+            <property name="orientation">horizontal</property>
+          </object>
+          <packing><property name="expand">False</property></packing>
+        </child>
+
+        <!-- Main content area (GtkStack; pages added dynamically as GtkScrolledWindows) -->
+        <child>
+          <object class="GtkStack" id="stk_pages">
+            <property name="transition_type">slide-left-right</property>
+            <property name="transition_duration">200</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+          </object>
+          <packing><property name="expand">True</property><property name="fill">True</property></packing>
+        </child>
+
+        <child>
+          <object class="GtkSeparator">
+            <property name="orientation">horizontal</property>
+          </object>
+          <packing><property name="expand">False</property></packing>
+        </child>
+
+        <!-- Footer -->
+        <child>
+          <object class="GtkBox" id="bx_footer">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">6</property>
+            <property name="margin_top">8</property>
+            <property name="margin_bottom">8</property>
+            <property name="margin_start">12</property>
+            <property name="margin_end">12</property>
+
+            <!-- Left: Reset -->
+            <child>
+              <object class="GtkButton" id="btn_reset">
+                <property name="label" translatable="yes">Reset wizard</property>
+                <property name="relief">none</property>
+                <property name="tooltip_text" translatable="yes">Start again from the beginning</property>
+              </object>
+              <packing><property name="expand">False</property></packing>
+            </child>
+
+            <!-- Spacer -->
+            <child>
+              <object class="GtkBox">
+                <property name="hexpand">True</property>
+              </object>
+              <packing><property name="expand">True</property><property name="fill">True</property></packing>
+            </child>
+
+            <!-- Cancel (always visible after welcome) -->
+            <child>
+              <object class="GtkButton" id="btn_cancel">
+                <property name="label" translatable="yes">Cancel</property>
+                <property name="tooltip_text" translatable="yes">Close without applying changes</property>
+              </object>
+              <packing><property name="expand">False</property></packing>
+            </child>
+
+            <!-- Apply (visible always, enabled only on Summary) -->
+            <child>
+              <object class="GtkButton" id="btn_apply_footer">
+                <property name="label" translatable="yes">Apply to current</property>
+                <property name="sensitive">False</property>
+                <property name="tooltip_text" translatable="yes">Apply settings to the current configuration</property>
+                <style><class name="suggested-action"/></style>
+              </object>
+              <packing><property name="expand">False</property></packing>
+            </child>
+
+            <!-- Create new (visible always, enabled only on Summary) -->
+            <child>
+              <object class="GtkButton" id="btn_createNew">
+                <property name="label" translatable="yes">Create new configuration</property>
+                <property name="sensitive">False</property>
+                <property name="tooltip_text" translatable="yes">Create a new configuration with these settings</property>
+              </object>
+              <packing><property name="expand">False</property></packing>
+            </child>
+
+            <!-- Navigation -->
+            <child>
+              <object class="GtkButton" id="btn_back">
+                <property name="label" translatable="yes">← Back</property>
+              </object>
+              <packing><property name="expand">False</property></packing>
+            </child>
+
+            <child>
+              <object class="GtkButton" id="btn_next">
+                <property name="label" translatable="yes">Next →</property>
+                <property name="can_default">True</property>
+                <style><class name="suggested-action"/></style>
+              </object>
+              <packing><property name="expand">False</property></packing>
+            </child>
+
+          </object>
+          <packing><property name="expand">False</property></packing>
+        </child>
+
+      </object>
+    </child>
+  </object>
+
+</interface>
