@@ -561,34 +561,121 @@ mac_menu = {
     # }
 }
 
+def _browsePTDir(parent=None):
+    """Open a folder-chooser and return the selected Path, or None if cancelled."""
+    fdialog = Gtk.FileChooserDialog(_("Base Projects Directory"), parent,
+        Gtk.FileChooserAction.SELECT_FOLDER,
+        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+         _("Select"), Gtk.ResponseType.OK))
+    fdialog.set_default_size(400, 300)
+    fdialog.set_select_multiple(False)
+    fresponse = fdialog.run()
+    result = None
+    if fresponse == Gtk.ResponseType.OK:
+        result = Path(fdialog.get_filename() + "/")
+    fdialog.destroy()
+    return result
+
+
+def chooseProjectsDir(candidates):
+    """Show a dialog letting the user pick from multiple detected Paratext project
+    directories.  *candidates* is a list of dicts with keys 'path', 'label',
+    and 'has_projects' (as returned by utils.find_pt_candidates).
+    Returns the chosen path string, or None if the user cancels."""
+    dlg = Gtk.Dialog(title=_("Choose Paratext Projects Folder"), modal=True)
+    dlg.set_default_size(520, -1)
+    dlg.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
+    btn_ok = dlg.add_button(_("Use Selected"), Gtk.ResponseType.OK)
+    btn_ok.get_style_context().add_class("suggested-action")
+    dlg.set_default_response(Gtk.ResponseType.OK)
+
+    box = dlg.get_content_area()
+    box.set_spacing(8)
+    box.set_margin_start(16)
+    box.set_margin_end(16)
+    box.set_margin_top(12)
+    box.set_margin_bottom(12)
+
+    heading = Gtk.Label()
+    heading.set_markup(_("<b>Multiple Paratext project folders were found.</b>\n"
+                         "Choose the one you want PTXprint to use."))
+    heading.set_xalign(0)
+    heading.set_line_wrap(True)
+    box.pack_start(heading, False, False, 0)
+
+    group = None
+    radio_buttons = []
+    for c in candidates:
+        note = _("(contains projects)") if c['has_projects'] else _("(empty — no projects yet)")
+        rb = Gtk.RadioButton.new_with_label_from_widget(group, "")
+        group = rb
+        vb = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1)
+        lbl_path = Gtk.Label(label=c['path'])
+        lbl_path.set_xalign(0)
+        attrs = Pango.AttrList()
+        attrs.insert(Pango.attr_weight_new(Pango.Weight.SEMIBOLD))
+        lbl_path.set_attributes(attrs)
+        lbl_note = Gtk.Label(label=note)
+        lbl_note.set_xalign(0)
+        lbl_note.get_style_context().add_class("dim-label")
+        vb.pack_start(lbl_path, False, False, 0)
+        vb.pack_start(lbl_note, False, False, 0)
+        rb.get_child().destroy()
+        rb.add(vb)
+        box.pack_start(rb, False, False, 2)
+        radio_buttons.append((rb, c['path']))
+
+    # Pre-select first candidate that has projects, else first overall
+    preferred = next((rb for rb, p in radio_buttons
+                      if candidates[radio_buttons.index((rb, p))]['has_projects']), None)
+    if preferred is None and radio_buttons:
+        preferred = radio_buttons[0][0]
+    if preferred is not None:
+        preferred.set_active(True)
+
+    sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+    box.pack_start(sep, False, False, 4)
+
+    browse_btn = Gtk.Button(label=_("Browse for a different folder…"))
+    browse_btn._chosen_path = None
+
+    def _on_browse(_btn):
+        path = _browsePTDir(dlg)
+        if path is not None:
+            _btn._chosen_path = str(path)
+            dlg.response(Gtk.ResponseType.OK)
+    browse_btn.connect("clicked", _on_browse)
+    box.pack_start(browse_btn, False, False, 0)
+
+    box.show_all()
+    response = dlg.run()
+    chosen = None
+    if response == Gtk.ResponseType.OK:
+        if browse_btn._chosen_path is not None:
+            chosen = browse_btn._chosen_path
+        else:
+            for rb, path in radio_buttons:
+                if rb.get_active():
+                    chosen = path
+                    break
+    dlg.destroy()
+    return chosen
+
+
 def getPTDir():
     txt = _("""Please locate the base directory in which one or more
 Scripture project directories are located (or will be stored).
 
-This message indicates that a 'My Paratext Projects' folder was 
-not located but PTXprint can still run without it, so click OK 
-to choose an alternative base directory (or Cancel to Quit)""")
+This message indicates that a Paratext projects folder was not
+found automatically. PTXprint can still run without one — click
+OK to choose a folder, or Cancel to quit.""")
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
             buttons=Gtk.ButtonsType.OK_CANCEL, text=txt)
     response = dialog.run()
     dialog.destroy()
     if response == Gtk.ResponseType.OK:
-        action = Gtk.FileChooserAction.SELECT_FOLDER
-        btnlabel = "Select"
-        fdialog = Gtk.FileChooserDialog("Base Projects Directory", None,
-            (action),
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            (btnlabel), Gtk.ResponseType.OK))
-        fdialog.set_default_size(400, 300)
-        fdialog.set_select_multiple(False)
-        fresponse = fdialog.run()
-        fcFilepath = None
-        if fresponse == Gtk.ResponseType.OK:
-            fcFilepath = Path(fdialog.get_filename()+"/")
-        fdialog.destroy()
-        return fcFilepath
-    else:
-        return None
+        return _browsePTDir()
+    return None
 
 def reset_gtk_direction():
     direction = Gtk.get_locale_direction()

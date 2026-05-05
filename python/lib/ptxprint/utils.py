@@ -416,42 +416,87 @@ def pt_bindir():
     logger.debug(f"pt_bindir= {res}")
     return res
 
-def get_ptsettings():
-    pt_settings = None
-    pt10base = os.path.join(os.path.expanduser("~/.paratext-10-studio"), "projects", "Paratext 9 Projects")
-    if os.path.exists(pt10base):
-        return pt10base
+def _dir_has_projects(path):
+    """Return True if path contains at least one apparent Paratext project directory."""
+    try:
+        for d in os.listdir(path):
+            p = os.path.join(path, d)
+            if not os.path.isdir(p):
+                continue
+            if any(os.path.exists(os.path.join(p, f)) for f in ('Settings.xml', 'ptxSettings.xml')):
+                return True
+            try:
+                if any(f.lower().endswith('.sfm') for f in os.listdir(p)):
+                    return True
+            except OSError:
+                pass
+    except OSError:
+        pass
+    return False
 
+
+def find_pt_candidates():
+    """Return a list of dicts {'path': str, 'label': str, 'has_projects': bool}
+    for every Paratext projects directory found on this machine.
+    Candidates are deduplicated by resolved absolute path.
+    """
+    seen = set()
+    candidates = []
+
+    def _add(path, label):
+        if not path:
+            return
+        path = str(path)
+        if not os.path.isdir(path):
+            return
+        real = os.path.realpath(os.path.abspath(path))
+        if real in seen:
+            return
+        seen.add(real)
+        has = _dir_has_projects(path)
+        candidates.append({'path': path, 'label': label, 'has_projects': has})
+        logger.debug(f"Found Paratext candidate: {path!r} ({label}, has_projects={has})")
+
+    # Paratext 10 Studio (Linux/macOS)
+    pt10base = os.path.join(os.path.expanduser("~/.paratext-10-studio"), "projects", "Paratext 9 Projects")
+    _add(pt10base, "Paratext 10 Studio")
+
+    # Windows registry (Paratext 8/9)
     ptob = openkey("Paratext/8")
-    if ptob is None:
-        logger.debug(f"No registry key found for Paratext. Searching for data folder...")
+    if ptob is not None:
+        reg_path = queryvalue(ptob, 'Settings_Directory')
+        if reg_path:
+            _add(reg_path, "Paratext (registry)")
+
+    # Filesystem scan
+    if sys.platform.startswith("win"):
         for v in ('9', '8'):
-            if sys.platform.startswith("win"):
-                for d in map(chr, range(ord('C'), ord('Z')+1)):
-                    if os.path.exists("{}:\\".format(d)):
-                        tempstr = "{}:\\My Paratext {} Projects"
-                        path = tempstr.format(d,v)
-                        if os.path.exists(path):
-                            pt_settings = path
-                            logger.debug(f"Found Paratext data folder: {path}")
-                            break
-                else:
-                    continue
-                break
-            else:
-                if sys.platform.startswith("darwin"):
-                    tempstr = os.path.expanduser("~/Library/Application Support/paratextlite/Paratext{}Projects")
-                else:
-                    tempstr = os.path.expanduser("~/Paratext{}Projects")
-                path = tempstr.format(v)
-                if os.path.exists(path):
-                    pt_settings = path
-                    logger.debug(f"Found Paratext data folder: {path}")
-                    break
-        logger.debug(f"ERROR: Unable to find a Paratext data folder! Searched C,D,E,...,Z drives")
+            for d in map(chr, range(ord('C'), ord('Z') + 1)):
+                if os.path.exists("{}:\\".format(d)):
+                    _add("{}:\\My Paratext {} Projects".format(d, v),
+                         "Paratext {} Projects (drive {})".format(v, d))
+    elif sys.platform.startswith("darwin"):
+        for v in ('9', '8'):
+            _add(os.path.expanduser("~/Library/Application Support/paratextlite/Paratext{}Projects".format(v)),
+                 "Paratext {} Projects".format(v))
     else:
-        pt_settings = queryvalue(ptob, 'Settings_Directory')
-    return pt_settings
+        # Linux — check both naming conventions Paratext uses
+        for v in ('9', '8'):
+            _add(os.path.expanduser("~/My Paratext {} Projects".format(v)),
+                 "Paratext {} Projects".format(v))
+            _add(os.path.expanduser("~/Paratext{}Projects".format(v)),
+                 "Paratext {} Projects".format(v))
+        _add(os.path.expanduser("~/My Paratext Projects"), "Paratext Projects")
+
+    if not candidates:
+        logger.debug("No Paratext project directories found on this machine")
+    return candidates
+
+
+def get_ptsettings():
+    """Legacy wrapper — returns the path of the first candidate found, or None."""
+    candidates = find_pt_candidates()
+    return candidates[0]['path'] if candidates else None
 
 def get_gitver(gitdir=None, version=None):
     if gitdir is None:

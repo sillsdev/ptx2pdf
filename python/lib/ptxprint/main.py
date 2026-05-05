@@ -230,7 +230,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         sys.stdio = StreamLogger(log, logging.INFO)
         sys.stderr = StreamLogger(log, logging.ERROR)
 
-    from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
+    from ptxprint.utils import _, setup_i18n, get_ptsettings, find_pt_candidates, pt_bindir, putenv
     from ptxprint.font import initFontCache, cachepath, writefontsconf
 
     fontconfig_path = writefontsconf(args.fontpath,testsuite=args.testsuite)
@@ -285,10 +285,22 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     log.debug("Loaded config")
 
     if not len(args.projects):
-        pdir = get_ptsettings()
-        if pdir is not None:
-            args.projects.append(pdir)
-            print(f"Adding {pdir}")
+        candidates = find_pt_candidates()
+        if len(candidates) == 1:
+            args.projects.append(candidates[0]['path'])
+            print(f"Adding {candidates[0]['path']}")
+        elif len(candidates) > 1:
+            if not args.print and args.test is None:
+                from ptxprint.gtkview import chooseProjectsDir
+                chosen = chooseProjectsDir(candidates)
+                if chosen is None:
+                    sys.exit(1)
+                args.projects.append(str(chosen))
+            else:
+                # Non-GUI mode: add all found directories
+                for c in candidates:
+                    args.projects.append(c['path'])
+                    print(f"Adding {c['path']}")
     elif not any(os.path.isdir(p) for p in args.projects):
         print(f"Projects directories do not exist in {args.projects}. Quitting")
         sys.exit(1)
