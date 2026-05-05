@@ -2328,6 +2328,16 @@ class GtkViewModel(ViewModel):
         cleaned = re.sub(r'[^A-Za-z0-9\-:;, ]+', '', no_accents)
         cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         bls = re.sub(r'-END', '-end', cleaned.upper())
+        # Validate every letter-only token as a known USFM book code
+        _valid = set(allbooks)
+        bad_codes = [c for c in re.findall(r'\b([A-Z]+)\b', bls) if c not in _valid]
+        if bad_codes:
+            self.doError(
+                _("Unknown book code: {}").format(', '.join(bad_codes)),
+                secondary=_("'{}' is not a recognised book code.\n"
+                             "Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV).").format(bad_codes[0])
+            )
+            return
         self.set('ecb_booklist', bls)
         self.bookrefs = None
         bl = self.getAllBooks()

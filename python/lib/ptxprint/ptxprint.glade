@@ -16472,7 +16472,7 @@ saved/shared configuration named above.</property>
                                       <packing>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">1</property>
-                                        <property name="width">6</property>
+                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -16693,6 +16693,21 @@ or export them to an external folder.</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkButton">
+                                        <property name="label" translatable="yes">Layout Wizard...</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="valign">center</property>
+                                        <signal name="clicked" handler="onConfigWizardClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">4</property>
+                                        <property name="top-attach">1</property>
+                                        <property name="width">3</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -16904,7 +16919,9 @@ Shortcut: Ctrl-B</property>
                                         <property name="name">Multiple books editable list entry</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="tooltip-text" translatable="yes">A list of references can be entered if printing less
+                                        <property name="tooltip-text" translatable="yes">Always use 3-letter USFM book codes (e.g. JHN, not JOHN; MRK, not MARK).
+
+A list of references can be entered if printing less
 than an entire book or chapter, or if you need to
 include portions from several books. For example:
   JHN 2:1-12
@@ -16922,7 +16939,7 @@ The list is editable, so books can be re-ordered
 if need be (for example, for the Hebrew canon).
 
 Note that verse ranges spanning multiple books
-are not permitted: For example, 
+are not permitted: For example,
   MAT 1:1-REV 22:21   does not work.
 
 Shortcut: Ctrl-B</property>
@@ -41541,20 +41558,7 @@ PDF file(s) created for this project.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton">
-                    <property name="label" translatable="yes">Wizard!</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <signal name="clicked" handler="onConfigWizardClicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">2</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
