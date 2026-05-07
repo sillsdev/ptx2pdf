@@ -583,17 +583,17 @@ height separated by a comma.
 For example: 203mm, 330mm (Foolscap)</property>
                         <property name="active">2</property>
                         <property name="has-entry">True</property>
-                        <property name="active-id">0</property>
+                        <property name="active-id">a4</property>
                         <items>
-                          <item translatable="yes">420mm, 594mm (A2)</item>
-                          <item translatable="yes">297mm, 420mm (A3)</item>
-                          <item translatable="yes">210mm, 297mm (A4)</item>
-                          <item translatable="yes">17in, 22in (ANSI C)</item>
-                          <item translatable="yes">11in, 17in (ANSI B)</item>
-                          <item translatable="yes">8.5in, 11in (Letter)</item>
-                          <item translatable="yes">353mm, 500mm (B3)</item>
-                          <item translatable="yes">250mm, 353mm (B4)</item>
-                          <item translatable="yes">176mm, 250mm (B5)</item>
+                          <item id="a2" translatable="yes">420mm, 594mm (A2)</item>
+                          <item id="a3" translatable="yes">297mm, 420mm (A3)</item>
+                          <item id="a4" translatable="yes">210mm, 297mm (A4)</item>
+                          <item id="431.8x558.8" translatable="yes">17in, 22in (ANSI C)</item>
+                          <item id="279.4x431.8" translatable="yes">11in, 17in (ANSI B)</item>
+                          <item id="ltr" translatable="yes">8.5in, 11in (Letter)</item>
+                          <item id="353x500" translatable="yes">353mm, 500mm (B3)</item>
+                          <item id="250x353" translatable="yes">250mm, 353mm (B4)</item>
+                          <item id="176x250" translatable="yes">176mm, 250mm (B5)</item>
                         </items>
                       </object>
                       <packing>
@@ -1163,71 +1163,6 @@ order to see exceptions of outlying text.</property>
                 <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="width-request">145</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="label" translatable="yes">Output PDF File:</property>
-                <property name="justify">center</property>
-                <property name="xalign">1</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkFileChooserButton" id="fp_output">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="title" translatable="yes"/>
-                <property name="width-chars">45</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="margin-start">6</property>
-                <property name="label" translatable="yes">Action After:</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBoxText">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="active">0</property>
-                <property name="has-entry">True</property>
-                <property name="active-id">openPDF</property>
-                <items>
-                  <item id="openPDF" translatable="yes">Open PDF in Default Viewer</item>
-                  <item id="openFolder" translatable="yes">Open Folder Containing PDF</item>
-                  <item id="showPreview" translatable="yes">Show Preview of PDF</item>
-                  <item id="doNothing" translatable="yes">Do Nothing</item>
-                </items>
-                <child internal-child="entry">
-                  <object class="GtkEntry">
-                    <property name="can-focus">False</property>
-                    <property name="editable">False</property>
-                    <property name="width-chars">12</property>
-                  </object>
-                </child>
-              </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>

@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
-import argparse, sys, os, re, configparser
-import appdirs
+import argparse, sys, os, re, configparser, subprocess, platform
 import site, logging
 from shutil import rmtree
 from zipfile import ZipFile
@@ -18,6 +17,7 @@ except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
 from ptxprint.utils import saferelpath
+from ptxprint.pdf.pdfsig import make_signatures, get_page_size
 
 from pathlib import Path
 import gi
@@ -38,6 +38,37 @@ def getnsetlang(config):
     config.set("init", "syslang", envlang or "")
     return envlang
 
+def get_sheet_size(sheet_text):
+    sheet_sizes = {
+        "420mm, 594mm (A2)": "a2",
+        "297mm, 420mm (A3)": "a3",
+        "210mm, 297mm (A4)": "a4",
+        "17in, 22in (ANSI C)": "431.8x558.8",
+        "11in, 17in (ANSI B)": "279.4x431.8",
+        "8.5in, 11in (Letter)": "ltr",
+        "353mm, 500mm (B3)": "353x500",
+        "250mm, 353mm (B4)": "250x353",
+        "176mm, 250mm (B5)": "176x250",
+    }
+    if sheet_text in sheet_sizes:
+        return sheet_sizes[sheet_text]
+    if sheet_text.count(',') != 1:
+        raise IOError('Format of sheet dimensions not understood. Please specify in format "width, height"')
+    width, height = sheet_text.split(',')
+    if 'mm' in width:
+        width = float(width.split('mm')[0])
+    elif 'in' in width:
+        width = float(width.split('in')[0]) * 25.4
+    else:
+        raise IOError('Unknown or unspecified unit!')
+    if 'mm' in height:
+        height = float(height.split('mm')[0])
+    elif 'in' in height:
+        height = float(height.split('in')[0]) * 25.4
+    else:
+        raise IOError('Unknown or unspecified unit!')
+    return 'x'.join((str(width), str(height)))
+
 class Finisher(Gtk.Application):
     def __init__(self):
         super().__init__()
@@ -46,11 +77,51 @@ class Finisher(Gtk.Application):
         self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
         self.mw = self.builder.get_object("pdfinish")
+
         self.mw.show_all()
         Gtk.main()
 
     def onProcessClicked(self, btn):
-        print("GoForIt")
+        pdf_path = self.builder.get_object("fp_input").get_filename()
+        if not pdf_path:
+            raise IOError("You need to select an input file!")
+        dialog = Gtk.FileChooserDialog(
+            title="Select output file",
+            parent=self.mw,
+            action=Gtk.FileChooserAction.SAVE,
+        )
+        dialog.add_buttons(
+                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_SAVE, Gtk.ResponseType.OK
+        )
+        dialog.set_do_overwrite_confirmation(True)
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            output_filepath = dialog.get_filename()
+            print("Selected file:", output_filepath)
+        dialog.destroy()
+        if response != Gtk.ResponseType.OK:
+            return
+
+        pages_per_spread = self.builder.get_object("ecb_pagesPerSpread").get_active_id()
+        sheets_per_sig = int(self.builder.get_object("s_sheetsPerSignature").get_value())
+        fold_cut_margin = self.builder.get_object("s_foldCutMargin").get_value()
+        add_crop_marks = self.builder.get_object("c_cropmarks").get_active()
+        right_to_left = self.builder.get_object("c_RTL").get_active()
+        fold_first = self.builder.get_object("c_foldFirst").get_active()
+        sheetsize_active_text = self.builder.get_object("ecb_sheetSize").get_active_text()
+        selected_sheet_size = get_sheet_size(sheetsize_active_text)
+        outwidth, outheight = get_page_size(selected_sheet_size)
+        make_signatures(pdf_path, outwidth, outheight, pages_per_spread,
+                        sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=output_filepath)
+
+        if platform.system() == 'Darwin':       # macOS
+            subprocess.call(('open', output_filepath))
+        elif platform.system() == 'Windows':    # Windows
+            os.startfile(output_filepath)
+        else:                                   # linux variants
+            subprocess.call(('xdg-open', output_filepath))
         pass
 
     def onCloseClicked(self, btn):
