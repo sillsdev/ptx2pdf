@@ -1,8 +1,25 @@
-PTXprint 3.0.22 Release Notes
-30 Apr 2026
+PTXprint 3.0.23 Release Notes
+7 May 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.23 - (7 May 2026)
+  * Provide options if multiple Paratext projects are located on initial run. #1143
+  * Make the booklist more robust to handle wrong book names or codes #1142
+  * Add link to Master Slides on Help tab
+  * Only one wordlist footnote per word in a verse
+  * Add comments to uwtv converter
+  * Add unfoldingWord conversion script
+  * Add mode to markdown converter
+  * Make sure we don't store None when we mean ''
+  * Turn on space before studynotes if after other notes
+  * Add developer overview doc for the diglot/polyglot system
+  * Refactor wizards
+  * Add Layout (configuration) Wizard; keep button hidden behind -E 1
+  * Fix markdown parsing
+  * Fix intercharspace to have a nobreak at start
+  * Fix style tristate values
 
 Bug fixes and Improvements in 3.0.22 - (30 Apr 2026)
   * Attempt to improve page-fill and avoid some crashes
