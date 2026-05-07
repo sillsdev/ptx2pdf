@@ -311,14 +311,12 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     if sys.platform.startswith("linux") and not args.nox11:
         os.environ['GDK_BACKEND'] = 'x11'
     if (args.extras & 8) != 0 or not len(args.projects):
-        # print("No Paratext Settings directory found - sys.exit(1)")
         if not args.print and args.test is None:
-            from ptxprint.gtkview import getPTDir
-            pdir = getPTDir()
-            if pdir is None:
+            from ptxprint.gtkview import chooseProjectsDir
+            chosen = chooseProjectsDir(find_pt_candidates())
+            if chosen is None:
                 sys.exit(1)
-            else:
-                args.projects = [pdir]
+            args.projects = [str(chosen)]
         else:
             sys.exit(1)
     else:
