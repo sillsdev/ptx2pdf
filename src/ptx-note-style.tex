@@ -70,8 +70,9 @@
     \trace{n}{Creating note class #1}%
 	\x@\n@winsert\csname note-#1\endcsname
 	\x@\newb@x\csname noteb@x-#1\endcsname
-	\x@\newb@x\csname notesave1-#1\endcsname
-	\x@\newb@x\csname notesave2-#1\endcsname
+	\x@\newb@x\csname notesave1-#1\endcsname % - saved as a revert-to point
+	\x@\newb@x\csname notesave2-#1\endcsname % - Notes that need to pass onto next page 
+	\x@\newb@x\csname notesave3-#1\endcsname % - save-point for 'page full but overflowing notes.'
         \x@\newc@unt\csname refn@te-#1\endcsname
 }
 \def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }
@@ -537,8 +538,8 @@
   \par
   \ifp@ranotes\@ch@ckadjustments
   \else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{n}{note(\n@tetype) spaceafter: \p@ram}%
-    \ifx\p@ram\relax\penalty0 \else\vskip\p@ram\verticalsp@ceunit\fi %FIXME Penalty0??? 
-    \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
+    \ifx\p@ram\relax \else\vskip\p@ram\verticalsp@ceunit\fi %There was a  penalty0 (???). Removed, as it seems wrong.
+    %\setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
     % surely we don't want a strut above and below?
     %\dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
     %\vskip \dimen0

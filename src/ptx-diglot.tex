@@ -391,7 +391,7 @@
      \let\col@do=\max@Tinsdim
      \dimen1=0pt
      \x@\each@col\diglot@list\E%
-     \trace{D}{inserts: \the\dimen1}%
+     \trace{D}{top inserts: \the\dimen1}%
      \ifdim\ht\topleftins>\ht\toprightins %
        \decr{\availht}{\topleftins}%
      \else%
@@ -487,7 +487,7 @@
   \global\setbox\galleyexc@ss=\box\voidb@x\global\setbox\galley=\box\voidb@x
   \ifdiglotDebugFollowContents
     \trace{D}{Galley unrolled}%
-    \showlists
+    \Showlists
   \fi
 }
 
@@ -502,7 +502,6 @@
     \d@resplit@galley %
     %\global\output={\diglot@backingup}%
     %\global\intrialtrue
-    %\global\vsize=\trialheight
     %\global\holdinginserts=1
     %\undog@lley
     %\penalty\endtri@lpen@lty
@@ -514,6 +513,7 @@
   \traceNum{d}{d@resplit@galley \c@rrdstat\space\the\trialheight\space bls:\the\baselineskip\space @bls:\the\@bls}%
   \dimen0=\vfuzz
   \vfuzz=\maxdimen
+  \global\haveb@ckeduptrue
   \global\setbox\galleyexc@ss\vbox{\undog@lley}%
   \setbox0\vbox{\penalty9000\unvcopy\galleyexc@ss}%
   \dimen1=\ht\galleyexc@ss\advance\dimen1 by \dp\galleyexc@ss\relax
@@ -526,7 +526,7 @@
   \setbox1=\vbox{\unvbox1}%
   \ifnum 1=\ifdim \ht1<1sp \ifdim\dp1<1sp 1 \else 0\fi \else 0\fi
     \trace{D}{Nothing positive wants to split from top of box: trial failed}% Rejecting negative heights saves us from at least some EEKs! Yey!
-    \ifdiglotDebugFollowContents\showbox\galleyexc@ss \fi
+    \ifdiglotDebugFollowContents\Showbox\galleyexc@ss \fi
     \trialfailedtrue
     \global\trialheight=-\@bls
     \global\setbox\galley\box\voidb@x
@@ -538,11 +538,11 @@
     \global\setbox\galley=\vsplit\galleyexc@ss to \trialheight
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 3}%
-      \showbox\galley%
+      \Showbox\galley%
     \fi
     \setbox3=\vbox{\vskip\dp\galley\splitdiscards}%
     \trace{D}{discard ht:\the\ht3}%
-    \ifdiglotDebugFollowContents\showbox3 \fi
+    \ifdiglotDebugFollowContents\Showbox3\relax\fi
     \vfuzz=\dimen0
     \global\setbox\galley=\vbox{\unvbox\galley\global\galleypenalty=\lastpenalty\unpenalty\penalty\endtri@lpen@lty}%
     \ifvoid\galleyexc@ss\else
@@ -550,7 +550,7 @@
     \fi
     \trace{D}{galley/xs now \the\ht\galley+\the\dp\galley, / \the\ht\galleyexc@ss+\the\dp\galleyexc@ss, gp:\the\galleypenalty}%
     \ifnum\TRACEcount=\diglotDbgJoinboxes
-     \showbox\galley\showbox\galleyexc@ss
+     \Showbox\galley\Showbox\galleyexc@ss
     \fi
     \let\after@this=\d@rerun@trial
   \fi
@@ -568,13 +568,14 @@
   \unvcopy\galley\relax %process newly-shrunk galley
   \ifdiglotDebugFollowContents
     \trace{D}{Showing galley Locn 1}%
-    \showbox\galley
+    \Showbox\galley
   \fi
 }
 \newif\ifNoMergeReflow
 \newif\ifextr@content
 \NoMergeReflowtrue % What to do when lastestagereflow is true and p@rtial is not empty. Changed on 16Dec2024. With false, an earlier column got repeated.
 
+\newif\ifhaveb@ckedup
 \def\run@a@trial{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
   \traceNum{d}{run@a@trial \show@dstat, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty}%
@@ -582,12 +583,13 @@
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname %source
   \trace{D}{partial\c@rrdstat: \the\ht\p@rtl+\the\dp\p@rtl x\the\wd\p@rtl}% The contents of the galley that went to page last time
   \trace{D}{excess\c@rrdstat (\csname digl@txcs\c@rrdstat\endcsname): \the\ht\@xcs+\the\dp\@xcs x\the\wd\@xcs}% Material for this time
-  \ifnum 1= \ifdiglotDebugFollowContents 1 \else \ifnum\TRACEcount=\diglotDbgJoinboxes 1\else 0\fi\fi
-   \showbox\p@rtl
-   \showbox\@xcs
+  \ifnum 1=\ifdiglotDebugFollowContents 1 \else \ifnum\TRACEcount=\diglotDbgJoinboxes 1 \else 0 \fi\fi
+   \Showbox\p@rtl
+   \Showbox\@xcs
   \fi
   \global\let\tri@lfirstmarks\empty
   \extr@contentfalse
+  \haveb@ckedupfalse % If we have been backing up, then we don't add back extra conent!
   \let\after@run@a@trial=\relax
   \s@tbaseline{p}{p}%
   \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
@@ -605,7 +607,7 @@
     \iflate@stage@reflow
       \trace{D}{restoring notes, re-flowing (\refl@wlist) partial\c@rrdstat\space and excess\c@rrdstat, trigger:\late@stage@trigger}%
       \r@storenotes{\g@tndstat}{1}%
-      %\showbox\p@rtl
+      %\Showbox\p@rtl
       \ifvoid\p@rtl\else
         % FIXME: Merge boxes back together? More data needed! It didn't used to
         % be here, but surely it ought to be?
@@ -623,7 +625,7 @@
     \fi
     \s@veinserts{col}%
     \ifnum\diglotDbgJoinboxes=\TRACEcount
-      \showbox\@xcs
+      \Showbox\@xcs
     \fi
     \dimen0=\ht\@xcs\advance\dimen0 by \dp\@xcs \relax
     \ifdim\dimen0<\trialheight
@@ -631,7 +633,7 @@
     \fi
     \ifdiglotDebugFollowContents
       \trace{D}{Showing xcs before split}%
-      \showbox\@xcs
+      \Showbox\@xcs
     \fi
     \savingvdiscards=1
     \trace{D}{Splitting to \the\availht}%
@@ -642,8 +644,8 @@
     \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
     \trace{D}{discard ht was \the\ht3}%
     \ifdiglotDebugFollowContents
-      \showbox3
-      \showbox\p@rtl
+      \Showbox3
+      \Showbox\p@rtl
     \fi
     {\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
     \global\vsize=\availht}% let grouping undo addition
@@ -654,7 +656,7 @@
       \global\setbox\@xcs=\vbox{\vskip\ht3\penalty10000\unvbox\@xcs}% %TeX will not split at glue with a penalty after it.
       \ifdiglotDebugFollowContents
         \trace{D}{Showing xcs after split}%
-        \showbox\@xcs
+        \Showbox\@xcs
       \fi
     \fi
     % Sadly, there isn't a \splitpenalty. Unwrap split discards and use that to see if there's a penalty there
@@ -683,13 +685,13 @@
     \fi\fi
     \iftemp
       \ifnum\interactionmode=2
-        \showbox\galley
+        \Showbox\galley
       \fi
     \fi
     \tracetimset{any@trial}%
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 4}%
-      \showbox\galley
+      \Showbox\galley
     \fi
     \global\output{\diglot@any@trial}
     \unvcopy\galley
@@ -728,7 +730,7 @@
     DCyc:\the\deadcycles,
     LB:\the\ht\Lbox+\the\dp\Lbox, av:\the\availht, vs:\the\vsize, pg:\the\pagegoal iftrialfailed\iftrialfailed true\else false\fi}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
-   \showbox\trialbox\showbox\galleyexc@ss\showlists
+   \Showbox\trialbox\Showbox\galleyexc@ss\Showlists
   \fi
   \ifnum\outputpenalty=\endtri@lpen@lty
     \global\intrialfalse
@@ -761,9 +763,9 @@
   \iftemp
     \traceNum{D}{Rejecting \the\ht\partialL+\the\dp\partialL,\the\ht\galley+\the\dp\galley, :: \the\ht\galleyexc@ss+\the\dp\galleyexc@ss (\the\trialheight}%
     \ifnum\TRACEcount=\diglotDbgJoinboxes \relax
-      \x@\showbox\csname partial\c@rrdstat\endcsname 
-      \x@\showbox\csname excess\c@rrdstat\endcsname 
-      \showbox\galley
+      \x@\Showbox\csname partial\c@rrdstat\endcsname 
+      \x@\Showbox\csname excess\c@rrdstat\endcsname 
+      \Showbox\galley
     \fi
     \global\advance\trialheight by -1\baselineskip\relax
     \ifdim\trialheight>\baselineskip
@@ -790,7 +792,7 @@
         \trace{D}{\c@rrdstat boxpenalty changed from \the\csname \c@rrdstat boxpenalty\endcsname\space to \tmp value \the\count255}%
         \x@\global\csname \c@rrdstat boxpenalty\endcsname=\count255
       \else
-        \trace{D}{\c@rrdstat boxpenalty changed from \the\csname \c@rrdstat boxpenalty\endcsname\space to galley value \galleypenalty}%
+        \trace{D}{\c@rrdstat boxpenalty changed from \the\csname \c@rrdstat boxpenalty\endcsname\space to galley value \the\galleypenalty}%
         \x@\global\csname\c@rrdstat boxpenalty\endcsname =\galleypenalty
         \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
         \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
@@ -798,7 +800,7 @@
       \global\setbox\galleyexc@ss=\box\voidb@x
       \ifdiglotDebugFollowContents
         \trace{D}{Showing galley locn 2}%
-        \showbox\galley
+        \Showbox\galley
       \fi
       \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname\box\galley% Remember the old galley
       \x@\global\csname \c@rrdstat ht\endcsname=\dimexpr \ht\trialbox + \dp\trialbox\relax
@@ -807,7 +809,7 @@
       \update@marks
     \fi
     \trace{D}{End of after@a@trial (\c@rrdstat) LB:\the\ht\Lbox+\the\dp\Lbox (\the\Lboxpenalty), RB:\the\ht\Rbox+\the\dp\Rbox (\the\Rboxpenalty)}%
-    %\showlists
+    %\Showlists
   \fi
   \tracetimcheck{a@a@trial}{end}%
   \after@this
@@ -820,10 +822,10 @@
   \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
   \ifdiglotDebugFollowContents
     \trace{D}{Showing galley@xcess}%
-    \x@\showbox\galleyexc@ss
+    \x@\Showbox\galleyexc@ss
     \trace{D}{Showing restored excess\c@rrdstat}%
-    \x@\showbox\csname excess\c@rrdstat\endcsname
-    \x@\showbox\csname partial\c@rrdstat\endcsname
+    \x@\Showbox\csname excess\c@rrdstat\endcsname
+    \x@\Showbox\csname partial\c@rrdstat\endcsname
   \fi
   %\ifdim\dimexpr \ht\@xcs + \dp\@xcs + \wd\@xcs\relax=0pt \relax
   %\fi
@@ -904,6 +906,10 @@
 
 
 \newdimen\@bls % Temp baselineskip
+\def\shown@tedims#1{%
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \trace{n}{#1:\the\count\th@cl@ss, \l@gdims{\th@cl@ss}}%
+}
 \def\diglot@any@trial{%output routine for any column
  % Handles calling d@resplit@galley
  %Stashes set material in \trialbox, discards extra,
@@ -913,17 +919,23 @@
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
   \tracetimcheck{any@trial}{output}%
   \traceifset{diglot@any@trial}%
-  \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
+  \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, pg:\the\pagegoal, p:\the\ht\p@rtl, split inserts:\the\insertpenalties}%
   \@bls=\csname b@selineskip\c@rrdstat\endcsname
   \ifnum\holdinginserts=0\relax\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
       \ifnum\interactionmode=2
-        \showbox255
-        \showlists
+        \Showbox{255}%
+        \Showlists
       \fi
     \fi
   \fi
+  \ifdim\ht255<0pt 
+    \trace{d}{Uh oh. Negative box!}%
+    %\global\trialfailedtrue
+    %\pagefulltrue
+  \fi
+  \let\\=\shown@tedims\the\n@tecl@sses
   \ifdim\@ftergalleyskip=0pt \else 
     \setbox255\vbox{\unvbox255}%
     \ifdim\dimexpr \trialheight-\ht255-\dp255 - \@ftergalleyskip\relax >0pt
@@ -934,7 +946,7 @@
   \fi\fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount\relax
     %{\setbox0\vbox{\pagediscards}\showbox0}%
-    \showbox255
+    \Showbox{255}%
   \fi
   \ifm@rksonpage\else
     \tempfalse{%
@@ -979,7 +991,7 @@
   }%
   \setbox255=\vbox{\vskip\@djustskip\penalty10000\unvbox255}%
   \ifdiglotDebugFollowContents
-    \showbox255
+    \Showbox{255}%
   \fi
   \ifdim\ht255>0pt
     \advance\TempDim by -\ht255\relax
@@ -991,44 +1003,61 @@
   \ifvoid\trialbox
     \global\setbox\trialbox=\vbox{\unvbox255}%
     \ifdiglotDebugFollowContents
-      \showbox\trialbox
+      \Showbox\trialbox
     \fi
     \update@marks@partone
+    %\s@venotes{\g@tndstat}{1}% Save *these* notes (page1 notes)
+    %\clearn@tes% And clear them
+    %\cle@rn@tesaves{\g@tndstat}{2}%Things fit or this is a new chunk. No excess notes to carry over.
     \ifdim\TempDim<-0.3\@bls % Coarse test. main trial routine can be pickier if it wants
-      \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
+      \trace{D}{Initial Content does not fit (th:\the\trialheight, \the\TempDim, av:\the\availht)}%
       \global\holdinginserts=1
       \global\trialfailedtrue
     \else
       \trace{D}{Initial content fits(th:\the\trialheight, av:\the\availht, box:\the\ht\trialbox d:\the\TempDim)}%
-      \ifdim \TempDim > 2\@bls
-        \vsize=\TempDim
+      %\ifdim \TempDim > 2\@bls
+        %\vsize=\TempDim
 %        \global\trialheight=\vsize
-      \fi
+      %\fi
     \fi
   \else
     \advance\TempDim by -\ht\trialbox\relax
     \advance\TempDim by -\dp\trialbox\relax
-    \ifdim\TempDim<-0.3\@bls 
-      \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255 (trial failed)}%
-      \ifnum\outputpenalty=\endtri@lpen@lty\relax\else
-        %\showbox\trialbox
-        %\showbox\galley
-        %\showbox\galleyexc@ss
-        %\showlists
+    \ifnum 1=\ifdim\TempDim<-0.3\@bls  1\else\ifhaveb@ckedup 1 \else 0 \fi\fi
+      \trace{D}{Extra content found before end of trial (tb:\l@gdims{\trialbox} th:\the\trialheight) \the\ht255+\the\dp255 (trial failed) td:\the\TempDim, vs:\the\vsize, av:\the\availht}%
+      \ifnum\outputpenalty=\endtri@lpen@lty\relax
+      \else
+        %\Showbox\trialbox
+        %\Showbox\galley
+        %\Showbox\galleyexc@ss
+        %\Showlists
       \fi
       \global\holdinginserts=1
       \global\trialfailedtrue
       \global\vsize=\textheight
+      \ifdim\ht255> 4 \@bls 
+        \ifdim\trialheight>0.5\ht255
+          \trace{D}{Big excess. Reducing th(\the\trialheight) by \the\dimexpr 0.5\ht255\relax}%
+          \global\advance\trialheight -0.5\ht255
+        \else
+          \trace{D}{Big excess. Reducing th(\the\trialheight) to \the\dimexpr 4\@bls\relax}%
+          \let\trialheight 4\@bls
+        \fi
+      \fi
+      %\s@venotes{\g@tndstat}{2}%
       \global\setbox255\box\voidb@x
     \else
-      \iftrialfailed
+      \ifhaveb@ckedup
+        \trialfailedtrue
         \global\setbox255\box\voidb@x
       \else
         \dimen1=\csname baselineDelta\c@rrdstat\endcsname 
         \advance\dimen1 -\baselineDelta
+        \trace{d}{Extra material found (\ifextr@content again\fi), which also fits (\the\ht255+\the\dp255)-bld(\the\dimen1). (trial sz \the\trialheight \space  was wrong)  \space \the\TempDim remains. \show@dstat}%
+        \ifdim\dimen1=0pt \else
+          \setbox255=\vbox{\vskip\dimen1\unvbox255}%
+        \fi
         \global\extr@contenttrue
-        \trace{d}{Extra material found, which also fits (\the\ht255+\the\dp255)-bld(\the\dimen1). (trial sz \the\trialheight \space  was wrong)  \space \the\TempDim remains. \show@dstat}%
-        \setbox255=\vbox{\vskip\dimen1\unvbox255}%
         \global\setbox\trialbox=\vbox{\joinboxes{\trialbox}{255}{5}{0}}%
         \ifdim \TempDim > 2\@bls
           \vsize=\TempDim
@@ -1044,7 +1073,7 @@
       \ifdim\trialheight<0.5\@bls
         \trace{D}{Abandoning trial for \c@rrdstat, no space for galley at all}%
         %\ifdiglotDebugFollowContents
-          %\ifp@rtlset \showbox\p@rtl\fi
+          %\ifp@rtlset \Showbox\p@rtl\fi
         %\fi
         \r@storenotes{\g@tndstat}{1}% As if galley hadn't happened.
         \r@storeinserts{col}%
@@ -1062,7 +1091,12 @@
       \trace{D}{All looks good!  \the\ht\trialbox+\the\dp\trialbox (gp:\the\galleypenalty, op: \the\outputpenalty)}%
       %\box\trialbox
       %\global\outputpenalty=\galleypenalty
-      \let\after@this=\whichtrial
+      \ifnum\insertpenalties>0
+        \let\after@this=\coll@ct@overrun
+        %\let\after@this=\whichtrial
+      \else
+        \let\after@this=\whichtrial
+      \fi
     \fi
   \else
     \iftrialfailed
@@ -1075,11 +1109,38 @@
   \after@this
 }
 
+\def\coll@ct@overrun{% Need another output cycle to protect overrunning notes and inserts
+  \trace{d}{coll@ct@overrun: \the\insertpenalties, \l@gdims{255}}%
+  \global\setbox10=\box255% Stash away the current box
+  %\global\@@debugnotestrue
+  \s@venotes{\g@tndstat}{3}%
+  \clearn@tes
+  \st@shinserts{chunk}%
+  \global\output={\@coll@ct@overrun}%
+  \global\vsize=\maxdimen
+  \vfill
+  \vbox to 0pt{}%
+  \vfill
+  \penalty\endtri@lpen@lty
+}
+\def\@coll@ct@overrun{%Collect insert overrun
+  \trace{d}{@coll@ct@overrun: \the\insertpenalties, vs:\the\vsize, pg:\the\pagegoal}%
+  \Showbox{255}%
+  \s@venotes{\g@tndstat}{2}%Save notes for next page
+  \r@storenotes{\g@tndstat}{3}%
+  \st@shinserts{nxtpg}%
+  \r@storeinserts{chunk}%
+  \setbox0\box255
+  \setbox255\box10
+  %\global\@@debugnotesfalse
+  \global\vsize=\availht
+  \whichtrial
+}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
   \ifintrial
-    %\showlists
+    %\Showlists
     \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}% (expected penalty \the\endtri@lpen@lty)}%
     %\endgraf\vfill\penalty\endtri@lpen@lty % Doesn't help 
     \relax
@@ -1117,7 +1178,7 @@
     \traceNum{D}{Got \the\savedpenalty from headings}%
     \ifnum\TRACEcount=\diglotDbgJoinboxes
       \showboxbreadth=100
-      \showlists
+      \Showlists
     \fi
   \fi%
   \ifb@dy\ifdim \pagetotal>0pt 
@@ -1144,7 +1205,7 @@
   \else
     \del@from@digl@tc@ntentlist{\c@rrdstat}%
   \fi
-  %\showlists
+  %\Showlists
   %\global\savedpenalty=0 % avoid cross-contamination
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
@@ -1223,6 +1284,7 @@
   \trace{D}{he@dingstyle is \ifhe@dingstyle set\else  not set\fi}%
   \trace{D}{he@dings is \ifhe@dings set\else  not set\fi}%
   \diglot@run@trials
+  \trace{D}{end of trials \csname tri@llist\endcsname,\the\curactivecols: \csname cts@list\endcsname}%
   \global\allNeedEmptyingfalse
   \csname aftereverychunkhook\endcsname% A potentially useful hook
   \ifcsname afterthischunkhook\endcsname % One-shot hook.
@@ -1521,7 +1583,7 @@
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
  \traceNum{d}{joinboxes #1(\l@gdims{#1}) #2(\l@gdims{#2}) called from locn #3, with penalty #4}%
  \ifnum\TRACEcount=\diglotDbgJoinboxes
-   \showbox#1\showbox#2
+   \Showbox#1\Showbox#2
  \fi\relax
  %How do these boxes join?
  \ifdim\ht#1>0pt
@@ -1540,7 +1602,7 @@
    \def\join@b{unknown}%
  \fi%
  %\bgroup
- %\ifnum#3=10\showbox#1\fi%
+ %\ifnum#3=10\Showbox#1\fi%
  \ifdim\ht#1=0pt \ifdim\dp#1=0pt \ifdim\wd#1=0pt \setbox0=\box#1\fi\fi\fi%make a 0 size box void
  \ifvoid#1%
    \trace{D}{#1 is void}%
@@ -1548,7 +1610,7 @@
    \s@tbaseline{p}{p}%
    \ifdim\ht#1=0pt
      \unvbox#1
-     %\showlists
+     %\Showlists
      \dimen4=\lastkern%
      \dimen5=\dimen4
      \unkern
@@ -1616,15 +1678,15 @@
    \unvbox#2 %
  \fi%
  \ifnum\diglotDbgJoinboxes=\TRACEcount
-   \showlists
+   \Showlists
  \fi
 }
 
 \def\joinb@xes#1#2{%Called (ONLY) by pagebuilder. Join a vtop/vbox and a vbox/vbox together and preserve baselineskip%
- %\showbox#1\showbox#2%
+ %\Showbox#1\Showbox#2%
  \bgroup
   \ifnum\TRACEcount=\diglotDbgJoinboxes
-    \showbox#1\showbox#2
+    \Showbox#1\Showbox#2
   \fi\relax
   \setbox0=\box#1
   \setbox1=\box#2
@@ -2092,8 +2154,8 @@
   %\showboxdepth=3 %
   %\showboxbreadth=1000 %
   %\ifnum\pageno=1%
-  %\showbox\Lbox%
-  %\showbox\Rbox%
+  %\Showbox\Lbox%
+  %\Showbox\Rbox%
   %\fi%
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty%
@@ -2134,7 +2196,7 @@
   %
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
-  \s@veallnotes{2}% remember old notestate 
+  %\s@veallnotes{2}% remember old notestate 
   \s@veinserts{chunk}%
   %
   % Save current column contents as n@xtp@rtial
@@ -2171,8 +2233,8 @@
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
-    \global\trialheight=\availht\relax%
-    \global\vsize=\trialheight\relax%
+    \global\trialheight=\availht\relax% Note that trialheight is not the same as vsize. trialheight is the cut point, vsize includes losses for notes/inserts.
+    \global\vsize=\availht\relax%
   \fi
   \ifpagefull%
     \traceifset{updp-full}%
@@ -2256,11 +2318,11 @@
     \trace{Df}{Notes for #1 \x@\the\x@\ht\csname #1box\endcsname, bls=\the\baselineskip, lsl=\the\lineskiplimit}%
     %\x@\ifdim\x@\ht\csname #1box\endcsname<\AboveNoteSpace
       %\x@\ifdim\x@\ht\csname #1box\endcsname>0pt
-        %\x@\showbox\csname #1box\endcsname
+        %\x@\Showbox\csname #1box\endcsname
       %\fi
     %\fi
   \fi
-  \ifnum\DEBUGnotes=\the\pageno \showbox\csname #1box\endcsname \fi
+  \ifnum\DEBUGnotes=\the\pageno \Showbox\csname #1box\endcsname \fi
   \setc@rdstat{\s@veddstat}\baselineskip=\s@vedbaseline\relax
   \lineskiplimit=\s@vedlineskiplimit\relax
 }
@@ -2359,7 +2421,7 @@
   \advance\dimen3 by \dimen9
   \trace{D}{Raising footnotebox by \the\dimen3 \space note:\l@gdims{\notechunk}, partial:\l@gdims{\partial}}%
   \global\setbox\partial=\vbox{\unvbox\partial\kern -\dimen3\vskip 0.5\AboveNoteSpace plus 1fil \dimen0=\dp\notechunk\box\notechunk}%
-  \ifnum\diglotDbgJoinboxes=\TRACEcount \showbox\partial\fi
+  \ifnum\diglotDbgJoinboxes=\TRACEcount \Showbox\partial\fi
 }%
 
 \def\@writep@ge{%
@@ -2419,8 +2481,20 @@
   \traceifcheck{@prep@writep@ge@simplecols}%
 }
 
+\def\diglot@applypgnotes#1{%Insert saved notes at start of unused galley
+  \trace{D}{diglot@applypgnotes #1}%
+  \global\setbox\csname excess#1\endcsname\vbox{%
+    \applysavedn@tes{\@g@tndstat{#1}}{2}%
+    \Showlists
+    \unvbox\csname excess#1\endcsname}%
+  \ifdiglotDebugFollowContents
+    \Showbox{\csname excess#1\endcsname}%
+  \fi
+}
+  
 \newif\ifactually@write
 \newif\if@@bg
+\def\diglot@writeparpageend#1{\ifhmode\beginL\fi\pdfsavepos \write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{#1}}\ifhmode\endL\fi}%Logging routine
 \def\@do@writep@ge@simplecols{
   \traceifset{@do@writep@ge@simplecols}%
   \traceifset{@do@writep@ge@simplecols-a}%
@@ -2432,7 +2506,7 @@
     \traceNum{d}{Forming page}%
   \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark}%
   \ifnum\TRACEcount=\diglotDbgJoinboxes
-    \showbox\partial
+    \Showbox\partial
     \showthe\everyhbox
     \showthe\leftskip
     \showthe\rightskip
@@ -2519,7 +2593,7 @@
   \ifunprintable 
     \abortpage
   \else
-    \def\tmpwrite##1{\ifhmode\beginL\fi\pdfsavepos \write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\ifhmode\endL\fi}%
+    \let\tmpwrite\diglot@writeparpageend
     \@@setppagecontents@simplecols
     \holdinginserts=1
     \trace{D}{PFM:\p@gefirstmark\space PBM:\p@gebotmark\space NPFM:\nextp@gefirstmark}%
@@ -2532,6 +2606,7 @@
   \traceifcheck{@do@writep@ge@simplecols-d}%
   \traceifcheck{@do@writep@ge@simplecols}%
 }
+
 \def\@@setppagecontents@simplecols{%
   \traceifset{@@setppagecontents}%
   \def\pagecontents{%
@@ -2686,8 +2761,15 @@
     \ifx\pagecontents\empty\else
       \trace{u}{Printing final part of page}%
       \plainoutput%
+      \let\pagecontents\empty
     \fi
-    \let\pagecontents\empty
+    \ifdiglotSepNotes\else
+      \r@storeallnotes{2}%
+      \f@rstnotetrue%
+      \def\pagecontents{
+        \m@kenotebox\unvbox2 % defined by m@kenotebox
+      }\plainoutput
+    \fi
     \global\unprintablefalse
 } 
 \def\@end@writep@ge@simplecols{%
@@ -2711,18 +2793,23 @@
   \xdef\firstRmark{}%
   \xdef\botRmark{}%
   \@mptyinserts
+  \r@storeinserts{nxtpg}%
   \s@veinserts{chunk}%
   \s@veinserts{col}%
-  \s@veallnotes{1}%
-  \s@veallnotes{2}%
   \nextshipout
+  \let\col@do=\diglot@applypgnotes
+  \x@\each@col\diglot@list\E
+  %\r@storeallnotes{2}%
+  \clear@allsaves{1}%
+  \clear@allsaves{2}%
+  \clear@allsaves{3}%
+  \ifdiglotDebugFollowContents
+    \Showlists
+  \fi
   \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
   \ifcsname page-\the\pageno\endcsname
     \csname page-\the\pageno\endcsname
   \fi
-  %\nonstopmode
-  %\showthe\output
-  %%somejunk
 }
 \def\@reset@diglot@simplecols{%Rsetting things that happend at end of page OR layout style switch
   \trace{d}{@reset@diglot@simplecols: resetting things at end of diglot}%
@@ -2743,8 +2830,8 @@
   % Fills: \excessX and \wholeX
   % Empties: \box255
   \traceNum{D}{diglotCollect \c@rrdstat O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize. \ifintrial IN trial\fi}%
-  %\ifintrial\showlists\fi
-  \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
+  %\ifintrial\Showlists\fi
+  \ifnum\diglotDbgJoinboxes=\TRACEcount\Showbox{255}\fi
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
   \ifx\destb@x\relax
     \errmessage{! ERROR! Improper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
@@ -2770,7 +2857,7 @@
 %
   \fi
   \makevtop{255}%
-  \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
+  \ifnum\diglotDbgJoinboxes=\TRACEcount\Showbox{255}\fi
   \trace{D}{dp:\the\dp255}%
   \tmpcount=\outputpenalty %
   \ifnum\outputpenalty=10000 % Nothing wrong with breaking here
@@ -2792,7 +2879,7 @@
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi\ifintrial IN trial??\fi}%
     \ifallNeedEmptying
       \global\let\n@xtc@mmand=\diglot@run@trials
-      \global\allNeedEmptyingfalse
+      %\global\allNeedEmptyingfalse
     \fi
   \fi
   \resetc@rdstat
@@ -2844,6 +2931,7 @@
 }
 
 \def\reflow@trial#1{%Restore trial contents to excess
+  \trace{D}{reflow@trial #1}%
   \x@\let\x@\p@rtl\csname partial#1\endcsname
   \x@\let\x@\@xcs\csname excess#1\endcsname
   \ifvoid\p@rtl\else
@@ -3146,7 +3234,7 @@
     }}%
   \fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount
-    \showbox\partial
+    \Showbox\partial
   \fi
   \voidn@xtpartial
 }
@@ -3285,7 +3373,7 @@
       \global\lastchunkpenalty=0
     \else
       \ifdim\dimexpr \ht\partial + \dp\partial + \ht\n@xtpartial + \dp\n@xtpartial=0pt
-        \message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near \c@rref}%
+        \message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere between \tri@lfirstmarks-\c@rref}%
         \ifunprintable
           \errmessage{Cannot continue}%
           \divide \count0 by 0 
@@ -3340,6 +3428,13 @@
   \x@\each@col\diglot@list\E
   \let\col@do=\delta@val
   \x@\each@col\diglot@list\E % Find 'skip' after each chunk
+  \csname s@tctslist@\diglotlayout\endcsname
+  \let\nxt\relax
+  \ifx\cts@list\empty\else\let\nxt\diglot@run@trials\let\digl@tc@ntentlist\cts@list
+    \trace{d}{Eh? Why is there still content? Will rerun}%
+  \fi
+  \trace{d}{end of diglot@run@trials, \cts@list(\the\curactivecols)}%
+  \nxt
 }
 
 \def\empty@partials{%Empty (eventually store?) partialX
@@ -3361,7 +3456,7 @@
     \ifnum 1=\x@\ifvoid\csname excess\c@rrdstat\endcsname \x@\ifvoid\csname partial\c@rrdstat\endcsname 0\else 1\fi\else 1\fi
       \loc@lhttrue\dglt@calc@vailht
       %\ifnum\triall@@pcount=1
-        %\showbox\partialL\showbox\excessL
+        %\Showbox\partialL\Showbox\excessL
       %\fi
       \global\p@rtlsetfalse
       \run@a@trial
@@ -3403,7 +3498,7 @@
       \empty@partials% voids partialX for all X in tri@llist, also sets triallist to empty.
     \fi
   \fi
-  %\showlists
+  %\Showlists
   \trace{D}{tri@llist: \tri@llist|\digl@tc@ntent@xcs, tlc=\the\triall@@pcount}%
   \ifx\tri@llist\empty
     \advance\triall@@pcount by 1 \relax
@@ -3445,7 +3540,7 @@
     \trace{d}{enddigl@t 2nd run \the\ht\n@xtpartial+\the\dp\n@xtpartial, \the\ht\partial+\the\dp\partial (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist)}%
     \diglot@run@trials
     \ifnum\interactionmode=2
-      \showbox\n@xtpartialNrml\showbox\n@xtpartialRev
+      \Showbox\n@xtpartialNrml\Showbox\n@xtpartialRev
     \fi
     \@add@n@xtpartial
     \trace{d}{After that; \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
@@ -3462,7 +3557,7 @@
           \else
           \fi
         \fi%avoid clashes with textborder and backgrounds
-        %\ifnum\pageno=117\showbox\partial\fi
+        %\ifnum\pageno=117\Showbox\partial\fi
         \csname digl@t@endbook@\diglotlayout\endcsname
         \csname @savepartial@\diglotlayout\endcsname
         \trace{d}{Book end: partial \the\ht\partial+\the\dp\partial}%
@@ -3496,7 +3591,7 @@
     \csname @do@writep@ge@\diglotlayout\endcsname
     \pagecontents
   }%
-  %\showbox\partial
+  %\Showbox\partial
   \global\partialfr@medtrue
 }
 \def\makediglotgutter#1#2#3{\hbox to \gutter{\hss

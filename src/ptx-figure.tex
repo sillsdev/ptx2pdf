@@ -53,11 +53,11 @@
 %toprightins, bottomleftins etc. are now aliases
 \edef\ins@rts{\columnins@rts\pageins@rts}
 
-\def\s@veclasses{col,chunk,} % diglot needs to save two distinct states per box.
+\def\s@veclasses{col,chunk,nxtpg,} % diglot needs to save three distinct states per box.
 \def\s@veins@class@name#1#2{save#1#2}
 \def\s@veclass@name#1{\s@veins@class@name{#1}{\s@veclass}}
 \def\m@kes@veb@x#1\E{\x@\newb@x\csname \s@veins@class@name{\ins@base}{#1}\endcsname}
-\def\s@veins#1\E{\x@\setbox\x@3\x@\copy\csname #1\endcsname\x@\global\x@\setbox\csname \s@veclass@name{#1}\endcsname\box3}
+\def\s@veins#1\E{\x@\global\x@\setbox\csname \s@veclass@name{#1}\x@\endcsname\x@\@@action\csname #1\endcsname}
 \def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname \s@veclass@name{#1}\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
 \def\sh@winsertdim#1\E{\x@\let\x@\tmp\csname \v@lpfx#1\v@lsfx\endcsname\immediate\write-1{\v@lpfx#1\v@lsfx: \ifx\tmp\relax\else\the\ht\tmp\space x \the\wd\tmp\fi}}
 
@@ -69,6 +69,15 @@
 \def\s@veinserts#1{%loop through \ins@rts and save them
   \trace{gI}{Saving inserts (#1)}%
   \edef\s@veclass{#1}%
+  \let\@@action\copy
+  \let\d@=\s@veins
+  \x@\cstackdown\ins@rts\E
+}
+
+\def\st@shinserts#1{%loop through \ins@rts and save them
+  \trace{gI}{Saving inserts (#1) (destructively)}%
+  \edef\s@veclass{#1}%
+  \let\@@action\box
   \let\d@=\s@veins
   \x@\cstackdown\ins@rts\E
 }
