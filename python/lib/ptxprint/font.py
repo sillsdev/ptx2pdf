@@ -866,6 +866,9 @@ class TTFont:
         return names
 
     def readhhea(self, inf):
+        if 'hhea' not in self.dict:
+            self.numhmetrics = 0
+            return
         inf.seek(self.dict['hhea'][0])
         data = inf.read(36)
         self.ascent, self.descent = struct.unpack(b">Hh", data[4:8])

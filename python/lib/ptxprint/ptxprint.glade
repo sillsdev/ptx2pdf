@@ -16694,11 +16694,13 @@ or export them to an external folder.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton">
+                                      <object class="GtkButton" id="btn_layoutWizard">
                                         <property name="label" translatable="yes">Layout Wizard...</property>
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
+                                        <property name="no-show-all">True</property>
                                         <property name="valign">center</property>
                                         <signal name="clicked" handler="onConfigWizardClicked" swapped="no"/>
                                       </object>

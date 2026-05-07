@@ -315,8 +315,8 @@
             {
               "id": "a5",
               "label": "A5 (Half A4)  ·  148 × 210 mm  /  5.8 × 8.3 in",
-              "description": "The most common size for Bibles worldwide.",
-              "pros": ["Widely used for Bibles.", "Good balance of text space and portability.", "Standard worldwide."],
+              "description": "A common size for home-printed scriptures; less common in formal publishing.",
+              "pros": ["Widely used for trial printouts.", "Good balance of text space and portability.", "Ideal for 2-up on A4 paper."],
               "cons": []
             },
             {

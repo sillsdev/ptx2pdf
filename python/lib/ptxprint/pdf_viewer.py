@@ -1360,7 +1360,7 @@ class PDFContentViewer(PDFFileViewer):
             i += 1
             if not i % 100:
                 pump_gtk()
-                if not keep_going:
+                if not keepgoing:
                     return False
 
         if self.spacethreshold == 0:
