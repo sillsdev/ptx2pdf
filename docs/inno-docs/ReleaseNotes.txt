@@ -1,8 +1,19 @@
-PTXprint 3.0.23 Release Notes
-7 May 2026
+PTXprint 3.0.24 Release Notes
+9 May 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.24 - (9 May 2026)
+  * Use new dialog for choosing base project location if -Z 8 is used from CLI
+  * Fix bare except on Windows DPI and WindowGeometry.fromConfig drops frame fields
+  * Fix bare except: in parselog swallows KeyboardInterrupt
+  * Fix PDF color variant suffix silently dropped from filename
+  * Fix analyse_script can crash or loop forever
+  * Fix path typo shard->shared and _mergecfg uses wrong config variable
+  * Fix getBooks returns None instead of [] when no project loaded
+  * Fix doError logs txt instead of secondary for secondary message
+  * Fix duplicate Thumb Tabs widget_map key and Log Analysis excluded from summary
 
 Bug fixes and Improvements in 3.0.23 - (7 May 2026)
   * Provide options if multiple Paratext projects are located on initial run. #1143
