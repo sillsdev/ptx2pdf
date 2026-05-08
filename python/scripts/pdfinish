@@ -18,6 +18,7 @@ except ImportError:
     import ptxprint
 from ptxprint.utils import saferelpath
 from ptxprint.pdf.pdfsig import make_signatures, get_page_size
+from ptxprint.pdf.pdfdiff import createDiff
 
 from pathlib import Path
 import gi
@@ -139,7 +140,19 @@ class Finisher(Gtk.Application):
         """
         Run pdfdiff from Gtk application
         """
-        raise NotImplementedError
+        base_pdf_path = self.builder.get_object("fp_compare").get_filename()
+        input_diff_rgba = self.builder.get_object("col_ndiffColor").get_rgba()
+        input_diff_color = (input_diff_rgba.red * 256, input_diff_rgba.green  * 256, input_diff_rgba.blue  * 256)
+        base_diff_rgba = self.builder.get_object("col_odiffColor").get_rgba()
+        base_diff_color = (base_diff_rgba.red * 256, base_diff_rgba.green  * 256, base_diff_rgba.blue  * 256)
+        # 'Offset starting page' option - what it is?
+        onlydiffs = self.builder.get_object("c_onlyDiffs").get_active()
+        diffpages = int(self.builder.get_object("s_diffpages").get_value())
+
+        if not base_pdf_path:
+            raise IOError("You need to select a file for computing the diff!")
+        createDiff(self.input_pdf_path, base_pdf_path, self.output_filepath, doError, color=input_diff_color,
+                                onlydiffs=onlydiffs, oldcolor=base_diff_color, limit=diffpages)
 
     def _run_pdfsig(self):
         """
