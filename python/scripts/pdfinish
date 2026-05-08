@@ -82,8 +82,8 @@ class Finisher(Gtk.Application):
         Gtk.main()
 
     def onProcessClicked(self, btn):
-        pdf_path = self.builder.get_object("fp_input").get_filename()
-        if not pdf_path:
+        self.input_pdf_path = self.builder.get_object("fp_input").get_filename()
+        if not self.input_pdf_path:
             raise IOError("You need to select an input file!")
         dialog = Gtk.FileChooserDialog(
             title="Select output file",
@@ -98,12 +98,53 @@ class Finisher(Gtk.Application):
         response = dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            output_filepath = dialog.get_filename()
-            print("Selected file:", output_filepath)
+            self.output_filepath = dialog.get_filename()
+            print("Selected file:", self.output_filepath)
         dialog.destroy()
         if response != Gtk.ResponseType.OK:
             return
 
+        notebook = self.builder.get_object('pdfinish_notebook')
+        current_page_id = notebook.get_current_page()
+
+        if current_page_id == 0:
+            self._run_pdfdiff()
+        elif current_page_id == 1:
+            self._run_pdfsig()
+        elif current_page_id == 2:
+            self._run_formatting()
+        elif current_page_id == 3:
+            self._run_overlay()
+        elif current_page_id == 4:
+            self._run_watermark()
+        else:
+            raise Exception("Unknown page id")
+
+        # open output PDF
+        if platform.system() == 'Darwin':       # macOS
+            subprocess.call(('open', self.output_filepath))
+        elif platform.system() == 'Windows':    # Windows
+            os.startfile(self.output_filepath)
+        else:                                   # linux variants
+            subprocess.call(('xdg-open', self.output_filepath))
+        pass
+
+    def onCloseClicked(self, btn):
+        Gtk.main_quit()
+
+    def onDestroy(self, btn):
+        Gtk.main_quit()
+
+    def _run_pdfdiff(self):
+        """
+        Run pdfdiff from Gtk application
+        """
+        raise NotImplementedError
+
+    def _run_pdfsig(self):
+        """
+        Run pdfsig from Gtk application
+        """
         pages_per_spread = self.builder.get_object("ecb_pagesPerSpread").get_active_id()
         sheets_per_sig = int(self.builder.get_object("s_sheetsPerSignature").get_value())
         fold_cut_margin = self.builder.get_object("s_foldCutMargin").get_value()
@@ -113,22 +154,27 @@ class Finisher(Gtk.Application):
         sheetsize_active_text = self.builder.get_object("ecb_sheetSize").get_active_text()
         selected_sheet_size = get_sheet_size(sheetsize_active_text)
         outwidth, outheight = get_page_size(selected_sheet_size)
-        make_signatures(pdf_path, outwidth, outheight, pages_per_spread,
-                        sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=output_filepath)
+        make_signatures(self.input_pdf_path, outwidth, outheight, pages_per_spread,
+                        sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=self.output_filepath)
 
-        if platform.system() == 'Darwin':       # macOS
-            subprocess.call(('open', output_filepath))
-        elif platform.system() == 'Windows':    # Windows
-            os.startfile(output_filepath)
-        else:                                   # linux variants
-            subprocess.call(('xdg-open', output_filepath))
-        pass
+    def _run_formatting(self):
+        """
+        Run formatting from Gtk application
+        """
+        raise NotImplementedError
 
-    def onCloseClicked(self, btn):
-        Gtk.main_quit()
+    def _run_overlay(self):
+        """
+        Run overlaying from Gtk application
+        """
+        raise NotImplementedError
 
-    def onDestroy(self, btn):
-        Gtk.main_quit()
+    def _run_watermark(self):
+        """
+        Run watermarking from Gtk application
+        """
+        raise NotImplementedError
+
 
 def main():
     parser = argparse.ArgumentParser()

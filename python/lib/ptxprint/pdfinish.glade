@@ -162,12 +162,12 @@ the current location) in the new PDF.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkNotebook">
+          <object class="GtkNotebook" id="pdfinish_notebook">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="tab-pos">left</property>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkFrame" id="fr_diff">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="margin-start">6</property>
@@ -486,7 +486,7 @@ the previous location) in the old PDF.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkFrame" id="fr_booklet">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="margin-start">6</property>
@@ -802,7 +802,7 @@ should be trimmed after binding.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkFrame" id="fr_format">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="margin-start">6</property>
@@ -1059,7 +1059,7 @@ order to see exceptions of outlying text.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkFrame" id="fr_watermark">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="margin-start">6</property>
