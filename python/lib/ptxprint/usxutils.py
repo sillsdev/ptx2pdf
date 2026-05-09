@@ -543,6 +543,8 @@ class Usfm:
                 ref = RefList(el.get('eid'))[0]
                 newel = el.parent.makeelement('char', attrib={'style': 'vp'})
                 newel.text = str(ref.verse) + (ref.subverse or "")
+                if ref.first != ref.last:
+                    newel.text += "-"+str(ref.last.verse) + (ref.last.subverse or "")
                 pindex = el.parent.index(el)
                 if pindex == 0 and el.parent.text:
                     t = el.parent.text
