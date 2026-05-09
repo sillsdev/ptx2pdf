@@ -294,7 +294,7 @@ class Paragraphs(list):
                     p.insert(0, "")
                 logger.log(5, f"Starting para {p[0]}")
                 cinfo = colinfos.get(polycol, None)
-                if currr is not None:
+                if currr is not None and cinfo is not None:
                     currr.xend = cinfo.topx
                     currr.yend = readpts(p[5])
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]), polycol)

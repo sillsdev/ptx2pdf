@@ -2908,6 +2908,8 @@ class GtkViewModel(ViewModel):
             bks = []
         elif not len(bks):
             bks = ["MOD"]
+        else:
+            bks = list(bks)
         if self.get('c_frontmatter'):
             bks.append("FRT")
         if self.get('c_useSectIntros'):
