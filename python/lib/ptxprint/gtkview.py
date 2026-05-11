@@ -1205,6 +1205,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
+        self._section_desc_labels = {}
+        self._setupCollapsibleSections()
 
         self.builder.get_object("tb_Printers").set_visible(True)
         logger.debug("Project list loaded")
@@ -1975,6 +1977,8 @@ class GtkViewModel(ViewModel):
         self.checkUpdates()
         # self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
+        for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
+            self._updateSectionVisibility(key)
         return True
 
     def toggleUIdetails(self, w, state):
@@ -2628,6 +2632,8 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", pdfre.sub(r"\1", x))
         else:
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
+            self._updateSectionVisibility(key)
         self.unpauseNoUpdate()
 
     def colorTabs(self):
@@ -5485,6 +5491,7 @@ class GtkViewModel(ViewModel):
             return
         self.onSimpleClicked(btn)
         self.sensiVisible("c_useOrnaments")
+        self._updateSectionVisibility("c_useOrnaments")
         self.colorTabs()
         self.setPublishableTextBorder()
 
@@ -5509,6 +5516,7 @@ class GtkViewModel(ViewModel):
             return
         self.onSimpleClicked(btn)
         self.sensiVisible("c_useOrnaments")
+        self._updateSectionVisibility("c_useOrnaments")
         self.colorTabs()
         self.setPublishableSectionBorder()
 
@@ -5527,6 +5535,7 @@ class GtkViewModel(ViewModel):
             return
         self.onSimpleClicked(btn)
         self.sensiVisible("c_useOrnaments")
+        self._updateSectionVisibility("c_useOrnaments")
         self.colorTabs()
         self.setPublishableTitleBorder()
 
@@ -5539,9 +5548,52 @@ class GtkViewModel(ViewModel):
         except KeyError:
             return
 
+    def _setupCollapsibleSections(self):
+        sections = [
+            ("fr_tabs", "gr_thumbs", "c_thumbtabs",
+             _("Decorative tabs at the page edge to help navigate between book groups.")),
+            ("fr_borders", "gr_borders", "c_useOrnaments",
+             _("Enables decorative borders, rules, and verse markers for section headings, page borders, and more.")),
+            ("bx_colophon", "gr_colophon", "c_colophon", None),
+        ]
+        for frame_id, grid_id, key, desc in sections:
+            frame = self.builder.get_object(frame_id)
+            grid = self.builder.get_object(grid_id)
+            if desc is not None:
+                box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                box.set_visible(True)
+                lbl = Gtk.Label(label=desc)
+                lbl.set_halign(Gtk.Align.START)
+                lbl.set_margin_start(7)
+                lbl.set_margin_top(4)
+                lbl.set_margin_bottom(6)
+                lbl.set_visible(True)
+                self._section_desc_labels[key] = lbl
+                frame.remove(grid)
+                box.pack_start(lbl, False, False, 0)
+                box.pack_start(grid, False, False, 0)
+                frame.add(box)
+            grid.set_no_show_all(True)  # prevent show_all() from making grid visible
+            checked = bool(self.get(key))
+            grid.set_visible(checked)
+            if desc is not None:
+                self._section_desc_labels[key].set_visible(not checked)
+
+    def _updateSectionVisibility(self, key):
+        if not hasattr(self, '_section_desc_labels'):
+            return
+        grid_ids = {"c_thumbtabs": "gr_thumbs", "c_useOrnaments": "gr_borders", "c_colophon": "gr_colophon"}
+        if (grid_id := grid_ids.get(key)) is None:
+            return
+        checked = bool(self.get(key))
+        self.builder.get_object(grid_id).set_visible(checked)
+        if key in self._section_desc_labels:
+            self._section_desc_labels[key].set_visible(not checked)
+
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
         self.sensiVisible("c_thumbtabs")
+        self._updateSectionVisibility("c_thumbtabs")
         self.colorTabs()
         self.onNumTabsChanged()
         status = self.get("c_thumbtabs")
@@ -5714,6 +5766,7 @@ class GtkViewModel(ViewModel):
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
+        self._updateSectionVisibility("c_colophon")
         if self.get("c_colophon") and self.get("txbf_colophon") == "":
             self.localizeDefColophon()
 
