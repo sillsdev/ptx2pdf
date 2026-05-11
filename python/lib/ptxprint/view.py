@@ -1934,9 +1934,9 @@ class ViewModel:
 
         def bname(s):
             if os.path.sep == "/":
-                return os.path.basename(s.replace("\\", "/"))
+                return os.path.basename(str(s).replace("\\", "/"))
             else:
-                return os.path.basename(s.replace("/", "\\"))
+                return os.path.basename(str(s).replace("/", "\\"))
 
         # pictures and texts
         fpath = baseprj.path

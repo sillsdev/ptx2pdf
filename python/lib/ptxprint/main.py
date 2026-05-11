@@ -136,6 +136,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-A', '--action', help="Perform a specific action instead of printing")
     parser.add_argument('-m', '--macros', help="Directory containing TeX macros (paratext2.tex)")
     parser.add_argument('-M', '--module', help="Specify module to print")
+    parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
     parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
     parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
     parser.add_argument('-t','--test',help="test file to run interactive test against")
@@ -463,6 +464,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 return mainw
             mainw.savePics()
             mainw.saveStyles()
+            if not args.enablescripts:
+                mainw.set("c_processScript", False)
             job = doit(mainw, noview=True, nothreads=True)
             if job is not None:
                 res = job.res
