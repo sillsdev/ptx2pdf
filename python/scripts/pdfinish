@@ -19,6 +19,7 @@ except ImportError:
 from ptxprint.utils import saferelpath
 from ptxprint.pdf.pdfsig import make_signatures, get_page_size
 from ptxprint.pdf.pdfdiff import createDiff
+from ptxprint.pdf.procpdf import procpdf
 
 from pathlib import Path
 import gi
@@ -95,6 +96,7 @@ class Finisher(Gtk.Application):
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_SAVE, Gtk.ResponseType.OK
         )
+
         dialog.set_do_overwrite_confirmation(True)
         response = dialog.run()
 
@@ -113,7 +115,7 @@ class Finisher(Gtk.Application):
         elif current_page_id == 1:
             self._run_pdfsig()
         elif current_page_id == 2:
-            self._run_formatting()
+            self._run_procpdf()
         elif current_page_id == 3:
             self._run_overlay()
         elif current_page_id == 4:
@@ -121,6 +123,8 @@ class Finisher(Gtk.Application):
         else:
             raise Exception("Unknown page id")
 
+        if not os.path.exists(self.output_filepath):
+            raise Exception("File not created as expected!")
         # open output PDF
         if platform.system() == 'Darwin':       # macOS
             subprocess.call(('open', self.output_filepath))
@@ -170,11 +174,17 @@ class Finisher(Gtk.Application):
         make_signatures(self.input_pdf_path, outwidth, outheight, pages_per_spread,
                         sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=self.output_filepath)
 
-    def _run_formatting(self):
+    def _run_procpdf(self):
         """
         Run formatting from Gtk application
         """
-        raise NotImplementedError
+        output_format = self.builder.get_object("ecb_outputFormat").get_active_id()  # aka, ispdfxa
+        spot_rgba = self.builder.get_object("col_spotColor").get_rgba()
+        spottolerance = self.builder.get_object("s_spotColorTolerance").get_value()
+        spotcolor = f"rgb({spot_rgba.red * 256}, {spot_rgba.green  * 256}, {spot_rgba.blue  * 256})"
+
+        # run procpdf - what does outfname do?
+        procpdf(self.output_filepath, self.input_pdf_path, output_format, doError, None, cover=None, spottolerance=spottolerance, spotcolor=spotcolor, output_filepath=self.output_filepath)
 
     def _run_overlay(self):
         """
