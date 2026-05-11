@@ -373,9 +373,9 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
 print("binaries:", binaries)
 print("datas:", datas)
 
-#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 jobs = {
-    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]}
+    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
+    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 tcolls = []
 for k, v in jobs.items():
