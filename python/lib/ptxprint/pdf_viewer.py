@@ -988,6 +988,8 @@ class PDFContentViewer(PDFFileViewer):
             return
         if cpage is None:
             cpage = self.current_index or self.parlocs.pnums.get(1, 1) if self.parlocs is not None else 1
+        if self.numpages:
+            cpage = max(1, min(cpage, self.numpages))
         self.spread_mode = self.model.get("c_bkView", False)
         # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
         if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
@@ -1299,11 +1301,11 @@ class PDFContentViewer(PDFFileViewer):
 
     def loadnshow(self, fname, iscurrent, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
         def plocs(self):
-            res = self.load_parlocs(self.parlocfile, rtl=rtl)
-            if page is not None and page in self.parlocs.pnums:
+            self.load_parlocs(self.parlocfile, rtl=rtl)
+            if page is not None and self.parlocs is not None and page in self.parlocs.pnums:
                 self.current_page = page
                 self.current_index = self.parlocs.pnums[page]
-            return res
+            return True
         if parlocs is None:
             parlocs = self.parlocfile
         if parlocs is not None:
@@ -1339,6 +1341,11 @@ class PDFContentViewer(PDFFileViewer):
                 res = self.parlocs.load_dests(self.document)
         except (IndexError,):
             pass
+        finally:
+            dlg = getattr(self.parlocs, '_parloc_dlg', None)
+            if dlg is not None:
+                dlg.response(Gtk.ResponseType.OK)
+                self.parlocs._parloc_dlg = None
         if res and self.showanalysis:
             res = self.load_analysis(fname)
         return res

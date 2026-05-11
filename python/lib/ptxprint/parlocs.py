@@ -220,11 +220,13 @@ class Paragraphs(list):
         innote = False
         pwidth = 0.
         keepgoing = True
+        self._parloc_dlg = None
         if gui:
             def dlgresponse(rid):
                 nonlocal keepgoing
                 keepgoing = rid != Gtk.ResponseType.CANCEL
-            dlg = background_msg(_("Reading paragraph info. Press Cancel to stop"), dlgresponse)
+            self._parloc_dlg = background_msg(_("Reading paragraph info. Press Cancel to stop"), dlgresponse)
+            dlg = self._parloc_dlg
         lines = ParlocLinesIterator(fname)
         for l in lines:
             m = self.parlinere.match(l)
@@ -412,8 +414,9 @@ class Paragraphs(list):
             # "nontextstop":    # x, y
             # "parpicanchor":   # ref, picid, x, y
         self.sort(key=lambda x:x.sortKey())
-        if gui:
+        if gui and keepgoing:
             dlg.response(Gtk.ResponseType.OK)
+        self._parloc_dlg = None
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
         return True
