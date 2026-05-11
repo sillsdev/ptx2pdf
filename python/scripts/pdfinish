@@ -20,6 +20,7 @@ from ptxprint.utils import saferelpath
 from ptxprint.pdf.pdfsig import make_signatures, get_page_size
 from ptxprint.pdf.pdfdiff import createDiff
 from ptxprint.pdf.procpdf import procpdf
+from ptxprint.pdfrw import PdfReader, PdfWriter, PageMerge
 
 from pathlib import Path
 import gi
@@ -196,7 +197,12 @@ class Finisher(Gtk.Application):
         """
         Run watermarking from Gtk application
         """
-        raise NotImplementedError
+        watermark_pdf_path = self.builder.get_object("fp_watermark").get_filename()
+        base = PdfReader(self.input_pdf_path)
+        watermark_page = PdfReader(watermark_pdf_path).pages[0]
+        for page in base.pages:
+            PageMerge(page).add(watermark_page, prepend=True).render()
+        PdfWriter(self.output_filepath, trailer=base).write()
 
 
 def main():
