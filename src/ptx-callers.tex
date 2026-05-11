@@ -75,7 +75,7 @@
       \loop\ifnum\c@llernum>\AutoCallerNumChars
         \advance\c@llernum by -\AutoCallerNumChars \repeat
       \advance\c@llernum by -1 \advance\c@llernum by \AutoCallerStartChar
-      \edef\getcalleres{\char\c@llernum}% generate an alphabetic auto-caller
+      \edef\getcallerres{\char\c@llernum}% generate an alphabetic auto-caller
     \else
       \edef\getcallerres{\number\c@llernum}% generate a numeric caller
     \fi
