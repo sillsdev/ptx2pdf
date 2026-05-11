@@ -1,8 +1,24 @@
-PTXprint 3.0.24 Release Notes
-9 May 2026
+PTXprint 3.0.25 Release Notes
+11 May 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.25 - (11 May 2026)
+  * Add -S to enable external scripts during CLI printing, for protection
+  * Minor fixes and hopefully handle cross platform paths in archive creation
+  * Integrate pdfinish into the build
+  * Tighten up the UI vertically to take less space
+  * Make sure PDF Preview shows the updated page
+  * Fix python-bug16-17-20-usfmerge      #1157 
+  * Fix tex-bug05-leftmarks-logic-typo   #1164 
+  * Fix tex-bug01-getcalleres-typo       #1160 
+  * Fix tex-bug02-set-utonum-overwrites  #1161 
+  * Fix tex-bug04-duplicate-gdef         #1163 
+  * Fix tex-bug07-wrong-if-conditional   #1166 
+  * Fix image padding bug causing pics to disappear completely
+  * Fix missing cinfo/topx bug
+  * Fix end of ayah for verse ranges
 
 Bug fixes and Improvements in 3.0.24 - (9 May 2026)
   * Use new dialog for choosing base project location if -Z 8 is used from CLI
