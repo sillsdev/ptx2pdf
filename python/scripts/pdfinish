@@ -21,6 +21,7 @@ from ptxprint.pdf.pdfsig import make_signatures, get_page_size
 from ptxprint.pdf.pdfdiff import createDiff
 from ptxprint.pdf.procpdf import procpdf
 from ptxprint.pdfrw import PdfReader, PdfWriter, PageMerge
+from ptxprint.pdfblender import blend_pdf
 
 from pathlib import Path
 import gi
@@ -191,7 +192,8 @@ class Finisher(Gtk.Application):
         """
         Run overlaying from Gtk application
         """
-        raise NotImplementedError
+        mirrored = self.builder.get_object("c_mirrored").get_active()
+        blend_pdf(self.input_pdf_path, self.output_filepath, mirrored=mirrored)
 
     def _run_watermark(self):
         """

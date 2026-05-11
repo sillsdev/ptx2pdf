@@ -1028,7 +1028,7 @@ order to see exceptions of outlying text.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton">
+                  <object class="GtkCheckButton"  id="c_mirrored">
                     <property name="label" translatable="yes">PDF has Mirrored Pages</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
