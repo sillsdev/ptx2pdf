@@ -323,9 +323,6 @@ class Report:
             return False
         return True
 
-        def myhackylambda(view, widget):
-            return ("", logging.DEBUG)
-
     def get_general_info(self, view):
         widget_map = {
             "Project Name":               ("1. Project/Overview", "l_projectFullName", 1100, \

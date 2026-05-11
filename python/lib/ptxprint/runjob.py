@@ -114,14 +114,6 @@ def newBase(fpath):
     else:
         return re.sub('[()&+,.;: ]', '_', base(fpath).lower())
 
-_diglotprinter = {
-"_diglotcustomsty":         "c_useCustomSty",
-"_diglotmodsty":            "c_useModsSty",
-"_diglotincludefn":         "c_includeFootnotes",
-"_diglotincludexr":         "c_includeXrefs"
-}
-
-
 _joblock = None
 def lockme(job):
     global _joblock
@@ -444,9 +436,6 @@ class RunJob:
         self.info["project/books"] = donebooks
         logger.debug(f"{donebooks=}")
 
-        # Pass all the needed parameters for the snippet from diginfo to info
-        for k,v in _diglotprinter.items():
-            self.info.printer.set(k, diginfo.printer.get(v))
         self.info["_isDiglot"] = True
         res = self.sharedjob(jobs, diglots=True)
         texfiles += res
@@ -630,7 +619,7 @@ class RunJob:
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
             self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
-            if isinstance(self.runner, subprocess.Popen) and runner is not None:
+            if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
                 try:
                     #runner.wait(self.args.timeout)
                     self.runner.wait()

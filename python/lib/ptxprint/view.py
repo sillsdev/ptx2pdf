@@ -1932,21 +1932,28 @@ class ViewModel:
         basecfpath = baseprjid + "/shared/ptxprint/" + self.cfgid
         interlang = self.get("t_interlinearLang") if self.get("c_interlinear") else None
 
+        def bname(s):
+            if os.path.sep == "/":
+                return os.path.basename(s.replace("\\", "/"))
+            else:
+                return os.path.basename(s.replace("/", "\\"))
+
         # pictures and texts
         fpath = baseprj.path
         scope = self.get("r_book")
         if scope == "module":
             bk = books[0]
-            res[os.path.join(fpath, bk)] = baseprjid + "/" + os.path.basename(bk)
-            cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+os.path.basename(bk)), "moduleFile")
-            cfgchanges['lb_bibleModule'] = os.path.basename(bk)
+            bkname = bname(bk)
+            res[os.path.join(fpath, bk)] = baseprjid + "/" + bkname
+            cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+bkname), "moduleFile")
+            cfgchanges['lb_bibleModule'] = bkname
             usfms = self.get_usfms()
             mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
         for bk in books + ['INT']:
             fname = self.getBookSrcPath(bk, baseprjid, project=baseprj)
             if fname is not None:
-                res[fname] = baseprjid + "/" + os.path.basename(fname)
+                res[fname] = baseprjid + "/" + bname(fname)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
@@ -1960,10 +1967,10 @@ class ViewModel:
         pathkey = 'src path'
         if self.picinfos is not None:
             for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
-                    res[f] = prjid + "/local/figures/"+os.path.basename(f)
+                    res[f] = prjid + "/local/figures/"+bname(f)
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
-            res[xrfile] = baseprjid + "/" + os.path.basename(xrfile)
+            res[xrfile] = baseprjid + "/" + bname(xrfile)
             cfgchanges["btn_selectXrFile"] = res[xrfile]
 
         # piclists
@@ -1982,7 +1989,7 @@ class ViewModel:
         if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
             for p in extrapics:
-                b = os.path.basename(p)
+                b = bname(p)
                 if p not in res:
                     res[p] = prjid + "/local/figures/" + b
         else:
@@ -2007,7 +2014,7 @@ class ViewModel:
             cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
-            k = os.path.basename(v)
+            k = bname(v)
             res[v] = prjid + "/local/ptxprint/" + cfgid + "/fonts/" + k
 
         if baseprjid:
@@ -2024,7 +2031,7 @@ class ViewModel:
             for a in ('BgImage', 'FgImage'):
                 val = v.get(a, mystyles.basesheet.get(k, {}).get(a, None))
                 if val is not None:
-                    fname = os.path.basename(val)
+                    fname = bname(val)
                     res[val] = baseprjid + "/figures/"+fname
                     mystyles.setval(k, a, "../../../figures/" + fname)
 
@@ -2062,8 +2069,9 @@ class ViewModel:
 
         script = self.customScript
         if script: # is not None and len(script):
-            res[script] = baseprjid + "/" + os.path.basename(script)
-            cfgchanges["btn_selectScript"] = os.path.join(self.project.path, os.path.basename(script))
+            sname = bname(script) 
+            res[script] = baseprjid + "/" + sname
+            cfgchanges["btn_selectScript"] = os.path.join(self.project.path, sname)
 
         pts = self._getPtSettings(prjid=baseprjid)
         ptres = pts.getArchiveFiles()
