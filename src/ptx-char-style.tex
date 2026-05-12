@@ -476,14 +476,16 @@
   \x@\shdwmul#2 \E
   \edef\@@outlinw{\strip@pt{\dimexpr #4\FontSizeUnit \relax}}%
   \edef\@@outcol{#5}\edef\@@shadcol{#3}\edef\@@fgcol{#6}% 
+  \edef\sv@interactionmode{\the\interactionmode}%
   \nonstopmode
   \tracingassigns=1
   \everypar={}\everyhbox={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf
   \@do@shadow}%
-  \ifdim \wd#1=0pt \else %\showbox#1 
+  \ifdim \wd#1=0pt \else %\showbox#1
     \setbox#1\hbox{\@@do@shadow{#1}}%
     \unhbox#1\fi
   \tracingassigns=0
+  \interactionmode=\sv@interactionmode
   }%
   %\showbox\ulb@x
   \setbox#1\box\ulb@x
