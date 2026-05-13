@@ -175,7 +175,10 @@ class WorkingCoverState:
             setfront("Border", None)
             for a in "Style Ref Color".split():
                 setfront("Border"+a, "")
-        setfront("BgColor", self.bg_color.replace("#", "x"), all=True)
+        if self.bg_mode == "solid":
+            setfront("BgColor", self.bg_color.replace("#", "x"), all=True)
+        elif self.bg_mode == "white":
+            setfront("BgColor", "xFFFFFF", all=True)
         setfront("Alpha", self.bg_opacity / 100, all=True)
         for d in (True, False):
             for c in ("BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha"):
@@ -604,6 +607,7 @@ class CoverWizardApp:
         self._buildPage6()
         self._buildPage7()
 
+    def run(self):
         self._stepIndex = 0
         self._updateStepList()
         self._goToStep(0)
@@ -1950,7 +1954,6 @@ class CoverWizardApp:
         if self.view is not None:
             self.state.updateView(self.view)
         self.onWindowDestroy(self.window)
-
 
     def onWindowDestroy(self, widget):
         self.window.hide()

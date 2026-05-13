@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union, Generator, Iterable, Literal
 from collections import deque, defaultdict
 from configparser import ConfigParser
-import heapq, re, os, logging, random, itertools, argparse, threading, socket, queue as _queue
+import heapq, re, os, logging, random, itertools, argparse, threading, queue as _queue
 import multiprocessing as mp
 from math import sqrt, log10
 from time import time, asctime
@@ -498,7 +498,7 @@ class TypesetterSolver:
                 free = new_state.layout.pages[page].column_free_lines
             if new_state.layout.first_failing_page is None or new_state.layout.first_failing_page > page or free is None or not len(free) or all(x == 0 for x in free):
                 logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
-                logger.log(15, f"Winning params {",".join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
+                logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
                 self.base_params = dict(new_state.paragraph_params)
                 new_state.passed = True
                 return new_state
@@ -567,7 +567,7 @@ class TypesetterSolver:
         self.itercount += 1
         logger.log(15, "layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
                 page, self.itercount, not self.noprobe,
-                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and i <= page+2}),
+                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
                 combo)
         self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
         return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
@@ -744,10 +744,20 @@ class PTXprinter:
             self.view.project.ext = f"pbuild{nid}"
             d = self.view.project.printPath(self.view.cfgid)
             if os.path.exists(d):
+                import time as _time
                 for f in os.listdir(d):
                     fp = os.path.join(d, f)
-                    if os.path.isfile(fp):
-                        os.unlink(fp)
+                    if not os.path.isfile(fp):
+                        continue
+                    for attempt in range(4):
+                        try:
+                            os.unlink(fp)
+                            break
+                        except PermissionError:
+                            if attempt < 3:
+                                _time.sleep(0.5)
+                            else:
+                                logger.warning(f"Cannot delete {fp} — file still locked; skipping")
 
     def solve(self, bk, stop=False, restart=False):
         self.bk = bk        # needed by run()
@@ -1004,75 +1014,34 @@ class PTXprinter:
 
 
 class GLibCompatQueue:
-    """A progress queue whose read side gives GLib.io_add_watch a real socket fd.
-    Architecture:
-      - Workers (child processes) call put() which writes to a plain mp.Queue.
-        mp.Queue is picklable so Worker instances can be spawned on Windows.
-      - The main process wraps the read side: a background thread drains the
-        mp.Queue and forwards items over a socket pair, whose read end is a
-        real socket fd that GLib.IOChannel.unix_new() accepts on Windows.
-    The GLibCompatQueue itself is NOT pickled into workers — only the inner
-    mp.Queue is passed (see __getstate__/__setstate__).
-    """
+    """A progress queue safe to share with worker processes on Windows.
 
-    class _Reader:
-        def __init__(self, sock):
-            self._sock = sock
-        def fileno(self):
-            return self._sock.fileno()
+    Workers (child processes) call put() which writes to the inner mp.Queue.
+    mp.Queue is picklable, so Worker instances can be spawned on Windows.
+
+    The main process polls for events using get_nowait(), called periodically
+    by a GLib.timeout_add callback — no socket pair or relay thread needed.
+
+    The GLibCompatQueue itself is NOT pickled into workers — only the inner
+    mp.Queue is passed (see __getstate__ / __setstate__).
+    """
 
     def __init__(self):
         self._mp_queue = mp.Queue()
-        self._write_sock, self._read_sock = socket.socketpair()
-        self._write_sock.setblocking(False)
-        self._read_sock.setblocking(False)
-        self._reader = self._Reader(self._read_sock)
-        self._items = _queue.Queue()   # main-thread item buffer
-        # Background thread: drains _mp_queue, buffers items, pings socket
-        self._thread = threading.Thread(target=self._relay, daemon=True)
-        self._thread.start()
-
-    def _relay(self):
-        """Relay items from the mp.Queue to the socket-signalled buffer."""
-        while True:
-            try:
-                item = self._mp_queue.get(timeout=0.5)
-            except Exception:
-                continue
-            if item is None:        # sentinel — shut down
-                break
-            self._items.put(item)
-            try:
-                self._write_sock.send(b'\x01')
-            except (BlockingIOError, OSError):
-                pass
 
     def put(self, item):
         """Called by worker processes (or main process for single-book jobs)."""
         self._mp_queue.put(item)
 
     def get_nowait(self):
-        """Drain one signal byte then return the next item, or raise queue.Empty."""
-        try:
-            self._read_sock.recv(4096)
-        except (BlockingIOError, OSError):
-            pass
-        return self._items.get_nowait()
+        """Return the next item without blocking, or raise queue.Empty."""
+        return self._mp_queue.get_nowait()
 
     def close(self):
-        self._mp_queue.put(None)    # stop the relay thread
         try:
             self._mp_queue.close()
             self._mp_queue.join_thread()
         except Exception:
-            pass
-        try:
-            self._write_sock.close()
-        except OSError:
-            pass
-        try:
-            self._read_sock.close()
-        except OSError:
             pass
 
     def join_thread(self):
@@ -1080,14 +1049,12 @@ class GLibCompatQueue:
 
     # --- Pickling support ---
     # When Worker (mp.Process) is pickled for spawning on Windows, only the
-    # inner mp.Queue crosses the process boundary. The socket pair and relay
-    # thread are main-process-only and are NOT pickled.
+    # inner mp.Queue crosses the process boundary.
     def __getstate__(self):
         return {'_mp_queue': self._mp_queue}
 
     def __setstate__(self, state):
         # In the child process: only restore put() capability via _mp_queue.
-        # All other attributes are absent; get_nowait/_reader are not needed.
         self._mp_queue = state['_mp_queue']
 
 
@@ -1232,6 +1199,7 @@ class MultiView:
             'progress_q':   GLibCompatQueue() if progress else None,
             'cancel_event': mp.Event()
         }
+        self.workers = []
 
     def add_job(self, bk):
         self.task_list.append(bk)
@@ -1243,21 +1211,34 @@ class MultiView:
         for _ in range(self.numproc):
             self.queues['task_q'].put(None)
 
+        results_q = self.queues['results_q']
+        ce = self.queues.get('cancel_event')
         if self.numproc == 1:
             worker = Worker(self.queues, self.build_params, self.log_config, None, stop=stop)
+            self.workers = [worker]
             worker.run()
             results = []
-            while not self.queues['results_q'].empty():
-                results.append(self.queues['results_q'].get())
+            while not results_q.empty():
+                results.append(results_q.get())
         else:
             workers = [Worker(self.queues, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
+            self.workers = workers
             for w in workers:
                 w.start()
             results = []
-            for _ in range(len(self.task_list)):
-                results.append(self.queues['results_q'].get())
+            expected = len(self.task_list)
+            while len(results) < expected:
+                if ce and ce.is_set():
+                    break
+                try:
+                    results.append(results_q.get(timeout=0.5))
+                except _queue.Empty:
+                    continue
             for w in workers:
-                w.join()
+                w.join(timeout=5)
+                if w.is_alive():
+                    w.terminate()
+        self.workers = []
         return results
 
     def cancel(self):

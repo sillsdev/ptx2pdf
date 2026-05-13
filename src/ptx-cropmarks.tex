@@ -405,7 +405,7 @@
   \bgroup
     \dimen1=0.99626401\pdfpagewidth \dimen2=0.99626401\pdfpageheight
     \dimen3=0.99626401\dimen0 \trace{s}{pdfpagewidth=\the\dimen1 from \the\pdfpagewidth}%
-    \ifCropMarks
+    \ifdim\dimen0 > 0pt
       \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
       \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
       \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space

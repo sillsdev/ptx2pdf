@@ -6,8 +6,9 @@ import cairo, re, time, sys, json
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from ptxprint.view import VersionStr
+from ptxprint.version import VersionStr
 from ptxprint.utils import _, f2s, coltoonemax, getcaller
+from ptxprint.gtkutils import background_msg, pump_gtk
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
 from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
@@ -170,6 +171,7 @@ class PDFViewer:
         z = self.viewers[p].zoomLevel
         self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
+        self.viewers[p].updatePageNavigation()
 
     def onmaximized(self):
         c = self.nbook.get_current_page()
@@ -224,6 +226,9 @@ class PDFViewer:
             v.show()
             self.nbook.set_current_page(i)
         self.hide_unused()
+        p = self.nbook.get_current_page()
+        if p < len(self.viewers) and self.viewers[p] is not None:
+            self.viewers[p].updatePageNavigation()
 
     def hide_unused(self):
         for i in range(1, self.nbook.get_n_pages()):
@@ -380,7 +385,8 @@ class PDFFileViewer:
         if not self.load_pdf(fname, **kw):
             return False
         if hook is not None:
-            hook(self)
+            if not hook(self):
+                return False
         self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
@@ -568,11 +574,11 @@ class PDFFileViewer:
             self.set_zoom_fit_to_screen(True)
             self.show_pdf()  # Redraw the current page
             return True
-        elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
-            self.set_page(self.swap4rtl("next"))
+        elif keyval == Gdk.KEY_Right:  # Right arrow (RTL-aware: decreases page in RTL layouts)
+            self.set_page("next")
             return True
-        elif keyval == Gdk.KEY_Left:  # Left arrow → Previous page
-            self.set_page(self.swap4rtl("previous"))
+        elif keyval == Gdk.KEY_Left:  # Left arrow (RTL-aware: increases page in RTL layouts)
+            self.set_page("previous")
             return True
             
     def updatePageNavigation(self):
@@ -982,6 +988,8 @@ class PDFContentViewer(PDFFileViewer):
             return
         if cpage is None:
             cpage = self.current_index or self.parlocs.pnums.get(1, 1) if self.parlocs is not None else 1
+        if self.numpages:
+            cpage = max(1, min(cpage, self.numpages))
         self.spread_mode = self.model.get("c_bkView", False)
         # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
         if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
@@ -1294,9 +1302,10 @@ class PDFContentViewer(PDFFileViewer):
     def loadnshow(self, fname, iscurrent, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
         def plocs(self):
             self.load_parlocs(self.parlocfile, rtl=rtl)
-            if page is not None and page in self.parlocs.pnums:
+            if page is not None and self.parlocs is not None and page in self.parlocs.pnums:
                 self.current_page = page
                 self.current_index = self.parlocs.pnums[page]
+            return True
         if parlocs is None:
             parlocs = self.parlocfile
         if parlocs is not None:
@@ -1324,23 +1333,43 @@ class PDFContentViewer(PDFFileViewer):
 
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
+        res = None
         try:
-            self.parlocs.readParlocs(fname, rtl=rtl)
-            self.parlocs.load_dests(self.document)
+            large_pdf = self.fname is not None and os.path.getsize(self.fname) > 2 * 1024 * 1024
+            res = self.parlocs.readParlocs(fname, rtl=rtl, gui=large_pdf)
+            if res:
+                res = self.parlocs.load_dests(self.document)
         except (IndexError,):
             pass
-        if self.showanalysis:
-            self.load_analysis(fname)
+        finally:
+            dlg = getattr(self.parlocs, '_parloc_dlg', None)
+            if dlg is not None:
+                dlg.response(Gtk.ResponseType.OK)
+                self.parlocs._parloc_dlg = None
+        if res and self.showanalysis:
+            res = self.load_analysis(fname)
+        return res
 
     def load_analysis(self, fname):
         xdvname = fname.replace(".parlocs", ".xdv")
-        print(f"Reading {xdvname}")
+        keepgoing = True
+        def dlgresponse(rid):
+            nonlocal keepgoing
+            if rid == Gtk.ResponseType.CANCEL:
+                keepgoing = False
+        dlg = background_msg(_("Analysing text. Press Cancel to stop"), dlgresponse)
         cthreshold = float(self.model.get("s_paddingwidth", 0.5))
         xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
                                     fontsize=float(self.model.get("s_fontsize", 1)),
                                     outlines=self.model.get("c_collisionPrecise", False))
+        i = 0
         for (opcode, data) in xdvreader.parse():
-            pass
+            i += 1
+            if not i % 100:
+                pump_gtk()
+                if not keepgoing:
+                    return False
+
         if self.spacethreshold == 0:
             self.badspaces = self.parlocs.getnbadspaces()
             if len(self.badspaces):
@@ -1349,6 +1378,8 @@ class PDFContentViewer(PDFFileViewer):
         self.spacepages, self.collisionpages, self.riverpages = \
             self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
                     float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
+        dlg.response(Gtk.ResponseType.OK)
+        return True
 
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """

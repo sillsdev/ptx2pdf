@@ -17,7 +17,7 @@ print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
 
-version="3.0.18"
+version="3.0.25"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -102,7 +102,7 @@ def process_icons(icons, src, dest):
             foundit = True
             t = p[p.find(src) + len(src) + 1:].replace("/",r"\\")
             d = dest + "\\" + t if dest else t
-            s = src.replace("/", "\\") + "\\" + t + "\\" + f
+            s = src.replace("/", "\\") + "\\" + t + "\\" + f        # " make vim happy
 
         if not foundit:
             print(f"Failed to find source for {i}")
@@ -373,9 +373,9 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
 print("binaries:", binaries)
 print("datas:", datas)
 
-#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 jobs = {
     "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]}
+#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 tcolls = []
 for k, v in jobs.items():

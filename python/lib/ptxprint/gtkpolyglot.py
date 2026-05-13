@@ -84,7 +84,7 @@ class PolyglotSetup(Gtk.Box):
         self.update_context_menu()
                 
     def load_polyglots_into_treeview(self):
-        row_index = self.find_or_create_row("L")
+        l_row_index = self.find_or_create_row("L")
         row_index = self.find_or_create_row("R")
         for sfx in self.codes:
             if sfx not in self.view.polyglots:  # Only process existing polyglots
@@ -96,7 +96,7 @@ class PolyglotSetup(Gtk.Box):
             plyglot.code = sfx
             self.ls_config[row_index].clear()
             for c in available_configs:
-                self.ls_config[row_index].append([c])                
+                self.ls_config[row_index].append([c])
             for idx, field in enumerate(_modelfields[1:11], start=1):
                 val = getattr(plyglot, field)
                 if sfx == "L" and idx in (m.fontsize, m.baseline):
@@ -120,11 +120,12 @@ class PolyglotSetup(Gtk.Box):
                     c = polyview.get('_dibackcol', "#FFFFFE")
                     if c is not None and c.startswith("rgb("):
                         rgb = coltoonemax(c)
-                        c = "#{0:02x}{1:02x}{2:02x}".format(*[int(x * 255) for x in rgb])      
+                        c = "#{0:02x}{1:02x}{2:02x}".format(*[int(x * 255) for x in rgb])
                     self.ls_treeview[row_index][m.color] = c
-            if sfx == "L":
-                self.updateRow(row_index)
-                    
+        # Always sync the L row to polyglots (creates polyglots["L"] if missing,
+        # and ensures polyfraction_ is set in the view's _dict for config saving).
+        self.updateRow(l_row_index)
+
         self.update_layout_string()
         self.ensure_right_click_handler()
         self.view.update_diglot_polyglot_UI()

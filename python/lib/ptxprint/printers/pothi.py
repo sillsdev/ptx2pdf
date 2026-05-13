@@ -150,6 +150,9 @@ class Pothi:
     def prepare(self):
         """Called every time the Pothi tab is made active."""
         self.setup()
+        numpages = self.view.getPageCount()
+        if numpages:
+            self._widget("p_pagesSpin").set_value(numpages)
 
     def onInputChanged(self, widget=None):
         """Recalculate and update all output labels whenever any input changes."""
@@ -255,6 +258,35 @@ class Pothi:
             print(f"ERROR in Pothi onInputChanged: {e}")
             import traceback
             traceback.print_exc()
+
+
+    def getPerCopyData(self, quantities):
+        """Return {qty: per_copy_price_INR} for the current settings at each quantity."""
+        try:
+            pages      = int(self._widget("p_pagesSpin").get_value())
+            sizeIdx    = self._widget("p_sizeCombo").get_active()
+            bindingIdx = self._widget("p_bindingCombo").get_active()
+            paperIdx   = self._widget("p_paperCombo").get_active()
+            colorIdx   = self._widget("p_colorCombo").get_active()
+            params      = SIZE_PARAMS[sizeIdx]
+            bindingKey  = BINDING_KEYS[bindingIdx]
+            isCoated    = (paperIdx == 2)
+            isFullColor = (colorIdx == 1)
+            base       = params["fixed"] + params["rate"] * pages
+            bindAdj    = BINDING_ADJ[bindingKey]
+            colorCost  = (params["color_rate"] * pages) if (isFullColor and params["color_rate"]) else 0.0
+            coatedCost = (COATED_RATE * pages) if (isCoated and isFullColor) else 0.0
+            price1     = base + bindAdj + colorCost + coatedCost
+            result = {}
+            for qty in quantities:
+                discPct = 0
+                for minQty, pct in DISCOUNT_TIERS:
+                    if qty >= minQty:
+                        discPct = pct
+                result[qty] = price1 * (1 - discPct / 100)
+            return result
+        except Exception:
+            return {}
 
 
 def fmtRupees(amount):

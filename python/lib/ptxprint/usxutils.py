@@ -529,13 +529,6 @@ class Usfm:
             state = self.visitall(fn, c, state=state)
         return state
 
-    # def make_zsetref(self, ref, book, parent, pos):
-        # attribs = {'style': 'zsetref', 'bkid': str(ref.book), 'chapter': str(ref.chapter), 'verse': str(ref.verse)}
-        # if book is not None:
-            # attribs['book'] = book
-        # res = self.factory("ms", attribs, parent=parent)
-        # return res
-
     def getsubbook(self, refrange, removes={}, addintro=True, **kw):
         if isinstance(refrange, (Ref, RefRange)):
             refrange = [refrange]
@@ -550,6 +543,8 @@ class Usfm:
                 ref = RefList(el.get('eid'))[0]
                 newel = el.parent.makeelement('char', attrib={'style': 'vp'})
                 newel.text = str(ref.verse) + (ref.subverse or "")
+                if ref.first != ref.last:
+                    newel.text += "-"+str(ref.last.verse) + (ref.last.subverse or "")
                 pindex = el.parent.index(el)
                 if pindex == 0 and el.parent.text:
                     t = el.parent.text

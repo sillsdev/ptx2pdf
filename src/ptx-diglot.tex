@@ -78,8 +78,8 @@
 \def\n@xtfirstRmark{} %First Rmark in the n@xt chunk
 \def\n@xtbotLmark{} %First Lmark in the n@xt chunk
 \def\n@xtbotRmark{} %First Rmark in the n@xt chunk
-\def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
-\def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
+\def\LeftMarkstrue{\useLeftMarkstrue\useRightMarksfalse}
+\def\LeftMarksfalse{\useLeftMarksfalse\useRightMarkstrue}
 \def\m@xBelowBaseline{0pt}%
 \def\@fnLht{0pt}
 \def\@fnRht{0pt}
@@ -1317,7 +1317,7 @@
  \ifx\c@rrdstat\empty
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
- \else 
+ \else
    %\diglottrue % Is THIS necessary?
  \fi
 }
@@ -3597,6 +3597,7 @@
     \x@\xdef\csname m@rker#1\endcsname{}%
     \x@\xdef\csname digl@txcs#1\endcsname{}%
     \x@\xdef\csname mcstack#1\endcsname{\mcstack@mpty}%
+    \x@\xdef\csname tri@lsplitRej#1\endcsname{0pt}% Default value, in case of strange code-paths
     \newsp@cialpen{dgl@tPen#1trialEnd}%
     \header@defs{#1}% All the possible header contents
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis

@@ -26,12 +26,13 @@ import cairo
 
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
-from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
+from ptxprint.view import ViewModel, Path
+from ptxprint.version import VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton, doError
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
-            _categoryColors, _bookToCategory, getResourcesDir
+            _categoryColors, _bookToCategory, getResourcesDir, getSrcDir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -55,7 +56,9 @@ from ptxprint.gtktesting import GtkTester
 from ptxprint.printers import init_printers, printer_from_label
 from ptxprint.page_filler import MultiView
 from ptxprint.bookProgressDlg import BookProgressDialog
-from ptxprint.coverwizard import CoverWizardApp
+from ptxprint.wizards.cover.coverwizard import CoverWizardApp
+from ptxprint.wizards.configuration import launchWizard
+
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging, threading
 import webbrowser
@@ -260,9 +263,10 @@ btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 # lpolyfraction_ spolyfraction_ tb_diglotSwitch btn_diglotSwitch
 
 _ui_experimental = """
+btn_layoutWizard
 """.split()
 
-_processing_needed = """c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after t_chapfrom t_chapto r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang btn_chooseBibleModule""".split()
+_processing_needed = """ecb_savedConfig c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after t_chapfrom t_chapto r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang btn_chooseBibleModule""".split()
 
 # every control that doesn't cause a config change
 _ui_unchanged = """r_book t_chapto t_chapfrom ecb_booklist ecb_savedConfig l_statusLine
@@ -282,11 +286,12 @@ _fullpage = {"F": "full", "P": "page"}
 _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition" : "toppurple", "rhruleposition" : "topgreen",
         "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
 
-_ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist", 
-                       "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks") # toggling these causes a crash
+_ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist",
+                       "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks",
+                       "btn_layoutWizard") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover tb_Printers lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
+_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover tb_Printers lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -558,34 +563,121 @@ mac_menu = {
     # }
 }
 
+def _browsePTDir(parent=None):
+    """Open a folder-chooser and return the selected Path, or None if cancelled."""
+    fdialog = Gtk.FileChooserDialog(_("Base Projects Directory"), parent,
+        Gtk.FileChooserAction.SELECT_FOLDER,
+        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+         _("Select"), Gtk.ResponseType.OK))
+    fdialog.set_default_size(400, 300)
+    fdialog.set_select_multiple(False)
+    fresponse = fdialog.run()
+    result = None
+    if fresponse == Gtk.ResponseType.OK:
+        result = Path(fdialog.get_filename() + "/")
+    fdialog.destroy()
+    return result
+
+
+def chooseProjectsDir(candidates):
+    """Show a dialog letting the user pick from multiple detected Paratext project
+    directories.  *candidates* is a list of dicts with keys 'path', 'label',
+    and 'has_projects' (as returned by utils.find_pt_candidates).
+    Returns the chosen path string, or None if the user cancels."""
+    dlg = Gtk.Dialog(title=_("Choose Paratext Projects Folder"), modal=True)
+    dlg.set_default_size(520, -1)
+    dlg.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
+    btn_ok = dlg.add_button(_("Use Selected"), Gtk.ResponseType.OK)
+    btn_ok.get_style_context().add_class("suggested-action")
+    dlg.set_default_response(Gtk.ResponseType.OK)
+
+    box = dlg.get_content_area()
+    box.set_spacing(8)
+    box.set_margin_start(16)
+    box.set_margin_end(16)
+    box.set_margin_top(12)
+    box.set_margin_bottom(12)
+
+    heading = Gtk.Label()
+    heading.set_markup(_("<b>Multiple Paratext project folders were found.</b>\n"
+                         "Choose the one you want PTXprint to use."))
+    heading.set_xalign(0)
+    heading.set_line_wrap(True)
+    box.pack_start(heading, False, False, 0)
+
+    group = None
+    radio_buttons = []
+    for c in candidates:
+        note = _("(contains projects)") if c['has_projects'] else _("(empty — no projects yet)")
+        rb = Gtk.RadioButton.new_with_label_from_widget(group, "")
+        group = rb
+        vb = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=1)
+        lbl_path = Gtk.Label(label=c['path'])
+        lbl_path.set_xalign(0)
+        attrs = Pango.AttrList()
+        attrs.insert(Pango.attr_weight_new(Pango.Weight.SEMIBOLD))
+        lbl_path.set_attributes(attrs)
+        lbl_note = Gtk.Label(label=note)
+        lbl_note.set_xalign(0)
+        lbl_note.get_style_context().add_class("dim-label")
+        vb.pack_start(lbl_path, False, False, 0)
+        vb.pack_start(lbl_note, False, False, 0)
+        rb.get_child().destroy()
+        rb.add(vb)
+        box.pack_start(rb, False, False, 2)
+        radio_buttons.append((rb, c['path']))
+
+    # Pre-select first candidate that has projects, else first overall
+    preferred = next((rb for rb, p in radio_buttons
+                      if candidates[radio_buttons.index((rb, p))]['has_projects']), None)
+    if preferred is None and radio_buttons:
+        preferred = radio_buttons[0][0]
+    if preferred is not None:
+        preferred.set_active(True)
+
+    sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+    box.pack_start(sep, False, False, 4)
+
+    browse_btn = Gtk.Button(label=_("Browse for a different folder…"))
+    browse_btn._chosen_path = None
+
+    def _on_browse(_btn):
+        path = _browsePTDir(dlg)
+        if path is not None:
+            _btn._chosen_path = str(path)
+            dlg.response(Gtk.ResponseType.OK)
+    browse_btn.connect("clicked", _on_browse)
+    box.pack_start(browse_btn, False, False, 0)
+
+    box.show_all()
+    response = dlg.run()
+    chosen = None
+    if response == Gtk.ResponseType.OK:
+        if browse_btn._chosen_path is not None:
+            chosen = browse_btn._chosen_path
+        else:
+            for rb, path in radio_buttons:
+                if rb.get_active():
+                    chosen = path
+                    break
+    dlg.destroy()
+    return chosen
+
+
 def getPTDir():
     txt = _("""Please locate the base directory in which one or more
 Scripture project directories are located (or will be stored).
 
-This message indicates that a 'My Paratext Projects' folder was 
-not located but PTXprint can still run without it, so click OK 
-to choose an alternative base directory (or Cancel to Quit)""")
+This message indicates that a Paratext projects folder was not
+found automatically. PTXprint can still run without one — click
+OK to choose a folder, or Cancel to quit.""")
     dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
             buttons=Gtk.ButtonsType.OK_CANCEL, text=txt)
     response = dialog.run()
     dialog.destroy()
     if response == Gtk.ResponseType.OK:
-        action = Gtk.FileChooserAction.SELECT_FOLDER
-        btnlabel = "Select"
-        fdialog = Gtk.FileChooserDialog("Base Projects Directory", None,
-            (action),
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            (btnlabel), Gtk.ResponseType.OK))
-        fdialog.set_default_size(400, 300)
-        fdialog.set_select_multiple(False)
-        fresponse = fdialog.run()
-        fcFilepath = None
-        if fresponse == Gtk.ResponseType.OK:
-            fcFilepath = Path(fdialog.get_filename()+"/")
-        fdialog.destroy()
-        return fcFilepath
-    else:
-        return None
+        return _browsePTDir()
+    return None
 
 def reset_gtk_direction():
     direction = Gtk.get_locale_direction()
@@ -677,7 +769,9 @@ class WindowGeometry:
             x=gi("x", -1), y=gi("y", -1), width=gi("width", 800), height=gi("height", 600),
             maximized=gb("maximized", False),
             monitor=gi("monitor", 0),
-            mon_x=gi("mon_x", 0), mon_y=gi("mon_y", 0), mon_w=gi("mon_w", 0), mon_h=gi("mon_h", 0)
+            mon_x=gi("mon_x", 0), mon_y=gi("mon_y", 0), mon_w=gi("mon_w", 0), mon_h=gi("mon_h", 0),
+            outer_w=gi("outer_w", 0), outer_h=gi("outer_h", 0),
+            dx=gi("dx", 0), dy=gi("dy", 0)
         )
 
     def toConfig(self, userconfig, name):
@@ -829,7 +923,7 @@ class GtkViewModel(ViewModel):
             # Set DPI awareness
             try:
                 windll.shcore.SetProcessDpiAwareness(2)  # DPI_AWARENESS_PER_MONITOR_AWARE
-            except:
+            except Exception:
                 windll.user32.SetProcessDPIAware()  # Fallback for older Windows versions
 
         if not self.args.quiet:
@@ -842,7 +936,16 @@ class GtkViewModel(ViewModel):
                 cmds = [runsplash_path, os.path.join(pycodedir(), 'splash.glade')]
             else:
                 cmds = [sys.executable, os.path.join(pycodedir(), "runsplash.py"), os.path.join(pycodedir(), "splash.glade")]
-            self.splash = subprocess.Popen(cmds)
+            try:
+                self.splash = subprocess.Popen(cmds)
+            except OSError as e:
+                self.splash = None
+                doError(_("PTXprint could not launch a required component (runsplash)."),
+                        secondary=_("This may indicate a corrupted or incomplete installation.\n\n"
+                                    "Please re-install PTXprint from:\n"
+                                    "https://software.sil.org/ptxprint/download/\n\n"
+                                    "Error: {}").format(e),
+                        autocloseSeconds=0)
         else:
             self.splash = None
 
@@ -975,6 +1078,7 @@ class GtkViewModel(ViewModel):
         self._picframe_connected = False
         self.fallbackPrj = None
         self.bkProgressDlg = None
+        self.coverwiz = None
 
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
@@ -1101,6 +1205,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("l_updateDelay").set_label(_("({}s delay)").format(self.get("s_autoupdatedelay", 3.0)))
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
+        self._section_desc_labels = {}
+        self._setupCollapsibleSections()
 
         self.builder.get_object("tb_Printers").set_visible(True)
         logger.debug("Project list loaded")
@@ -1292,6 +1398,9 @@ class GtkViewModel(ViewModel):
         combo = self.builder.get_object("fcb_project")
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         combo.set_wrap_width(wide)
+        if not getattr(combo, '_scrollFix', False):
+            combo.connect("notify::popup-shown", self._fixComboPopupScroll)
+            combo._scrollFix = True
         self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
 
@@ -1314,6 +1423,30 @@ class GtkViewModel(ViewModel):
         # Apply the properties to the cell renderer
         cell.set_property('weight', font_weight)
         cell.set_property('foreground', fg_color)
+
+    def _fixComboPopupScroll(self, combo, pspec):
+        if not combo.props.popup_shown:
+            return
+        for win in Gtk.Window.list_toplevels():
+            if win.get_type_hint() == Gdk.WindowTypeHint.COMBO:
+                self._applyScrollToComboPopup(win)
+                break
+
+    def _applyScrollToComboPopup(self, popup_win, max_height=480):
+        def fixSW(widget):
+            if isinstance(widget, Gtk.ScrolledWindow):
+                widget.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+                widget.set_max_content_height(max_height)
+                widget.queue_resize()
+                return True
+            try:
+                for child in widget.get_children():
+                    if fixSW(child):
+                        return True
+            except AttributeError:
+                pass
+            return False
+        fixSW(popup_win)
 
     def initialize_uiLevel_menu(self):
         levels = self.builder.get_object("ls_uiLevel")
@@ -1438,7 +1571,7 @@ class GtkViewModel(ViewModel):
 
         logger.debug("Creating source views")
         lm = GtkSource.LanguageManager()
-        langpath = os.path.join(os.path.dirname(__file__), "syntax")
+        langpath = os.path.join(getSrcDir(), "syntax")
         sm = GtkSource.StyleSchemeManager()
         logger.debug(f"Setting syntax files path to {langpath}")
         lm.set_search_path([langpath])
@@ -1871,6 +2004,8 @@ class GtkViewModel(ViewModel):
         self.checkUpdates()
         # self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
+        for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
+            self._updateSectionVisibility(key)
         return True
 
     def toggleUIdetails(self, w, state):
@@ -2315,6 +2450,16 @@ class GtkViewModel(ViewModel):
         cleaned = re.sub(r'[^A-Za-z0-9\-:;, ]+', '', no_accents)
         cleaned = re.sub(r'\s+', ' ', cleaned).strip()
         bls = re.sub(r'-END', '-end', cleaned.upper())
+        # Validate every letter-only token as a known USFM book code
+        _valid = set(allbooks)
+        bad_codes = [c for c in re.findall(r'\b([A-Z]+)\b', bls) if c not in _valid]
+        if bad_codes:
+            self.doError(
+                _("Unknown book code: {}").format(', '.join(bad_codes)),
+                secondary=_("'{}' is not a recognised book code.\n"
+                             "Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV).").format(bad_codes[0])
+            )
+            return
         self.set('ecb_booklist', bls)
         self.bookrefs = None
         bl = self.getAllBooks()
@@ -2514,6 +2659,8 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", pdfre.sub(r"\1", x))
         else:
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
+            self._updateSectionVisibility(key)
         self.unpauseNoUpdate()
 
     def colorTabs(self):
@@ -2794,6 +2941,8 @@ class GtkViewModel(ViewModel):
             bks = []
         elif not len(bks):
             bks = ["MOD"]
+        else:
+            bks = list(bks)
         if self.get('c_frontmatter'):
             bks.append("FRT")
         if self.get('c_useSectIntros'):
@@ -5369,6 +5518,7 @@ class GtkViewModel(ViewModel):
             return
         self.onSimpleClicked(btn)
         self.sensiVisible("c_useOrnaments")
+        self._updateSectionVisibility("c_useOrnaments")
         self.colorTabs()
         self.setPublishableTextBorder()
 
@@ -5393,6 +5543,7 @@ class GtkViewModel(ViewModel):
             return
         self.onSimpleClicked(btn)
         self.sensiVisible("c_useOrnaments")
+        self._updateSectionVisibility("c_useOrnaments")
         self.colorTabs()
         self.setPublishableSectionBorder()
 
@@ -5411,6 +5562,7 @@ class GtkViewModel(ViewModel):
             return
         self.onSimpleClicked(btn)
         self.sensiVisible("c_useOrnaments")
+        self._updateSectionVisibility("c_useOrnaments")
         self.colorTabs()
         self.setPublishableTitleBorder()
 
@@ -5423,9 +5575,52 @@ class GtkViewModel(ViewModel):
         except KeyError:
             return
 
+    def _setupCollapsibleSections(self):
+        sections = [
+            ("fr_tabs", "gr_thumbs", "c_thumbtabs",
+             _("Decorative tabs at the page edge to help navigate between book groups.")),
+            ("fr_borders", "gr_borders", "c_useOrnaments",
+             _("Enables decorative borders, rules, and verse markers for section headings, page borders, and more.")),
+            ("bx_colophon", "gr_colophon", "c_colophon", None),
+        ]
+        for frame_id, grid_id, key, desc in sections:
+            frame = self.builder.get_object(frame_id)
+            grid = self.builder.get_object(grid_id)
+            if desc is not None:
+                box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                box.set_visible(True)
+                lbl = Gtk.Label(label=desc)
+                lbl.set_halign(Gtk.Align.START)
+                lbl.set_margin_start(7)
+                lbl.set_margin_top(4)
+                lbl.set_margin_bottom(6)
+                lbl.set_visible(True)
+                self._section_desc_labels[key] = lbl
+                frame.remove(grid)
+                box.pack_start(lbl, False, False, 0)
+                box.pack_start(grid, False, False, 0)
+                frame.add(box)
+            grid.set_no_show_all(True)  # prevent show_all() from making grid visible
+            checked = bool(self.get(key))
+            grid.set_visible(checked)
+            if desc is not None:
+                self._section_desc_labels[key].set_visible(not checked)
+
+    def _updateSectionVisibility(self, key):
+        if not hasattr(self, '_section_desc_labels'):
+            return
+        grid_ids = {"c_thumbtabs": "gr_thumbs", "c_useOrnaments": "gr_borders", "c_colophon": "gr_colophon"}
+        if (grid_id := grid_ids.get(key)) is None:
+            return
+        checked = bool(self.get(key))
+        self.builder.get_object(grid_id).set_visible(checked)
+        if key in self._section_desc_labels:
+            self._section_desc_labels[key].set_visible(not checked)
+
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
         self.sensiVisible("c_thumbtabs")
+        self._updateSectionVisibility("c_thumbtabs")
         self.colorTabs()
         self.onNumTabsChanged()
         status = self.get("c_thumbtabs")
@@ -5598,6 +5793,7 @@ class GtkViewModel(ViewModel):
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)
+        self._updateSectionVisibility("c_colophon")
         if self.get("c_colophon") and self.get("txbf_colophon") == "":
             self.localizeDefColophon()
 
@@ -6033,7 +6229,7 @@ class GtkViewModel(ViewModel):
             ])
 
     def _loadImagesetsCatalog(self):
-        catalog_path = os.path.join(os.path.dirname(__file__), "imagesets.json")
+        catalog_path = os.path.join(getSrcDir(), "imagesets.json")
         try:
             with open(catalog_path, 'r', encoding='utf-8') as f:
                 return json.load(f).get("imagesets", [])
@@ -6376,8 +6572,9 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def onCoverWizardClicked(self, btn):
-        app = CoverWizardApp(view=self)
-        return  # TODO: implement cover wizard dialog
+        if self.coverwiz is None:
+            self.coverwiz = CoverWizardApp(view=self)
+        self.coverwiz.run()
     
     def createCoverPeriphs(self, **kw):
         self.periphs['coverfront'] = r'''
@@ -7728,6 +7925,15 @@ Thank you,
 
     def _onFillPagesClicked(self, resume=False):
         self.saveAdjlists()
+        mview = getattr(self, 'mview', None)
+        if mview is not None:
+            for w in getattr(mview, 'workers', []):
+                if w.is_alive():
+                    logger.debug(f"Terminating orphaned worker {w.pid}")
+                    w.terminate()
+                    w.join(timeout=3)
+            mview.teardown()
+            self.mview = None
         args = argparse.Namespace(**vars(self.args))
         args.restart = resume
         tout = float(self.get("s_maxfilltime"))
@@ -7738,7 +7944,11 @@ Thank you,
         if numproc == 0:
             numproc = 1
         self.mview.initScheduler(numproc, None, progress=True)
-        self._progress_watch_id = GLib.io_add_watch(self.mview.queues['progress_q']._reader.fileno(), GLib.IO_IN, self.onFillProgress)
+        # Poll for progress events every 100 ms — simpler and more reliable
+        # on Windows than io_add_watch + socketpair.
+        if getattr(self, '_progress_watch_id', None) is not None:
+            GLib.source_remove(self._progress_watch_id)
+        self._progress_watch_id = GLib.timeout_add(100, self._pollFillProgress)
         if self.bkProgressDlg is None:
             self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)  
         self.bkProgressDlg.populate(self.getBooks())
@@ -7747,11 +7957,12 @@ Thank you,
         self.fillThread.start()
 
     def _fillPages_run(self):
+        mview = self.mview
         try:
-            results = self.mview.run_all(True)
+            results = mview.run_all(stop=True)
         finally:
-            self.mview.teardown()
-        print(results)
+            mview.teardown()
+        logger.debug(f"page fill results: {results}")
         self.mview = None
         GLib.idle_add(self._fillPages_finish, results)
 
@@ -7773,17 +7984,23 @@ Thank you,
     def onRestartFillClicked(self, widget, *a):
         self._onFillPagesClicked(resume=False)
 
-    def onFillProgress(self, source, condition):
-        if condition & (GLib.IO_HUP | GLib.IO_ERR):     # tearing down the queue
-            return False
-        q = self.mview.queues['progress_q']
+    def _pollFillProgress(self):
+        """GLib.timeout_add callback: drain all pending progress events."""
+        mview = getattr(self, 'mview', None)
+        if mview is None:
+            self._progress_watch_id = None
+            return GLib.SOURCE_REMOVE
+        q = mview.queues.get('progress_q')
+        if q is None:
+            self._progress_watch_id = None
+            return GLib.SOURCE_REMOVE
         try:
             while True:
                 event = q.get_nowait()
                 self._fill_progress(event)
         except queue.Empty:
             pass
-        return True         # Continue monitoring
+        return GLib.SOURCE_CONTINUE
 
     def onFillCancelled(self):
         if self.mview is not None:
@@ -7802,3 +8019,7 @@ Thank you,
         widget.set_label("Hide progress" if visible else "Show progress")
 
 
+    def onConfigWizardClicked(self, widget):
+        launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),
+             projectDir=self.project.path, configName=self.cfgid,
+             ptxprintVersion=VersionStr, onApply=lambda _: self.saveConfig())

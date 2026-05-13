@@ -17,7 +17,7 @@ classifiers = [
 requires-python = ">=3.8"
 # commented out dynamic versioning for now
 # dynamic = ["version"]
-version = "3.0.18"
+version = "3.0.25"
 
 dependencies = [
 "usfmtc @ https://github.com/usfm-bible/usfmtc/archive/main.zip",
@@ -25,7 +25,8 @@ dependencies = [
 "fonttools",
 "platformdirs",
 "Pillow",
-"numpy"
+"numpy",
+"markdown_it-py"
 ]
 
 [project.optional-dependencies]

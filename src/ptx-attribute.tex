@@ -89,6 +89,7 @@
 \def\Spec@lAttribName#1#2{attr-spec-#1-#2}
 \newif\ifattrspecial
 \def\FlagSpecialAttrib#1{%The given attribute uses special handling, and thus charstyles with it box their values
+  %\message{#1 is a special attrib}%
   \x@\global\x@\let\csname attr-spec-#1\endcsname\tr@e
 }
 \def\CheckSpecial#1{\ifcsname attr-spec-#1\endcsname\attrspecialtrue\fi}
@@ -97,13 +98,13 @@
   \S@tOneSpecialAttrib{#1}{#2}{#3}}
 
 \def\S@tOneSpecialAttrib#1#2#3{%
+  \FlagSpecialAttrib{#1}%
   \def\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
     \x@\let\csname\tmpa\endcsname\relax
   \else
     \x@\def\csname\tmpa\endcsname{#3}%
   \fi}
 \def\SetSpeciallAttribs#1#2#3{%\tracingassigns=1\relax%
-  \FlagSpecialAttrib{#1}%
   \S@tOneSpecialAttrib{#1}{start}{#2}%
   \S@tOneSpecialAttrib{#1}{end}{#3}\tracingassigns=0\relax}%
 
@@ -236,10 +237,12 @@
   }
 
 
-\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\xdef\csname defaultattrkey-#1\endcsname{#2}%
+\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is '#2'}\x@\xdef\csname defaultattrkey-#1\endcsname{#2}%
   \edef\@ttrlistname{@ttriblist-#1}%
   \x@\xdef\csname \@ttrlistname\endcsname{#2}%
-  \CheckSpecial{#1}\ifattrspecial\x@\let\csname boxed-\thiswh@tstyle\endcsname\tr@e\fi
+  \CheckSpecial{#2}\relax\ifattrspecial\x@\let\csname boxed-#1\endcsname\tr@e
+    \trace{A}{Marking style as needing a box}%\else\trace{A}{not a special attrib}%
+  \fi
 }
 
 \x@\def\csname nostore-attrib-eid\endcsname{}

@@ -25,6 +25,21 @@
 \input QRcode.tex
 \QRdimen=2cm
 \def\QRref{\s@tf@rstr@f{\p@gefirstmark}\ifx\@@firstref\empty\else\x@\QRdata\x@! \@@firstref!\QRcode\box\QRcodebox\fi}
+\def\chk@QR@col#1{%
+  \trace{m}{Style-defined QR colour:#1}%
+  \ifx\p@ram\empty
+    \let\p@ram\relax
+  \else
+    \ifx\p@ram\relax\else
+      \edef\tmp{\x@\zap@space#1 \empty}%
+      \ifx\p@ram\tmp% No spaces in that colour definition. It's thus an error or a left-over from the paragraph style
+        \x@\ParseColor\colp@ram\end
+        \x@\h@xsixtotripple \x@ x\r@s\end
+        \let\p@ram\rgb@out
+      \fi
+    \fi
+  \fi
+}
 
 \x@\def\csname MS:zqrcode\endcsname{%
   \bgroup\everypar{}%
@@ -66,13 +81,21 @@
       \dimen0=0.5\QRinside
       \global\setbox\QRcodebox\hbox{\kern-\dimen0\box\QRcodebox\kern\dimen0}%
     \egroup
-    \getp@ram{color}{zqrcode}{\styst@k}%
+    \let\p@ram\relax
     \get@ttribute{color}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
     \get@ttribute{colour}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
-    \ifx\p@ram\relax\else\setfgc@l{\p@ram}\setbox\QRcodebox\hbox{\fgc@l\box\QRcodebox\endfgc@l}\fi
+    \ifx\p@ram\relax
+      \getp@ram{color}{zqrcode}{\styst@k}%
+      \chk@QR@col{\p@ram}%
+    \fi
+    \ifx\p@ram\relax\else\setfgc@l{\p@ram}
+      \trace{m}{QR foreground colour \p@ram}%
+      \setbox\QRcodebox\hbox{\fgc@l\box\QRcodebox\endfgc@l}\fi
     \getp@ram{background}{zqrcode}{\styst@k}%
     \get@ttribute{background}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
-    \ifx\p@ram\relax\else\setbgc@l{\p@ram}\setbox\QRcodebox\hbox{\bgc@l\vrule depth 0pt height \QRbounding width \QRbounding\endbgc@l\kern -\QRbounding\box\QRcodebox}\fi
+    \ifx\p@ram\relax\else
+      \trace{m}{QR background colour \p@ram}%
+      \setbgc@l{\p@ram}\setbox\QRcodebox\hbox{\bgc@l\vrule depth 0pt height \QRbounding width \QRbounding\endbgc@l\kern -\QRbounding\box\QRcodebox}\fi
     \get@ttribute{spacebeside}%
     \ifx\attr@b\relax\getp@ram{spacebeside}{zqrcode}{\styst@k}%
       \ifx\p@ram\relax\def\sp@cebeside{0pt}\else

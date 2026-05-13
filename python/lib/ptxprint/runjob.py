@@ -6,13 +6,14 @@ from threading import Thread
 from ptxprint.runner import call, checkoutput
 from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
-from ptxprint.view import ViewModel, VersionStr, refKey
+from ptxprint.version import VersionStr
+from ptxprint.view import ViewModel
 from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
         saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, \
-        runChanges, swapext
+        runChanges, swapext, refKey
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.procpdf import procpdf
@@ -112,14 +113,6 @@ def newBase(fpath):
         return clwr
     else:
         return re.sub('[()&+,.;: ]', '_', base(fpath).lower())
-
-_diglotprinter = {
-"_diglotcustomsty":         "c_useCustomSty",
-"_diglotmodsty":            "c_useModsSty",
-"_diglotincludefn":         "c_includeFootnotes",
-"_diglotincludexr":         "c_includeXrefs"
-}
-
 
 _joblock = None
 def lockme(job):
@@ -325,7 +318,7 @@ class RunJob:
         self.info["project/books"] = donebooks
         res = self.sharedjob(jobs)
         if self.info['notes/ifxrexternalist']:
-            res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks]
+            res += [os.path.join(self.tmpdir, out+".triggers") for out in donebooks if out is not None]
         return [os.path.join(self.tmpdir, out) for out in donebooks if out is not None] + res
 
     def digdojob(self, jobs, diginfos):
@@ -443,9 +436,6 @@ class RunJob:
         self.info["project/books"] = donebooks
         logger.debug(f"{donebooks=}")
 
-        # Pass all the needed parameters for the snippet from diginfo to info
-        for k,v in _diglotprinter.items():
-            self.info.printer.set(k, diginfo.printer.get(v))
         self.info["_isDiglot"] = True
         res = self.sharedjob(jobs, diglots=True)
         texfiles += res
@@ -554,7 +544,7 @@ class RunJob:
         outpath = os.path.join(self.tmpdir, '..', self.outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
-        self.pdffile = outpath + ".pdf".format(pdfext)
+        self.pdffile = outpath + f"{pdfext}.pdf"
         logger.debug(f"{self.pdffile} exists({os.path.exists(self.pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:
@@ -629,7 +619,7 @@ class RunJob:
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
             self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
-            if isinstance(self.runner, subprocess.Popen) and runner is not None:
+            if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
                 try:
                     #runner.wait(self.args.timeout)
                     self.runner.wait()
@@ -888,7 +878,7 @@ class RunJob:
                     loglines.append(l)
                     if len(loglines) > lines:
                         loglines.pop(0)
-        except:
+        except Exception:
             loglines.append("Logfile missing: "+fname)
         return (loglines, rerunres)
 
@@ -1044,7 +1034,7 @@ class RunJob:
         folderList = ["tmpPics", "tmpPicLists"] 
         cropme = self.info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
-            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N') in 'tbhp' else None
+            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N')[0] in 'tbhp' else None
             logger.debug(f"carefulcopy {src} -> {tgt} @ {ratio}")
             return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
