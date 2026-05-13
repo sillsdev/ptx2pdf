@@ -2,6 +2,8 @@
 
 import argparse, sys, os, re, configparser, subprocess, platform
 import site, logging
+import tempfile
+import uuid
 from shutil import rmtree
 from zipfile import ZipFile
 
@@ -81,6 +83,9 @@ class Finisher(Gtk.Application):
         self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
         self.mw = self.builder.get_object("pdfinish")
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.tmp_file_1 = None
+        self.tmp_file_2 = None
 
         self.mw.show_all()
         Gtk.main()
@@ -112,18 +117,24 @@ class Finisher(Gtk.Application):
         notebook = self.builder.get_object('pdfinish_notebook')
         current_page_id = notebook.get_current_page()
 
-        if current_page_id == 0:
-            self._run_pdfdiff()
-        elif current_page_id == 1:
-            self._run_pdfsig()
-        elif current_page_id == 2:
-            self._run_procpdf()
-        elif current_page_id == 3:
-            self._run_overlay()
-        elif current_page_id == 4:
-            self._run_watermark()
+        checkbox_to_action_dict = {
+            'c_diff': self._run_pdfdiff,
+            'c_repaginate': self._run_pdfsig,
+            'c_format': self._run_procpdf,
+            'c_overlay': self._run_overlay,
+            'c_watermark': self._run_watermark
+        }
+
+        for checkbox in ['c_watermark', 'c_overlay', 'c_format', 'c_repaginate', 'c_diff']:
+            # iterate through actions sequentially in reverse order
+            if self.builder.get_object(checkbox).get_active():
+                action = checkbox_to_action_dict[checkbox]
+                self.run_action(action)
+        if self.tmp_file_1 is None:
+            raise Exception('There is nothing to do! Select at least one action before clicking Process.')
         else:
-            raise Exception("Unknown page id")
+            os.rename(self.tmp_file_1, self.output_filepath)
+            self.tmp_file_1, self.tmp_file_2 = None, None
 
         if not os.path.exists(self.output_filepath):
             raise Exception("File not created as expected!")
@@ -142,7 +153,18 @@ class Finisher(Gtk.Application):
     def onDestroy(self, btn):
         Gtk.main_quit()
 
-    def _run_pdfdiff(self):
+    def run_action(self, action):
+        """
+        Run an action
+        """
+        self.tmp_file_2 = ''.join([self.tmp_dir.name, '/', str(uuid.uuid4()), '.pdf'])
+        if not self.tmp_file_1:
+            action(self.input_pdf_path, self.tmp_file_2)
+        else:
+            action(self.tmp_file_1, self.tmp_file_2)
+        self.tmp_file_1, self.tmp_file_2 = self.tmp_file_2, None
+
+    def _run_pdfdiff(self, input_pdf_path, output_pdf_path):
         """
         Run pdfdiff from Gtk application
         """
@@ -157,26 +179,26 @@ class Finisher(Gtk.Application):
 
         if not base_pdf_path:
             raise IOError("You need to select a file for computing the diff!")
-        createDiff(self.input_pdf_path, base_pdf_path, self.output_filepath, doError, color=input_diff_color,
+        createDiff(input_pdf_path, base_pdf_path, output_pdf_path, doError, color=input_diff_color,
                                 onlydiffs=onlydiffs, oldcolor=base_diff_color, limit=diffpages)
 
-    def _run_pdfsig(self):
+    def _run_pdfsig(self, input_pdf_path, output_pdf_path):
         """
         Run pdfsig from Gtk application
         """
         pages_per_spread = self.builder.get_object("ecb_pagesPerSpread").get_active_id()
+        sheetsize_active_text = self.builder.get_object("ecb_sheetSize").get_active_text()
         sheets_per_sig = int(self.builder.get_object("s_sheetsPerSignature").get_value())
         fold_cut_margin = self.builder.get_object("s_foldCutMargin").get_value()
         add_crop_marks = self.builder.get_object("c_cropmarks").get_active()
         right_to_left = self.builder.get_object("c_RTL").get_active()
         fold_first = self.builder.get_object("c_foldFirst").get_active()
-        sheetsize_active_text = self.builder.get_object("ecb_sheetSize").get_active_text()
         selected_sheet_size = get_sheet_size(sheetsize_active_text)
         outwidth, outheight = get_page_size(selected_sheet_size)
-        make_signatures(self.input_pdf_path, outwidth, outheight, pages_per_spread,
-                        sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=self.output_filepath)
+        make_signatures(input_pdf_path, outwidth, outheight, pages_per_spread,
+                        sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=output_pdf_path)
 
-    def _run_procpdf(self):
+    def _run_procpdf(self, input_pdf_path, output_pdf_path):
         """
         Run formatting from Gtk application
         """
@@ -186,25 +208,25 @@ class Finisher(Gtk.Application):
         spotcolor = f"rgb({spot_rgba.red * 256}, {spot_rgba.green  * 256}, {spot_rgba.blue  * 256})"
 
         # run procpdf - what does outfname do?
-        procpdf(self.output_filepath, self.input_pdf_path, output_format, doError, None, cover=None, spottolerance=spottolerance, spotcolor=spotcolor, output_filepath=self.output_filepath)
+        procpdf(output_pdf_path, input_pdf_path, output_format, doError, None, cover=None, spottolerance=spottolerance, spotcolor=spotcolor, output_filepath=output_pdf_path)
 
-    def _run_overlay(self):
+    def _run_overlay(self, input_pdf_path, output_pdf_path):
         """
         Run overlaying from Gtk application
         """
         mirrored = self.builder.get_object("c_mirrored").get_active()
-        blend_pdf(self.input_pdf_path, self.output_filepath, mirrored=mirrored)
+        blend_pdf(input_pdf_path, output_pdf_path, mirrored=mirrored)
 
-    def _run_watermark(self):
+    def _run_watermark(self, input_pdf_path, output_pdf_path):
         """
         Run watermarking from Gtk application
         """
         watermark_pdf_path = self.builder.get_object("fp_watermark").get_filename()
-        base = PdfReader(self.input_pdf_path)
+        base = PdfReader(input_pdf_path)
         watermark_page = PdfReader(watermark_pdf_path).pages[0]
         for page in base.pages:
             PageMerge(page).add(watermark_page, prepend=True).render()
-        PdfWriter(self.output_filepath, trailer=base).write()
+        PdfWriter(output_pdf_path, trailer=base).write()
 
 
 def main():
