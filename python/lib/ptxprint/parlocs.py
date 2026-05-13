@@ -393,7 +393,7 @@ class Paragraphs(list):
                 else:
                     currr = None
                 lastyend = 0
-            elif c == "parpicsize":
+            elif c == "parpicsize":     # "width"/"height", "heightlimit", width, height
                 if len(p) < 4:
                     (w, h) = readpts(p[0]), readpts(p[1])
                 else:
