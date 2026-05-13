@@ -17346,6 +17346,7 @@ or select from the list of preset values.</property>
                                           <item>5.5in, 8.5in (1/2 Letter)</item>
                                           <item>5.25in, 8.25in (133x210mm)</item>
                                           <item>5.8in, 8.7in (147x221mm)</item>
+                                          <item>6in, 9in (152x229mm)</item>
                                           <item>184.6mm, 271.6mm (A4 with cropmarks)</item>
                                           <item>165mm, 234mm (KBS max page)</item>
                                         </items>

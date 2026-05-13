@@ -4,7 +4,7 @@ import xml.etree.ElementTree as et
 from datetime import datetime
 from ptxprint.parlocs import BadSpace
 from ptxprint.xdv.spacing_oddities import Rivers
-from ptxprint.utils import rtlScripts, dediglotref
+from ptxprint.utils import rtlScripts, dediglotref, getSrcDir
 from usfmtc.reference import Ref, RefList
 from math import sqrt
 
@@ -75,7 +75,7 @@ class Report:
         self.sections.setdefault(section, []).append(ReportEntry(msg, **kw))
 
     def generate_html(self, fname, texmodel):
-        doc = et.fromstring(html_template.format(css=os.path.join(os.path.dirname(__file__), "sakura.css"), **texmodel))
+        doc = et.fromstring(html_template.format(css=os.path.join(getSrcDir(), "sakura.css"), **texmodel))
         body = doc.find("body")
         timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         summary_html_str = self._generate_summary_html()

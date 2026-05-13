@@ -26,6 +26,7 @@ except ImportError:
 
 from ptxprint.wizards.configuration import wizardState, wizardValidation
 from ptxprint.wizards.configuration.wizardMapping import applyAnswers, PAGE_SIZE_PRESETS
+from ptxprint.utils import getSrcDir
 try:
     from ptxprint.utils import _
 except ImportError:
@@ -33,7 +34,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-_WIZARD_DIR   = os.path.dirname(__file__)
+_WIZARD_DIR   = getSrcDir()
 _GLADE_FILE   = os.path.join(_WIZARD_DIR, "wizardDialog.glade")
 _QUESTIONS_FILE = os.path.join(_WIZARD_DIR, "wizardQuestions.json")
 _SCHEMA_FILE  = os.path.join(_WIZARD_DIR, "wizardQuestions.schema.json")
