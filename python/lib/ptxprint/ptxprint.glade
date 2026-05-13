@@ -16896,18 +16896,25 @@ Multiple Books:</property>
                                   <object class="GtkComboBoxText" id="ecb_booklist">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">After selecting one or more books to be
-printed, the book codes will be listed here.
-This list is editable, so books can be re-ordered
-if need be.
+                                    <property name="tooltip-text" translatable="yes">Use 3-letter USFM book codes (e.g. JHN, not John; MRK, not Mark).
 
-A list of references can also be entered manually
-for ranges of scripture to be printed. For example:
+A list of references can be entered if printing less
+than an entire book or chapter, or if you need to
+include portions from several books. For example:
   JHN 2:1-12
   MRK 1-5
   PSA 23; 100; 117
   EXO 20:12-17 MAT 5:3-11
   GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
+  GEN 24:1-17; 24:22-30
+  MAT-REV
+
+If working on several books, use the Choose...
+button to select multiple books. For example:
+  LUK ACT GLO NDX
+prints Luke, Acts, Glossary and Names Index.
+The list is editable, so books can be re-ordered
+if need be (for example, for the Hebrew canon).
 
 Shortcut: Ctrl-B</property>
                                     <property name="valign">center</property>
@@ -16921,7 +16928,7 @@ Shortcut: Ctrl-B</property>
                                         <property name="name">Multiple books editable list entry</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="tooltip-text" translatable="yes">Always use 3-letter USFM book codes (e.g. JHN, not JOHN; MRK, not MARK).
+                                        <property name="tooltip-text" translatable="yes">Use 3-letter USFM book codes (e.g. JHN, not John; MRK, not Mark).
 
 A list of references can be entered if printing less
 than an entire book or chapter, or if you need to
@@ -16932,6 +16939,7 @@ include portions from several books. For example:
   EXO 20:12-17 MAT 5:3-11
   GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
   GEN 24:1-17; 24:22-30
+  MAT-REV
 
 If working on several books, use the Choose...
 button to select multiple books. For example:
@@ -16939,10 +16947,6 @@ button to select multiple books. For example:
 prints Luke, Acts, Glossary and Names Index.
 The list is editable, so books can be re-ordered
 if need be (for example, for the Hebrew canon).
-
-Note that verse ranges spanning multiple books
-are not permitted: For example,
-  MAT 1:1-REV 22:21   does not work.
 
 Shortcut: Ctrl-B</property>
                                         <property name="valign">center</property>
@@ -17241,14 +17245,9 @@ be useful for a journaling layout.</property>
                                         <property name="name">Binding gutter amount</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="tooltip-text" translatable="yes">This is the amount of space to be
-given on the inner edge of each
-page for binding (millimeters).
-
-However, if Outer Gutter is enabled
-this extra space will appear on the
-outside edge of each page. This can
-be useful for a journaling layout.</property>
+                                        <property name="tooltip-text" translatable="yes">This amount is added to the ‘Side Margin
+Width’ amount to the inner edge (or outside
+edge, if you check ‘Outer Gutter’).</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="width-chars">4</property>
@@ -39077,8 +39076,8 @@ We supply high-quality hardcovers, flex covers and paperbacks. For missionary or
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="orientation">vertical</property>
                                         <property name="valign">start</property>
+                                        <property name="orientation">vertical</property>
                                         <property name="spacing">12</property>
                                         <child>
                                           <object class="GtkLabel">
@@ -39331,6 +39330,27 @@ Both rates are adjusted by the Paper Type selection.</property>
                                                 <property name="top-attach">6</property>
                                               </packing>
                                             </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -39361,8 +39381,8 @@ Both rates are adjusted by the Paper Type selection.</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="orientation">vertical</property>
                                         <property name="valign">start</property>
+                                        <property name="orientation">vertical</property>
                                         <property name="spacing">8</property>
                                         <child>
                                           <!-- n-columns=3 n-rows=7 -->
@@ -39537,6 +39557,27 @@ Both rates are adjusted by the Paper Type selection.</property>
                                                 <property name="top-attach">6</property>
                                               </packing>
                                             </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -39622,8 +39663,8 @@ Comprehensive Print on Demand digital book printing solutions with custom bindin
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="orientation">vertical</property>
                                         <property name="valign">start</property>
+                                        <property name="orientation">vertical</property>
                                         <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkLabel">
@@ -39836,6 +39877,27 @@ For 1500+ copies, contact Pothi.com directly for a custom quote.</property>
                                                 <property name="width">2</property>
                                               </packing>
                                             </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
                                           </object>
                                           <packing>
                                             <property name="expand">False</property>
@@ -39866,11 +39928,11 @@ For 1500+ copies, contact Pothi.com directly for a custom quote.</property>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="orientation">vertical</property>
                                         <property name="valign">start</property>
+                                        <property name="orientation">vertical</property>
                                         <property name="spacing">8</property>
                                         <child>
-                                          <!-- n-columns=3 n-rows=7 -->
+                                          <!-- n-columns=3 n-rows=8 -->
                                           <object class="GtkGrid">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
@@ -40054,6 +40116,36 @@ For 1500+ copies, contact Pothi.com directly for a custom quote.</property>
                                                 <property name="left-attach">1</property>
                                                 <property name="top-attach">7</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                           <packing>

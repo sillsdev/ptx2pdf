@@ -2100,7 +2100,7 @@ class ViewModel:
         for a in (".pdf", ".html"):
             for d in ('', '..'):
                 for x in self.tempFiles:
-                    if x.endswith(".xdv"):
+                    if x and x.endswith(".xdv"):
                         xdvfile = x
                         f = os.path.join(os.path.dirname(x), d, os.path.basename(x).replace(".xdv", a))
                         if not found and os.path.exists(f):

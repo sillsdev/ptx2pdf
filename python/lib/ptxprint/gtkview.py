@@ -1398,6 +1398,9 @@ class GtkViewModel(ViewModel):
         combo = self.builder.get_object("fcb_project")
         wide = int(len(projects)/16)+1 if len(projects) > 14 else 1
         combo.set_wrap_width(wide)
+        if not getattr(combo, '_scrollFix', False):
+            combo.connect("notify::popup-shown", self._fixComboPopupScroll)
+            combo._scrollFix = True
         self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
 
@@ -1420,6 +1423,30 @@ class GtkViewModel(ViewModel):
         # Apply the properties to the cell renderer
         cell.set_property('weight', font_weight)
         cell.set_property('foreground', fg_color)
+
+    def _fixComboPopupScroll(self, combo, pspec):
+        if not combo.props.popup_shown:
+            return
+        for win in Gtk.Window.list_toplevels():
+            if win.get_type_hint() == Gdk.WindowTypeHint.COMBO:
+                self._applyScrollToComboPopup(win)
+                break
+
+    def _applyScrollToComboPopup(self, popup_win, max_height=480):
+        def fixSW(widget):
+            if isinstance(widget, Gtk.ScrolledWindow):
+                widget.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+                widget.set_max_content_height(max_height)
+                widget.queue_resize()
+                return True
+            try:
+                for child in widget.get_children():
+                    if fixSW(child):
+                        return True
+            except AttributeError:
+                pass
+            return False
+        fixSW(popup_win)
 
     def initialize_uiLevel_menu(self):
         levels = self.builder.get_object("ls_uiLevel")
