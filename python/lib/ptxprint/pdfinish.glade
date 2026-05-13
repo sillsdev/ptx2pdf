@@ -102,7 +102,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">17 pgs</property>
+                    <!-- <property name="label" translatable="yes">17 pgs</property> -->
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -116,7 +116,7 @@
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="margin-left">12</property>
-                    <property name="label" translatable="yes">140mm x 210mm</property>
+                    <!-- <property name="label" translatable="yes">140mm x 210mm</property> -->
                     <attributes>
                       <attribute name="weight" value="bold"/>
                       <attribute name="foreground" value="#1a1a5f5fb4b4"/>
@@ -250,7 +250,7 @@ the previous location) in the old PDF.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="margin-start">30</property>
-                        <property name="label" translatable="yes">21 pgs</property>
+                        <!-- <property name="label" translatable="yes">21 pgs</property> -->
                       </object>
                       <packing>
                         <property name="left-attach">5</property>
@@ -263,7 +263,7 @@ the previous location) in the old PDF.</property>
                         <property name="can-focus">False</property>
                         <property name="margin-right">6</property>
                         <property name="margin-end">6</property>
-                        <property name="label" translatable="yes">140mm x 210mm</property>
+                        <!-- <property name="label" translatable="yes">140mm x 210mm</property> -->
                       </object>
                       <packing>
                         <property name="left-attach">6</property>
@@ -318,13 +318,10 @@ This will also potentially speed up the process.</property>
                         <property name="name">Compare PDFs: Maximum pages of differences to show</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="tooltip-text" translatable="yes">Set the color to use when
-differences are found between
-the old and the new PDFs.
-
-Use this color to show anything
-that has been deleted (or moved from
-the previous location) in the old PDF.</property>
+                        <property name="tooltip-text" translatable="yes">Maximum number of pages to
+show in the output diff;
+additional pages will be
+truncated.</property>
                         <property name="halign">end</property>
                         <property name="valign">center</property>
                         <property name="label" translatable="yes">Show Max Diff Pages:</property>
@@ -353,8 +350,8 @@ the previous location) in the old PDF.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Error: Cannot compare
-different page sizes!</property>
+                        <!-- <property name="label" translatable="yes">Error: Cannot compare
+different page sizes!</property> -->
                         <attributes>
                           <attribute name="scale" value="0.90000000000000002"/>
                           <attribute name="foreground" value="#a5a51d1d2d2d"/>
@@ -366,7 +363,7 @@ different page sizes!</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
-                    <child>
+                    <!-- <child>
                       <object class="GtkSpinButton" id="s_offsetStart">
                         <property name="name">Compare PDFs: Set maximum diff pages to show</property>
                         <property name="width-request">125</property>
@@ -413,7 +410,7 @@ the previous location) in the old PDF.</property>
                         <property name="left-attach">0</property>
                         <property name="top-attach">2</property>
                       </packing>
-                    </child>
+                    </child> -->
                     <child>
                       <placeholder/>
                     </child>

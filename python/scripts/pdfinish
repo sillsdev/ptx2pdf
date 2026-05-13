@@ -197,7 +197,7 @@ class Finisher(Gtk.Application):
         input_diff_color = (input_diff_rgba.red * 256, input_diff_rgba.green  * 256, input_diff_rgba.blue  * 256)
         base_diff_rgba = self.builder.get_object("col_odiffColor").get_rgba()
         base_diff_color = (base_diff_rgba.red * 256, base_diff_rgba.green  * 256, base_diff_rgba.blue  * 256)
-        # 'Offset starting page' option - what it is?
+        # TODO: 'Offset starting page' option - what it is?
         onlydiffs = self.builder.get_object("c_onlyDiffs").get_active()
         diffpages = int(self.builder.get_object("s_diffpages").get_value())
 
