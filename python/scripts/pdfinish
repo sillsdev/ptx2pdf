@@ -59,20 +59,23 @@ def get_sheet_size(sheet_text):
     if sheet_text in sheet_sizes:
         return sheet_sizes[sheet_text]
     if sheet_text.count(',') != 1:
-        raise IOError('Format of sheet dimensions not understood. Please specify in format "width, height"')
+        self.show_error('Format of sheet dimensions not understood. Please specify in format "width, height"')
+        return
     width, height = sheet_text.split(',')
     if 'mm' in width:
         width = float(width.split('mm')[0])
     elif 'in' in width:
         width = float(width.split('in')[0]) * 25.4
     else:
-        raise IOError('Unknown or unspecified unit!')
+        self.show_error('Unknown or unspecified unit!')
+        return
     if 'mm' in height:
         height = float(height.split('mm')[0])
     elif 'in' in height:
         height = float(height.split('in')[0]) * 25.4
     else:
-        raise IOError('Unknown or unspecified unit!')
+        self.show_error('Unknown or unspecified unit!')
+        return
     return 'x'.join((str(width), str(height)))
 
 class Finisher(Gtk.Application):
@@ -86,6 +89,7 @@ class Finisher(Gtk.Application):
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.tmp_file_1 = None
         self.tmp_file_2 = None
+        self.errored = False
 
         self.mw.show_all()
         Gtk.main()
@@ -93,7 +97,8 @@ class Finisher(Gtk.Application):
     def onProcessClicked(self, btn):
         self.input_pdf_path = self.builder.get_object("fp_input").get_filename()
         if not self.input_pdf_path:
-            raise IOError("You need to select an input file!")
+            self.show_error("You need to select an input file!")
+            return
         dialog = Gtk.FileChooserDialog(
             title="Select output file",
             parent=self.mw,
@@ -103,16 +108,6 @@ class Finisher(Gtk.Application):
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_SAVE, Gtk.ResponseType.OK
         )
-
-        dialog.set_do_overwrite_confirmation(True)
-        response = dialog.run()
-
-        if response == Gtk.ResponseType.OK:
-            self.output_filepath = dialog.get_filename()
-            print("Selected file:", self.output_filepath)
-        dialog.destroy()
-        if response != Gtk.ResponseType.OK:
-            return
 
         notebook = self.builder.get_object('pdfinish_notebook')
         current_page_id = notebook.get_current_page()
@@ -125,19 +120,34 @@ class Finisher(Gtk.Application):
             'c_watermark': self._run_watermark
         }
 
-        for checkbox in ['c_watermark', 'c_overlay', 'c_format', 'c_repaginate', 'c_diff']:
-            # iterate through actions sequentially in reverse order
-            if self.builder.get_object(checkbox).get_active():
-                action = checkbox_to_action_dict[checkbox]
-                self.run_action(action)
-        if self.tmp_file_1 is None:
-            raise Exception('There is nothing to do! Select at least one action before clicking Process.')
-        else:
-            os.rename(self.tmp_file_1, self.output_filepath)
-            self.tmp_file_1, self.tmp_file_2 = None, None
+        actions_to_run = [checkbox_to_action_dict[checkbox] for checkbox in ['c_watermark', 'c_overlay', 'c_format', 'c_repaginate', 'c_diff'] if self.builder.get_object(checkbox).get_active()]
+
+        if not actions_to_run:
+            self.show_error('There is nothing to do! Select at least one action before clicking Process.')
+            return
+
+        for action in actions_to_run:
+            self.run_action(action)
+
+        if self.errored:
+            return
+
+        dialog.set_do_overwrite_confirmation(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self.output_filepath = dialog.get_filename()
+            print("Selected file:", self.output_filepath)
+        dialog.destroy()
+        if response != Gtk.ResponseType.OK:
+            return
+
+        os.rename(self.tmp_file_1, self.output_filepath)
+        self.tmp_file_1, self.tmp_file_2 = None, None
 
         if not os.path.exists(self.output_filepath):
-            raise Exception("File not created as expected!")
+            self.show_error("File not created as expected!")
+            return
+
         # open output PDF
         if platform.system() == 'Darwin':       # macOS
             subprocess.call(('open', self.output_filepath))
@@ -152,6 +162,20 @@ class Finisher(Gtk.Application):
 
     def onDestroy(self, btn):
         Gtk.main_quit()
+
+    def show_error(self, message):
+        self.errored = True
+        dialog = Gtk.MessageDialog(
+            transient_for=self.mw,
+            flags=0,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text="Error",
+        )
+
+        dialog.format_secondary_text(message)
+        dialog.run()
+        dialog.destroy()
 
     def run_action(self, action):
         """
@@ -178,7 +202,8 @@ class Finisher(Gtk.Application):
         diffpages = int(self.builder.get_object("s_diffpages").get_value())
 
         if not base_pdf_path:
-            raise IOError("You need to select a file for computing the diff!")
+            self.show_error("You need to select a file for computing the diff!")
+            return
         createDiff(input_pdf_path, base_pdf_path, output_pdf_path, doError, color=input_diff_color,
                                 onlydiffs=onlydiffs, oldcolor=base_diff_color, limit=diffpages)
 
@@ -194,6 +219,8 @@ class Finisher(Gtk.Application):
         right_to_left = self.builder.get_object("c_RTL").get_active()
         fold_first = self.builder.get_object("c_foldFirst").get_active()
         selected_sheet_size = get_sheet_size(sheetsize_active_text)
+        if selected_sheet_size is None:
+            return
         outwidth, outheight = get_page_size(selected_sheet_size)
         make_signatures(input_pdf_path, outwidth, outheight, pages_per_spread,
                         sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=output_pdf_path)
