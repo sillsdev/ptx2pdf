@@ -5037,15 +5037,7 @@ class GtkViewModel(ViewModel):
         self.setImportButtonOKsensitivity(None)
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn, chkbx=True):
-        folderattr = getattr(self, attr, None)
-        if folderattr is None:
-            folderattr = basedir if isSingle else [basedir]
-        if isSingle:
-            fldr = os.path.dirname(folderattr)
-        else:
-            fldr = os.path.dirname(folderattr[0])
-        if not os.path.exists(fldr):
-            fldr = basedir
+        fldr = str(basedir)
         vals = self.fileChooser(title,
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = not isSingle, basedir=fldr)
@@ -5475,6 +5467,9 @@ class GtkViewModel(ViewModel):
         if not passed and self.showPDFmode == "preview":
             self.pdf_viewer.loadnshow(None)
         # TO DO: enable/disable the Permission Letter button
+        for printer in self.printers.values():
+            if hasattr(printer, 'refreshPageCount'):
+                printer.refreshPageCount()
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")

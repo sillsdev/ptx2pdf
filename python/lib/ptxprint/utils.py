@@ -405,6 +405,8 @@ def saferelpath(p, r="."):
     return res.rstrip("/")
 
 def pycodedir():
+    if getattr(sys, 'frozen', False):
+        return os.path.join(sys._MEIPASS, 'ptxprint')
     return os.path.abspath(os.path.dirname(__file__))
 
 def pt_bindir():
