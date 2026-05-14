@@ -158,7 +158,7 @@
 
 \def\set@notesavetype#1{\edef\@notesavetype{#1}\ifdiglot\ifdiglotSepNotes\ifcsname parallelcounts#1\endcsname
     \x@\ifx\csname parallelcounts#1\endcsname\tru@
-      \edef\@notesavetype{\c@rrdstat#1}%
+      \edef\@notesavetype{#1\c@rrdstat}%
     \fi
   \fi\fi\fi}
 \def\set@utonum#1{\set@notesavetype{#1}\edef\@utonum{autonum\@notesavetype}%
