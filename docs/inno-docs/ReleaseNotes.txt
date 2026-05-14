@@ -1,9 +1,19 @@
-PTXprint 3.0.25 Release Notes
-11 May 2026
+PTXprint 3.0.26 Release Notes
+14 May 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
+Bug fixes and Improvements in 3.0.26 - (14 May 2026)
+  * Fix bad bug in adjlist triggers generation
+  * Make Project dropdown scrollable
+  * Fix bug on create archive.
+  * Get internal files better from windows .exe
+  * Update the techref
+  * Fix bug #1162 bug03-nonstopmode-not-reset
+  * Fix bug #1165 firstnote-false-before-check
+  * Remove pdfinish as not ready yet
+  
 Bug fixes and Improvements in 3.0.25 - (11 May 2026)
   * Add -S to enable external scripts during CLI printing, for protection
   * Minor fixes and hopefully handle cross platform paths in archive creation
