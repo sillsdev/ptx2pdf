@@ -88,6 +88,7 @@ def getImageSets():
     if not os.path.exists(uddir):
         return None
     catalog_path = os.path.join(getSrcDir(), "imagesets.json")
+    logger.debug(f"{catalog_path=}")
     try:
         with open(catalog_path, encoding='utf-8') as f:
             catalog = {e['id']: e.get('name', e['id']) for e in json.load(f).get('imagesets', [])}
