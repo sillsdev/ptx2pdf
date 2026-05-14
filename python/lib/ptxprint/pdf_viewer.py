@@ -396,7 +396,8 @@ class PDFFileViewer:
         self.widget = widget
         # if widget is not None:
         #    widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
-        self.model.set_preview_pages(self.numpages, _("Pages:"))
+        if iscurrent:
+            self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.widget.show_all()
         self.set_zoom_fit_to_screen(iscurrent)
         self.updatePageNavigation()
@@ -1325,7 +1326,8 @@ class PDFContentViewer(PDFFileViewer):
         formatted_time = mod_time.strftime("   %d-%b %H:%M")
         if widget is not None:
             widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
-        self.model.set_preview_pages(self.numpages, _("Pages:"))
+        if iscurrent:
+            self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
     def clear(self, widget=None):
