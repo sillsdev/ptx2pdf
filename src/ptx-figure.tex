@@ -221,7 +221,7 @@
   \trace{g}{p@rsesize #1*#2*#3}%
   \global\def\size@ption{#1}%
   \edef\tmp{#2}%
-  \if\tmp\relax\relax\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
+  \ifx\tmp\empty\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
 }
 %-cfig_parsesize
 

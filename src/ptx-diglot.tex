@@ -78,8 +78,8 @@
 \def\n@xtfirstRmark{} %First Rmark in the n@xt chunk
 \def\n@xtbotLmark{} %First Lmark in the n@xt chunk
 \def\n@xtbotRmark{} %First Rmark in the n@xt chunk
-\def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
-\def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
+\def\LeftMarkstrue{\useLeftMarkstrue\useRightMarksfalse}
+\def\LeftMarksfalse{\useLeftMarksfalse\useRightMarkstrue}
 \def\m@xBelowBaseline{0pt}%
 \def\@fnLht{0pt}
 \def\@fnRht{0pt}
@@ -2485,8 +2485,9 @@
   \trace{D}{diglot@applypgnotes #1}%
   \global\setbox\csname excess#1\endcsname\vbox{%
     \applysavedn@tes{\@g@tndstat{#1}}{2}%
-    \Showlists
-    \unvbox\csname excess#1\endcsname}%
+    %\Showlists
+    \unvbox\csname excess#1\endcsname
+  }%
   \ifdiglotDebugFollowContents
     \Showbox{\csname excess#1\endcsname}%
   \fi

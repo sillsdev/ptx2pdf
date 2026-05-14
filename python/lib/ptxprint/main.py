@@ -136,6 +136,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-A', '--action', help="Perform a specific action instead of printing")
     parser.add_argument('-m', '--macros', help="Directory containing TeX macros (paratext2.tex)")
     parser.add_argument('-M', '--module', help="Specify module to print")
+    parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
     parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
     parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
     parser.add_argument('-t','--test',help="test file to run interactive test against")
@@ -230,7 +231,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         sys.stdio = StreamLogger(log, logging.INFO)
         sys.stderr = StreamLogger(log, logging.ERROR)
 
-    from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
+    from ptxprint.utils import _, setup_i18n, get_ptsettings, find_pt_candidates, pt_bindir, putenv
     from ptxprint.font import initFontCache, cachepath, writefontsconf
 
     fontconfig_path = writefontsconf(args.fontpath,testsuite=args.testsuite)
@@ -285,10 +286,22 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     log.debug("Loaded config")
 
     if not len(args.projects):
-        pdir = get_ptsettings()
-        if pdir is not None:
-            args.projects.append(pdir)
-            print(f"Adding {pdir}")
+        candidates = find_pt_candidates()
+        if len(candidates) == 1:
+            args.projects.append(candidates[0]['path'])
+            print(f"Adding {candidates[0]['path']}")
+        elif len(candidates) > 1:
+            if not args.print and args.test is None:
+                from ptxprint.gtkview import chooseProjectsDir
+                chosen = chooseProjectsDir(candidates)
+                if chosen is None:
+                    sys.exit(1)
+                args.projects.append(str(chosen))
+            else:
+                # Non-GUI mode: add all found directories
+                for c in candidates:
+                    args.projects.append(c['path'])
+                    print(f"Adding {c['path']}")
     elif not any(os.path.isdir(p) for p in args.projects):
         print(f"Projects directories do not exist in {args.projects}. Quitting")
         sys.exit(1)
@@ -299,14 +312,12 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     if sys.platform.startswith("linux") and not args.nox11:
         os.environ['GDK_BACKEND'] = 'x11'
     if (args.extras & 8) != 0 or not len(args.projects):
-        # print("No Paratext Settings directory found - sys.exit(1)")
         if not args.print and args.test is None:
-            from ptxprint.gtkview import getPTDir
-            pdir = getPTDir()
-            if pdir is None:
+            from ptxprint.gtkview import chooseProjectsDir
+            chosen = chooseProjectsDir(find_pt_candidates())
+            if chosen is None:
                 sys.exit(1)
-            else:
-                args.projects = [pdir]
+            args.projects = [str(chosen)]
         else:
             sys.exit(1)
     else:
@@ -453,6 +464,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 return mainw
             mainw.savePics()
             mainw.saveStyles()
+            mainw.saveAdjlists()
+            if not args.enablescripts:
+                mainw.set("c_processScript", False)
             job = doit(mainw, noview=True, nothreads=True)
             if job is not None:
                 res = job.res

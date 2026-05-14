@@ -17,7 +17,7 @@ print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
 
-version="3.0.21"
+version="3.0.26"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -358,7 +358,8 @@ binaries = (binaries
 
 # data files are considered text and end up where specified by the tuple.
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-        ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
+        ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs',
+         'imagesets.json')]
       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'printers', 'pdfrw', 'pdfrw/objects')]
       + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
@@ -373,9 +374,9 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
 print("binaries:", binaries)
 print("datas:", datas)
 
-#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 jobs = {
     "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]}
+#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 tcolls = []
 for k, v in jobs.items():

@@ -1,10 +1,71 @@
-PTXprint 3.0.21 Release Notes
-29 Apr 2026
+PTXprint 3.0.26 Release Notes
+14 May 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.21 - (29 Apr 2026)
+Bug fixes and Improvements in 3.0.26 - (14 May 2026)
+  * Fix bad bug in adjlist triggers generation
+  * Make Project dropdown scrollable
+  * Fix bug on create archive.
+  * Get internal files better from windows .exe
+  * Update the techref
+  * Fix bug #1162 bug03-nonstopmode-not-reset
+  * Fix bug #1165 firstnote-false-before-check
+  * Remove pdfinish as not ready yet
+  
+Bug fixes and Improvements in 3.0.25 - (11 May 2026)
+  * Add -S to enable external scripts during CLI printing, for protection
+  * Minor fixes and hopefully handle cross platform paths in archive creation
+  * Integrate pdfinish into the build
+  * Tighten up the UI vertically to take less space
+  * Make sure PDF Preview shows the updated page
+  * Fix python-bug16-17-20-usfmerge      #1157 
+  * Fix tex-bug05-leftmarks-logic-typo   #1164 
+  * Fix tex-bug01-getcalleres-typo       #1160 
+  * Fix tex-bug02-set-utonum-overwrites  #1161 
+  * Fix tex-bug04-duplicate-gdef         #1163 
+  * Fix tex-bug07-wrong-if-conditional   #1166 
+  * Fix image padding bug causing pics to disappear completely
+  * Fix missing cinfo/topx bug
+  * Fix end of ayah for verse ranges
+
+Bug fixes and Improvements in 3.0.24 - (9 May 2026)
+  * Use new dialog for choosing base project location if -Z 8 is used from CLI
+  * Fix bare except on Windows DPI and WindowGeometry.fromConfig drops frame fields
+  * Fix bare except: in parselog swallows KeyboardInterrupt
+  * Fix PDF color variant suffix silently dropped from filename
+  * Fix analyse_script can crash or loop forever
+  * Fix path typo shard->shared and _mergecfg uses wrong config variable
+  * Fix getBooks returns None instead of [] when no project loaded
+  * Fix doError logs txt instead of secondary for secondary message
+  * Fix duplicate Thumb Tabs widget_map key and Log Analysis excluded from summary
+
+Bug fixes and Improvements in 3.0.23 - (7 May 2026)
+  * Provide options if multiple Paratext projects are located on initial run. #1143
+  * Make the booklist more robust to handle wrong book names or codes #1142
+  * Add link to Master Slides on Help tab
+  * Only one wordlist footnote per word in a verse
+  * Add comments to uwtv converter
+  * Add unfoldingWord conversion script
+  * Add mode to markdown converter
+  * Make sure we don't store None when we mean ''
+  * Turn on space before studynotes if after other notes
+  * Add developer overview doc for the diglot/polyglot system
+  * Refactor wizards
+  * Add Layout (configuration) Wizard; keep button hidden behind -E 1
+  * Fix markdown parsing
+  * Fix intercharspace to have a nobreak at start
+  * Fix style tristate values
+
+Bug fixes and Improvements in 3.0.22 - (30 Apr 2026)
+  * Attempt to improve page-fill and avoid some crashes
+  * Enable "downgrading" study notes to normal notes
+  * Make study notes in diglots calculate space better
+  * Define tri@lsplitRej once should be enough
+  * Fix typo that stopped special attributes from detecting properly
+
+Bug fixes and Improvements in 3.0.21 - unreleased (29 Apr 2026)
   * Only show the OK-Cancel dialog for larger (2MB+) PDFs
   * Move version stuff out of view into version.py
   * Study notes in diglots

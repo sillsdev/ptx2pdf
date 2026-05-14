@@ -179,6 +179,8 @@ def fromtri(self, s, mrk=None, model=None):
         return s
     if s.strip() == "-":
         return 0
+    elif s.strip() == '':
+        return 1
     else:
         try:
             return int(s, 10)
@@ -273,8 +275,8 @@ _fieldmap = {
     'italic':           (fromBool, toBool, None),
     'superscript':      (fromBool, toBool, None),
     'smallcaps':        (fromBool, toBool, None),
-#    'underline':        (fromtri, totri, None),
-    'underline':        (fromBool, toBool, None),
+    'underline':        (fromtri, totri, None),
+#    'underline':        (fromBool, toBool, None),
     'firstlineindent':  (fromFloat, toFloat, 0.),
     'leftmargin':       (fromFloat, toFloat, 0.),
     'rightmargin':      (fromFloat, toFloat, 0.),
@@ -342,6 +344,7 @@ class StyleEditor:
                     continue
                 elif mk.lower() in _fieldmap:
                     v = _fieldmap[mk.lower()][0](self, v, mrk=mrk, model=self.model)
+                logger.log(6, f"{mrk}/{mk.lower()} -> {v}")
                 curr[mk.lower()] = v
         if len(curr) and mrk:
             f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
@@ -397,11 +400,13 @@ class StyleEditor:
         # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
         oldval = self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None
         if mrk in self.sheet and key.lower() in self.sheet[mrk] and (val is None or val == oldval):
+            logger.log(7, f"{mrk}/{key} {val} == {oldval}")
             del self.sheet[mrk][key.lower()]
         elif oldval != val and val is not None:
             if mrk not in self.sheet:
                 self.sheet[mrk] = {}
             self.sheet[mrk][key.lower()] = val
+            logger.log(7, f"{mrk}/{key} {val} == {oldval}")
             self.model.changed()
         # do we really want to do this?
         elif key.lower() in self.basesheet.get(mrk, {}) and val is None:
@@ -540,6 +545,7 @@ class StyleEditor:
                 if k == "name":
                     v = self.getval(m, k, v)
                 other = om.get(k, None)
+                logger.log(7, f"{m}/{k}: {v} != {other}")
                 if not self._eq_val(other, v, key=k):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))

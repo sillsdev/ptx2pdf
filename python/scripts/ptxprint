@@ -13,6 +13,8 @@ try:
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     from ptxprint.main import main
+from multiprocessing import freeze_support
 
 if __name__ == "__main__":
+    freeze_support()
     main()
