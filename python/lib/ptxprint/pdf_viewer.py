@@ -461,7 +461,11 @@ class PDFFileViewer:
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         if ctrl_pressed:
-            return False 
+            return False
+        v_adj = widget.get_vadjustment()
+        h_adj = widget.get_hadjustment()
+        if v_adj.get_upper() > v_adj.get_page_size() or h_adj.get_upper() > h_adj.get_page_size():
+            return False  # zoomed in — let ScrolledWindow pan naturally
         if event.direction == Gdk.ScrollDirection.SMOOTH:
             _, _, z = event.get_scroll_deltas()
             if z < 0:
