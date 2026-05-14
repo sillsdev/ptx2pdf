@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from ptxprint.utils import _, extraDataDir, appdirs, allbooks, chaps, getSrcDir
+from ptxprint.utils import _, extraDataDir, appdirs, allbooks, chaps, pycodedir
 from usfmtc.reference import RefList, Ref
 from functools import reduce
 
@@ -87,7 +87,7 @@ def getImageSets():
     uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
     if not os.path.exists(uddir):
         return None
-    catalog_path = os.path.join(getSrcDir(), "imagesets.json")
+    catalog_path = os.path.join(pycodedir(), "imagesets.json")
     logger.debug(f"{catalog_path=}")
     try:
         with open(catalog_path, encoding='utf-8') as f:

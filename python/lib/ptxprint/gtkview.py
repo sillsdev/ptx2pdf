@@ -6229,7 +6229,7 @@ class GtkViewModel(ViewModel):
             ])
 
     def _loadImagesetsCatalog(self):
-        catalog_path = os.path.join(getSrcDir(), "imagesets.json")
+        catalog_path = os.path.join(pycodedir(), "imagesets.json")
         try:
             with open(catalog_path, 'r', encoding='utf-8') as f:
                 return json.load(f).get("imagesets", [])
