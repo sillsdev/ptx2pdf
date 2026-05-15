@@ -44,39 +44,6 @@ def getnsetlang(config):
     config.set("init", "syslang", envlang or "")
     return envlang
 
-def get_sheet_size(sheet_text):
-    sheet_sizes = {
-        "420mm, 594mm (A2)": "a2",
-        "297mm, 420mm (A3)": "a3",
-        "210mm, 297mm (A4)": "a4",
-        "17in, 22in (ANSI C)": "431.8x558.8",
-        "11in, 17in (ANSI B)": "279.4x431.8",
-        "8.5in, 11in (Letter)": "ltr",
-        "353mm, 500mm (B3)": "353x500",
-        "250mm, 353mm (B4)": "250x353",
-        "176mm, 250mm (B5)": "176x250",
-    }
-    if sheet_text in sheet_sizes:
-        return sheet_sizes[sheet_text]
-    if sheet_text.count(',') != 1:
-        self.show_error('Format of sheet dimensions not understood. Please specify in format "width, height"')
-        return
-    width, height = sheet_text.split(',')
-    if 'mm' in width:
-        width = float(width.split('mm')[0])
-    elif 'in' in width:
-        width = float(width.split('in')[0]) * 25.4
-    else:
-        self.show_error('Unknown or unspecified unit!')
-        return
-    if 'mm' in height:
-        height = float(height.split('mm')[0])
-    elif 'in' in height:
-        height = float(height.split('in')[0]) * 25.4
-    else:
-        self.show_error('Unknown or unspecified unit!')
-        return
-    return 'x'.join((str(width), str(height)))
 
 class Finisher(Gtk.Application):
     def __init__(self):
@@ -95,6 +62,7 @@ class Finisher(Gtk.Application):
         Gtk.main()
 
     def onProcessClicked(self, btn):
+        self.errored = False
         self.input_pdf_path = self.builder.get_object("fp_input").get_filename()
         if not self.input_pdf_path:
             self.show_error("You need to select an input file!")
@@ -109,18 +77,15 @@ class Finisher(Gtk.Application):
                 Gtk.STOCK_SAVE, Gtk.ResponseType.OK
         )
 
-        notebook = self.builder.get_object('pdfinish_notebook')
-        current_page_id = notebook.get_current_page()
+        checkbox_action_mapping = [
+            ('c_watermark',   self._run_watermark),
+            ('c_overlay',     self._run_overlay),
+            ('c_format',      self._run_procpdf),
+            ('c_repaginate',  self._run_pdfsig),
+            ('c_diff',        self._run_pdfdiff),
+        ]
 
-        checkbox_to_action_dict = {
-            'c_diff': self._run_pdfdiff,
-            'c_repaginate': self._run_pdfsig,
-            'c_format': self._run_procpdf,
-            'c_overlay': self._run_overlay,
-            'c_watermark': self._run_watermark
-        }
-
-        actions_to_run = [checkbox_to_action_dict[checkbox] for checkbox in ['c_watermark', 'c_overlay', 'c_format', 'c_repaginate', 'c_diff'] if self.builder.get_object(checkbox).get_active()]
+        actions_to_run = [action for checkbox, action in checkbox_action_mapping if self.builder.get_object(checkbox).get_active()]
 
         if not actions_to_run:
             self.show_error('There is nothing to do! Select at least one action before clicking Process.')
@@ -136,7 +101,6 @@ class Finisher(Gtk.Application):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             self.output_filepath = dialog.get_filename()
-            print("Selected file:", self.output_filepath)
         dialog.destroy()
         if response != Gtk.ResponseType.OK:
             return
@@ -155,7 +119,6 @@ class Finisher(Gtk.Application):
             os.startfile(self.output_filepath)
         else:                                   # linux variants
             subprocess.call(('xdg-open', self.output_filepath))
-        pass
 
     def onCloseClicked(self, btn):
         Gtk.main_quit()
@@ -218,7 +181,7 @@ class Finisher(Gtk.Application):
         add_crop_marks = self.builder.get_object("c_cropmarks").get_active()
         right_to_left = self.builder.get_object("c_RTL").get_active()
         fold_first = self.builder.get_object("c_foldFirst").get_active()
-        selected_sheet_size = get_sheet_size(sheetsize_active_text)
+        selected_sheet_size = self._get_sheet_size(sheetsize_active_text)
         if selected_sheet_size is None:
             return
         outwidth, outheight = get_page_size(selected_sheet_size)
@@ -249,11 +212,50 @@ class Finisher(Gtk.Application):
         Run watermarking from Gtk application
         """
         watermark_pdf_path = self.builder.get_object("fp_watermark").get_filename()
+
+        if not watermark_pdf_path:
+            self.show_error("You need to select a file for the watermark!")
+            return
+
         base = PdfReader(input_pdf_path)
         watermark_page = PdfReader(watermark_pdf_path).pages[0]
         for page in base.pages:
             PageMerge(page).add(watermark_page, prepend=True).render()
         PdfWriter(output_pdf_path, trailer=base).write()
+
+    def _get_sheet_size(self, sheet_text):
+        sheet_sizes = {
+            "420mm, 594mm (A2)": "a2",
+            "297mm, 420mm (A3)": "a3",
+            "210mm, 297mm (A4)": "a4",
+            "17in, 22in (ANSI C)": "431.8x558.8",
+            "11in, 17in (ANSI B)": "279.4x431.8",
+            "8.5in, 11in (Letter)": "ltr",
+            "353mm, 500mm (B3)": "353x500",
+            "250mm, 353mm (B4)": "250x353",
+            "176mm, 250mm (B5)": "176x250",
+        }
+        if sheet_text in sheet_sizes:
+            return sheet_sizes[sheet_text]
+        if sheet_text.count(',') != 1:
+            self.show_error('Format of sheet dimensions not understood. Please specify in format "width, height"')
+            return
+        width, height = sheet_text.split(',')
+        if 'mm' in width:
+            width = float(width.split('mm')[0])
+        elif 'in' in width:
+            width = float(width.split('in')[0]) * 25.4
+        else:
+            self.show_error('Unknown or unspecified unit!')
+            return
+        if 'mm' in height:
+            height = float(height.split('mm')[0])
+        elif 'in' in height:
+            height = float(height.split('in')[0]) * 25.4
+        else:
+            self.show_error('Unknown or unspecified unit!')
+            return
+        return 'x'.join((str(width), str(height)))
 
 
 def main():
