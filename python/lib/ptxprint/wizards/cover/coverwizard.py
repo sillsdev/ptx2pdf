@@ -171,6 +171,7 @@ class WorkingCoverState:
             setfront("Border", "All")
             setfront("BorderRef", self.border_style)
             setfront("BorderColor", self.border_color)
+            setfront("BorderFillColor", self.border_color)
         else:
             setfront("Border", None)
             for a in "Style Ref Color".split():
@@ -178,7 +179,8 @@ class WorkingCoverState:
         if self.bg_mode == "solid":
             setfront("BgColor", self.bg_color.replace("#", "x"), all=True)
         elif self.bg_mode == "white":
-            setfront("BgColor", "xFFFFFF", all=True)
+            # setfront("BgColor", "xFFFFFF", all=True)
+            pass
         setfront("Alpha", self.bg_opacity / 100, all=True)
         for d in (True, False):
             for c in ("BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha"):
