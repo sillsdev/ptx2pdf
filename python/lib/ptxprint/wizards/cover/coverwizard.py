@@ -277,6 +277,9 @@ class WorkingCoverState:
                     res.append(r'\zgap 10pt\*')
                     res.append(r'\ztruetext*')
             view.periphs['cover'+a] = "\n".join(res)
+            view.updateFrontMatter()
+            view.onLocalFRTclicked(None)
+            view.onViewerChangePage(None, None, 0, forced=True)
 
     def update_texmodel(self, model):
         model.dict["cover/spinewidth"] = self.pine_width_computed_mm
