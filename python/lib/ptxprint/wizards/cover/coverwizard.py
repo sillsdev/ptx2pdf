@@ -205,7 +205,9 @@ class WorkingCoverState:
         if self.langname_enabled:
             view.setvar('languagename', self.langname)
         if self.isbn_enabled:
+            positions = {"inner": "hr", "outer": "hl", "centre": "hc"}
             view.setvar('isbn', self.isbn)
+            view.styleEditor.setval(f"cat:ISBNbox|Position", positions[self.isbn_hpos])
         self.createCoverPeriphs(view)
 
     def getBorderVal(self, view, mkr, vh, key):
