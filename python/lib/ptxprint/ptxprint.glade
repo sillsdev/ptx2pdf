@@ -526,6 +526,13 @@ THE SOFTWARE.
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_prnl_pages">
+    <property name="lower">1</property>
+    <property name="upper">9999</property>
+    <property name="value">200</property>
+    <property name="step-increment">2</property>
+    <property name="page-increment">20</property>
+  </object>
   <object class="GtkAdjustment" id="a_prnl_copiesMax">
     <property name="lower">50</property>
     <property name="upper">99999</property>
@@ -1691,7 +1698,7 @@ General section of the Advanced tab.&lt;/span&gt;</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 3.0.25</property>
+    <property name="version">Version 3.0.27</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -38102,7 +38109,7 @@ is in the publications is always helpful.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">6</property>
+                                            <property name="top-attach">7</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38119,7 +38126,7 @@ the cost and the thickness of the book.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38136,7 +38143,7 @@ these are only available for hardback books.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38254,7 +38261,7 @@ these are only available for hardback books.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38278,7 +38285,7 @@ the cost and the thickness of the book.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38381,7 +38388,7 @@ for printing the book.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">6</property>
+                                            <property name="top-attach">7</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38415,6 +38422,99 @@ is in the publications is always helpful.</property>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Pretore has a minimum page count
+of 120 pages, and maximum of 2000.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="label" translatable="yes">Pages:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="spacing">6</property>
+                                            <child>
+                                              <object class="GtkSpinButton" id="s_prnl_pages">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="tooltip-text" translatable="yes">Pretore has a minimum page count
+of 120 pages, and maximum of 2000.</property>
+                                                <property name="valign">center</property>
+                                                <property name="max-length">5</property>
+                                                <property name="width-chars">5</property>
+                                                <property name="progress-pulse-step">0</property>
+                                                <property name="adjustment">a_prnl_pages</property>
+                                                <property name="climb-rate">2</property>
+                                                <property name="numeric">True</property>
+                                                <property name="value">200</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="hexpand">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">True</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="tooltip-text" translatable="yes">The final thickness of the finished
+book including the cover binding.</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
+                                                <property name="label" translatable="yes">Thickness:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="l_prnl_thickness">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="tooltip-text" translatable="yes">The final thickness of the finished
+book including the cover binding.</property>
+                                                <property name="halign">start</property>
+                                                <property name="label" translatable="yes">-</property>
+                                                <attributes>
+                                                  <attribute name="foreground" value="#1a1a5f5fb4b4"/>
+                                                </attributes>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">3</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">For hardback publications you can add
 upto three ribbons (of different colours).</property>
                                             <property name="halign">end</property>
@@ -38423,7 +38523,7 @@ upto three ribbons (of different colours).</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">5</property>
+                                            <property name="top-attach">6</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38444,7 +38544,7 @@ upto three ribbons (of different colours).</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">5</property>
+                                            <property name="top-attach">6</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38459,7 +38559,7 @@ individually in plastic film?</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">7</property>
+                                            <property name="top-attach">8</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38477,7 +38577,7 @@ individually in plastic film?</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">7</property>
+                                            <property name="top-attach">8</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38492,7 +38592,7 @@ individually in plastic film?</property>
                                           <packing>
                                             <property name="left-attach">2</property>
                                             <property name="top-attach">1</property>
-                                            <property name="height">7</property>
+                                            <property name="height">8</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38510,95 +38610,6 @@ e.g. 50, 100, 500, 1000, 2000 copies</property>
                                           <packing>
                                             <property name="left-attach">3</property>
                                             <property name="top-attach">5</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkBox">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="spacing">6</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Pretore has a minimum page count
-of 120 pages, and maximum of 2000.</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="label" translatable="yes">Pages:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_prnl_pages">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Pretore has a minimum page count
-of 120 pages, and maximum of 2000.</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">448	</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="hexpand">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The final thickness of the finished
-book including the cover binding.</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="label" translatable="yes">Thickness:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_prnl_thickness">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The final thickness of the finished
-book including the cover binding.</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">-</property>
-                                                <attributes>
-                                                  <attribute name="foreground" value="#1a1a5f5fb4b4"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">4</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">3</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -38957,7 +38968,7 @@ Pretore B.V. is an FSC®-certified company with certificate number SGSCH-COC-030
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
                                         </child>
                                         <child>

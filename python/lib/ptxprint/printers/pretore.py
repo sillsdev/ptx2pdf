@@ -16,7 +16,7 @@ querymap = {
     "settings/width":       (lambda s:s.width(), int),
     "data/11-211-widget-1": ("t_prnl_bookID", str),
     "data/8-203-widget-0":  ("t_prnl_description", str),
-    "data/1-189-widget-4":  ("l_prnl_pages", int),
+    "data/1-189-widget-4":  ("s_prnl_pages", int),
     "data/1-189-widget-5":  ("fcb_prnl_paperType", int),
     "data/6-200-widget-3":  ("fcb_prnl_coverLamination", int),
     "data/31-194-widget-4": ("s_prnl_ribbons", int),
@@ -122,15 +122,21 @@ class Pretore:
             if w:
                 w.set_sensitive(ok)
 
+    def _applyPageCountStyle(self, numpages):
+        w = self.view.builder.get_object("s_prnl_pages")
+        if w is None:
+            return
+        ctx = w.get_style_context()
+        if numpages < 120 or numpages > 2000:
+            ctx.add_class("red-label")
+        else:
+            ctx.remove_class("red-label")
+
     def setup(self):
-        numpages = self.numpages()
-        if numpages is not None:
-            self.set("l_prnl_pages", str(numpages))
-            w = self.view.builder.get_object("l_prnl_pages").get_style_context()
-            if numpages < 120 or numpages > 2000:
-                w.add_class("red-label")
-            else:
-                w.remove_class("red-label")
+        actualcount = self.view.getPageCount()
+        if actualcount is not None:
+            self.set("s_prnl_pages", actualcount)
+            self._applyPageCountStyle(actualcount)
         if not self.get("t_prnl_bookID"):
             prjid = getattr(self.view.project, 'prjid', None)
             if prjid:
@@ -159,6 +165,9 @@ class Pretore:
                 w = self.view.builder.get_object(wid)
                 if w:
                     w.connect("changed", self._updateThickness)
+            w = self.view.builder.get_object("s_prnl_pages")
+            if w:
+                w.connect("value-changed", self._updateThickness)
         if self.user is not None:
             return
         self.exchange_thread = threading.Thread(target=self.get_exchange_rates)
@@ -176,6 +185,13 @@ class Pretore:
 
     def prepare(self):
         self.setup()
+
+    def refreshPageCount(self):
+        actualcount = self.view.getPageCount()
+        if actualcount is not None:
+            self.set("s_prnl_pages", actualcount)
+            self._applyPageCountStyle(actualcount)
+            self._updateThickness()
 
     def read_account(self, fname):
         with open(fname, encoding="utf-8") as inf:
@@ -195,7 +211,8 @@ class Pretore:
         return width
 
     def numpages(self):
-        return self.view.getPageCount()
+        v = self.get("s_prnl_pages")
+        return int(float(v)) if v else None
 
     def select_account(self, btn, *a):
         olduser = self.user
@@ -223,6 +240,11 @@ class Pretore:
         file_button = Gtk.FileChooserButton(title="Select Key File",
                 action=Gtk.FileChooserAction.OPEN)
         labelWidget(_("Import Account File:"), file_button, grid, 0, 1)
+
+        link = Gtk.LinkButton(uri="https://ptxprint.pretore.com/login/",
+                label=_("Register / download account key at pretore.com"))
+        link.set_halign(Gtk.Align.START)
+        grid.attach(link, 0, 2, 2, 1)
 
         grid.show_all()
         response = dialog.run()

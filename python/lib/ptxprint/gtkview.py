@@ -32,7 +32,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
-            _categoryColors, _bookToCategory, getResourcesDir, getSrcDir
+            _categoryColors, _bookToCategory, getResourcesDir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -1571,7 +1571,7 @@ class GtkViewModel(ViewModel):
 
         logger.debug("Creating source views")
         lm = GtkSource.LanguageManager()
-        langpath = os.path.join(getSrcDir(), "syntax")
+        langpath = os.path.join(pycodedir(), "syntax")
         sm = GtkSource.StyleSchemeManager()
         logger.debug(f"Setting syntax files path to {langpath}")
         lm.set_search_path([langpath])
@@ -5037,15 +5037,7 @@ class GtkViewModel(ViewModel):
         self.setImportButtonOKsensitivity(None)
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn, chkbx=True):
-        folderattr = getattr(self, attr, None)
-        if folderattr is None:
-            folderattr = basedir if isSingle else [basedir]
-        if isSingle:
-            fldr = os.path.dirname(folderattr)
-        else:
-            fldr = os.path.dirname(folderattr[0])
-        if not os.path.exists(fldr):
-            fldr = basedir
+        fldr = str(basedir)
         vals = self.fileChooser(title,
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = not isSingle, basedir=fldr)
@@ -5475,6 +5467,9 @@ class GtkViewModel(ViewModel):
         if not passed and self.showPDFmode == "preview":
             self.pdf_viewer.loadnshow(None)
         # TO DO: enable/disable the Permission Letter button
+        for printer in self.printers.values():
+            if hasattr(printer, 'refreshPageCount'):
+                printer.refreshPageCount()
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
@@ -6229,7 +6224,7 @@ class GtkViewModel(ViewModel):
             ])
 
     def _loadImagesetsCatalog(self):
-        catalog_path = os.path.join(getSrcDir(), "imagesets.json")
+        catalog_path = os.path.join(pycodedir(), "imagesets.json")
         try:
             with open(catalog_path, 'r', encoding='utf-8') as f:
                 return json.load(f).get("imagesets", [])

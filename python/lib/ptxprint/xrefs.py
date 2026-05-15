@@ -350,7 +350,7 @@ class StrongsXrefs(XMLXrefs):
             lang = 'und'
         if self.btmap is not None and len(self.btmap) and lang == self.lang:
             return
-        strongsdoc = et.parse(os.path.join(getSrcDir(), "xrefs", "strongs_info.xml"))
+        strongsdoc = et.parse(os.path.join(pycodedir(), "xrefs", "strongs_info.xml"))
         self.lang = lang
         if self.strongs is None:
             self.strongs = {}

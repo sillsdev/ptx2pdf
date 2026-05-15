@@ -396,7 +396,8 @@ class PDFFileViewer:
         self.widget = widget
         # if widget is not None:
         #    widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
-        self.model.set_preview_pages(self.numpages, _("Pages:"))
+        if iscurrent:
+            self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.widget.show_all()
         self.set_zoom_fit_to_screen(iscurrent)
         self.updatePageNavigation()
@@ -461,7 +462,11 @@ class PDFFileViewer:
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         if ctrl_pressed:
-            return False 
+            return False
+        v_adj = widget.get_vadjustment()
+        h_adj = widget.get_hadjustment()
+        if v_adj.get_upper() > v_adj.get_page_size() or h_adj.get_upper() > h_adj.get_page_size():
+            return False  # zoomed in — let ScrolledWindow pan naturally
         if event.direction == Gdk.ScrollDirection.SMOOTH:
             _, _, z = event.get_scroll_deltas()
             if z < 0:
@@ -1321,7 +1326,8 @@ class PDFContentViewer(PDFFileViewer):
         formatted_time = mod_time.strftime("   %d-%b %H:%M")
         if widget is not None:
             widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
-        self.model.set_preview_pages(self.numpages, _("Pages:"))
+        if iscurrent:
+            self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
     def clear(self, widget=None):

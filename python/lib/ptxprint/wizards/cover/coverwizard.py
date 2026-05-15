@@ -264,16 +264,16 @@ class WorkingCoverState:
                 res.append(rf"\mt2 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*")
             elif a == "back":
                 back_height = view.styleEditor.getval(f"cat:cover{a}|m", "LineSpacing", 1.0)
-                positions = {"inner": "pi", "center": "pc", "outer": "po"}
+                positions = {"inner": "pi", "centre": "pc", "outer": "po"}
                 res.append(r"\zgap|1in\*")
                 res.append(rf"\m {self.backtext}")
                 if self.logo_enabled:
                     res.append(rf"\zgap|{self.logo_vpos_pct / 100 * pheight}\*")
-                    res.append(rf'\fig|src="{self.logo_path}" pgpos="{positions[self.logo_hpos]}" size="col" scale="self.logo_scale / 100"\fig*')
+                    res.append(rf'\fig|src="{self.logo_path}" pgpos="{positions[self.logo_hpos]}" size="col" scale="{self.logo_scale / 100}"\fig*')
                 res.append(r"\vfill")
                 if self.isbn_enabled:
                     res.append(r'\ztruetext')
-                    res.append(fr'\esb\cat ISBNbox\cat*\pc \zISBNbarcode|var="isbn" pgpos="positions[self.isbn_hpos]" height="medium"\*\esbe')
+                    res.append(fr'\esb\cat ISBNbox\cat*\pc \zISBNbarcode|var="isbn" pgpos="{positions[self.isbn_hpos]}" height="medium"\*\esbe')
                     res.append(r'\zgap 10pt\*')
                     res.append(r'\ztruetext*')
             view.periphs['cover'+a] = "\n".join(res)

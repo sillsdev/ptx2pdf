@@ -464,6 +464,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 return mainw
             mainw.savePics()
             mainw.saveStyles()
+            mainw.saveAdjlists()
             if not args.enablescripts:
                 mainw.set("c_processScript", False)
             job = doit(mainw, noview=True, nothreads=True)
