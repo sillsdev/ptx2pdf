@@ -67,6 +67,9 @@ class Finisher(Gtk.Application):
         if not self.input_pdf_path:
             self.show_error("You need to select an input file!")
             return
+        elif not self.input_pdf_path.endswith('.pdf'):
+            self.show_error("You must select an input file with a .pdf extension.")
+            return
         dialog = Gtk.FileChooserDialog(
             title="Select output file",
             parent=self.mw,
@@ -167,6 +170,9 @@ class Finisher(Gtk.Application):
         if not base_pdf_path:
             self.show_error("You need to select a file for computing the diff!")
             return
+        elif not base_pdf_path.endswith('.pdf'):
+            self.show_error("You must select a file with .pdf extension for computing the diff.")
+            return
         createDiff(input_pdf_path, base_pdf_path, output_pdf_path, doError, color=input_diff_color,
                                 onlydiffs=onlydiffs, oldcolor=base_diff_color, limit=diffpages)
 
@@ -215,6 +221,9 @@ class Finisher(Gtk.Application):
 
         if not watermark_pdf_path:
             self.show_error("You need to select a file for the watermark!")
+            return
+        elif not watermark_pdf_path.endswith('.pdf'):
+            self.show_error("You must select a file with .pdf extension for the watermark.")
             return
 
         base = PdfReader(input_pdf_path)
