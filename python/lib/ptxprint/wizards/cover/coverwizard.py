@@ -179,8 +179,8 @@ class WorkingCoverState:
         if self.bg_mode == "solid":
             setfront("BgColor", self.bg_color.replace("#", "x"), all=True)
         elif self.bg_mode == "white":
-            # setfront("BgColor", "xFFFFFF", all=True)
-            pass
+            setfront("BgColor", None, all=True)
+            setfront("Alpha", "0", all=True)
         setfront("Alpha", self.bg_opacity / 100, all=True)
         for d in (True, False):
             for c in ("BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha"):
@@ -192,6 +192,7 @@ class WorkingCoverState:
             setfront("BgImageScale", "1x1" if self.img_primary_fit == "stretch" else "1", all=wrap_all)
             setfront("BgImageAlpha", self.img_primary_opacity / 100, all=wrap_all)
             setfront("BgImageAlpha", 1 - (self.img_primary_opacity / 100), all=not wrap_all)
+            # todo: cropping images
         for m in (('mt1', 'title'), ('mt2', 'subtitle')):
             sz = view.styleEditor.getval(m[0], 'FontSize', 1.0)
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'FontSize', sz * getattr(self, m[1]+"_size_pct") / 100)
@@ -266,7 +267,7 @@ class WorkingCoverState:
                 res.append(rf"\mt2 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*")
             elif a == "back":
                 back_height = view.styleEditor.getval(f"cat:cover{a}|m", "LineSpacing", 1.0)
-                positions = {"inner": "pi", "centre": "pc", "outer": "po"}
+                positions = {"inner": "qr", "centre": "pc", "outer": "p"}
                 res.append(r"\zgap|1in\*")
                 res.append(rf"\m {self.backtext}")
                 if self.logo_enabled:
@@ -275,7 +276,7 @@ class WorkingCoverState:
                 res.append(r"\vfill")
                 if self.isbn_enabled:
                     res.append(r'\ztruetext')
-                    res.append(fr'\esb\cat ISBNbox\cat*\pc \zISBNbarcode|var="isbn" pgpos="{positions[self.isbn_hpos]}" height="medium"\*\esbe')
+                    res.append(fr'\esb\cat ISBNbox\cat*\{positions[self.isbn_hpos]} \zISBNbarcode|var="isbn" height="medium"\*\esbe')
                     res.append(r'\zgap 10pt\*')
                     res.append(r'\ztruetext*')
             view.periphs['cover'+a] = "\n".join(res)
