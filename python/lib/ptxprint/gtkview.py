@@ -32,7 +32,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
-            _categoryColors, _bookToCategory, getResourcesDir, getSrcDir
+            _categoryColors, _bookToCategory, getResourcesDir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -1571,7 +1571,7 @@ class GtkViewModel(ViewModel):
 
         logger.debug("Creating source views")
         lm = GtkSource.LanguageManager()
-        langpath = os.path.join(getSrcDir(), "syntax")
+        langpath = os.path.join(pycodedir(), "syntax")
         sm = GtkSource.StyleSchemeManager()
         logger.debug(f"Setting syntax files path to {langpath}")
         lm.set_search_path([langpath])

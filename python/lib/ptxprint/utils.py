@@ -736,9 +736,6 @@ def getResourcesDir():
             return res
     return None
 
-def getSrcDir():
-    return getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
         inf.seek(-12, 2)
