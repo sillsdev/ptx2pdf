@@ -9,4 +9,4 @@ rmdir /s /q Output
 
 REM Call PyInstaller to create the "dist" folder
 REM pyinstaller --log-level DEBUG --clean ptxprint.spec
-pyinstaller --log-level DEBUG ptxprint.spec
+C:\msys64\mingw64\bin\pyinstaller --log-level DEBUG ptxprint.spec
