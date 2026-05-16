@@ -1,13 +1,14 @@
-PTXprint 3.0.28 Release Notes
+PTXprint 3.0.29 Release Notes
 15 May 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.28 - (15 May 2026)
+Bug fixes and Improvements in 3.0.29 - (15 May 2026)
   * Get covers working in some way
   * Replace getSrcDir with pytcodedir and remember to use it
   * Enable pdfinish again
+  * Fix broken .spec file
 
 Bug fixes and Improvements in 3.0.27 - (14 May 2026)
   * Improve layout of Pretore options and sign-up
