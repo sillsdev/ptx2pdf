@@ -83,9 +83,12 @@
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
 \def\FootnoteMulC{1} % Centrecolumn text
-\def\FootnoteMulT{400} % Twocolumn text
-\def\FootnoteMulS{400} % Sg column text
-\def\FootnoteMulD{500} % Diglot column text - deliberately read excess text for diglots
+\def\FootnoteMulStT{800} % StudyNote DblCol text (theoretically 1000)
+\def\FootnoteMulStS{400} % StudyNote SgCol text (theoretically 500)
+\def\FootnoteMulStD{500} % StudyNote Diglot text (theoetical value 500)
+\def\FootnoteMulT{1500} % Twocolumn text (Theoretically 2000)
+\def\FootnoteMulS{800} % Sg column text - theoretically 1000
+\def\FootnoteMulD{900} % Diglot column text - theoretically 1000
 
 %+c_setnotecount
 % iterate over note classes, set \count for each class  
@@ -112,7 +115,11 @@
   \else\s@tn@tep@r@ms{#1}\fi
 }
 \def\s@tn@tep@r@ms#1{%
-  \count255=\ifdiglot \FootnoteMulD \else \ifp@ranotes \FootnoteMulT \else \FootnoteMulS \fi\fi 
+  \def\tmpa{}\def\tmpb{T}%2Col
+  \ifnum\BodyColumns=1 \def\tmpb{S}\fi
+  \ifdiglot\def\tmpb{D}\fi
+  \x@\ifx\csname studynotes-#1\endcsname\relax\else\def\tmpa{St}\fi
+  \count255=\csname FootnoteMul\tmpa\tmpb\endcsname
   \s@tn@tec@unt{#1}%
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
