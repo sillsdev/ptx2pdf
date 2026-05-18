@@ -15,6 +15,10 @@ else:
     bindir = sys.platform + "_" + platform.machine()
 print("bindir:", bindir)
 
+import types
+_uuid = types.ModuleType('_uuid')
+_uuid.generate_time_safe = None
+sys.modules['_uuid'] = _uuid
 import usfmtc           # so we can find its data files
 
 version="3.0.29"
