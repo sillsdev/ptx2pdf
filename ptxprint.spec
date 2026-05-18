@@ -17,7 +17,7 @@ print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
 
-version="3.0.26"
+version="3.0.29"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -375,8 +375,8 @@ print("binaries:", binaries)
 print("datas:", datas)
 
 jobs = {
-    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]}
-#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
+    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 tcolls = []
 for k, v in jobs.items():
@@ -413,7 +413,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             binaries = binaries,
             datas = datas,
                 # The registry tends not to get included
-            hiddenimports = (['_winreg', 'gi.repository.win32'] if sys.platform.startswith("win") else []) \
+            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid"] if sys.platform.startswith("win") else []) \
                 + ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._core._exceptions'],
             runtime_hooks = [],
             hookspath = [os.path.abspath("pyinstallerhooks")],
