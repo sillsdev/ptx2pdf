@@ -16,9 +16,16 @@ else:
 print("bindir:", bindir)
 
 import types
-_uuid = types.ModuleType('_uuid')
-_uuid.generate_time_safe = None
-sys.modules['_uuid'] = _uuid
+
+class MockExtensionModule(types.ModuleType):
+    def __init__(self, name):
+        super().__init__(name)
+        self.generate_time_safe = None
+        self.__file__ = f"<built-in extension {name}>"
+
+if '_uuid' not in sys.modules:
+    sys.modules['_uuid'] = MockExtensionModule('_uuid')
+
 import usfmtc           # so we can find its data files
 
 version="3.0.29"
