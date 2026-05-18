@@ -118,7 +118,7 @@ class Signature:
         self.src = Size(*srcsize)
         self.tgt = Size(*tgtsize)
         self.mbox = PdfArray([0, 0, self.tgt.w, self.tgt.h])
-        self.pages = pages * 2
+        self.pages = int(pages) * 2
         self.sigsheets = sigsheets
         self.rotate = (int(math.log2(self.pages)) & 1) == 0
         self.fold = fold if self.pages != 4 else 0
@@ -268,6 +268,29 @@ def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, ha
         writer.write()
     return writer
 
+def get_page_size(page_size):
+    points_per_mm = 2.834467
+    pagesizes = {
+        'a4': (595, 842),
+        'a4b': (635, 882),
+        'ltr': (612, 792),
+        'lgl': (612, 1008),
+        'a3': (842, 1191),
+        'a3b': (862, 1211),
+        'a2': (1191, 1684),
+        'a2b': (1211, 1704)
+    }
+    if 'x' in page_size:
+        outwidth, outheight = (float(x.strip()) * points_per_mm for x in page_size.split('x'))
+    elif page_size.lower() in pagesizes:
+        outwidth, outheight = pagesizes[page_size.lower()]
+    elif page_size.lower().endswith('l') and page_size.lower()[:-1] in pagesizes:
+        outheight, outwidth = pagesizes[page_size.lower()[:-1]]
+    else:
+        raise Exception(f"Unknown paper size: {page_size}.")
+    return outwidth, outheight
+
+
 
 if __name__ == "__main__":
     import argparse
@@ -293,20 +316,15 @@ if __name__ == "__main__":
     parser.add_argument('-S','--sigsheets',type=int,default=1,help='Number of sheets per signature')
     parser.add_argument('-f','--fold',type=float,default=0.,help='Minimum fold cut margin')
     parser.add_argument('-c','--crops',action="store_true",help="Add cropmarks")
+    parser.add_argument('-r','--rtl',action="store_true",help="Right-to-left?")
     parser.add_argument('-F','--foldfirst',action='store_true',help='Fold before cut')
     parser.add_argument('-H','--height',type=float,help="Source page height")
     parser.add_argument('-W','--width',type=float,help="Source page width")
     args = parser.parse_args()
 
     if args.size is not None:
-        if 'x' in args.size:
-            args.outwidth, args.outheight = (float(x.strip()) for x in args.size.split('x'))
-        elif args.size.lower() in pagesizes:
-            args.outwidth, args.outheight = pagesizes[args.size.lower()]
-        elif args.size.lower().endswith('l') and args.size.lower()[:-1] in pagesizes:
-            args.outheight, args.outwidth = pagesizes[args.size.lower()[:-1]]
-        else:
-            print(f"Unknown paper size: {args.size}. Keeping going and will probably crash")
+        args.outwidth, args.outheight = get_page_size(args.size)
+
     if not args.infile:
         sig = Signature([args.width, args.height], [args.outwidth, args.outheight],
                     args.num, args.sigsheets, args.fold)
@@ -317,4 +335,4 @@ if __name__ == "__main__":
         print("Must specify an output file if processing an input file")
     else:
         make_signatures(args.infile, args.outwidth, args.outheight, args.num,
-                        args.sigsheets, args.fold, args.crops, args.foldfirst, outfname=args.outfile)
+                        args.sigsheets, args.fold, args.crops, args.rtl, args.foldfirst, outfname=args.outfile)
