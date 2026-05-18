@@ -143,7 +143,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             pdffile = pdffile.replace(".pdf", ext+".pdf")
             res[' Finished'] = pdffile
         elif opath == pdffile:
-            opath = outfname.replace(".tex", ".prepress.pdf")
+            opath = os.path.normpath(pdffile).replace(".pdf", ".prepress.pdf")
             safeRename(pdffile, opath)
             res[' Original'] = opath
         outpdfobj.fname = pdffile
