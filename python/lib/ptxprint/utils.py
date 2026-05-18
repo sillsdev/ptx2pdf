@@ -405,6 +405,8 @@ def saferelpath(p, r="."):
     return res.rstrip("/")
 
 def pycodedir():
+    if getattr(sys, 'frozen', False):
+        return os.path.join(sys._MEIPASS, 'ptxprint')
     return os.path.abspath(os.path.dirname(__file__))
 
 def pt_bindir():
@@ -733,9 +735,6 @@ def getResourcesDir():
         if os.path.exists(res):
             return res
     return None
-
-def getSrcDir():
-    return getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
 
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
