@@ -51,7 +51,7 @@ def overlay_pages_onto_blank(blank_page, pages_to_overlay):
         PageMerge(base).add(p).render()
     return base
 
-def blend_pdf(pdf_path: str, start_page: int | None = None, end_page: int | None = None, mirrored: bool = False):
+def blend_pdf(pdf_path: str, output_path: str | None = None, start_page: int | None = None, end_page: int | None = None, mirrored: bool = False):
     """
     Blend (overlay) selected pages of a PDF into a single page.
     - pdf_path: input PDF (Windows or forward-slash path accepted)
@@ -112,8 +112,9 @@ def blend_pdf(pdf_path: str, start_page: int | None = None, end_page: int | None
         print("Wrote:", output_file)
 
     if not mirrored:
-        out = f"{src_dir}/{src_base}-blend{range_suffix}.pdf"
-        write_one(out, selected)
+        if not output_path:
+            output_path = f"{src_dir}/{src_base}-blend{range_suffix}.pdf"
+        write_one(output_path, selected)
         return
 
     # Mirrored: odd/even based on original document page numbers (1-based)
@@ -127,22 +128,35 @@ def blend_pdf(pdf_path: str, start_page: int | None = None, end_page: int | None
         else:
             even_pages.append(p)
 
+    # Build a two-page PDF: page 1 = odd overlay, page 2 = even overlay
+    if not output_path:
+        output_path = f"{src_dir}/{src_base}-blend{range_suffix}.pdf"
+
+    writer = PdfWriter()
+
     if odd_pages:
-        out_odd = f"{src_dir}/{src_base}-blend-odd{range_suffix}.pdf"
-        write_one(out_odd, odd_pages)
+        blank = make_blank_page_like(pages[0])
+        writer.addpage(overlay_pages_onto_blank(blank, odd_pages))
     else:
-        print("No odd pages in the selected range; no -blend-odd PDF written.")
+        print("No odd pages in the selected range; odd page will be blank.")
+        writer.addpage(make_blank_page_like(pages[0]))
 
     if even_pages:
-        out_even = f"{src_dir}/{src_base}-blend-even{range_suffix}.pdf"
-        write_one(out_even, even_pages)
+        blank = make_blank_page_like(pages[0])
+        writer.addpage(overlay_pages_onto_blank(blank, even_pages))
     else:
-        print("No even pages in the selected range; no -blend-even PDF written.")
+        print("No even pages in the selected range; even page will be blank.")
+        writer.addpage(make_blank_page_like(pages[0]))
+
+    writer.write(output_path)
+    print("Wrote:", output_path)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Blend (overlay) PDF pages into a single page (pdfrw).")
     parser.add_argument("pdf_path", help="PDF path (Windows or forward-slash style).")
+    parser.add_argument("-o", "--output",
+                        help="Output filepath.")
     parser.add_argument("start_page", nargs="?", type=int, default=None,
                         help="Optional start page (1-based).")
     parser.add_argument("end_page", nargs="?", type=int, default=None,
@@ -151,7 +165,7 @@ def main():
                         help="Blend odd/even pages separately into two PDFs.")
     args = parser.parse_args()
 
-    blend_pdf(args.pdf_path, args.start_page, args.end_page, args.mirrored)
+    blend_pdf(args.pdf_path, args.output, args.start_page, args.end_page, args.mirrored)
 
 
 if __name__ == "__main__":

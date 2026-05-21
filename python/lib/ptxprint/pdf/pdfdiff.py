@@ -1,4 +1,3 @@
-
 import os, argparse
 from PIL import Image, ImageChops, ImageEnhance, ImageOps
 from ptxprint.utils import _
@@ -102,8 +101,10 @@ def main():
     parser.add_argument('infilea', help="Original input PDF file")
     parser.add_argument('infileb', help="Different input PDF file")
     parser.add_argument('outfile', help="Output difference PDF file")
-    parser.add_argument('-O','--oldcol',help="From colour 6 hex RGB digits")
-    parser.add_argument('-N','--newcol',help="To colour 6 hex RGB digits")
+    parser.add_argument('-O','--oldcol',help="From colour 6 hex RGB digits. Default: red.")
+    parser.add_argument('-N','--newcol',help="To colour 6 hex RGB digits. Default: blue.")
+    parser.add_argument('-A','--allpages', action="store_true", help="Show all pages? Default: show only non-identical pages.")
+    parser.add_argument('-m','--maxpages', type=int, default=0, help="Maximum pages to show. Default: no maximum")
     args = parser.parse_args()
 
     if args.oldcol is not None:
@@ -112,7 +113,7 @@ def main():
         args.newcol = splithex(args.newcol)
 
     res = createDiff(os.path.abspath(args.infilea), os.path.abspath(args.infileb),
-            os.path.abspath(args.outfile), doError, color=args.oldcol, oldcolor=args.newcol)
+            os.path.abspath(args.outfile), doError, color=args.oldcol, oldcolor=args.newcol, onlydiffs=not args.allpages, limit=args.maxpages)
 
 if __name__ == "__main__":
-    ptxprint.pdf.pdfdiff.main()
+    main()

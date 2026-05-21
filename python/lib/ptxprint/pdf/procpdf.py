@@ -134,7 +134,6 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             pdict.Private.Binary = True
             p.ptxprint = pdict
         zio.close()
-
     if outpdfobj is not None:
         if opath != pdffile:
             if os.path.exists(opath):
@@ -146,6 +145,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             opath = os.path.normpath(pdffile).replace(".pdf", ".prepress.pdf")
             safeRename(pdffile, opath)
             res[' Original'] = opath
+        if kw.get("output_filepath"):
+            pdffile = kw.get("output_filepath")
         outpdfobj.fname = pdffile
         outpdfobj.compress = True
         outpdfobj.do_compress = compress

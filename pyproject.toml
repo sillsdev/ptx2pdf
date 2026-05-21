@@ -61,3 +61,4 @@ universal = true
 ptxprint = "ptxprint.main:main"
 pdfdiff = "ptxprint.pdf.pdfdiff:main"
 xdvitype = "ptxprint.xdv.xdvtype:main"
+pdfinish = "ptxprint.pdf.pdfinish:main"
