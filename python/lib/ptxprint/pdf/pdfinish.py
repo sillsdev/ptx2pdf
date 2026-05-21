@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import argparse, sys, os, re, configparser, subprocess, platform
-import site, logging
+import site, logging, shutil
 import tempfile
 import uuid
 from shutil import rmtree
@@ -108,8 +108,9 @@ class Finisher(Gtk.Application):
         if response != Gtk.ResponseType.OK:
             return
 
-        os.rename(self.tmp_file_1, self.output_filepath)
-        self.tmp_file_1, self.tmp_file_2 = None, None
+        if self.tmp_file_1 is not None and os.path.exists(self.tmp_file_1):
+            shutil.move(self.tmp_file_1, self.output_filepath)
+            self.tmp_file_1, self.tmp_file_2 = None, None
 
         if not os.path.exists(self.output_filepath):
             self.show_error("File not created as expected!")
