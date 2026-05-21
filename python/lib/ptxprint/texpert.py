@@ -1,8 +1,10 @@
 
 from ptxprint.utils import _, strtobool, asfloat, f2s
 from dataclasses import dataclass
+from multiprocessing import cpu_count
 from typing import Optional, Callable, Tuple, Union
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +67,11 @@ texpertOptions = {
                             # _("Major noteline happens at the start then every this many lines after.")),
     "DoubleSided":          O("doublesided", "LAY", True, None, _("Double Sided Layout"), 
                             _("This setting can be disabled to turn off inner/outer margins, forcing the inner/outer gutter, and Notelines to always appear on the same side of the printed page.")),
+
+    "MaxProcesses":         O("maxproc", "LAY", (int(cpu_count() * 0.9), 1, cpu_count(), 1, 1, 1), None, _("Maximum parallel processes"),
+                            _("The maximum number of parallel processes to use for example when page filling")),
+    "MaxFillTime":          O("maxfilltime", "LAY", (0, 100, 0.1, 1, 1, 1), None, _("Maximum Filling Time (mins)"),
+                            _("Stop page filling a book after this many minutes")),
 
     #"versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
     #"versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
@@ -212,6 +219,19 @@ texpertOptions = {
     "ShowHboxErrorBars":  O("showhboxerrorbars", "PDF", False, "", _("Show Error Bars For Overfull Lines"),
                             _("Enable this option to have TeX make overfull lines stand out."),
                             valfn = lambda v:"%" if v else ""),
+ # s_spineOverlapBack
+    "spineOverlapBack":   O("spineoverlapback", "PDF", (0, 0.00, 50.00, 0.50, 1.00, 1), "", _("Spine Overlap onto Back Cover (mm)"),
+                            _("If you want the spine graphic or colour to spill over onto the back cover page, then set the amount of overlap here.")),
+ # s_spineOverlapFront
+    "spineOverlapFront":  O("spineoverlapfront", "PDF", (0, 0.00, 50.00, 0.50, 1.00, 1), "", _("Spine Overlap onto Front Cover (mm)"),
+                            _("If you want the spine graphic or colour to spill over onto the front cover page, then set the amount of overlap here.")),
+ # s_coverBleed
+    "Bleed":              O("bleed", "PDF", (5, 0.00, 25.00, 0.50, 1.00, 1), "", _("Cover Bleed (mm)"),
+                            _("Bleed is the section of artwork that goes beyond where the paper is cut. This ensures that the image goes right to the edge of the cover after it has been trimmed.")),
+ # s_coverArtBleed
+    "ArtBleed":           O("artbleed", "PDF", (0, 0.00, 25.00, 0.50, 1.00, 1), "", _("Hard Cover Art Bleed (mm)"),
+                            _("Art Bleed is specifically for hard cover binding and is the setting which enables images to go beyond the size of the cover in order to wrap around the hard cover and stuck down under the inner backing sheet.")),
+
     # "ProperCase":         O("lowercase", "PDF", False, "", _("Title"),
                             # _("Description in Tooltip")),
 

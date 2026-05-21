@@ -885,6 +885,7 @@
 
 \def\@prepare@layout@complexpages{%
   \trace{d}{@prepare@layout@complexpages \l@gdims{\partial} \ifdiglotb@dy body\else intro\fi}%
+  \traceifset{@prepare@layout@complexpages}%
   %\@prepare@layout@simplecols  NO: it does things in the wrong order for us here.
   % joint calcs and delta? Not relevant here
   %
@@ -906,6 +907,7 @@
   % per-column footnoteboxen need unwrapping and applying to the relevant column, as part of layout
   %TODO: join text and 
   %
+  \traceifcheck{@prepare@layout@complexpages}%
 }
 
 \def\complex@realnotehts#1{%
@@ -1117,7 +1119,7 @@
 \globdimen\cplx@bestcost
 \globdimen\cplx@trycost
 \def\diglot@run@trials@complexpages{% This receives control after all columns are gathered.
-  \special{color push rgb 0 1 0}%
+  %\special{color push rgb 0 1 0}%
   \trace{dmc}{Running trials for active content:\digl@tc@ntentlist}% 
   %As columns are gathered via the output routine, by definition the currentpage must be empty
   %Material to typeset is in excessX and wholeX (intially equal in content)
@@ -1223,6 +1225,7 @@
   \let\col@do\check@galley
   \x@\each@col\cplx@proc@all\E
   \ifpagefull
+    \traceifset{drt@complexpages}%
     \trace{dmc}{Go for final layout (\g@lleylist)}%
     \global\late@stage@reflowfalse
     % TODO: Split list by page number, and save per-page notes, or run checkgalley and trials from complex@layout
@@ -1233,9 +1236,10 @@
       %\tracingmacros=1
       \diglot@run@nxt@trial
     \fi
-    \special{color push rgb 0 0 1}%
+    %\special{color push rgb 0 0 1}%
     \@prepare@layout@complexpages
     \complex@layout
+    \traceifcheck{drt@complexpages}%
   \else 
     \complex@notfull
   \fi
@@ -1249,8 +1253,10 @@
   %\x@\each@col\diglot@list\E % Find 'skip' after each chunk
 }
 \def\complex@layout{%
+  \traceifset{complex@layout}%
   \p@lyp@geno=0
   \@complex@layout
+  \traceifcheck{complex@layout}%
 }
 \def\@complex@layout{%
   \trace{dmc}{@complex@layout (\the\p@lyp@geno)}%

@@ -1,8 +1,140 @@
-PTXprint 3.0.17 Release Notes
-27 Mar 2026
+PTXprint 3.0.29 Release Notes
+15 May 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.29 - (15 May 2026)
+  * Get covers working in some way
+  * Replace getSrcDir with pytcodedir and remember to use it
+  * Enable pdfinish again
+  * Fix broken .spec file
+
+Bug fixes and Improvements in 3.0.27 - (14 May 2026)
+  * Improve layout of Pretore options and sign-up
+  * Fix path problems for downloading ImageSets
+  * Make sure PDF viewer's Page count is updated consistently
+  * Improve scrollwheel behaviour when zoomed in with PDF viewer
+  * Get multiprocessing working for pyinstaller apps
+
+Bug fixes and Improvements in 3.0.26 - (14 May 2026)
+  * Fix bad bug in adjlist triggers generation
+  * Make Project dropdown scrollable
+  * Fix bug on create archive.
+  * Get internal files better from windows .exe
+  * Update the techref
+  * Fix bug #1162 bug03-nonstopmode-not-reset
+  * Fix bug #1165 firstnote-false-before-check
+  * Remove pdfinish as not ready yet
+  
+Bug fixes and Improvements in 3.0.25 - (11 May 2026)
+  * Add -S to enable external scripts during CLI printing, for protection
+  * Minor fixes and hopefully handle cross platform paths in archive creation
+  * Integrate pdfinish into the build
+  * Tighten up the UI vertically to take less space
+  * Make sure PDF Preview shows the updated page
+  * Fix python-bug16-17-20-usfmerge      #1157 
+  * Fix tex-bug05-leftmarks-logic-typo   #1164 
+  * Fix tex-bug01-getcalleres-typo       #1160 
+  * Fix tex-bug02-set-utonum-overwrites  #1161 
+  * Fix tex-bug04-duplicate-gdef         #1163 
+  * Fix tex-bug07-wrong-if-conditional   #1166 
+  * Fix image padding bug causing pics to disappear completely
+  * Fix missing cinfo/topx bug
+  * Fix end of ayah for verse ranges
+
+Bug fixes and Improvements in 3.0.24 - (9 May 2026)
+  * Use new dialog for choosing base project location if -Z 8 is used from CLI
+  * Fix bare except on Windows DPI and WindowGeometry.fromConfig drops frame fields
+  * Fix bare except: in parselog swallows KeyboardInterrupt
+  * Fix PDF color variant suffix silently dropped from filename
+  * Fix analyse_script can crash or loop forever
+  * Fix path typo shard->shared and _mergecfg uses wrong config variable
+  * Fix getBooks returns None instead of [] when no project loaded
+  * Fix doError logs txt instead of secondary for secondary message
+  * Fix duplicate Thumb Tabs widget_map key and Log Analysis excluded from summary
+
+Bug fixes and Improvements in 3.0.23 - (7 May 2026)
+  * Provide options if multiple Paratext projects are located on initial run. #1143
+  * Make the booklist more robust to handle wrong book names or codes #1142
+  * Add link to Master Slides on Help tab
+  * Only one wordlist footnote per word in a verse
+  * Add comments to uwtv converter
+  * Add unfoldingWord conversion script
+  * Add mode to markdown converter
+  * Make sure we don't store None when we mean ''
+  * Turn on space before studynotes if after other notes
+  * Add developer overview doc for the diglot/polyglot system
+  * Refactor wizards
+  * Add Layout (configuration) Wizard; keep button hidden behind -E 1
+  * Fix markdown parsing
+  * Fix intercharspace to have a nobreak at start
+  * Fix style tristate values
+
+Bug fixes and Improvements in 3.0.22 - (30 Apr 2026)
+  * Attempt to improve page-fill and avoid some crashes
+  * Enable "downgrading" study notes to normal notes
+  * Make study notes in diglots calculate space better
+  * Define tri@lsplitRej once should be enough
+  * Fix typo that stopped special attributes from detecting properly
+
+Bug fixes and Improvements in 3.0.21 - unreleased (29 Apr 2026)
+  * Only show the OK-Cancel dialog for larger (2MB+) PDFs
+  * Move version stuff out of view into version.py
+  * Study notes in diglots
+  * Reduce required fonts to Charis
+  * Make broken startup (runsplash) error message is more helpful
+  * Add long load message dialog with OK or Cancel option
+  * Add markdown-it-py dependency to pyproject.toml
+  * Add initial markdown support (requires markdown_it python module)
+  * Fix bug that prevented Diglot working after first setup
+  * Fix minor bugs in ptx-diglot.tex and load_parlocs
+  * Fix glossary as footnotes
+
+Bug fixes and Improvements in 3.0.20 - (26 Apr 2026)
+  * Update VCS trigger when adjlist changes
+  * Get marginal notes working
+  * Try to get page_filler to finish the good work it starts
+  * Incremental improvements to Printers tabs
+  * Implement 'no whitespace' background image sizes for covers
+  * Add tweaks needed for cropping images
+  * QR codes in coloured contexts should not generate bad .XDV, but inherit that colour
+  * Prepare to allow non crop mark bleeds (partly completed)
+  * Auto-close warning message after 30s and carry on with job
+  * Add better colour support to covers, etc.
+  * Ensure 'Layout Only' is disabled when a config changes
+  * Add DEBUG to pyinstaller output on windows build
+  * Minor PDF navigation fixes
+  * Fix nlines error
+  * Fix syntax error that only Python 3.11.0 seems to care about
+
+Bug fixes and Improvements in 3.0.19 - unreleased (19 Apr 2026)
+  * Add (Auto) Fill Page feature to PDF Viewer and show book progress (parallel processing)
+  * Remove the Cover tab and add a Cover Wizard instead (peripherals tab)
+  * Add the Printers tab with cost comparisons graph (for Pretore, Print_Gallery, Pothi)
+  * Smarter choice of anchor ref if an image has multiple options (uses the filtered book ref)
+  * Improve picture catalogue to be more responsive and flexible
+  * Improve ImageSet downloader dialog to be dynamic
+  * When saving diglot content at a layout style break clear values for interleaving.
+  * Implement cropped background images and positioning thereof
+  * Add Charis to bundled fonts
+  * Fix support .png images in the picture catalogue, etc.
+  * Fix picture preview pane to also shows 1st image at startup #1096
+  * Fix configuration names should be sorted caseless
+  * Fix avoid EEK from mispalced marks on sections (diglot issue)
+  * Fix cover figure image shift bug
+  * Fix shortcuts not working as they should
+  * Fix don't sort the book list (allowing non-canonical book order as before)
+  * Fix cover wizard UI
+
+Bug fixes and Improvements in 3.0.18 (3 Apr 2026)
+  * Solve issue of lineskiplimit causing mangled small textborder boxes
+  * Improve cover wizard UI
+  * Wire up Pretore behind -E 1
+  * Make page_filler more robust
+  * page_filler to support verse ranges
+  * Remove default timeout from page_filler
+  * Handle radio buttons when no gui
 
 Bug fixes and Improvements in 3.0.17 (27 Mar 2026)
   * Merge pull request #1138 from sillsdev/feature/dmg-ux

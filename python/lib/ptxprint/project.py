@@ -208,9 +208,10 @@ class Project:
             return os.path.join(self.path, self.printdir)
         if ext is None:
             ext = self.ext
+        res = os.path.join(self.path, self.printdir, cfgid)
         if not noext and ext is not None:
-            return os.path.join(self.path, self.printdir, cfgid, ext)
-        return os.path.join(self.path, self.printdir, cfgid)
+            res = os.path.join(res, ext)
+        return res
 
     def shareConfig(self, cfgid, toshared=True):
         cdir = self.configs.get(cfgid, None)

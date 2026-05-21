@@ -208,19 +208,87 @@ def histogram(data, indent=0, zoom=(0,1), bins=10, width=40):
         res.append(" "*indent + "Above {}%: {}".format(int(zoom[1] * 100), mx))
     return "\n".join(res)
     
+def langQuarter_analyze(results, stat):
+    """Count distinct languages active during the configured quarter.
+
+    Two modes (set via _quarter_overlap in results):
+      overlap (default): project's usage window overlaps the quarter
+                         i.e. firstUsed <= qend AND lastUsed >= qstart
+      exact:             lastUsed falls strictly within the quarter
+    """
+    ptx = stat.get("ptxPrint", {})
+    last_used  = ptx.get("lastUsed")
+    first_used = ptx.get("firstUsed")
+    lang = stat.get("languageCode") or stat.get("language")
+    if not last_used or not lang:
+        return
+    qstart = results.get("_qstart")
+    qend   = results.get("_qend")
+    if not qstart or not qend:
+        return
+    lu_dt = datetime.fromtimestamp(last_used,  UTC)
+    fu_dt = datetime.fromtimestamp(first_used, UTC) if first_used else lu_dt
+
+    if results.get("_quarter_overlap", True):
+        # Project was alive at some point during the quarter
+        in_quarter = fu_dt <= qend and lu_dt >= qstart
+    else:
+        # lastUsed falls strictly inside the quarter window
+        in_quarter = qstart <= lu_dt <= qend
+
+    if in_quarter:
+        counts = results.setdefault("langQuarter", {})
+        counts[lang] = counts.get(lang, 0) + 1
+
+def langQuarter_results(results):
+    langs = results.get("langQuarter", {})
+    qstart  = results.get("_qstart", "?")
+    qend    = results.get("_qend",   "?")
+    mode    = "overlap" if results.get("_quarter_overlap", True) else "exact lastUsed"
+    res = [f"Languages active {qstart} – {qend}  (mode: {mode})"]
+    res.append(f"    Distinct language count: {len(langs)}")
+    res.append(f"    {'Language Code':<40} Count")
+    res.append(f"    {'-'*40} -----")
+    for lang, count in sorted(langs.items(), key=lambda x: (-x[1], x[0])):
+        res.append(f"    {lang:<40} {count}")
+    return "\n".join(res)
+
 def main(argv=None):
     parser = ArgumentParser(prog="something")
     parser.add_argument("infile",help="Input file",default="stats/ptxPrintStats.txt")
     parser.add_argument("-o","--outfile",help="Output file",default="stats/report.txt")
     parser.add_argument("-f","--find",help="What to report on",action="append",default=["usage"])
+    parser.add_argument("--quarter-start", default=None,
+                        help="Quarter start date YYYY-MM-DD (e.g. 2025-01-01)")
+    parser.add_argument("--quarter-end", default=None,
+                        help="Quarter end date YYYY-MM-DD (e.g. 2025-03-31)")
+    parser.add_argument("--quarter-exact", action="store_true", default=False,
+                        help="Only count languages whose lastUsed falls strictly inside the quarter "
+                             "(default: count any language whose usage window overlaps the quarter)")
 
     args = parser.parse_args(argv)
 
     afns = [getattr(current_module, f+"_analyze", duck) for f in args.find]
     rfns = [getattr(current_module, f+"_results", duck) for f in args.find]
 
+    # Inject quarter bounds into results dict before processing
+    _quarter_init = {}
+    if args.quarter_start:
+        _quarter_init["_qstart"] = datetime.strptime(args.quarter_start, "%Y-%m-%d").replace(tzinfo=UTC)
+    if args.quarter_end:
+        _quarter_init["_qend"]   = datetime.strptime(args.quarter_end,   "%Y-%m-%d").replace(tzinfo=UTC).replace(hour=23, minute=59, second=59)
+    _quarter_init["_quarter_overlap"] = not args.quarter_exact
+
+    def process_with_quarter(js, args, afns, rfns):
+        results = dict(_quarter_init)
+        for s in js:
+            for fn in afns:
+                fn(results, s)
+        report = [fn(results) for fn in rfns]
+        return "\n\n".join(report)
+
     print(f"Input:  {args.infile}")
-    Pipeline(args, jsoninfile, f_(process, afns, rfns), textoutfile)
+    Pipeline(args, jsoninfile, f_(process_with_quarter, afns, rfns), textoutfile)
     print(f"Output: {args.outfile}")
 
 if __name__ == "__main__":

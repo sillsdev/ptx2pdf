@@ -669,10 +669,14 @@
 \def\reduceavailht#1{%
   \checkp@ranotes{#1}%
   %\TRACE{av: \the\availht =>}
-  \ifp@ranotes\let\n@xt=\reduceavailht@para
-    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
-  \else\let\n@xt=\reduceavailht@sep
-    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+  \ifst@dynotes
+    \let\n@xt=\reduceavailht@st@dy
+  \else
+    \ifp@ranotes\let\n@xt=\reduceavailht@para
+      \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
+    \else\let\n@xt=\reduceavailht@sep
+      \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+    \fi
   \fi
   \iff@rstnote\else\global\noteseentrue\fi\n@xt{#1}}
 %-c_reduceavailht
@@ -699,6 +703,32 @@
     \ifnum\DEBUGnotes=\the\pageno \showbox0 \fi
   \fi}
 %-c_reduceavailht_para
+\def\reduceavailht@st@dy#1{%
+  \edef\cl@sss{#1\g@tndstat}%
+  \trace{n}{class \cl@sss}%
+  \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
+  \ifvoid\th@cl@ss\trace{f}{studynotes[#1] empty}\else
+    \dimen0=0.5\ht\th@cl@ss
+    \advance\dimen0 -4\@minb@seline
+    \@@LOOP\temptrue
+      \setbox1=\copy\th@cl@ss
+      \setbox11=\vsplit1 to \dimen0
+      \setbox11=\vsplit1 to \dimen0
+      \ifdim\ht1>0pt
+        \advance\dimen0 by 0.5\ht1
+      \else\tempfalse
+      \fi
+      \iftemp\@@REPEAT
+    \global\advance\availht by -\dimen0
+    \iff@rstnote
+      \global\advance\availht by -\AboveNoteSpace
+      \global\f@rstnotefalse
+      \trace{f}{StudyNotes[#1] cost \the\dimen0 + \the\AboveNoteSpace + \BelowFootNoteRuleSpace}%
+    \else
+      \global\advance\availht by -\InterNoteSpace
+      \trace{f}{StudyNotes[#1] cost \the\dimen0 + \the\InterNoteSpace}%
+    \fi
+  \fi}
 
 \def\max@boxpara#1{%paragraph notes of type \v@lpfx#1 and find the max height amongst them
   \trace{n}{max@boxpara \v@lpfx\if #1L\else #1\fi}%
@@ -739,7 +769,6 @@
   \TRACE{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\trace{f}{Notes[#1] empty}\else
-    \global\f@rstnotefalse
     \global\advance\availht by -\ht\th@cl@ss
     \global\advance\availht by -\dp\th@cl@ss
     \iff@rstnote\advance\availht by -\AboveNoteSpace
@@ -1337,9 +1366,11 @@
   \ifNoGrid\else
     \bmg@p=\availht
     \dimen0=8 \baselineskip
-    \ifdim\dimen0>0.5pt
-        \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
-        \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
+    \ifdim\availht > -1000pt % Skip calc if we're in silly negative numbers
+      \ifdim\dimen0>0.5pt
+          \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
+          \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
+      \fi
     \fi
     \advance\bmg@p by -\availht
   \fi
@@ -1621,7 +1652,8 @@
   \fitonpagetrue
   \ifdim\availht<0pt
     \MSG{No space! vsize=\the\vsize}%
-    \ifdim\vsize > 2 \baselineskip \divide\vsize 2 \fitonpagefalse% drastic
+    \ifdim\vsize > 2 \baselineskip \global\vsize= 0.8\vsize %2% drastic
+      \fitonpagefalse
     \else\MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi\fi
   \iffitonpage

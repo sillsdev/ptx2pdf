@@ -78,8 +78,8 @@
 \def\n@xtfirstRmark{} %First Rmark in the n@xt chunk
 \def\n@xtbotLmark{} %First Lmark in the n@xt chunk
 \def\n@xtbotRmark{} %First Rmark in the n@xt chunk
-\def\LeftMarkstrue{\useLeftMarkstrue\useRigthMarksfalse}
-\def\LeftMarksfalse{\useLeftMarkstrue\useRigthMarkstrue}
+\def\LeftMarkstrue{\useLeftMarkstrue\useRightMarksfalse}
+\def\LeftMarksfalse{\useLeftMarksfalse\useRightMarkstrue}
 \def\m@xBelowBaseline{0pt}%
 \def\@fnLht{0pt}
 \def\@fnRht{0pt}
@@ -661,6 +661,7 @@
       \showbox\@xcs
     \fi
     \savingvdiscards=1
+    \trace{D}{Splitting to \the\availht}%
     \global\setbox\p@rtl=\vsplit\@xcs to \availht
     \edef\tmpbadness{\the\badness}%
     \global\p@rtlsettrue
@@ -703,15 +704,23 @@
   \fi
 }
 \def\run@a@trial{%
-  \csname run@a@trial@prep@\diglotlayout\endcsname
+  \csname run@a@trial@prep@\diglotlayout\endcsname% Sets iftemp true: run trial / false: no content
   \iftemp
     \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time). ags=\the\@ftergalleyskip, tsr:\csname tri@lsplitRej\c@rrdstat\endcsname}%
-    \ifdim\ht\galley=0pt \ifdim\dp\galley=0pt
+    \tempfalse
+    \ifdim\ht\galley<\z@
+      \trace{D}{How come galley has NEGATIVE size? (check with  scrollmode) \the\interactionmode}%
+      \temptrue
+    \fi
+    \ifdim\ht\galley=\z@ \ifdim\dp\galley=\z@
       \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
+      \temptrue
+    \fi\fi
+    \iftemp
       \ifnum\interactionmode=2
         \showbox\galley
       \fi
-    \fi\fi
+    \fi
     \tracetimset{any@trial}%
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 4}%
@@ -1120,7 +1129,7 @@
     \fi
   \fi
   \tmpcount=\lastnodetype
-  \traceNum{D}{Initial savepenalty \the\savedpenalty, \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
+  \traceNum{D}{Initial savepenalty \the\savedpenalty \ifdiglotcolh@scontent colh@scontent\fi, lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}) , \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
   \IfTr@ce{C}{{%
     \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
     \x@\let\x@\tmpL\csname ch@pterwaiting\endcsname\ifx\tmpL\relax\let\tmpL\space\fi
@@ -1149,7 +1158,7 @@
   \ifb@dy\ifdim \pagetotal>0pt 
       \x@\global\x@\let\csname isb@dy\c@rrdstat\endcsname\tr@e
   \fi\fi
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal, \csname isb@dy\c@rrdstat\endcsname}%
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal, \csname isb@dy\c@rrdstat\endcsname}%
   \checkfort@c % as good a place as any
   %\ifnum\outputpenalty=-10000 %User-pagebreak
     %\global\savedpenalty=\outputpenalty
@@ -1344,7 +1353,7 @@
  \ifx\c@rrdstat\empty
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
- \else 
+ \else
    %\diglottrue % Is THIS necessary?
  \fi
 }
@@ -2180,7 +2189,12 @@
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \loc@lhtfalse\dglt@calc@vailht
-  \advance\availht by -\m@xBelowBaseline
+  \ifversion{8}{%
+    \advance\availht by -\m@xBelowBaseline
+    \relax
+  }{%
+    \advance\availht by -\m@xBelowBaseline
+  }%
   %\tracingassigns=0
   \ifdim\availht<\@maxb@seline %
     \global\pagefulltrue%
@@ -2725,7 +2739,7 @@
   \global\availhtR=\textheight%
   \global\availhtL=\textheight%
   \global\availht=\textheight%
-  \global\chunkDelta=0pt
+  \csname @reset@diglot@\diglotlayout\endcsname
   \global\pagefullfalse%
   \xdef\f@rstb@dy{0pt}%
   \p@gestartfalse
@@ -2734,15 +2748,6 @@
   \xdef\nextp@gefirstmark{}%
   \let\col@do=\reset@marks
   \x@\each@col\diglot@list\E% 
-  \def\v@lpfx{@cur}%
-  \let\col@do=\forget@boxdim
-  \x@\each@col\diglot@list\E
-  \def\v@lpfx{@fn}%
-  \x@\each@col\diglot@list\E
-  \def\v@lpfx{}\def\v@lsfx{box}%
-  \let\col@do=\void@boxes %
-  \x@\each@col\diglot@list\E
-  \resetc@rdstat%reset the current diglotstatus
   \xdef\firstLmark{}%
   \xdef\botLmark{}%
   \xdef\firstRmark{}%
@@ -2752,7 +2757,6 @@
   \s@veinserts{col}%
   \s@veallnotes{1}%
   \s@veallnotes{2}%
-  \resetc@rdstat%reset the current diglotstatus
   \nextshipout
   \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
   \ifcsname page-\the\pageno\endcsname
@@ -2762,7 +2766,19 @@
   %\showthe\output
   %%somejunk
 }
-
+\def\@reset@diglot@simplecols{%Rsetting things that happend at end of page OR layout style switch
+  \trace{d}{@reset@diglot@simplecols: resetting things at end of diglot}%
+  \global\chunkDelta=0pt
+  \def\v@lpfx{@cur}%
+  \let\col@do=\forget@boxdim
+  \x@\each@col\diglot@list\E
+  \def\v@lpfx{@fn}%
+  \x@\each@col\diglot@list\E
+  \def\v@lpfx{}\def\v@lsfx{box}%
+  \let\col@do=\void@boxes %
+  \x@\each@col\diglot@list\E
+  \resetc@rdstat%reset the current diglotstatus
+}
 \def\diglotCollect{%
   %This gets called to collect material into the appropriate input queue.
   % assumes: \availht is correct, 
@@ -3370,7 +3386,7 @@
 \def\diglot@run@trials@simplecols{% for X as L, R, (eventually others)
   %expects: collected input in partialX, excessX empty
   %Process: cycle through chunks  
-  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist) sp=\the\savedpenalty}%
+  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist|\digl@tc@ntent@xcs|\tri@llist) sp=\the\savedpenalty, lc=\the\triall@@pcount}%
   \let\tri@llist\digl@tc@ntentlist%
   %Before running trials, empty(eventually store?) old galleys
   \empty@partials
@@ -3404,10 +3420,11 @@
 \newif\ifp@rtlset
 \def\diglot@run@nxt@trial{%
   \traceNum{d}{diglot@run@nxt@trial}%
+  \traceifset{diglot@run@nxt@trial}%
   \x@\n@xttrial\tri@llist\E % cuts 1st column off tri@lalist and makes it current.
   \ifx\c@rrdstat\empty %End of the loop.
   \else
-    \ifnum 1=\x@\ifvoid\csname excess\c@rrdstat\endcsname \x@\ifvoid\csname partial\c@rrdstat\endcsname 0\else 1\fi\else 1\fi
+    \ifnum 1=\x@\ifvoid\csname excess\c@rrdstat\endcsname \x@\ifvoid\csname partial\c@rrdstat\endcsname 0 \else 1 \fi\else 1 \fi
       \loc@lhttrue\csname dglt@calc@vailht@\diglotlayout\endcsname
       %\ifnum\triall@@pcount=1
         %\showbox\partialL\showbox\excessL
@@ -3417,6 +3434,7 @@
       \relax
     \fi
   \fi
+  \traceifcheck{diglot@run@nxt@trial}%
   \relax\relax
 }
 \def\@diglot@pagebreak{%
@@ -3521,6 +3539,7 @@
       }%
     \fi
     \trace{d}{Book end: Not writing page}%
+    \ifversion{8}{\csname @reset@diglot@\diglotlayout\endcsname}{}%This might be in the wrong place. Added so that at a new book things aren't misplaced.
     %\pr@sideswitch{end}{L}%
     \let\digl@tc@ntentlist\empty
   \fi
@@ -3654,6 +3673,7 @@
     \x@\xdef\csname m@rker#1\endcsname{}%
     \x@\xdef\csname digl@txcs#1\endcsname{}%
     \x@\xdef\csname mcstack#1\endcsname{\mcstack@mpty}%
+    \x@\xdef\csname tri@lsplitRej#1\endcsname{0pt}% Default value, in case of strange code-paths
     \newsp@cialpen{dgl@tPen#1trialEnd}%
     \header@defs{#1}% All the possible header contents
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis

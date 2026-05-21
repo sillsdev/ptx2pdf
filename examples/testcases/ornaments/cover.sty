@@ -12,11 +12,12 @@
 %\BgImageLow F
 \BgImage SlithyToves.jpg
 \BgImageAlpha 0.5
-%\BgImageOversize distort
+\BgImageOversize crop
 \BorderHPadding -40
 \BorderVPadding -40
-\BgImageScale x0.8
-\BgImageScaleTo inner
+\BgImageScale  x
+\BgImageCropOfs 0.5x1
+\BgImageScaleTo iborder
 \Border All
 
 \Category coverback
@@ -43,7 +44,7 @@
 \BorderWidth 1.0
 \BgColour .3 .3 0.5
 \BgImageLow F
-\BgImageAlpha 0.8
+\BgImageAlpha 1
 \BoxTPadding 0
 \BoxBPadding 0
 \Border none 
@@ -74,18 +75,21 @@
 \BoxPadding 0
 \BoxBPadding 10
 \Alpha 1
+\EndCategory
 
-\Category ISBNbox
-\Position hr
-\SpaceBefore 100
-\SpaceAfter 0
-\Border None
-\BorderWidth 0.5
+\Marker cat:ISBNbox|esb
+\Position hl
+\SpaceBefore 20
+\SpaceAfter 20
+\FirstLineIndent .5
+\BorderStyle plain
+\BorderWidth 5
+\BorderColour 0.5 0.5 0.5
 \BgColour 1 1 1
 \BoxHPadding 5
 \BoxVPadding 5
-\BorderRPadding 10
-\Scale 0.7
+\BorderPadding 2
+\Scale .3
 \Alpha 1
 
 \Category footbox

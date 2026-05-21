@@ -344,7 +344,7 @@
 \XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
 
 %% various Unicode characters that we handle in TeX... and protect in TOC and PDF bookmarks
-\def\intercharspace{\hskip0pt}
+\def\intercharspace{\nobreak\hskip0pt}
 \def\SFTHYPHEN{\-}
 \def\NBSP{\nobreak\space} % make Unicode NO-BREAK SPACE into a no-break space
 \def\ZWSP{\penalty0\intercharspace\relax} % ZERO WIDTH SPACE is a possible break

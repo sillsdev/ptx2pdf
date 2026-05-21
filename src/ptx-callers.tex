@@ -75,7 +75,7 @@
       \loop\ifnum\c@llernum>\AutoCallerNumChars
         \advance\c@llernum by -\AutoCallerNumChars \repeat
       \advance\c@llernum by -1 \advance\c@llernum by \AutoCallerStartChar
-      \edef\getcalleres{\char\c@llernum}% generate an alphabetic auto-caller
+      \edef\getcallerres{\char\c@llernum}% generate an alphabetic auto-caller
     \else
       \edef\getcallerres{\number\c@llernum}% generate a numeric caller
     \fi
@@ -158,11 +158,10 @@
 
 \def\set@notesavetype#1{\edef\@notesavetype{#1}\ifdiglot\ifdiglotSepNotes\ifcsname parallelcounts#1\endcsname
     \x@\ifx\csname parallelcounts#1\endcsname\tru@
-      \edef\@notesavetype{\c@rrdstat#1}%
+      \edef\@notesavetype{#1\c@rrdstat}%
     \fi
   \fi\fi\fi}
 \def\set@utonum#1{\set@notesavetype{#1}\edef\@utonum{autonum\@notesavetype}%
-    \edef\@utonum{autonum#1\c@rrdstat}%
 }
 
 %% override the autonumber macro from ptx-note-style.tex:

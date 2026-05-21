@@ -327,9 +327,9 @@ class Collector:
         return res
 
     def makeChunk(self, c=None):
-        global _validatedhpi, _headingidx
+        global _validatedhpi, _headingidx, globalcl
         if c is None:
-            currChunk = Chunk(mode=self.mode, doc=doc, bk=self.book)
+            currChunk = Chunk(mode=self.mode, doc=self.doc, bk=self.book)
             self.waspar = False
             self.waschap = False
         else:
@@ -766,9 +766,9 @@ def alignChunks(primary, secondary):
                 logger.debug(f"--- {op}, {debstr(pgk[abg:aeg])}, {debstr(sgk[bbg:beg])}")
                 if actiong == "equal":
                     appendpairs(pairs, sum(pgg[abg:aeg], []), sum(sgg[bbg:beg], []))
-                elif action == "delete":
+                elif actiong == "delete":
                     appendpair(pairs, 0, sum(pgg[abg:aeg], []))
-                elif action == "insert":
+                elif actiong == "insert":
                     appendpair(pairs, 0, sum(sgg[bbg:beg], []))
                 elif action == "replace":
                     for zp in zip(range(abg, aeg), range(bbg, beg)):

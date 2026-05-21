@@ -1,10 +1,10 @@
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GLib
 from ptxprint.utils import _, f2s
 from PIL import Image
 import logging, traceback
-from ptxprint.view import GitVersionStr, VersionStr
+from ptxprint.version import GitVersionStr, VersionStr
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +16,10 @@ def _getcomboval(w, sub):
         if e is not None and isinstance(e, Gtk.Entry):
             return e.get_text()
     elif model is not None:
+        if sub < 0:
+            active_id = w.get_active_id()
+            if active_id is not None:
+                return active_id
         return model[i][w.get_entry_text_column() if sub < 0 else sub]
 
 def getWidgetVal(wid, w, default=None, asstr=False, sub=-1):
@@ -35,6 +39,10 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=-1):
         # v = w.get_font_name()
     elif wid.startswith("c_"):
         v = w.get_active()
+    elif wid.startswith("ct_"):
+        v = w.get_active()
+        if w.get_inconsistent():
+            v = 2
     elif wid.startswith("s_"):
         v = f2s(w.get_value())
     elif wid.startswith("btn_"):
@@ -54,6 +62,8 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=-1):
     return v
 
 def _setcomboval(w, value, sub):
+        if sub < 0 and value and w.set_active_id(str(value)):
+            return
         model = w.get_model()
         e = w.get_child()
         for i, v in enumerate(model):
@@ -84,6 +94,12 @@ def setWidgetVal(wid, w, value, noui=False, useMarkup=False, sub=-1):
             if isinstance(value, str):
                 value = value.lower() == "true"
             w.set_active(value)
+        elif wid.startswith("ct_"):
+            if isinstance(value, str):
+                value = value.lower() == "true"
+            w.set_active(value)
+            if value == 2:
+                w.set_inconsistent()
         elif wid.startswith("s_"):
             w.set_value(float(value or 0))
         elif wid.startswith("btn_"):
@@ -158,7 +174,7 @@ class HelpTextViewWindow(Gtk.Window):
         self.show_all()
         Gtk.main()
 
-def doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", debuglog=True, **kw):
+def doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", debuglog=True, autocloseSeconds=30, **kw):
     logger.error(text)
     if secondary:
         logger.error(secondary)
@@ -193,7 +209,25 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
         dialog.set_title(title)
         if secondary is not None:
             dialog.format_secondary_text(secondary)
+        if autocloseSeconds and not copy2clip:
+            _remaining = [autocloseSeconds]
+            _base_title = title or ""
+            def _tick():
+                if not dialog.get_visible():
+                    return GLib.SOURCE_REMOVE
+                dialog.set_title("{} [{}s]".format(_base_title, _remaining[0]))
+                _remaining[0] -= 1
+                if _remaining[0] < 0:
+                    dialog.response(Gtk.ResponseType.OK)
+                    return GLib.SOURCE_REMOVE
+                return GLib.SOURCE_CONTINUE
+            _tick()
+            timeout_id = GLib.timeout_add_seconds(1, _tick)
+        else:
+            timeout_id = None
         dialog.run()
+        if timeout_id is not None:
+            GLib.source_remove(timeout_id)
         dialog.destroy()
     else:
         print(text)
@@ -202,4 +236,42 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
     if debuglog:
         s = traceback.format_stack()
         logger.debug(s)
+
+def pump_gtk():
+     while Gtk.events_pending():
+        Gtk.main_iteration()
+
+def background_msg(txt, resfn, timeout=0):
+    dialog = Gtk.MessageDialog(
+        message_type=Gtk.MessageType.QUESTION,
+        buttons=Gtk.ButtonsType.OK_CANCEL,
+        text=txt)
+
+    timeout_id = None
+    closed = False
+
+    def ontimeout():
+        nonlocal timeout_id, closed
+        timeout_id = None
+        if not closed:
+            dialog.destroy()
+        return False
+
+    if timeout > 0:
+        timeout_id = GLib.timeout_add(timeout, ontimeout)
+
+    def onresponse(dlg, rid):
+        nonlocal timeout_id, closed
+        if closed:
+            return
+        closed = True
+        if timeout_id is not None:
+            GLib.source_remove(timeout_id)
+        dialog.destroy()
+        resfn(rid)
+
+    dialog.connect("response", onresponse)
+    dialog.show_all()
+    return dialog
+
 

@@ -17,7 +17,7 @@ print("bindir:", bindir)
 
 import usfmtc           # so we can find its data files
 
-version="3.0.17"
+version="3.0.29"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -102,7 +102,7 @@ def process_icons(icons, src, dest):
             foundit = True
             t = p[p.find(src) + len(src) + 1:].replace("/",r"\\")
             d = dest + "\\" + t if dest else t
-            s = src.replace("/", "\\") + "\\" + t + "\\" + f
+            s = src.replace("/", "\\") + "\\" + t + "\\" + f        # " make vim happy
 
         if not foundit:
             print(f"Failed to find source for {i}")
@@ -346,7 +346,7 @@ binaries = (binaries
       + [('python/lib/ptxprint/unicode/*.bz2', 'ptxprint/unicode')]
       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
       + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
-      + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
+      + [('fonts/' + f, 'fonts/' + f) for f in ['empties.ttf', 'SourceCodePro-Regular.ttf'] + [f'Charis-{x}.ttf' for x in 'Regular Bold Italic BoldItalic'.split()]]
       + [('src/mappings/*.tec', 'ptxprint/ptx2pdf/mappings')]
       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptxprint/PDFassets/reference')]
       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
@@ -358,7 +358,8 @@ binaries = (binaries
 
 # data files are considered text and end up where specified by the tuple.
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-        ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
+        ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs',
+         'imagesets.json')]
       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'printers', 'pdfrw', 'pdfrw/objects')]
       + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
@@ -373,9 +374,9 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
 print("binaries:", binaries)
 print("datas:", datas)
 
-#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 jobs = {
-    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]}
+    "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
+    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 tcolls = []
 for k, v in jobs.items():
@@ -412,7 +413,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             binaries = binaries,
             datas = datas,
                 # The registry tends not to get included
-            hiddenimports = (['_winreg', 'gi.repository.win32'] if sys.platform.startswith("win") else []) \
+            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid"] if sys.platform.startswith("win") else []) \
                 + ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._core._exceptions'],
             runtime_hooks = [],
             hookspath = [os.path.abspath("pyinstallerhooks")],

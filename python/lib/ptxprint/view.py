@@ -20,6 +20,7 @@ from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
 from ptxprint.polyglot import PolyglotConfig
+from ptxprint.version import VersionStr, GitVersionStr, ConfigVersion
 from ptxprint.report import Report
 import ptxprint.pdfrw.errors
 import os, sys
@@ -37,9 +38,6 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "3.0.17"
-GitVersionStr = "3.0.17"
-ConfigVersion = "3.01"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -65,7 +63,7 @@ def doError(txt, secondary=None, **kw):
     logger.error(txt)
     if secondary is not None:
         print(secondary)
-        logger.error(txt)
+        logger.error(secondary)
 
 class ViewModel:
     _attributes = {
@@ -293,7 +291,7 @@ class ViewModel:
 
     def getBooks(self, scope=None, files=False, local=False):
         if self.project is None:
-            return
+            return []
         if scope is None:
             scope = self.get("r_book")
         if scope == "module":
@@ -304,8 +302,13 @@ class ViewModel:
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
-        bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
-        bl.simplify()
+        try:
+            bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
+        except SyntaxError as e:
+            self.doError(str(e),
+                         secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
+            return []
+        bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
@@ -430,6 +433,7 @@ class ViewModel:
             if a is None:
                 continue
             fpath = os.path.join(a, fname)
+            logger.log(5, f"Trying {bk} -> {fpath} {'success' if os.path.exists(fpath) else 'failed'}")
             if os.path.exists(fpath):
                 return fpath
         return None
@@ -642,8 +646,8 @@ class ViewModel:
             if new.has_section(sect):
                 allopts.update(new.options(sect))
             for opt in allopts:
-                if config.has_option(sect, opt) and (not base.has_option(sect, opt)
-                        or config.get(sect, opt) != base.get(sect, opt)):
+                if this.has_option(sect, opt) and (not base.has_option(sect, opt)
+                        or this.get(sect, opt) != base.get(sect, opt)):
                     continue
                 if new.has_option(sect, opt):
                     this.set(sect, opt, new.get(sect, opt))
@@ -803,7 +807,11 @@ class ViewModel:
         bk = None
         while res is None:
             bk = pts.getABook(bk)
+            if bk is None:
+                break
             abook = self.get_usfm(bk)
+            if abook is None:
+                continue
             res = abook.findScript()
         return res
 
@@ -849,7 +857,7 @@ class ViewModel:
             return self.copyrightInfo
         with open(os.path.join(pycodedir(), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:
             self.copyrightInfo = json.load(inf)
-        fname = os.path.join(self.project.path, "shard", "ptxprint", "picCopyrights.json")
+        fname = os.path.join(self.project.path, "shared", "ptxprint", "picCopyrights.json")
         if os.path.exists(fname):
             with open(fname, encoding="utf-8", errors="ignore") as inf:
                 try:
@@ -1536,8 +1544,12 @@ class ViewModel:
         self.isChanged = False
 
     def saveAdjlists(self, force=False):
-        for bk, adj in self.adjlists.items():
-            adj.save()
+        changed = False
+        for bk in self.getBooks():
+            adj = self.get_adjlist(bk, save=False)
+            changed |= adj.save()
+        if changed:
+            self.triggervcs = True
 
     def saveStyles(self, force=False):
         if not force and self.configLocked():
@@ -1646,7 +1658,13 @@ class ViewModel:
 
     def get_adjlist(self, bk, save=True, gtk=None):
         if bk in self.adjlists:
-            return self.adjlists[bk]
+            adj = self.adjlists[bk]
+        #    if adj.adjfile is not None and os.path.exists(adj.adjfile):
+        #        adjt = os.lstat(adj.adjfile).st_ctime
+        #        if adjt <= adj.ftime:
+        #            return adj
+        #    else:
+            return adj
         fname = self.getAdjListFilename(bk)
         if fname is None:
             return None
@@ -1914,21 +1932,28 @@ class ViewModel:
         basecfpath = baseprjid + "/shared/ptxprint/" + self.cfgid
         interlang = self.get("t_interlinearLang") if self.get("c_interlinear") else None
 
+        def bname(s):
+            if os.path.sep == "/":
+                return os.path.basename(str(s).replace("\\", "/"))
+            else:
+                return os.path.basename(str(s).replace("/", "\\"))
+
         # pictures and texts
         fpath = baseprj.path
         scope = self.get("r_book")
         if scope == "module":
             bk = books[0]
-            res[os.path.join(fpath, bk)] = baseprjid + "/" + os.path.basename(bk)
-            cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+os.path.basename(bk)), "moduleFile")
-            cfgchanges['lb_bibleModule'] = os.path.basename(bk)
+            bkname = bname(bk)
+            res[os.path.join(fpath, bk)] = baseprjid + "/" + bkname
+            cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+bkname), "moduleFile")
+            cfgchanges['lb_bibleModule'] = bkname
             usfms = self.get_usfms()
             mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
         for bk in books + ['INT']:
             fname = self.getBookSrcPath(bk, baseprjid, project=baseprj)
             if fname is not None:
-                res[fname] = baseprjid + "/" + os.path.basename(fname)
+                res[fname] = baseprjid + "/" + bname(fname)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
@@ -1942,10 +1967,10 @@ class ViewModel:
         pathkey = 'src path'
         if self.picinfos is not None:
             for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
-                    res[f] = prjid + "/local/figures/"+os.path.basename(f)
+                    res[f] = prjid + "/local/figures/"+bname(f)
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
-            res[xrfile] = baseprjid + "/" + os.path.basename(xrfile)
+            res[xrfile] = baseprjid + "/" + bname(xrfile)
             cfgchanges["btn_selectXrFile"] = res[xrfile]
 
         # piclists
@@ -1964,7 +1989,7 @@ class ViewModel:
         if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
             for p in extrapics:
-                b = os.path.basename(p)
+                b = bname(p)
                 if p not in res:
                     res[p] = prjid + "/local/figures/" + b
         else:
@@ -1989,7 +2014,7 @@ class ViewModel:
             cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
-            k = os.path.basename(v)
+            k = bname(v)
             res[v] = prjid + "/local/ptxprint/" + cfgid + "/fonts/" + k
 
         if baseprjid:
@@ -2006,7 +2031,7 @@ class ViewModel:
             for a in ('BgImage', 'FgImage'):
                 val = v.get(a, mystyles.basesheet.get(k, {}).get(a, None))
                 if val is not None:
-                    fname = os.path.basename(val)
+                    fname = bname(val)
                     res[val] = baseprjid + "/figures/"+fname
                     mystyles.setval(k, a, "../../../figures/" + fname)
 
@@ -2044,8 +2069,9 @@ class ViewModel:
 
         script = self.customScript
         if script: # is not None and len(script):
-            res[script] = baseprjid + "/" + os.path.basename(script)
-            cfgchanges["btn_selectScript"] = os.path.join(self.project.path, os.path.basename(script))
+            sname = bname(script) 
+            res[script] = baseprjid + "/" + sname
+            cfgchanges["btn_selectScript"] = os.path.join(self.project.path, sname)
 
         pts = self._getPtSettings(prjid=baseprjid)
         ptres = pts.getArchiveFiles()
@@ -2074,7 +2100,7 @@ class ViewModel:
         for a in (".pdf", ".html"):
             for d in ('', '..'):
                 for x in self.tempFiles:
-                    if x.endswith(".xdv"):
+                    if x and x.endswith(".xdv"):
                         xdvfile = x
                         f = os.path.join(os.path.dirname(x), d, os.path.basename(x).replace(".xdv", a))
                         if not found and os.path.exists(f):
@@ -2489,4 +2515,11 @@ set stack_size=32768""".format(self.cfgid)
         tm = {"project/id": self.project.prjid, "config/name": self.cfgid}
         self.report.generate_html(fpath, tm)
         return fpath
+
+    def createPrinterZip(self, fname):
+        with zipfile.ZipFile(fname, "w") as ozip:
+            for k, v in self.pdfFiles.items():
+                with open(v, "rb") as inf:
+                    d = inf.read()
+                ozip.write(f"{k}.pdf", d)
 

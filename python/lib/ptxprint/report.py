@@ -4,7 +4,7 @@ import xml.etree.ElementTree as et
 from datetime import datetime
 from ptxprint.parlocs import BadSpace
 from ptxprint.xdv.spacing_oddities import Rivers
-from ptxprint.utils import rtlScripts, dediglotref
+from ptxprint.utils import rtlScripts, dediglotref, pycodedir
 from usfmtc.reference import Ref, RefList
 from math import sqrt
 
@@ -75,7 +75,7 @@ class Report:
         self.sections.setdefault(section, []).append(ReportEntry(msg, **kw))
 
     def generate_html(self, fname, texmodel):
-        doc = et.fromstring(html_template.format(css=os.path.join(os.path.dirname(__file__), "sakura.css"), **texmodel))
+        doc = et.fromstring(html_template.format(css=os.path.join(pycodedir(), "sakura.css"), **texmodel))
         body = doc.find("body")
         timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         summary_html_str = self._generate_summary_html()
@@ -323,9 +323,6 @@ class Report:
             return False
         return True
 
-        def myhackylambda(view, widget):
-            return ("", logging.DEBUG)
-
     def get_general_info(self, view):
         widget_map = {
             "Project Name":               ("1. Project/Overview", "l_projectFullName", 1100, \
@@ -365,7 +362,6 @@ class Report:
             "Front Matter PDF(s)":        ("7. Peripheral Components", "c_inclFrontMatter", 0, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
             "Table of Contents":          ("7. Peripheral Components", "c_autoToC", 0, None),
-            "Thumb Tabs":                 ("6. Features", "c_thumbtabs", 0, None),
             "Front Matter":               ("7. Peripheral Components", "c_frontmatter", 0, \
                                             lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_colophon", False) else logging.DEBUG)),
             "Colophon":                   ("7. Peripheral Components", "c_colophon", 0, \
@@ -432,7 +428,7 @@ class Report:
         for p, r in plocs.getRects():
             r.tspace = 0
             r.nspace = 0
-            r.nlines = 0
+            r.lines = 0
         for l, p, r in plocs.allxdvlines():
             count += 1
             if threshold != 0:  
@@ -441,7 +437,7 @@ class Report:
                     badlist.append(BadSpace(r.pagenum, l, *b))
                 r.tspace += tspaces
                 r.nspace += nspaces
-                r.nlines += 1
+                r.lines += 1
             if (collisions := l.has_collisions()):
                 for c in collisions:
                         collisions_list.append(l.ref)
@@ -671,7 +667,7 @@ class Report:
         Calculates the max severity for each main section and generates an HTML summary line
         with clickable blocks.
         """
-        max_severities = {i: logging.NOTSET for i in range(1, 10)}
+        max_severities = {i: logging.NOTSET for i in range(1, 11)}
         for section_key, entries in self.sections.items():
             if not entries:
                 continue
@@ -686,7 +682,7 @@ class Report:
             if current_max_severity > max_severities[main_section_num]:
                 max_severities[main_section_num] = current_max_severity
         summary_blocks = []
-        for i in range(1, 10):
+        for i in range(1, 11):
             severity = max_severities[i]
             color_index = severity // 10
             color = logcolors[color_index]
@@ -754,7 +750,7 @@ class Report:
         return findings
 
     def get_log_analysis(self, view, log_content_string):
-        section_base = "Log File Analysis"
+        section_base = "10. Log File Analysis"
         if not log_content_string or not log_content_string.strip():
             self.add(section_base, "Log file content not available or empty.", severity=logging.WARN); return
         findings = self._analyze_log_file_content(log_content_string)

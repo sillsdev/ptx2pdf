@@ -1,0 +1,764 @@
+{
+  "version": 2,
+  "pages": [
+    {
+      "id": "intentMedium",
+      "step": "intent",
+      "titleString": "Will this primarily be printed, or read on a screen?",
+      "helpString": "Pick the way most people will use this. You can change anything later.",
+      "tooltipString": "Output",
+      "showIf": null,
+      "staticPanel": null,
+      "questions": [
+        {
+          "id": "outputMedium",
+          "type": "singleSelect",
+          "label": "Output medium",
+          "translatorNote": "Top-level branch. Affects ~40 downstream settings.",
+          "required": true,
+          "default": "print",
+          "showIf": null,
+          "affects": [],
+          "options": [
+            {
+              "id": "print",
+              "label": "Primarily printed on paper",
+              "description": "A book or booklet that will be printed.",
+              "pros": ["Best for sharing physical copies.", "More layout control."],
+              "cons": ["Costs money to print.", "Harder to update later."]
+            },
+            {
+              "id": "digital",
+              "label": "Read on a screen",
+              "description": "A PDF for a phone, tablet, or computer.",
+              "pros": ["Free to share.", "Easy to update."],
+              "cons": ["Some people cannot read on screens."]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "intentStage",
+      "step": "intent",
+      "titleString": "Is this a finished version, or a draft?",
+      "helpString": "Drafts and finished versions have different settings.",
+      "tooltipString": "Stage",
+      "showIf": null,
+      "staticPanel": null,
+      "questions": [
+        {
+          "id": "publicationStage",
+          "type": "singleSelect",
+          "label": "Publication stage",
+          "translatorNote": "Pre-publication vs public release. Affects product type options and sensitive flag.",
+          "required": true,
+          "default": "publicRelease",
+          "showIf": null,
+          "affects": ["productType"],
+          "options": [
+            {
+              "id": "prePublication",
+              "label": "A draft, during translation",
+              "description": "A version for the team or community to read and check while translation is still going on.",
+              "pros": ["Shows project name and date by default.", "Settings keep sensitive details visible for checking."],
+              "cons": ["Not suitable for public distribution."]
+            },
+            {
+              "id": "publicRelease",
+              "label": "A finished version",
+              "description": "A final version for general use.",
+              "pros": ["Clean layout for readers.", "Optimised for distribution."],
+              "cons": ["You will need to check translation quality before publishing."]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "intentAudience",
+      "step": "intent",
+      "titleString": "Who will mainly read this?",
+      "helpString": "Pick up to 3. This helps put the most useful options at the top of the next list.",
+      "tooltipString": "Audience",
+      "showIf": {"answers": {"publicationStage": "publicRelease"}},
+      "staticPanel": "The audience you choose is used to suggest a publication type. It does not hide any options — you can still pick any type you like.",
+      "questions": [
+        {
+          "id": "audience",
+          "type": "multiSelect",
+          "maxSelections": 3,
+          "label": "Audience",
+          "translatorNote": "Audience. Used to re-rank product types, not to hide them.",
+          "required": false,
+          "default": ["adults"],
+          "showIf": null,
+          "affects": ["productType"],
+          "options": [
+            {"id": "children",   "label": "Children",       "description": "Young readers, up to about age 12.",           "pros": [], "cons": []},
+            {"id": "youth",      "label": "Young people",   "description": "Teens and young adults.",                      "pros": [], "cons": []},
+            {"id": "adults",     "label": "Adults",         "description": "General adult readers.",                       "pros": [], "cons": []},
+            {"id": "pastors",    "label": "Church leaders", "description": "Pastors, teachers, and preachers.",            "pros": [], "cons": []},
+            {"id": "churched",   "label": "Church members", "description": "People who attend church regularly.",          "pros": [], "cons": []},
+            {"id": "unchurched", "label": "New readers",    "description": "People reading the Bible for the first time.", "pros": [], "cons": []},
+            {"id": "lowVision",  "label": "Low vision",     "description": "Readers who need larger text or more space.",  "pros": [], "cons": []}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "intentProduct",
+      "step": "intent",
+      "titleString": "What kind of book are you making?",
+      "helpString": "Each type comes with good starting settings. You can change anything later.",
+      "tooltipString": "Product",
+      "showIf": null,
+      "staticPanel": null,
+      "questions": [
+        {
+          "id": "productType",
+          "type": "singleSelect",
+          "label": "Product type",
+          "sectionLabel": "Kinds of books:",
+          "translatorNote": "Product type. Options split by publicationStage.",
+          "required": true,
+          "default": "pewBible",
+          "showIf": null,
+          "affects": ["columns"],
+          "rankBy": [
+            {"answers": {"audience": {"contains": "children"}},   "promote": ["childrensBible"]},
+            {"answers": {"audience": {"contains": "lowVision"}},  "promote": ["largePrintBible"]},
+            {"answers": {"audience": {"contains": "pastors"}},    "promote": ["pastorsBible"]},
+            {"answers": {"audience": {"contains": "unchurched"}}, "promote": ["pewBible", "lifeApplicationBible"]},
+            {"answers": {"audience": {"contains": "churched"}},   "promote": ["pewBible", "lectionary"]}
+          ],
+          "options": [
+            {
+              "id": "teamCheck",
+              "label": "Team check",
+              "description": "A draft for the translation team to review.",
+              "showOnlyIf": {"answers": {"publicationStage": "prePublication"}},
+              "pros": ["Quick to produce.", "Good for sharing with the team."],
+              "cons": ["Not for public distribution."]
+            },
+            {
+              "id": "communityCheck",
+              "label": "Community check",
+              "description": "A draft for the wider community, including comprehension testing.",
+              "showOnlyIf": {"answers": {"publicationStage": "prePublication"}},
+              "pros": ["Includes pictures where available.", "Simpler layout for non-team readers."],
+              "cons": ["Not for public distribution."]
+            },
+            {
+              "id": "consultantUns",
+              "label": "Consultant / UNS check",
+              "description": "A draft for a translation consultant or for back-translation checking.",
+              "showOnlyIf": {"answers": {"publicationStage": "prePublication"}},
+              "pros": ["Clean single-column layout.", "Shows project information for context."],
+              "cons": ["Not for public distribution."]
+            },
+            {
+              "id": "exegeticalCheck",
+              "label": "Exegetical check",
+              "description": "A draft focused on meaning, with notes and cross-references visible.",
+              "showOnlyIf": {"answers": {"publicationStage": "prePublication"}},
+              "pros": ["Shows cross-references and notes.", "Useful for checking meaning."],
+              "cons": ["More complex layout — not for general readers."]
+            },
+            {
+              "id": "pewBible",
+              "label": "Pew Bible",
+              "description": "A standard Bible for church use. Compact and affordable.",
+              "showOnlyIf": {"answers": {"publicationStage": "publicRelease"}},
+              "pros": ["Compact and affordable to print.", "Familiar two-column layout.", "Thumb-tab index included."],
+              "cons": ["Small text may be hard for older readers."],
+              "recommendIf": [
+                {"level": "recommended", "when": {"answers": {"audience": {"contains": "churched"}}},  "reason": "A good all-round choice for church members."},
+                {"level": "recommended", "when": {"answers": {"audience": {"contains": "adults"}}},    "reason": "A good all-round choice for adult readers."}
+              ]
+            },
+            {
+              "id": "childrensBible",
+              "label": "Children's Bible",
+              "description": "Larger text, pictures, simple layout.",
+              "showOnlyIf": {"answers": {"publicationStage": "publicRelease"}},
+              "pros": ["Larger text and more space.", "Includes pictures.", "Decorative borders."],
+              "cons": ["Single column uses more pages.", "Not ideal for adults."],
+              "recommendIf": [
+                {"level": "recommended", "when": {"answers": {"audience": {"contains": "children"}}}, "reason": "Designed for young readers."}
+              ]
+            },
+            {
+              "id": "pastorsBible",
+              "label": "Pastor's Bible",
+              "description": "Smaller text, many cross-references and notes.",
+              "showOnlyIf": {"answers": {"publicationStage": "publicRelease"}},
+              "pros": ["Compact and detailed.", "Extended cross-references.", "Study notes in margin."],
+              "cons": ["Small text needs good eyesight.", "More expensive to typeset well."],
+              "recommendIf": [
+                {"level": "recommended", "when": {"answers": {"audience": {"contains": "pastors"}}}, "reason": "Designed for church leaders who need cross-references and notes."}
+              ]
+            },
+            {
+              "id": "largePrintBible",
+              "label": "Large-print Bible",
+              "description": "Big text and wide spacing for easier reading.",
+              "showOnlyIf": {"answers": {"publicationStage": "publicRelease"}},
+              "pros": ["Large, easy-to-read text.", "Good for older readers or low-vision readers."],
+              "cons": ["More pages than a standard Bible.", "Costs more to print."],
+              "recommendIf": [
+                {"level": "recommended", "when": {"answers": {"audience": {"contains": "lowVision"}}}, "reason": "Designed for readers who need larger text."}
+              ]
+            },
+            {
+              "id": "lifeApplicationBible",
+              "label": "Life Application Bible",
+              "description": "Includes side notes and study material.",
+              "showOnlyIf": {"answers": {"publicationStage": "publicRelease"}},
+              "pros": ["Includes side notes and sidebars.", "Good for personal study.", "Attractive layout."],
+              "cons": ["Needs extra study content to be useful.", "More complex to produce."],
+              "recommendIf": [
+                {"level": "recommended", "when": {"answers": {"audience": {"contains": "unchurched"}}}, "reason": "Study notes help new readers understand context."}
+              ]
+            },
+            {
+              "id": "journalingBible",
+              "label": "Journaling Bible",
+              "description": "Wide outer margin with lines for writing.",
+              "showOnlyIf": {"answers": {"publicationStage": "publicRelease"}},
+              "pros": ["Wide ruled margin for notes.", "Encourages personal reflection."],
+              "cons": ["Uses more paper per page.", "Not ideal for compact printing."]
+            },
+            {
+              "id": "lectionary",
+              "label": "Lectionary",
+              "description": "A book of readings for church services.",
+              "showOnlyIf": {"answers": {"publicationStage": "publicRelease"}},
+              "pros": ["Large clear text for reading aloud.", "Simple layout without footnotes."],
+              "cons": ["Only covers selected readings, not the full Bible."],
+              "recommendIf": [
+                {"level": "recommended", "when": {"answers": {"audience": {"contains": "churched"}}}, "reason": "Good for churches that follow a lectionary cycle."}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "productionColour",
+      "step": "production",
+      "titleString": "Inside pages — colour or black-and-white?",
+      "helpString": "",
+      "tooltipString": "Colour",
+      "showIf": null,
+      "staticPanel": "Colour printing costs more, especially for inkjet and small print runs. Most Bibles and Scripture publications use black-and-white inside pages. Colour is useful for children's books or study materials with maps and diagrams.",
+      "questions": [
+        {
+          "id": "colour",
+          "type": "singleSelect",
+          "label": "Colour",
+          "translatorNote": "Colour vs B&W. Affects PDF output format.",
+          "required": true,
+          "default": {
+            "rules": [
+              {"if": {"answers": {"outputMedium": "digital"}}, "then": "colour"}
+            ],
+            "else": "blackAndWhite"
+          },
+          "showIf": null,
+          "affects": [],
+          "options": [
+            {
+              "id": "blackAndWhite",
+              "label": "Black-and-white",
+              "description": "Lower cost. Good for most Bibles.",
+              "pros": ["Much cheaper to print.", "Suitable for most text-only Scripture."],
+              "cons": ["Cannot show colour pictures or maps."]
+            },
+            {
+              "id": "colour",
+              "label": "Colour",
+              "description": "Higher cost. Useful for children's books or study materials.",
+              "pros": ["Can include colour pictures, maps, and diagrams.", "Looks more attractive."],
+              "cons": ["Costs more to print.", "Larger file size."]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "productionPageSize",
+      "step": "production",
+      "titleString": "What is the finished book size?",
+      "helpString": "This is the book page size, not paper size. (e.g. To print two-up A5 on A4 paper, choose A5.)",
+      "tooltipString": "Page size",
+      "showIf": {"answers": {"outputMedium": "print"}},
+      "staticPanel": null,
+      "questions": [
+        {
+          "id": "pageSize",
+          "type": "singleSelect",
+          "label": "Page size",
+          "translatorNote": "Page size selection. Order matches PTXprint Layout page UI.",
+          "required": true,
+          "default": "a5",
+          "showIf": null,
+          "affects": [],
+          "options": [
+            {
+              "id": "a4",
+              "label": "A4  ·  210 × 297 mm  /  8.3 × 11.7 in",
+              "description": "Standard printer paper worldwide.",
+              "pros": ["Easy to print at home or office.", "Good for large-print or lectionary.", "Universal standard outside North America."],
+              "cons": ["Large — not portable."]
+            },
+            {
+              "id": "a5",
+              "label": "A5 (Half A4)  ·  148 × 210 mm  /  5.8 × 8.3 in",
+              "description": "A common size for home-printed scriptures; less common in formal publishing.",
+              "pros": ["Widely used for trial printouts.", "Good balance of text space and portability.", "Ideal for 2-up on A4 paper."],
+              "cons": []
+            },
+            {
+              "id": "a6",
+              "label": "Pocket A6  ·  105 × 148 mm  /  4.1 × 5.8 in",
+              "description": "A small pocket-size format.",
+              "pros": ["Very compact.", "Easy to carry."],
+              "cons": ["Small text, limited space per page."]
+            },
+            {
+              "id": "b5",
+              "label": "B5  ·  176 × 250 mm  /  6.9 × 9.8 in",
+              "description": "Between A4 and A5. Good for study Bibles.",
+              "pros": ["More space than A5.", "Still portable."],
+              "cons": []
+            },
+            {
+              "id": "b6",
+              "label": "B6  ·  125 × 176 mm  /  4.9 × 6.9 in",
+              "description": "Between A6 and A5 in size.",
+              "pros": ["More space than A6.", "Still pocket-sized."],
+              "cons": ["Less common paper size."]
+            },
+            {
+              "id": "pa4",
+              "label": "PA4  ·  210 × 280 mm  /  8.3 × 11.0 in",
+              "description": "A4 width, slightly shorter than A4.",
+              "pros": ["Good for wide-format layouts.", "Fits most printers."],
+              "cons": ["Not a standard paper size in all countries."]
+            },
+            {
+              "id": "pa5",
+              "label": "PA5  ·  140 × 210 mm  /  5.5 × 8.3 in",
+              "description": "A compact format close to A5.",
+              "pros": ["Compact but readable.", "Common in some regions."],
+              "cons": ["Less common than A5."]
+            },
+            {
+              "id": "pa6",
+              "label": "Pocket (PA6)  ·  105 × 140 mm  /  4.1 × 5.5 in",
+              "description": "A tiny pocket Bible size.",
+              "pros": ["Very compact and lightweight.", "Easy to carry anywhere."],
+              "cons": ["Very small text.", "Very limited space per page."]
+            },
+            {
+              "id": "letter",
+              "label": "Letter  ·  216 × 279 mm  /  8.5 × 11 in",
+              "description": "Standard US letter paper.",
+              "pros": ["Easy to print at home or office in North America.", "Very common in the US."],
+              "cons": ["Large — not portable."]
+            },
+            {
+              "id": "halfLetter",
+              "label": "Half Letter  ·  140 × 216 mm  /  5.5 × 8.5 in",
+              "description": "Half of US Letter paper. Common in North America.",
+              "pros": ["Easy to print from US Letter paper.", "Common US book size."],
+              "cons": []
+            },
+            {
+              "id": "compact",
+              "label": "Compact  ·  133 × 210 mm  /  5.25 × 8.25 in",
+              "description": "A compact US-standard size.",
+              "pros": ["Common US pocket Bible size.", "Narrow and easy to carry."],
+              "cons": []
+            },
+            {
+              "id": "common",
+              "label": "Common  ·  147 × 221 mm  /  5.8 × 8.7 in",
+              "description": "A popular trade paperback size.",
+              "pros": ["Comfortable reading size.", "Common trade paperback format."],
+              "cons": []
+            },
+            {
+              "id": "kbsMax",
+              "label": "KBS Max  ·  165 × 234 mm  /  6.5 × 9.2 in",
+              "description": "Maximum size allowed by Korea Bible Society standards.",
+              "pros": ["More text space than A5.", "Meets KBS publishing standards."],
+              "cons": ["Less common outside Korea."]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "productionPageCount",
+      "step": "production",
+      "titleString": "About how many pages will the finished book have?",
+      "helpString": "An estimate is fine. This helps choose a binding.",
+      "tooltipString": "Pages",
+      "showIf": {"answers": {"outputMedium": "print"}},
+      "staticPanel": "The number of pages affects which bindings are possible. It also affects spine width for hardcover and perfect-bound books.",
+      "questions": [
+        {
+          "id": "pageCount",
+          "type": "notchedSlider",
+          "label": "Page count",
+          "translatorNote": "Page count for binding gating and cover/spine calc.",
+          "notches": [10, 20, 50, 100, 200, 500, 1000, 1500, 2000, 3000, 5000],
+          "notchLabels": ["10", "20", "50", "100", "200", "500", "1000", "1500", "2000", "3000", "5000"],
+          "required": true,
+          "default": 500,
+          "showIf": null,
+          "affects": ["binding", "printer"]
+        }
+      ]
+    },
+    {
+      "id": "productionScreen",
+      "step": "production",
+      "titleString": "What kind of screen will people read this on?",
+      "helpString": "This sets the page size to match the screen.",
+      "tooltipString": "Screen",
+      "showIf": {"answers": {"outputMedium": "digital"}},
+      "staticPanel": null,
+      "questions": [
+        {
+          "id": "screenTarget",
+          "type": "singleSelect",
+          "label": "Screen target",
+          "translatorNote": "Digital target: phone/tablet/pc affects page size.",
+          "required": true,
+          "default": "tablet",
+          "showIf": null,
+          "affects": ["columns"],
+          "options": [
+            {
+              "id": "phone",
+              "label": "Phone",
+              "description": "A small phone screen.",
+              "pros": ["Most people have a phone.", "Works offline once downloaded."],
+              "cons": ["Small screen — single column layout works better."]
+            },
+            {
+              "id": "tablet",
+              "label": "Tablet",
+              "description": "A tablet or large phone screen.",
+              "pros": ["More space for two columns.", "Comfortable reading size."],
+              "cons": ["Fewer people have tablets than phones."]
+            },
+            {
+              "id": "pc",
+              "label": "Computer",
+              "description": "A desktop or laptop screen.",
+              "pros": ["Large screen with room for two columns.", "Good for detailed study material."],
+              "cons": ["Fewer people in some communities use computers."]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "productionPrinter",
+      "step": "production",
+      "titleString": "Where will this be printed?",
+      "helpString": "The number of copies that fit each option is shown on the right.",
+      "tooltipString": "Printer",
+      "showIf": {"answers": {"outputMedium": "print"}},
+      "staticPanel": null,
+      "questions": [
+        {
+          "id": "printer",
+          "type": "singleSelect",
+          "label": "Printer",
+          "translatorNote": "Printer type for production overrides. Volume communicated via rangeLabel.",
+          "required": true,
+          "default": "photocopyShop",
+          "showIf": null,
+          "affects": ["binding"],
+          "options": [
+            {
+              "id": "homeInkjet",
+              "label": "Home inkjet",
+              "rangeLabel": "Best for 1–50 copies",
+              "description": "A printer at home, for a few copies.",
+              "pros": ["No setup cost.", "You control the timing."],
+              "cons": ["Slow for many copies.", "Ink is expensive over time.", "Cannot do thick books."],
+              "recommendIf": [
+                {"level": "notOptimal",
+                 "when": {"answers": {"productType": {"in": ["pewBible", "pastorsBible", "lectionary"]}}},
+                 "reason": "These publications usually need many copies. A copy shop or print-on-demand service will be cheaper."},
+                {"level": "notOptimal",
+                 "when": {"answers": {"pageCount": {"gt": 100}}},
+                 "reason": "Home inkjet printers are slow for large books. Consider a copy shop or print-on-demand service."}
+              ]
+            },
+            {
+              "id": "officeLaser",
+              "label": "High-speed office laser",
+              "rangeLabel": "Best for 1–100 copies",
+              "description": "A normal office printer.",
+              "pros": ["Fast and consistent.", "Low running cost per page."],
+              "cons": ["Usually black-and-white only.", "Not for thick books."],
+              "recommendIf": [
+                {"level": "notOptimal",
+                 "when": {"answers": {"colour": "colour"}},
+                 "reason": "Most office laser printers print in black-and-white. Check yours supports colour before choosing this."},
+                {"level": "notOptimal",
+                 "when": {"answers": {"pageCount": {"gt": 100}}},
+                 "reason": "Office printers are not ideal for large page counts. Consider a copy shop or print-on-demand service."}
+              ]
+            },
+            {
+              "id": "photocopyShop",
+              "label": "Local copy shop",
+              "rangeLabel": "Best for 1–200 copies",
+              "description": "A nearby photocopy or print shop.",
+              "pros": ["Good quality at low cost.", "Can print double-sided.", "Often same-day."],
+              "cons": ["You must deliver or send the file."]
+            },
+            {
+              "id": "podLow",
+              "label": "Print-on-demand (small runs)",
+              "rangeLabel": "Best for 1–200 copies",
+              "description": "Online services that print one or a few copies.",
+              "pros": ["No minimum order.", "Ships directly to you.", "Good for testing a layout."],
+              "cons": ["Costs more per copy than offset.", "Delivery takes time."]
+            },
+            {
+              "id": "podHigh",
+              "label": "Print-on-demand (bigger runs)",
+              "rangeLabel": "Best for 50–500 copies",
+              "description": "Online services with a minimum of around 50 copies.",
+              "pros": ["Lower cost per copy than small POD.", "Good quality.", "Ships directly."],
+              "cons": ["Usually needs at least 50 copies.", "Delivery takes time."]
+            },
+            {
+              "id": "offset",
+              "label": "Offset printing",
+              "rangeLabel": "Best for 500–5000 copies",
+              "description": "A commercial press for big print runs.",
+              "pros": ["Lowest cost per copy for large runs.", "Highest quality.", "Wide choice of paper and binding."],
+              "cons": ["Needs at least 500 copies to be cost-effective.", "Longer lead time.", "Needs print-ready PDF with crop marks."]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "productionBudget",
+      "step": "production",
+      "titleString": "Lower cost, or better quality?",
+      "helpString": "The middle setting works well for most print runs.",
+      "tooltipString": "Budget",
+      "showIf": {"answers": {"outputMedium": "print"}},
+      "staticPanel": "Moving left reduces file size and allows slightly uneven columns, which speeds up typesetting. Moving right produces more balanced columns and higher-resolution images, but takes longer to generate and produces a larger file.",
+      "questions": [
+        {
+          "id": "budgetQuality",
+          "type": "centredSlider",
+          "label": "Budget vs quality",
+          "translatorNote": "Budget vs quality slider. Affects allowUnbalanced and viewer checks.",
+          "leftLabel": "Cheaper",
+          "centreLabel": "Balanced",
+          "rightLabel": "Better quality",
+          "required": false,
+          "default": 0.5,
+          "showIf": null,
+          "affects": []
+        }
+      ]
+    },
+    {
+      "id": "productionSpeed",
+      "step": "production",
+      "titleString": "Faster output, or better-looking output?",
+      "helpString": "The middle setting works well for most uses.",
+      "tooltipString": "Speed",
+      "showIf": {"answers": {"outputMedium": "digital"}},
+      "staticPanel": "Moving left produces the file faster with slightly simpler layout processing. Moving right takes more time but produces better-balanced text and higher-quality images.",
+      "questions": [
+        {
+          "id": "speedQuality",
+          "type": "centredSlider",
+          "label": "Speed vs quality",
+          "translatorNote": "Speed vs quality slider for digital output.",
+          "leftLabel": "Faster",
+          "centreLabel": "Balanced",
+          "rightLabel": "Better quality",
+          "required": false,
+          "default": 0.5,
+          "showIf": null,
+          "affects": []
+        }
+      ]
+    },
+    {
+      "id": "productionBinding",
+      "step": "production",
+      "titleString": "How will the pages be held together?",
+      "helpString": "If you are not sure, choose Perfect-bound — it works for most books.",
+      "tooltipString": "Binding",
+      "showIf": {"answers": {"outputMedium": "print"}},
+      "staticPanel": null,
+      "questions": [
+        {
+          "id": "binding",
+          "type": "singleSelect",
+          "label": "Binding",
+          "translatorNote": "Binding type. Gated by pageCount and printer volumeBand.",
+          "required": true,
+          "default": "perfect",
+          "showIf": null,
+          "affects": [],
+          "options": [
+            {
+              "id": "saddleStitch",
+              "label": "Folded and stapled",
+              "description": "Folded in the middle and stapled. Best for small books.",
+              "pros": ["Very cheap to produce.", "Lies flat when open.", "Easy to print at home or a copy shop."],
+              "cons": ["Only works for small page counts.", "No spine for a title."],
+              "recommendIf": [
+                {"level": "notOptimal",  "when": {"answers": {"pageCount": {"between": [49, 64]}}}, "reason": "Works best under 48 pages. Your book may be hard to fold and staple at this thickness."},
+                {"level": "notAdvised",  "when": {"answers": {"pageCount": {"gt": 64}}},            "reason": "Folded-and-stapled binding does not work for books this thick."}
+              ]
+            },
+            {
+              "id": "spiral",
+              "label": "Spiral or coil",
+              "description": "A wire or plastic coil down the side. Lies flat when open.",
+              "pros": ["Lies completely flat when open.", "Good for study use.", "Easy to print at a copy shop."],
+              "cons": ["Cannot add a printed spine.", "More expensive than saddle-stitch.", "Not suitable for very thick books."],
+              "recommendIf": [
+                {"level": "notOptimal",  "when": {"answers": {"pageCount": {"between": [301, 500]}}}, "reason": "Spiral binding can be done but gets awkward above 300 pages."},
+                {"level": "notAdvised",  "when": {"answers": {"pageCount": {"gt": 500}}},             "reason": "Spiral binding is not practical for books this thick."}
+              ]
+            },
+            {
+              "id": "sideStitched",
+              "label": "Side-stitched",
+              "description": "Stapled or sewn through the side.",
+              "pros": ["More durable than saddle-stitch.", "Works for thicker books than saddle-stitch."],
+              "cons": ["Does not lie flat when open.", "No spine for a title."],
+              "recommendIf": [
+                {"level": "notAdvised", "when": {"answers": {"pageCount": {"gt": 200}}}, "reason": "Side-stitching is not practical for books this thick."}
+              ]
+            },
+            {
+              "id": "perfect",
+              "label": "Perfect-bound (paperback)",
+              "description": "Pages glued at the spine, like a paperback.",
+              "pros": ["Professional look.", "Printed spine.", "Works for a wide range of page counts.", "Available at most print shops."],
+              "cons": ["Needs at least 32 pages.", "Does not lie completely flat."],
+              "recommendIf": [
+                {"level": "notOptimal", "when": {"answers": {"pageCount": {"between": [32, 63]}}}, "reason": "Can be done but the spine will be very thin. Saddle-stitch may be a better choice."},
+                {"level": "notAdvised", "when": {"answers": {"pageCount": {"lt": 32}}},            "reason": "Perfect binding needs at least 32 pages."}
+              ]
+            },
+            {
+              "id": "hardcover",
+              "label": "Hardcover",
+              "description": "A hard book cover with sewn or glued pages inside.",
+              "pros": ["Very durable.", "Premium appearance.", "Good for pew or reference use."],
+              "cons": ["Much more expensive than paperback.", "Heavier.", "Needs at least 64 pages."],
+              "recommendIf": [
+                {"level": "notOptimal", "when": {"answers": {"pageCount": {"between": [64, 99]}}},  "reason": "Hardcover works but looks best on thicker books."},
+                {"level": "notAdvised", "when": {"answers": {"pageCount": {"lt": 64}}},             "reason": "Hardcover binding needs at least 64 pages."},
+                {"level": "notOptimal",
+                 "when": {"answers": {"printer": {"in": ["homeInkjet", "officeLaser"]}}},
+                 "reason": "Hardcover binding requires a professional bindery — it cannot be done on a home or office printer."}
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "layout",
+      "step": "layout",
+      "titleString": "Layout",
+      "helpString": "A couple of last questions.",
+      "tooltipString": "Layout",
+      "showIf": null,
+      "staticPanel": null,
+      "questions": [
+        {
+          "id": "diglotInterlinear",
+          "type": "multiSelect",
+          "label": "Special layout",
+          "help": "Leave all unticked if not sure. You can add these later.",
+          "translatorNote": "Diglot / interlinear modifiers.",
+          "required": false,
+          "default": [],
+          "showIf": null,
+          "affects": ["columns"],
+          "options": [
+            {
+              "id": "diglot",
+              "label": "Two languages, side by side",
+              "description": "The text is shown in two languages, one beside the other.",
+              "pros": ["Readers can compare the two languages easily.", "Good for bilingual communities."],
+              "cons": ["Needs two separate Paratext projects.", "Columns are narrower."]
+            },
+            {
+              "id": "interlinear",
+              "label": "Interlinear scripture",
+              "description": "Each word has another language under or above it.",
+              "pros": ["Shows word-for-word meaning.", "Useful for language learning or checking."],
+              "cons": ["Complex to set up.", "Text is harder to read quickly."]
+            }
+          ]
+        },
+        {
+          "id": "columns",
+          "type": "singleSelect",
+          "label": "Columns",
+          "help": "Two columns fit more text on each page. One column is easier to read on a phone or for children.",
+          "translatorNote": "Column layout. Hidden when diglot is selected (diglot forces two columns).",
+          "required": true,
+          "showIf": {
+            "not": {"answers": {"diglotInterlinear": {"contains": "diglot"}}}
+          },
+          "affects": [],
+          "default": {
+            "rules": [
+              {"if": {"answers": {"screenTarget": "phone"}},               "then": "single"},
+              {"if": {"answers": {"outputMedium": "digital"}},             "then": "single"},
+              {"if": {"answers": {"productType": "childrensBible"}},       "then": "single"},
+              {"if": {"answers": {"productType": "largePrintBible"}},      "then": "single"},
+              {"if": {"answers": {"productType": "journalingBible"}},      "then": "single"},
+              {"if": {"answers": {"productType": "lectionary"}},           "then": "single"},
+              {"if": {"answers": {"publicationStage": "prePublication"}},  "then": "single"}
+            ],
+            "else": "double"
+          },
+          "options": [
+            {
+              "id": "single",
+              "label": "One column",
+              "description": "All text in a single block down the page.",
+              "pros": ["Easier to read for children, new readers, or on small screens.", "More space for wider text."],
+              "cons": ["Fewer words per page — more pages needed."]
+            },
+            {
+              "id": "double",
+              "label": "Two columns",
+              "description": "Two columns of text side by side.",
+              "pros": ["More words per page.", "Familiar layout for printed Bibles.", "Shorter line length can improve readability."],
+              "cons": ["Narrower columns — not ideal for large text or small page sizes."]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,6 +6,7 @@ from ptxprint.font import TTFont
 from ptxprint.runner import checkoutput
 from ptxprint.usxutils import Usfm, Sheets
 from ptxprint.module import Module
+from ptxprint.markdown import MarkDown
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect
@@ -84,7 +85,7 @@ _periphids = {
 
 
 class TexModel:
-    _ptxversion = 7
+    _ptxversion = 8
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
@@ -161,7 +162,7 @@ class TexModel:
         # '|': 'pipe'
 
     def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None):
-        from ptxprint.view import VersionStr, GitVersionStr
+        from ptxprint.version import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
         self.printer = printer
@@ -876,16 +877,22 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         if not noaction:
             usfms = self.printer.get_usfms()
-            mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
-            try:
-                mod.parse(self.printer.picinfos)
-            except ValueError as e:
-                self.printer.doError(f"Module error: {e}")
-                res = ""
+            if infpath.lower().endswith(".md"):
+                with open(fname, encoding="utf-8") as inf:
+                    text = inf.read()
+                mod = MarkDown(text)
+                res = mod
             else:
-                res = mod.doc
-                if res.xml.errors:
-                    self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
+                mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
+                try:
+                    mod.parse(self.printer.picinfos)
+                except ValueError as e:
+                    self.printer.doError(f"Module error: {e}")
+                    res = ""
+                else:
+                    res = mod.doc
+                    if res.xml.errors:
+                        self.printer.doError("\n".join(f"{msg} in {ref} at line {pos.l} char {pos.c}" for msg, pos, ref in res.xml.errors))
         else:
             res = ""
         if text is not None:
@@ -1458,14 +1465,15 @@ class TexModel:
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
                 # Note that this will only pick up the first para of glossary entries
-                ge = re.findall(r"(\S+~\s*)?\\k (.+?)\\k\*(.+?)\r?\n", dat) # Finds all glossary entries in GLO book
+                ge = re.findall(r"(\S+~\s*)?\\k (.+?)(?:\|(.*?))?\\k\*(.+?)\r?\n", dat) # Finds all glossary entries in GLO book
                 if ge is not None:
                     for g in ge:
-                        gdefn = re.sub(r"\\xt (.+?)\\xt\*", r"\1", g[2])
+                        gdefn = re.sub(r"\\xt (.+?)\\xt\*", r"\1", g[3])
                         gdefn = re.sub(r"\\w (.+?\|)?(.+?)\\w\*", r"\2", gdefn) # FIXME! This strips out \w from notes, preventing broken USFM (notes in notes). It would be better to leave them as-is, and avoid detecting them in notes, so readers can follow the chain.
                         gdefn = re.sub(r"\\", r"\\\\", gdefn)
+                        gkey = re.sub(r'key="(.*?)"',r"\1",g[2])
                         gpfx = re.sub(r"~\s+"," ",g[0]) # Remove any trailing spaces from glossary item prefix
-                        self.localChanges.append(makeChange(r"(\\w (.+?\|)?{} ?\\w\*)".format(g[1]), \
+                        self.localChanges.append(makeChange(r"(\\w (?:.+?\|)?{} ?\\w\*)".format(gkey), \
                                                                      r"\1\\f + {}\\fq {}: \\ft {}\\f* ".format(gpfx,g[1],gdefn), flags=regex.M))
 
     def filterGlossary(self, printer):

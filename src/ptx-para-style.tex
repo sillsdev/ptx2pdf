@@ -146,6 +146,10 @@
   \else
     \global\let\tmppcl@ss\thisp@rclass %pass out the heading group class
   \fi
+  \edef\tmp{\the\s@vedm@rks}\ifx\tmp\empty\else
+    \global\setbox\he@dingnotes\vbox{\unvbox\he@dingbox\the\s@vedm@rks}%
+    \global\s@vedm@rks{}%
+  \fi
   \egroup %\showbox\he@dingbox
   \global\normalhe@dingstrue\ifcsname at@end-\oldm@rker\endcsname \x@\ifx\csname at@end-\oldm@rker\endcsname\tr@e
     \global\normalhe@dingsfalse

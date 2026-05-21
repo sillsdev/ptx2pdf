@@ -164,6 +164,7 @@
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
   \ifinn@te \MSG{Note marker (\newn@testyle) found while still in note style, after \c@rref. End notes properly, notes may not nest.}\endn@testyle*\fi
   \trace{n}{startn@testyle \newn@testyle #1}%
+  \traceifset{startnotestyle}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
     \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
     \begingroup
@@ -178,7 +179,7 @@
   \else
     \leavevmode
     \advance\fmc@unt 1
-    \getp@ram{notebase}{\newn@testyle}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
+    \getp@ram{notebase}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\edef\n@tebase{\newn@testyle}\else\edef\n@tebase{\p@ram}\fi
     \csname before-\newn@testyle\endcsname
     \def\t@st{#1}%
     \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
@@ -252,7 +253,7 @@
   \csname end-\newn@testyle\endcsname % execute <end> hook
    \ifp@ranotes\else\ifhmode\endgraf\fi\ifvmode \n@tedepth=\prevdepth\kern-\n@tedepth \fi\fi% Kill decenders at the end of the note
  \fi
- \egroup % end the insert (started in \m@kenote) 
+ \egroup % end the insert (started in \f@@t from \m@kenote, triggers \@foot)
  \ifx\@wrap\empty\else\egroup\let\@wrap\empty\fi%\@wrap would have started a box
  \global\inn@tefalse
  \global\n@tenesting=0 
@@ -262,6 +263,7 @@
  \endgroup
  \beginL\x@\write\x@\p@rlocs\x@{\n@tesize}\endL
  %\showboxbreadth=999\showlists
+ \traceifcheck{startnotestyle}%
  \n@xt}
 \newif\ifsp@cebefore
 \newif\ifskipn@testyle
@@ -318,12 +320,12 @@
   \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\undefined
     \x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \fi
-  \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
+  \ifhmode\def\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
-  \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
-    \ifdoingt@ble #3\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes\hsize=\t@blehsize}\else%
-      \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
-      \else\edef\@wrap{}%
+  \ifinextended #3\def\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
+    \ifdoingt@ble #3\def\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes\hsize=\t@blehsize}\else%
+      \ifhe@dings #3\def\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
+      \else\def\@wrap{}%
         \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax #3
         \else % there is a chapter number waiting
           \trace{n}{Note will be saved for chapter number}%
@@ -353,6 +355,7 @@
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
+  \trace{M}{note-no-insert-\n@tetype \space is \ifx\th@sins\relax not \fi defined, p@ranotes\ifp@ranotes true\else false\fi, group=\the\currentgrouplevel}%
   \setn@tewidth{#1}\trace{M}{noteboxwidth hsize=\the\hsize}%
   \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 1 \fi 
     \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
@@ -366,7 +369,8 @@
   \xdef\currn@tetype{#1}%
   \trace{n}{Footnote (\n@tetype) [\ch@pter:\v@rse] will \ifp@ranotes\else not \fi be paragraphed and \the\n@tewidth \space wide (page is \the\hsize)}%
   \global\floatingpenalty\@MM % make sure note does not float away from caller to another page
-  \the\d@note\bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
+  \the\d@note
+  \bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
     \ifFootNoteGlyphMetrics
       \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
     \else
@@ -427,6 +431,7 @@
   \s@tfont{#2}{#2}%
   \ifp@ranotes\else\@ch@ckadjustments\fi
   %\ifnum\interactionmode=1\showlists\fi
+  %\traceifset{mnote}%
   \futurelet\next\fo@t}% use plain.tex footnote processor, see plain.tex 1166. It ensures that @foot after the following group.
 %-c_vmakenote
 
@@ -455,6 +460,7 @@
     \fi
     }%
   \x@\gdef\csname note-no-insert-#1\endcsname{\x@\afterassignment\csname addt@endnote-#1\endcsname\global\setbox\csname endn@te-#1\endcsname\vbox}%
+  \trace{M}{Setting note-no-insert-#1 addt@endnote-#1}%
   \x@\gdef\csname ztestnotes-#1\endcsname{% Set the @ndnotesfound flag based on one type of note. 
       \ifvoid\csname endn@te-#1\endcsname\@ndnotesfoundfalse\else\@ndnotesfoundtrue\fi}%
   \x@\gdef\csname zplacenotes-#1\endcsname{\ifvmode\else\par\fi \n@tedepth=\prevdepth %
@@ -526,12 +532,13 @@
 % called at end of note
 \def\n@tesize{}
 \def\@foot{%This ends the group that starts with the footnote class.
+  %\traceifcheck{mnote}%
+  \trace{f}{End of note}%
   \ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
   \t@gend{Note}%
   \par
-  \ifp@ranotes \@ch@ckadjustments   \fi
-  %\setbox0\lastbox\setbox0\hbox{\unhbox0}\xdef\l@stboxwid{\the\wd0}\box0
-  \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{n}{note(\n@tetype) spaceafter: \p@ram}%
+  \ifp@ranotes\@ch@ckadjustments
+  \else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{n}{note(\n@tetype) spaceafter: \p@ram}%
     \ifx\p@ram\relax\penalty0 \else\vskip\p@ram\verticalsp@ceunit\fi %FIXME Penalty0??? 
     \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
     % surely we don't want a strut above and below?
@@ -539,7 +546,8 @@
     %\vskip \dimen0
   \fi
   \x@\xdef\csname n@te-\n@tetype-bls\endcsname{\the\baselineskip}%
-  \egroup\end@llpoppedstyles{N*}%
+  \egroup
+  \end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \ifDBGshownoteboxes\showbox9 \fi
   \ifp@ranotes\setbox8=\copy9\setbox7=\vbox{\unvbox8\global\setbox6=\lastbox}\setbox8=\hbox{\unhbox6}%
@@ -548,7 +556,7 @@
     \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd9\string}\string{\the\ht9\string}}%
   \fi
   \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize, p@ranotes\ifp@ranotes true \else false\fi, st@dynotes\ifst@dynotes true\else false\fi, \ifx\XrefNotes\n@tetype xrefnote\else normal\fi}%
-      %\showbox9
+  \trace{M}{box9[\n@tetype]=\the\ht9 +\the\dp9 *\the\wd9}%
   \ifn@npublishablec@t\global\n@npublishablec@tfalse\else
     \ifx\n@tetype\XrefNotes\relax
       \unvbox9 % Simple normal-height boxes.
@@ -560,8 +568,9 @@
       \fi
     \fi
   \fi
- \egroup
- \ifcsname endnote-no-insert-\n@tetype\endcsname\csname endnote-no-insert-\n@tetype\endcsname\fi
+  \egroup
+  \ifcsname endnote-no-insert-\n@tetype\endcsname\csname endnote-no-insert-\n@tetype\endcsname\fi
+  \trace{M}{endnote-no-insert-\n@tetype \space is \ifcsname endnote-no-insert-\n@tetype\endcsname\else not \fi defined}%
  %\ifnum\interactionmode=1\showboxbreadth=1000 \showlists\fi
 }
 \newbox\f@@tstrut
@@ -663,7 +672,7 @@
       \noterule{\AboveStudyNoteSpace}{\BelowStudyNoteRuleSpace}{\textwidth}{%
       \StudyNoteRuleLeftIndent \vrule height \StudyNoteRuleThickness width \StudyNoteRuleWidth\textwidth \StudyNoteRuleRightIndent}%
       \global\f@rstnotefalse
-    \fi%\else\kern\InterNoteSpace\fi
+    \else\kern\InterNoteSpace\fi
     \setbox11=\vbox{\unvbox11}\setbox12=\vbox{\unvbox12}%
     \ifdim\ht12=0pt \setbox12=\vbox{\hbox to \wd11{}}\fi
     \dimen11=\ht11 \ifdim\dimen11<\ht12 \dimen11=\ht12\fi
@@ -747,6 +756,8 @@
 \def\ParagraphedNotes#1{\Par@gr@phedNotes{#1\g@tndstat}}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
 \def\StudyNotes#1{\x@\let\csname studynotes-#1\g@tndstat\endcsname=1}
+\def\NotStudyNotes#1{\x@\let\csname studynotes-#1\g@tndstat\endcsname\relax}
+
 \newif\ifp@ranotes
 \newif\ifColNotes \ColNotesfalse
 \def\checkp@ranotes#1{%
@@ -782,7 +793,15 @@
           \trace{d}{c@rrdstat currently set to '\c@rrdstat'.  No column fullwidth}%
           \n@tewidth=\csname columnLwidth\endcsname
         \fi
-     \else\n@tewidth=\textwidth\fi
+     \else
+       \ifst@dynotes\global\n@tewidth=0.5\textwidth
+         \dimen9=\StudyGutterFactor\FontSizeUnit
+         \advance\n@tewidth by -0.5\dimen9
+       \else
+         \ifColNotes\ifnum\c@rrentcols=2\global\n@tewidth=\colwidth\else\onecolwidth{\n@tewidth}\fi
+         \else\n@tewidth=\textwidth\fi
+       \fi
+     \fi
    \else
      \ifst@dynotes\global\n@tewidth=0.5\textwidth
        \dimen9=\StudyGutterFactor\FontSizeUnit
@@ -800,7 +819,6 @@
       \else
         \n@tewidth=\ifdiglot\csname column\c@rrdstat width\endcsname
           \else\ifColNotes\colwidth\else\textwidth\fi \fi
-        \else\ifColNotes\colwidth\else\textwidth\fi
       \fi
     \fi
     %\advance\n@tewidth by -\columnshift
@@ -1316,13 +1334,19 @@
 
 % Marginal notes
 \def\marginaln@te#1{\x@\gdef\csname note-no-insert-#1\endcsname{\n@test@rt{#1}}%
+  \trace{M}{Setting note-no-insert-#1 -> n@testart}%
   \x@\gdef\csname endnote-no-insert-#1\endcsname{\n@te@nd{#1}}%
   \x@\newb@x\csname nm-box-#1\endcsname
   \x@\gdef\csname nm-cref-#1\endcsname{#1}%
   \x@\newc@unt\csname nm-count-#1\endcsname
 }
+\newcount\tracingonce \tracingonce=0
+\def\flyflag{\trace{M}{6. group=\the\currentgrouplevel, \ifcsname endnote-no-insert-x\endcsname fndefined\fi}}
 \def\n@test@rt#1{\n@tewidth=\dimexpr \marginnoteswidth - \marginnotesgap\relax
-  \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup\usespacebeforefalse
+  %\ifnum\tracingonce > 0 \tracingmacros=0\tracinggroups=0\tracingcommands=0\else\tracingmacros=1\tracinggroups=1\tracingcommands=1\fi \advance \tracingonce by 1
+  \trace{M}{n@testart #1, starting with n@tewidth=\the\n@tewidth, group=\the\currentgrouplevel}%
+  \traceifset{n@test@rt}%
+  \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup%\aftergroup\flyflag\usespacebeforefalse
     \global\p@ranotesfalse
     \s@tsideskips{#1}{-1pt}%
     \ifXrefSideAlign\testXrefSideL\getp@ram{justification}{#1}{#1}%
@@ -1336,12 +1360,13 @@
           \ifx\p@ram\l@ft\else
             \dimen1=\leftskip \leftskip=\rightskip \rightskip=\dimen1
         \fi\fi
+      \fi
     \fi
     \n@tewidth=\marginnoteswidth \advance\n@tewidth -\marginnotesgap \hsize=\n@tewidth
     \ifdim\parfillskip>0pt\hfil\fi
 }
 \def\n@te@nd#1{%
-  \egroup% \x@\showbox\csname nm-box-#1\endcsname
+  \egroup\trace{M}{group=\the\currentgrouplevel}%
   \x@\ifx\csname nm-cref-#1\endcsname\c@rref
     \x@\advance\csname nm-count-#1\endcsname 1%
   \else \csname nm-count-#1\endcsname=0 \x@\xdef\csname nm-cref-#1\endcsname{\c@rref}\fi
@@ -1349,9 +1374,10 @@
   \skip1=\baselineskip \s@tbaseline{#1}{#1}%
   \getp@ram{spacebeside}{#1}{#1}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
   \advance\dimen0 \marginnotesgap
-  \trace{M}{nm-box-#1 \x@\the\x@\ht\csname nm-box-#1\endcsname+\x@\the\x@\dp\csname nm-box-#1\endcsname*\x@\the\x@\wd\csname nm-box-#1\endcsname}%
+  \trace{M}{nm-box-#1 \x@\the\x@\ht\csname nm-box-#1\endcsname +\x@\the\x@\dp\csname nm-box-#1\endcsname *\x@\the\x@\wd\csname nm-box-#1\endcsname}%
   \d@marginnote{\x@\the\csname nm-box-#1\endcsname}{\t@@mp}{#1}{\MarginNoteSide}{bottom}{\the\dimen0}{\dimexpr -\dp\pstr@t -\baselineskip}%
   \baselineskip=\skip1
+  \traceifcheck{n@test@rt}%
 }
 
 %+cnote_declare

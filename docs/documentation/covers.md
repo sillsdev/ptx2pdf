@@ -95,7 +95,7 @@ The final two allow the spine colour / image to wrap onto the
 front / rear cover as is seen in some editions. 
 
 ## Position of the main sidebars
-For the cover macro to function as expected, the sidebars must each have their position set to the value set for them in ptx2pdf.sty:
+For the cover macro to function as expected, the sidebars **must** each have their position set to the value set for them in ptx2pdf.sty:
 ```tex
 \Position Fcf
 ```
@@ -119,6 +119,62 @@ The relevant options are:
 * inner - The area that text could cover (vertically this extends to the inner edge of the border)
 * text - The area that text covers (vertically this extends to the height of the text, excluding stretch, and it is probably not useful for covers).
 
+### Oversize images
+Background images are scaled to the X-size, the Y-size or distorted to fit both.
+If an (approximately) square image is put on a 'portrait'  cover, with a size-specification of `\Scale x1`  then the image will be oversized. There are 4 options available  (similarly if the image does not match the aspect ratio in the other direction and `1x` is specified):
+`\BgImageOversize shrink` The aspect ratio of the original is  preserved, and the image shrunk scaled to the undefined dimension.  E.g. if `\BgImageScale x0.9` is too wide, it reloads the image with  `\BgImageScale 1x`. Note that choosing a scale factor larger than 1 can thus result in an  image which is still too large.
+
+`\BgImageOversize distort` The originally specified dimension is obeyed, and the image distorted in the other dimension so that it exactly fits. (Horizontally, in this example).
+
+`\BgImageOversize ignore` **DEPRECATED** An image that is too big at the selected size will remain too big.
+
+`\BgImageOversize crop` has now been implemented. The image will crop to the full dimensions of the `\BgImageScaleTo` box. The image can then be offset relative to  this area (*whether cropping or not*).
+
+`\BgImageCropOfs XxY`  takes 2 numbers separated by x (e.g. `0.3x0.5`). `0x0`  anchors the bottom left corner of image to bottom left corner of cropping area. `1x1` anchors the top-right corner to the top right of the cropping area.
+`0.5x0.5` anchors the middle to the middle.
+
+It does this by offsetting the image Xoffset * {ImageSzX - CropSizeX), Yoffset*(ImageSzY-CropSizeY). Values above 1 or below 0 push the image too far in the appropriate direction.
+
+If `crop` is selected, then `\BgImageScale x` (not specifying either X or Y) will set the image size to the largest dimension that will fit the crop boundary while only cropping on one direction. 
+
+## Styling an  ISBN box (and similar)
+An (unusual)  ISBN might look like this (as part of the back cover):
+![](imgs/isbn.png) 
+```
+\esb \cat ISBNbox\cat*
+\zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
+\esbe
+```
+(Note the lack of paragraph marker; \zISBNbarcode does not need one, as it makes it's own pseudo-paragaph).
+Here is the relevant portion of the stylesheet, with an explanation:
+```
+\Marker cat:ISBNbox|esb
+\Position hl
+\SpaceBefore 20
+\SpaceAfter 20
+\FirstLineIndent .5
+\BorderStyle plain
+\BorderWidth 5
+\BorderColour 0.5 0.5 0.5
+\BgColour 1 1 1
+\BoxHPadding 5 
+\BoxVPadding 5
+\BorderPadding 2
+\Scale 0.4
+\Alpha 1
+```
+`\Position hl` positions the sidebar 'here', (as a normal, non-delayed, paragraph-like  chunk) on the left of the text area. (`hr` and `hc` give right and central horizontal positioning).
+
+`\SpaceBefore` and `\SpaceAfter` provide some vertical adjustment above and below the sidebar 'paragraph', relative to other paragraphing / the end of the page. If the ISBN is the last thing on the back cover and there's a `\vfill` or other stretch above it, then `\SpaceAfter`  will raise the ISBN box. The units are as for heading paragraphs (12=1 normal line).
+
+`\FirstLineIndent` on a left- or right-aligned image or sidebar 'indents' the sidebar away from the alignment edge. It uses the same units as paragraph indents.
+
+The initial border parameters are mostly assumed to be obvious. The `\BorderWidth` units are measured in `pt`, colours are given as *red* *blue* *green*. The `\BgColour` and the `\Alpha` value specify the colour and transparency of the (at present) white box in which the ISBN is put.
+Box Padding values determine how much that white box is padded beyond actual ink of the ISBN (and asociated text).
+`\BorderPadding 2` is what gives the 2pt of transparency beyond the box, to before the start of the border. 
+
+`\Scale` is not used in the above example, as  However, if there were actual lines of text then that would determine how much of the available width the paragraph (and box/border) fills out to. Note that at present \the indent available from `\FirstLineIndent` does not get taken into account by `\Scale`, and so  undesirable effects can be created.
+ 
 ### Examples
 ```
 \BgImageScaleTo inner
