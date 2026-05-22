@@ -980,7 +980,7 @@ class RunJob:
             report = checkoutput(["xetex", "--version"], path='xetex')
             z.writestr("_runinfo.txt", report)
             z.close()
-        self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, **kw)
+        self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, output_filepath=pdffile, **kw)
         return True
         if cover:
             self.coverfile = self.extrafiles.get('cover', None)
