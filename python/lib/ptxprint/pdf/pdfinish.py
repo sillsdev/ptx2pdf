@@ -189,6 +189,7 @@ class Finisher(Gtk.Application):
         right_to_left = str(self.builder.get_object("c_RTL").get_active())  # procpdf wants a string
         fold_first = self.builder.get_object("c_foldFirst").get_active()
         selected_sheet_size = self._get_sheet_size(sheetsize_active_text)
+        scale_to_fit = self.builder.get_object("c_scaleToFit").get_active()
         if selected_sheet_size is None:
             return
         outwidth, outheight = get_page_size(selected_sheet_size)
@@ -196,7 +197,8 @@ class Finisher(Gtk.Application):
         procpdf(output_pdf_path, input_pdf_path, "None", doError, None,
                 cover=None, pgsperspread=pages_per_spread, sheetsinsigntr=sheets_per_sig,
                 sheetsize=page_size, foldcutmargin=fold_cut_margin, cropmarks=add_crop_marks,
-                ifrtl=right_to_left, foldfirst=fold_first, output_filepath=output_pdf_path)
+                ifrtl=right_to_left, foldfirst=fold_first, scaletofit=scale_to_fit,
+                output_filepath=output_pdf_path)
 
     def _run_procpdf(self, input_pdf_path, output_pdf_path):
         """
@@ -208,7 +210,7 @@ class Finisher(Gtk.Application):
         spotcolor = f"rgb({spot_rgba.red * 256}, {spot_rgba.green  * 256}, {spot_rgba.blue  * 256})"
 
         # run procpdf - what does outfname do?
-        procpdf(output_pdf_path, input_pdf_path, output_format, doError, None, cover=None, spottolerance=spottolerance, spotcolor=spotcolor, output_filepath=output_pdf_path)
+        procpdf(output_pdf_path, input_pdf_path, output_format, doError, None, cover=None, spottolerance=spottolerance, spotcolor=spotcolor, scaletofit=scale_to_fit, output_filepath=output_pdf_path)
 
     def _run_overlay(self, input_pdf_path, output_pdf_path):
         """

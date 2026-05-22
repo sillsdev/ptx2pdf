@@ -601,14 +601,12 @@ For example: 203mm, 330mm (Foolscap)</property>
                     </child>
                     <child>
                       <object class="GtkCheckButton" id="c_scaleToFit">
-                        <property name="label" translatable="yes">Scale to fit*</property>
+                        <property name="label" translatable="yes">Scale to fit</property>
                         <property name="name">Pagination: Scale to fit</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">(Coming in the future...)
-Enable this option if it is acceptable
+                        <property name="tooltip-text" translatable="yes">Enable this option if it is acceptable
 to slightly scale the Page Size (set on
 the Layout tab) in order to fit the
 Physical Paper Size based on the Pages
@@ -729,6 +727,7 @@ two sets of sequential pages.</property>
                         <property name="has-entry">True</property>
                         <property name="active-id">2</property>
                         <items>
+                          <item id="1" translatable="yes">1 (no change)</item>
                           <item id="2" translatable="yes">2 (A5 booklet on A4 sheet)</item>
                           <item id="4" translatable="yes">4 (A6 booklet on A4 sheet)</item>
                           <item id="8" translatable="yes">8 (A6 booklet on A3 sheet)</item>

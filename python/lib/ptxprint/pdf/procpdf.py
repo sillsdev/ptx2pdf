@@ -22,6 +22,11 @@ _unitpts = {
     'pt': 1
 }
 
+def make_stream(content):
+    s = IndirectPdfDict()
+    s.stream = content
+    return s
+
 def safeRename(infile, outfile):
     try:
         if os.path.exists(outfile):
@@ -89,18 +94,20 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
                         parlocs = outfname.replace(".tex", ".parlocs"), **params)
         except ValueError:
             return {}
+
+    paper = []
+    psize = kw.get('sheetsize', "210mm, 297mm (A4)").split(",")
+    for p in psize:
+        m = re.match(r"^\s*([\d.]+)\s*(mm|in|pt)", p)
+        if m:
+            paper.append(float(m.group(1)) * float(_unitpts[m.group(2)])) 
+        else:
+            paper.append(0.)
+
     nums = int(kw.get('pgsperspread', 1))
     if nums > 1:
         if ext is None:
             ext = "_{}up".format(nums)
-        psize = kw.get('sheetsize', "210mm, 297mm (A4)").split(",")
-        paper = []
-        for p in psize:
-            m = re.match(r"^\s*([\d.]+)\s*(mm|in|pt)", p)
-            if m:
-                paper.append(float(m.group(1)) * float(_unitpts[m.group(2)])) 
-            else:
-                paper.append(0.)
         sigsheets = int(kw.get('sheetsinsigntr', 0))
         foldmargin = int(kw.get('foldcutmargin', 0)) * _unitpts['mm']
         logger.debug(f"Impositioning onto {nums} pages. {sigsheets=}, {foldmargin=} from {paper[0]} to {paper[1]}")
@@ -114,6 +121,41 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                  title=_("Paper Size Error"), secondary=str(e), threaded=True)
             return {}
+    else:  # nums is 1
+        scale_to_fit = bool(kw.get("scaletofit", False))
+        if scale_to_fit:
+            src = outpdfobj._trailer if outpdfobj else PdfReader(opath)
+            if outpdfobj is None:
+                outpdfobj = PdfWriter(None, trailer=src)
+            target_w, target_h = paper[0], paper[1]
+            for page in src.pages:
+                mb = page.MediaBox
+                if mb is None:
+                    continue
+                pg_w = float(mb[2]) - float(mb[0])
+                pg_h = float(mb[3]) - float(mb[1])
+                if pg_w == 0 or pg_h == 0:
+                    continue
+                scale = min(target_w / pg_w, target_h / pg_h)
+                if abs(scale - 1.0) < 1e-4:
+                    continue
+                tx = (target_w - pg_w * scale) / 2
+                ty = (target_h - pg_h * scale) / 2
+                matrix_op = "{} {} {} {} {} {} cm\n".format(*[round(v, 6) for v in [scale, 0, 0, scale, tx, ty]])
+                save  = make_stream("q\n" + matrix_op)
+                restore = make_stream("\nQ\n")
+                existing = page.Contents
+                if existing is None:
+                    page.Contents = PdfArray([save, restore])
+                elif isinstance(existing, PdfArray):
+                    page.Contents = PdfArray([save] + list(existing) + [restore])
+                else:
+                    page.Contents = PdfArray([save, existing, restore])
+                page.MediaBox = PdfArray([PdfObject(0), PdfObject(0),
+                                        PdfObject(round(target_w, 4)),
+                                        PdfObject(round(target_h, 4))])
+                page.CropBox = None
+
     if kw.get('inclsettings', False):
         if ext is None:
             ext = ""
