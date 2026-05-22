@@ -38,6 +38,8 @@ _WIZARD_DIR   = pycodedir("wizards", "configuration")
 _GLADE_FILE   = os.path.join(_WIZARD_DIR, "wizardDialog.glade")
 _QUESTIONS_FILE = os.path.join(_WIZARD_DIR, "wizardQuestions.json")
 _SCHEMA_FILE  = os.path.join(_WIZARD_DIR, "wizardQuestions.schema.json")
+logger.debug(_WIZARD_DIR)
+logger.debug(_QUESTIONS_FILE)
 
 _MAIN_PANE_WIDTH = 520
 _SIDE_PANE_WIDTH = 300

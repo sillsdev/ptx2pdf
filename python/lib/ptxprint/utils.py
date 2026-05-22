@@ -405,6 +405,7 @@ def saferelpath(p, r="."):
     return res.rstrip("/")
 
 def pycodedir(*subdirs):
+    logger.debug(f"pycodedir {subdirs}")
     if getattr(sys, 'frozen', False):
         return os.path.join(sys._MEIPASS, 'ptxprint', *subdirs)
     return os.path.abspath(os.path.join(os.path.dirname(__file__), *subdirs))
