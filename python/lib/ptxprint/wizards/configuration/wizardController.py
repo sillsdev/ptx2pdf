@@ -34,7 +34,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-_WIZARD_DIR   = pycodedir()
+_WIZARD_DIR   = pycodedir("wizards", "configuration")
 _GLADE_FILE   = os.path.join(_WIZARD_DIR, "wizardDialog.glade")
 _QUESTIONS_FILE = os.path.join(_WIZARD_DIR, "wizardQuestions.json")
 _SCHEMA_FILE  = os.path.join(_WIZARD_DIR, "wizardQuestions.schema.json")

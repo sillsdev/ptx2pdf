@@ -404,10 +404,10 @@ def saferelpath(p, r="."):
         return p
     return res.rstrip("/")
 
-def pycodedir():
+def pycodedir(*subdirs):
     if getattr(sys, 'frozen', False):
-        return os.path.join(sys._MEIPASS, 'ptxprint')
-    return os.path.abspath(os.path.dirname(__file__))
+        return os.path.join(sys._MEIPASS, 'ptxprint', *subdirs)
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), *subdirs))
 
 def pt_bindir():
     basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
