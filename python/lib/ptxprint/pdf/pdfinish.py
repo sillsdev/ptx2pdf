@@ -62,7 +62,7 @@ class Finisher(Gtk.Application):
         Gtk.main()
 
     def onProcessClicked(self, btn):
-        self.errored = False
+        self.errored, self.tmp_file_1, self.tmp_file_2 = False, None, None
         self.input_pdf_path = self.builder.get_object("fp_input").get_filename()
         if not self.input_pdf_path:
             self.show_error("You need to select an input file!")
