@@ -186,14 +186,17 @@ class Finisher(Gtk.Application):
         sheets_per_sig = int(self.builder.get_object("s_sheetsPerSignature").get_value())
         fold_cut_margin = self.builder.get_object("s_foldCutMargin").get_value()
         add_crop_marks = self.builder.get_object("c_cropmarks").get_active()
-        right_to_left = self.builder.get_object("c_RTL").get_active()
+        right_to_left = str(self.builder.get_object("c_RTL").get_active())  # procpdf wants a string
         fold_first = self.builder.get_object("c_foldFirst").get_active()
         selected_sheet_size = self._get_sheet_size(sheetsize_active_text)
         if selected_sheet_size is None:
             return
         outwidth, outheight = get_page_size(selected_sheet_size)
-        make_signatures(input_pdf_path, outwidth, outheight, pages_per_spread,
-                        sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=output_pdf_path)
+        page_size = f"{outwidth} pt, {outheight} pt"
+        procpdf(output_pdf_path, input_pdf_path, "None", doError, None,
+                cover=None, pgsperspread=pages_per_spread, sheetsinsigntr=sheets_per_sig,
+                sheetsize=page_size, foldcutmargin=fold_cut_margin, cropmarks=add_crop_marks,
+                ifrtl=right_to_left, foldfirst=fold_first, output_filepath=output_pdf_path)
 
     def _run_procpdf(self, input_pdf_path, output_pdf_path):
         """
