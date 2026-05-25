@@ -969,7 +969,7 @@ class RunJob:
         return pdffile
 
     def procpdf(self, outfname, pdffile, cover=False, **kw):
-        for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'paper/cropmarks', 'document/ifrtl'):
+        for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'scaletofit', 'paper/cropmarks', 'document/ifrtl'):
             if '/' in a:
                 kw[a[a.find("/")+1:]] = self.info[a]
             else:
