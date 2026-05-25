@@ -280,6 +280,10 @@ texpertOptions = {
     "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2, -10, 50, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"),
                             _("Shift thumbtab text")),
 
+    "pbSpacingTol":       O("pbspacingtol", "OTH", (1, 0, 10, 1, 1, 0), None, _("Badness for expansion"), _("Weighting of badness caused by expansion")),
+    "pbShrinkPref":       O("pbshrinkpref", "OTH", (20, 0, 200, 1, 10, 0), None, _("Longer paragraph cost"), _("Extra cost for making paragraphs longer")),
+    "pbHeadings":         O("pbheadings", "OTH", (60, 0, 200, 1, 10, 0), None, _("Heading cost"), _("Factor to pay for adjusting a heading")),
+    "pbLastLine":         O("pblastline", "OTH", (2, 0, 20, 1, 1, 0), None, _("Last line effect weight"), _("Weighting of last line length effect costs"))
 }                          # (default, lower, upper, stepIncr, pageIncr, decPlaces)
 
 def widgetName(opt):

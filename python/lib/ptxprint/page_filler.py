@@ -183,6 +183,13 @@ class Hooks:
         self.basestate = state
         vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
         logger.log(15, f"Badness parameters = {vals}")
+        for a in (("spacing_tolerance", "pbspacingtol"),
+                  ("shrink_preference", "pbshrinkpref"),
+                  ("header_aversion", "pbheadings"),
+                  ("lastline_weight", "pblastline")):
+            val = float(printer.view.get("s_"+a[1]))
+            print(f"{a}, {val}")
+            setattr(self, "badness_"+a[0], val)
 
     def run_layout(self,
                    solver: Optional["Typesetter"],
@@ -279,7 +286,6 @@ class Hooks:
             res += 25 * (abs(delta) - 1) * short_factor
 
         # --- 3. Spacing distortion (expansion/compression across paragraph) ---
-        density = self.badness_line_density_factor
         res += self.badness_spacing_tolerance * (distortion * 100) ** 2
 
         # --- 4. Effort to cause line change (pwidth-driven, your correct model) ---
