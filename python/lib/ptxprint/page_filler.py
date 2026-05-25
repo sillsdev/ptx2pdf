@@ -170,12 +170,12 @@ class ProgressEvent:
 class Hooks:
 
     badness_stretch_tolerance   = 80   # avoid ±2
-    badness_spacing_tolerance   = 1    # paragraph spacing distortion
+    badness_spacing_tolerance   = 20    # paragraph spacing distortion
     badness_shrink_preference   = 20   # + = prefer shrink, - = prefer stretch
     badness_header_aversion     = 60   # avoid headers
     badness_line_density_factor = 1.0  # wide vs narrow text
     badness_line_weight         = 12
-    badness_lastline_weight     = 2
+    badness_lastline_weight     = 20
     badness_tex_weight          = 12
 
     def __init__(self, printer, state):
@@ -286,7 +286,7 @@ class Hooks:
             res += 25 * (abs(delta) - 1) * short_factor
 
         # --- 3. Spacing distortion (expansion/compression across paragraph) ---
-        res += self.badness_spacing_tolerance * (distortion * 100) ** 2
+        res += self.badness_spacing_tolerance / 20 * (distortion * 100) ** 2
 
         # --- 4. Effort to cause line change (pwidth-driven, your correct model) ---
         if delta != 0:
@@ -295,7 +295,7 @@ class Hooks:
             else:
                 effort = pwidth         # short line = hard to shrink
 
-            res += self.badness_lastline_weight * (effort ** 4) * short_factor * abs(stretch)
+            res += self.badness_lastline_weight / 10 * (effort ** 4) * short_factor * abs(stretch)
 
         # --- 5. Wrong-direction penalty (soft guidance, not dominant) ---
         PIVOT = 0.7
@@ -306,7 +306,7 @@ class Hooks:
         else:
             wrongness = 0.0
 
-        res += 0.5 * self.badness_spacing_tolerance * (wrongness ** 2) * short_factor * abs(stretch)
+        res += 0.5 * self.badness_spacing_tolerance / 20 * (wrongness ** 2) * short_factor * abs(stretch)
 
         # --- 6. Short paragraph sensitivity ---
         #line_penalty = self.badness_line_weight * ((20 / min(lines + 1, 20)) ** 0.5 - 1)
