@@ -1094,7 +1094,16 @@
     \fi
   \fi
   \tmpcount=\lastnodetype
-  \traceNum{D}{Initial savepenalty \the\savedpenalty \ifdiglotcolh@scontent colh@scontent\fi, lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}) , \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
+  \edef\@xtra{lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}}%
+  \ifnum\tmpcount=11
+    \dimen0=\lastskip
+    \edef\@xtra{\@xtra\space \the\dimen0}%
+    \vbox to 0pt{}%
+  \fi 
+  \ifnum\tmpcount=13
+    \edef\@xtra{\@xtra\space \the\savedpenalty}%
+  \fi 
+  \traceNum{D}{Initial savepenalty \the\savedpenalty \ifdiglotcolh@scontent colh@scontent\fi, \@xtra), \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
   \IfTr@ce{C}{{%
     \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
     \x@\let\x@\tmpL\csname ch@pterwaiting\endcsname\ifx\tmpL\relax\let\tmpL\space\fi
@@ -1123,7 +1132,18 @@
   \ifb@dy\ifdim \pagetotal>0pt 
       \x@\global\x@\let\csname isb@dy\c@rrdstat\endcsname\tr@e
   \fi\fi
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal, \csname isb@dy\c@rrdstat\endcsname}%
+  \tmpcount=\lastnodetype
+  \ifnum\tmpcount=11
+    \dimen0=\lastskip
+    \trace{D}{Trying to cope with chunk-end skip of \the\dimen0}%
+    %\vbox to 0pt{}% This adds a baselineskip:-(
+    \ifdim\dimen0<\baselineskip
+      \unskip
+    \else
+      \vskip -\baselineskip
+      \vbox to 0pt{}% This adds a baselineskip:-(
+    \fi
+  \fi 
   \checkfort@c % as good a place as any
   %\ifnum\outputpenalty=-10000 %User-pagebreak
     %\global\savedpenalty=\outputpenalty
