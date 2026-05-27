@@ -380,11 +380,13 @@
    \global\advance\availht by \adjustp@ge\relax % Panic measure.. Needs to be applied after checking for content.
    \trace{Dh}{after part2:\the\availht}%
    \f@rstnotetrue
-   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-   \iff@rstnote\else
-      \global\advance\availht by -\AboveNoteSpace\relax
-   \fi
-   \trace{Dh}{after notes:\the\availht}%
+   \ifversion{9}{}{%
+     \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+     \iff@rstnote\else
+        \global\advance\availht by -\AboveNoteSpace\relax
+     \fi
+     \trace{Dh}{after notes:\the\availht}%
+   }%
    \ifunprintable\else 
      \decr{\availht}{\topins}%pictures
      % Reduce by the height of whichever top picture takes the most space.
@@ -403,7 +405,7 @@
      \else%
        \decr{\availht}{\bottomrightins}%
      \fi%
-     \decr{\availht}{\bottomins}%
+     %\decr{\availht}{\bottomins}%
      \decr{\availht}{\verybottomins}%
    \fi
    \ch@ckiftextborderadj
@@ -425,7 +427,14 @@
      \dglt@calc@vailht@mods
    \fi
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
-   \trace{D}{final:\the\availht}%
+   \ifversion{9}{%the availht used for running trials needs to exclude notes.
+     \trace{D}{all but notes:\the\availht}%
+     \f@rstnotetrue
+     \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+     \trace{Dh}{Final (after notes):\the\availht}%
+   }{
+     \trace{D}{Final:\the\availht}%
+   }%
 }
 
 \def\dglt@calc@vailht@mods{%
@@ -593,7 +602,7 @@
   \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
   \ifdim\availht>\baselineskip
     \trace{D}{Preparing for trial}%
-    \global\trialheight=\availht
+    \global\trialheight=\csname availht\c@rrdstat\endcsname %Non-notes version
     \global\let\whichtrial=\after@a@trial
     \global\setbox\trialbox=\box\voidb@x
     \global\setbox\galleyexc@ss=\box\voidb@x
@@ -994,7 +1003,7 @@
       \showbox\trialbox
     \fi
     \update@marks@partone
-    \ifdim\TempDim<-0.3\@bls % Coarse test. main trial routine can be pickier if it wants
+    \ifdim\TempDim<-0.1\@bls % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
       \global\holdinginserts=1
       \global\trialfailedtrue
@@ -2191,7 +2200,7 @@
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
-    \global\trialheight=\availht\relax%
+    \global\trialheight=\csname availht\c@rrdstat\endcsname\relax%
     \global\vsize=\trialheight\relax%
   \fi
   \ifpagefull%
