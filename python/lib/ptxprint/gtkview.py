@@ -3953,7 +3953,7 @@ class GtkViewModel(ViewModel):
                 if isinstance(obj, Gtk.CheckButton):
                     if (1 if obj.get_active() else 0) == self.currdefaults.get(k, 0):
                         obj.set_active(newdefaults.get(k, 0) == 1)
-                elif isinstnace(obj, GtkSpinButton):
+                elif isinstance(obj, GtkSpinButton):
                     if obj.get_value() == self.currdefaults.get(k, 0):
                         obj.set_value(newdefaults.get(k, 0))
                 elif isinstance(obj, Gtk.ComboBoxText):
