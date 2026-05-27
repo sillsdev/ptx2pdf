@@ -373,7 +373,7 @@
          \trace{Dh}{dglt@calc@vailht:  \tmsg}
        }%
        \ifcsname cts@list\endcsname \else\let\cts@list\diglot@list\fi
-       \csname @do@jointcalc@\diglotlayout\endcsname{@nxtchunk}%
+       \csname @do@jointcalc@\diglotlayout @\diglotjointtype\endcsname{@nxtchunk}%
        \global\advance\availht by -\thisjointDelta \relax%
      \fi
    \fi
@@ -1713,7 +1713,8 @@
   %\columnRwidth=\DiglotRightFraction\dimen0
 }
 
-\def\@do@jointcalc@simplecols#1{%
+\def\diglotjointtype{normal}%
+\def\@do@jointcalc@simplecols@normal#1{%The usual version
     % step 0 what maxbaselineskip applies?
     {\edef\tmsg{@cur}\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
     \x@\def\x@\tmsg\x@{\tmsg}%
@@ -1747,6 +1748,30 @@
     \fi
     \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1 \space jd:\the\thisjointDelta}%
 }
+\def\diglotgridneg{1pt} % Maximum negative shift to restore grid
+\def\@do@jointcalc@simplecols@gridone#1{%One column (\diglotgridcolumn) follows grid, others don't.
+  % step 1: max height of the last box 
+  \def\v@lpfx{#1}\def\v@lsfx{ht}%
+  \dimen1=0pt
+  \let\col@do=\max@val
+  \x@\each@col\diglot@list\E % Find height of lastchunk
+  \thisjointDelta=0pt
+  \ifx\m@x@at@col\diglotgridcolumn\else
+    \dimen2=\csname #1\diglotgridcolumn ht\endcsname
+    \trace{d}{@do@jointcalc@simplecols@gridone maxht:\the\dimen1, control:\the\dimen2. Diff:\the\dimexpr \dimen2-\dimen1\relax}%
+    \advance \dimen2 - \dimen1
+    \dimen0=\csname b@selineskip\diglotgridcolumn\endcsname
+    \m@d % see ptx-para-style
+    \ifdim\dimen3>\diglotgridneg
+      \trace{D}{Restoring grid by addition of \the\dimen0}% 
+      \thisjointDelta=\dimen0
+    \else
+      \trace{D}{Restoring grid by subtraction of \the\dimen3}%  
+      \thisjointDelta=-\dimen3
+    \fi
+  \fi
+  \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space tb:\@maxb@seline\space mjv:\the\dimen1 \space jd:\the\thisjointDelta}%
+}
 \def\@prepare@layout@simplecols{%
     \bgroup
       \trace{d}{@prepare@layout@simplecols \l@gdims{\partial} \ifdiglotb@dy body\else intro\fi}%
@@ -1765,7 +1790,7 @@
       \fi
     \egroup
     %Calculate how much extra space we need:
-    \csname @do@jointcalc@\diglotlayout\endcsname{@cur}%
+    \csname @do@jointcalc@\diglotlayout @\diglotjointtype\endcsname{@cur}%
     % Returns the ideal next baseline posltion below previous sync line.
     \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\@maxb@seline = \the\thisjointDelta}%
     \global\chunkDelta=\Rht
