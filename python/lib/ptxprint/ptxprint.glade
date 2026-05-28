@@ -3735,7 +3735,8 @@ new name and/or different folder.</property>
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="tooltip-text" translatable="yes">Show the main PTXprint
-dialog with all the settings. </property>
+dialog with all the settings. 
+Shortcut: Alt+S</property>
     <property name="icon-name">applications-system-symbolic</property>
     <property name="icon_size">3</property>
   </object>
@@ -33884,6 +33885,7 @@ edit the USFM stylesheet files.</property>
                             <property name="can-focus">True</property>
                             <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
+                            <signal name="switch-page" handler="onAdvancedNotebookChanged" swapped="no"/>
                             <child>
                               <object class="GtkScrolledWindow" id="tb_AdvMain">
                                 <property name="visible">True</property>
@@ -34993,6 +34995,30 @@ are likely to have to re-do it all again.</property>
                             </child>
                             <child type="tab">
                               <placeholder/>
+                            </child>
+                            <child type="action-end">
+                              <object class="GtkToggleButton" id="btn_texpertFilter">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="margin-end">6</property>
+                                <property name="tooltip-text" translatable="yes">Filter: show only sections with non-default settings.
+Sections where all values are default will be hidden.
+Sections with changed values will be expanded.
+Disable to restore all sections in collapsed state.</property>
+                                <signal name="toggled" handler="onTexpertFilter" swapped="no"/>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="icon-name">view-list-bullet-symbolic</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="tab-fill">False</property>
+                              </packing>
                             </child>
                           </object>
                           <packing>

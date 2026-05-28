@@ -32,7 +32,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
-            _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates
+            _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates, f2s
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -4093,7 +4093,7 @@ class GtkViewModel(ViewModel):
                 eb.add(label)
                 eb.connect("button-release-event", getattr(self, "resetLabel"))
                 label = eb
-                v = str(x[0])
+                v = f2s(x[0])
                 self.initValues[wname] = v
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
             elif wname.startswith("fcb_"):
@@ -5873,6 +5873,42 @@ class GtkViewModel(ViewModel):
 
     def onStyleEdit(self, btn):
         self.styleEditor.mkrDialog()
+
+    def onAdvancedNotebookChanged(self, nb, page, page_num):
+        btn = self.builder.get_object("btn_texpertFilter")
+        if btn is None:
+            return
+        is_other = page_num == 1
+        btn.set_sensitive(is_other)
+        if not is_other and btn.get_active():
+            btn.set_active(False)  # restores all expanders via onTexpertFilter
+
+    def onTexpertFilter(self, btn):
+        active = btn.get_active()
+        changed_groups = set()
+        for k, opt, wname in TeXpert.opts():
+            is_changed = wname in self.initValues and self.get(wname) != self.initValues[wname]
+            suffix = wname[wname.index("_")+1:]
+            ctrl = self.builder.get_object(wname)
+            lbl  = self.builder.get_object("l_" + suffix)
+            if active:
+                if is_changed:
+                    changed_groups.add(opt.group)
+                if ctrl: ctrl.set_visible(is_changed)
+                if lbl:  lbl.set_visible(is_changed)
+            else:
+                if ctrl: ctrl.set_visible(True)
+                if lbl:  lbl.set_visible(True)
+        for grp in ('LAY', 'CVS', 'BDY', 'FNT', 'NTS', 'DIG', 'PIC', 'PDF', 'PRV', 'OTH'):
+            ex = self.builder.get_object("ex_texpert" + grp)
+            if ex is None:
+                continue
+            if active:
+                ex.set_visible(grp in changed_groups)
+                ex.set_expanded(grp in changed_groups)
+            else:
+                ex.set_visible(True)
+                ex.set_expanded(False)
 
     def onStyleFilter(self, btn):
         def widen(x):
