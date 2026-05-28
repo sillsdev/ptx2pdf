@@ -7288,7 +7288,7 @@ Thank you,
                 if ref is None:
                     ref = Ref("UNK 0:0")
                 ref = ref.first
-                if not ref.verse:
+                if not ref.verse and hasattr(ref, 'numverses'):
                     ref.verse = ref.numverses() // 2 + 1
                 bref = self.get_usfms().resolve_bridge(ref)
                 self.picinfos.addpic(suffix=self.digSuffix, anchor=bref.str(env=Environment(cvsep='.')), src=p[0]+p[3],

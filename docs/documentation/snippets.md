@@ -201,6 +201,26 @@ outputs the same chapter and then a toc2 line involving the book and chapter.
 # TeX Snippets
 The snippets in this section go into the ptxprint-mods.tex file.
 
+## Allow orphans at end of pages not after headings
+
+Some typesetting styles allow a final single line on a page if the line does not
+follow a heading. For those who like this style, we can do this by marker:
+
+```tex
+\sethook{before}{p}{\iffirst@fterheading\else\clubpenalty=0}
+\sethook[after}{p}{\clubpenalty=10000}
+```
+
+### Implementation
+
+TeX introduces a penalty after the first line of a paragraph. This is called
+\\clubpenalty. If that value is 10000 it will not allow a page break at that
+point. We set it to 0 except following a heading (indicated by
+\\iffirst@fterheading being true). After the paragraph the clubpenalty is reset
+to not allowing breaks. If this behaviour is also needed for other paragraph
+styles, e.g. \\m then a corresponding sethook pair will be needed.
+
+
 ## Paragraph Initial Verses
 
 This snippet limits verse numbers so that only the first verse in a paragraph is

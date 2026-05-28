@@ -55,8 +55,8 @@ class TagableRef(Ref):
             firstc = 0
             lastc = len(vrs.vnums[self.book])
         else:
-            firstc = self.chapter
-            lastc = self.chapter + 1
+            firstc = self.chapter - 1
+            lastc = self.chapter
         return vrs.vnums[self.book][lastc] - vrs.vnums[self.book][firstc]
 
 
