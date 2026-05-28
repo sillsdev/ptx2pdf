@@ -278,7 +278,7 @@ class WorkingCoverState:
                 if self.isbn_enabled:
                     res.append(r'\ztruetext')
                     res.append(fr'\esb\cat ISBNbox\cat*\{positions[self.isbn_hpos]} \zISBNbarcode|var="isbn" height="medium"\*\esbe')
-                    res.append(r'\zgap 10pt\*')
+                    res.append(r'\zgap|10pt\*')
                     res.append(r'\ztruetext*')
             view.periphs['cover'+a] = "\n".join(res)
             view.updateFrontMatter()

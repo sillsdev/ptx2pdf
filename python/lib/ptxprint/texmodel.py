@@ -85,7 +85,7 @@ _periphids = {
 
 
 class TexModel:
-    _ptxversion = 8
+    _ptxversion = 9
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
@@ -933,7 +933,7 @@ class TexModel:
                 if not hasrun:
                     logger.debug(f"running: {cmd}")
                     checkoutput(cmd) # dont't pass cmd as list when shell=True
-        logger.debug(f"{outfpath=}")
+        logger.debug(f"{outfpath=}, {script=}")
         return outfpath
 
     def _getText(self, data, doc, bk, logmsg=""):

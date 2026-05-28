@@ -371,6 +371,8 @@ binaries = (binaries
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
         ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs',
          'imagesets.json')]
+      + [('python/lib/ptxprint/wizards/configuration/'+z, 'ptxprint/wizards/configuration') for z in 
+        ('wizardQuestions.json', 'wizardQuestions.schema.json', 'wizardDialog.glade')]
       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'printers', 'pdfrw', 'pdfrw/objects')]
       + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
@@ -387,7 +389,7 @@ print("datas:", datas)
 
 jobs = {
     "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
-    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 tcolls = []
 for k, v in jobs.items():

@@ -1,0 +1,114 @@
+	#===========================================================================================
+# ENGLISH (CURLY) QUOTATION SYSTEM--REMOVE COMMENTS TO ACTIVATE ENGLISH QUOTATION PROCESSING
+#===========================================================================================
+
+sections(piclist)
+# Take verse ref off pictures in GLO
+"^(GLO.*?)(?<=[|\s])ref=\".*?\"(.*?)$" >  "\1\2"
+
+sections(initial,piclist)
+#  CONVERT ANGLED QUOTES TO ENGLISH (CURLY) QUOTES
+#      -------------------------------------------------------------------------------
+   '<< *<'               >    '\u201c \u2018' # Use nested open double and single curly quotes
+                                                   #   (non-breaking thin space between)
+   '<<'                  >    '\u201c'             # Use double open curly quotes
+   '<'                   >    '\u2018'             # Use single open curly quotes 
+   '> *>>'               >    '\u2019 \u201d' # Use nested close double and single curly quotes
+                                                   #   (non-breaking thin space between)
+   '>>'                  >    '\u201d'             # Use double close curly quotes
+   '>'                   >    '\u2019'             # Use single close curly quotes
+
+sections(default, periph)
+
+# Choose whether we want to print \li3 lines as \li or as joined paragraphs. Mark one of them with a #. 
+# '\\li3 '>'\\li '
+'\\li3 '>''
+
+# Ensure the TDX is not typeset as a diglot. 
+at TDX "(\\mt1 )" > "\\diglotfalse\n\1"
+# Don't print chapter numbers in TDX
+at TDX "\\c \d+" > ""
+# Don't print verse numbers in TDX
+at TDX "\\v \d+" > ""
+# Format TDX as single column on section headings and three column on reference lists.
+at TDX "(\\zmt1)" > "\\mt2"
+at TDX "(\\zs[123].+?\n)" > "\1\n\\threecolumns\n"
+at TDX "(\\s[123].+?\n)" > "\\p\n\\singlecolumn\n\1"
+at TDX "\\threecolumns\n\\p\n\\singlecolumn\n" > ""
+at TDX "\\(z?s[123])" > "\\i\1"
+
+# This is failing. Does it matter where we put this? 
+at NDX "\\usfm.+?\r?\n" > ""
+at NDX "\\nidx.+?\r?\n" > ""
+at NDX "\\t " > ""
+at NDX "(\\zpa-xb\*)" > " \1"
+at NDX "\\p" > "\\li" 
+
+# Don't print verse numbers in Introduction
+at INT "\\v \d+ " > ""
+
+# Removes all GLO entries not marked with C in \zstat
+at GLO "(?s)\\p\s\\k\s[^\\]+\\k\*(?:(?!\\zstat\s[C]).)+?(?=\\p\s\\k\s[^\\]+\\k\*)" > ""
+
+# Removes all GLO entries that are not at P:P1 or P:P2
+# In other words, this prints only the priority numbers listed in []
+# To print all priorities of glossary entries leave following line inactive
+# at GLO "(?s)\\p\s\\k\s[^\\]+\\k\*(?:(?!P:P[12]).)+?(?=\\p\s\\k\s[^\\]+\\k\*)" > ""
+
+# Don't print verse numbers in glossary
+at GLO "\\v \d+[\s\r\n]+" > ""
+
+# Don't print status info in GLO
+at GLO "\\zstat .+?[\r\n]*" > ""
+
+# Don't print English gloss in GLO  - \zge ... \zge*
+# at GLO in "\\hp .+?[\r\n]+": "\\zge .+?\\zge\*;?" > ""
+
+# Don't print priority info in GLO  - P:P2
+at GLO in "\\hp .+?[\r\n]+": "P:.+?;" > ""
+
+# Don't print category info in GLO  - CAT:ME
+at GLO in "\\hp .+?[\r\n]+": "CAT:.+?;" > ""
+
+# Don't print Greek words in GLO - G:
+# at GLO in "\\hp .+?[\r\n]+": "G:.+?;" > ""
+
+# Don't print Hebrew words in GLO - H:
+# at GLO in "\\hp .+?[\r\n]+": "H:.+?;" > ""
+
+# Wrap Greek words in wg
+at GLO in "\\hp .+?[\r\n]+": "G:(.+?)([;\r\n\\])" > "\\wg \1\\wg*\2"
+
+# Wrap Hebrew words in wg
+at GLO in "\\hp .+?[\r\n]+": "H:(.+?)([;\r\n\\])" > "\\wh \1\\wh*\2"
+
+# Finally discard the temp hp marker and empty zstat lines 
+at GLO "\\hp " > ""
+at GLO "\\(zstat|hp)[\s\r\n]+" > ""
+
+# This replaces the \p with \li only in the GLO book.
+at GLO "\\p \\k " > "\\li \\k "
+at GLO "\\p " > "\\pi "
+
+ # Get rid of the references within captions of illustrations
+# at GLOREF ".*" > ""
+
+# CHOOSE HOW TO PROCESS LONG FOOTNOTES
+# Keep footnotes marked with caller "@"
+# "\\f +@" > "\\f +"
+# Remove footnotes marked with caller '@'
+# "\\f +@.*?\\f\*" > "" 
+
+#     REPLACE NORMAL SPACES BETWEEN NESTED QUOTES WITH THIN SPACES
+#     OR INSERT A THIN SPACE IF THE NORMAL SPACE IS MISSING
+#     -------------------------------------------------------------------------------
+#   '(\u201c) *(\u2018)'  >    '\1\u2009\2'     # Place non-breaking thin space between
+#  '(\u2018) *(\u201c)'  >    '\1\u2009\2'     #   nested open quote marks
+#   '(\u2019) *(\u201d)'  >    '\1\u2009\2'     # Place non-breaking thin space between
+#  '(\u201d) *(\u2019)'  >    '\1\u2009\2'     #   nested close quote marks
+
+# sections(merged)
+# at TDX "\\polyglotcolumn\sR" > "\\diglottrue"
+# at TDX "\\polyglotcolumn\sL" > "\\diglotfalse"
+# at TDX "(?s)\\id TDX \- Arop BT.+" >""
+sections(default)

@@ -32,7 +32,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
-            _categoryColors, _bookToCategory, getResourcesDir
+            _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -581,15 +581,18 @@ def _browsePTDir(parent=None):
 
 def chooseProjectsDir(candidates):
     """Show a dialog letting the user pick from multiple detected Paratext project
-    directories.  *candidates* is a list of dicts with keys 'path', 'label',
-    and 'has_projects' (as returned by utils.find_pt_candidates).
+    directories, or browse for one if none were found.
+    *candidates* is a list of dicts with keys 'path', 'label', and 'has_projects'
+    (as returned by utils.find_pt_candidates).
     Returns the chosen path string, or None if the user cancels."""
+    no_candidates = not candidates
     dlg = Gtk.Dialog(title=_("Choose Paratext Projects Folder"), modal=True)
     dlg.set_default_size(520, -1)
     dlg.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
-    btn_ok = dlg.add_button(_("Use Selected"), Gtk.ResponseType.OK)
-    btn_ok.get_style_context().add_class("suggested-action")
-    dlg.set_default_response(Gtk.ResponseType.OK)
+    if not no_candidates:
+        btn_ok = dlg.add_button(_("Use Selected"), Gtk.ResponseType.OK)
+        btn_ok.get_style_context().add_class("suggested-action")
+        dlg.set_default_response(Gtk.ResponseType.OK)
 
     box = dlg.get_content_area()
     box.set_spacing(8)
@@ -599,8 +602,13 @@ def chooseProjectsDir(candidates):
     box.set_margin_bottom(12)
 
     heading = Gtk.Label()
-    heading.set_markup(_("<b>Multiple Paratext project folders were found.</b>\n"
-                         "Choose the one you want PTXprint to use."))
+    if no_candidates:
+        heading.set_markup(_("<b>No Paratext projects folder was located.</b>\n"
+                             "Select a Base Projects folder to continue.\n"
+                             "The Base Projects folder should contain one or more subfolders with USFM files."))
+    else:
+        heading.set_markup(_("<b>Multiple Paratext project folders were found.</b>\n"
+                             "Choose the one you want PTXprint to use."))
     heading.set_xalign(0)
     heading.set_line_wrap(True)
     box.pack_start(heading, False, False, 0)
@@ -638,7 +646,8 @@ def chooseProjectsDir(candidates):
     sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
     box.pack_start(sep, False, False, 4)
 
-    browse_btn = Gtk.Button(label=_("Browse for a different folder…"))
+    browse_label = _("Browse for a folder…") if no_candidates else _("Browse for a different folder…")
+    browse_btn = Gtk.Button(label=browse_label)
     browse_btn._chosen_path = None
 
     def _on_browse(_btn):
@@ -3566,9 +3575,8 @@ class GtkViewModel(ViewModel):
         sview.override_font(p)
         self.picListView.modify_font(p)
 
-        w = self.builder.get_object("cr_zvar_value")
-        w = self.builder.get_object("cr_strvar_value")
-        w.set_property("font-desc", p)
+        for wname in ("cr_zvar_value", "cr_strvar_value"):
+            self.builder.get_object(wname).set_property("font-desc", p)
 
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)
@@ -3892,7 +3900,7 @@ class GtkViewModel(ViewModel):
         if isGraphite:
             feats = f.feats
             vals = f.featvals
-            langs = f.grLangs
+            langs = getattr(f, 'grLangs', {})
             self.currdefaults = f.featdefaults
             langfeats = f.langfeats
             tips = {}
@@ -3953,7 +3961,7 @@ class GtkViewModel(ViewModel):
                 if isinstance(obj, Gtk.CheckButton):
                     if (1 if obj.get_active() else 0) == self.currdefaults.get(k, 0):
                         obj.set_active(newdefaults.get(k, 0) == 1)
-                elif isinstnace(obj, GtkSpinButton):
+                elif isinstance(obj, GtkSpinButton):
                     if obj.get_value() == self.currdefaults.get(k, 0):
                         obj.set_value(newdefaults.get(k, 0))
                 elif isinstance(obj, Gtk.ComboBoxText):
@@ -4709,10 +4717,9 @@ class GtkViewModel(ViewModel):
         self.setPrintBtnStatus(1, _("No project set"))
 
     def onChangeProjectTreeClicked(self, btn):
-        customFigFolder = self.fileChooser(_("Select the projects root folder"),
-                filters = None, multiple = False, folder = True)
-        if customFigFolder is not None and len(customFigFolder):
-            self.changeProjectTree(customFigFolder[0])
+        chosen = chooseProjectsDir(find_pt_candidates())
+        if chosen is not None:
+            self.changeProjectTree(chosen)
             self.builder.get_object("nbk_Main").set_current_page(0)
 
     # def onDBLprojNameChanged(self, widget):
@@ -7282,10 +7289,12 @@ Thank you,
                 ref = p[1]
                 if ref is None:
                     ref = Ref("UNK 0:0")
-                if not ref.verse:
+                ref = ref.first
+                if not ref.verse and hasattr(ref, 'numverses'):
                     ref.verse = ref.numverses() // 2 + 1
-                self.picinfos.addpic(suffix=self.digSuffix, anchor=p[1].str(env=Environment(cvsep='.')), src=p[0]+p[3],
-                        ref=p[1].str(env=self.getRefEnv(nobook=True)), alt=p[2], size='col', pgpos='tl')
+                bref = self.get_usfms().resolve_bridge(ref)
+                self.picinfos.addpic(suffix=self.digSuffix, anchor=bref.str(env=Environment(cvsep='.')), src=p[0]+p[3],
+                        ref=bref.str(env=self.getRefEnv(nobook=True)), alt=p[2], size='col', pgpos='tl')
             self.picListView.load(self.picinfos)
 
     def onArtistToggled(self, btn, path):
@@ -7316,6 +7325,10 @@ Thank you,
 
     def onImageSetChosen(self, ecb, *a):
         imgset = self.get('ecb_artPictureSet')
+        if imgset and hasattr(self, 'thumbnails'):
+            if not self.userconfig.has_section("imagesets"):
+                self.userconfig.add_section("imagesets")
+            self.userconfig.set("imagesets", "last", imgset)
         try:
             self.thumbnails.set_imageset(imgset)
         except AttributeError:

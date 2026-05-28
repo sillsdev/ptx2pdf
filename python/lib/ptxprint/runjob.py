@@ -1034,7 +1034,7 @@ class RunJob:
         folderList = ["tmpPics", "tmpPicLists"] 
         cropme = self.info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
-            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N')[0] in 'tbhp' else None
+            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if (p.get('pgpos', '') or 'N')[0] in 'tbhp' else None
             logger.debug(f"carefulcopy {src} -> {tgt} @ {ratio}")
             return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []

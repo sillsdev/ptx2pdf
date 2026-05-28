@@ -1,0 +1,18 @@
+[DEFAULT]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[oi00150]
+approved = false
+notes = 
+
+[oi00237]
+approved = false
+notes = 
+
+[oi00417]
+approved = false
+notes = 
+

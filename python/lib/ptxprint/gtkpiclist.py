@@ -95,6 +95,8 @@ class PicList:
         sel = self.view.get_selection()
         sel.set_mode=Gtk.SelectionMode.SINGLE
         sel.connect("changed", self.row_select)
+        self.view.connect("button-press-event", self._onRightClick)
+        self.view.connect("drag-data-received", lambda *a: self.view.stop_emission_by_name("drag-data-received"))
         for k, v in _form_structure.items():
             w = builder.get_object(v)
             sig = "changed"
@@ -280,7 +282,7 @@ class PicList:
         else:
             pgpos = re.sub(r'^([PF])([lcrio])([tfb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
-        # self.loading = True
+        self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
             # print(j, k, v)
             if k == 'pgpos':
@@ -327,6 +329,10 @@ class PicList:
         self.mask_media(currow)
         self.parent.unpause_logging()
         self.loading = False
+        self._updatePreview(currow)
+        src = currow[_pickeys['src']]
+        if src:
+            self.parent.updatePicChecks(src)
 
     def select_row(self, i):
         if isinstance(i, Gtk.TreeIter):
@@ -423,47 +429,10 @@ class PicList:
             currow[fieldi] = val
             r_image = self.parent.get("r_image", default="preview")
             if i == 0 and r_image == "location":
-                if self.get("c_doublecolumn"):
-                    cols = 2
-                else:
-                    cols = 1
-                if not self.get("c_plMediaP"):
-                    locKey = "1" if cols == 1 else "2"
-                else:
-                    frSize = self.currows[0][_pickeys['size']]
-                    pgposLocn = self.currows[0][_pickeys['pgpos']]
-                    locKey = getLocnKey(cols, frSize, pgposLocn)
-                pic = dispLocPreview(locKey)
-                self.setPreview(pic)
+                self._updatePreview(currow)
             if key == "src":
-                if r_image == "preview":
-                    fpath = None
-                    if self.picinfo is not None:
-                        exclusive = self.parent.get("c_exclusiveFiguresFolder")
-                        fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
-                        imgorder  = self.parent.get("t_imageTypeOrder")
-                        lowres    = self.parent.get("r_pictureRes") == "Low"
-                        a = currow[_pickeys['anchor']]
-                        for p in self.picinfo.find(anchor=a):
-                            p.clear_src_paths()
-                        dat = self.picinfo.getFigureSources(data=[{'src': val}], key='path', exclusive=exclusive,
-                                    mode=self.picinfo.mode, figFolder=fldr, imgorder=imgorder, lowres=lowres)
-                        fpath = dat[0].get('path', None)
-                        logger.debug(f"Figure Path={fpath}, {dat[0]}")
-                    if fpath is not None and os.path.exists(fpath):
-                        if not self.parent._picframe_connected:
-                            self.parent.picframe.connect("size-allocate", self.onPicframeSize)
-                            self.parent._picframe_connected = True
-                        if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
-                            try:
-                                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
-                            except GLib.GError:
-                                pixbuf = None
-                            self.setPreview(pixbuf, tooltip=fpath)
-                        else:
-                            self.setPreview(None)
-                    else:
-                        self.setPreview(None)
+                if i == 0:
+                    self._updatePreview(currow)
                 self.parent.updatePicChecks(val)       # only update checks if src exists
                 self.mask_media(currow)
                 if True: # val != oldval: # New source implies new destination file
@@ -485,6 +454,45 @@ class PicList:
         if tooltip is not None:
             pic.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
+
+    def _updatePreview(self, currow):
+        r_image = self.parent.get("r_image", default="preview")
+        if r_image == "location":
+            cols = 2 if self.get("c_doublecolumn") else 1
+            if not self.get("c_plMediaP"):
+                locKey = "1" if cols == 1 else "2"
+            else:
+                locKey = getLocnKey(cols, currow[_pickeys['size']], currow[_pickeys['pgpos']])
+            self.setPreview(dispLocPreview(locKey))
+        else:
+            val = currow[_pickeys['src']]
+            fpath = None
+            if self.picinfo is not None:
+                exclusive = self.parent.get("c_exclusiveFiguresFolder")
+                fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
+                imgorder  = self.parent.get("t_imageTypeOrder")
+                lowres    = self.parent.get("r_pictureRes") == "Low"
+                a = currow[_pickeys['anchor']]
+                for p in self.picinfo.find(anchor=a):
+                    p.clear_src_paths()
+                dat = self.picinfo.getFigureSources(data=[{'src': val}], key='path', exclusive=exclusive,
+                            mode=self.picinfo.mode, figFolder=fldr, imgorder=imgorder, lowres=lowres)
+                fpath = dat[0].get('path', None)
+                logger.debug(f"Figure Path={fpath}, {dat[0]}")
+            if fpath is not None and os.path.exists(fpath):
+                if not self.parent._picframe_connected:
+                    self.parent.picframe.connect("size-allocate", self.onPicframeSize)
+                    self.parent._picframe_connected = True
+                if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
+                    try:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                    except GLib.GError:
+                        pixbuf = None
+                    self.setPreview(pixbuf, tooltip=fpath)
+                else:
+                    self.setPreview(None)
+            else:
+                self.setPreview(None)
 
     def drawPreview(self, wid, cr):
         if self.previewScales:
@@ -578,3 +586,72 @@ class PicList:
 
     def multiSelected(self, ismulti=False):
         pass
+
+    def _onRightClick(self, treeview, event):
+        if event.button != 3:
+            return False
+        path_info = treeview.get_path_at_pos(int(event.x), int(event.y))
+        if path_info is None:
+            return False
+        path, col, cell_x, cell_y = path_info
+        if not self.selection.path_is_selected(path):
+            self.selection.select_path(path)
+        menu = Gtk.Menu()
+        for label, usfm3 in ((_('Copy \\fig string to clipboard (USFM3)'), True),
+                              (_('Copy \\fig string to clipboard (USFM2)'), False)):
+            item = Gtk.MenuItem(label=label)
+            item.connect('activate', self._copyFigToClipboard, usfm3)
+            menu.append(item)
+        menu.show_all()
+        menu.popup_at_pointer(event)
+        return True
+
+    def _buildFigString(self, row, usfm3=True):
+        caption = row[_pickeys['caption']] or ''
+        alt     = row[_pickeys['alt']] or ''
+        src     = row[_pickeys['src']] or ''
+        size    = row[_pickeys['size']] or 'col'
+        pgpos   = row[_pickeys['pgpos']] or ''
+        loc     = row[_pickeys['media']] or ''
+        copy_   = row[_pickeys['copy']] or ''
+        ref     = row[_pickeys['ref']] or ''
+        scale   = row[_pickeys['scale']]   # stored as percentage (100.0 = default)
+        mirror  = row[_pickeys['mirror']] or ''
+        # Normalise ref: USFM requires dot separator; derive from anchor when empty
+        if not ref:
+            anchor = row[_pickeys['anchor']] or ''
+            parts = anchor.split()
+            if len(parts) >= 2:
+                ref = parts[1]           # anchor already uses dot separator
+        else:
+            ref = ref.replace(':', '.')  # normalise colon → dot
+        if usfm3:
+            # Canonical order: alt src size loc copy ref, then non-standard extensions
+            attrs = []
+            if alt:
+                attrs.append(f'alt="{alt}"')
+            attrs.append(f'src="{src}"')
+            attrs.append(f'size="{size}"')
+            if loc:
+                attrs.append(f'loc="{loc}"')
+            if copy_:
+                attrs.append(f'copy="{copy_}"')
+            if ref:
+                attrs.append(f'ref="{ref}"')
+            if pgpos:
+                attrs.append(f'pgpos="{pgpos}"')
+            if isinstance(scale, (int, float)) and abs(scale - 100.0) > 0.01:
+                attrs.append(f'scale="{scale / 100:.4g}"')
+            if mirror and mirror.lower() not in ('', 'none'):
+                attrs.append(f'mirror="{mirror}"')
+            return f'\\fig {caption}|{" ".join(attrs)}\\fig*'
+        else:
+            # USFM2: seven fixed fields — DESC|FILE|SIZE|LOC|COPY|CAP|REF
+            # pgpos/scale/mirror have no slot in USFM2 and are dropped
+            return f'\\fig {alt}|{src}|{size}|{loc}|{copy_}|{caption}|{ref}\\fig*'
+
+    def _copyFigToClipboard(self, menuitem, usfm3):
+        if not self.currows:
+            return
+        lines = [self._buildFigString(row, usfm3=usfm3) for row in self.currows]
+        Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).set_text('\n'.join(lines), -1)
