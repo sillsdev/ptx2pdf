@@ -128,6 +128,10 @@ texpertOptions = {
     "UnderlineLower":     O("underlineposition", "FNT", (0.10, -1.0 , 1.0, 0.01, 0.01, 2), r"\def{0}{{{1}em}}", _("Underline vertical position (em)"),
                             _("This sets how far (in ems) the underline is below the text and what it is relative to. If negative, it is the distance below the baseline. If positive (or zero), it is the distance below the bottom of any descenders."),
                             valfn=lambda v: f2s(float(v or "-0.1"))),
+    "UnderlineSpaces":    O("underlnsp", "FNT", True, None, _("Underline Spaces"),
+                            _("Underline spaces in underlined runs")),
+    "LogFonts":           O("logfontusage", "FNT", False, None, _("Log font creation"),
+                            _("Create <jobname>.fontusage in the local/ptxprint/<config>/ directory, which will list the page number and exact font definition when each new style is first used.")),
 
     "MidPageFootnotes":   O("midnotes", "NTS", False, None, _("Mid-Page Footnotes"),
                             _("Should footnotes go before a single-double column transition")),
@@ -216,6 +220,8 @@ texpertOptions = {
                             _("Disable transparency output in PDF")),
     "MarkAdjustPoints":   O("showadjpoints", "PDF", False, None, _("Show adjust points"),
                             _("Show adjust points in the margin of the text.")),
+    "MarkTriggerPoints":  O("mktrigpts", "PDF", False, "", _("Mark Trigger Points"),
+                            _("Display trigger points in output")),
     "ParaLabelling":      O("showusfmcodes", "PDF", False, "", _("Show USFM codes"),
                             _("Show the USFM markers in the margin beside paragraphs.")),
     "ShowHboxErrorBars":  O("showhboxerrorbars", "PDF", False, "", _("Show Error Bars For Overfull Lines"),
@@ -266,8 +272,6 @@ texpertOptions = {
     "RiverOverlap":       O("riveroverlap", "PRV", (0.4, -5, 5, 0.1, 0.1, 1), "", _("River Detection minimum overlap (em)"),
                             _("Minimum overlap in ems required for two spaces above each other to be considered part of the same river")),
 
-    "UnderlineSpaces":    O("underlnsp", "OTH", True, None, _("Underline Spaces"),
-                            _("Underline spaces in underlined runs")),
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),
     # "AttrMilestoneMatchesUnattr": O("attrmsmatchunattr", "OTH", False, "", _("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*.")),
@@ -277,8 +281,6 @@ texpertOptions = {
                             _("USFM 3.2 allows additional reference links to be inserted as part of \\xt ... \\xt* markup. This frequently appear in DBL text bundles, but are unhandled by PTXprint. Allow these to be removed from the USFM prior to typesetting.")),
     "BookEndDecorationSkip":   O("bedskip", "OTH", (16, -100, 100, 1, 1, 0), r"\def{0}{{{1}pt}}", _("End decoration skip"),
                                  _("The gap between the end of the book and the book-end decoration")),
-    "MarkTriggerPoints":  O("mktrigpts", "OTH", False, "", _("Mark Trigger Points"),
-                            _("Display trigger points in output")),
     "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2, -10, 50, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"),
                             _("Shift thumbtab text")),
 
