@@ -1,0 +1,16 @@
+[DEFAULT]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = 
+piccredit = 
+
+[oi00150]
+approved = false
+
+[oi00237]
+approved = false
+
+[oi00417]
+approved = false
+

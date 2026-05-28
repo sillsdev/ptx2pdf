@@ -208,6 +208,13 @@ class ThumbnailDialog:
         imgset = last_imgset or self.view.get('ecb_artPictureSet')
         if last_imgset:
             self.view.set('ecb_artPictureSet', last_imgset)
+        # Re-apply any filter the user left active in a previous opening
+        existing_ref = self.view.get('t_artRefRange') or ''
+        existing_search = self.view.get('t_artSearch') or ''
+        if existing_ref:
+            self.reftext = existing_ref
+        if existing_search:
+            self.filters = set(c.lower() for c in existing_search.split())
         if not imgset:
             imagesets = getImageSets()
             if imagesets is None or not len(imagesets):
@@ -218,7 +225,8 @@ class ThumbnailDialog:
             self.view.getBooks()
             reflist = self.view.bookrefs
             logger.debug(f"Start with bookrefs: {reflist}")
-            self.view.set('t_artRefRange', str(reflist))
+            if not existing_ref:
+                self.view.set('t_artRefRange', str(reflist))
         self.set_imageset(imgset)
         response = self.dlg.run()
         self.dlg.hide()
