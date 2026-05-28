@@ -3,7 +3,7 @@
 ## macOS App (Intel chip only)
 
 Important NOTE: When an application gets downloaded from any source other than those that Apple seems suited, the application gets an extended attribute "com.apple.Quarantine".
-This triggers the message: "<application> is damaged and can't be opened. You should move it to the Bin."
+This triggers the message: "application XY is damaged and can't be opened. You should move it to the Bin."
 
 Remove the attribute and you can launch the application.
 
