@@ -3575,9 +3575,8 @@ class GtkViewModel(ViewModel):
         sview.override_font(p)
         self.picListView.modify_font(p)
 
-        w = self.builder.get_object("cr_zvar_value")
-        w = self.builder.get_object("cr_strvar_value")
-        w.set_property("font-desc", p)
+        for wname in ("cr_zvar_value", "cr_strvar_value"):
+            self.builder.get_object(wname).set_property("font-desc", p)
 
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)
