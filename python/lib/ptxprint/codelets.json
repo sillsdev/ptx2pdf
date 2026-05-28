@@ -491,6 +491,18 @@
           "Label": "Merged",
           "Description": "Diglot/polyglot only, after merging",
           "CodeSnippet": "sections(merged)"
+        },
+        {
+          "Type": "insert",
+          "Label": "Piclist",
+          "Description": "Apply to the locally generated piclist",
+          "CodeSnippet": "sections(piclist)"
+        },
+        {
+          "Type": "insert",
+          "Label": "Module",
+          "Description": "Apply when module is read before flattening",
+          "CodeSnippet": "sections(module)"
         }
       ],
       "Arabic": [

@@ -7,6 +7,4 @@ pubaccept = Unknown
 [image]
 approved = false
 notes = 
-pubclear = yes
-pubnoise = yes
 

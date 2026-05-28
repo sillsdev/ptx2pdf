@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BookNames>
+  <book code="GEN" abbr="Jen" short="Jenesis" long="Jenesis, o Stat bilong Olgeta Samting" />
+  <book code="RUT" abbr="Rut" short="Rut" long="Buk bilong Rut" />
+  <book code="PSA" abbr="Sam" short="Buk Sam" long="Ol Sam o Buk bilong Lotu" />
+  <book code="JON" abbr="Jna" short="Jona" long="Buk bilong Profet Jona" />
+  <book code="MAT" abbr="Mt" short="Matyu" long="Gutnius Matyu i raitim" />
+  <book code="MRK" abbr="Mk" short="Mak" long="Gutnius Mak i raitim" />
+  <book code="LUK" abbr="Lk" short="Luk" long="Gutnius Luk i raitim" />
+  <book code="JHN" abbr="Jo" short="Jon" long="Gutnius Jon i raitim" />
+  <book code="ACT" abbr="Ap" short="Aposel" long="Wok bilong ol Aposel" />
+  <book code="1TI" abbr="1Ti" short="1 Timoti" long="Namba wan pas Pol i raitim long Timoti" />
+  <book code="2TI" abbr="2Ti" short="2 Timoti" long="Namba 2 pas Pol i raitim long Timoti" />
+  <book code="TIT" abbr="Ta" short="Taitus" long="Pas Pol i raitim long Taitus" />
+  <book code="PHM" abbr="Fm" short="Filemon" long="Pas Pol i raitim long Filemon" />
+  <book code="HEB" abbr="Hi" short="Hibru" long="Pas i go long ol Hibru" />
+  <book code="JAS" abbr="Je" short="Jems" long="Pas Jems i raitim" />
+  <book code="1PE" abbr="1Pi" short="1 Pita" long="Namba wan pas Pita i raitim" />
+  <book code="2PE" abbr="2Pi" short="2 Pita" long="Namba 2 pas Pita i raitim" />
+  <book code="1JN" abbr="1Jo" short="1 Jon" long="Namba wan pas Jon i raitim" />
+  <book code="2JN" abbr="2Jo" short="2 Jon" long="Namba 2 Pas Jon i raitim" />
+  <book code="3JN" abbr="3Jo" short="3 Jon" long="Namba 3 Pas Jon i raitim" />
+  <book code="JUD" abbr="Ju" short="Jut" long="Pas Jut i raitim" />
+  <book code="REV" abbr="Rev" short="Revelesen" long="Revelesen o Krais i kamapim Tok Hait" />
+  <book code="XXB" abbr="" short="As bilong sampela tok" long="As bilong ol Sampela ol toktok i stap Buk Baibel Bilong mipela Arop" />
+  <book code="FRT" abbr="" short="" long="Gutnius Luk i raitim" />
+  <book code="OTH" abbr="" short="" long="" />
+  <book code="GLO" abbr="Glo" short="Gloseri" long="Gloseri" />
+  <book code="EXO" abbr="Eks" short="Eksodas" long="Eksodas" />
+  <book code="LEV" abbr="Wkp" short="Wok Pris" long="Ol lo bilong Wok Pris" />
+  <book code="NUM" abbr="Nam" short="Namba" long="Namba bilong ol Israel" />
+  <book code="DEU" abbr="Lo" short="Lo" long="Moses i autim gen Lo Bilong God" />
+  <book code="JOS" abbr="Jos" short="Josua" long="Buk bilong Hetman Josua" />
+  <book code="JDG" abbr="Het" short="Hetman" long="Ol Hetman bilong Israel" />
+  <book code="1SA" abbr="1Sml" short="1 Samuel" long="Buk bilong Profet Samuel Buk 1" />
+  <book code="2SA" abbr="2Sml" short="2 Samuel" long="Buk bilong Profet Samuel Buk 2" />
+  <book code="1KI" abbr="1Kin" short="1 King" long="Ol King bilong Israel na Juda Buk 1" />
+  <book code="2KI" abbr="2Kin" short="2 King" long="Ol King bilong Israel na Juda Buk 2" />
+  <book code="1CH" abbr="1Sto" short="1 Stori" long="Stori bilong ol King Buk 1" />
+  <book code="2CH" abbr="2Sto" short="2 Stori" long="Stori bilong ol King Buk 2" />
+  <book code="EZR" abbr="Esr" short="Esra" long="Buk bilong Esra" />
+  <book code="NEH" abbr="Neh" short="Nehemia" long="Buk bilong Nehemia" />
+  <book code="EST" abbr="Est" short="Esta" long="Buk bilong Esta" />
+  <book code="JOB" abbr="Jop" short="Jop" long="Buk bilong Jop" />
+  <book code="PRO" abbr="Pro" short="Provep" long="Ol Provep o Pasin bilong Gutpela Sindaun" />
+  <book code="ECC" abbr="Sav" short="Saveman" long="Saveman i autim tingting bilong en, o Eklisiastis" />
+  <book code="SNG" abbr="Sol" short="Solomon" long="Song bilong Solomon" />
+  <book code="ISA" abbr="Ais" short="Aisaia" long="Buk bilong Profet Aisaia" />
+  <book code="JER" abbr="Jer" short="Jeremaia" long="Buk bilong Profet Jeremaia" />
+  <book code="LAM" abbr="Kra" short="Krai" long="Ol Manmeri i Krai Sori long Jerusalem" />
+  <book code="EZK" abbr="Ese" short="Esekiel" long="Buk bilong Profet Esekial" />
+  <book code="DAN" abbr="Dan" short="Daniel" long="Buk bilong Daniel" />
+  <book code="HOS" abbr="Hos" short="Hosea" long="Buk bilong Profet Hosea" />
+  <book code="JOL" abbr="Jol" short="Joel" long="Buk bilong Profet Joel" />
+  <book code="AMO" abbr="Amo" short="Amos" long="Buk bilong Profet Amos" />
+  <book code="OBA" abbr="Oba" short="Obadia" long="Buk bilong Profet Obadia" />
+  <book code="MIC" abbr="Mai" short="Maika" long="Buk bilong Profet Maika" />
+  <book code="NAM" abbr="Nah" short="Nahum" long="Buk bilong Profet Nahum" />
+  <book code="HAB" abbr="Hab" short="Habakuk" long="Buk bilong Profet Habakuk" />
+  <book code="ZEP" abbr="Sef" short="Sefanaia" long="Buk bilong Profet Sefanaia" />
+  <book code="HAG" abbr="Hag" short="Hagai" long="Buk bilong Profet Hagai" />
+  <book code="ZEC" abbr="Sek" short="Sekaraia" long="Buk bilong Profet Sekaraia" />
+  <book code="MAL" abbr="Mal" short="Malakai" long="Buk bilong Profet Malakai" />
+  <book code="ROM" abbr="Ro" short="Rom" long="Pas Pol i raitim long ol Rom" />
+  <book code="1CO" abbr="1Ko" short="1 Korin" long="Namba wan pas Pol i raitim long ol Korin" />
+  <book code="2CO" abbr="2Ko" short="1 Korin" long="Namba 2 pas Pol i raitim long ol Korin" />
+  <book code="GAL" abbr="Ga" short="Galesia" long="Pas Pol i raitim long ol Galesia" />
+  <book code="EPH" abbr="Ef" short="Efesus" long="Pas Pol i raitim long ol Efesus" />
+  <book code="PHP" abbr="Fl" short="Filipai" long="Pas Pol i raitim long ol Filipai" />
+  <book code="COL" abbr="Kl" short="Kolosi" long="Pas Pol i raitim long ol Kolosi" />
+  <book code="1TH" abbr="1Te" short="1 Tesalonaika" long="Namba wan pas Pol i raitim long ol Tesalonaika" />
+  <book code="2TH" abbr="2Te" short="2 Tesalonaika" long="Namba 2 pas Pol i raitim long ol Tesalonaika" />
+  <book code="TOB" abbr="" short="Tobit" long="" />
+  <book code="JDT" abbr="" short="Judith" long="" />
+  <book code="ESG" abbr="" short="Esther Greek" long="" />
+  <book code="WIS" abbr="" short="Wisdom of Solomon" long="" />
+  <book code="SIR" abbr="" short="Sirach (Ecclesiasticus)" long="" />
+  <book code="BAR" abbr="" short="Baruch" long="" />
+  <book code="LJE" abbr="" short="Letter of Jeremiah" long="" />
+  <book code="S3Y" abbr="" short="Song of 3 Young Men" long="" />
+  <book code="SUS" abbr="" short="Susanna" long="" />
+  <book code="BEL" abbr="" short="Bel and the Dragon" long="" />
+  <book code="1MA" abbr="" short="1 Maccabees" long="" />
+  <book code="2MA" abbr="" short="2 Maccabees" long="" />
+  <book code="3MA" abbr="" short="3 Maccabees" long="" />
+  <book code="4MA" abbr="" short="4 Maccabees" long="" />
+  <book code="1ES" abbr="" short="1 Esdras (Greek)" long="" />
+  <book code="2ES" abbr="" short="2 Esdras (Latin)" long="" />
+  <book code="MAN" abbr="" short="Prayer of Manasseh" long="" />
+  <book code="PS2" abbr="" short="Psalm 151" long="" />
+  <book code="ODA" abbr="" short="Odes" long="" />
+  <book code="PSS" abbr="" short="Psalms of Solomon" long="" />
+  <book code="JSA" abbr="" short="Joshua A. *obsolete*" long="" />
+  <book code="JDB" abbr="" short="Judges B. *obsolete*" long="" />
+  <book code="TBS" abbr="" short="Tobit S. *obsolete*" long="" />
+  <book code="SST" abbr="" short="Susanna Th. *obsolete*" long="" />
+  <book code="DNT" abbr="" short="Daniel Th. *obsolete*" long="" />
+  <book code="BLT" abbr="" short="Bel Th. *obsolete*" long="" />
+  <book code="3ES" abbr="" short="3 Ezra *obsolete*" long="" />
+  <book code="EZA" abbr="" short="Apocalypse of Ezra" long="" />
+  <book code="5EZ" abbr="" short="5 Ezra (Latin Prologue)" long="" />
+  <book code="6EZ" abbr="" short="6 Ezra (Latin Epilogue)" long="" />
+  <book code="DAG" abbr="" short="Daniel Greek" long="" />
+  <book code="PS3" abbr="" short="Psalms 152-155" long="" />
+  <book code="2BA" abbr="" short="2 Baruch (Apocalypse)" long="" />
+  <book code="LBA" abbr="" short="Letter of Baruch" long="" />
+  <book code="JUB" abbr="" short="Jubilees" long="" />
+  <book code="ENO" abbr="" short="Enoch" long="" />
+  <book code="1MQ" abbr="" short="1 Meqabyan" long="" />
+  <book code="2MQ" abbr="" short="2 Meqabyan" long="" />
+  <book code="3MQ" abbr="" short="3 Meqabyan" long="" />
+  <book code="REP" abbr="" short="Reproof (Proverbs 25-31)" long="" />
+  <book code="4BA" abbr="" short="4 Baruch (Rest of Baruch)" long="" />
+  <book code="LAO" abbr="" short="Laodiceans" long="" />
+  <book code="XXA" abbr="" short="" long="" />
+  <book code="XXC" abbr="" short="" long="" />
+  <book code="XXD" abbr="" short="" long="Ol Map" />
+  <book code="XXE" abbr="" short="" long="" />
+  <book code="XXF" abbr="" short="" long="Gutnius Luk i raitim" />
+  <book code="XXG" abbr="" short="" long="Pasin na sindaun bilong ol Juda" />
+  <book code="BAK" abbr="" short="" long="Ol Map" />
+  <book code="INT" abbr="" short="" long="Preface" />
+  <book code="CNC" abbr="" short="" long="" />
+  <book code="TDX" abbr="" short="" long="Ol Topik bilong Baibel" />
+  <book code="NDX" abbr="" short="" long="Names Index" />
+  <book code="***" abbr="" short="" long="" />
+</BookNames>

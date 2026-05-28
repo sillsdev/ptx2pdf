@@ -84,7 +84,7 @@
 \def\FootnoteMulC{1} % Centrecolumn text
 \def\FootnoteMulT{400} % Twocolumn text
 \def\FootnoteMulS{400} % Sg column text
-\def\FootnoteMulD{500} % Diglot column text - deliberately read excess text for diglots
+\def\FootnoteMulD{900} % Diglot column text - deliberately read excess text for diglots
 
 %+c_setnotecount
 % iterate over note classes, set \count for each class  
@@ -628,7 +628,8 @@
   \edef\cl@ss{#1\g@tndstat}%
   \n@tedepth=\prevdepth
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
-  \trace{f}{parains@rtn@tecl@ss \cl@ss, pd=\the\n@tedepth, c:\the\count\th@cl@ss.}%
+  \def\@@oright{}%
+  \trace{f}{parains@rtn@tecl@ss \cl@ss, pd=\the\n@tedepth, c:\the\count\th@cl@ss. iniboxSz:\the\ht\th@cl@ss}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote%\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
@@ -864,7 +865,7 @@
   \fi
   \n@tedepth=\prevdepth
   \dimen0=0pt
-  \trace{f}{maken@tepara #2 f@rstnote\iff@rstnote true \else false \fi falseparnoteskillprevdepth\ifparnoteskillprevdepth true \else false \fi parnoteskilldepth\ifparnoteskilldepth true \else false \fi FootNoteGlyphMetrics\ifFootNoteGlyphMetrics true \else false \fi pd=\the\n@tedepth}%
+  \trace{f}{maken@tepara #2 f@rstnote\iff@rstnote true \else false \fi parnoteskillprevdepth\ifparnoteskillprevdepth true \else false \fi parnoteskilldepth\ifparnoteskilldepth true \else false \fi FootNoteGlyphMetrics\ifFootNoteGlyphMetrics true \else false \fi pd=\the\n@tedepth}%
   \ifnewparnotes\ifparnoteskillprevdepth
     \ifdim\n@tedepth>0pt \kern-\n@tedepth \fi
   \fi\fi % Prevdepth correction, because makevboxofhboxes won't (can't) obey it.
@@ -912,6 +913,7 @@
     %\ifnum\interactionmode=1 \showbox 3\showlists\fi
     \penalty10000
     \dimen1=\dp3
+    \trace{f}{Note placed \the\ht3+\the\dp3}%
     \unvbox3
     %\kern -\dimen1
   \else

@@ -294,24 +294,6 @@ class Picture:
             line.append('{}="{}"'.format(pos3parms[i], val))
         return (outk, self.get('caption', ''), " ".join(line))
 
-    def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False, srcfkey="srcpath"):
-        if self.get('crop', False) == cropme and 'destfile' in self:
-            return
-        if keys is not None and self['anchor'][:3] not in keys:
-            return
-        if (fpath := self.get(srcfkey, None)) is None:
-            return
-        # print(fpath)
-        origExt = os.path.splitext(fpath)[1]
-        nB = newBase(self.get('src', ""))
-        if not nB:
-            logger.warn(f"src missing: {self.fields}")
-        self.destfile = fn(self, self[srckey], nB+origExt.lower())
-        self.crop = cropme
-        v = self.get('media', "")
-        if len(v) and 'p' not in v:
-            self.disabled = True
-
     def anchor_matches(self, src, bk=None):
         if self.get('src', None) != src:
             return None
