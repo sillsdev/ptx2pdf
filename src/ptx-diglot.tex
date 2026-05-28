@@ -2725,7 +2725,7 @@
        \tmpwrite{verybottomins}%
        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
       \tmpwrite{pageend}%
-      \makefootbox
+      \ifactually@write\makefootbox\fi
      }%pagecontents
   \traceifcheck{@@setppagecontents}%
 }
