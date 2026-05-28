@@ -3575,9 +3575,8 @@ class GtkViewModel(ViewModel):
         sview.override_font(p)
         self.picListView.modify_font(p)
 
-        w = self.builder.get_object("cr_zvar_value")
-        w = self.builder.get_object("cr_strvar_value")
-        w.set_property("font-desc", p)
+        for wname in ("cr_zvar_value", "cr_strvar_value"):
+            self.builder.get_object(wname).set_property("font-desc", p)
 
     def onRadioChanged(self, btn):
         n = Gtk.Buildable.get_name(btn)
@@ -7288,11 +7287,12 @@ Thank you,
                 ref = p[1]
                 if ref is None:
                     ref = Ref("UNK 0:0")
-                if not ref.verse:
+                ref = ref.first
+                if not ref.verse and hasattr(ref, 'numverses'):
                     ref.verse = ref.numverses() // 2 + 1
                 bref = self.get_usfms().resolve_bridge(ref)
-                self.picinfos.addpic(suffix=self.digSuffix, anchor=p[1].str(env=Environment(cvsep='.')), src=p[0]+p[3],
-                        ref=p[1].str(env=self.getRefEnv(nobook=True)), alt=p[2], size='col', pgpos='tl')
+                self.picinfos.addpic(suffix=self.digSuffix, anchor=bref.str(env=Environment(cvsep='.')), src=p[0]+p[3],
+                        ref=bref.str(env=self.getRefEnv(nobook=True)), alt=p[2], size='col', pgpos='tl')
             self.picListView.load(self.picinfos)
 
     def onArtistToggled(self, btn, path):
@@ -7323,6 +7323,10 @@ Thank you,
 
     def onImageSetChosen(self, ecb, *a):
         imgset = self.get('ecb_artPictureSet')
+        if imgset and hasattr(self, 'thumbnails'):
+            if not self.userconfig.has_section("imagesets"):
+                self.userconfig.add_section("imagesets")
+            self.userconfig.set("imagesets", "last", imgset)
         try:
             self.thumbnails.set_imageset(imgset)
         except AttributeError:

@@ -1,0 +1,13 @@
+at INT "etek iyn God" > "etek//iyn God"
+at INT "enian lo iyn God'e" > "enian// lo iyn God'e"
+at INT "iyn termen omon" > "iyn// termen omon"
+at INT "tingting yiꞌe o Eklisiastis" > "tingting yi'e// o Eklisiastis"
+at INT "kartaiyn kormonraina" > "kartaiyn// kormonraina"
+# Imported from None
+#aArp changes - LEFT
+include "../../../PrintDraftChanges.txt"
+# Use styles to stretch or shrink paragraphs
+
+# Temporary hack for thumbtabs until PTXPrint gets fixed. Turn next line on or off. Must be "on" here, "off in aArpBT
+"\\toc3 " > "\\zthumbtab "
+
