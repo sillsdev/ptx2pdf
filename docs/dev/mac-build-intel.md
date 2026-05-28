@@ -2,6 +2,11 @@
 
 Date: 2026-05may-28
 
+## Distribution
+
+You can find an App binary here:
+https://github.com/flagsoft/ptx2pdf/blob/master/distribution/readme.md
+
 ## Ideas for future versions
 
 - Maybe there should be a Settings > TeTeX path input box where user can setup which TeTeX will be used.
