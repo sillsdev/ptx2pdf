@@ -933,7 +933,7 @@ class TexModel:
                 if not hasrun:
                     logger.debug(f"running: {cmd}")
                     checkoutput(cmd) # dont't pass cmd as list when shell=True
-        logger.debug(f"{outfpath=}")
+        logger.debug(f"{outfpath=}, {script=}")
         return outfpath
 
     def _getText(self, data, doc, bk, logmsg=""):

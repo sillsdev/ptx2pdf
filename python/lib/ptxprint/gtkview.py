@@ -3901,7 +3901,7 @@ class GtkViewModel(ViewModel):
         if isGraphite:
             feats = f.feats
             vals = f.featvals
-            langs = f.grLangs
+            langs = getattr(f, 'grLangs', {})
             self.currdefaults = f.featdefaults
             langfeats = f.langfeats
             tips = {}
@@ -7290,6 +7290,7 @@ Thank you,
                     ref = Ref("UNK 0:0")
                 if not ref.verse:
                     ref.verse = ref.numverses() // 2 + 1
+                bref = self.get_usfms().resolve_bridge(ref)
                 self.picinfos.addpic(suffix=self.digSuffix, anchor=p[1].str(env=Environment(cvsep='.')), src=p[0]+p[3],
                         ref=p[1].str(env=self.getRefEnv(nobook=True)), alt=p[2], size='col', pgpos='tl')
             self.picListView.load(self.picinfos)
