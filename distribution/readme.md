@@ -8,7 +8,26 @@ This is an non-official distribution of PTXprint for macOS with Intel(TM) chips.
 
 ## macOS App (Intel chip only)
 
-Important NOTE: When an application gets downloaded from any source other than those that Apple seems suited, the application gets an extended attribute "com.apple.Quarantine".
+### Install
+
+You *must* install XeTeX with brew (Homebrew), see https://brew.sh/ else it will not work.
+
+```
+% brew install xetex
+```
+
+This will install XeTeX with binaries:
+
+```
+/usr/local/bin/fc-list
+/Library/TeX/texbin/xetex
+/Library/TeX/texbin/xdvipdfmx
+```
+
+
+### Important NOTE after downloading .app file
+
+When an application gets downloaded from any source other than those that Apple seems suited, the application gets an extended attribute "com.apple.Quarantine".
 This triggers the message: "application XY is damaged and can't be opened. You should move it to the Bin."
 
 Remove the attribute and you can launch the application.
