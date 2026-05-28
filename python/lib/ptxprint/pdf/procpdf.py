@@ -108,6 +108,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     if nums > 1:
         if ext is None:
             ext = "_{}up".format(nums)
+        else:
+            ext = "{}_{}up".format(ext, nums)
         sigsheets = int(kw.get('sheetsinsigntr', 0))
         foldmargin = int(kw.get('foldcutmargin', 0)) * _unitpts['mm']
         logger.debug(f"Impositioning onto {nums} pages. {sigsheets=}, {foldmargin=} from {paper[0]} to {paper[1]}")
