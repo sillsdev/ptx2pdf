@@ -8,12 +8,13 @@ with open(sys.argv[2], "w", encoding="utf8") as outf:
             # Not the GLO book, so just write out whatever came in
             outf.write(inf.read())
         else:
-            thisGLOproj = os.path.basename(sys.argv[1])[5:9]
+            bname = os.path.basename(sys.argv[1])
+            thisGLOproj = bname[5:bname.rindex(".")]
             othrGLOproj = mapping.get(thisGLOproj, thisGLOproj)
             gloData = inf.read()
             # Step 1: Read counterpart file to create a list of all entries which aren't CAT:name
-            print(f"Inserting into {thisGLOproj} GLO headwords from {othrGLOproj}")
             othrGLOpath = sys.argv[1].replace(thisGLOproj, othrGLOproj)
+            print(f"Inserting into {thisGLOproj} GLO headwords from {othrGLOproj} generating {othrGLOpath}")
             with open(othrGLOpath, encoding="utf8") as othrGLO:
                 entries = re.findall(r"(\\p \\k ([^\\]+)\\k\*)[\r\n\s+]\\v (\d+)[\r\n\s+](?!\\hp .+?CAT:name)",othrGLO.read())
                 # print(f"Total entries: {len(entries)}")
