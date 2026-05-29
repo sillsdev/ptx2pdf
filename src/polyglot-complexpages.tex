@@ -263,11 +263,16 @@
 
 \globcount\p@lyr@wno
 \newcount\p@lylastp@ge
-\def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e}% Various 'column codes' are not connected to any input. Use ifcsname to check for them
-\inactive@col@code{-} % A blank column or page
+\def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e}% Various 'column codes' are not directly connected to any input. Use ifcsname to check for them
+\inactive@col@code{-} % A blank column or page e.g. for marginal notes. If multiple, then they split the empty space.
 \inactive@col@code{=} % Lines
-\inactive@col@code{+} % Footnote slot(s)
-%\inactive@col@code{@} % Image / sidebar slot?? 
+
+\def\special@col@code#1#2#3{\x@\let\csname special@col@#1}\n@wbox\\endcsname\tr@e\new@followon{#1}\csname sp@cialhandler-#1\endcsname}% for automagic note/insert columns.
+\special@col@code{f} % Footnote slot(s) (for notes that aren't column-end
+\special@col@code{x} % Xref slot(s):  centre column/side column/etc.
+\special@col@code{e} % extended footnote slot(s).
+\special@col@code{@} % Image / sidebar slot?? (Images / sidebars can target) 
+
 
 \def\col@active@count#1{\ifcsname in@ctive@col@#1\endcsname\else\advance\count255 by 1 \fi}% 
 \def\@@complexr@vpolyp@ges#1{%
@@ -952,7 +957,7 @@
   \add@tr@iling{#1}%
   \trace{dmc}{trailing for #1 done}%
   \edef\tmp{\tmpdim=\dimexpr \ht\csname excess#1\endcsname+\dp\csname excess#1\endcsname \relax }%
-  \x@\def\csname pg#1htfn\x@\x@\x@\x@\x@\x@\x@\endcsname\x@\x@\x@\x@\x@\x@{\x@\x@\x@\tmp\x@\the\x@\fntoks\x@\edef\csname tmp#1ht\endcsname{\the\tmpdim}}% This one for the page
+  \x@\def\csname pg#1htfn\x@\x@\x@\x@\x@\x@\x@\endcsname\x@\x@\x@\x@\x@\x@\x@{\x@\x@\x@\tmp\x@\the\x@\fntoks\x@\edef\csname tmp#1ht\endcsname{\the\tmpdim}}% This one for the page
   \trace{dmc}{pg#1htfn defined as \x@\meaning\csname tmp#1htfn\endcsname}%
   \x@\def\x@\tmp\x@{\x@\tmpdim\x@=\csname #1test\endcsname}%
   \x@\def\csname tst#1htfn\x@\x@\x@\x@\x@\x@\x@\endcsname\x@\x@\x@\x@\x@\x@\x@{\x@\x@\x@\tmp\x@\the\x@\fntoks\x@\edef\csname tmp#1ht\endcsname{\the\tmpdim}}% This one for layout testing.
