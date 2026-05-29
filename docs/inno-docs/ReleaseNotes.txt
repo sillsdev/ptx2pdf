@@ -4,7 +4,7 @@ PTXprint 3.0.31 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.31 - (19 May 2026)
+Bug fixes and Improvements in 3.0.31 - (29 May 2026)
   * Allow complexpages layout strings in experimental mode -E 1
   * Autofill plugins when polyglot requires them
   * Add attach_console for windows (should give stdout if run from a console)
