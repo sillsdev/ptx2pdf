@@ -1,8 +1,36 @@
-PTXprint 3.0.30 Release Notes
-18 May 2026
+PTXprint 3.0.31 Release Notes
+29 May 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.31 - (19 May 2026)
+  * Allow complexpages layout strings in experimental mode -E 1
+  * Autofill plugins when polyglot requires them
+  * Add attach_console for windows (should give stdout if run from a console)
+  * Enable filtering of non-default settings on Adv->Other tab
+  * Add a status message on the left side of PDF Viewer button bar
+  * Add Piclist and Module to the sections codelets for changes
+  * Deactiveate custom chars for vp and va
+  * Add aArp + aArpBT TestDiglotA5 test
+  * Improve Picture Catalog behaviour
+  * Resolve picture references to bridged verses
+  * Improve choose base projects location dialog and wording
+  * Add extra texpert controls
+  * Improve diglot notespace calcs, expose diglotBalNotes
+  * Protect or remove chunk-final skips. (EEK avoidance)
+  * Treat poetry different to non-poetry (WIP)
+  * Rescale badness values 0-200
+  * Add texpert options for page_filler badness
+  * Right-click context menu to copy fig details to clipboard in USFM format
+  * Add various json files and Windows build set bug
+  * Get paths sorted for wizards
+  * Get file saving working in pdfinish across filesystems
+  * First stab at diglotjointtype{gridone}
+  * Fix numverses add clubpenalty snippet
+  * Fix vernacular font not being applied to Variables
+  * Fix paragraph counting in glossary, so figures include correctly
+  * Fixed (?) repeated footers
 
 Bug fixes and Improvements in 3.0.30 - (18 May 2026)
   * Get covers working in some way

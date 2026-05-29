@@ -231,7 +231,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         sys.stdio = StreamLogger(log, logging.INFO)
         sys.stderr = StreamLogger(log, logging.ERROR)
 
-    from ptxprint.utils import _, setup_i18n, get_ptsettings, find_pt_candidates, pt_bindir, putenv
+    from ptxprint.utils import _, setup_i18n, get_ptsettings, find_pt_candidates, \
+                                pt_bindir, putenv, attach_console
     from ptxprint.font import initFontCache, cachepath, writefontsconf
 
     fontconfig_path = writefontsconf(args.fontpath,testsuite=args.testsuite)
@@ -242,6 +243,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     from ptxprint.runjob import RunJob, isLocked
     from ptxprint.project import ProjectList
 
+    attach_console()
     if viewClass is None:
         viewClass = ViewModel
     savetreedirs = False

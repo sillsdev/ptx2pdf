@@ -368,7 +368,8 @@ def getPDFconfig(fname):
     return None
 
 if sys.platform.startswith("win"):
-    import winreg
+    import winreg, ctypes
+    kernel32 = ctypes.windll.kernel32
 
     def openkey(path):
         try:
@@ -379,6 +380,13 @@ if sys.platform.startswith("win"):
 
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
+
+    def attach_console():
+        if kernel32.AttachConsole(-1):
+            sys.stdout = open("CONOUT$", "w", buffering=1)
+            sys.stderr = open("CONOUT$", "w", buffering=1)
+            return True
+        return False
 else:
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
@@ -394,6 +402,9 @@ else:
             return ""
         else:
             return res.text
+
+    def attach_console():
+        return False
 
 def saferelpath(p, r="."):
     if p is None or not len(str(p)):

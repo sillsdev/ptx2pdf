@@ -7734,6 +7734,7 @@ when exporting to an external folder of settings.</property>
                     <property name="margin-start">20</property>
                     <property name="margin-end">20</property>
                     <property name="image-position">right</property>
+                    <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
                   </object>
@@ -35002,11 +35003,11 @@ are likely to have to re-do it all again.</property>
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
-                                <property name="margin-end">6</property>
                                 <property name="tooltip-text" translatable="yes">Filter: show only sections with non-default settings.
 Sections where all values are default will be hidden.
 Sections with changed values will be expanded.
 Disable to restore all sections in collapsed state.</property>
+                                <property name="margin-end">6</property>
                                 <signal name="toggled" handler="onTexpertFilter" swapped="no"/>
                                 <child>
                                   <object class="GtkImage">
