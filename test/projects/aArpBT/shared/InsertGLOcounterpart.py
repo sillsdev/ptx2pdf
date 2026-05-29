@@ -1,4 +1,4 @@
-import sys, re
+import sys, re, os
 mapping = {'aArp': 'aArpBT', 'aMal': 'aArpBT', 'aSno': 'aArpBT',
            'bBar': 'bG1BT',  'bPou': 'bG1BT',  'bRam': 'bG1BT',
            'cGoi': 'cOGBT',  'cRbr': 'cOGBT',  'cWol': 'cOGBT', 'dOpi': 'dOLBT'}
@@ -8,13 +8,8 @@ with open(sys.argv[2], "w", encoding="utf8") as outf:
             # Not the GLO book, so just write out whatever came in
             outf.write(inf.read())
         else:
-            path1 = str(sys.argv[1]).replace("\\", "/")
-            thisGLOproj = path1.split("/")[2]
-            if thisGLOproj in mapping.keys():
-                othrGLOproj = mapping[thisGLOproj]
-            else:
-                path2 = str(sys.argv[2]).replace("\\", "/")
-                othrGLOproj = path2.split("/")[2]
+            thisGLOproj = os.path.basename(sys.argv[1])[5:9]
+            othrGLOproj = mapping.get(thisGLOproj, thisGLOproj)
             gloData = inf.read()
             # Step 1: Read counterpart file to create a list of all entries which aren't CAT:name
             print(f"Inserting into {thisGLOproj} GLO headwords from {othrGLOproj}")
