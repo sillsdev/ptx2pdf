@@ -49,7 +49,7 @@ at GLO "\\v \d+[\s\r\n]+" > ""
 at GLO "\\zstat .+?[\r\n]*" > ""
 
 # Don't print English gloss in GLO  - \zge ... \zge*
-# at GLO in "\\hp .+?[\r\n]+": "\\zge .+?\\zge\*;?" > ""
+at GLO in "\\hp .+?[\r\n]+": "\\zge .+?\\zge\*;?" > ""
 
 # Don't print priority info in GLO  - P:P2
 at GLO in "\\hp .+?[\r\n]+": "P:.+?;" > ""
