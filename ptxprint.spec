@@ -15,9 +15,20 @@ else:
     bindir = sys.platform + "_" + platform.machine()
 print("bindir:", bindir)
 
+import types
+
+class MockExtensionModule(types.ModuleType):
+    def __init__(self, name):
+        super().__init__(name)
+        self.generate_time_safe = None
+        self.__file__ = f"<built-in extension {name}>"
+
+if '_uuid' not in sys.modules:
+    sys.modules['_uuid'] = MockExtensionModule('_uuid')
+
 import usfmtc           # so we can find its data files
 
-version="3.0.29"
+version="3.0.30"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -360,6 +371,8 @@ binaries = (binaries
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
         ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs',
          'imagesets.json')]
+      + [('python/lib/ptxprint/wizards/configuration/'+z, 'ptxprint/wizards/configuration') for z in 
+        ('wizardQuestions.json', 'wizardQuestions.schema.json', 'wizardDialog.glade')]
       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'printers', 'pdfrw', 'pdfrw/objects')]
       + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
@@ -376,7 +389,7 @@ print("datas:", datas)
 
 jobs = {
     "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
-    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 tcolls = []
 for k, v in jobs.items():

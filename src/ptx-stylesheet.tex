@@ -1042,6 +1042,7 @@
  % If the next token IS vp, then call relevant code to interpret before dropping 
  \def\@V@{%
   \let\nxt\@@V@@
+  \deactiv@tecustomch@rs
   \ifhangingverse\ifHangVA\ifx\mayb@vp\va\let\nxt\@@VA@@\fi\fi\fi
   \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
  \def\@@VP@@\vp ##1\vp*{\xdef\print@bleverse{##1}\futurelet\mayb@vp\@V@}
@@ -1078,6 +1079,7 @@
     \ignorespaces
   \else\ifMarginalVerses \ignorespaces\fi
   \fi
+  \activ@tecustomch@rs
  }
  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
  \let\cat\c@t

@@ -32,22 +32,24 @@ class ChunkType(Enum):
     TITLE = 4
     INTRO = 5
     BODY = 6
-    ID = 7
-    TABLE = 8
-    VERSE = 9 
-    PARVERSE = 10
-    MIDVERSEPAR = 11
-    PREVERSEPAR = 12
-    NOVERSEPAR = 13
-    NPARA = 14
-    NB = 15
-    NBCHAPTER = 16
-    CHAPTERPAR = 17
-    CHAPTERHEAD = 18
-    CHAPTERDESC = 19
-    PREVERSEHEAD = 20
-    USERSYNC = 21
-    PARUSERSYNC =22 # User
+    POETRY = 7
+    ID = 8
+    TABLE = 9
+    VERSE = 10 
+    PARVERSE = 11
+    MIDVERSEPAR = 12
+    MIDVERSEPOETRY = 13
+    PREVERSEPAR = 14
+    NOVERSEPAR = 15
+    NPARA = 16
+    NB = 17
+    NBCHAPTER = 18
+    CHAPTERPAR = 19
+    CHAPTERHEAD = 20
+    CHAPTERDESC = 21
+    PREVERSEHEAD = 22
+    USERSYNC = 23
+    PARUSERSYNC =24 # User
 
 _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the config file.
     ChunkType.CHAPTER :"A normal chapter number",
@@ -56,11 +58,13 @@ _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the con
     ChunkType.TITLE :"A title (e.g. mt1)",
     ChunkType.INTRO :"An introduction paragraph (e.g. ip)",
     ChunkType.BODY :"A generic paragraph (normally turned into something else)",
+    ChunkType.POETRY :"A poetry paragraph (normally turned into something else)",
     ChunkType.ID :"(!)The \\id line",
     ChunkType.TABLE :"A table",
     ChunkType.VERSE :"A verse chunk, inside a paragraph",
     ChunkType.PARVERSE :"A verse chunk, first thing after starting a paragraph",
-    ChunkType.MIDVERSEPAR :"A paragraph which is mid-paragraph",
+    ChunkType.MIDVERSEPAR :"A paragraph which is mid-verse",
+    ChunkType.MIDVERSEPOETRY :"A poetry paragraph which is mid-verse",
     ChunkType.PREVERSEPAR :"A paragrpah where the next content is a verse number",
     ChunkType.NOVERSEPAR :"A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction",
     ChunkType.NPARA :"(!)A block of nested paragraphs",
@@ -80,11 +84,13 @@ ChunkType.HEADING:'HEADING',
 ChunkType.TITLE:'TITLE',
 ChunkType.INTRO:'INTRO',
 ChunkType.BODY:'BODY',
+ChunkType.POETRY:'BODY',
 ChunkType.ID:'ID',
 ChunkType.TABLE:'TABLE',
 ChunkType.VERSE:'VERSE',
 ChunkType.PARVERSE:'VERSE',
 ChunkType.MIDVERSEPAR:'BODY',
+ChunkType.MIDVERSEPOETRY:'BODY',
 ChunkType.PREVERSEPAR:'BODY',
 ChunkType.NOVERSEPAR:'BODY',
 ChunkType.NPARA:'BODY',
@@ -129,7 +135,10 @@ _marker_modes = {
     'c': ChunkType.CHAPTER,
     'd': ChunkType.CHAPTERDESC, # this gets overwritten.
     'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
-    'nb': ChunkType.NB
+    'nb': ChunkType.NB,
+    'q1': ChunkType.POETRY, # this sometimes gets overwritten
+    'q2': ChunkType.POETRY, # this sometimes gets overwritten
+    'q3': ChunkType.POETRY # this sometimes gets overwritten
 }
 
 _canonical_order={
@@ -370,24 +379,28 @@ class Collector:
                 if mode == ChunkType.HEADING:
                     if self.waschap:
                         mode = ChunkType.CHAPTERHEAD
-                elif mode == ChunkType.BODY and c.tag == "para":
+                elif mode in (ChunkType.BODY,ChunkType.POETRY) and c.tag == "para":
+                    if mode==ChunkType.POETRY:
+                        midvmode = ChunkType.MIDVERSEPOETRY
+                    else: 
+                        midvmode = ChunkType.MIDVERSEPAR
                     logger.log(8, f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}: {len(self.acc)}')
                     if len(c) == 0:
                         logger.log(8, f'Bodypar(simple): {name} {c.text}')
                         if c.text and len(c.text.strip()) and self.currChunk.verseText:
-                            mode = ChunkType.MIDVERSEPAR
+                            mode = midvmode
                     elif len(c):
                         cs = list(c)
                         #Multi-component body paragraph
                         logger.log(8, f'Bodypar: {name}, {type(cs[0])}, {cs[0]}')
                         if (len(cs[0]) > 1 and self.currChunk.verseText):
-                            mode = ChunkType.MIDVERSEPAR
+                            mode = midvmode
                         elif cs[0].tag == "verse" or (len(cs) > 1 and cs[1].tag == "verse"):
                             mode = ChunkType.PREVERSEPAR
                         elif cs[0].tail or cs[0].text:
                             if self.currChunk.verseText:
-                                mode = ChunkType.MIDVERSEPAR
-                    logger.log(9, f"Conclusion: bodypar type is {mode}")
+                                mode = midvmode
+                    logger.log(9, f"Conclusion: poetry/bodypar type is {mode}")
                         
             pn = self.pnum(mode)
             if mode in (ChunkType.CHAPTER,ChunkType.CHAPTERHEAD):

@@ -16,6 +16,9 @@ As such, it is assumed that  the more desirable abstraction is that of the rows-
  such as the `LR/A`layout  (with `/` indicating a new row)  that below (showing a 
 double-page spread, with mirroring).  L<sub>1</sub> etc are intended to show  vertical  alignment between the L and R chunks on a given row.
 
+As a further extension, bracketing is desired, e.g. NET uses an `N(L/NN)N`
+Parsing this will be 'simplified' by using a `|` within the brackets. 
+
 ![ ](mirrored.svg  "Mirrored triglot (LR/A)")
 
 Sub-dividing a column vertically (I.e. making the layout to be rows-of-columns-of-columns) is considered to be an unreasonable request at present.
@@ -293,3 +296,27 @@ a partial list of line-no/insert measurements. [NEEDLESS - recursive split funct
 * Eventually add a 'top-here', 'bottom-here' pseudo-column inserts, to supplement tL, etc.
 *  These can apply in monoglot dual columns too. Will go top/bottom exactly in the triggering column (measuring code is almost in place - see 'Could not identify column ...' message in code. To implement, may need to apply a pseudo-name to the insert dimensions).
 
+
+
+## Special considerations for study notes
+There will be a special flag `e` for extended notes. `e` may occur in a multiple columns, but only one project can use `e`.
+
+* IF study notes are not to be fully included (i.e. notes can flow onto following pages):
+    * There needs to be a \marks in the body text to mark when the note is pushed.
+    * The ef note has a corresponding \marks
+    * The marks *MUST* match, otherwise the note has gone adrift of where it was called.   This requires special scoring to compare the verse number of notes with the calling column.
+    * The last note column compares its verse number with the `\marks` from the calling column. Explicit assumption (and requirement) is that the last note-generating  column is processed before the first note column. 
+ * If study notes are not flowing onto the next page, there is no problem.
+ 
+ Study notes may contain figures.
+
+* Therefore the study note paragraph (full content) needs to be decoded and a full measurement table be created.
+
+## Rows of columns of rows of columns.
+
+This is needed for various real-world layouts. E.g. NET / historic layouts may use `e(L/ee)e`. Non-Christian comparison scriptures may use `(L/ee)/e`.
+* Parse `#1,#2` for pages
+* Parse page `#1/#2` for rows
+* Parse row `#1(#2)#3` for groups. Groups DO NOT nest.
+* Parse group for `#1|#2` for sub-rows.
+* Identifiers are thus: page-row (present code) or page-row-rowgroup-subrow

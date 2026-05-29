@@ -1981,6 +1981,11 @@
   \count255=1000
   \global\count\topins=\count255
   \global\count\bottomins=\count255
+  \dimen1=0pt
+  \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
+  \let\col@do=\max@val
+  \x@\each@col\diglot@list\E % Find biggest baseline skip of those bits of text WHICH ARE ACTIVE. I.e. yes it does need to be here.
+  \edef\@maxb@seline{\the\dimen1}%
 } 
 
 

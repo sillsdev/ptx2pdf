@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from ptxprint.utils import _, extraDataDir, appdirs, allbooks, chaps, pycodedir
-from usfmtc.reference import RefList, Ref
+from usfmtc.reference import RefList, Ref, RefRange
 from functools import reduce
 
 image_extensions = {'.jpg', '.jpeg', '.tif', '.tiff', '.png', '.gif', '.bmp'}
@@ -55,8 +55,8 @@ class TagableRef(Ref):
             firstc = 0
             lastc = len(vrs.vnums[self.book])
         else:
-            firstc = self.chapter
-            lastc = self.chapter + 1
+            firstc = self.chapter - 1
+            lastc = self.chapter
         return vrs.vnums[self.book][lastc] - vrs.vnums[self.book][firstc]
 
 
@@ -151,7 +151,46 @@ class ThumbnailDialog:
         self.selected_thumbnails = set()
         self.reftext = None
         self._idleLoadId = None
+        self._usedImageIds = set()
+        self._usedAnchors = {}
+        self._setupAlreadyUsedCss()
         self.dlg.connect("key-press-event", self._onDialogKeyPress)
+
+    def _setupAlreadyUsedCss(self):
+        css = Gtk.CssProvider()
+        css.load_from_data(b"""
+            flowboxchild.already-used {
+                background-color: peachpuff;
+                padding: 3px;
+                border-radius: 4px;
+            }
+        """)
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+    def _getUsedImages(self):
+        used = set()
+        anchors = {}
+        picinfos = getattr(self.view, 'picinfos', None)
+        if picinfos is None:
+            return used, anchors
+        for pic in picinfos.get_pics():
+            src = pic.get('src', '') or ''
+            anchor = pic.get('anchor', '') or ''
+            imgid = os.path.splitext(os.path.basename(src))[0].lower()
+            if imgid:
+                used.add(imgid)
+                if anchor:
+                    anchors.setdefault(imgid, []).append(anchor)
+        return used, anchors
+
+    def _applyUsedStyles(self):
+        for imgid, (w, fbc, isLoaded, fpath) in self.image_tiles.items():
+            sc = fbc.get_style_context()
+            if imgid.lower() in self._usedImageIds:
+                sc.add_class("already-used")
+            else:
+                sc.remove_class("already-used")
 
     def run(self):
         uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
@@ -165,7 +204,17 @@ class ThumbnailDialog:
                 self.artists.add(r[1].lower())
             else:
                 self.artists.discard(r[1].lower())
-        imgset = self.view.get('ecb_artPictureSet')
+        last_imgset = self.view.userconfig.get("imagesets", "last", fallback=None)
+        imgset = last_imgset or self.view.get('ecb_artPictureSet')
+        if last_imgset:
+            self.view.set('ecb_artPictureSet', last_imgset)
+        # Re-apply any filter the user left active in a previous opening
+        existing_ref = self.view.get('t_artRefRange') or ''
+        existing_search = self.view.get('t_artSearch') or ''
+        if existing_ref:
+            self.reftext = existing_ref
+        if existing_search:
+            self.filters = set(c.lower() for c in existing_search.split())
         if not imgset:
             imagesets = getImageSets()
             if imagesets is None or not len(imagesets):
@@ -176,7 +225,8 @@ class ThumbnailDialog:
             self.view.getBooks()
             reflist = self.view.bookrefs
             logger.debug(f"Start with bookrefs: {reflist}")
-            self.view.set('t_artRefRange', str(reflist))
+            if not existing_ref:
+                self.view.set('t_artRefRange', str(reflist))
         self.set_imageset(imgset)
         response = self.dlg.run()
         self.dlg.hide()
@@ -188,6 +238,7 @@ class ThumbnailDialog:
     def set_imageset(self, s):
         self.imageset = s
         imagesetdir = extraDataDir("imagesets", self.imageset)
+
         if imagesetdir is None:
             return
         illpath = os.path.join(imagesetdir, "illustrations.json")
@@ -199,7 +250,7 @@ class ThumbnailDialog:
         # fill in list of artists
         model = self.view.builder.get_object("ls_artists")
         model.clear()
-        if 'sets' in self.imagedata:
+        if self.imagedata and 'sets' in self.imagedata:
             for a in sorted(self.imagedata['sets']):
                 name = self.view.copyrightInfo['copyrights'].get(a.lower(), {}).get('artist', _("Unknown"))
                 model.append([False, a.upper(), name])
@@ -252,10 +303,10 @@ class ThumbnailDialog:
         if self.langdata is None:
             return True
         entry = self.langdata.get(imgid, {})
-        if any(x.lower() in filters for x in entry.get('kwds', [])):
+        if any(f in x.lower() for x in entry.get('kwds', []) for f in filters):
             return True
         title_words = re.findall(r'\w+', entry.get('title', '').lower())
-        if any(w in filters for w in title_words):
+        if any(f in w for w in title_words for f in filters):
             return True
         return False
 
@@ -325,7 +376,7 @@ class ThumbnailDialog:
                 if not len(refs):
                     continue
                 for r in refs:
-                    if r in self.reflist:
+                    if any(r in e for e in self.reflist):
                         self.imgrefs[imageid] = r
                         break
                 else:
@@ -337,17 +388,10 @@ class ThumbnailDialog:
         imagesdir = self.get_imgdir()
         if imagesdir is None:
             return
+        self._usedImageIds, self._usedAnchors = self._getUsedImages()
         imageids = self._build_imageids(imagesdir)
-        if not imageids and self.reflist:
-            self.reflist = []
-            self.reftext = ""
-            self.view.set('t_artRefRange', '')
-            imageids = self._build_imageids(imagesdir)
-        if not imageids and self.filters:
-            self.filters = set()
-            self.view.set('t_artSearch', '')
-            imageids = self._build_imageids(imagesdir)
         self.set_images(imagesdir, sorted(imageids))
+        self._applyUsedStyles()
         self.disable_refresh()
 
     def imgkey(self, imgid, mode="ref"):
@@ -355,7 +399,8 @@ class ThumbnailDialog:
             pop = self.imagedata['images'].get(imgid, {}).get('pop', 0)
         else:
             pop = 0
-        res = self.imgrefs[imgid].astag() if imgid in self.imgrefs else "zzzz"+imgid
+        r = self.imgrefs.get(imgid)
+        res = (r.first if isinstance(r, RefRange) else r).astag() if r is not None else "zzzz"+imgid
         return (pop, res)
 
     _INITIAL_LOAD = 30
@@ -507,7 +552,7 @@ class ThumbnailDialog:
         bibref = bibrefs[0] if len(bibrefs) else None
         if self.reflist and bibrefs:
             for r in bibrefs:
-                if r is not None and r in self.reflist:
+                if r is not None and any(r in e for e in self.reflist):
                     bibref = r
                     break
         title = self.langdata.get(imageid, {}).get("title", "") if self.langdata else ""
@@ -539,9 +584,40 @@ class ThumbnailDialog:
         self._setLabelRowVisible("lb_imgKeywords", "l_imgKeywords", bool(kwds))
 
         if self.imagedata:
-            refs = "; ".join(self.imagedata["images"].get(imageid, {}).get('refs', []))
-            refs = re.sub(":0", "", refs)
+            raw_refs = self.imagedata["images"].get(imageid, {}).get('refs', [])
+            parsed_refs = self.get_refs(imageid)
+            placement_idx = 0
+            if self.reflist:
+                matching = self.imgrefs.get(imageid)
+                if matching is not None:
+                    for i, r in enumerate(parsed_refs):
+                        if r is not None:
+                            try:
+                                if matching in r:
+                                    placement_idx = i
+                                    break
+                            except Exception:
+                                pass
+            used_anchors = self._usedAnchors.get(imageid.lower(), [])
+            ref_parts = []
+            for i, (raw, parsed) in enumerate(zip(raw_refs, parsed_refs)):
+                display = GLib.markup_escape_text(re.sub(":0", "", raw))
+                is_placed = False
+                for anchor_str in used_anchors:
+                    try:
+                        anchor_parsed = RefList(anchor_str, factory=TagableRef)[0]
+                        if anchor_parsed in parsed:
+                            is_placed = True
+                            break
+                    except (SyntaxError, IndexError, Exception):
+                        pass
+                if is_placed:
+                    display = f'<span color="red">{display}</span>'
+                if i == placement_idx:
+                    display = f"<b>{display}</b>"
+                ref_parts.append(display)
+            refs = "; ".join(ref_parts)
         else:
             refs = ""
-        self.view.set('l_imgRefs', refs)
+        self.view.set('l_imgRefs', refs, useMarkup=True)
         self._setLabelRowVisible("lb_imgRefs", "l_imgRefs", bool(refs))

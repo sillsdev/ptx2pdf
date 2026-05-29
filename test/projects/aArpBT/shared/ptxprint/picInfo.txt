@@ -1,0 +1,20 @@
+[DEFAULT]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = 
+piccredit = 
+
+[james_1_1_ap_06_13]
+approved = false
+
+[co00604]
+picclear = yes
+approved = false
+
+[cn01613]
+approved = false
+
+[lb00035]
+approved = false
+

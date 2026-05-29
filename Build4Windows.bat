@@ -2,7 +2,7 @@
 REM Use this Batch file to build PTXprint Installer for Windows
 REM Mark Penny and Martin Hosken, Last updated: 28-Nov-2025
 
-PPATH=C:\msys64\mingw64\bin\
+set PPATH=C:\msys64\mingw64\bin\
 
 REM Get rid of the build and dist folders before starting the new build process
 rmdir /s /q build
