@@ -94,18 +94,18 @@ class Finisher(Gtk.Application):
             self.show_error('There is nothing to do! Select at least one action before clicking Process.')
             return
 
-        for action in actions_to_run:
-            self.run_action(action)
-
-        if self.errored:
-            return
-
         dialog.set_do_overwrite_confirmation(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             self.output_filepath = dialog.get_filename()
         dialog.destroy()
         if response != Gtk.ResponseType.OK:
+            return
+
+        for action in actions_to_run:
+            self.run_action(action)
+
+        if self.errored:
             return
 
         if self.tmp_file_1 is not None and os.path.exists(self.tmp_file_1):
