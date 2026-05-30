@@ -61,15 +61,7 @@ class Finisher(Gtk.Application):
         self.mw.show_all()
         Gtk.main()
 
-    def onProcessClicked(self, btn):
-        self.errored, self.tmp_file_1, self.tmp_file_2 = False, None, None
-        self.input_pdf_path = self.builder.get_object("fp_input").get_filename()
-        if not self.input_pdf_path:
-            self.show_error("You need to select an input file!")
-            return
-        elif not self.input_pdf_path.endswith('.pdf'):
-            self.show_error("You must select an input file with a .pdf extension.")
-            return
+    def onSelectOutputClicked(self, btn):
         dialog = Gtk.FileChooserDialog(
             title="Select output file",
             parent=self.mw,
@@ -79,6 +71,27 @@ class Finisher(Gtk.Application):
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_SAVE, Gtk.ResponseType.OK
         )
+        dialog.set_do_overwrite_confirmation(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self.output_filepath = dialog.get_filename()
+            self.builder.get_object("btn_process").set_sensitive(True)
+        dialog.destroy()
+        if response != Gtk.ResponseType.OK:
+            return
+        elif not self.output_filepath.endswith('.pdf'):
+            self.show_error("You must select an input file with a .pdf extension.")
+            return
+
+    def onProcessClicked(self, btn):
+        self.errored, self.tmp_file_1, self.tmp_file_2 = False, None, None
+        self.input_pdf_path = self.builder.get_object("fp_input").get_filename()
+        if not self.input_pdf_path:
+            self.show_error("You need to select an input file!")
+            return
+        elif not self.input_pdf_path.endswith('.pdf'):
+            self.show_error("You must select an input file with a .pdf extension.")
+            return
 
         checkbox_action_mapping = [
             ('c_watermark',   self._run_watermark),
@@ -92,14 +105,6 @@ class Finisher(Gtk.Application):
 
         if not actions_to_run:
             self.show_error('There is nothing to do! Select at least one action before clicking Process.')
-            return
-
-        dialog.set_do_overwrite_confirmation(True)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            self.output_filepath = dialog.get_filename()
-        dialog.destroy()
-        if response != Gtk.ResponseType.OK:
             return
 
         for action in actions_to_run:
