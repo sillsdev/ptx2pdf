@@ -526,13 +526,6 @@ THE SOFTWARE.
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="a_prnl_pages">
-    <property name="lower">1</property>
-    <property name="upper">9999</property>
-    <property name="value">200</property>
-    <property name="step-increment">2</property>
-    <property name="page-increment">20</property>
-  </object>
   <object class="GtkAdjustment" id="a_prnl_copiesMax">
     <property name="lower">50</property>
     <property name="upper">99999</property>
@@ -545,6 +538,13 @@ THE SOFTWARE.
     <property name="value">3</property>
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_prnl_pages">
+    <property name="lower">1</property>
+    <property name="upper">9999</property>
+    <property name="value">200</property>
+    <property name="step-increment">2</property>
+    <property name="page-increment">20</property>
   </object>
   <object class="GtkAdjustment" id="a_prnl_ribbons">
     <property name="upper">3</property>
@@ -3735,7 +3735,8 @@ new name and/or different folder.</property>
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="tooltip-text" translatable="yes">Show the main PTXprint
-dialog with all the settings. </property>
+dialog with all the settings. 
+Shortcut: Alt+S</property>
     <property name="icon-name">applications-system-symbolic</property>
     <property name="icon_size">3</property>
   </object>
@@ -7733,6 +7734,7 @@ when exporting to an external folder of settings.</property>
                     <property name="margin-start">20</property>
                     <property name="margin-end">20</property>
                     <property name="image-position">right</property>
+                    <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
                   </object>
@@ -14059,12 +14061,32 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="halign">end</property>
             <property name="valign">center</property>
             <property name="margin-start">2</property>
             <property name="margin-end">2</property>
             <property name="margin-top">2</property>
             <property name="margin-bottom">2</property>
+            <child>
+              <object class="GtkLabel" id="l_pdfStatusLine">
+                <property name="can-focus">False</property>
+                <property name="no-show-all">True</property>
+                <property name="valign">center</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="hexpand">True</property>
+                <property name="label" translatable="yes">This is where the status messages appear for the job.</property>
+                <property name="ellipsize">end</property>
+                <property name="width-chars">50</property>
+                <property name="single-line-mode">True</property>
+                <property name="track-visited-links">False</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+                <property name="non-homogeneous">True</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkMenuButton" id="btn_fillPages">
                 <property name="label" translatable="yes">Auto Fill...</property>
@@ -14083,9 +14105,10 @@ Warning: CPU-hungry. Go to lunch!</property>
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+                <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
@@ -14101,7 +14124,7 @@ Warning: CPU-hungry. Go to lunch!</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -14176,29 +14199,11 @@ Ctrl + Scrollwheel - change zoom level</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkButton" id="btn_zoom_100">
-                    <property name="label" translatable="yes">100%</property>
-                    <property name="name">Reset Zoom to 100%</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">Reset Zoom to 100%</property>
-                    <property name="halign">center</property>
-                    <property name="margin-start">6</property>
-                    <signal name="clicked" handler="onZoom100Clicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">3</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14362,7 +14367,7 @@ Ctrl+Mouse Scroll Zooms in/out</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14394,7 +14399,7 @@ Layout Analysis is active.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>
@@ -14445,7 +14450,7 @@ Layout Analysis is active.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">5</property>
+                <property name="position">6</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14471,7 +14476,7 @@ Advanced &gt; Other options.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">6</property>
+                <property name="position">7</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14498,7 +14503,7 @@ the middle mouse button</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">7</property>
+                <property name="position">8</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14509,16 +14514,18 @@ the middle mouse button</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
                 <property name="tooltip-text" translatable="yes">Show the main PTXprint
-dialog with all the settings. </property>
+dialog with all the settings. 
+Shortcut: Alt+S</property>
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <property name="image">icon_settings</property>
                 <signal name="clicked" handler="onShowMainDialogClicked" swapped="no"/>
+                <accelerator key="s" signal="clicked" modifiers="GDK_MOD1_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">8</property>
+                <property name="position">9</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14536,7 +14543,7 @@ dialog with all the settings. </property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">9</property>
+                <property name="position">10</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -33879,6 +33886,7 @@ edit the USFM stylesheet files.</property>
                             <property name="can-focus">True</property>
                             <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
+                            <signal name="switch-page" handler="onAdvancedNotebookChanged" swapped="no"/>
                             <child>
                               <object class="GtkScrolledWindow" id="tb_AdvMain">
                                 <property name="visible">True</property>
@@ -34988,6 +34996,30 @@ are likely to have to re-do it all again.</property>
                             </child>
                             <child type="tab">
                               <placeholder/>
+                            </child>
+                            <child type="action-end">
+                              <object class="GtkToggleButton" id="btn_texpertFilter">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Filter: show only sections with non-default settings.
+Sections where all values are default will be hidden.
+Sections with changed values will be expanded.
+Disable to restore all sections in collapsed state.</property>
+                                <property name="margin-end">6</property>
+                                <signal name="toggled" handler="onTexpertFilter" swapped="no"/>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="icon-name">view-list-bullet-symbolic</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="tab-fill">False</property>
+                              </packing>
                             </child>
                           </object>
                           <packing>
@@ -38968,9 +39000,6 @@ Pretore B.V. is an FSC®-certified company with certificate number SGSCH-COC-030
                                             <property name="left-attach">2</property>
                                             <property name="top-attach">4</property>
                                           </packing>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
                                         </child>
                                         <child>
                                           <placeholder/>

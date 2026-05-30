@@ -32,7 +32,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
-            _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates
+            _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates, f2s
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -291,7 +291,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        "btn_layoutWizard") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover tb_Printers lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
+_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover tb_Printers lb_Expert bx_statusMsgBar l_pdfStatusLine fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -1556,6 +1556,7 @@ class GtkViewModel(ViewModel):
             button {transition: color 0.3s ease-in-out; /* Transition for a smooth color change */}
             
             .highlighted {background-color: peachpuff; background: peachpuff}
+            label.highlighted {background-color: peachpuff;}
             .yellowlighted {background-color: rgb(255,255,102); background: rgb(255,255,102)}
             .attention {background-color: lightblue; background: lightblue}
             .warning {background: lightpink;font-weight: bold; color: darkred}
@@ -2127,6 +2128,10 @@ class GtkViewModel(ViewModel):
             wid = wid[:subi]
         if wid == "l_statusLine":
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
+            psl = self.builder.get_object("l_pdfStatusLine")
+            if psl is not None:
+                psl.set_text(value or "")
+                psl.set_visible(bool(value))
         w = self.builder.get_object(wid)
         if w is None:
             if wid.startswith("+"):
@@ -4088,7 +4093,7 @@ class GtkViewModel(ViewModel):
                 eb.add(label)
                 eb.connect("button-release-event", getattr(self, "resetLabel"))
                 label = eb
-                v = str(x[0])
+                v = f2s(x[0])
                 self.initValues[wname] = v
                 tiptext = "{k}:\t[{val}]\n\n{descr}".format(k=k, **asdict(opt))
             elif wname.startswith("fcb_"):
@@ -5473,10 +5478,23 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
         if not passed and self.showPDFmode == "preview":
             self.pdf_viewer.loadnshow(None)
+        GLib.idle_add(self._setStaleIndicator, not passed)
         # TO DO: enable/disable the Permission Letter button
         for printer in self.printers.values():
             if hasattr(printer, 'refreshPageCount'):
                 printer.refreshPageCount()
+
+    def _setStaleIndicator(self, stale):
+        for wid, method in (("bx_statusMsgBar", "get_style_context"),
+                            ("l_pdfStatusLine",  "get_style_context")):
+            w = self.builder.get_object(wid)
+            if w is None:
+                continue
+            sc = w.get_style_context()
+            if stale:
+                sc.add_class("highlighted")
+            else:
+                sc.remove_class("highlighted")
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
@@ -5855,6 +5873,42 @@ class GtkViewModel(ViewModel):
 
     def onStyleEdit(self, btn):
         self.styleEditor.mkrDialog()
+
+    def onAdvancedNotebookChanged(self, nb, page, page_num):
+        btn = self.builder.get_object("btn_texpertFilter")
+        if btn is None:
+            return
+        is_other = page_num == 1
+        btn.set_sensitive(is_other)
+        if not is_other and btn.get_active():
+            btn.set_active(False)  # restores all expanders via onTexpertFilter
+
+    def onTexpertFilter(self, btn):
+        active = btn.get_active()
+        changed_groups = set()
+        for k, opt, wname in TeXpert.opts():
+            is_changed = wname in self.initValues and self.get(wname) != self.initValues[wname]
+            suffix = wname[wname.index("_")+1:]
+            ctrl = self.builder.get_object(wname)
+            lbl  = self.builder.get_object("l_" + suffix)
+            if active:
+                if is_changed:
+                    changed_groups.add(opt.group)
+                if ctrl: ctrl.set_visible(is_changed)
+                if lbl:  lbl.set_visible(is_changed)
+            else:
+                if ctrl: ctrl.set_visible(True)
+                if lbl:  lbl.set_visible(True)
+        for grp in ('LAY', 'CVS', 'BDY', 'FNT', 'NTS', 'DIG', 'PIC', 'PDF', 'PRV', 'OTH'):
+            ex = self.builder.get_object("ex_texpert" + grp)
+            if ex is None:
+                continue
+            if active:
+                ex.set_visible(grp in changed_groups)
+                ex.set_expanded(grp in changed_groups)
+            else:
+                ex.set_visible(True)
+                ex.set_expanded(False)
 
     def onStyleFilter(self, btn):
         def widen(x):
@@ -7491,9 +7545,6 @@ Thank you,
             
     def onZoomFitClicked(self, btn):
         self.pdf_viewer.set_zoom_fit_to_screen(None)
-
-    def onZoom100Clicked(self, btn):
-        self.pdf_viewer.set_zoom(1.0)
 
     def onSeekPage2fill(self, btn):
         direction = Gtk.Buildable.get_name(btn).split("_")[-1]

@@ -8,11 +8,3 @@ pubaccept = Unknown
 approved = false
 notes = 
 
-[oi00237]
-approved = false
-notes = 
-
-[oi00417]
-approved = false
-notes = 
-

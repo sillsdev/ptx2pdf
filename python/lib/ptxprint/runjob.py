@@ -780,11 +780,14 @@ class RunJob:
                     sl = self.printer.builder.get_object("l_statusLine")
                     sl.set_text("")
                     sl.set_tooltip_text("")
+                    psl = self.printer.builder.get_object("l_pdfStatusLine")
+                    if psl is not None:
+                        psl.set_text("")
                 if smry["E"] + smry["W"] > 0:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
-                    if not self.noview and not self.args.print and not self.printer.showPDFmode == "preview":
+                    if not self.noview and not self.args.print:
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
