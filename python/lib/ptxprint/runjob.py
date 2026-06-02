@@ -364,7 +364,9 @@ class RunJob:
             sheets[k] = diginfo.printer.getStyleSheets()
             keyarr.append(k)
             if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
-                texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext="tex", withext="_INTR.SFM"))))
+                intf = diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext="tex", withext="_INTR.SFM")))
+                if intf is not None:
+                    texfiles.append(intf)
             diginfo["cfgrpath_"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
             self.info.dict["diglots_"][k] = diginfo
 
