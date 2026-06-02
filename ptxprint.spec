@@ -426,7 +426,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             binaries = binaries,
             datas = datas,
                 # The registry tends not to get included
-            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid"] if sys.platform.startswith("win") else []) \
+            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid", "_wmi"] if sys.platform.startswith("win") else []) \
                 + ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._core._exceptions'],
             runtime_hooks = [],
             hookspath = [os.path.abspath("pyinstallerhooks")],
