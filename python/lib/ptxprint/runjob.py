@@ -768,6 +768,8 @@ class RunJob:
                 startname = pdfname
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 startname = pdfname
+            if hasattr(self, 'extrafiles') and ' Finished' in self.extrafiles:
+                startname = self.extrafiles.get(' Finished')
 
             fname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".log"))
             logger.debug(f"Testing log file {fname}")
@@ -978,7 +980,7 @@ class RunJob:
         return pdffile
 
     def procpdf(self, outfname, pdffile, cover=False, **kw):
-        for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'paper/cropmarks', 'document/ifrtl'):
+        for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'scaletofit', 'paper/cropmarks', 'document/ifrtl'):
             if '/' in a:
                 kw[a[a.find("/")+1:]] = self.info[a]
             else:
