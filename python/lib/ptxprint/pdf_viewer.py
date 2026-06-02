@@ -58,7 +58,6 @@ mstr = {
     'ecs':        _("Edit Caption Style"),
     'j2pt':       _("Send Ref to Paratext"),
     'z2f':        _("Zoom to Fit"),
-    'z100':       _("Zoom 100%"),
     'ancrdat':    _("Anchored at:"),
     'ianf':       _("Image Anchor Not Found"),
     'cnganc':     _("Change Anchor Ref"),
@@ -463,10 +462,9 @@ class PDFFileViewer:
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         if ctrl_pressed:
             return False
-        v_adj = widget.get_vadjustment()
-        h_adj = widget.get_hadjustment()
-        if v_adj.get_upper() > v_adj.get_page_size() or h_adj.get_upper() > h_adj.get_page_size():
-            return False  # zoomed in — let ScrolledWindow pan naturally
+        fit_zoom = self.get_fit_zoom()
+        if fit_zoom is not None and self.zoomLevel >= fit_zoom * 1.1:
+            return False  # zoomed in enough — let ScrolledWindow pan naturally
         if event.direction == Gdk.ScrollDirection.SMOOTH:
             _, _, z = event.get_scroll_deltas()
             if z < 0:
@@ -497,20 +495,15 @@ class PDFFileViewer:
 
             return True  # Prevent further handling of the scroll event
 
-        # Get the parent scrolled window and its adjustments
-        scrolled_window = self.hbox.get_parent()
-        v_adjustment = scrolled_window.get_vadjustment()
-        if v_adjustment.get_upper() > v_adjustment.get_page_size():
-            return False # v_adjustment is active
-        else:
-            # Default behavior: Scroll for navigation
-            if event.direction == Gdk.ScrollDirection.UP:
-                self.set_page(self.swap4rtl("previous"))
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                self.set_page(self.swap4rtl("next"))
-            return True
-
-        return False
+        fit_zoom = self.get_fit_zoom()
+        if fit_zoom is not None and self.zoomLevel >= fit_zoom * 1.1:
+            return False  # zoomed in enough — let ScrolledWindow scroll naturally
+        # Default behavior: scroll for page navigation
+        if event.direction == Gdk.ScrollDirection.UP:
+            self.set_page(self.swap4rtl("previous"))
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            self.set_page(self.swap4rtl("next"))
+        return True
 
     def widgetPosition(self, widget):
         children = self.hbox.get_children()
@@ -569,11 +562,8 @@ class PDFFileViewer:
         elif ctrl and keyval in {Gdk.KEY_minus, Gdk.KEY_underscore}:  # Ctrl+Minus (Zoom Out)
             self.on_zoom_out(widget)
             return True
-        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
-            self.on_reset_zoom(widget)
-            return True
-        elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
-            self.set_zoom(1.0)
+        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Fit to screen)
+            self.set_zoom_fit_to_screen(True)
             return True
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
             self.set_zoom_fit_to_screen(True)
@@ -671,22 +661,28 @@ class PDFFileViewer:
             return
         self.set_zoom_fit_to_screen(False)
 
-    def set_zoom_fit_to_screen(self, iscurrent):
+    def get_fit_zoom(self):
         if not hasattr(self, "document") or self.document is None or self.current_page is None:
-            return
-        page = self.document.get_page(self.current_page - 1)
+            return None
         try:
+            page = self.document.get_page(self.current_page - 1)
             page_width, page_height = page.get_size()
-        except AttributeError:
-            return
+        except (AttributeError, Exception):
+            return None
         if page_width < 10 or page_height < 10:
-            return
-        parent_widget = self.hbox.get_parent() # .get_parent()
+            return None
+        parent_widget = self.hbox.get_parent()
         if parent_widget is not None:
             alloc = parent_widget.get_allocation()
-            scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
-            scale_y = (alloc.height + 0) / page_height
-            self.set_zoom(min(scale_x, scale_y), setz=iscurrent)
+            scale_x = alloc.width / (page_width * (2 if self.spread_mode else 1))
+            scale_y = alloc.height / page_height
+            return min(scale_x, scale_y)
+        return None
+
+    def set_zoom_fit_to_screen(self, iscurrent):
+        fit = self.get_fit_zoom()
+        if fit is not None:
+            self.set_zoom(fit, setz=iscurrent)
 
     def set_page(self, action):
         if self.current_index is None:

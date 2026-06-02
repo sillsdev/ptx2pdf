@@ -127,12 +127,24 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
                 p = PdfDict()
                 outpdfobj.trailer.Root.PieceInfo = p
             else:
-                p = output.trailer.Root.PieceInfo
+                p = outpdfobj.trailer.Root.PieceInfo
             pdict = PdfDict(LastModified= "D:" + kw.get("pdfdate_", ""))
             pdict.Private = PdfDict()
             pdict.Private.stream = zio.getvalue()
             pdict.Private.Binary = True
             p.ptxprint = pdict
+            if nums > 1 and os.path.exists(opath):
+                origobj = PdfWriter(None, trailer=PdfReader(opath))
+                if origobj.trailer.Root.PieceInfo is None:
+                    op = PdfDict()
+                    origobj.trailer.Root.PieceInfo = op
+                else:
+                    op = origobj.trailer.Root.PieceInfo
+                op.ptxprint = pdict
+                origobj.fname = opath
+                origobj.compress = True
+                origobj.do_compress = compress
+                origobj.write()
         zio.close()
     if outpdfobj is not None:
         if opath != pdffile:

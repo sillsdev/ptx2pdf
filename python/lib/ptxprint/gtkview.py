@@ -1060,6 +1060,7 @@ class GtkViewModel(ViewModel):
         self.locked = set()
         self.config_dir = None
         self.booklistKeypressed = False
+        self._mpsUpdating = False
         self.configKeypressed = False
         self.configNoUpdate = False
         self.noUpdate = False
@@ -1092,6 +1093,7 @@ class GtkViewModel(ViewModel):
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
+        self.mruCopyTargets = [x for x in self.userconfig.get('init', 'mruCopyTargets', fallback='').split('\n') if x]
 
         llang = self.builder.get_object("ls_interfaceLang")
         btn_language = self.builder.get_object("btn_menu_lang")
@@ -1152,6 +1154,12 @@ class GtkViewModel(ViewModel):
         mrubl.remove_all()
         for m in self.mruBookList:
             mrubl.append(None, m)
+
+        mrucopy = self.builder.get_object("ecb_mpsTargets")
+        if mrucopy is not None:
+            mrucopy.remove_all()
+            for m in self.mruCopyTargets:
+                mrucopy.append(None, m)
 
         imsets = self.builder.get_object("ecb_artPictureSet")
         imsets.remove_all()
@@ -4223,6 +4231,10 @@ class GtkViewModel(ViewModel):
         mps_grid = self.builder.get_object("mps_grid")
         mps_grid.forall(mps_grid.remove)
         self.alltoggles = []
+        self._mpsUpdating = False
+        ecb = self.builder.get_object("ecb_mpsTargets")
+        if ecb is not None:
+            ecb.get_child().set_text("")
         prjs = self.builder.get_object("ls_projects")
         prjCtr = len(prjs)
         cols = int(prjCtr**0.6) if prjCtr <= 70 else 5
@@ -4233,6 +4245,7 @@ class GtkViewModel(ViewModel):
                 tbox.set_use_markup(True)
             else:
                 tbox = Gtk.ToggleButton(b[0])
+                tbox.connect("toggled", lambda w: self._mpsUpdateEcbFromToggles())
             tbox.show()
             self.alltoggles.append((tbox, b[1]))
             mps_grid.attach(tbox, i % cols, i // cols, 1, 1)
@@ -4258,7 +4271,50 @@ class GtkViewModel(ViewModel):
                         outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
                 except FileNotFoundError as e:
                     self.doError(_("File not found"), str(e))
+            if projlist:
+                ecb = self.builder.get_object("ecb_mpsTargets")
+                sel_text = ecb.get_child().get_text().strip() if ecb is not None else ""
+                if sel_text:
+                    self._mpsSaveToMRU(sel_text)
         dialog.hide()
+
+    def _mpsUpdateEcbFromToggles(self):
+        if self._mpsUpdating:
+            return
+        selected = [b.get_label() for b, g in self.alltoggles
+                    if hasattr(b, 'get_active') and b.get_active()]
+        ecb = self.builder.get_object("ecb_mpsTargets")
+        if ecb is not None:
+            ecb.get_child().set_text(" ".join(selected))
+
+    def _mpsUpdateTogglesFromEcb(self, text):
+        self._mpsUpdating = True
+        try:
+            names = set(text.split())
+            for b, g in self.alltoggles:
+                if hasattr(b, 'set_active'):
+                    b.set_active(b.get_label() in names)
+        finally:
+            self._mpsUpdating = False
+        self._mpsUpdateEcbFromToggles()
+
+    def _mpsSaveToMRU(self, selection_text):
+        if selection_text in self.mruCopyTargets:
+            return
+        self.mruCopyTargets.insert(0, selection_text)
+        ecb = self.builder.get_object("ecb_mpsTargets")
+        if ecb is not None:
+            ecb.prepend_text(selection_text)
+        while len(self.mruCopyTargets) > 10:
+            self.mruCopyTargets.pop(10)
+            if ecb is not None:
+                ecb.remove(10)
+        self.userconfig.set('init', 'mruCopyTargets', "\n".join(self.mruCopyTargets))
+
+    def onMpsTargetsChanged(self, widget):
+        text = widget.get_active_text() or ""
+        if text:
+            self._mpsUpdateTogglesFromEcb(text)
         
     def updateExamineBook(self):
         try:
@@ -7537,12 +7593,16 @@ Thank you,
     def onZoomLevelChanged(self, widget):
         if self.loadingConfig:
             return
-        adj_zl = max(30, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
+        adj_zl = max(10, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
+        spin = self.builder.get_object("s_pdfZoomLevel")
+        if spin is not None:
+            step = max(10, int(adj_zl / 100 + 0.5) * 10)
+            spin.get_adjustment().set_step_increment(step)
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True, setz=False)
             
     def onZoomFitClicked(self, btn):
-        self.pdf_viewer.set_zoom_fit_to_screen(None)
+        self.pdf_viewer.set_zoom_fit_to_screen(True)
 
     def onSeekPage2fill(self, btn):
         direction = Gtk.Buildable.get_name(btn).split("_")[-1]

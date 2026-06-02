@@ -483,7 +483,7 @@ THE SOFTWARE.
     <property name="page-increment">5</property>
   </object>
   <object class="GtkAdjustment" id="a_pdfZoomLevel">
-    <property name="lower">20</property>
+    <property name="lower">10</property>
     <property name="upper">1000</property>
     <property name="value">100</property>
     <property name="step-increment">10</property>
@@ -3284,6 +3284,52 @@ current configuration (source) should be copied to:</property>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">Recent:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkComboBoxText" id="ecb_mpsTargets">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="has-entry">True</property>
+                    <property name="tooltip-text" translatable="yes">Shows selected target projects.
+Pick a previous selection from the dropdown,
+or select projects in the grid above.</property>
+                    <signal name="changed" handler="onMpsTargetsChanged" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
                 <property name="halign">end</property>
                 <property name="margin-end">12</property>
                 <property name="margin-top">3</property>
@@ -3403,7 +3449,7 @@ source target setting will "win").</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -14139,7 +14185,7 @@ Warning: CPU-hungry. Go to lunch!</property>
 Ctrl + F - fit to screen
 Ctrl + Plus - zoom in
 Ctrl + Minus - zoom out
-Ctrl + 0 - resets zoom level
+Ctrl + 0 - fit to screen
 Ctrl + Scrollwheel - change zoom level</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
@@ -14159,7 +14205,7 @@ Ctrl + Scrollwheel - change zoom level</property>
 Ctrl + F - fit to screen
 Ctrl + Plus - zoom in
 Ctrl + Minus - zoom out
-Ctrl + 0 - resets zoom level
+Ctrl + 0 - fit to screen
 Ctrl + Scrollwheel - change zoom level</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>

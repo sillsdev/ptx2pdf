@@ -426,7 +426,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             binaries = binaries,
             datas = datas,
                 # The registry tends not to get included
-            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid"] if sys.platform.startswith("win") else []) \
+            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid", "_wmi"] if sys.platform.startswith("win") else []) \
                 + ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._core._exceptions'],
             runtime_hooks = [],
             hookspath = [os.path.abspath("pyinstallerhooks")],
@@ -437,6 +437,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             noarchive = False)
 
 a1.binaries = stripbinaries(a1.binaries, f'xetex/bin/{bindir}')
+a1.binaries = [x for x in a1.binaries if "aom" not in x and "av1" not in x]
 print("Binaries:", a1.binaries)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
 app_name = 'PTXprint'
