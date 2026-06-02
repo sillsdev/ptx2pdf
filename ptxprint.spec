@@ -399,7 +399,7 @@ for k, v in jobs.items():
              binaries = binaries,
              hookspath = [os.path.abspath("pyinstallerhooks")],
              runtime_hooks = [],
-             excludes = ['tkinter', 'scipy', 'pillow_avif', 'avif'],
+             excludes = ['tkinter', 'scipy'],
              win_no_prefer_redirects = False,
              win_private_assemblies = False,
              noarchive = False,
@@ -437,6 +437,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             noarchive = False)
 
 a1.binaries = stripbinaries(a1.binaries, f'xetex/bin/{bindir}')
+a1.binaries = [x for x in a1.binaries if "aom" not in x and "av1" not in x]
 print("Binaries:", a1.binaries)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
 app_name = 'PTXprint'
