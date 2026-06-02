@@ -399,7 +399,7 @@ for k, v in jobs.items():
              binaries = binaries,
              hookspath = [os.path.abspath("pyinstallerhooks")],
              runtime_hooks = [],
-             excludes = ['tkinter', 'scipy'],
+             excludes = ['tkinter', 'scipy', 'pillow_avif', 'avif'],
              win_no_prefer_redirects = False,
              win_private_assemblies = False,
              noarchive = False,
