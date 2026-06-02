@@ -7537,12 +7537,16 @@ Thank you,
     def onZoomLevelChanged(self, widget):
         if self.loadingConfig:
             return
-        adj_zl = max(30, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
+        adj_zl = max(10, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
+        spin = self.builder.get_object("s_pdfZoomLevel")
+        if spin is not None:
+            step = max(10, int(adj_zl / 100 + 0.5) * 10)
+            spin.get_adjustment().set_step_increment(step)
         if self.pdf_viewer is not None:
             self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True, setz=False)
             
     def onZoomFitClicked(self, btn):
-        self.pdf_viewer.set_zoom_fit_to_screen(None)
+        self.pdf_viewer.set_zoom_fit_to_screen(True)
 
     def onSeekPage2fill(self, btn):
         direction = Gtk.Buildable.get_name(btn).split("_")[-1]

@@ -463,12 +463,16 @@ class RunJob:
             self.info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
         if self.info["project/sectintros"]:
-            genfiles.append(self.info.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_INT.SFM"))))
+            intf = self.info.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_INT.SFM")))
+            if intf is not None:
+                genfiles.append(intf)
             if diglots:
                 addintlist = [r"\diglottrue\zglot|L\*"+self.info["project/intfile"]]
                 for k in self.printer.diglotViews.keys():
                     diginfo = self.info.dict["diglots_"][k]
-                    genfiles.append(diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=f"_INT{k}.SFM"))))
+                    intf = diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=f"_INT{k}.SFM")))
+                    if intf is not None:
+                        genfiles.append(intf)
                     addintlist.append(f"\\zglot|{k}\\*"+diginfo["project/intfile"])
                 addintlist.append(r"\zglot|\*")
                 self.info["project/intfile"] = "".join(addintlist)
