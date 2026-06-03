@@ -7378,14 +7378,7 @@ Thank you,
         if not os.path.exists(techref):
             logger.warn(f"Technical Reference not found: {techref}")
         else:
-            if self.showPDFmode == "preview":
-                showref = self.builder.get_object("dlg_preview")
-                self.pdf_viewer.loadnshow(techref, widget=showref, tab="manual")
-                self.set("c_bkView", True, mod=False)
-                self.pdf_viewer.set_zoom_fit_to_screen(None)
-                showref.present()
-            else:
-                startfile(techref)
+            startfile(techref)
                 
         logger.debug(f"{techref=}")
 
