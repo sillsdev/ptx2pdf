@@ -7158,9 +7158,11 @@ class GtkViewModel(ViewModel):
     def onPagesPerSpreadChanged(self, btn):
         self.colorTabs()
         status = self.get("fcb_pagesPerSpread") != "1"
-        for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
+        for w in ["s_sheetsPerSignature", "s_foldCutMargin", "c_foldFirst",
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
+        for w in ["c_scaleToFit"]:
+            self.builder.get_object(w).set_sensitive(not status)
 
     def onTxlOptionsChanged(self, btn):
         o = _("What did Mary say that God had done?")
@@ -7376,14 +7378,7 @@ Thank you,
         if not os.path.exists(techref):
             logger.warn(f"Technical Reference not found: {techref}")
         else:
-            if self.showPDFmode == "preview":
-                showref = self.builder.get_object("dlg_preview")
-                self.pdf_viewer.loadnshow(techref, widget=showref, tab="manual")
-                self.set("c_bkView", True, mod=False)
-                self.pdf_viewer.set_zoom_fit_to_screen(None)
-                showref.present()
-            else:
-                startfile(techref)
+            startfile(techref)
                 
         logger.debug(f"{techref=}")
 

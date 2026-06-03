@@ -37205,14 +37205,12 @@ total of 4 pages on a single sheet.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_scaleToFit">
-                                        <property name="label" translatable="yes">Scale to fit*</property>
+                                        <property name="label" translatable="yes">Scale to fit</property>
                                         <property name="name">Pagination: Scale to fit</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">(Coming soon...)
-Enable this option if it is acceptable
+                                        <property name="tooltip-text" translatable="yes">Enable this option if it is acceptable
 to slightly scale the Page Size (set on
 the Layout tab) in order to fit the
 Physical Paper Size based on the Pages

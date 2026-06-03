@@ -1,0 +1,18 @@
+#!/usr/bin/python3
+
+import argparse, sys, os
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
+    if not hasattr(site, 'getuserbase'):
+        site.getuserbase = lambda : site.USER_BASE
+    os.putenv("PATH", sys._MEIPASS)
+
+try:
+    import ptxprint.pdf.pdfinish
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+    import ptxprint.pdf.pdfinish
+
+if __name__ == "__main__":
+    ptxprint.pdf.pdfinish.main()
