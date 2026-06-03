@@ -353,7 +353,7 @@
     \else
       \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
       \ifdiglot
-	\runtrigg@rs{\mkp@cref{\id@@@\c@rrdstat}{\x@\detokenize\x@{\attr@b}}}%
+    \runtrigg@rs{\mkp@cref{\id@@@\c@rrdstat}{\x@\detokenize\x@{\attr@b}}}%
       \fi
       \runtrigg@rs{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
     \fi
@@ -559,14 +559,16 @@
 }
 
 \x@\def\csname MS:zpdf\endcsname{%
+  \m@kedigitsother
   \get@ttribute{page}%
-  \ifx\attr@b\relax\whichp@ge=0\else\whichp@ge=-\attr@b\fi
+  \ifx\attr@b\relax \whichp@ge=0\else\whichp@ge=\x@\detokenize\x@{\attr@b}\multiply \whichp@ge -1\fi
   \get@ttribute{scale}%
-  \ifx\attr@b\relax\edef\tmp{}\else\edef\tmp{scaled \attr@b}\fi
+  \ifx\attr@b\relax \let\tmpp\empty\else\edef\tmpp{scaled \attr@b}\fi
   \get@ttribute{rotate}%
-  \ifx\attr@b\relax\edef\tmp{\tmp \space rotated \attr@b}\fi
+  \ifx\attr@b\relax \else\edef\tmpp{\tmpp \space rotated \attr@b}\fi
+  \ifx\tmpp\empty\else\edef\tmpp{\x@\detokenize\x@{\tmpp}}
   \get@ttribute{file}%
-  \ifx\tmp\empty\incl@depdf{\attr@b}\else\incl@depdf[\tmp]{\attr@b}\fi
+  \ifx\tmpp\empty \x@\incl@depdf\x@{\attr@b}\else\x@\x@\x@\incl@depdf\x@\x@\x@[\x@\tmpp\x@]\x@{\attr@b}\fi
 }
 
 \x@\def\csname MS:zsetref\endcsname{%
