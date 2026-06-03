@@ -558,6 +558,17 @@
   \fi
 }
 
+\x@\def\csname MS:zpdf\endcsname{%
+  \get@ttribute{page}%
+  \ifx\attr@b\relax\whichp@ge=0\else\whichp@ge=-\attr@b\fi
+  \get@ttribute{scale}%
+  \ifx\attr@b\relax\edef\tmp{}\else\edef\tmp{scaled \attr@b}\fi
+  \get@ttribute{rotate}%
+  \ifx\attr@b\relax\edef\tmp{\tmp \space rotated \attr@b}\fi
+  \get@ttribute{file}%
+  \ifx\tmp\empty\incl@depdf{\attr@b}\else\incl@depdf[\tmp]{\attr@b}\fi
+}
+
 \x@\def\csname MS:zsetref\endcsname{%
   %\trace{M}{This is zsetref "\attribsus@d"}%
   \tempfalse % Did an actual reference get set properly, or was this called with an unattributed string reference 
