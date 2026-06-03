@@ -768,8 +768,6 @@ class RunJob:
                 startname = pdfname
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 startname = pdfname
-            if hasattr(self, 'extrafiles') and ' Finished' in self.extrafiles:
-                startname = self.extrafiles.get(' Finished')
 
             fname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".log"))
             logger.debug(f"Testing log file {fname}")

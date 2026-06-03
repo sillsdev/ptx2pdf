@@ -40,6 +40,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
     opath = pdffile
     ext = None
     outpdfobj = None
+    origobj = None
     coverfile = None
     if kw.get('burst', False) or kw.get('cover', False):
         inpdf = PdfReader(opath)
@@ -177,6 +178,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             pdict.Private.stream = zio.getvalue()
             pdict.Private.Binary = True
             p.ptxprint = pdict
+
             if nums > 1 and os.path.exists(opath):
                 origobj = PdfWriter(None, trailer=PdfReader(opath))
                 if origobj.trailer.Root.PieceInfo is None:
@@ -184,17 +186,23 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
                     origobj.trailer.Root.PieceInfo = op
                 else:
                     op = origobj.trailer.Root.PieceInfo
-                op.ptxprint = pdict
+                # Fresh dict — do NOT share pdict across writers
+                origpdict = PdfDict(LastModified= "D:" + kw.get("pdfdate_", ""))
+                origpdict.Private = PdfDict()
+                origpdict.Private.stream = zio.getvalue()
+                origpdict.Private.Binary = True
+                op.ptxprint = origpdict
                 origobj.fname = opath
                 origobj.compress = True
                 origobj.do_compress = compress
-                origobj.write()
+                # Note: deliberately NOT calling origobj.write() here
         zio.close()
+
     if outpdfobj is not None:
         if opath != pdffile:
             if os.path.exists(opath):
                 safeRename(opath, pdffile)
-        if ext is not None and  ext != "":
+        if ext is not None and ext != "":
             pdffile = pdffile.replace(".pdf", ext+".pdf")
             res[' Finished'] = pdffile
         elif opath == pdffile:
@@ -207,5 +215,11 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
         outpdfobj.write()
+
+    # Write the settings-augmented 1-up *after* the 2-up has been serialised, so 
+    # its lazy references into opath still resolve to the original xetex output.
+    if origobj is not None:
+        origobj.write()
+
     return res
 
