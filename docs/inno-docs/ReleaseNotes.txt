@@ -1,8 +1,19 @@
-PTXprint 3.0.31 Release Notes
-1 Jun 2026
+PTXprint 3.0.32 Release Notes
+4 Jun 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.32 - (4 Jun 2026)
+  * Make sure settings are stored in all PDFs when 2-up pagination is set
+  * Turn zpdf into a milestone with attributes and include in codelets
+  * Fix the Zoom control to update the zoom %age when Zoom to fit has been clicked
+  * One line fix to sort the sections of the report better
+  * Bring back long lost Status bar messages with info, warn and error counts
+  * Always open TechRef documentation in system viewer (making it searchable)
+  * Fix bug of passing the wrong file to the PDFviewer
+  * Add MRU list to Copy Configuration to... dialog
+  * Merge pull request #1172 scale-to-fit
 
 Bug fixes and Improvements in 3.0.31 - (1 Jun 2026)
   * Improve Picture Catalog behaviour
