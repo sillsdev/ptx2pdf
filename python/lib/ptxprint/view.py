@@ -1532,6 +1532,7 @@ class ViewModel:
             changed = True
         else:
             cfgt = os.stat(cfgpath).st_mtime
+        vcsnoted = self.triggervcs  # capture before writeConfig() resets it
         self.writeConfig(force=force)
         if not changed:
             os.utime(cfgpath, (cfgt, cfgt))
@@ -1541,6 +1542,11 @@ class ViewModel:
             if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
+            elif v is not None and vcsnoted:
+                # Primary adjlists changed (e.g. via PDF viewer context menu) —
+                # the diglot output has changed so signal the secondary project too.
+                v.triggervcs = True
+                v.writeConfig()
         self.isChanged = False
 
     def saveAdjlists(self, force=False):
