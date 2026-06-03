@@ -782,11 +782,7 @@ class RunJob:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
                     sl = self.printer.builder.get_object("l_statusLine")
-                    sl.set_text("")
-                    sl.set_tooltip_text("")
                     psl = self.printer.builder.get_object("l_pdfStatusLine")
-                    if psl is not None:
-                        psl.set_text("")
                 if smry["E"] + smry["W"] > 0:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
@@ -795,16 +791,18 @@ class RunJob:
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
-                            sl.set_text(msgs)
-                            sl.set_tooltip_text(msgs)
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
                             self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
+                            self.printer.onIdle(sl.set_tooltip_text, msgs)
+                            if psl is not None:
+                                self.printer.onIdle(psl.set_tooltip_text, msgs)
                         else:
-                            sl.set_text(summaryLine)
-                            sl.set_tooltip_text(msgs)
-                            self.printer.set("l_statusLine", summaryLine)
+                            self.printer.onIdle(self.printer.set, "l_statusLine", summaryLine)
+                            self.printer.onIdle(sl.set_tooltip_text, msgs)
+                            if psl is not None:
+                                self.printer.onIdle(psl.set_tooltip_text, msgs)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
             
