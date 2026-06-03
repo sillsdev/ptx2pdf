@@ -2136,10 +2136,15 @@ class GtkViewModel(ViewModel):
             wid = wid[:subi]
         if wid == "l_statusLine":
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
+            sl = self.builder.get_object("l_statusLine")
+            if sl is not None and not value:
+                sl.set_tooltip_text("")
             psl = self.builder.get_object("l_pdfStatusLine")
             if psl is not None:
                 psl.set_text(value or "")
                 psl.set_visible(bool(value))
+                if not value:
+                    psl.set_tooltip_text("")
         w = self.builder.get_object(wid)
         if w is None:
             if wid.startswith("+"):
