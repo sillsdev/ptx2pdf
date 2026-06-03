@@ -305,7 +305,7 @@
   \t@stpublishability{\thismil@stone}%
   \getp@ram{type}{\thismil@stone}{\thismil@stone}%
   \ifx\p@ram\relax\let\p@ram\empty\fi
-  \trace{m}{\thismil@stone \space type=\p@ram}%
+  \trace{m}{\thismil@stone \space type=\p@ram, attr@b=\attr@b, attrid=\attrid}%
   \ifx\p@ram\empty\else
     \leavevmode
     \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
@@ -566,8 +566,9 @@
   \ifx\attr@b\relax \let\tmpp\empty\else\edef\tmpp{scaled \attr@b}\fi
   \get@ttribute{rotate}%
   \ifx\attr@b\relax \else\edef\tmpp{\tmpp \space rotated \attr@b}\fi
-  \ifx\tmpp\empty\else\edef\tmpp{\x@\detokenize\x@{\tmpp}}
+  \ifx\tmpp\empty\else\edef\tmpp{\x@\detokenize\x@{\tmpp}}\fi
   \get@ttribute{file}%
+  \trace{m}{zpdf file=\attr@b, page=\the\whichp@ge, \tmpp}
   \ifx\tmpp\empty \x@\incl@depdf\x@{\attr@b}\else\x@\x@\x@\incl@depdf\x@\x@\x@[\x@\tmpp\x@]\x@{\attr@b}\fi
 }
 
