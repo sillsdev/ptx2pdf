@@ -1966,12 +1966,16 @@ PDF files which will remain in that folder.</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
-        <property name="tooltip-text" translatable="yes">Delete this Saved Configuration
+        <property name="tooltip-text" translatable="yes">Unlike most other PTXprint settings (which can easily be
+toggled on or off), the Diglot setting is special in that it
+has to set up a number of other settings; and is very hard
+to disable later. So only continue if you are sure that this
+is what you need to do.
 
-This also deletes the corresponding subfolder 
-of temporary files in the local\ptxprint folder 
-but does not delete the previously created 
-PDF files which will remain in that folder.</property>
+It is highly recommended to first save the existing
+configuration with a new name (like "Diglot") and
+then proceed with the step of enabling this option.
+</property>
         <property name="orientation">vertical</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
@@ -1996,9 +2000,6 @@ PDF files which will remain in that folder.</property>
             <property name="fill">False</property>
             <property name="position">0</property>
           </packing>
-        </child>
-        <child>
-          <placeholder/>
         </child>
       </object>
     </child>

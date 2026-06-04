@@ -5430,7 +5430,22 @@ class GtkViewModel(ViewModel):
             self._showSaveAsMonoglotDialog()
             return
 
-        # ---- Normal path: diglot is being activated, or config is loading ----
+        # Intercept activation: warn the user this is a significant, hard-to-reverse step.
+        # Only show the dialog for interactive clicks, not when loading a saved config.
+        if self.get("c_diglot") and not self.loadingConfig:
+            dialog = self.builder.get_object("dlg_confirmDiglot")
+            response = dialog.run()
+            dialog.hide()
+            if response != Gtk.ResponseType.YES:
+                # User declined – silently restore the checkbox to unchecked and return
+                # before any UI state has changed.  handler_block prevents re-entering
+                # this function; mod=False avoids marking the config as changed.
+                btn.handler_block_by_func(self.onDiglotClicked)
+                self.set("c_diglot", False, mod=False)
+                btn.handler_unblock_by_func(self.onDiglotClicked)
+                return
+
+        # ---- Normal path: activation confirmed, or config is loading ----
         self.sensiVisible("c_diglot")
         self.colorTabs()
         if self.loadingConfig:
