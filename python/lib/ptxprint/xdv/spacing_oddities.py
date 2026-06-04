@@ -225,11 +225,11 @@ class Line:
     def is_empty(self):
         return len(self.glyph_clusters) == 0
 
-    def bad_glyphs(self):
+    def bad_glyphs(self, minheight=0.):
         bad_glyphs = []
         for i, c in enumerate(self.glyph_clusters):
             b = c.get_boundary_box()
-            if b[3] - b[1] <= 0.:
+            if b[3] - b[1] <= minheight:
                 continue
             lastx = b[0]
             for g in c.glyphs:

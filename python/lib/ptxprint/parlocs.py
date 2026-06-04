@@ -640,9 +640,8 @@ class Paragraphs(list):
 
     def getbadglyphs(self, pnum):
         for l in self._getlines(pnum):
-            glyphs = l.bad_glyphs()
+            glyphs = l.bad_glyphs(minheight=4.)
             for g in glyphs:
-                print(f"{pnum}: {g}")
                 yield Rect(pnum, *g)
             
     def getcollisions(self, pnum):

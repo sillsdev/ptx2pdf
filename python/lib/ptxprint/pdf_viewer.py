@@ -1228,7 +1228,7 @@ class PDFContentViewer(PDFFileViewer):
                 make_rect(s)
 
     def _draw_badglyphs(self, page, pnum, context, zoomlevel):
-        def make_rect(r, col=(0.2, 0.9, 0.2, 0.6)):
+        def make_rect(r, col=(0.7, 0.25, 0.85, 0.6)):
             context.set_source_rgba(*col)
             context.rectangle(*r)
             context.fill()
@@ -1535,7 +1535,7 @@ class PDFContentViewer(PDFFileViewer):
                     elif p in vertRivers:
                         text = f"<span foreground='yellow'><b>{p}</b></span>"
                     elif p in badGlyphs:
-                        text = f"<span foreground='green'><b>{p}</b></span>"
+                        text = f"<span foreground='#A05080'><b>{p}</b></span>"
                     else: # if p in ufPages:
                         text = f"<b>{p}</b>"
 
