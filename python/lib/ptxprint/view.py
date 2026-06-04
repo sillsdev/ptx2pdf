@@ -1691,6 +1691,8 @@ class ViewModel:
             srcp = os.path.join(pycodedir(), "FRTtemplateBasic.txt")
         elif frtype == "advanced":
             srcp = os.path.join(pycodedir(), "FRTtemplateAdvanced.txt")
+        elif frtype == "diglot":
+            srcp = os.path.join(pycodedir(), "FRTtemplateDiglot.txt")
         elif frtype == "paratext":
             srcp = self.getBookSrcPath("FRT", self.project.prjid)
             if srcp is None:

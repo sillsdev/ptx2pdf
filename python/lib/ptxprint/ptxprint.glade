@@ -2408,7 +2408,7 @@ sections (used for creating a cover page):
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">4</property>
+                        <property name="top-attach">5</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -2420,7 +2420,7 @@ sections (used for creating a cover page):
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">3</property>
+                        <property name="top-attach">4</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -2437,7 +2437,7 @@ sections (used for creating a cover page):
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">5</property>
+                        <property name="top-attach">6</property>
                       </packing>
                     </child>
                     <child>
@@ -2445,7 +2445,7 @@ sections (used for creating a cover page):
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">This operation can overwrite 
+                        <property name="label" translatable="yes">This operation can overwrite
 carefully crafted settings.
 So choose carefully...
 If in doubt, click Cancel.</property>
@@ -2455,12 +2455,47 @@ If in doubt, click Cancel.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">5</property>
+                        <property name="top-attach">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="r_generateFRT_diglot">
+                        <property name="label" translatable="yes">DIGLOT: template for a Diglot or Polyglot publication
+(deliberately fuller — delete sections you do not need)</property>
+                        <property name="name">Generate front matter: DIGLOT (for Diglot/Polyglot publications)</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">This option creates a DIGLOT / POLYGLOT front matter
+template designed for publications with two (or more)
+languages or scripts. It is deliberately more complete
+than the BASIC and ADVANCED templates because diglots
+are inherently complex: two (or more) texts, often two
+contents lists, two prefaces, sometimes two scripts and
+two writing directions. Delete the sections you do not need.
+
+Like the ADVANCED template it uses \zvar|variables\* and
+\zglot|L\* / \zglot|R\* markers for column-specific content,
+so it requires editing before use and is NOT suitable for
+use inside Paratext without prior modification.
+
+If this option is disabled, the Diglot setting is not
+enabled for this configuration.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="draw-indicator">True</property>
+                        <property name="group">r_generateFRT_basic</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">2</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="r_generateFRT_paratext">
-                        <property name="label" translatable="yes">PARATEXT: Make a copy of the Project's FRT book 
+                        <property name="label" translatable="yes">PARATEXT: Make a copy of the Project's FRT book
 (which may be edited to make use of \zvar|variables\*)</property>
                         <property name="name">Generate front matter: PARATEXT (make a local copy)</property>
                         <property name="visible">True</property>
@@ -2484,7 +2519,7 @@ in the Paratext project (so there is nothing to import).</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">3</property>
                         <property name="width">2</property>
                       </packing>
                     </child>

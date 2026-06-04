@@ -3057,6 +3057,7 @@ class GtkViewModel(ViewModel):
         if pgid == "tb_FrontMatter":
             ptFRT = self.getBookSrcPath("FRT", self.project.prjid)
             self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT is not None)
+            self.builder.get_object("r_generateFRT_diglot").set_sensitive(bool(self.get("c_diglot")))
             dialog = self.builder.get_object("dlg_generateFRT")
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
