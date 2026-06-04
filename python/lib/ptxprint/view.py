@@ -1912,6 +1912,19 @@ class ViewModel:
             digView.picinfos.load_files(digView)
         self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
 
+    def setupPicinfos(self, picinfos=None, diglots=True):
+        if picinfos is None:
+            picinfos = self.picinfos
+        vlist = [self]
+        if diglots:
+            vlist = vlist + list(self.diglotViews.values())
+        for i, v in enumerate(vlist):
+            exclusive = v.get("c_exclusiveFiguresFolder")
+            fldr      = v.get("lb_selectFigureFolder", "") if v.get("c_useCustomFolder") else ""
+            imgorder  = v.get("t_imageTypeOrder")
+            lowres    = v.get("r_pictureRes") == "Low"
+            picinfos.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres, append=i!=0)
+
     def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
@@ -1960,7 +1973,8 @@ class ViewModel:
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(baseprjid, intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
-            self.picinfos.getFigureSources(exclusive=exclFigsFolder)
+            self.setupPicinfos()
+            self.picinfos.getFigureSources()
         if self.get("c_useCustomFolder"): # What is happening here? and why? (shouldn't it happen above before we getFigureSources?)
             cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)

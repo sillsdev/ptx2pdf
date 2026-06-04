@@ -1048,13 +1048,8 @@ class RunJob:
         if self.info['document/ifinclfigs'] == 'false':
             # print("NoFigs")
             return []
-        picinfos.build_searchlist()
+        self.printer.setupPicinfos(picinfos, diglots)
         books = [r[0][0].first.book if r[1] else "MOD" for r in jobs] + ["FRT","COV"]
-        exclusive = self.printer.get("c_exclusiveFiguresFolder")
-        fldr      = self.printer.get("lb_selectFigureFolder", "") if self.printer.get("c_useCustomFolder") else ""
-        imgorder  = self.printer.get("t_imageTypeOrder")
-        lowres    = self.printer.get("r_pictureRes") == "Low"
-        picinfos.srchlist = None
         for j in books:
             logger.debug(f"getsrc&dest for {j}")
             picinfos.getFigureSources(keys=j, exclusive=exclusive, mode=self.ispdfxa,
