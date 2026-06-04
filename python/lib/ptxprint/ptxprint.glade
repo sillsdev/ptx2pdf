@@ -3306,12 +3306,17 @@ current configuration (source) should be copied to:</property>
                   <object class="GtkComboBoxText" id="ecb_mpsTargets">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="hexpand">True</property>
-                    <property name="has-entry">True</property>
                     <property name="tooltip-text" translatable="yes">Shows selected target projects.
 Pick a previous selection from the dropdown,
 or select projects in the grid above.</property>
+                    <property name="hexpand">True</property>
+                    <property name="has-entry">True</property>
                     <signal name="changed" handler="onMpsTargetsChanged" swapped="no"/>
+                    <child internal-child="entry">
+                      <object class="GtkEntry">
+                        <property name="can-focus">False</property>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -3603,6 +3608,202 @@ saved configuration.</property>
     <action-widgets>
       <action-widget response="-5">btn_pw_cancel</action-widget>
       <action-widget response="-6">btn_pw_ok</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkDialog" id="dlg_saveAsMonoglot">
+    <property name="width-request">270</property>
+    <property name="height-request">150</property>
+    <property name="can-focus">False</property>
+    <property name="valign">start</property>
+    <property name="title" translatable="yes">PTXprint: Save Configuration As Monoglot...</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type-hint">dialog</property>
+    <property name="skip-taskbar-hint">True</property>
+    <property name="gravity">center</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_disableDiglot_ok">
+                <property name="label">OK</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_disableDiglot_cancel">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel" id="l_warningDiglot2Mono">
+                <property name="height-request">34</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">start</property>
+                <property name="margin-right">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-top">12</property>
+                <property name="label" translatable="yes">&lt;span foreground="red"&gt;&lt;b&gt;WARNING:&lt;/b&gt; You cannot simply disable a Diglot as
+this would discard all your carefully crafted settings.&lt;/span&gt;
+
+Either click &lt;b&gt;Cancel to return&lt;/b&gt; to the current Diglot configuration
+   OR
+&lt;b&gt;Enter a name&lt;/b&gt; for the new configuration, and &lt;b&gt;click OK&lt;/b&gt;. 
+(Your current diglot configuration will remain unchanged, 
+while the new monoglot configuration will be saved and 
+become the active configuration.)</property>
+                <property name="use-markup">True</property>
+                <property name="yalign">0</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="margin-left">6</property>
+                <property name="margin-right">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="label" translatable="yes">Save as a new Configuration
+(which will be a monoglot):</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_newMonoglotConfigName">
+                    <property name="name">Enter a name for the configuration to be saved</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="can-default">True</property>
+                    <property name="has-default">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="max-length">30</property>
+                    <property name="width-chars">30</property>
+                    <property name="input-purpose">terminal</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_diableDiglotNewCfgMsg">
+                <property name="height-request">34</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">start</property>
+                <property name="margin-right">10</property>
+                <property name="margin-end">10</property>
+                <property name="label" translatable="yes">Do not use spaces or special characters
+or an existing Configuration Name.</property>
+                <property name="yalign">0</property>
+                <attributes>
+                  <attribute name="foreground" value="#bfbf1c1c2828"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_disableDiglot_ok</action-widget>
+      <action-widget response="-6">btn_disableDiglot_cancel</action-widget>
     </action-widgets>
   </object>
   <object class="GtkEntryCompletion" id="entrycompletion1"/>

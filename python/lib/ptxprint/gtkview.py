@@ -5194,6 +5194,10 @@ class GtkViewModel(ViewModel):
 
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
+        # Default "Everything" to True when no category has been explicitly selected
+        # (covers first-run and any state where the OK button would be disabled anyway).
+        if not any(self.get(f"c_imp{c}", False) for c in ['Pictures', 'Layout', 'FontsScript', 'Styles', 'Other', 'Everything']):
+            self.set("c_impEverything", True)
         self.setImportButtonOKsensitivity(None)
         self.set("ecb_targetProject", self.project.prjid)
         self.set("ecb_targetConfig", self.cfgid)
