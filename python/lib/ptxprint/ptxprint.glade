@@ -1953,6 +1953,59 @@ PDF files which will remain in that folder.</property>
       </object>
     </child>
   </object>
+  <object class="GtkMessageDialog" id="dlg_confirmDiglot">
+    <property name="can-focus">False</property>
+    <property name="title" translatable="yes">PTXprint: Please Confirm...</property>
+    <property name="resizable">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="message-type">warning</property>
+    <property name="buttons">yes-no</property>
+    <property name="text" translatable="yes">You are about to CREATE a diglot (or polyglot) configuration. This setting cannot be undone.</property>
+    <property name="secondary-text" translatable="yes">Consider using the &lt;b&gt;Save As...&lt;/b&gt; button to create a NEW Configuration Layout before proceeding to enable the Diglot. &lt;b&gt;Are you sure you want to CONTINUE?&lt;/b&gt;</property>
+    <property name="secondary-use-markup">True</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="tooltip-text" translatable="yes">Delete this Saved Configuration
+
+This also deletes the corresponding subfolder 
+of temporary files in the local\ptxprint folder 
+but does not delete the previously created 
+PDF files which will remain in that folder.</property>
+        <property name="orientation">vertical</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="valign">center</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="layout-style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+  </object>
   <object class="GtkDialog" id="dlg_createHyphenList">
     <property name="can-focus">False</property>
     <property name="halign">start</property>
@@ -3615,7 +3668,7 @@ saved configuration.</property>
     <property name="height-request">150</property>
     <property name="can-focus">False</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: Save Configuration As Monoglot...</property>
+    <property name="title" translatable="yes">PTXprint: Save As Monoglot...</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window-position">center-on-parent</property>
