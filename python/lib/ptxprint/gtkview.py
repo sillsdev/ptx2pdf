@@ -5576,17 +5576,39 @@ class GtkViewModel(ViewModel):
             self.onUpdatePicCaptionsClicked(None)
 
     def switchToDiglot(self, pref):
-        dv = self.diglotViews.get(pref, None)
+        dv = None
+        dvprj = None
+        dvcfg = None
+        if self.otherDiglot is not None:
+            if pref is not None:
+                dv = self.otherDiglot[2].get(pref, None)
+        elif self.diglotViews is not None:
+            dv = self.diglotViews.get(pref, None)
         if dv is None:
-            return False
-        dv.saveConfig()
-        dvprj = dv.project
-        self.otherDiglot = (self.project, self.cfgid)
-        # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-        self.changeBtnLabel("b_print", _("Return to Primary"))
-        self.builder.get_object("b_reprint").set_sensitive(False)
+            if self.otherDiglot is not None:
+                dvprj, dvcfg = self.otherDiglot[:2]
+            else:
+                return False
+        elif dv:
+            dv.saveConfig()
+            dvprj = dv.project
+            dvcfg = dv.cfgid
+        if pref is not None:
+            if self.otherDiglot is None:
+                self.otherDiglot = (self.project, self.cfgid, self.diglotViews.copy())
+            # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+            self.changeBtnLabel("b_print", _("Return to Primary"))
+            self.builder.get_object("b_reprint").set_sensitive(False)
+            self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+        else:
+            self.changeBtnLabel("b_print", _("Print (Make PDF)"))
+            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            self.builder.get_object("b_reprint").set_sensitive(True)
+            if self.otherDiglot is not None:
+                self.diglotViews = self.otherDiglot[2]
+                self.otherDiglot = None
         self.set("fcb_project", dvprj.prjid)
-        self.set("ecb_savedConfig", dv.cfgid)
+        self.set("ecb_savedConfig", dvcfg)
         self.disableLayoutAnalysis()
         # self.updateProjectSettings(dvprj.prjid, dvprj.guid, configName=dv.cfgid)
         # self.updateDialogTitle()

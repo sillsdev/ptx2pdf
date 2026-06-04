@@ -144,6 +144,13 @@ class ViewModel:
         # private to this implementation
         self.dict = {}
 
+    def __eq__(self, other):
+        if self.project is None or other.project is None:
+            return False
+        if self.cfgid != other.cfgid:
+            return False
+        return self.project == other.project
+
     def setup_ini(self):
         self.setDate()
         self.report.clear()

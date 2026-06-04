@@ -5,7 +5,7 @@ from shutil import rmtree
 from zipfile import ZipFile
 
 import ptxprint
-from ptxprint.utils import saferelpath, appdirs
+from ptxprint.utils import saferelpath, appdirs, bookcodes
 from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
@@ -261,7 +261,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     attach_console()
     if viewClass is None:
-        viewClass = ViewModel
+        viewClass = MultiView if args.cmd == "fill" else ViewModel
     savetreedirs = False
     ptxdir = None
     # necessary for the side effect of setting pt_bindir :(
@@ -459,7 +459,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
-        if args.print or retview or args.cmd == "print":
+        if args.print or retview or args.cmd in ("print", "fill"):
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)
@@ -485,16 +485,18 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             mainw.saveAdjlists()
             if not args.enablescripts:
                 mainw.set("c_processScript", False)
-            job = doit(mainw, noview=True, nothreads=True)
-            if job is not None:
-                res = job.res
+            if args.cmd == "fill":
+                mainw.initScheduler(args.jobs, None)
+                results = mainw.run_all(False)
+                print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))
             else:
-                res = 0
+                job = doit(mainw, noview=True, nothreads=True)
+                res = 0 if job is None else job.res
+                print(f"{res=}")
         if args.action:
             print(getattr(mainw, args.action)())
         elif args.cmd == "archive":
             mainw.createArchive(args.output, nobuild=True)
-        print(f"{res=}")
         sys.exit(res)
     else:
         from ptxprint.gtkview import GtkViewModel, reset_gtk_direction

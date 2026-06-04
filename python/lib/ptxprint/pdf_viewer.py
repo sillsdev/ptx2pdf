@@ -2234,12 +2234,7 @@ class PDFContentViewer(PDFFileViewer):
         
     def edit_style(self, widget, a):
         (mkr, pref) = a
-        if pref != self.currpref:
-            if self.currpref is not None:
-                self.model.onOK(None)
-            if pref is not None:
-                self.model.switchToDiglot(pref)
-            self.currpref = pref
+        self.model.switchToDiglot(pref)
         if mkr is not None:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
