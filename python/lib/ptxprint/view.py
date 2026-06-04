@@ -863,7 +863,7 @@ class ViewModel:
                 try:
                     cupdates = json.load(inf)
                     self.copyrightInfo.update(cupdates)
-                except json.decode.JSONDecodeError as e:
+                except json.decoder.JSONDecodeError as e:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
         return self.copyrightInfo
