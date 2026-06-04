@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import argparse, sys, os
+import argparse, sys, os, site
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")

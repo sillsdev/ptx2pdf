@@ -2079,7 +2079,7 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def createArchive(self, filename=None):
+    def createArchive(self, filename=None, nobuild=False):
         if filename is None:
             filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
         if not filename.lower().endswith(".zip"):
@@ -2090,10 +2090,14 @@ class ViewModel:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
         temps = []
-        from ptxprint.runjob import RunJob
-        runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
-        runjob.doit(noview=True)
-        res = runjob.wait()
+        if not nobuild:
+            from ptxprint.runjob import RunJob
+            runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
+            runjob.doit(noview=True)
+            res = runjob.wait()
+        else:
+            runjob = None
+            res = 0
         found = False
         # TODO: include burst pdfs
         xdvfile = None
@@ -2117,7 +2121,7 @@ class ViewModel:
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
                     self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
-        for f in set(self.tempFiles + runjob.picfiles + temps):
+        for f in set(self.tempFiles + ([] if runjob is None else runjob.picfiles) + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.project.path)

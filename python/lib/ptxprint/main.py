@@ -113,12 +113,19 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         server.terminate()
         server.wait()
 
+commands = {
+    'print': (),
+    'fill': (),
+    'archive': ()
+}
+
 def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
     # parser.add_argument('-h','--help', help="show this help message and exit")
 
     # Positional Argument
     parser.add_argument('pid', nargs="?", help="Project ID or full path to a ptxprint.cfg file")
+    parser.add_argument('cmd', nargs="?", choices=list(commands.keys()), help="Non interactive command to execute")
 
     # Commonly Used Arguments
     parser.add_argument('-b', '--books', help="List of books to print")
@@ -134,12 +141,13 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     # Execution & Processing
     parser.add_argument('-A', '--action', help="Perform a specific action instead of printing")
+    parser.add_argument("-o", '--output', help="Output file for actions like archive")
     parser.add_argument('-m', '--macros', help="Directory containing TeX macros (paratext2.tex)")
     parser.add_argument('-M', '--module', help="Specify module to print")
     parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
-    parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
-    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
-    parser.add_argument('-t','--test',help="test file to run interactive test against")
+    parser.add_argument('-T', '--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
+    parser.add_argument('-C', '--capture', help="Capture interaction events")
+    parser.add_argument('-t', '--test',help="test file to run interactive test against")
     parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
     
     # Performance & Debugging
@@ -195,6 +203,14 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         opts = shlex.split(argsline)
         args = parser.parse_args(opts, args)
     args = parser.parse_args(None, args)
+    if args.pid in commands and args.cmd is None:
+        args.cmd = args.pid
+        args.pid = None
+    if args.cmd is None:
+        if args.print:
+            args.cmd = "print"
+        elif args.action == "createArchive":
+            args.cmd = "archive"
 
     # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
     # setup_i18n()
@@ -293,7 +309,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             args.projects.append(candidates[0]['path'])
             print(f"Adding {candidates[0]['path']}")
         elif len(candidates) > 1:
-            if not args.print and args.test is None:
+            if not args.print and args.test is None and not args.cmd:
                 from ptxprint.gtkview import chooseProjectsDir
                 chosen = chooseProjectsDir(candidates)
                 if chosen is None:
@@ -314,7 +330,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     if sys.platform.startswith("linux") and not args.nox11:
         os.environ['GDK_BACKEND'] = 'x11'
     if (args.extras & 8) != 0 or not len(args.projects):
-        if not args.print and args.test is None:
+        if not args.print and args.test is None and not args.cmd:
             from ptxprint.gtkview import chooseProjectsDir
             chosen = chooseProjectsDir(find_pt_candidates())
             if chosen is None:
@@ -433,7 +449,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     if args.test is not None:
         runtest(prjTree, config, macrosdir, project, doit, args)
-    elif args.print or args.action is not None or retview:
+    elif args.print or args.cmd is not None or retview:
         mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()
         if args.pid:
@@ -443,7 +459,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
-        if args.print or retview:
+        if args.print or retview or args.cmd == "print":
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)
@@ -476,6 +492,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 res = 0
         if args.action:
             print(getattr(mainw, args.action)())
+        elif args.cmd == "archive":
+            mainw.createArchive(args.output, nobuild=True)
         print(f"{res=}")
         sys.exit(res)
     else:
