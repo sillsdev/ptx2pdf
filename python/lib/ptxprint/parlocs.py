@@ -23,6 +23,7 @@ def readpts(s):
         except ValueError:
             return 0
 
+
 @dataclass
 class ParRect:
     pagenum:    int
@@ -77,6 +78,7 @@ class ParDest:
     def __lt__(self, other):
         return self.y > other.y or self.y == other.y and self.x < other.x
 
+
 @dataclass
 class ParInfo:
     ref:        str
@@ -101,6 +103,7 @@ class ParInfo:
     def sortKey(self):
         return (self.rects[-1].pagenum, refSort(self.ref), getattr(self, 'parnum', 0))
 
+
 @dataclass
 class FigInfo:
     ref:        str
@@ -121,6 +124,7 @@ class FigInfo:
     def sortKey(self):
         return (self.rects[-1].pagenum, refSort(self.ref), 0)       # must sort with ParInfo
 
+
 @dataclass
 class ColInfo:
     height: float
@@ -128,6 +132,7 @@ class ColInfo:
     width:  float
     topx:   float
     topy:   float
+
 
 @dataclass
 class BadSpace:
@@ -139,6 +144,7 @@ class BadSpace:
 
     def __lt__(self, other):
         return self.width < other.width
+
 
 class ParlocLinesIterator:
     def __init__(self, fname):
@@ -177,6 +183,14 @@ class ParlocLinesIterator:
             self.replay = True
             logger.log(7, "Starting replay of {len(self.collection)} lines")
 
+
+@dataclass
+class Rect:
+    pnum: int
+    xmin: float
+    ymin: float
+    xmax: float
+    ymax: float
 
 
 class PopplerDest(ctypes.Structure):
@@ -623,6 +637,13 @@ class Paragraphs(list):
             spaces, tspaces, nspaces = l.has_badspace(threshold, char_threshold)
             for s in spaces:
                 yield BadSpace(pnum, l, *s)
+
+    def getbadglyphs(self, pnum):
+        for l in self._getlines(pnum):
+            glyphs = l.bad_glyphs()
+            for g in glyphs:
+                print(f"{pnum}: {g}")
+                yield Rect(pnum, *g)
             
     def getcollisions(self, pnum):
         for l in self._getlines(pnum):
@@ -643,6 +664,7 @@ class Paragraphs(list):
         collisions = set()
         spaces = set()
         rivers = set()
+        badglyphs = set()
         for pnum in range(len(self.pindex)):
             for l in self._getlines(pnum):
                 if (wanted & 1) == 1 and pnum not in spaces:
@@ -653,6 +675,10 @@ class Paragraphs(list):
                     c = l.has_collisions()
                     if len(c):
                         collisions.add(pnum)
+                if (wanted & 2) == 2 and pnum not in badglyphs:
+                    g = l.bad_glyphs()
+                    if len(g):
+                        badglyphs.add(pnum)
                 if ((wanted & 2) == 0 or pnum in collisions) \
                         and ((wanted & 1) == 0 or pnum in spaces):
                     break
@@ -660,6 +686,6 @@ class Paragraphs(list):
                 r = self.getrivers(pnum)
                 if len(r):
                     rivers.add(pnum)
-        return (sorted(spaces), sorted(collisions), sorted(rivers))
+        return (sorted(spaces), sorted(collisions), sorted(rivers), sorted(badglyphs))
             
             

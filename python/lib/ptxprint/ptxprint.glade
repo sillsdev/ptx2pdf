@@ -14279,6 +14279,21 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="position">3</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkCheckButton" id="c_findBadGlyphs">
+            <property name="label" translatable="yes">Bad Glyphs</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="active">True</property>
+            <property name="draw-indicator">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>

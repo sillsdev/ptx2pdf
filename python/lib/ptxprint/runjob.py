@@ -1052,8 +1052,7 @@ class RunJob:
         books = [r[0][0].first.book if r[1] else "MOD" for r in jobs] + ["FRT","COV"]
         for j in books:
             logger.debug(f"getsrc&dest for {j}")
-            picinfos.getFigureSources(keys=j, exclusive=exclusive, mode=self.ispdfxa,
-                                      figFolder=fldr, imgorder=imgorder, lowres=lowres)
+            picinfos.getFigureSources(keys=j, mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         logger.debug(f"{books=}, {[x.fields for x in picinfos.pics.values()]}")
         missingPics = [v['src'] for v in picinfos.get_pics() if v['anchor'][:3] in books and 'destfile' not in v and 'src' in v]

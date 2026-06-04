@@ -225,6 +225,19 @@ class Line:
     def is_empty(self):
         return len(self.glyph_clusters) == 0
 
+    def bad_glyphs(self):
+        bad_glyphs = []
+        for i, c in enumerate(self.glyph_clusters):
+            b = c.get_boundary_box()
+            if b[3] - b[1] <= 0.:
+                continue
+            lastx = b[0]
+            for g in c.glyphs:
+                if g[4] == 0:
+                    bad_glyphs.append([lastx, b[1], g[2], b[3]])
+                lastx = g[2]
+        return bad_glyphs
+
 class GlyphCluster:
     def __init__(self, v, font):
         self.font = font 
@@ -253,7 +266,7 @@ class GlyphCluster:
                 yield self.glyphs[i], prev_gc.glyphs[j]
 
     def get_boundary_box(self):
-        if len(self.glyphs) ==0:
+        if len(self.glyphs) == 0:
             return [0, self.vmin, 0, self.vmax]
         else:
             return [self.glyphs[0][0], self.vmin, self.glyphs[-1][2], self.vmax]
