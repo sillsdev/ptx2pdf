@@ -5455,6 +5455,23 @@ class GtkViewModel(ViewModel):
             self.diglotViews['R'] = self.createDiglotView()
             self.set("c_doublecolumn", True)
             self.builder.get_object("c_doublecolumn").set_sensitive(False)
+            # Open the Project dropdown for the R row so the user immediately knows
+            # they need to select a secondary project.
+            if self.gtkpolyglot is not None:
+                tv = self.gtkpolyglot.treeview
+                cols = tv.get_columns()
+                if len(cols) > 2:
+                    proj_col = cols[2]   # Code=0, 1|2=1, Project=2
+                    def _open_project_dropdown(tv=tv, proj_col=proj_col):
+                        model = tv.get_model()
+                        for i, row in enumerate(model):
+                            if row[0] == "R":   # m.code == 0
+                                path = Gtk.TreePath([i])
+                                tv.scroll_to_cell(path, proj_col, False, 0.0, 0.0)
+                                tv.set_cursor(path, proj_col, True)
+                                break
+                        return False
+                    GLib.idle_add(_open_project_dropdown)
         else:
             self.builder.get_object("c_doublecolumn").set_sensitive(True)
             self.setPrintBtnStatus(2)
