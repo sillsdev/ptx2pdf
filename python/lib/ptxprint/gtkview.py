@@ -188,7 +188,7 @@ r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
 s_pdfZoomLevel btn_page_first btn_page_previous t_pgNum btn_page_next btn_page_last
-b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
+b_reprint l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
 btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint
 btn_showSettings
