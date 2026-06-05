@@ -976,7 +976,7 @@
       \trace{orn}{Adding to group box \l@gdims\theorngroup\ifvbox\theorngroup vert\fi}%
       \ifvbox\theorngroup
         \global\setbox\theorngroup=\vbox{\everypar={}\let\par\endgraf\unvbox\theorngroup\box\theornament}%
-        \showbox\theorngroup
+        %\showbox\theorngroup
       \else
         \global\setbox\theorngroup=\hbox{\unhbox\theorngroup\box\theornament}%
       \fi
