@@ -8,6 +8,10 @@ This is an non-official distribution of PTXprint for macOS with Intel(TM) chips.
 
 ## Download macOS App (for Intel chip only)
 
+Download any version here:
+https://www.flagsoft.com/public/ptxprint/
+
+
 ### 2026-06jun-01, Version 3.0.31, https://www.flagsoft.com/public/ptxprint/2026-06jun-01/PTXprint.zip
 
 sha256sum of ZIP file: ad1b6436f35650e404fc072e72f5ec3b663e78b2de8dc8fcc62aed3a5eb8e377
