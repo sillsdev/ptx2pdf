@@ -88,7 +88,7 @@ class TexModel:
     _ptxversion = 9
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
-                    ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
+                    ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophesy"), ("TOB-LAO", "intdc"), 
                     ("MAT-REV", "intnt"), ("MAT-JHN", "intgospels"), ("ROM-PHM", "intepistles"), ("HEB-REV", "intletters"))
     _fonts = {
         "fontregular":              ("bl_fontR", None, None, None, None),

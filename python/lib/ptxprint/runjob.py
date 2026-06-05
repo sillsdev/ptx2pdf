@@ -782,12 +782,12 @@ class RunJob:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
                     sl = self.printer.builder.get_object("l_statusLine")
-                    psl = self.printer.builder.get_object("l_pdfStatusLine")
                 if smry["E"] + smry["W"] > 0:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
                     if not self.noview and not self.args.print:
+                        severity = "error" if smry["E"] > 0 else "warn"
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
@@ -795,14 +795,12 @@ class RunJob:
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
                             self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
-                            self.printer.onIdle(sl.set_tooltip_text, msgs)
-                            if psl is not None:
-                                self.printer.onIdle(psl.set_tooltip_text, msgs)
+                            self.printer.onIdle(sl.set_tooltip_text, "" if msgs == chkmsg else msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, "error" if smry["E"] > 0 else None)
                         else:
                             self.printer.onIdle(self.printer.set, "l_statusLine", summaryLine)
-                            self.printer.onIdle(sl.set_tooltip_text, msgs)
-                            if psl is not None:
-                                self.printer.onIdle(psl.set_tooltip_text, msgs)
+                            self.printer.onIdle(sl.set_tooltip_text, "" if msgs == summaryLine else msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, summaryLine, msgs, severity)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
             
@@ -1048,17 +1046,11 @@ class RunJob:
         if self.info['document/ifinclfigs'] == 'false':
             # print("NoFigs")
             return []
-        picinfos.build_searchlist()
+        self.printer.setupPicinfos(picinfos, diglots)
         books = [r[0][0].first.book if r[1] else "MOD" for r in jobs] + ["FRT","COV"]
-        exclusive = self.printer.get("c_exclusiveFiguresFolder")
-        fldr      = self.printer.get("lb_selectFigureFolder", "") if self.printer.get("c_useCustomFolder") else ""
-        imgorder  = self.printer.get("t_imageTypeOrder")
-        lowres    = self.printer.get("r_pictureRes") == "Low"
-        picinfos.srchlist = None
         for j in books:
             logger.debug(f"getsrc&dest for {j}")
-            picinfos.getFigureSources(keys=j, exclusive=exclusive, mode=self.ispdfxa,
-                                      figFolder=fldr, imgorder=imgorder, lowres=lowres)
+            picinfos.getFigureSources(keys=j, mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         logger.debug(f"{books=}, {[x.fields for x in picinfos.pics.values()]}")
         missingPics = [v['src'] for v in picinfos.get_pics() if v['anchor'][:3] in books and 'destfile' not in v and 'src' in v]

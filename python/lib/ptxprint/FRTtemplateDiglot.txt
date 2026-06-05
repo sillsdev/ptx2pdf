@@ -1,0 +1,246 @@
+\id FRT Diglot / Polyglot Front Matter Template (edit before use!)
+
+\rem =========================================================================
+\rem  DIGLOT / POLYGLOT FRONT MATTER TEMPLATE
+\rem =========================================================================
+\rem This template is a starting point for Diglot and Polyglot publications in
+\rem PTXprint. It is deliberately fuller than the Basic and Advanced monoglot
+\rem templates, because diglots are inherently complex: there are two (or more)
+\rem texts, often two contents lists, two prefaces, sometimes two scripts and
+\rem two writing directions. Delete the parts you do not need.
+\rem
+\rem As with the other templates, this is structured on the USFM specification
+\rem for Paratext's FRT book, but uses additional \z... markers and \zvar
+\rem variables that make it UNSUITABLE for use inside Paratext without prior
+\rem modification. Use it only with PTXprint's "Generate" front matter feature.
+\rem
+\rem -------------------------------------------------------------------------
+\rem  KEY DIGLOT CONCEPTS USED BELOW
+\rem -------------------------------------------------------------------------
+\rem  \zglot|L\*   switch to the LEFT / primary text (T1) only
+\rem  \zglot|R\*   switch to the RIGHT / secondary text (T2) only
+\rem  \zglot|\*    switch back to BOTH sides (neutral). The line that resets
+\rem               to \zglot|\* should NEVER be removed in a diglot.
+\rem
+\rem  Per-side title variables (set on the Title/Peripheral pages of PTXprint):
+\rem    \zvar|t1title\*  \zvar|t2title\*   (and t3title... for polyglots)
+\rem    \zvar|t1contentstitle\*  \zvar|t2contentstitle\*
+\rem    \zvar|t1languagelocalspelling\*  \zvar|t2languagelocalspelling\*
+\rem    \zvar|t1andinlocallanguage\*   (the word "and" in the local language)
+\rem
+\rem  Per-side Tables of Contents:  \ztoc|mainL\*  and  \ztoc|mainR\*
+\rem
+\rem  Pulling a periph (preface, transfer primer, abbreviations...) separately
+\rem  from each side's INT book:
+\rem    \zgetperiph|side="L" id="preface"\*
+\rem    \zgetperiph|side="R" id="preface"\*
+\rem
+\rem  \zNeedOddPage   force the following matter to begin on a right-hand
+\rem                  (recto / odd) page.
+\rem
+\rem  Mixed writing directions (e.g. a Hebrew or Yiddish side beside a Latin
+\rem  side) use \beginL ... and \beginR ... to set the base direction of a run.
+\rem =========================================================================
+
+
+\rem =========================================================================
+\periph Title Page|id="title"
+\rem =========================================================================
+\nopagenums
+\zgap|1.5in\*
+\mt1 \zvar|t1title\*
+\mt2 \zvar|t2title\*
+\zgap|3in\*
+\rem \fig |src="C:/Path/To/Folder/OrgLogo.png" size="col" pgpos="pc" scale="0.15" copy="None"\fig*
+
+
+\rem =========================================================================
+\periph Publication Data|id="pubdata"
+\rem  This page is normally typeset from the LEFT/primary side only, so we
+\rem  fix it to \zglot|L\* and reset to \zglot|\* at the end.
+\rem =========================================================================
+\zglot|L\*
+\zgap|0.5in\*
+\mt3 \zvar|t1title\*
+\mt4 \zvar|t2title\*
+\zbl|1\*
+\rem A sentence explaining what each side of the diglot actually is. Edit freely.
+\pc This diglot publication includes a translation of \zvar|englishbooknames\* into the \zvar|languagename\* language. The opposite side is the corresponding text in the second language.
+\zbl|1\*
+\pc Language: \zvar|languagename\* (\zvar|langiso\*)
+\pc Script: \zvar|script\*
+\pc Trial edition for limited distribution
+\pc Copies printed: \zvar|copiesprinted\*
+\pc Date printed: \zvar|dateprinted\*
+\pc \zvar|edition\* Edition, \zvar|printing\* Printing
+\zbl|2\*
+\pc \zcopyright
+\zccimg by-nc-nd|size="col" pgpos="pc" scale="0.2"\*
+\b
+\pc \zlicense
+\pc \zvar|licensetext\*
+\zbl|2\*
+\pc \zimagecopyrights
+\pc All uncredited pictures are in the public domain.
+\zbl|3\*
+\pc Printed by: \zvar|printedby\*
+\zglot|\*
+
+
+\rem =========================================================================
+\periph Foreword|id="foreword"
+\rem =========================================================================
+\zNeedOddPage
+\resetpagenums -1
+\dopagenums
+\h Foreword
+\is Foreword
+\p The \bk Xyz Translation\bk* of the Bible is a translation which seeks to state clearly,
+accurately and naturally the meaning of the original texts in words and forms that are widely
+accepted by people who use the language as a means of communication.
+\p We trust that the reading and study of this translation will result in a better understanding
+of the meaning of the Bible.
+
+
+\rem =========================================================================
+\periph Inline Prefaces|id="prefaces"
+\rem  Two-sided preface. Each side's preface is pulled from the "preface"
+\rem  periph stored in that side's INT book, so the two languages each get
+\rem  their own preface in their own words. Delete one side for a foreword
+\rem  that only appears on one language.
+\rem  (Alternatively, write a single inline preface below instead.)
+\rem =========================================================================
+\zNeedOddPage
+\dopagenums
+\zglot|L\*
+\zgetperiph|side="L" id="preface"\*
+\pagebreak
+\zglot|R\*
+\zgetperiph|side="R" id="preface"\*
+\rem The next line resets to both sides and must NOT be removed in a diglot.
+\zglot|\*
+
+\rem -------------------------------------------------------------------------
+\rem  SINGLE INLINE PREFACE (alternative to the two-sided block above).
+\rem  Uncomment and edit if you prefer one shared preface.
+\rem -------------------------------------------------------------------------
+\rem \periph Preface|id="preface"
+\rem \h Preface
+\rem \is Preface
+\rem \p The translation of the Bible into this language began in ... when ...
+\rem \s1 The translation process
+\rem \p In order to achieve the highest quality, a rigorous process has been used ...
+\rem \s2 The text used for this translation
+\rem \p ...
+\rem \pr Translation Committee
+\rem \pr Mnth, Year
+
+
+\rem =========================================================================
+\periph Transfer Primer|id="transferprimer"
+\rem  A transfer/transition primer helps readers who know one language move to
+\rem  the other. It is typically taken from the LEFT/primary side only.
+\rem  Delete this whole section if you are not using a transfer primer.
+\rem =========================================================================
+\zNeedOddPage
+\dopagenums
+\zglot|L\*
+\zgetperiph|side="L" id="transferprimer"\*
+\pagebreak
+\rem The next line resets to both sides and must NOT be removed in a diglot.
+\zglot|\*
+
+
+\rem =========================================================================
+\periph Helps for the reader|id="helps"
+\rem =========================================================================
+\is Helps for the reader
+\m Keep these matters in mind while reading:
+\li 1. Wherever there is a word or phrase \w marked like this\w* it shows that this is a new or difficult word (for example, baptism, synagogue, or Pharisee). Words like these have an explanation in the glossary section at the end of the book.
+\li 2. In order to understand more about a word or phrase which is marked with a symbol like this* you need to read about it at the bottom of the page.
+\li 3. A symbol like this† indicates that this matter is also contained in another book - look for the reference at the bottom of the page.
+\li 4. In some places, where words are not in the original language books, in order to show them, *[we have marked in square brackets like this] and have explained about them at the bottom of the page.
+
+
+\rem =========================================================================
+\periph Tables of Abbreviations|id="abbrlists"
+\rem  Two-sided abbreviations, each pulled from its side's INT book. Delete
+\rem  this section, or one side, if not needed.
+\rem =========================================================================
+\zNeedOddPage
+\dopagenums
+\zglot|L\*
+\zgetperiph|side="L" id="abbrlist"\*
+\pagebreak
+\zglot|R\*
+\zgetperiph|side="R" id="abbrlist"\*
+\rem The next line resets to both sides and must NOT be removed in a diglot.
+\zglot|\*
+
+
+\rem =========================================================================
+\periph Table of Contents|id="contents"
+\rem  Diglots usually want TWO contents lists - one per side - using mainL and
+\rem  mainR. Other ztoc parameters: bible, main, pre, nt, ot, dc, post, heb.
+\rem =========================================================================
+\zbl|3\*
+\mt3 \zvar|t1contentstitle\*
+\zgap|6pt\*
+\ip \ztoc|mainL\*
+\zbl|3\*
+\mt3 \zvar|t2contentstitle\*
+\zgap|6pt\*
+\ip \ztoc|mainR\*
+
+
+\rem =========================================================================
+\periph Alphabetical Contents|id="alphacontents"
+\rem  Optional alphabetical book list. sorta/sortb/sortc sort by toc1/toc2/toc3
+\rem  for all books; biba/bibb/bibc for biblical books only.
+\rem =========================================================================
+\is Alphabetical Order of Books
+\p \ztoc|bibc\*
+\ip
+
+\rem =========================================================================
+\rem  COVER
+\rem  Cover pieces are optional. Enable the cover in PTXprint to use them.
+\rem  Use t1title / t2title so both languages appear on the cover and spine.
+\rem =========================================================================
+\rem -------------------------------------------------------------------------
+\periph front|id="coverfront"
+\rem -------------------------------------------------------------------------
+\zgap|15pt\*
+\mt1 \zvar|t1title\*
+\mt2 \zvar|t2title\*
+\rem \fig |src="C:/Path/To/Folder/CoverImage.png" size="col" pgpos="pc" scale="0.50" copy="None"\fig*
+\zgap|10pt\*
+\mt3 \zvar|t1languagelocalspelling\* \zvar|t1andinlocallanguage\* \zvar|t2languagelocalspelling\*
+\endgraf
+\rem -------------------------------------------------------------------------
+\periph spine|id="coverspine"
+\rem -------------------------------------------------------------------------
+\mt2 \zvar|t1title\* ~~-~~ \zvar|t2title\*
+\p
+\rem -------------------------------------------------------------------------
+\periph back|id="coverback"
+\rem -------------------------------------------------------------------------
+\zgap|1in\*
+\pc ~
+\vfill
+\rem The ISBN barcode is only printed if the "isbn" variable has been set.
+\zifvarset|var="isbn" emptyok="F"\*
+\ztruetext
+\esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="medium"\* \esbe
+\zgap|10pt\*
+\ztruetext*
+\rem -------------------------------------------------------------------------
+\periph spannedCover|id="coverwhole"
+\rem  Used when the cover is laid out as one wide sheet (front+spine+back).
+\rem -------------------------------------------------------------------------
+\zgap|1pt\*
+\vfill
+\pc ~
+\vfill
+\endgraf
+

@@ -124,14 +124,34 @@ class XDViReader:
         if self.file is None:
             selfopen = True
             self.__enter__()
+        self.readpost()
+        yield from self._parse()
+        if selfopen:
+            self.__exit__(None, None, None)
+            self.file = None
+
+    def _parse(self):
         for (op, opc, data) in self:
             res = getattr(self, opc[0])(op, opc[2], data) 
             yield (op, res)
             if opc[2] == "postpost":
                 break
-        if selfopen:
-            self.__exit__(None, None, None)
-            self.file = None
+
+    def readpost(self):
+        self.file.seek(-16, 2)
+        dat = self.file.read(16)
+        postpos = 0
+        for i in range(16):
+            if dat[-1-i] != 0xDF:
+                postpos = unpack(">L", dat[-5-i:-1-i])[0]
+                break
+        else:
+            self.seek(0)
+            return
+        self.file.seek(postpos)
+        for (op, res) in self._parse():
+            pass
+        self.file.seek(0)
 
     def out(self, txt):
         # print(("pg[{}] ".format(self.pageno) + txt).encode("utf-8"))

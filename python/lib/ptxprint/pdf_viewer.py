@@ -812,6 +812,7 @@ class PDFContentViewer(PDFFileViewer):
         self.collisionpages = []
         self.spacepages = []
         self.riverpages = []
+        self.badglyphpages = []
         # UI extensions loaded from <config>/UIExtensions.json
         self.uiExtensions = []
         self.uiExtensionsLoaded = False
@@ -1012,6 +1013,7 @@ class PDFContentViewer(PDFFileViewer):
             layerfns.append(self._draw_spaces)
             layerfns.append(self._draw_collisions)
             layerfns.append(self._draw_whitespace_rivers)
+            layerfns.append(self._draw_badglyphs)
         
         images = []
         if self.spread_mode:
@@ -1212,7 +1214,6 @@ class PDFContentViewer(PDFFileViewer):
             context.set_source_rgba(*col)
             context.rectangle(*r)
             context.fill()
-
         for c in self.parlocs.getcollisions(pnum):
             make_rect(c)
             
@@ -1225,6 +1226,14 @@ class PDFContentViewer(PDFFileViewer):
         for r in self.parlocs.getrivers(pnum, **self.riverparms):
             for s in r.spaces:
                 make_rect(s)
+
+    def _draw_badglyphs(self, page, pnum, context, zoomlevel):
+        def make_rect(r, col=(0.7, 0.25, 0.85, 0.6)):
+            context.set_source_rgba(*col)
+            context.rectangle(*r)
+            context.fill()
+        for r in self.parlocs.getbadglyphs(pnum):
+            make_rect([r.xmin, r.ymin, r.xmax-r.xmin, r.ymax-r.ymin])
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):
@@ -1377,7 +1386,7 @@ class PDFContentViewer(PDFFileViewer):
             if len(self.badspaces):
                 self.model.set("s_spaceEms", self.badspaces[0].widthem)
         wanted = 7
-        self.spacepages, self.collisionpages, self.riverpages = \
+        self.spacepages, self.collisionpages, self.riverpages, self.badglyphpages = \
             self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
                     float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
         dlg.response(Gtk.ResponseType.OK)
@@ -1443,14 +1452,16 @@ class PDFContentViewer(PDFFileViewer):
             collisionPages  = []
             horizWhitespace = []
             vertRivers      = []
+            badGlyphs       = []
         else:
             ufPages         = self.model.ufPages or [] if self.model.get('c_findUnbalanced', False) else []
             collisionPages  = self.collisionpages      if self.model.get('c_findCollisions', False) else []
             horizWhitespace = self.spacepages          if self.model.get('c_findWhitespace', False) else []
             vertRivers      = self.riverpages          if self.model.get('c_findRivers',     False) else []
+            badGlyphs       = self.badglyphpages       if self.model.get('c_findBadGlyphs',  False) else []
 
         # Merge lists in order with uniqueness
-        for lst in [ufPages, collisionPages, horizWhitespace, vertRivers]:
+        for lst in [ufPages, collisionPages, horizWhitespace, vertRivers, badGlyphs]:
             for p in lst:
                 if p not in self.all_pages:
                     self.all_pages.append(p)
@@ -1523,6 +1534,8 @@ class PDFContentViewer(PDFFileViewer):
                         text = f"<span foreground='lightblue'><b>{p}</b></span>"
                     elif p in vertRivers:
                         text = f"<span foreground='yellow'><b>{p}</b></span>"
+                    elif p in badGlyphs:
+                        text = f"<span foreground='#A05080'><b>{p}</b></span>"
                     else: # if p in ufPages:
                         text = f"<b>{p}</b>"
 
@@ -2221,12 +2234,7 @@ class PDFContentViewer(PDFFileViewer):
         
     def edit_style(self, widget, a):
         (mkr, pref) = a
-        if pref != self.currpref:
-            if self.currpref is not None:
-                self.model.onOK(None)
-            if pref is not None:
-                self.model.switchToDiglot(pref)
-            self.currpref = pref
+        self.model.switchToDiglot(pref)
         if mkr is not None:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
