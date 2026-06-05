@@ -5730,8 +5730,10 @@ class GtkViewModel(ViewModel):
             sc.add_class("report-error")
         elif severity == "warn":
             sc.add_class("report-warn")
-        tooltip = "\n".join(t for t in [summary, detail] if t) \
-                  or _("Display a report on the current configuration.")
+        parts = [t for t in [summary, detail] if t]
+        if len(parts) == 2 and parts[0] == parts[1]:
+            parts = parts[:1]
+        tooltip = "\n".join(parts) or _("Display a report on the current configuration.")
         prv.set_tooltip_text(tooltip)
         img = self.builder.get_object("icon_prvReport")
         if img is not None:
@@ -7972,12 +7974,6 @@ Thank you,
         if not prvw:
             return
         try:
-            # Set up the Fill Pages menu button with its dropdown menu
-            fillPagesBtn = self.builder.get_object("btn_fillPages")
-            fillPagesMenu = self.builder.get_object("fillPagesMenu")
-            if fillPagesBtn and fillPagesMenu:
-                fillPagesBtn.set_popup(fillPagesMenu)
-            
             if showPreview:
                 prvw.set_modal(False)
                 prvw.set_keep_above(False)
@@ -8312,10 +8308,11 @@ Thank you,
 
     def onProgressMonitorToggle(self, widget, *a):
         if self.bkProgressDlg is None:
-            return
-        self.bkProgressDlg.toggle()
-        visible = self.bkProgressDlg.window.get_visible()
-        widget.set_label("Hide progress" if visible else "Show progress")
+            self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)
+        if widget.get_active():
+            self.bkProgressDlg.show()
+        else:
+            self.bkProgressDlg.hide()
 
 
     def onConfigWizardClicked(self, widget):

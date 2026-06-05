@@ -194,14 +194,28 @@ class BookProgressDialog:
         # Action area at the bottom
         button_box = Gtk.ButtonBox(orientation=Gtk.Orientation.HORIZONTAL)
         button_box.set_layout(Gtk.ButtonBoxStyle.CENTER)
+        button_box.set_spacing(8)
+        button_box.set_margin_start(8)
+        button_box.set_margin_end(8)
         button_box.set_margin_bottom(8)
         vbox.pack_start(button_box, False, False, 0)
+
+        # Resume Fill and Restart Fill buttons
+        resume_tip = _("Resume filling from the first underfilled page in each book.\n\nWarning: CPU-hungry. Go to lunch!")
+        restart_tip = _("Restart filling from the beginning of each book.\n\nWarning: CPU-hungry. Go to lunch!")
+        self.resume_button = Gtk.Button(label=_("Resume Fill"))
+        self.resume_button.set_tooltip_text(resume_tip)
+        self.resume_button.connect("clicked", lambda btn: self.view.onResumeFillClicked(btn))
+        button_box.add(self.resume_button)
+
+        self.restart_button = Gtk.Button(label=_("Restart Fill"))
+        self.restart_button.set_tooltip_text(restart_tip)
+        self.restart_button.connect("clicked", lambda btn: self.view.onRestartFillClicked(btn))
+        button_box.add(self.restart_button)
 
         # The Stop button
         self.stop_button = Gtk.Button(label=stoplabel)
         self.stop_button.connect("clicked", self.on_stop_clicked)
-        # Optional: Add a CSS class or icon if you want it to look urgent
-        # self.stop_button.get_style_context().add_class("destructive-action")
         button_box.add(self.stop_button)
 
         self.stylep = Gtk.CssProvider()

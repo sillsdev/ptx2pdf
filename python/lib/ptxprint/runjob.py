@@ -795,11 +795,11 @@ class RunJob:
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
                             self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
-                            self.printer.onIdle(sl.set_tooltip_text, msgs)
-                            self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, severity)
+                            self.printer.onIdle(sl.set_tooltip_text, "" if msgs == chkmsg else msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, "error" if smry["E"] > 0 else None)
                         else:
                             self.printer.onIdle(self.printer.set, "l_statusLine", summaryLine)
-                            self.printer.onIdle(sl.set_tooltip_text, msgs)
+                            self.printer.onIdle(sl.set_tooltip_text, "" if msgs == summaryLine else msgs)
                             self.printer.onIdle(self.printer._setPrvReportStatus, summaryLine, msgs, severity)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")

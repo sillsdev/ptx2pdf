@@ -3899,26 +3899,6 @@ or an existing Configuration Name.</property>
     </action-widgets>
   </object>
   <object class="GtkEntryCompletion" id="entrycompletion1"/>
-  <object class="GtkMenu" id="fillPagesMenu">
-    <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <child>
-      <object class="GtkMenuItem">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="label" translatable="yes">Resume Fill</property>
-        <signal name="activate" handler="onResumeFillClicked" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="label" translatable="yes">Restart Fill</property>
-        <signal name="activate" handler="onRestartFillClicked" swapped="no"/>
-      </object>
-    </child>
-  </object>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
@@ -14445,30 +14425,6 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
               <placeholder/>
             </child>
             <child>
-              <object class="GtkMenuButton" id="btn_fillPages">
-                <property name="label" translatable="yes">Auto Fill...</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Resume filling from current position or Restart from beginning.
-
-Tries to fill the pages for the entire job specified, stopping on the first page failure.
-Starting from the first underfilled page in each book (Resume) or from the beginning (Restart).
-
-Warning: CPU-hungry. Go to lunch!</property>
-                <property name="margin-left">3</property>
-                <property name="margin-start">3</property>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -15515,7 +15471,6 @@ highlighted as an issue.</property>
                         <property name="tooltip-text" translatable="yes">Show/hide Auto Page Fill
 dialog and progress monitor</property>
                         <property name="halign">start</property>
-                        <signal name="clicked" handler="onProgressMonitorToggle" swapped="no"/>
                         <signal name="toggled" handler="onProgressMonitorToggle" swapped="no"/>
                         <child>
                           <object class="GtkImage" id="icon_prvAutoFill2">
