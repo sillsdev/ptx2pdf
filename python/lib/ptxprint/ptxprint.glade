@@ -1698,7 +1698,7 @@ General section of the Advanced tab.&lt;/span&gt;</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 3.0.31</property>
+    <property name="version">Version 3.0.32</property>
     <property name="copyright">© 2020-2025, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -1951,6 +1951,60 @@ PDF files which will remain in that folder.</property>
           </packing>
         </child>
       </object>
+    </child>
+  </object>
+  <object class="GtkMessageDialog" id="dlg_confirmDiglot">
+    <property name="can-focus">False</property>
+    <property name="title" translatable="yes">PTXprint: Please Confirm...</property>
+    <property name="resizable">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="message-type">warning</property>
+    <property name="buttons">yes-no</property>
+    <property name="text" translatable="yes">You are about to CREATE a diglot (or polyglot) configuration. This setting cannot be undone.</property>
+    <property name="secondary-text" translatable="yes">Consider using the &lt;b&gt;Save As...&lt;/b&gt; button to create a NEW Configuration Layout before proceeding to enable the Diglot. &lt;b&gt;Are you sure you want to CONTINUE?&lt;/b&gt;</property>
+    <property name="secondary-use-markup">True</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="tooltip-text" translatable="yes">Unlike most other PTXprint settings (which can easily be
+toggled on or off), the Diglot setting is special in that it
+has to set up a number of other settings; and is very hard
+to disable later. So only continue if you are sure that this
+is what you need to do.
+
+It is highly recommended to first save the existing
+configuration with a new name (like "Diglot") and
+then proceed with the step of enabling this option.
+</property>
+        <property name="orientation">vertical</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="valign">center</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="layout-style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
   <object class="GtkDialog" id="dlg_createHyphenList">
@@ -2262,7 +2316,7 @@ their approval status) then disable this option.</property>
                 <property name="halign">start</property>
                 <property name="left-padding">12</property>
                 <child>
-                  <!-- n-columns=3 n-rows=6 -->
+                  <!-- n-columns=3 n-rows=7 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -2354,7 +2408,7 @@ sections (used for creating a cover page):
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">4</property>
+                        <property name="top-attach">5</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -2366,7 +2420,7 @@ sections (used for creating a cover page):
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">3</property>
+                        <property name="top-attach">4</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -2383,7 +2437,7 @@ sections (used for creating a cover page):
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">5</property>
+                        <property name="top-attach">6</property>
                       </packing>
                     </child>
                     <child>
@@ -2391,7 +2445,7 @@ sections (used for creating a cover page):
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">This operation can overwrite 
+                        <property name="label" translatable="yes">This operation can overwrite
 carefully crafted settings.
 So choose carefully...
 If in doubt, click Cancel.</property>
@@ -2401,12 +2455,47 @@ If in doubt, click Cancel.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">5</property>
+                        <property name="top-attach">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="r_generateFRT_diglot">
+                        <property name="label" translatable="yes">DIGLOT: template for a Diglot or Polyglot publication
+(deliberately fuller — delete sections you do not need)</property>
+                        <property name="name">Generate front matter: DIGLOT (for Diglot/Polyglot publications)</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">This option creates a DIGLOT / POLYGLOT front matter
+template designed for publications with two (or more)
+languages or scripts. It is deliberately more complete
+than the BASIC and ADVANCED templates because diglots
+are inherently complex: two (or more) texts, often two
+contents lists, two prefaces, sometimes two scripts and
+two writing directions. Delete the sections you do not need.
+
+Like the ADVANCED template it uses \zvar|variables\* and
+\zglot|L\* / \zglot|R\* markers for column-specific content,
+so it requires editing before use and is NOT suitable for
+use inside Paratext without prior modification.
+
+If this option is disabled, the Diglot setting is not
+enabled for this configuration.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="draw-indicator">True</property>
+                        <property name="group">r_generateFRT_basic</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">2</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="r_generateFRT_paratext">
-                        <property name="label" translatable="yes">PARATEXT: Make a copy of the Project's FRT book 
+                        <property name="label" translatable="yes">PARATEXT: Make a copy of the Project's FRT book
 (which may be edited to make use of \zvar|variables\*)</property>
                         <property name="name">Generate front matter: PARATEXT (make a local copy)</property>
                         <property name="visible">True</property>
@@ -2430,9 +2519,12 @@ in the Paratext project (so there is nothing to import).</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">3</property>
                         <property name="width">2</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                     <child>
                       <placeholder/>
@@ -3306,12 +3398,17 @@ current configuration (source) should be copied to:</property>
                   <object class="GtkComboBoxText" id="ecb_mpsTargets">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="hexpand">True</property>
-                    <property name="has-entry">True</property>
                     <property name="tooltip-text" translatable="yes">Shows selected target projects.
 Pick a previous selection from the dropdown,
 or select projects in the grid above.</property>
+                    <property name="hexpand">True</property>
+                    <property name="has-entry">True</property>
                     <signal name="changed" handler="onMpsTargetsChanged" swapped="no"/>
+                    <child internal-child="entry">
+                      <object class="GtkEntry">
+                        <property name="can-focus">False</property>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -3605,27 +3702,203 @@ saved configuration.</property>
       <action-widget response="-6">btn_pw_ok</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkEntryCompletion" id="entrycompletion1"/>
-  <object class="GtkMenu" id="fillPagesMenu">
-    <property name="visible">True</property>
+  <object class="GtkDialog" id="dlg_saveAsMonoglot">
+    <property name="width-request">270</property>
+    <property name="height-request">150</property>
     <property name="can-focus">False</property>
-    <child>
-      <object class="GtkMenuItem">
-        <property name="visible">True</property>
+    <property name="valign">start</property>
+    <property name="title" translatable="yes">PTXprint: Save As Monoglot...</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type-hint">dialog</property>
+    <property name="skip-taskbar-hint">True</property>
+    <property name="gravity">center</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
         <property name="can-focus">False</property>
-        <property name="label" translatable="yes">Resume Fill</property>
-        <signal name="activate" handler="onResumeFillClicked" swapped="no"/>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_disableDiglot_ok">
+                <property name="label">OK</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_disableDiglot_cancel">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel" id="l_warningDiglot2Mono">
+                <property name="height-request">34</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">start</property>
+                <property name="margin-right">10</property>
+                <property name="margin-end">10</property>
+                <property name="margin-top">12</property>
+                <property name="label" translatable="yes">&lt;span foreground="red"&gt;&lt;b&gt;WARNING:&lt;/b&gt; You cannot simply disable a Diglot as
+this would discard all your carefully crafted settings.&lt;/span&gt;
+
+Either click &lt;b&gt;Cancel to return&lt;/b&gt; to the current Diglot configuration
+   OR
+&lt;b&gt;Enter a name&lt;/b&gt; for the new configuration, and &lt;b&gt;click OK&lt;/b&gt;. 
+(Your current diglot configuration will remain unchanged, 
+while the new monoglot configuration will be saved and 
+become the active configuration.)</property>
+                <property name="use-markup">True</property>
+                <property name="yalign">0</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="margin-left">6</property>
+                <property name="margin-right">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="label" translatable="yes">Save as a new Configuration
+(which will be a monoglot):</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_newMonoglotConfigName">
+                    <property name="name">Enter a name for the configuration to be saved</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="can-default">True</property>
+                    <property name="has-default">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="max-length">30</property>
+                    <property name="width-chars">30</property>
+                    <property name="input-purpose">terminal</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_diableDiglotNewCfgMsg">
+                <property name="height-request">34</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">start</property>
+                <property name="margin-right">10</property>
+                <property name="margin-end">10</property>
+                <property name="label" translatable="yes">Do not use spaces or special characters
+or an existing Configuration Name.</property>
+                <property name="yalign">0</property>
+                <attributes>
+                  <attribute name="foreground" value="#bfbf1c1c2828"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
       </object>
     </child>
-    <child>
-      <object class="GtkMenuItem">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="label" translatable="yes">Restart Fill</property>
-        <signal name="activate" handler="onRestartFillClicked" swapped="no"/>
-      </object>
-    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_disableDiglot_ok</action-widget>
+      <action-widget response="-6">btn_disableDiglot_cancel</action-widget>
+    </action-widgets>
   </object>
+  <object class="GtkEntryCompletion" id="entrycompletion1"/>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
@@ -14078,6 +14351,21 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="position">3</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkCheckButton" id="c_findBadGlyphs">
+            <property name="label" translatable="yes">Bad Glyphs</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="active">True</property>
+            <property name="draw-indicator">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>
@@ -14134,44 +14422,7 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
               </packing>
             </child>
             <child>
-              <object class="GtkMenuButton" id="btn_fillPages">
-                <property name="label" translatable="yes">Auto Fill...</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Resume filling from current position or Restart from beginning.
-
-Tries to fill the pages for the entire job specified, stopping on the first page failure.
-Starting from the first underfilled page in each book (Resume) or from the beginning (Restart).
-
-Warning: CPU-hungry. Go to lunch!</property>
-                <property name="margin-start">3</property>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-                <property name="non-homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn_progressMonitor">
-                <property name="label" translatable="yes">Show progress</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Show/hide page fill progress monitor</property>
-                <property name="margin-start">2</property>
-                <signal name="clicked" handler="onProgressMonitorToggle" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">2</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <object class="GtkBox">
@@ -14257,6 +14508,7 @@ Ctrl + Scrollwheel - change zoom level</property>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="halign">start</property>
                 <child>
                   <object class="GtkLabel" id="l_pdfPgsSprds">
                     <property name="visible">True</property>
@@ -14552,49 +14804,6 @@ the middle mouse button</property>
                 <property name="position">8</property>
                 <property name="non-homogeneous">True</property>
               </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn_showSettings">
-                <property name="name">Show main PTXprint settings</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Show the main PTXprint
-dialog with all the settings. 
-Shortcut: Alt+S</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="image">icon_settings</property>
-                <signal name="clicked" handler="onShowMainDialogClicked" swapped="no"/>
-                <accelerator key="s" signal="clicked" modifiers="GDK_MOD1_MASK"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">9</property>
-                <property name="non-homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn_closePreview">
-                <property name="label">gtk-close</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="valign">center</property>
-                <property name="margin-end">6</property>
-                <property name="use-stock">True</property>
-                <signal name="clicked" handler="onClosePreview" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">10</property>
-                <property name="non-homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
           </object>
           <packing>
@@ -15255,6 +15464,44 @@ highlighted as an issue.</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
                     <child>
+                      <object class="GtkToggleButton" id="btn_prvAutoFill">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Show/hide Auto Page Fill
+dialog and progress monitor</property>
+                        <property name="halign">start</property>
+                        <signal name="toggled" handler="onProgressMonitorToggle" swapped="no"/>
+                        <child>
+                          <object class="GtkImage" id="icon_prvAutoFill2">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Show/hide Auto Page Fill
+dialog and progress monitor</property>
+                            <property name="icon-name">thunderbolt-symbolic</property>
+                            <property name="icon_size">3</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="height-request">30</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkButton" id="btn_prvReport">
                         <property name="name">Show Report Information</property>
                         <property name="visible">True</property>
@@ -15270,7 +15517,7 @@ current configuration.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">0</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -15290,7 +15537,7 @@ Acrobat or SumatraPDF).</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">1</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                     <child>
@@ -15309,7 +15556,7 @@ PDF file(s) created for this project.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">2</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                     <child>
@@ -15328,7 +15575,7 @@ new name and/or different folder.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">3</property>
+                        <property name="position">5</property>
                       </packing>
                     </child>
                     <child>
@@ -15348,7 +15595,28 @@ to this device.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">4</property>
+                        <property name="position">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_showSettings">
+                        <property name="name">Show main PTXprint settings</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Show the main PTXprint
+dialog with all the settings. 
+Shortcut: Alt+S</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="image">icon_settings</property>
+                        <signal name="clicked" handler="onShowMainDialogClicked" swapped="no"/>
+                        <accelerator key="s" signal="clicked" modifiers="GDK_MOD1_MASK"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">7</property>
                       </packing>
                     </child>
                   </object>
@@ -15372,9 +15640,6 @@ to this device.</property>
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="-7">btn_closePreview</action-widget>
-    </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_newAnchor">
     <property name="width-request">220</property>
@@ -30901,7 +31166,9 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                                 <property name="width-request">95</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Vertical shift in pts of the section box downwards relative to the text</property>
+                                                <property name="tooltip-text" translatable="yes">Vertical shift in pts of the section box image.
+  - values shift the box upwards
+  + values shift the box downwards</property>
                                                 <property name="halign">end</property>
                                                 <property name="label" translatable="yes">Shift:</property>
                                                 <property name="xalign">1</property>
@@ -30916,6 +31183,9 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                                 <property name="name">Decorative section headings: Vertical shift</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
+                                                <property name="tooltip-text" translatable="yes">Vertical shift in pts of the section box image.
+  - values shift the box upwards
+  + values shift the box downwards</property>
                                                 <property name="text">0.0</property>
                                                 <property name="xalign">1</property>
                                                 <property name="adjustment">a_inclSectionShift</property>
@@ -31549,7 +31819,9 @@ fit within the graphic.</property>
                                                 <property name="width-request">95</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Vertical shift in pts of the verse decorator image upwards relative to the text.</property>
+                                                <property name="tooltip-text" translatable="yes">Vertical shift in pts of the verse decorator image.
+  + values shift the decorator upwards
+  - values shift the decorator downwards</property>
                                                 <property name="halign">end</property>
                                                 <property name="label" translatable="yes">Shift:</property>
                                                 <property name="justify">right</property>
@@ -31565,6 +31837,9 @@ fit within the graphic.</property>
                                                 <property name="name">Verse border graphic: Vertical shift</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
+                                                <property name="tooltip-text" translatable="yes">Vertical shift in pts of the verse decorator image.
+  + values shift the decorator upwards
+  - values shift the decorator downwards</property>
                                                 <property name="text">0.0</property>
                                                 <property name="xalign">1</property>
                                                 <property name="adjustment">a_verseDecoratorShift</property>

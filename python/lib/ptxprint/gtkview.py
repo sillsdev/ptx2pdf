@@ -188,7 +188,7 @@ r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
 s_pdfZoomLevel btn_page_first btn_page_previous t_pgNum btn_page_next btn_page_last
-b_reprint btn_closePreview l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
+b_reprint l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
 c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
 btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint
 btn_showSettings
@@ -1570,6 +1570,8 @@ class GtkViewModel(ViewModel):
             .warning {background: lightpink;font-weight: bold; color: darkred}
             entry.progress, entry.trough {min-height: 24px}
             combobox.highlighted {border: 3px solid peachpuff; border-radius: 4px}
+            button.report-warn { background-color: peachpuff; background: peachpuff; background-image: none; }
+            button.report-error { background-color: #ffb3b3; background: #ffb3b3; background-image: none; }
             """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
@@ -2136,10 +2138,11 @@ class GtkViewModel(ViewModel):
             wid = wid[:subi]
         if wid == "l_statusLine":
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
-            psl = self.builder.get_object("l_pdfStatusLine")
-            if psl is not None:
-                psl.set_text(value or "")
-                psl.set_visible(bool(value))
+            sl = self.builder.get_object("l_statusLine")
+            if sl is not None and not value:
+                sl.set_tooltip_text("")
+            if not value:
+                self._setPrvReportStatus("", "", None)
         w = self.builder.get_object(wid)
         if w is None:
             if wid.startswith("+"):
@@ -3052,6 +3055,7 @@ class GtkViewModel(ViewModel):
         if pgid == "tb_FrontMatter":
             ptFRT = self.getBookSrcPath("FRT", self.project.prjid)
             self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT is not None)
+            self.builder.get_object("r_generateFRT_diglot").set_sensitive(bool(self.get("c_diglot")))
             dialog = self.builder.get_object("dlg_generateFRT")
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
@@ -5189,6 +5193,10 @@ class GtkViewModel(ViewModel):
 
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
+        # Default "Everything" to True when no category has been explicitly selected
+        # (covers first-run and any state where the OK button would be disabled anyway).
+        if not any(self.get(f"c_imp{c}", False) for c in ['Pictures', 'Layout', 'FontsScript', 'Styles', 'Other', 'Everything']):
+            self.set("c_impEverything", True)
         self.setImportButtonOKsensitivity(None)
         self.set("ecb_targetProject", self.project.prjid)
         self.set("ecb_targetConfig", self.cfgid)
@@ -5406,6 +5414,37 @@ class GtkViewModel(ViewModel):
         return fcFilepath
 
     def onDiglotClicked(self, btn):
+        # Guard against re-entry when we programmatically restore the checkbox state below.
+        if getattr(self, '_restoringDiglot', False):
+            return
+
+        # The user just deactivated the diglot checkbox.  Intercept this BEFORE any other
+        # action: restore the checkbox to True immediately, then show the Save-As-Monoglot
+        # dialog.  The checkbox cannot simply be deactivated – the user must first save the
+        # current settings under a new (monoglot) configuration name.
+        if not self.get("c_diglot") and not self.loadingConfig:
+            self._restoringDiglot = True
+            btn.set_active(True)          # restore visual state (triggers clicked again)
+            self._restoringDiglot = False
+            self._showSaveAsMonoglotDialog()
+            return
+
+        # Intercept activation: warn the user this is a significant, hard-to-reverse step.
+        # Only show the dialog for interactive clicks, not when loading a saved config.
+        if self.get("c_diglot") and not self.loadingConfig:
+            dialog = self.builder.get_object("dlg_confirmDiglot")
+            response = dialog.run()
+            dialog.hide()
+            if response != Gtk.ResponseType.YES:
+                # User declined – silently restore the checkbox to unchecked and return
+                # before any UI state has changed.  handler_block prevents re-entering
+                # this function; mod=False avoids marking the config as changed.
+                btn.handler_block_by_func(self.onDiglotClicked)
+                self.set("c_diglot", False, mod=False)
+                btn.handler_unblock_by_func(self.onDiglotClicked)
+                return
+
+        # ---- Normal path: activation confirmed, or config is loading ----
         self.sensiVisible("c_diglot")
         self.colorTabs()
         if self.loadingConfig:
@@ -5415,6 +5454,23 @@ class GtkViewModel(ViewModel):
             self.diglotViews['R'] = self.createDiglotView()
             self.set("c_doublecolumn", True)
             self.builder.get_object("c_doublecolumn").set_sensitive(False)
+            # Open the Project dropdown for the R row so the user immediately knows
+            # they need to select a secondary project.
+            if self.gtkpolyglot is not None:
+                tv = self.gtkpolyglot.treeview
+                cols = tv.get_columns()
+                if len(cols) > 2:
+                    proj_col = cols[2]   # Code=0, 1|2=1, Project=2
+                    def _open_project_dropdown(tv=tv, proj_col=proj_col):
+                        model = tv.get_model()
+                        for i, row in enumerate(model):
+                            if row[0] == "R":   # m.code == 0
+                                path = Gtk.TreePath([i])
+                                tv.scroll_to_cell(path, proj_col, False, 0.0, 0.0)
+                                tv.set_cursor(path, proj_col, True)
+                                break
+                        return False
+                    GLib.idle_add(_open_project_dropdown)
         else:
             self.builder.get_object("c_doublecolumn").set_sensitive(True)
             self.setPrintBtnStatus(2)
@@ -5425,18 +5481,132 @@ class GtkViewModel(ViewModel):
         if self.get("c_includeillustrations"):
             self.onUpdatePicCaptionsClicked(None)
 
+    def _onMonoglotNameChanged(self, entry):
+        """Live validation for the 't_newMonoglotConfigName' entry in dlg_saveAsMonoglot."""
+        cfg = entry.get_text()
+        ok_btn   = self.builder.get_object("btn_disableDiglot_ok")
+        msg_lbl  = self.builder.get_object("l_diableDiglotNewCfgMsg")
+        cleanCfg = re.sub('[^-a-zA-Z0-9_()]+', '', cfg)
+        cpath    = self.project.srcPath(cleanCfg) if cleanCfg and self.project else None
+        if cfg != cleanCfg:
+            msg = _("Do not use spaces or special characters")
+        elif not len(cfg):
+            msg = ""
+        elif cpath is not None and os.path.exists(cpath):
+            msg = _("That Configuration already exists.\nUse another name.")
+        else:
+            ok_btn.set_sensitive(True)
+            msg_lbl.set_text("")
+            return
+        ok_btn.set_sensitive(False)
+        msg_lbl.set_text(msg)
+
+    def _showSaveAsMonoglotDialog(self):
+        """Show the 'Save As Monoglot' dialog and act on the response.
+
+        Cancel  → c_diglot stays True (already restored before this is called).
+        OK      → The current settings are saved under the chosen name with
+                  c_diglot turned off; that new monoglot configuration becomes active.
+                  The original diglot configuration is left untouched on disk.
+        """
+        entry   = self.builder.get_object("t_newMonoglotConfigName")
+        ok_btn  = self.builder.get_object("btn_disableDiglot_ok")
+        msg_lbl = self.builder.get_object("l_diableDiglotNewCfgMsg")
+
+        # Reset dialog widgets to a clean state
+        entry.set_text("")
+        ok_btn.set_sensitive(False)
+        msg_lbl.set_text("")
+
+        # Connect live validation once (avoid duplicate connections on repeated opens)
+        if not getattr(self, '_monoglotDlgSigConnected', False):
+            entry.connect("changed", self._onMonoglotNameChanged)
+            self._monoglotDlgSigConnected = True
+
+        dialog   = self.builder.get_object("dlg_saveAsMonoglot")
+        response = dialog.run()
+        dialog.hide()
+
+        if response != Gtk.ResponseType.OK:
+            return  # User cancelled – diglot remains active, nothing to do.
+
+        cfg = re.sub('[^-a-zA-Z0-9_()]+', '', entry.get_text())
+        if not cfg:
+            return  # Safety guard – shouldn't be reachable while OK button is insensitive.
+
+        # ── Step 1: Save the current state as a new configuration ──
+        # This mirrors onSaveAsNewConfig exactly.  Internally, onSaveConfig calls
+        # updateProjectSettings(readConfig=True) which copies the existing diglot
+        # config files to the new name and then re-reads them from disk.  That
+        # read restores c_diglot=True in memory, so we must NOT try to turn diglot
+        # off before this call – we do it in step 2 instead.
+        self.set("ecb_savedConfig", cfg)
+        self.doConfigNameChange(cfg)
+        self.changed()
+        self.onSaveConfig(None)
+        # After onSaveConfig the new config is on disk but still has c_diglot=True
+        # because the re-read from the copied file restored that value in memory.
+
+        # ── Step 2: Turn off diglot in memory and overwrite the new config ──
+        # Block the signal so set() doesn't re-enter onDiglotClicked.
+        diglot_btn = self.builder.get_object("c_diglot")
+        diglot_btn.handler_block_by_func(self.onDiglotClicked)
+        self.set("c_diglot", False)   # marks isChanged=True via changed()
+        diglot_btn.handler_unblock_by_func(self.onDiglotClicked)
+        self.saveConfig()             # writes c_diglot=False to the new config on disk
+
+        # ── Step 3: Finalise the new config identity ──
+        # Now that c_diglot=False, loadPolyglotSettings will only clear the
+        # treeview rather than trying to load diglot data.
+        self.updateConfigIdentity(cfg)
+
+        # ── Step 4: Run the deactivation housekeeping that onDiglotClicked would ──
+        # have done in its 'else' branch (and the shared tail code after it).
+        self.sensiVisible("c_diglot")
+        self.colorTabs()
+        self.builder.get_object("c_doublecolumn").set_sensitive(True)
+        self.setPrintBtnStatus(2)
+        self.diglotViews = {}
+        self.updateDialogTitle()
+        self.disableLayoutAnalysis()
+        self.loadPics(mustLoad=False, force=True)
+        if self.get("c_includeillustrations"):
+            self.onUpdatePicCaptionsClicked(None)
+
     def switchToDiglot(self, pref):
-        dv = self.diglotViews.get(pref, None)
+        dv = None
+        dvprj = None
+        dvcfg = None
+        if self.otherDiglot is not None:
+            if pref is not None:
+                dv = self.otherDiglot[2].get(pref, None)
+        elif self.diglotViews is not None:
+            dv = self.diglotViews.get(pref, None)
         if dv is None:
-            return False
-        dv.saveConfig()
-        dvprj = dv.project
-        self.otherDiglot = (self.project, self.cfgid)
-        # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-        self.changeBtnLabel("b_print", _("Return to Primary"))
-        self.builder.get_object("b_reprint").set_sensitive(False)
+            if self.otherDiglot is not None:
+                dvprj, dvcfg = self.otherDiglot[:2]
+            else:
+                return False
+        elif dv:
+            dv.saveConfig()
+            dvprj = dv.project
+            dvcfg = dv.cfgid
+        if pref is not None:
+            if self.otherDiglot is None:
+                self.otherDiglot = (self.project, self.cfgid, self.diglotViews.copy())
+            # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+            self.changeBtnLabel("b_print", _("Return to Primary"))
+            self.builder.get_object("b_reprint").set_sensitive(False)
+            self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+        else:
+            self.changeBtnLabel("b_print", _("Print (Make PDF)"))
+            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            self.builder.get_object("b_reprint").set_sensitive(True)
+            if self.otherDiglot is not None:
+                self.diglotViews = self.otherDiglot[2]
+                self.otherDiglot = None
         self.set("fcb_project", dvprj.prjid)
-        self.set("ecb_savedConfig", dv.cfgid)
+        self.set("ecb_savedConfig", dvcfg)
         self.disableLayoutAnalysis()
         # self.updateProjectSettings(dvprj.prjid, dvprj.guid, configName=dv.cfgid)
         # self.updateDialogTitle()
@@ -5541,16 +5711,33 @@ class GtkViewModel(ViewModel):
                 printer.refreshPageCount()
 
     def _setStaleIndicator(self, stale):
-        for wid, method in (("bx_statusMsgBar", "get_style_context"),
-                            ("l_pdfStatusLine",  "get_style_context")):
-            w = self.builder.get_object(wid)
-            if w is None:
-                continue
+        w = self.builder.get_object("bx_statusMsgBar")
+        if w is not None:
             sc = w.get_style_context()
             if stale:
                 sc.add_class("highlighted")
             else:
                 sc.remove_class("highlighted")
+
+    def _setPrvReportStatus(self, summary, detail, severity):
+        prv = self.builder.get_object("btn_prvReport")
+        if prv is None:
+            return
+        sc = prv.get_style_context()
+        sc.remove_class("report-warn")
+        sc.remove_class("report-error")
+        if severity == "error":
+            sc.add_class("report-error")
+        elif severity == "warn":
+            sc.add_class("report-warn")
+        parts = [t for t in [summary, detail] if t]
+        if len(parts) == 2 and parts[0] == parts[1]:
+            parts = parts[:1]
+        tooltip = "\n".join(parts) or _("Display a report on the current configuration.")
+        prv.set_tooltip_text(tooltip)
+        img = self.builder.get_object("icon_prvReport")
+        if img is not None:
+            img.set_tooltip_text(tooltip)
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
@@ -7787,12 +7974,6 @@ Thank you,
         if not prvw:
             return
         try:
-            # Set up the Fill Pages menu button with its dropdown menu
-            fillPagesBtn = self.builder.get_object("btn_fillPages")
-            fillPagesMenu = self.builder.get_object("fillPagesMenu")
-            if fillPagesBtn and fillPagesMenu:
-                fillPagesBtn.set_popup(fillPagesMenu)
-            
             if showPreview:
                 prvw.set_modal(False)
                 prvw.set_keep_above(False)
@@ -8127,10 +8308,11 @@ Thank you,
 
     def onProgressMonitorToggle(self, widget, *a):
         if self.bkProgressDlg is None:
-            return
-        self.bkProgressDlg.toggle()
-        visible = self.bkProgressDlg.window.get_visible()
-        widget.set_label("Hide progress" if visible else "Show progress")
+            self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)
+        if widget.get_active():
+            self.bkProgressDlg.show()
+        else:
+            self.bkProgressDlg.hide()
 
 
     def onConfigWizardClicked(self, widget):

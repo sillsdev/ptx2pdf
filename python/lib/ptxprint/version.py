@@ -1,5 +1,5 @@
 
-VersionStr = "3.0.31"
-GitVersionStr = "3.0.31"
+VersionStr = "3.0.32"
+GitVersionStr = "3.0.32"
 ConfigVersion = "3.01"
 
