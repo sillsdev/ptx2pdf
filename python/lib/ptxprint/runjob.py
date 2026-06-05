@@ -782,12 +782,12 @@ class RunJob:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
                     sl = self.printer.builder.get_object("l_statusLine")
-                    psl = self.printer.builder.get_object("l_pdfStatusLine")
                 if smry["E"] + smry["W"] > 0:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
                     if not self.noview and not self.args.print:
+                        severity = "error" if smry["E"] > 0 else "warn"
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
@@ -796,13 +796,11 @@ class RunJob:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
                             self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
                             self.printer.onIdle(sl.set_tooltip_text, msgs)
-                            if psl is not None:
-                                self.printer.onIdle(psl.set_tooltip_text, msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, severity)
                         else:
                             self.printer.onIdle(self.printer.set, "l_statusLine", summaryLine)
                             self.printer.onIdle(sl.set_tooltip_text, msgs)
-                            if psl is not None:
-                                self.printer.onIdle(psl.set_tooltip_text, msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, summaryLine, msgs, severity)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
             

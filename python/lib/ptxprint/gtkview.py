@@ -1570,6 +1570,8 @@ class GtkViewModel(ViewModel):
             .warning {background: lightpink;font-weight: bold; color: darkred}
             entry.progress, entry.trough {min-height: 24px}
             combobox.highlighted {border: 3px solid peachpuff; border-radius: 4px}
+            button.report-warn { background-color: peachpuff; background: peachpuff; background-image: none; }
+            button.report-error { background-color: #ffb3b3; background: #ffb3b3; background-image: none; }
             """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
@@ -2139,12 +2141,8 @@ class GtkViewModel(ViewModel):
             sl = self.builder.get_object("l_statusLine")
             if sl is not None and not value:
                 sl.set_tooltip_text("")
-            psl = self.builder.get_object("l_pdfStatusLine")
-            if psl is not None:
-                psl.set_text(value or "")
-                psl.set_visible(bool(value))
-                if not value:
-                    psl.set_tooltip_text("")
+            if not value:
+                self._setPrvReportStatus("", "", None)
         w = self.builder.get_object(wid)
         if w is None:
             if wid.startswith("+"):
@@ -5713,16 +5711,31 @@ class GtkViewModel(ViewModel):
                 printer.refreshPageCount()
 
     def _setStaleIndicator(self, stale):
-        for wid, method in (("bx_statusMsgBar", "get_style_context"),
-                            ("l_pdfStatusLine",  "get_style_context")):
-            w = self.builder.get_object(wid)
-            if w is None:
-                continue
+        w = self.builder.get_object("bx_statusMsgBar")
+        if w is not None:
             sc = w.get_style_context()
             if stale:
                 sc.add_class("highlighted")
             else:
                 sc.remove_class("highlighted")
+
+    def _setPrvReportStatus(self, summary, detail, severity):
+        prv = self.builder.get_object("btn_prvReport")
+        if prv is None:
+            return
+        sc = prv.get_style_context()
+        sc.remove_class("report-warn")
+        sc.remove_class("report-error")
+        if severity == "error":
+            sc.add_class("report-error")
+        elif severity == "warn":
+            sc.add_class("report-warn")
+        tooltip = "\n".join(t for t in [summary, detail] if t) \
+                  or _("Display a report on the current configuration.")
+        prv.set_tooltip_text(tooltip)
+        img = self.builder.get_object("icon_prvReport")
+        if img is not None:
+            img.set_tooltip_text(tooltip)
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
