@@ -22,22 +22,14 @@
 ##
 
 
-echo "mac-build-intel.ch -- Build App for Intel based Macs."
-echo "NOTE: This is NOT an automated script!"
-echo "Instead you need to do copy past manually to your command line terminal and patch some code manually."
-exit
 
-
-## -- get source code from github
-
-git clone --depth=1 https://github.com/sillsdev/ptx2pdf.git
-
-cd ptx2pdf
-
-
-## -- prepare for build
-## add your Apple Code Sign identity here:
-export NOTARIZATION_CODESIGN_IDENTITY="1234567890"
+## -- ad hoc code sign
+export NOTARIZATION_CODESIGN_IDENTITY="-"
+export SIGNING_IDENTITY_INSTALLER="-"
+#export NOTARIZATION_TEAM=""
+#export NOTARIZATION_USERNAME=""
+#export NOTARIZATION_PASSWORD=""
+# Notarization skipped: NOTARIZATION_TEAM, NOTARIZATION_USERNAME, or NOTARIZATION_PASSWORD not set in environment.
 
 
 ## -- find out where you have your homebrew (brew) installed
@@ -46,7 +38,6 @@ export HOMEBREW_PREFIX=`brew config | grep HOMEBREW_PREFIX | cut -f2 -d: | awk '
 echo "-- your HOMEBREW_PREFIX is:"
 echo "$HOMEBREW_PREFIX"
 
-
 ## -- the following lines are taken from https://github.com/sillsdev/ptx2pdf/mac-build.sh
 python3 -m venv --system-site-packages _venv
 source _venv/bin/activate
@@ -54,15 +45,21 @@ pip3 install -e .
 pip3 install pyinstaller
 
 
-
-
 ## -- patch source code
 
 ## -- make sure you use Gtk 3 else your app will crash later
-
 ## main.py add on top:
 ## import gi
 ## gi.require_version('Gtk', '3.0')
+#--dry-run
+# -R reverse
+# -b backup
+
+patch -R -b ./python/lib/ptxprint/main.py --ignore-whitespace << 'EOF'
+2,3d1
+< import gi
+< gi.require_version('Gtk', '3.0')
+EOF
 
 
 ## [PYI-14051:ERROR] Failed to execute script 'ptxprint' due to unhandled exception: gtk-builder-error-quark: .:15738:56 Invalid object type 'GtkSourceBuffer' (6)
@@ -70,6 +67,10 @@ pip3 install pyinstaller
 ## gi.require_version('GtkSource', '3.0')
 ## gi.require_version('Gtk', '3.0')
 
+patch -R -b ./python/lib/ptxprint/gtkview.py --ignore-whitespace << 'EOF'
+9d8
+< gi.require_version('GtkSource', '3.0')
+EOF
 
 
 
@@ -78,7 +79,6 @@ pip3 install pyinstaller
 ## -- the following command will compile the .app and .dmg
 ## -- if you need to re-compile things, just call this line and do the patch below again
 pyinstaller ptxprint.spec -y
-
 
 
 
@@ -98,5 +98,31 @@ echo "You can copy PTXprint-app.app in /Applications folder."
 
 
 
+## -- show codesign (adhoc)
+## https://stories.miln.eu/graham/2024-06-25-ad-hoc-code-signing-a-mac-app/
+## Ad hoc code signing is a type of digital signature created for a specific,
+## temporary purpose without using a verifiable developer identity.
+## In operating systems like macOS, it acts as a "seal" applied to a program
+## so the system knows the code hasn't been tampered with, but it does not
+## prove who wrote it.
+
+#codesign -dv ./dist/PTXprint.app 
+
+
+#echo "-- Create ZIP archive of .app"
+cd ./dist
+zip -9 -y -r -q PTXprint.zip PTXprint.app
+#Flag descriptions:
+#-9: compress better
+#-y: store symbolic links as the link instead of the referenced file
+#-r: recurse into directories
+#-q: quiet operation
+
+echo "-- Checksum ZIP archive with sha512sum"
+sha256sum PTXprint.zip > sha256sum.txt
+
+cd ..
+
+echo "ALL DONE."
 
 ## EOF.
