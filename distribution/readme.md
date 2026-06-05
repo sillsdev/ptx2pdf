@@ -11,6 +11,7 @@ This is an non-official distribution of PTXprint for macOS with Intel(TM) chips.
 Download any version here:
 https://www.flagsoft.com/public/ptxprint/
 
+### sha256sum
 ba288c6d028d500020876174ccd57921f94789ced71882a11af1cd2628dda60b, 3.0.32, PTXprint.zip
 
 
