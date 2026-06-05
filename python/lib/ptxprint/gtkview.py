@@ -5524,6 +5524,7 @@ class GtkViewModel(ViewModel):
             self._monoglotDlgSigConnected = True
 
         dialog   = self.builder.get_object("dlg_saveAsMonoglot")
+        dialog.show_all()
         response = dialog.run()
         dialog.hide()
 
