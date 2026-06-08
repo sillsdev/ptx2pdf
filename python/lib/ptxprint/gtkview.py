@@ -8317,6 +8317,8 @@ Thank you,
         if self.bkProgressDlg is None:
             self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)
         if widget.get_active():
+            if not self.bkProgressDlg._cells:
+                self.bkProgressDlg.populate(self.getBooks(), stop_sensitive=False)
             self.bkProgressDlg.show()
         else:
             self.bkProgressDlg.hide()

@@ -39,12 +39,10 @@ def _rgba(hex_color):
 
 css = """
     progressbar trough, progressbar progress {
-        min-height: 8px; margin-top: 0px; margin-bottom: 0px;
+        min-height: 1.8em;
     }
     progressbar text {
         color: black;
-        font-size: 12px; padding-top: 2px; padding-bottom: 0px;
-        margin-top: -2px; margin-bottom: -2px;
     }
 """
 
@@ -217,8 +215,9 @@ class BookProgressDialog:
         self.restart_button.connect("clicked", lambda btn: self.view.onRestartFillClicked(btn))
         button_box.add(self.restart_button)
 
-        # The Stop button
+        # The Stop button (insensitive until a fill is running)
         self.stop_button = Gtk.Button(label=stoplabel)
+        self.stop_button.set_sensitive(False)
         self.stop_button.connect("clicked", self.on_stop_clicked)
         self.stop_button.set_sensitive(False)
         button_box.add(self.stop_button)
@@ -228,7 +227,7 @@ class BookProgressDialog:
 
         self.window.show_all()
 
-    def populate(self, bookList: list):
+    def populate(self, bookList: list, stop_sensitive=True):
         """Rebuild cells for a new job. bookList contains 3-letter book codes."""
         # Remove existing children
         for child in self.grid.get_children():
@@ -249,7 +248,7 @@ class BookProgressDialog:
             self.grid.attach(cell.frame, col, row, 1, 1)
             self._cells[bk] = cell
 
-        self.stop_button.set_sensitive(True)
+        self.stop_button.set_sensitive(stop_sensitive)
         self.stop_button.set_label(stoplabel)
         self.grid.show_all()
         self.window.show_all()
