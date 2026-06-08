@@ -260,10 +260,17 @@ class PDFFileViewer:
         self.hbox = widget
         self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
+        self.sw.add_events(Gdk.EventMask.SCROLL_MASK)
         self.sw.connect("button-press-event", self.on_button_press)
         self.sw.connect("button-release-event", self.on_button_release)
         self.sw.connect("motion-notify-event", self.on_mouse_motion)
-        self.sw.connect("scroll-event", self.on_scroll_parent_event) # outer box (not the pages)
+        self.sw.connect("scroll-event", self.on_scroll_parent_event)
+        # Also connect to the GtkScrolledWindow itself — the gray border area can belong
+        # to its GdkWindow rather than the Viewport's, so the Viewport handler may never fire.
+        real_sw = self.sw.get_parent()
+        if isinstance(real_sw, Gtk.ScrolledWindow):
+            real_sw.add_events(Gdk.EventMask.SCROLL_MASK)
+            real_sw.connect("scroll-event", self.on_scroll_parent_event)
         
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
@@ -458,10 +465,24 @@ class PDFFileViewer:
         else:
             self.show_pdf()
 
+    def _scroll_zoom_direction(self, event):
+        """Return (zoom_in, zoom_out) booleans from a scroll event, handling both
+        discrete (UP/DOWN) and smooth (trackpad/precise wheel) directions."""
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, dx, dy = event.get_scroll_deltas()
+            return dy < 0, dy > 0
+        return (event.direction == Gdk.ScrollDirection.UP,
+                event.direction == Gdk.ScrollDirection.DOWN)
+
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         if ctrl_pressed:
-            return False
+            zoom_in, zoom_out = self._scroll_zoom_direction(event)
+            if zoom_in or zoom_out:
+                hbox_width = self.hbox.get_allocated_width()
+                posn = 1 if (self.spread_mode and event.x > hbox_width / 2) else 0
+                self.zoom_at_point(event.x, event.y, posn, zoom_in)
+            return True
         fit_zoom = self.get_fit_zoom()
         if fit_zoom is not None and self.zoomLevel >= fit_zoom * 1.1:
             return False  # zoomed in enough — let ScrolledWindow pan naturally
@@ -480,26 +501,26 @@ class PDFFileViewer:
     def on_scroll_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
 
-        if ctrl_pressed:  # Zooming with Ctrl + Scroll
-            zoom_in = event.direction == Gdk.ScrollDirection.UP
-            zoom_out = event.direction == Gdk.ScrollDirection.DOWN
-
-            # Get mouse position relative to the widget
+        if ctrl_pressed:
+            zoom_in, zoom_out = self._scroll_zoom_direction(event)
             mouse_x, mouse_y = event.x, event.y
-            posn = self.widgetPosition(widget) # 0=left page; 1=right page
-
-            if zoom_in:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
-            elif zoom_out:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=False)
-
-            return True  # Prevent further handling of the scroll event
+            posn = self.widgetPosition(widget)
+            if posn < 0:
+                posn = 1 if (self.spread_mode and mouse_x > self.hbox.get_allocated_width() / 2) else 0
+            if zoom_in or zoom_out:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in)
+            return True
 
         fit_zoom = self.get_fit_zoom()
         if fit_zoom is not None and self.zoomLevel >= fit_zoom * 1.1:
             return False  # zoomed in enough — let ScrolledWindow scroll naturally
-        # Default behavior: scroll for page navigation
-        if event.direction == Gdk.ScrollDirection.UP:
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, _, z = event.get_scroll_deltas()
+            if z < 0:
+                self.set_page(self.swap4rtl("previous"))
+            elif z > 0:
+                self.set_page(self.swap4rtl("next"))
+        elif event.direction == Gdk.ScrollDirection.UP:
             self.set_page(self.swap4rtl("previous"))
         elif event.direction == Gdk.ScrollDirection.DOWN:
             self.set_page(self.swap4rtl("next"))
