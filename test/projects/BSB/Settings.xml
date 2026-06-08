@@ -1,0 +1,71 @@
+<ScriptureText>
+  <StyleSheet>usfm.sty</StyleSheet>
+  <Versification>4</Versification>
+  <Language>english</Language>
+  <MinParatextVersion>8.0.100.76</MinParatextVersion>
+  <FullName>Example project based on Berean Standard Bible</FullName>
+  <Encoding>65001</Encoding>
+  <Editable>T</Editable>
+  <Copyright>&lt;p&gt;The Holy Bible, Berean Standard Bible, BSB is produced in cooperation with Bible Hub, Discovery Bible, OpenBible.com, and the Berean Bible Translation Committee. This text of God's Word has been dedicated to the public domain.&lt;/p&gt;</Copyright>
+  <NormalizationForm>NFC</NormalizationForm>
+  <Name>exmplBSB</Name>
+  <Guid>c28c21a612f983ed0fdbbbc264966aa631f44188</Guid>
+  <DefaultFont>Charis</DefaultFont>
+  <DefaultFontSize>12</DefaultFontSize>
+  <FontFeatures />
+  <HtmlLanguage />
+  <LanguageIsoCode>en:::</LanguageIsoCode>
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <FileNamePrePart />
+  <FileNamePostPart>BSB.usfm</FileNamePostPart>
+  <BiblicalTermsListSetting>Major::BiblicalTerms.xml</BiblicalTermsListSetting>
+  <MatchBasedOnStems>F</MatchBasedOnStems>
+  <AllowReadAccess>F</AllowReadAccess>
+  <AllowSharingWithSLDR>F</AllowSharingWithSLDR>
+  <Visibility>Test</Visibility>
+  <TranslationInfo>Standard::</TranslationInfo>
+  <EncodingConverter />
+  <UsfmVersion>3</UsfmVersion>
+  <ParallelPassagesBooks>000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</ParallelPassagesBooks>
+  <InitialImportBooksDirectory>C:\Projects\examples.bsb</InitialImportBooksDirectory>
+  <BooksPresent>111111111111111111111111111111111111111111111111111111111111111111000000000000000000000000000000000000000000000000000000000</BooksPresent>
+  <SegmentOrder>a b c d e f &amp; * ( ) % # $ % @ asdf</SegmentOrder>
+  <ParatextRegistryId>KBE4fHmiNgeuSSB8p</ParatextRegistryId>
+  <ChapterVerseSeparator>:</ChapterVerseSeparator>
+  <ReferenceFinalPunctuation />
+  <BookSourceForMarkerXt>ShortName</BookSourceForMarkerXt>
+  <BookSourceForMarkerR>ShortName</BookSourceForMarkerR>
+  <OriginRangeOption>MatchVerseExactly</OriginRangeOption>
+  <CrossReferenceSettingsHaveBeenReviewed>T</CrossReferenceSettingsHaveBeenReviewed>
+  <RefsMustMatchVerseSegments>False</RefsMustMatchVerseSegments>
+  <SegmentsMustHaveFinalPunctuation>False</SegmentsMustHaveFinalPunctuation>
+  <NoSpaceBetweenBookAndChapter>False</NoSpaceBetweenBookAndChapter>
+  <RangeIndicator>-|–</RangeIndicator>
+  <SequenceIndicator>,|, and | and |, </SequenceIndicator>
+  <ChapterRangeSeparator>—</ChapterRangeSeparator>
+  <BookSequenceSeparator>; </BookSequenceSeparator>
+  <ChapterNumberSeparator>; </ChapterNumberSeparator>
+  <ReferenceExtraMaterial>)|(</ReferenceExtraMaterial>
+  <CharacterAdvancedView>True</CharacterAdvancedView>
+  <ValidCharacters>  
+ 
+ a A b B c C d D e E f F g G h H i I j J k K l L m M n N o O p P q Q r R s S t T u U v V w W x X y Y z Z - ʼ ‌ ‍ ד ט י כ ו ה ג ב א ל ז מ ס ע פ צ ק ר ש ת נ ח / ‘ — 9 ! ( ) , . 0 1 2 3 4 5 6 7 8 : ; ? – ’ “ ”</ValidCharacters>
+  <InvalidCharacters />
+  <AdvancedView>False</AdvancedView>
+  <ValidPunctuation>- ʼ ‌ ‍ ...._ ..._ —_ ’_ !_ )_ :_ ?_ ”_ ;_ ._ ,_ _‘ _( _“ ” ‘ ! ) “ . – —</ValidPunctuation>
+  <InvalidPunctuation>’</InvalidPunctuation>
+  <Quotes>“ ”</Quotes>
+  <InnerQuotes>‘ ’</InnerQuotes>
+  <InnerInnerQuotes>“ ”</InnerInnerQuotes>
+  <Continuer />
+  <ContinueQuotes>No</ContinueQuotes>
+  <InnerContinuer />
+  <ContinueInnerQuotes>No</ContinueInnerQuotes>
+  <InnerInnerContinuer />
+  <VerboseQuotes>No</VerboseQuotes>
+  <QuoteClosesAllQuoteLevels>No</QuoteClosesAllQuoteLevels>
+  <ContinueAt>p p/q1 b/q1</ContinueAt>
+  <QuotationTypesOption>Recommended</QuotationTypesOption>
+  <ApplyQuoteRulesInFootnoteCitations>T</ApplyQuoteRulesInFootnoteCitations>
+  <Naming PrePart="" PostPart="BSB.usfm" BookNameForm="41MAT" />
+</ScriptureText>

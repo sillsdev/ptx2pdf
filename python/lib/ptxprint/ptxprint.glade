@@ -4137,6 +4137,8 @@ settings for a similar project.</property>
       <column type="gchararray"/>
       <!-- column-name x-xetex -->
       <column type="gchararray"/>
+      <!-- column-name scale_colour -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkListStore" id="ls_XrefCaller">

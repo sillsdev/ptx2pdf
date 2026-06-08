@@ -4661,7 +4661,7 @@ class GtkViewModel(ViewModel):
                 self.polyglots["L"].cfg = config
             self.gtkpolyglot.load_polyglots_into_treeview()
 
-    def showmybook(self, isfirst=False):
+    def showmybook(self, isfirst=False, nodate=False):
         if self.otherDiglot is None and self.initialised and self.showPDFmode == "preview": # preview is on
             prvw = self.builder.get_object("dlg_preview")
             pdffile = os.path.join(self.project.printPath(None), self.getPDFname(noext=True))
@@ -4675,7 +4675,7 @@ class GtkViewModel(ViewModel):
                 for bk in self.getBooks():
                     adj = self.get_adjlist(bk, gtk=Gtk)
                 logger.debug(f"time({pdffile})={pdft}, time({cfgfile})={cfgt}")
-                if pdft > cfgt:
+                if pdft > cfgt or nodate:
                     if isfirst:
                         prvw.set_gravity(Gdk.Gravity.NORTH_EAST)
                     pdfname = self.baseTeXPDFnames()[0]

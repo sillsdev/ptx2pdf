@@ -26,13 +26,14 @@ _form_structure = {
     'medP':     'c_plMediaP',
     'medA':     'c_plMediaA',
     'medW':     'c_plMediaW',
-    'x-xetex':  't_picXetex'
+    'x-xetex':  't_picXetex',
+    'scale_colour': None
 }
 
 _singlefields = ("anchor", "caption", "src", "ref", "alt", "x-xetex")
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "captionR",
-                  "disabled", "cleardest", "key", "media", "x-xetex"]
+                  "disabled", "cleardest", "key", "media", "x-xetex", "scale_colour"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _sizekeys = {"P": "page", "F": "full", "c": "col", "s": "span"}
@@ -98,6 +99,8 @@ class PicList:
         self.view.connect("button-press-event", self._onRightClick)
         self.view.connect("drag-data-received", lambda *a: self.view.stop_emission_by_name("drag-data-received"))
         for k, v in _form_structure.items():
+            if v is None:
+                continue
             w = builder.get_object(v)
             sig = "changed"
             if v.startswith("s_"):
@@ -175,6 +178,8 @@ class PicList:
                 else:
                     limit = self.parent.picMedia(pic.get('src',''))[1]
                     val = "".join(x for x in val if x in limit)
+            elif e == "scale_colour":
+                val = self.calc_scale_colour(row)
             else:
                 val = pic.get(e, "")
             row.append(val)
@@ -200,6 +205,8 @@ class PicList:
 
     def get(self, wid, default=None):
         wid = _form_structure.get(wid, wid)
+        if wid is None:
+            return None
         w = self.builder.get_object(wid)
         res = getWidgetVal(wid, w, default=default)
         if wid.startswith("s_"):
@@ -222,6 +229,8 @@ class PicList:
                 elif e == "cleardest":
                     if row[i] and 'destfile' in p:
                         del p['destfile']
+                    continue
+                elif e == "scale_colour":
                     continue
                 else:
                     val = row[i]
@@ -257,13 +266,14 @@ class PicList:
                 w.get_style_context().add_class("highlighted")
                 self.parent.doError(_("Missing: 'Anchor Ref'"), secondary=_("You must provide a Book Ch.Vs reference as an anchor for the picture. For example: GEN 14.19"))
                 return
-            for k, s in ((k, x) for k,x in _form_structure.items() if x.startswith("s_")):
+            for k, s in ((k, x) for k,x in _form_structure.items() if x is not None and x.startswith("s_")):
                 w = self.builder.get_object(s)
                 if w.has_focus():
                     e = Gdk.Event(Gdk.EventType.FOCUS_CHANGE)
                     e.window = w
                     e.send_event = True
                     w.emit("focus-out-event", e)
+            self.currows[-1][_pickeys['scale_colour']] = self.calc_scale_colour(self.currows[-1])
         model, paths = selection.get_selected_rows()
         self.currows = []
         for i, path in enumerate(paths):
@@ -284,6 +294,8 @@ class PicList:
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
+            if v is None:
+                continue
             # print(j, k, v)
             if k == 'pgpos':
                 val = pgpos[1:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
@@ -404,6 +416,21 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblistcr)
         return res
 
+    def calc_scale_colour(self, row):
+        pwidth, pheight = self.parent.calcPageSize()
+        ffactor = float(self.parent.get("s_pagefullfactor", 1.0))
+        mheight = ffactor * pheight
+        wfactor = 0.5 if row[_pickeys['size']] == 'col' and self.parent.get("c_doublecolumn") else 1
+        a = row[_pickeys['anchor']]
+        pbuf, fname = self._getpixbuf(row[_pickeys['src']], a)
+        if pbuf is None:
+            return "white"
+        imwidth = pbuf.get_width()
+        imheight = pbuf.get_height()
+        wscale = wfactor * imwidth / pwidth
+        height = imheight / wscale
+        return "red" if height > mheight else "white"
+
     def onPicframeSize(self, widget, allocation):
         if allocation.width <= 1 or allocation.height <= 1:
             return
@@ -417,7 +444,7 @@ class PicList:
             val = self.get_pgpos()
             key = "pgpos"
         elif key.startswith("med"):
-            val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
+            val = "".join(v[-1].lower() for k, v in _form_structure.items() if v is not None and k.startswith("med") and self.get(v))
             if val == "":
                 val = "x"
             key = "media"
@@ -455,6 +482,28 @@ class PicList:
             pic.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
 
+    def _getpixbuf(self, src, anchor):
+        fpath = None
+        if self.picinfo is None:
+            return None, None
+        self.parent.setupPicinfos(self.picinfo)
+        for p in self.picinfo.find(anchor=anchor):
+            p.clear_src_paths()
+        dat = self.picinfo.getFigureSources(data=[{'src': src}], key='path', mode=self.picinfo.mode)
+        fpath = dat[0].get('path', None)
+        logger.debug(f"Figure Path={fpath}, {dat[0]}")
+        if fpath is not None and os.path.exists(fpath):
+            if not self.parent._picframe_connected:
+                self.parent.picframe.connect("size-allocate", self.onPicframeSize)
+                self.parent._picframe_connected = True
+            if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                except GLib.GError:
+                    pixbuf = None
+                return pixbuf, fpath
+        return None, fpath
+
     def _updatePreview(self, currow):
         r_image = self.parent.get("r_image", default="preview")
         if r_image == "location":
@@ -467,28 +516,9 @@ class PicList:
         else:
             val = currow[_pickeys['src']]
             fpath = None
-            if self.picinfo is not None:
-                self.parent.setupPicinfos(self.picinfo)
-                a = currow[_pickeys['anchor']]
-                for p in self.picinfo.find(anchor=a):
-                    p.clear_src_paths()
-                dat = self.picinfo.getFigureSources(data=[{'src': val}], key='path', mode=self.picinfo.mode)
-                fpath = dat[0].get('path', None)
-                logger.debug(f"Figure Path={fpath}, {dat[0]}")
-            if fpath is not None and os.path.exists(fpath):
-                if not self.parent._picframe_connected:
-                    self.parent.picframe.connect("size-allocate", self.onPicframeSize)
-                    self.parent._picframe_connected = True
-                if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
-                    try:
-                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
-                    except GLib.GError:
-                        pixbuf = None
-                    self.setPreview(pixbuf, tooltip=fpath)
-                else:
-                    self.setPreview(None)
-            else:
-                self.setPreview(None)
+            a = currow[_pickeys['anchor']]
+            pixbuf, fpath = self._getpixbuf(val, a)
+            self.setPreview(pixbuf, tooltip=fpath)
 
     def drawPreview(self, wid, cr):
         if self.previewScales:
