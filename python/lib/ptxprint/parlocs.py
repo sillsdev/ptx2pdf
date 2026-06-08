@@ -101,7 +101,8 @@ class ParInfo:
         return f"{self.ref}[{getattr(self, 'parnum', '')}]"
 
     def sortKey(self):
-        return (self.rects[-1].pagenum, refSort(self.ref), getattr(self, 'parnum', 0))
+        return (self.rects[-1].pagenum if self.rects is not None and len(self.rects) else 10000,
+                refSort(self.ref), getattr(self, 'parnum', 0))
 
 
 @dataclass

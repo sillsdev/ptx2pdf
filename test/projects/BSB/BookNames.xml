@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BookNames>
+  <book code="GEN" abbr="Gn" short="Genesis" long="The First Book of Moses, Genesis"/>
+  <book code="EXO" abbr="Ex" short="Exodus" long="The Second Book of Moses, Exodus"/>
+  <book code="LEV" abbr="Lv" short="Leviticus" long="The Third Book of Moses, Leviticus"/>
+  <book code="NUM" abbr="Nu" short="Numbers" long="The Fourth Book of Moses, Numbers"/>
+  <book code="DEU" abbr="Dt" short="Deuteronomy" long="The Fifth Book of Moses, Deuteronomy"/>
+  <book code="JOS" abbr="Jos" short="Joshua" long="The Book of Joshua"/>
+  <book code="JDG" abbr="Jg" short="Judges" long="The Book of Judges"/>
+  <book code="RUT" abbr="Ru" short="Ruth" long="The Book of Ruth"/>
+  <book code="1SA" abbr="1Sa" short="1 Samuel" long="The First Book of Samuel"/>
+  <book code="2SA" abbr="2Sa" short="2 Samuel" long="The Second Book of Samuel"/>
+  <book code="1KI" abbr="1Ki" short="1 Kings" long="The First Book of Kings"/>
+  <book code="2KI" abbr="2Ki" short="2 Kings" long="The Second Book of Kings"/>
+  <book code="1CH" abbr="1Ch" short="1 Chronicles" long="The First Book of Chronicles"/>
+  <book code="2CH" abbr="2Ch" short="2 Chronicles" long="The Second Book of Chronicles"/>
+  <book code="EZR" abbr="Ezr" short="Ezra" long="The Book of Ezra"/>
+  <book code="NEH" abbr="Ne" short="Nehemiah" long="The Book of Nehemiah"/>
+  <book code="EST" abbr="Est" short="Esther" long="The Book of Esther"/>
+  <book code="JOB" abbr="Jb" short="Job" long="The Book of Job"/>
+  <book code="PSA" abbr="Ps" short="Psalms" long="The Psalms"/>
+  <book code="PRO" abbr="Pr" short="Proverbs" long="The Book of Proverbs"/>
+  <book code="ECC" abbr="Ec" short="Ecclesiastes" long="Ecclesiastes, or The Preacher"/>
+  <book code="SNG" abbr="Sg" short="Song of Songs" long="The Song of Songs (Song of Solomon)"/>
+  <book code="ISA" abbr="Is" short="Isaiah" long="The Book of Isaiah"/>
+  <book code="JER" abbr="Je" short="Jeremiah" long="The Book of Jeremiah"/>
+  <book code="LAM" abbr="La" short="Lamentations" long="The Lamentations of Jeremiah"/>
+  <book code="EZK" abbr="Ezk" short="Ezekiel" long="The Book of Ezekiel"/>
+  <book code="DAN" abbr="Dn" short="Daniel" long="The Book of Daniel"/>
+  <book code="HOS" abbr="Ho" short="Hosea" long="The Book of Hosea"/>
+  <book code="JOL" abbr="Jl" short="Joel" long="The Book of Joel"/>
+  <book code="AMO" abbr="Am" short="Amos" long="The Book of Amos"/>
+  <book code="OBA" abbr="Ob" short="Obadiah" long="The Book of Obadiah"/>
+  <book code="JON" abbr="Jon" short="Jonah" long="The Book of Jonah"/>
+  <book code="MIC" abbr="Mi" short="Micah" long="The Book of Micah"/>
+  <book code="NAM" abbr="Na" short="Nahum" long="The Book of Nahum"/>
+  <book code="HAB" abbr="Hab" short="Habakkuk" long="The Book of Habakkuk"/>
+  <book code="ZEP" abbr="Zep" short="Zephaniah" long="The Book of Zephaniah"/>
+  <book code="HAG" abbr="Hg" short="Haggai" long="The Book of Haggai"/>
+  <book code="ZEC" abbr="Zec" short="Zechariah" long="The Book of Zechariah"/>
+  <book code="MAL" abbr="Ml" short="Malachi" long="The Book of Malachi"/>
+  <book code="MAT" abbr="Mt" short="Matthew" long="The Gospel According to Matthew"/>
+  <book code="MRK" abbr="Mk" short="Mark" long="The Gospel According to Mark"/>
+  <book code="LUK" abbr="Lk" short="Luke" long="The Gospel According to Luke"/>
+  <book code="JHN" abbr="Jn" short="John" long="The Gospel According to John"/>
+  <book code="ACT" abbr="Ac" short="Acts" long="The Acts of the Apostles"/>
+  <book code="ROM" abbr="Rm" short="Romans" long="The Letter of Paul to the Romans"/>
+  <book code="1CO" abbr="1Co" short="1 Corinthians" long="The First Letter of Paul to the Corinthians"/>
+  <book code="2CO" abbr="2Co" short="2 Corinthians" long="The Second Letter of Paul to the Corinthians"/>
+  <book code="GAL" abbr="Ga" short="Galatians" long="The Letter of Paul to the Galatians"/>
+  <book code="EPH" abbr="Eph" short="Ephesians" long="The Letter of Paul to the Ephesians"/>
+  <book code="PHP" abbr="Php" short="Philippians" long="The Letter of Paul to the Philippians"/>
+  <book code="COL" abbr="Col" short="Colossians" long="The Letter of Paul to the Colossians"/>
+  <book code="1TH" abbr="1Th" short="1 Thessalonians" long="The First Letter of Paul to the Thessalonians"/>
+  <book code="2TH" abbr="2Th" short="2 Thessalonians" long="The Second Letter of Paul to the Thessalonians"/>
+  <book code="1TI" abbr="1Ti" short="1 Timothy" long="The First Letter of Paul to Timothy"/>
+  <book code="2TI" abbr="2Ti" short="2 Timothy" long="The Second Letter of Paul to Timothy"/>
+  <book code="TIT" abbr="Ti" short="Titus" long="The Letter of Paul to Titus"/>
+  <book code="PHM" abbr="Phm" short="Philemon" long="The Letter of Paul to Philemon"/>
+  <book code="HEB" abbr="Heb" short="Hebrews" long="The Letter to the Hebrews"/>
+  <book code="JAS" abbr="Jas" short="James" long="The Letter of James"/>
+  <book code="1PE" abbr="1Pe" short="1 Peter" long="The First Letter of Peter"/>
+  <book code="2PE" abbr="2Pe" short="2 Peter" long="The Second Letter of Peter"/>
+  <book code="1JN" abbr="1Jn" short="1 John" long="The First Letter of John"/>
+  <book code="2JN" abbr="2Jn" short="2 John" long="The Second Letter of John"/>
+  <book code="3JN" abbr="3Jn" short="3 John" long="The Third Letter of John"/>
+  <book code="JUD" abbr="Jud" short="Jude" long="The Letter of Jude"/>
+  <book code="REV" abbr="Rv" short="Revelation" long="The Revelation to John"/>
+  <book code="TOB" abbr="Tb" short="Tobit" long="Tobit"/>
+  <book code="JDT" abbr="Jdt" short="Judith" long="Judith"/>
+  <book code="ESG" abbr="EsG" short="Esther (Greek)" long="Additions to Esther (Greek)"/>
+  <book code="WIS" abbr="Wis" short="Wisdom of Solomon" long="The Wisdom of Solomon"/>
+  <book code="SIR" abbr="Sir" short="Sirach (Ecclesiasticus)" long="The Wisdom of Jesus Son of Sirach (Ecclesiasticus)"/>
+  <book code="BAR" abbr="Bar" short="Baruch" long="Baruch"/>
+  <book code="LJE" abbr="LJe" short="Letter of Jeremiah" long="The Letter of Jeremiah"/>
+  <book code="S3Y" abbr="Az" short="Song of the Three" long="The Prayer of Azariah and the Song of the Three"/>
+  <book code="SUS" abbr="Sus" short="Susanna" long="Susanna"/>
+  <book code="BEL" abbr="Bel" short="Bel and the Dragon" long="Bel and the Dragon"/>
+  <book code="1MA" abbr="1Ma" short="1 Maccabees" long="The First Book of the Maccabees"/>
+  <book code="2MA" abbr="2Ma" short="2 Maccabees" long="The Second Book of the Maccabees"/>
+  <book code="3MA" abbr="3Ma" short="3 Maccabees" long="The Third Book of the Maccabees"/>
+  <book code="4MA" abbr="4Ma" short="4 Maccabees" long="The Fourth Book of the Maccabees"/>
+  <book code="1ES" abbr="1Es" short="1 Esdras (Greek)" long="First Esdras (Greek)"/>
+  <book code="2ES" abbr="2Es" short="2 Esdras (Latin)" long="Second Esdras (Latin)"/>
+  <book code="MAN" abbr="PMa" short="Prayer of Manasseh" long="The Prayer of Manasseh"/>
+  <book code="PS2" abbr="Ps151" short="Psalm 151" long="Psalm 151"/>
+  <book code="ODA" abbr="Od" short="Odes" long="Odes"/>
+  <book code="PSS" abbr="Pso" short="Psalms of Solomon" long="The Psalms of Solomon"/>
+  <book code="DAG" abbr="DaG" short="Daniel (Greek)" long="Daniel with Greek Additions"/>
+  <book code="PS3" abbr="P152" short="Psalms 152–155" long="Psalms 152–155"/>
+  <book code="2BA" abbr="2Ba" short="2 Baruch (Apocalypse)" long="2 Baruch (Apocalypse of Baruch)"/>
+  <book code="LBA" abbr="LBa" short="Letter of Baruch" long="The Letter of Baruch"/>
+  <book code="JUB" abbr="Jub" short="Jubilees" long="The Book of Jubilees"/>
+  <book code="ENO" abbr="En" short="Enoch" long="1 Enoch"/>
+  <book code="1MQ" abbr="1Mq" short="1 Meqabyan" long="First Meqabyan"/>
+  <book code="2MQ" abbr="2Mq" short="2 Meqabyan" long="Second Meqabyan"/>
+  <book code="3MQ" abbr="3Mq" short="3 Meqabyan" long="Third Meqabyan"/>
+  <book code="REP" abbr="Rep" short="Reproof (Prov 25–31)" long="Reproof (Proverbs 25–31)"/>
+  <book code="4BA" abbr="4Ba" short="4 Baruch (Rest of Baruch)" long="4 Baruch (Rest of Baruch)"/>
+  <book code="LAO" abbr="Lao" short="Laodiceans" long="The Letter to the Laodiceans"/>
+  <book code="JSA" abbr="Joshua A." short="Joshua A." long="Joshua A."/>
+  <book code="JDB" abbr="Judges B." short="Judges B." long="Judges B."/>
+  <book code="TBS" abbr="Tobit S." short="Tobit S." long="Tobit S."/>
+  <book code="SST" abbr="Susanna Th." short="Susanna Th." long="Susanna Th."/>
+  <book code="DNT" abbr="Daniel Th." short="Daniel Th." long="Daniel Th."/>
+  <book code="BLT" abbr="Bel Th." short="Bel Th." long="Bel Th."/>
+  <book code="3ES" abbr="3 Ezra" short="3 Ezra" long="3 Ezra"/>
+  <book code="FRT" abbr="Preface" short="Preface" long="Preface"/>
+  <book code="GLO" abbr="Glossary" short="Glossary" long="Glossary"/>
+  <book code="XXA" abbr="" short="" long=""/>
+  <book code="XXB" abbr="" short="" long=""/>
+  <book code="XXC" abbr="" short="" long=""/>
+  <book code="XXD" abbr="" short="" long=""/>
+  <book code="XXE" abbr="" short="" long=""/>
+  <book code="XXF" abbr="" short="" long=""/>
+  <book code="XXG" abbr="" short="" long=""/>
+  <book code="BAK" abbr="" short="" long=""/>
+  <book code="OTH" abbr="" short="" long=""/>
+  <book code="INT" abbr="" short="" long=""/>
+  <book code="CNC" abbr="" short="" long=""/>
+  <book code="TDX" abbr="" short="" long=""/>
+  <book code="NDX" abbr="" short="" long=""/>
+</BookNames>

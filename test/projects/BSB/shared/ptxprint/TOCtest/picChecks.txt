@@ -1,0 +1,2333 @@
+[DEFAULT]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = 
+piccredit = 
+
+[map_mat_2]
+pubusage = Unknown
+pubclear = yes
+pubnoise = yes
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00294]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[hk00208]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00244]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00305]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[lb00299]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[lb00310]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00311]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[hk00155]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00213]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00280]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00317]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[hk00033]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00103]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[hk00166]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00250]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00320]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00284]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00321]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00324]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[lb00329cmod]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00636]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00638]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00646]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00647]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00655]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00656]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00659]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00683]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00692]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00709]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00718]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00745]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00760]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01628]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+piccreditbox = bl,0,None
+piccredit = © David C Cook
+approved = false
+approved_by = MJP
+approval_date = 
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = This note is all GO - yes, yes and more yes... 4 in total
+
+[cn01684]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01841]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01998]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01833]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01994]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[dn00401]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01681]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = br,90,None
+piccredit = © David C Cook
+approved = false
+approved_by = MJP
+approval_date = 
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = This wasn't clear at all 4x No and 3 Unknowns.
+
+[cn01723]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01771]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Story Enhancement
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01774]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01784]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[lb00104]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[hk00168]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[lb00061]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01698]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01814]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01825]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01849]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01606]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01609]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01617]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01647]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01656]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = yes
+pubnoise = yes
+pubaccept = Unknown
+notes = 
+
+[cn01686]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01699]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01702]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01778]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01709]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01713]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01718]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01728]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01750]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01759]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01761]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01715]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01739]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01776]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01789]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01794]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01803]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01815]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01822]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01836]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01853]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01859]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01866]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01667]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[lb00302]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01700]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[lb00014]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01769]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01782]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01800]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[hk00108]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[ab02861]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[lb00328]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01857]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01875]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01923]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01932]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01945cmod]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01953]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01964]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01988]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01993]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn02045]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[armor_of_godsgb]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00621]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01738]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01603]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00843]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn02103]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn01843]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00604]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = yes
+pubnoise = yes
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00626]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00663]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00754]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00818]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00606]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00613]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co01451]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00625]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00630]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00634]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00635]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[hk00227]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+
+[co00951]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00956]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00958]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00964]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00966]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00968]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00970]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00971]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00972]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co00973]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co01407]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co01415]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co01417]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co01419]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co01421]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co01422]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[co01423]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01921]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[cn02093]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[hk00264]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[ab02753]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[co00992]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[CN01771C.jpg]
+picclear = yes
+picaccept = Culturally Appropriate
+picreverse = unknown
+pubusage = Space Filler
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[mark01_06_08]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[mark02_22b]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+approved = false
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+notes = 
+
+[lb00294b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00244b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00305b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00299b.tif]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00310b.tif]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00311b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[hk00155b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00213b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00280b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00317b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[hk00033b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00103b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[hk00166b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00250b.tif]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00320b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00284b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00321b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00324b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00329Cmod.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01606c.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01609c.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01617.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01647c.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[Cn01656c.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01686C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01699C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01702C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01778C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01709C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01713C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01718C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01728C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01750C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01759C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01761C.TIF]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01715C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[Cn01739C.tif]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01776C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01789C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01794C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01803C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01815C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01822c.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01836C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01853c.tif]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01859C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01866C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01667C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[LB00302C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01700C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[Cn01739C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[LB00014C.TIF]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01769C.TIF]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01782C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01800C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[HK00108C.TIF]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[AB02861b.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[LB00328C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01857c.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01875C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01923C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[CN01932C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01945Cmod.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01953C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01964C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01988C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01998C.TIF]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn01993c.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[cn02045C.jpg]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[ab02778]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[bk00007]
+picclear = unknown
+picaccept = Unknown
+picreverse = unknown
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[lb00259]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[ap_03_08]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[hk029a]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[front]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[title_page_seerat_hz_moses]
+pubusage = Unknown
+pubclear = yes
+pubnoise = yes
+pubaccept = Unknown
+approved_by = mj
+approval_date = 
+approved = false
+notes = 
+
+[bismillah]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01600]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01605]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01620]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+approved = false
+notes = 
+
+[cn01625]
+pubusage = Unknown
+pubclear = yes
+pubnoise = yes
+pubaccept = Unknown
+approved = false
+notes = 
+

@@ -196,8 +196,8 @@
     %\getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     %\ifx\p@ram\relax \else \trace{t}{leftmargin of \tc@ll is \p@ram *\the\IndentUnit}\advance\dimen255 \p@ram\IndentUnit \fi
     \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax \else \kern \p@ram\IndentUnit \fi
-    %\trace{t}{Kern for start of \the\tablec@l, \the\dimen255, firstindent=\p@ram}% 
+    \ifx\p@ram\relax \else \dimen255=\p@ram\IndentUnit \kern\dimen255\fi
+    \trace{t}{Kern for start of \the\tablec@l, \the\dimen255, firstindent=\p@ram}% 
     %\ifdim\dimen255=0pt\else\kern\dimen255\fi
     \s@tfont{tc\the\tablec@l}{\tc@ll+\styst@k}%
     \global\advance\p@ranesting by 1
@@ -291,7 +291,7 @@
     \setbox0\vbox{% wrap the table so that other processing (e.g. pagebreaks) don't intervenes
       \f@reachcol{\edef\tc@l{tc\the\@col}\getp@ram{\ifRTL leftmargin\else rightmargin\fi}{\tc@l}{\tc@l+\styst@k}\ifx\p@ram\relax \else
         \trace{t}{oldcolwidth \the\@col \space is \the\wd\c@rrentcolbox + \p@ram * \the\IndentUnit}%
-        \dimen0=\wd\c@rrentcolbox\advance\dimen0 \p@ram\IndentUnit\wd\c@rrentcolbox=\dimen0
+        \dimen0=\wd\c@rrentcolbox\advance\dimen0 \p@ram \IndentUnit \wd\c@rrentcolbox=\dimen0
       \fi\trace{t}{colwidth \the\@col \space is \the\wd\c@rrentcolbox}\advance\t@talwidth by \wd\c@rrentcolbox}%
       \endt@blewrap
       \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
@@ -388,11 +388,11 @@
       \line{\hskip\dimen0
         \ifRTL
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftbal\hfil\fi\fi\fi
-          \lochcaer@f{\csname \c@tprefix tc\the\@col :fill\endcsname\getnth@line}%
+          \lochcaer@f{\getnth@line}%
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\r@ght\hfil\fi\fi
         \else
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\r@ght\hfil\fi\fi
-          \f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}%
+          \f@reachcol{\getnth@line}%
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftbal\hfil\fi\fi\fi
         \fi
         \hskip\trmargin}%
@@ -444,34 +444,37 @@
     \edef\tc@ll{tc\the\@col}%
     \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
-    \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax\else \dimen3=\p@ram \IndentUnit
-      \ifdim\dimen3=0pt\else\kern \dimen3\fi
-    \fi
+    %\getp@ram{firstindent}{\tc@ll}{\tc@ll}%
+    %\dimen3=0pt
+    %\ifx\p@ram\relax\else \dimen3=\p@ram \IndentUnit
+    %  \trace{t}{firstindent=\the\dimen3}%
+    %  \ifdim\dimen3=0pt\else\kern \dimen3\fi
+    %\fi
     \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\relax \getp@ram{justification}{\tc@ll}{\tc@ll}\s@ttc@lign\let\the@lign\mytmp\fi
-    \ifx\the@lign\empty \let\the@lign\cell@l\fi
+    %\ifx\the@lign\empty \let\the@lign\cell@l\fi
     \trace{t}{Pre(\c@tprefix \tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \edef\l@drsl{}\edef\l@drsr{}%
     \ifx\the@lign\cell@r
       \parfillskip=0pt
       \edef\l@drsl{r}%
-      %\ifRTL \let\n@xt=\rightskip \else
-        %\skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
+      \ifRTL \let\n@xt=\rightskip \else
+        \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
-      %\fi
+      \fi
     \else\ifx\the@lign\cell@c
       %\parfillskip=0pt
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
       \edef\l@drsr{r}%
-      %\ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
-      %  \let\n@xt=\leftskip
-      %\else
-        \let\n@xt=\parfillskip\trace{t}{n@xt=rightskip}%
-      %\fi
+      \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
+        \let\n@xt=\leftskip
+      \else
+        \ifx\the@lign\cell@l \advance\rightskip by 0pt plus 1fil\fi
+        \let\n@xt=\parfillskip\trace{t}{n@xt=parfillskip}%
+      \fi
     \fi\fi
     \trace{t}{r=\l@drsr, l=\l@drsl, \c@tprefix =\c@ttoc}%
     \advance\n@xt by 0pt plus 1fil
@@ -486,7 +489,7 @@
       \nobreak\csname \mytmp\endcsname \hfil
       \trace{t}{Final... \mytmp}\def\f@nish{\unskip\unskip}%
     \else \def\f@nish{}\fi
-    \ifRTL\parfillskip=-\rightskip\fi% \hskip\rightskip \rightskip=0pt
+    %\ifRTL\parfillskip=-\rightskip\fi% \hskip\rightskip \rightskip=0pt
     \ifRTL\endR\fi\par\f@nish}% remove parfillskip and rightskip
   \wd0=\c@rrentcolwidth
   \box0}
@@ -520,18 +523,28 @@
     \fi
     \trace{t}{column \the\@col[\p@ram]. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
     \advance \nth@line by -\count255
-    \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
+    \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi
+      \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}%
+      \global\t@mpfalse
+    \else
       \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell
         \@@@LOOP \ifnum\nth@line<\lct@mp
           \setbox0=\lastbox \unskip\unpenalty
           \advance\lct@mp by -1 \@@@REPEAT
         \global\setbox1=\lastbox}%
+      \trace{t}{nth@line=\the\nth@line, linec@unt=\the\linec@unt, lct@mp=\the\lct@mp, count255=\the\count255}%
+      \ifnum\nth@line=\lct@mp \global\t@mptrue\else\global\t@mpfalse\fi
     \fi
   \egroup
   \trace{t}{bls:\the\baselineskip,  width=\the\wd1}%
   \ifsp@ncols\wd1=\csname colwidth-\the\@col\endcsname \fi
   \ifh@lfrow\lower 0.5\baselineskip\fi
+  \ifRTL\ifnum\@col=\maxtablec@l\else
+    \ift@mp\csname \c@tprefix tc\the\@col :fill\endcsname\else\hfill\fi\fi\fi
   \box1%
+  \trace{t}{t@mp\ift@mp true\else false\fi \space col=\the\@col \space max=\the\maxtablec@l}%
+  \ifRTL\else\ifnum\@col=\maxtablec@l\else
+    \ift@mp\csname \c@tprefix tc\the\@col :fill\endcsname\else\hfill\fi\fi\fi
 }
 \newcount\nth@line
 
