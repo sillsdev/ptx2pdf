@@ -172,7 +172,11 @@
   \x@\let\csname cover-Y-back\endcsname\c@vY
   \x@\edef\csname cover-X-front\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-front-spinewrap\endcsname - \ifBookOpenLeft \wholec@vrlpad\else\wholec@vrrpad\fi\relax}%
   \x@\edef\csname cover-X-back\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-back-spinewrap\endcsname - \ifBookOpenLeft \wholec@vrrpad\else\wholec@vrlpad\fi\relax}%
-  \x@\edef\csname cover-X-whole\endcsname{\the\dimexpr \csname cover-spine\endcsname +\csname cover-x\endcsname *2 + \csname cover-hinge\endcsname*4\relax }%
+  \ifdim\csname cover-spine\endcsname >\z@
+    \x@\edef\csname cover-X-whole\endcsname{\the\dimexpr \csname cover-spine\endcsname +\csname cover-x\endcsname *2 + \csname cover-hinge\endcsname*4\relax }%
+  \else
+    \x@\edef\csname cover-X-whole\endcsname{\the\dimexpr \csname cover-x\endcsname *2 \relax }%
+  \fi
   \x@\edef\csname cover-Y-whole\endcsname{\the\dimexpr \csname cover-y\endcsname \relax}
   \trace{cov}{back=\csname cover-X-back\endcsname, spine=\csname cover-X-spine\endcsname, front=\csname cover-X-front\endcsname, cover-spine=\csname cover-spine\endcsname}%
   %  
