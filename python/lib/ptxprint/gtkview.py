@@ -8255,10 +8255,10 @@ Thank you,
         mview = self.mview
         try:
             results = mview.run_all(stop=True)
-        finally:
+        except:
             mview.teardown()
+            self.mview = None
         #logger.debug(f"page fill results: {results}")
-        self.mview = None
         GLib.idle_add(self._fillPages_finish, results)
 
     def _fillPages_finish(self, results):
@@ -8270,6 +8270,8 @@ Thank you,
             pass
         self._progress_watch_id = None
         self.bkProgressDlg.finished()
+        self.mview.teardown()
+        self.mview = None
         for i, bk in enumerate(self.getBooks()):
             self.adjlists.pop(bk, None)
             a = self.get_adjlist(bk, save=False)

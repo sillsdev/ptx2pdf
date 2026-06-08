@@ -95,7 +95,7 @@ class BookProgressCell:
             provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
         )
 
-    def _barText(self, page, total, prefix="pg"):
+    def _barText(self, page, total, prefix="pg done"):
         t = str(total) if total is not None else "?"
         return f"{self.bookCode}  {prefix} {page}/{t}"
 
@@ -220,6 +220,7 @@ class BookProgressDialog:
         # The Stop button
         self.stop_button = Gtk.Button(label=stoplabel)
         self.stop_button.connect("clicked", self.on_stop_clicked)
+        self.stop_button.set_sensitive(False)
         button_box.add(self.stop_button)
 
         self.stylep = Gtk.CssProvider()

@@ -800,6 +800,7 @@ class PTXprinter:
         self.job.xdvtopdf(self.job.outfname, self.job.pdffile)
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
+            self.progress(ProgressEvent(bk, res.page, 'failed', res.message, -1))
         else:
             retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
         return retval
