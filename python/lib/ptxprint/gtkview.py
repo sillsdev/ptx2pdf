@@ -8243,7 +8243,7 @@ Thank you,
         # on Windows than io_add_watch + socketpair.
         if getattr(self, '_progress_watch_id', None) is not None:
             GLib.source_remove(self._progress_watch_id)
-        self._progress_watch_id = GLib.timeout_add(100, self._pollFillProgress)
+        self._progress_watch_id = GLib.timeout_add(1000, self._pollFillProgress)
         if self.bkProgressDlg is None:
             self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)  
         self.bkProgressDlg.populate(self.getBooks())
@@ -8257,14 +8257,19 @@ Thank you,
             results = mview.run_all(stop=True)
         finally:
             mview.teardown()
-        logger.debug(f"page fill results: {results}")
+        #logger.debug(f"page fill results: {results}")
         self.mview = None
         GLib.idle_add(self._fillPages_finish, results)
 
     def _fillPages_finish(self, results):
-        if getattr(self, "_progress_watch_id", None) is not None:
+        self._pollFillProgress()
+        print("Fill finished")
+        try:
             GLib.source_remove(self._progress_watch_id)
-            self._progress_watch_id = None
+        except TypeError:       # self._progress_watch_id can be cleared many places
+            pass
+        self._progress_watch_id = None
+        self.bkProgressDlg.finished()
         for i, bk in enumerate(self.getBooks()):
             self.adjlists.pop(bk, None)
             a = self.get_adjlist(bk, save=False)

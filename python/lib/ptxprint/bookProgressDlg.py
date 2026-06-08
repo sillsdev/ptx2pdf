@@ -153,6 +153,10 @@ class BookProgressCell:
             self._msgLabel.set_text(event.msg or "Failed")
             self._applyColor(STATUS_FAILED)
 
+    def finish(self):
+        if self._status not in (STATUS_GOOD, STATUS_WARNING, STATUS_FAILED):
+            self._applyColor(STATUS_FAILED)
+
 
 # ---------------------------------------------------------------------------
 # BookProgressDialog
@@ -265,6 +269,8 @@ class BookProgressDialog:
     def updateEvent(self, event):
         """Route a ProgressEvent to the correct BookProgressCell."""
         cell = self._cells.get(event.book)
+        print(f"{event.book=} {event.mode=} {event.page=} {event.total=}")
+
         if cell is not None:
             cell.update(event)
 
@@ -287,3 +293,9 @@ class BookProgressDialog:
         button.set_label(_("Stopping..."))
         self.view.onFillCancelled()
 
+    def finished(self):
+        self.stop_button.set_label(stoplabel)
+        self.stop_button.set_sensitive(False)
+        for k, v in self._cells.items():
+            v.finish()
+            
