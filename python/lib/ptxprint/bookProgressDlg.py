@@ -39,12 +39,10 @@ def _rgba(hex_color):
 
 css = """
     progressbar trough, progressbar progress {
-        min-height: 8px; margin-top: 0px; margin-bottom: 0px;
+        min-height: 1.8em;
     }
     progressbar text {
         color: black;
-        font-size: 12px; padding-top: 2px; padding-bottom: 0px;
-        margin-top: -2px; margin-bottom: -2px;
     }
 """
 
@@ -95,7 +93,7 @@ class BookProgressCell:
             provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
         )
 
-    def _barText(self, page, total, prefix="pg"):
+    def _barText(self, page, total, prefix="pg done"):
         t = str(total) if total is not None else "?"
         return f"{self.bookCode}  {prefix} {page}/{t}"
 
@@ -151,6 +149,10 @@ class BookProgressCell:
             self._bar.set_fraction(frac)
             self._bar.set_text(self._barText(page, self._total))
             self._msgLabel.set_text(event.msg or "Failed")
+            self._applyColor(STATUS_FAILED)
+
+    def finish(self):
+        if self._status not in (STATUS_GOOD, STATUS_WARNING, STATUS_FAILED):
             self._applyColor(STATUS_FAILED)
 
 
@@ -213,9 +215,11 @@ class BookProgressDialog:
         self.restart_button.connect("clicked", lambda btn: self.view.onRestartFillClicked(btn))
         button_box.add(self.restart_button)
 
-        # The Stop button
+        # The Stop button (insensitive until a fill is running)
         self.stop_button = Gtk.Button(label=stoplabel)
+        self.stop_button.set_sensitive(False)
         self.stop_button.connect("clicked", self.on_stop_clicked)
+        self.stop_button.set_sensitive(False)
         button_box.add(self.stop_button)
 
         self.stylep = Gtk.CssProvider()
@@ -223,7 +227,7 @@ class BookProgressDialog:
 
         self.window.show_all()
 
-    def populate(self, bookList: list):
+    def populate(self, bookList: list, stop_sensitive=True):
         """Rebuild cells for a new job. bookList contains 3-letter book codes."""
         # Remove existing children
         for child in self.grid.get_children():
@@ -244,7 +248,7 @@ class BookProgressDialog:
             self.grid.attach(cell.frame, col, row, 1, 1)
             self._cells[bk] = cell
 
-        self.stop_button.set_sensitive(True)
+        self.stop_button.set_sensitive(stop_sensitive)
         self.stop_button.set_label(stoplabel)
         self.grid.show_all()
         self.window.show_all()
@@ -265,6 +269,8 @@ class BookProgressDialog:
     def updateEvent(self, event):
         """Route a ProgressEvent to the correct BookProgressCell."""
         cell = self._cells.get(event.book)
+        print(f"{event.book=} {event.mode=} {event.page=} {event.total=}")
+
         if cell is not None:
             cell.update(event)
 
@@ -287,3 +293,9 @@ class BookProgressDialog:
         button.set_label(_("Stopping..."))
         self.view.onFillCancelled()
 
+    def finished(self):
+        self.stop_button.set_label(stoplabel)
+        self.stop_button.set_sensitive(False)
+        for k, v in self._cells.items():
+            v.finish()
+            
