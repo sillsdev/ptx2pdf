@@ -170,17 +170,24 @@ class ProgressEvent:
 class Hooks:
 
     badness_stretch_tolerance   = 80   # avoid ±2
-    badness_spacing_tolerance   = 1    # paragraph spacing distortion
+    badness_spacing_tolerance   = 20    # paragraph spacing distortion
     badness_shrink_preference   = 20   # + = prefer shrink, - = prefer stretch
     badness_header_aversion     = 60   # avoid headers
     badness_line_density_factor = 1.0  # wide vs narrow text
     badness_line_weight         = 12
-    badness_lastline_weight     = 2
+    badness_lastline_weight     = 20
     badness_tex_weight          = 12
 
     def __init__(self, printer, state):
         self.printer = printer
         self.basestate = state
+        for a in (("spacing_tolerance", "pbspacingtol"),
+                  ("shrink_preference", "pbshrinkpref"),
+                  ("header_aversion", "pbheadings"),
+                  ("lastline_weight", "pblastline")):
+            val = float(printer.view.get("s_"+a[1]))
+            print(f"{a}, {val}")
+            setattr(self, "badness_"+a[0], val)
         vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
         logger.log(15, f"Badness parameters = {vals}")
 
@@ -247,12 +254,9 @@ class Hooks:
                        delta: int,
                        result: bool = False) -> float:
 
-        import math
-
         isshrink = delta < 0
         bigdelta = abs(delta) > 1
         distortion = abs(expansion - 1.0)
-
         p = self.printer.get_para(paragraph)
         rtl = self.printer.rtl
         pwidth = p.lastwidth if p is not None else 0.
@@ -268,7 +272,6 @@ class Hooks:
         # --- 1. Base cost per line change (asymmetric) ---
         # Prefer removing lines slightly over adding, especially for short paragraphs
         short_factor = (20 / min(lines + 1, 20)) ** 0.5
-
         if delta > 0 and is_just:
             res += self.badness_shrink_preference * delta * short_factor   # adding lines is more visible
         elif delta < 0:
@@ -279,17 +282,12 @@ class Hooks:
             res += 25 * (abs(delta) - 1) * short_factor
 
         # --- 3. Spacing distortion (expansion/compression across paragraph) ---
-        density = self.badness_line_density_factor
-        res += self.badness_spacing_tolerance * (distortion * 100) ** 2
+        res += self.badness_spacing_tolerance / 20 * (distortion * 100) ** 2
 
         # --- 4. Effort to cause line change (pwidth-driven, your correct model) ---
         if delta != 0:
-            if delta > 0:
-                effort = 1.0 - pwidth   # short line = hard to stretch
-            else:
-                effort = pwidth         # short line = hard to shrink
-
-            res += self.badness_lastline_weight * (effort ** 4) * short_factor * abs(stretch)
+            effort = (1. - pwidth) if delta > 0 else pwidth
+            res += self.badness_lastline_weight / 10 * (effort ** 4) * short_factor * abs(stretch)
 
         # --- 5. Wrong-direction penalty (soft guidance, not dominant) ---
         PIVOT = 0.7
@@ -299,8 +297,7 @@ class Hooks:
             wrongness = max(0.0, pwidth - (1.0 - PIVOT))
         else:
             wrongness = 0.0
-
-        res += 0.5 * self.badness_spacing_tolerance * (wrongness ** 2) * short_factor * abs(stretch)
+        res += 0.5 * self.badness_spacing_tolerance / 20 * (wrongness ** 2) * short_factor * abs(stretch)
 
         # --- 6. Short paragraph sensitivity ---
         #line_penalty = self.badness_line_weight * ((20 / min(lines + 1, 20)) ** 0.5 - 1)
@@ -313,10 +310,7 @@ class Hooks:
 
         # --- 8. Header penalty ---
         if is_header:
-            if pwidth >= 0.9:
-                res += self.badness_header_aversion * (1.0 - pwidth)
-            else:
-                res += self.badness_header_aversion
+            res += self.badness_header_aversion * ((1.0 - pwidth) if pwidth >= 0.9 else 1.0)
 
         if not result:
             logger.log(
@@ -324,7 +318,6 @@ class Hooks:
                 f"{paragraph=}, {expansion=}, {stretch=}, {delta=}, "
                 f"{lines=}, {pwidth=:.3f}, {tex_badness=}, {res=:.2f}"
             )
-
         return res
 
     def progress(self, pevent):
@@ -767,7 +760,7 @@ class PTXprinter:
         self.view.set("r_book", "single")
         self.view.set("ecb_book", bk)
         # suppress peripherals
-        for a in """c_inclFrontMatter c_autoToC c_useSectIntros c_frontmatter c_inclMaps
+        for a in """c_inclFrontMatter c_autoToC c_frontmatter c_inclMaps
                     c_colophon c_inclBackMatter c_extradvproc c_inclSettingsInPDF c_applyWatermark
                     c_cropmarks c_extractInserts c_printArchive""".split():
             self.view.set(a, False)
@@ -807,6 +800,7 @@ class PTXprinter:
         self.job.xdvtopdf(self.job.outfname, self.job.pdffile)
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
+            self.progress(ProgressEvent(bk, res.page, 'failed', res.message, -1))
         else:
             retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
         return retval

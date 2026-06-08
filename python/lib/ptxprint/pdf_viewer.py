@@ -58,7 +58,6 @@ mstr = {
     'ecs':        _("Edit Caption Style"),
     'j2pt':       _("Send Ref to Paratext"),
     'z2f':        _("Zoom to Fit"),
-    'z100':       _("Zoom 100%"),
     'ancrdat':    _("Anchored at:"),
     'ianf':       _("Image Anchor Not Found"),
     'cnganc':     _("Change Anchor Ref"),
@@ -261,10 +260,17 @@ class PDFFileViewer:
         self.hbox = widget
         self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
+        self.sw.add_events(Gdk.EventMask.SCROLL_MASK)
         self.sw.connect("button-press-event", self.on_button_press)
         self.sw.connect("button-release-event", self.on_button_release)
         self.sw.connect("motion-notify-event", self.on_mouse_motion)
-        self.sw.connect("scroll-event", self.on_scroll_parent_event) # outer box (not the pages)
+        self.sw.connect("scroll-event", self.on_scroll_parent_event)
+        # Also connect to the GtkScrolledWindow itself — the gray border area can belong
+        # to its GdkWindow rather than the Viewport's, so the Viewport handler may never fire.
+        real_sw = self.sw.get_parent()
+        if isinstance(real_sw, Gtk.ScrolledWindow):
+            real_sw.add_events(Gdk.EventMask.SCROLL_MASK)
+            real_sw.connect("scroll-event", self.on_scroll_parent_event)
         
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
@@ -459,14 +465,27 @@ class PDFFileViewer:
         else:
             self.show_pdf()
 
+    def _scroll_zoom_direction(self, event):
+        """Return (zoom_in, zoom_out) booleans from a scroll event, handling both
+        discrete (UP/DOWN) and smooth (trackpad/precise wheel) directions."""
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, dx, dy = event.get_scroll_deltas()
+            return dy < 0, dy > 0
+        return (event.direction == Gdk.ScrollDirection.UP,
+                event.direction == Gdk.ScrollDirection.DOWN)
+
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         if ctrl_pressed:
-            return False
-        v_adj = widget.get_vadjustment()
-        h_adj = widget.get_hadjustment()
-        if v_adj.get_upper() > v_adj.get_page_size() or h_adj.get_upper() > h_adj.get_page_size():
-            return False  # zoomed in — let ScrolledWindow pan naturally
+            zoom_in, zoom_out = self._scroll_zoom_direction(event)
+            if zoom_in or zoom_out:
+                hbox_width = self.hbox.get_allocated_width()
+                posn = 1 if (self.spread_mode and event.x > hbox_width / 2) else 0
+                self.zoom_at_point(event.x, event.y, posn, zoom_in)
+            return True
+        fit_zoom = self.get_fit_zoom()
+        if fit_zoom is not None and self.zoomLevel >= fit_zoom * 1.1:
+            return False  # zoomed in enough — let ScrolledWindow pan naturally
         if event.direction == Gdk.ScrollDirection.SMOOTH:
             _, _, z = event.get_scroll_deltas()
             if z < 0:
@@ -482,35 +501,30 @@ class PDFFileViewer:
     def on_scroll_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
 
-        if ctrl_pressed:  # Zooming with Ctrl + Scroll
-            zoom_in = event.direction == Gdk.ScrollDirection.UP
-            zoom_out = event.direction == Gdk.ScrollDirection.DOWN
-
-            # Get mouse position relative to the widget
+        if ctrl_pressed:
+            zoom_in, zoom_out = self._scroll_zoom_direction(event)
             mouse_x, mouse_y = event.x, event.y
-            posn = self.widgetPosition(widget) # 0=left page; 1=right page
-
-            if zoom_in:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
-            elif zoom_out:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=False)
-
-            return True  # Prevent further handling of the scroll event
-
-        # Get the parent scrolled window and its adjustments
-        scrolled_window = self.hbox.get_parent()
-        v_adjustment = scrolled_window.get_vadjustment()
-        if v_adjustment.get_upper() > v_adjustment.get_page_size():
-            return False # v_adjustment is active
-        else:
-            # Default behavior: Scroll for navigation
-            if event.direction == Gdk.ScrollDirection.UP:
-                self.set_page(self.swap4rtl("previous"))
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                self.set_page(self.swap4rtl("next"))
+            posn = self.widgetPosition(widget)
+            if posn < 0:
+                posn = 1 if (self.spread_mode and mouse_x > self.hbox.get_allocated_width() / 2) else 0
+            if zoom_in or zoom_out:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in)
             return True
 
-        return False
+        fit_zoom = self.get_fit_zoom()
+        if fit_zoom is not None and self.zoomLevel >= fit_zoom * 1.1:
+            return False  # zoomed in enough — let ScrolledWindow scroll naturally
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, _, z = event.get_scroll_deltas()
+            if z < 0:
+                self.set_page(self.swap4rtl("previous"))
+            elif z > 0:
+                self.set_page(self.swap4rtl("next"))
+        elif event.direction == Gdk.ScrollDirection.UP:
+            self.set_page(self.swap4rtl("previous"))
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            self.set_page(self.swap4rtl("next"))
+        return True
 
     def widgetPosition(self, widget):
         children = self.hbox.get_children()
@@ -569,11 +583,8 @@ class PDFFileViewer:
         elif ctrl and keyval in {Gdk.KEY_minus, Gdk.KEY_underscore}:  # Ctrl+Minus (Zoom Out)
             self.on_zoom_out(widget)
             return True
-        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
-            self.on_reset_zoom(widget)
-            return True
-        elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
-            self.set_zoom(1.0)
+        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Fit to screen)
+            self.set_zoom_fit_to_screen(True)
             return True
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
             self.set_zoom_fit_to_screen(True)
@@ -671,22 +682,28 @@ class PDFFileViewer:
             return
         self.set_zoom_fit_to_screen(False)
 
-    def set_zoom_fit_to_screen(self, iscurrent):
+    def get_fit_zoom(self):
         if not hasattr(self, "document") or self.document is None or self.current_page is None:
-            return
-        page = self.document.get_page(self.current_page - 1)
+            return None
         try:
+            page = self.document.get_page(self.current_page - 1)
             page_width, page_height = page.get_size()
-        except AttributeError:
-            return
+        except (AttributeError, Exception):
+            return None
         if page_width < 10 or page_height < 10:
-            return
-        parent_widget = self.hbox.get_parent() # .get_parent()
+            return None
+        parent_widget = self.hbox.get_parent()
         if parent_widget is not None:
             alloc = parent_widget.get_allocation()
-            scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
-            scale_y = (alloc.height + 0) / page_height
-            self.set_zoom(min(scale_x, scale_y), setz=iscurrent)
+            scale_x = alloc.width / (page_width * (2 if self.spread_mode else 1))
+            scale_y = alloc.height / page_height
+            return min(scale_x, scale_y)
+        return None
+
+    def set_zoom_fit_to_screen(self, iscurrent):
+        fit = self.get_fit_zoom()
+        if fit is not None:
+            self.set_zoom(fit, setz=iscurrent)
 
     def set_page(self, action):
         if self.current_index is None:
@@ -816,6 +833,7 @@ class PDFContentViewer(PDFFileViewer):
         self.collisionpages = []
         self.spacepages = []
         self.riverpages = []
+        self.badglyphpages = []
         # UI extensions loaded from <config>/UIExtensions.json
         self.uiExtensions = []
         self.uiExtensionsLoaded = False
@@ -1016,6 +1034,7 @@ class PDFContentViewer(PDFFileViewer):
             layerfns.append(self._draw_spaces)
             layerfns.append(self._draw_collisions)
             layerfns.append(self._draw_whitespace_rivers)
+            layerfns.append(self._draw_badglyphs)
         
         images = []
         if self.spread_mode:
@@ -1216,7 +1235,6 @@ class PDFContentViewer(PDFFileViewer):
             context.set_source_rgba(*col)
             context.rectangle(*r)
             context.fill()
-
         for c in self.parlocs.getcollisions(pnum):
             make_rect(c)
             
@@ -1229,6 +1247,14 @@ class PDFContentViewer(PDFFileViewer):
         for r in self.parlocs.getrivers(pnum, **self.riverparms):
             for s in r.spaces:
                 make_rect(s)
+
+    def _draw_badglyphs(self, page, pnum, context, zoomlevel):
+        def make_rect(r, col=(0.7, 0.25, 0.85, 0.6)):
+            context.set_source_rgba(*col)
+            context.rectangle(*r)
+            context.fill()
+        for r in self.parlocs.getbadglyphs(pnum):
+            make_rect([r.xmin, r.ymin, r.xmax-r.xmin, r.ymax-r.ymin])
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):
@@ -1381,7 +1407,7 @@ class PDFContentViewer(PDFFileViewer):
             if len(self.badspaces):
                 self.model.set("s_spaceEms", self.badspaces[0].widthem)
         wanted = 7
-        self.spacepages, self.collisionpages, self.riverpages = \
+        self.spacepages, self.collisionpages, self.riverpages, self.badglyphpages = \
             self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
                     float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
         dlg.response(Gtk.ResponseType.OK)
@@ -1447,14 +1473,16 @@ class PDFContentViewer(PDFFileViewer):
             collisionPages  = []
             horizWhitespace = []
             vertRivers      = []
+            badGlyphs       = []
         else:
             ufPages         = self.model.ufPages or [] if self.model.get('c_findUnbalanced', False) else []
             collisionPages  = self.collisionpages      if self.model.get('c_findCollisions', False) else []
             horizWhitespace = self.spacepages          if self.model.get('c_findWhitespace', False) else []
             vertRivers      = self.riverpages          if self.model.get('c_findRivers',     False) else []
+            badGlyphs       = self.badglyphpages       if self.model.get('c_findBadGlyphs',  False) else []
 
         # Merge lists in order with uniqueness
-        for lst in [ufPages, collisionPages, horizWhitespace, vertRivers]:
+        for lst in [ufPages, collisionPages, horizWhitespace, vertRivers, badGlyphs]:
             for p in lst:
                 if p not in self.all_pages:
                     self.all_pages.append(p)
@@ -1527,6 +1555,8 @@ class PDFContentViewer(PDFFileViewer):
                         text = f"<span foreground='lightblue'><b>{p}</b></span>"
                     elif p in vertRivers:
                         text = f"<span foreground='yellow'><b>{p}</b></span>"
+                    elif p in badGlyphs:
+                        text = f"<span foreground='#A05080'><b>{p}</b></span>"
                     else: # if p in ufPages:
                         text = f"<b>{p}</b>"
 
@@ -2225,12 +2255,7 @@ class PDFContentViewer(PDFFileViewer):
         
     def edit_style(self, widget, a):
         (mkr, pref) = a
-        if pref != self.currpref:
-            if self.currpref is not None:
-                self.model.onOK(None)
-            if pref is not None:
-                self.model.switchToDiglot(pref)
-            self.currpref = pref
+        self.model.switchToDiglot(pref)
         if mkr is not None:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")

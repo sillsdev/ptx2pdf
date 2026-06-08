@@ -294,24 +294,6 @@ class Picture:
             line.append('{}="{}"'.format(pos3parms[i], val))
         return (outk, self.get('caption', ''), " ".join(line))
 
-    def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False, srcfkey="srcpath"):
-        if self.get('crop', False) == cropme and 'destfile' in self:
-            return
-        if keys is not None and self['anchor'][:3] not in keys:
-            return
-        if (fpath := self.get(srcfkey, None)) is None:
-            return
-        # print(fpath)
-        origExt = os.path.splitext(fpath)[1]
-        nB = newBase(self.get('src', ""))
-        if not nB:
-            logger.warn(f"src missing: {self.fields}")
-        self.destfile = fn(self, self[srckey], nB+origExt.lower())
-        self.crop = cropme
-        v = self.get('media', "")
-        if len(v) and 'p' not in v:
-            self.disabled = True
-
     def anchor_matches(self, src, bk=None):
         if self.get('src', None) != src:
             return None
@@ -637,8 +619,11 @@ class Piclist:
                 for p in d[1:]:
                     self.remove(p)
 
-    def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True):
-        self.srchlist = [figFolder] if figFolder is not None else []
+    def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True, append=False):
+        if not append:
+            self.srchlist = []
+        if figFolder:
+            self.srchlist.append(figFolder)
         chkpaths = []
         for d in ("local", ""):
             if sys.platform.startswith("win"):
@@ -646,13 +631,15 @@ class Piclist:
             else:
                 chkpaths += [os.path.join(self.basedir, x, y+"igures") for x in (d, d.title()) for y in "fF"]
         for p in chkpaths:
-            if os.path.exists(p) and len(os.listdir(p)) > 0:
+            if os.path.exists(p) and len(os.listdir(p)) > 0 and p not in self.srchlist:
                 if exclusive:
                     self.srchlist.append(p)
                 else:
                     for dp, _, fn in os.walk(p): 
                         if len(fn): 
                             self.srchlist.append(dp)
+        if append:
+            return
         uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
         if os.path.isdir(uddir):
             self.srchlist.append(uddir)

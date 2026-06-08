@@ -306,6 +306,13 @@ class UsfmCollection:
                 logger.warn(f"{bk} usfm not found to extract markers")
         return res
 
+    def resolve_bridge(self, r):
+        usfm = self.get(r.book)
+        if usfm is None:
+            return r
+        usfm.addorncv()
+        return usfm.bridges.get(r, r)
+
 class RefPos:
     def __init__(self, pos, ref):
         if pos is not None:

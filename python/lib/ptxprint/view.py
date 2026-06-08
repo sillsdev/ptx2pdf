@@ -144,6 +144,13 @@ class ViewModel:
         # private to this implementation
         self.dict = {}
 
+    def __eq__(self, other):
+        if self.project is None or other.project is None:
+            return False
+        if self.cfgid != other.cfgid:
+            return False
+        return self.project == other.project
+
     def setup_ini(self):
         self.setDate()
         self.report.clear()
@@ -863,7 +870,7 @@ class ViewModel:
                 try:
                     cupdates = json.load(inf)
                     self.copyrightInfo.update(cupdates)
-                except json.decode.JSONDecodeError as e:
+                except json.decoder.JSONDecodeError as e:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
         return self.copyrightInfo
@@ -1532,6 +1539,7 @@ class ViewModel:
             changed = True
         else:
             cfgt = os.stat(cfgpath).st_mtime
+        vcsnoted = self.triggervcs  # capture before writeConfig() resets it
         self.writeConfig(force=force)
         if not changed:
             os.utime(cfgpath, (cfgt, cfgt))
@@ -1541,6 +1549,11 @@ class ViewModel:
             if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
+            elif v is not None and vcsnoted:
+                # Primary adjlists changed (e.g. via PDF viewer context menu) —
+                # the diglot output has changed so signal the secondary project too.
+                v.triggervcs = True
+                v.writeConfig()
         self.isChanged = False
 
     def saveAdjlists(self, force=False):
@@ -1685,6 +1698,8 @@ class ViewModel:
             srcp = os.path.join(pycodedir(), "FRTtemplateBasic.txt")
         elif frtype == "advanced":
             srcp = os.path.join(pycodedir(), "FRTtemplateAdvanced.txt")
+        elif frtype == "diglot":
+            srcp = os.path.join(pycodedir(), "FRTtemplateDiglot.txt")
         elif frtype == "paratext":
             srcp = self.getBookSrcPath("FRT", self.project.prjid)
             if srcp is None:
@@ -1912,6 +1927,19 @@ class ViewModel:
             digView.picinfos.load_files(digView)
         self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
 
+    def setupPicinfos(self, picinfos=None, diglots=True):
+        if picinfos is None:
+            picinfos = self.picinfos
+        vlist = [self]
+        if diglots:
+            vlist = vlist + list(self.diglotViews.values())
+        for i, v in enumerate(vlist):
+            exclusive = v.get("c_exclusiveFiguresFolder")
+            fldr      = v.get("lb_selectFigureFolder", "") if v.get("c_useCustomFolder") else ""
+            imgorder  = v.get("t_imageTypeOrder")
+            lowres    = v.get("r_pictureRes") == "Low"
+            picinfos.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres, append=i!=0)
+
     def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
@@ -1960,7 +1988,8 @@ class ViewModel:
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(baseprjid, intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
-            self.picinfos.getFigureSources(exclusive=exclFigsFolder)
+            self.setupPicinfos()
+            self.picinfos.getFigureSources()
         if self.get("c_useCustomFolder"): # What is happening here? and why? (shouldn't it happen above before we getFigureSources?)
             cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
@@ -2079,7 +2108,7 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def createArchive(self, filename=None):
+    def createArchive(self, filename=None, nobuild=False):
         if filename is None:
             filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
         if not filename.lower().endswith(".zip"):
@@ -2090,10 +2119,14 @@ class ViewModel:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
         temps = []
-        from ptxprint.runjob import RunJob
-        runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
-        runjob.doit(noview=True)
-        res = runjob.wait()
+        if not nobuild:
+            from ptxprint.runjob import RunJob
+            runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
+            runjob.doit(noview=True)
+            res = runjob.wait()
+        else:
+            runjob = None
+            res = 0
         found = False
         # TODO: include burst pdfs
         xdvfile = None
@@ -2117,7 +2150,7 @@ class ViewModel:
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
                     self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
-        for f in set(self.tempFiles + runjob.picfiles + temps):
+        for f in set(self.tempFiles + ([] if runjob is None else runjob.picfiles) + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.project.path)

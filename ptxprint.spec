@@ -15,9 +15,20 @@ else:
     bindir = sys.platform + "_" + platform.machine()
 print("bindir:", bindir)
 
+import types
+
+class MockExtensionModule(types.ModuleType):
+    def __init__(self, name):
+        super().__init__(name)
+        self.generate_time_safe = None
+        self.__file__ = f"<built-in extension {name}>"
+
+if '_uuid' not in sys.modules:
+    sys.modules['_uuid'] = MockExtensionModule('_uuid')
+
 import usfmtc           # so we can find its data files
 
-version="3.0.29"
+version="3.0.32"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -360,6 +371,8 @@ binaries = (binaries
 datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
         ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs',
          'imagesets.json')]
+      + [('python/lib/ptxprint/wizards/configuration/'+z, 'ptxprint/wizards/configuration') for z in 
+        ('wizardQuestions.json', 'wizardQuestions.schema.json', 'wizardDialog.glade')]
       + [(f'python/lib/ptxprint/{x}/*.*y', f'ptxprint/{x}') for x in ('unicode', 'pdf', 'printers', 'pdfrw', 'pdfrw/objects')]
       + getfiles("xetex", "ptxprint", excldirs=["bin", "tfm", "pfb"])
       + getfiles('resources', 'ptxprint', extin=['.sfm'])
@@ -413,7 +426,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             binaries = binaries,
             datas = datas,
                 # The registry tends not to get included
-            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid"] if sys.platform.startswith("win") else []) \
+            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid", "_wmi"] if sys.platform.startswith("win") else []) \
                 + ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._core._exceptions'],
             runtime_hooks = [],
             hookspath = [os.path.abspath("pyinstallerhooks")],
@@ -424,6 +437,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             noarchive = False)
 
 a1.binaries = stripbinaries(a1.binaries, f'xetex/bin/{bindir}')
+a1.binaries = [x for x in a1.binaries if "aom" not in x and "av1" not in x]
 print("Binaries:", a1.binaries)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
 app_name = 'PTXprint'

@@ -1,10 +1,47 @@
-PTXprint 3.0.29 Release Notes
-15 May 2026
+PTXprint 3.0.32 Release Notes
+4 Jun 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.29 - (15 May 2026)
+Bug fixes and Improvements in 3.0.32 - (4 Jun 2026)
+  * Make sure settings are stored in all PDFs when 2-up pagination is set
+  * Turn zpdf into a milestone with attributes and include in codelets
+  * Fix the Zoom control to update the zoom %age when Zoom to fit has been clicked
+  * One line fix to sort the sections of the report better
+  * Bring back long lost Status bar messages with info, warn and error counts
+  * Always open TechRef documentation in system viewer (making it searchable)
+  * Fix bug of passing the wrong file to the PDFviewer
+  * Add MRU list to Copy Configuration to... dialog
+  * Merge pull request #1172 scale-to-fit
+
+Bug fixes and Improvements in 3.0.31 - (1 Jun 2026)
+  * Improve Picture Catalog behaviour
+  * Resolve picture references to bridged verses
+  * Right-click context menu to copy fig details to clipboard in USFM format
+  * Autofill plugins when polyglot requires them
+  * Add attach_console for windows (should give stdout if run from a console)
+  * Enable filtering of non-default settings on Adv->Other tab
+  * Add a status message on the left side of PDF Viewer button bar
+  * Protect or remove chunk-final skips (EEK avoidance)
+  * Add Piclist and Module to the sections codelets for changes
+  * Deactiveate custom chars for vp and va
+  * Improve choose base projects location dialog and wording
+  * Improve diglot notespace calcs, expose diglotBalNotes
+  * Treat poetry different to non-poetry (WIP)
+  * Add texpert options for page_filler badness
+  * Add extra texpert controls
+  * Get paths sorted for wizards
+  * Add various json files and Windows build set bug
+  * Get file saving working in pdfinish across filesystems
+  * Allow complexpages layout strings in experimental mode -E 1
+  * First stab at diglotjointtype{gridone}
+  * Fix numverses add clubpenalty snippet
+  * Fix vernacular font not being applied to Variables
+  * Fix paragraph counting in glossary, so figures include correctly
+  * Fixed (?) repeated footers 
+
+Bug fixes and Improvements in 3.0.30 - (18 May 2026)
   * Get covers working in some way
   * Replace getSrcDir with pytcodedir and remember to use it
   * Enable pdfinish again

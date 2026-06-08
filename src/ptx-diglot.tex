@@ -374,18 +374,20 @@
          \trace{Dh}{dglt@calc@vailht:  \tmsg}
        }%
        \ifcsname cts@list\endcsname \else\let\cts@list\diglot@list\fi
-       \csname @do@jointcalc@\diglotlayout\endcsname{@nxtchunk}%
+       \csname @do@jointcalc@\diglotlayout @\diglotjointtype\endcsname{@nxtchunk}%
        \global\advance\availht by -\thisjointDelta \relax%
      \fi
    \fi
    \global\advance\availht by \adjustp@ge\relax % Panic measure.. Needs to be applied after checking for content.
    \trace{Dh}{after part2:\the\availht}%
    \f@rstnotetrue
-   \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
-   \iff@rstnote\else
-      %\global\advance\availht by -\AboveNoteSpace\relax
-   \fi
-   \trace{Dh}{after notes:\the\availht}%
+   \ifversion{9}{}{%
+     \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+     \iff@rstnote\else
+        \global\advance\availht by -\AboveNoteSpace\relax
+     \fi
+     \trace{Dh}{after notes:\the\availht}%
+   }%
    \ifunprintable\else 
      \decr{\availht}{\topins}%pictures
      % Reduce by the height of whichever top picture takes the most space.
@@ -426,7 +428,14 @@
      \dglt@calc@vailht@mods
    \fi
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
-   \trace{D}{final:\the\availht}%
+   \ifversion{9}{%the availht used for running trials needs to exclude notes.
+     \trace{D}{all but notes:\the\availht}%
+     \f@rstnotetrue
+     \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+     \trace{Dh}{Final (after notes):\the\availht}%
+   }{
+     \trace{D}{Final:\the\availht}%
+   }%
 }
 
 \def\dglt@calc@vailht@mods{%
@@ -597,7 +606,7 @@
   \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
   \ifdim\availht>\baselineskip
     \trace{D}{Preparing for trial}%
-    \global\trialheight=\availht
+    \global\trialheight=\csname availht\c@rrdstat\endcsname %Non-notes version
     \global\let\whichtrial=\after@a@trial
     \global\setbox\trialbox=\box\voidb@x
     \global\setbox\galleyexc@ss=\box\voidb@x
@@ -1023,7 +1032,7 @@
       \global\trialfailedtrue
     \else
       \trace{D}{Initial content fits(th:\the\trialheight, av:\the\availht, box:\the\ht\trialbox d:\the\TempDim)}%
-      %\ifdim \TempDim > 2\@bls
+      %\ifdim \TempDim > 2\@bls % FIXME... Is this actually needded?
         %\vsize=\TempDim
 %        \global\trialheight=\vsize
       %\fi
@@ -1179,7 +1188,16 @@
     \fi
   \fi
   \tmpcount=\lastnodetype
-  \traceNum{D}{Initial savepenalty \the\savedpenalty \ifdiglotcolh@scontent colh@scontent\fi, lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}) , \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
+  \edef\@xtra{lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}}%
+  \ifnum\tmpcount=11
+    \dimen0=\lastskip
+    \edef\@xtra{\@xtra\space \the\dimen0}%
+    \vbox to 0pt{}%
+  \fi 
+  \ifnum\tmpcount=13
+    \edef\@xtra{\@xtra\space \the\savedpenalty}%
+  \fi 
+  \traceNum{D}{Initial savepenalty \the\savedpenalty \ifdiglotcolh@scontent colh@scontent\fi, \@xtra), \ifb@dy body\fi. \csname isb@dy\c@rrdstat\endcsname, \the\pagetotal}%
   \IfTr@ce{C}{{%
     \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
     \x@\let\x@\tmpL\csname ch@pterwaiting\endcsname\ifx\tmpL\relax\let\tmpL\space\fi
@@ -1208,7 +1226,18 @@
   \ifb@dy\ifdim \pagetotal>0pt 
       \x@\global\x@\let\csname isb@dy\c@rrdstat\endcsname\tr@e
   \fi\fi
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal, \csname isb@dy\c@rrdstat\endcsname}%
+  \tmpcount=\lastnodetype
+  \ifnum\tmpcount=11
+    \dimen0=\lastskip
+    \trace{D}{Trying to cope with chunk-end skip of \the\dimen0}%
+    %\vbox to 0pt{}% This adds a baselineskip:-(
+    \ifdim\dimen0<\baselineskip
+      \unskip
+    \else
+      \vskip -\baselineskip
+      \vbox to 0pt{}% This adds a baselineskip:-(
+    \fi
+  \fi 
   \checkfort@c % as good a place as any
   %\ifnum\outputpenalty=-10000 %User-pagebreak
     %\global\savedpenalty=\outputpenalty
@@ -1770,7 +1799,8 @@
   %\columnRwidth=\DiglotRightFraction\dimen0
 }
 
-\def\@do@jointcalc@simplecols#1{%
+\def\diglotjointtype{normal}%
+\def\@do@jointcalc@simplecols@normal#1{%The usual version
     % step 0 what maxbaselineskip applies?
     {\edef\tmsg{@cur}\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
     \x@\def\x@\tmsg\x@{\tmsg}%
@@ -1804,6 +1834,30 @@
     \fi
     \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1 \space jd:\the\thisjointDelta}%
 }
+\def\diglotgridneg{1pt} % Maximum negative shift to restore grid
+\def\@do@jointcalc@simplecols@gridone#1{%One column (\diglotgridcolumn) follows grid, others don't.
+  % step 1: max height of the last box 
+  \def\v@lpfx{#1}\def\v@lsfx{ht}%
+  \dimen1=0pt
+  \let\col@do=\max@val
+  \x@\each@col\diglot@list\E % Find height of lastchunk
+  \thisjointDelta=0pt
+  \ifx\m@x@at@col\diglotgridcolumn\else
+    \dimen2=\csname #1\diglotgridcolumn ht\endcsname
+    \trace{d}{@do@jointcalc@simplecols@gridone maxht:\the\dimen1, control:\the\dimen2. Diff:\the\dimexpr \dimen2-\dimen1\relax}%
+    \advance \dimen2 - \dimen1
+    \dimen0=\csname b@selineskip\diglotgridcolumn\endcsname
+    \m@d % see ptx-para-style
+    \ifdim\dimen3>\diglotgridneg
+      \trace{D}{Restoring grid by addition of \the\dimen0}% 
+      \thisjointDelta=\dimen0
+    \else
+      \trace{D}{Restoring grid by subtraction of \the\dimen3}%  
+      \thisjointDelta=-\dimen3
+    \fi
+  \fi
+  \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space tb:\@maxb@seline\space mjv:\the\dimen1 \space jd:\the\thisjointDelta}%
+}
 \def\@prepare@layout@simplecols{%
     \bgroup
       \trace{d}{@prepare@layout@simplecols \l@gdims{\partial} \ifdiglotb@dy body\else intro\fi}%
@@ -1822,7 +1876,7 @@
       \fi
     \egroup
     %Calculate how much extra space we need:
-    \csname @do@jointcalc@\diglotlayout\endcsname{@cur}%
+    \csname @do@jointcalc@\diglotlayout @\diglotjointtype\endcsname{@cur}%
     % Returns the ideal next baseline posltion below previous sync line.
     \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\@maxb@seline = \the\thisjointDelta}%
     \global\chunkDelta=\Rht
@@ -2259,8 +2313,13 @@
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
+<<<<<<< HEAD
     \global\trialheight=\availht\relax% Note that trialheight is not the same as vsize. trialheight is the cut point, vsize includes losses for notes/inserts.
     \global\vsize=\availht\relax%
+=======
+    \global\trialheight=\csname availht\c@rrdstat\endcsname\relax%
+    \global\vsize=\trialheight\relax%
+>>>>>>> master
   \fi
   \ifpagefull%
     \traceifset{updp-full}%
@@ -2775,7 +2834,7 @@
        \tmpwrite{verybottomins}%
        \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}\fi
       \tmpwrite{pageend}%
-      \makefootbox
+      \ifactually@write\makefootbox\fi
      }%pagecontents
   \traceifcheck{@@setppagecontents}%
 }

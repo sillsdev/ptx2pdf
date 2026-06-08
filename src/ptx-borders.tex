@@ -549,7 +549,7 @@
     \edef\b@xextadj{\the\dimexpr 0pt - \ifdim\border@bpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@bpadding\relax\else 0pt \fi\else 0pt \fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@bpadding +\b@drwidth pt  \fi \relax}% 
     \trace{eb}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x }%
-    \trace{e}{bbh=\b@rderbox@height, bbd=\b@rderbox@depth, b@xextadj=\b@xextadj, b@xintadj=\b@xintadj}%
+    \trace{e}{bbh=\b@rderbox@height, bbd=\b@rderbox@depth, bbp=\border@bpadding, btp=\border@tpadding, b@xextadj=\b@xextadj, b@xintadj=\b@xintadj}%
     %\xdef\b@xintadj{10pt}%
   \else
     \setbox\b@rderbox\box\voidb@x

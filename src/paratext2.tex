@@ -248,16 +248,17 @@
   \n@xt}
 \def\incl@depdf{\begingroup
   \m@kedigitsother \catcode`\[=12 \catcode`\]=12
+  \ifnum\whichp@ge<0 \else\whichp@ge=0\fi
   \futurelet\n@xt\t@stincl@de@ptions}
 \def\t@stincl@de@ptions{\ifx\n@xt[\let\n@xt\incl@de@ptions
   \else\let\n@xt\incl@deno@ptions\fi\n@xt}
 \def\incl@deno@ptions#1{\incl@de@ptions[]{#1}}
 \def\incl@de@ptions[#1]#2{%
   \pdfp@ges=\XeTeXpdfpagecount "#2"\relax
-  \whichp@ge=0
-  \msg{includepdf #2 pages=\the\pdfp@ges}
+  \msg{includepdf #2 #1 pages=\the\pdfp@ges, pdfpagewidth=\the\pdfpagewidth, page=\the\whichp@ge}
   \edef\tmp{\string\@pdffile\string{\the\pdfp@ges\string}\string{#2\string}}%
   \x@\immediate\x@\write\x@\p@rlocs\x@{\tmp}%
+  \ifnum\whichp@ge<0 \tempfalse\whichp@ge=-\whichp@ge \advance\whichp@ge -1\else \temptrue\whichp@ge=0\fi
   \loop \ifnum\whichp@ge<\pdfp@ges
     \advance\whichp@ge by 1
     \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{"#2"}{page \whichp@ge #1}}%
@@ -270,7 +271,9 @@
     {\def\c@rrID{#2 #1 page \number\whichp@ge}% for lower crop-mark info, if requested
       \shipcompletep@gewithcr@pmarks{\vbox{\box0}}}%
     \ifholdpageno\else\advancepageno\fi
-    \repeat
+  \else\tempfalse
+  \fi
+  \iftemp\repeat
   \endgroup % begun in \incl@depdf
 }
 \newcount\pdfp@ges %Pages in the pdf

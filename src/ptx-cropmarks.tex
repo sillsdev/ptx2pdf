@@ -39,6 +39,15 @@
 \def\id@@@{}% just in case.
 %\font\idf@nt="Times New Roman" at 10pt % FIXME: Use something not bitmap?
 \newbox\topcr@p \newbox\bottomcr@p
+\def\spinet@k{\kern -0.2pt\vrule height 6pt depth 0.5pt width .4pt\kern-0.2pt}%
+\def\spineht@k{\kern -0.15pt\vrule height 4pt depth -2pt width .3pt\kern-0.15pt}%
+\def\sp@nemarks{%Mark the spine position
+  \ifdim\h@nge>0pt
+    \hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\kern-2\h@nge\spineht@k\kern\h@nge\spineht@k\kern\h@nge\spinet@k\kern\sp@newidth\spinet@k\kern\h@nge\spineht@k\kern\h@nge\spineht@k}
+  \else
+    \hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\spinet@k\kern\sp@newidth\spinet@k}
+  \fi
+}
 \def\makecr@ps{% construct the cropmark boxes for top and bottom of page
   \trace{cov}{makecrops bleeds=\the\bl@eds, pw=\the\PaperWidth}%
   \trace{o}{id line (\the\pageno): \id@line}%
@@ -59,8 +68,9 @@
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=\leftskip
         \noindent \hfil\beginL\idf@nt \id@line  \endL\par
-        \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
-          \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}}\hss}%
+        \ifdim\sp@newidth>0pt
+          \sp@nemarks
+        \fi}}\hss}%
       \hss
       \dimen0=30pt \advance\dimen0 \bl@eds
       \dimen1=-5pt \advance\dimen1 -\bl@eds
@@ -86,8 +96,7 @@
       \dimen1=-5pt \advance\dimen1 -\bl@eds
       \vrule height \dimen1 depth \dimen0 width .4pt    % left page (bottom)
       \kern -0.2pt
-      \ifdim\sp@newidth>0pt\lower \dimexpr 6pt + \bl@eds \hbox to 0pt{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\kern -0.2pt \vrule height 6pt depth .5pt width .4pt
-        \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt\hss}\fi
+      \ifdim\sp@newidth>0pt\lower \dimexpr 6pt + \bl@eds \hbox to 0pt{\sp@nemarks\hss}\fi
       \hss
       \vrule height \dimen1 depth \dimen0 width .4pt    % right page (bottom)
       \kern 4.8pt \kern\bl@eds
@@ -343,19 +352,19 @@
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
   \initThumbT@bs%becomes \relax after 1st run, unless reset
   \let\st@rtatedge=T% Does a horizontal chunk of text in a box  start nearest to the page edge away from the binding (False for English on odd-numbered pages) (depends on page sequence, matching LTR/RTL)
-  \ifodd\pageno
-    \ifRTL
-      \ifBookOpenLeft\let\st@rtatedge=F\fi
-    \else
-      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
-    \fi
-  \else
-    \ifRTL
-      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
-    \else
-      \ifBookOpenLeft\let\st@rtatedge=F\fi
-    \fi
-  \fi
+  \ifodd\pageno \st@rtatedge=F \fi
+%    \ifRTL
+%      \ifBookOpenLeft\let\st@rtatedge=F\fi
+%    \else
+%      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
+%    \fi
+%  \else
+%    \ifRTL
+%      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
+%    \else
+%      \ifBookOpenLeft\let\st@rtatedge=F\fi
+%    \fi
+%  \fi
  \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort, pg:\the\pageno}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
  \XeTeXuseglyphmetrics=3
@@ -885,10 +894,10 @@
 
 \newbox\instopcr@p
 \newbox\insbottomcr@p
-\newdimen\sp@newidth \newdimen\bl@eds
-\def\ship@utcoverinsert#1#2#3#4{%
-  \trace{cov}{ship@utcoverinsert #1, \the\wd#2 \space x \the\ht#2, #3, #4}%
-% #1 - insertion name, #2 - box, #3 - spine width, #4 - bleed
+\newdimen\sp@newidth \newdimen\bl@eds \newdimen\h@nge
+\def\ship@utcoverinsert#1#2#3#4#5{%
+  \trace{cov}{ship@utcoverinsert #1, \the\wd#2 \space x \the\ht#2, #3, #4, #5}%
+% #1 - insertion name, #2 - box, #3 - spine width, #4 - bleed, #5 hinge
 % make cropmarks if spine width >=0pt, if -ve, no cropmarks
   \dimen5=\PaperWidth \dimen6=\PaperHeight
   \PaperWidth=\wd#2 \PaperHeight=\ht#2%
@@ -898,7 +907,7 @@
   \else
     \m@keid@line
     \setbox1=\box\topcr@p \setbox2=\box\bottomcr@p
-    \sp@newidth=#3 \bl@eds=#4 \makecr@ps
+    \sp@newidth=#3 \bl@eds=#4 \h@nge=#5 \makecr@ps
     \setbox\instopcr@p=\box\topcr@p \setbox\insbottomcr@p=\box\bottomcr@p
     \setbox\topcr@p=\box1 \setbox\bottomcr@p=\box2
     \dimen0=0.5in

@@ -1,0 +1,72 @@
+[DEFAULT]
+pubusage = Unknown
+pubclear = unchecked
+pubnoise = unchecked
+pubaccept = Unknown
+
+[oi00150]
+approved = false
+notes = 
+
+[oi00254]
+approved = false
+notes = 
+
+[oi00417]
+approved = false
+notes = 
+
+[oi00340]
+approved = false
+notes = 
+
+[oi00317]
+approved = false
+notes = 
+
+[oi00029]
+approved = false
+notes = 
+
+[oi00031]
+approved = false
+notes = 
+
+[oi00153]
+approved = false
+notes = 
+
+[oi00185]
+approved = false
+notes = 
+
+[oi00170]
+approved = false
+notes = 
+
+[oi00375]
+approved = false
+notes = 
+
+[oi00180]
+approved = false
+notes = 
+
+[oi00223]
+approved = false
+notes = 
+
+[oi00227]
+approved = false
+notes = 
+
+[oi00237]
+approved = false
+notes = 
+
+[co00604]
+pubclear = yes
+pubnoise = yes
+approved = false
+notes = 
+

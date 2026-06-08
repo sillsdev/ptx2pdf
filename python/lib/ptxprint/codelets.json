@@ -38,7 +38,7 @@
           "CodeSnippet": "\\zgap|2.3cm\\*"
         }
       ],
-      "Image": [
+      "Insert": [
         {
           "Type": "insert",
           "Label": "\\zfiga|anchor\\*",
@@ -50,9 +50,13 @@
           "Label": "\\fig |src=\"path/to/filename.png\" size=\"size\" pgpos=\"pgpos\" scale=\"0.2\" copy=\"None\"",
           "Description": "Insert an image copy=\"None\"",
           "CodeSnippet": "\\fig |src=\"C:/Users/Jim/Dropbox/orglogo.png\" size=\"col\" pgpos=\"pc\" scale=\"0.15\" copy=\"None\"\\fig*"
-        }
-      ],
-      "Legal": [
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zpdf|file=\"../../../shared/filename.pdf\"\\*",
+          "Description": "Insert a PDF, or specific page from PDF; optionally scale [100%=1000] followed by rotate",
+          "CodeSnippet": "\\zpdf|file=\"../../../shared/Filename.pdf\" page=\"3\" scale=\"1000\" rotate=\"270\"\\*"
+        },
         {
           "Type": "insert",
           "Label": "\\zcopyright",
@@ -491,6 +495,18 @@
           "Label": "Merged",
           "Description": "Diglot/polyglot only, after merging",
           "CodeSnippet": "sections(merged)"
+        },
+        {
+          "Type": "insert",
+          "Label": "Piclist",
+          "Description": "Apply to the locally generated piclist",
+          "CodeSnippet": "sections(piclist)"
+        },
+        {
+          "Type": "insert",
+          "Label": "Module",
+          "Description": "Apply when module is read before flattening",
+          "CodeSnippet": "sections(module)"
         }
       ],
       "Arabic": [
@@ -522,6 +538,12 @@
           "Label": "Insert a picture",
           "Description": "Insert an illustration at a particular reference.",
           "CodeSnippet": "\\fig Optional Caption for Picture|alt=\"Roman soldier\" src=\"ArmorOfGodDiagram.png\" size=\"col\" ref=\"6:14-18\"\\fig\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zpdf|file=\"../../../shared/filename.pdf\"\\*",
+          "Description": "Insert a PDF, or specific page from PDF; optionally scale [100%=1000] followed by rotate",
+          "CodeSnippet": "\\zpdf|file=\"../../../shared/Filename.pdf\" page=\"3\" scale=\"1000\" rotate=\"270\"\\*"
         }
       ],
       "Rules/Lines": [

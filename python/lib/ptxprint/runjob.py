@@ -364,7 +364,9 @@ class RunJob:
             sheets[k] = diginfo.printer.getStyleSheets()
             keyarr.append(k)
             if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
-                texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext="tex", withext="_INTR.SFM"))))
+                intf = diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext="tex", withext="_INTR.SFM")))
+                if intf is not None:
+                    texfiles.append(intf)
             diginfo["cfgrpath_"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
             self.info.dict["diglots_"][k] = diginfo
 
@@ -461,12 +463,16 @@ class RunJob:
             self.info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
         if self.info["project/sectintros"]:
-            genfiles.append(self.info.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_INT.SFM"))))
+            intf = self.info.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_INT.SFM")))
+            if intf is not None:
+                genfiles.append(intf)
             if diglots:
                 addintlist = [r"\diglottrue\zglot|L\*"+self.info["project/intfile"]]
                 for k in self.printer.diglotViews.keys():
                     diginfo = self.info.dict["diglots_"][k]
-                    genfiles.append(diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=f"_INT{k}.SFM"))))
+                    intf = diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=f"_INT{k}.SFM")))
+                    if intf is not None:
+                        genfiles.append(intf)
                     addintlist.append(f"\\zglot|{k}\\*"+diginfo["project/intfile"])
                 addintlist.append(r"\zglot|\*")
                 self.info["project/intfile"] = "".join(addintlist)
@@ -776,26 +782,25 @@ class RunJob:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
                     sl = self.printer.builder.get_object("l_statusLine")
-                    sl.set_text("")
-                    sl.set_tooltip_text("")
                 if smry["E"] + smry["W"] > 0:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
-                    if not self.noview and not self.args.print and not self.printer.showPDFmode == "preview":
+                    if not self.noview and not self.args.print:
+                        severity = "error" if smry["E"] > 0 else "warn"
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
-                            sl.set_text(msgs)
-                            sl.set_tooltip_text(msgs)
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
                             self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
+                            self.printer.onIdle(sl.set_tooltip_text, "" if msgs == chkmsg else msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, "error" if smry["E"] > 0 else None)
                         else:
-                            sl.set_text(summaryLine)
-                            sl.set_tooltip_text(msgs)
-                            self.printer.set("l_statusLine", summaryLine)
+                            self.printer.onIdle(self.printer.set, "l_statusLine", summaryLine)
+                            self.printer.onIdle(sl.set_tooltip_text, "" if msgs == summaryLine else msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, summaryLine, msgs, severity)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
             
@@ -969,7 +974,7 @@ class RunJob:
         return pdffile
 
     def procpdf(self, outfname, pdffile, cover=False, **kw):
-        for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'paper/cropmarks', 'document/ifrtl'):
+        for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'scaletofit', 'paper/cropmarks', 'document/ifrtl'):
             if '/' in a:
                 kw[a[a.find("/")+1:]] = self.info[a]
             else:
@@ -1034,24 +1039,18 @@ class RunJob:
         folderList = ["tmpPics", "tmpPicLists"] 
         cropme = self.info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
-            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N')[0] in 'tbhp' else None
+            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if (p.get('pgpos', '') or 'N')[0] in 'tbhp' else None
             logger.debug(f"carefulcopy {src} -> {tgt} @ {ratio}")
             return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
         if self.info['document/ifinclfigs'] == 'false':
             # print("NoFigs")
             return []
-        picinfos.build_searchlist()
+        self.printer.setupPicinfos(picinfos, diglots)
         books = [r[0][0].first.book if r[1] else "MOD" for r in jobs] + ["FRT","COV"]
-        exclusive = self.printer.get("c_exclusiveFiguresFolder")
-        fldr      = self.printer.get("lb_selectFigureFolder", "") if self.printer.get("c_useCustomFolder") else ""
-        imgorder  = self.printer.get("t_imageTypeOrder")
-        lowres    = self.printer.get("r_pictureRes") == "Low"
-        picinfos.srchlist = None
         for j in books:
             logger.debug(f"getsrc&dest for {j}")
-            picinfos.getFigureSources(keys=j, exclusive=exclusive, mode=self.ispdfxa,
-                                      figFolder=fldr, imgorder=imgorder, lowres=lowres)
+            picinfos.getFigureSources(keys=j, mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         logger.debug(f"{books=}, {[x.fields for x in picinfos.pics.values()]}")
         missingPics = [v['src'] for v in picinfos.get_pics() if v['anchor'][:3] in books and 'destfile' not in v and 'src' in v]
