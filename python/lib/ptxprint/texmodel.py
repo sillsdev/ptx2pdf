@@ -40,13 +40,13 @@ def makeChange(pattern, to, flags=regex.M, context=None):
     
 bcvref = re.compile(r'([A-Z]{3})\s*(\d+)[.:](\d+(?:-\d+)?)')
 
-Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),
-           'c_inclSectionHeader':   ('sectionheader', 'fancy/sectionheaderpdf', 'A5 section head border.pdf'),
-           'c_inclEndOfBook':       ('endofbook', 'fancy/endofbookpdf', 'decoration.pdf'),
-           'c_inclVerseDecorator':  ('versedecorator', 'fancy/versedecoratorpdf', 'Verse number star.pdf'),
-           'c_inclFrontMatter':     ('FrontPDFs', 'project/frontincludes', '\\includepdf{{{}}}'),
-           'c_inclBackMatter':      ('BackPDFs', 'project/backincludes', '\\includepdf{{{}}}'),
-           'c_applyWatermark':      ('watermarks', 'paper/watermarkpdf', r'\def\MergePDF{{"{}"}}')
+Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf', "btn_selectPageBorderPDF"),
+           'c_inclSectionHeader':   ('sectionheader', 'fancy/sectionheaderpdf', 'A5 section head border.pdf', "btn_selectSectionHeaderPDF"),
+           'c_inclEndOfBook':       ('endofbook', 'fancy/endofbookpdf', 'decoration.pdf', "btn_selectEndOfBookPDF"),
+           'c_inclVerseDecorator':  ('versedecorator', 'fancy/versedecoratorpdf', 'Verse number star.pdf', "btn_selectVerseDecorator"),
+           'c_inclFrontMatter':     ('FrontPDFs', 'project/frontincludes', '\\includepdf{{{}}}', "btn_selectFrontPDFs"),
+           'c_inclBackMatter':      ('BackPDFs', 'project/backincludes', '\\includepdf{{{}}}', "btn_selectBackPDFs"),
+           'c_applyWatermark':      ('watermarks', 'paper/watermarkpdf', r'\def\MergePDF{{"{}"}}', "btn_selectWatermarkPDF")
 }
 
 _periphids = {
@@ -275,9 +275,9 @@ class TexModel:
                 if islist and not isinstance(fname, (list, tuple)):
                     fname = [fname]
                 if islist:
-                    self.dict[a[1]] = "\n".join(a[2].format("../shared/ptxprint/{}".format(f.name)) for f in fname)
+                    self.dict[a[1]] = "\n".join(a[2].format("../../../shared/ptxprint/{}".format(f.name)) for f in fname)
                 else:
-                    self.dict[a[1]] = "../shared/ptxprint/{}".format(fname.name)
+                    self.dict[a[1]] = "../../../shared/ptxprint/{}".format(fname.name)
         if self.dict["fancy/versedecorator"] != "%":
             self.dict["fancy/versedecoratorisfile"] = "" if self.dict["fancy/versedecoratortype"] == "file" else "%"
             self.dict["fancy/versedecoratorisayah"] = "" if self.dict["fancy/versedecoratortype"] == "ayah" else "%"
