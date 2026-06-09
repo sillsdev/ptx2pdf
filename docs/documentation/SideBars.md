@@ -289,12 +289,14 @@ Define the thickness of the border around the box, measured in pt.
 #### `\BorderStyle` 
 `\BorderStyle` option
 
-* Options: `plain`|`double`
-* Options with plugin: `ornaments`
+* Option: `plain`|`double`
+* (or with plugin): `plain` | `double` | `ornaments`
+* (with standardborders.sty): *any named style*
 * Default: `plain`
 
 Normal borders are of style `plain`. The style `double` is also available, which gives a border that has double-line (and a filled region in between). The `ornaments` 
 [plugin](Ornaments.md) plugin provides for more complex ornaments.
+Named styles may also be defined, as in standardborders.sty, in which case border parameters not defined for the given sidebar are inherited from the named style. 
 
 #### `\BorderColour`
 `\BorderColour` value(0-1) value(0-1) value(0.1)

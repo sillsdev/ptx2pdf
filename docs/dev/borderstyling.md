@@ -1,7 +1,9 @@
 ## Named border styles
-`\SetBorder`  Defines a new border style. `\SetBorder foo` is precisely equivalent to `\Marker b@rder-foo` 
-`\BorderRef`  Defines indicates that the present style inherits the border settings from another style.
-`\BorderStyle` Can is overloaded. If the given parameter not recognised as a valid procesing engine (plain, double, or - if plugin is loaded - ornaments), then it calls `\BorderRef`
+`\SetBorder`  Defines a new border style. `\SetBorder foo` is precisely equivalent to `\Marker b@rder-foo`
+ 
+`\BorderRef` indicates that the present style inherits the border settings from another style.
+
+`\BorderStyle` Is overloaded. It either chooses the processing engine or works as a synonym for `\BorderRef`.  More precisely: if the given parameter not recognised as a valid procesing engine (plain, double, or - if plugin is loaded - ornaments), then it calls `\BorderRef`. This detection occurs immediately, so  note that this means two `\BorderStyle` entries in the same manual stylesheet might be confusing to the user but understood as separate definitions which don't contradict one another by TeX. 
 
 
 ###  Ineritance processing.
