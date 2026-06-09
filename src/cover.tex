@@ -94,8 +94,6 @@
     \egroup
     \trace{cov}{Request (#1) was (\the\PaperHeight x\the\PaperWidth) \ifcsname bpparam\endcsname bpparam=\bpp@ram\fi}%
     \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr \b@dr@right@pad\relax,\fb@rpadding>\space bdr,col hpadding and hbleed of \the\dimexpr \lble@d\relax + \the\dimexpr\rble@d\relax. Vpadding: <\the\dimexpr\b@dr@top@pad\relax,\fb@tpadding|\the\dimexpr \b@dr@bot@pad\relax,\fb@bpadding>, vbleed: \the\dimexpr \tble@d\relax+\the\dimexpr \bble@d\relax}%
-    %\hskip \dimexpr \unble@d@lpad\relax
-    %\trace{cov}{Unbleed apply \c@tprefix/\oldc@tegory: \unble@d@lpad}%
     \ifhasb@rder
       \trace{cov}{Cover (\the\ht\wholepagepic+\the\dp\wholepagepic)*\the\wd\wholepagepic had a border (flags: \ifvmode vmode \fi \ifble@d bleed \fi)}%
       
@@ -111,7 +109,6 @@
       \box\wholepagepic
       %\vrule width 1pt
     \fi
-    %\hskip \dimexpr \unble@d@rpad\relax
   \egroup
 } 
 
@@ -194,6 +191,7 @@
     \fi
   \fi
   \ifrotatespine
+    \XeTeXuseglyphmetrics=1
     \let\lble@d\spinelble@d
     \let\rble@d\spinerble@d
     \edef\tble@d{\csname cover-hinge\endcsname}%
@@ -237,7 +235,7 @@
       \else
         \sp@ne
       \fi
-      \endgraf\vskip 0pt plus 0.001fil % very weak fill
+      \endgraf\vskip 0pt plus 0.001fil % very weak fill - allow lots of override but by default push to top.
     }}%
     \trace{cov}{NOT Rotating spine \the\ht0+\the\dp0 x \the\wd0}%
     \box0
