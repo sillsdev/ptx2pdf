@@ -213,7 +213,7 @@ class PopplerDest(ctypes.Structure):
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
 
-    def readParlocs(self, fname, rtl=False, gui=False):
+    def readParlocs(self, fname, rtl=False, gui=False, parent=None):
         self.pindex = []        # first paragraph on a page
         self.pnums = {}         # from pagenumber to first page index
         self.pnumorder = []     # from pageindex to pagenumber
@@ -240,7 +240,7 @@ class Paragraphs(list):
             def dlgresponse(rid):
                 nonlocal keepgoing
                 keepgoing = rid != Gtk.ResponseType.CANCEL
-            self._parloc_dlg = background_msg(_("Reading paragraph info. Press Cancel to stop"), dlgresponse)
+            self._parloc_dlg = background_msg(_("Reading paragraph info. Press Cancel to stop"), dlgresponse, parent=parent)
             dlg = self._parloc_dlg
         lines = ParlocLinesIterator(fname)
         for l in lines:

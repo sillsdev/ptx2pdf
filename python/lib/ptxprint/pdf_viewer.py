@@ -1368,7 +1368,7 @@ class PDFContentViewer(PDFFileViewer):
         res = None
         try:
             large_pdf = self.fname is not None and os.path.getsize(self.fname) > 2 * 1024 * 1024
-            res = self.parlocs.readParlocs(fname, rtl=rtl, gui=large_pdf)
+            res = self.parlocs.readParlocs(fname, rtl=rtl, gui=large_pdf, parent=self.hbox)
             if res:
                 res = self.parlocs.load_dests(self.document)
         except (IndexError,):
@@ -1389,7 +1389,7 @@ class PDFContentViewer(PDFFileViewer):
             nonlocal keepgoing
             if rid == Gtk.ResponseType.CANCEL:
                 keepgoing = False
-        dlg = background_msg(_("Analysing text. Press Cancel to stop"), dlgresponse)
+        dlg = background_msg(_("Analysing text. Press Cancel to stop"), dlgresponse, parent=self.hbox)
         cthreshold = float(self.model.get("s_paddingwidth", 0.5))
         xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
                                     fontsize=float(self.model.get("s_fontsize", 1)),
