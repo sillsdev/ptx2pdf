@@ -1440,6 +1440,8 @@ class ViewModel:
                                 self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
+                        except ValueError as e:
+                            self.doError(f"{v.widget}: {e}")
                 elif sect in ("vars", "strongsvar") and (categories is None or 'variables' in categories):
                     if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
@@ -2000,7 +2002,7 @@ class ViewModel:
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
             res[xrfile] = baseprjid + "/" + bname(xrfile)
-            cfgchanges["btn_selectXrFile"] = res[xrfile]
+            cfgchanges["btn_selectXrFile"] = Path("${prjdir}/" + bname(xrfile))
 
         # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
@@ -2036,6 +2038,7 @@ class ViewModel:
                     fname = [fname]
                 for f in fname:
                     res[f.as_posix()] = baseprjid + "/shared/ptxprint/" + f.name
+                    cfgchanges[v[3]] = (Path("${prjdir}/shared/ptxprint/" + f.name), v[0])
 
         # fonts
         allfonts.update(self.getallfonts())
@@ -2100,7 +2103,7 @@ class ViewModel:
         if script: # is not None and len(script):
             sname = bname(script) 
             res[script] = baseprjid + "/" + sname
-            cfgchanges["btn_selectScript"] = os.path.join(self.project.path, sname)
+            cfgchanges["btn_selectScript"] = Path("${prjdir}/" + sname)
 
         pts = self._getPtSettings(prjid=baseprjid)
         ptres = pts.getArchiveFiles()
@@ -2180,13 +2183,14 @@ class ViewModel:
                 self._writearchive(zf, k, v)
         tmpcfg = {}
         for k,v in cfgchanges.items():
-            if len(v) == 2 and v[1] is not None:
+            if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
                 tv = getattr(self, v[1])
                 setattr(self, v[1], v[0])
+                self.set(k, str(v[0]))
             else:
                 tv = None
+                self.set(k, str(v))
             tmpcfg[k] = (self.get(k), tv)
-            self.set(k, str(v if len(v) != 2 else v[0]))
         config = self.createConfig()
         configstr = StringIO()
         config.write(configstr)
