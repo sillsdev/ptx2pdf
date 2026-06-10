@@ -11,7 +11,7 @@ class Hyphenation:
 
     @classmethod
     def fromPTXFile(cls, view, prjid, prjdir, inbooks=False, addsyls=False, strict=False, 
-                    hyphen="\u2010", minprefix=1, minword=5, minblock=9):
+                    hyphen="\u2010", minaffix=1, minword=5, minblock=9):
         infname = os.path.join(prjdir, 'hyphenatedWords.txt')
         outfname = os.path.join(prjdir, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
         hyphenatedWords = []
@@ -42,7 +42,7 @@ class Hyphenation:
                         # print(f"Skipped: {l}")
                         z += 1
                     else:
-                        if l.index("-") >= minprefix and len(l) > minword:
+                        if l.index("-") >= minaffix and l.rinde("-") >= minaffix and len(l) > minword:
                             hyphenatedWords.append(l)
                 elif len(l) > minblock:
                     # print(f"No hyphen data for long word: {l}")

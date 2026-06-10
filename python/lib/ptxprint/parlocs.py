@@ -104,6 +104,10 @@ class ParInfo:
         return (self.rects[-1].pagenum if self.rects is not None and len(self.rects) else 10000,
                 refSort(self.ref), getattr(self, 'parnum', 0))
 
+    def book(self):
+        res = re.sub(r"^(.*?\D)\s*\d.*$", r"\1", self.ref)
+        return res
+
 
 @dataclass
 class FigInfo:
@@ -471,11 +475,11 @@ class Paragraphs(list):
         y = (self.pheights[pnum-1] if pnum > 0 and pnum <= len(self.pheights) else self.pheights[-1]) - y
         return [r for p, r in self._iterRectsPage(pnum) if r.ystart >= y and r.yend <= y]
 
-    def getParas(self, pnum, inclast=False):
+    def getParas(self, pnum, inclast=False, inclafter=False):
         ''' Iterates all ParDest, ParRect on page with given index '''
         if pnum > len(self.pindex):
             return
-        e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
+        e = self.pindex[pnum] if not inclafter and pnum < len(self.pindex) else len(self)
 
         start = max(self.pindex[pnum-1], 0)
         #logger.info(f"{pnum=}, {start=}, {e=}, max={len(self)}, {self.pindex=}")
@@ -485,7 +489,8 @@ class Paragraphs(list):
                 if not isinstance(p, ParInfo):
                     continue
                 for r in reversed(p.rects):
-                    if r.pagenum == pnum - 1:
+                    if (not inclafter and r.pagenum == pnum - 1) \
+                            or (inclafter and r.pagenum >= pnum - 1):
                         yield (p, r)
                         done = True
                         break
@@ -496,7 +501,8 @@ class Paragraphs(list):
             if not isinstance(p, ParInfo):
                 continue
             for r in p.rects:
-                if r.pagenum == pnum:
+                if (not inclafter and r.pagenum == pnum) \
+                        or (inclafter and r.pagenum >= pnum):
                     yield (p, r)
 
     def getRects(self):

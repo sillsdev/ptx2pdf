@@ -28,7 +28,7 @@ if sys.platform.startswith("win"):
     
 logger = logging.getLogger(__name__)
 
-reset  = {'para': _("Paragraph"), 'col': _("Column"), 'page': _("Page"), 'sprd': _("Spread")}
+reset  = {'para': _("Paragraph"), 'col': _("Column"), 'page': _("Page"), 'sprd': _("Spread"), 'doc': _("End of Book")}
 frame  = {'col': _("Column"), 'span': _("Span"), 'page': _("Page"), 'full': _("Full")}  # 'cut': _("Cutout"), 
 mirror = {'': _("Never"), 'both': _("Always"), 'odd': _("If on odd page"), 'even': _("If on even page")}
 vpos   = {'t': _("Top"), '-': _("Center"), 'b': _("Bottom"), 'h': _("Before Verse"), 'p': _("After Paragraph"), 'c': _("Cutout"), 'B': _("Below Notes")}
@@ -1885,7 +1885,8 @@ class PDFContentViewer(PDFFileViewer):
                     menu_item.connect("activate", self.on_reset_adjustments, k, pgindx, info, parref)
                     menu_item.set_sensitive((k == "para" and not (info[1] == 100 and int(l.replace("+","")) == 0)) \
                                             or (k == "col" ) or (k == "page") \
-                                            or (k == "sprd" and self.spread_mode and len(self.get_spread(pgindx))))
+                                            or (k == "sprd" and self.spread_mode and len(self.get_spread(pgindx))) \
+                                            or k == 'doc')
                     menu_item.show()
                     reset_menu.append(menu_item)
                 self.addSubMenuItem(menu, mstr['rp'], reset_menu)
@@ -2204,9 +2205,10 @@ class PDFContentViewer(PDFFileViewer):
         elif scope == 'col':
             for p, r in self.parlocs.getParasByColumnOrParref(parref=parref):
                 refs2del.append((p.ref, getattr(p, 'parnum', '')))
-        elif scope == 'page':
-            for p, r in self.parlocs.getParas(pgindx):
-                refs2del.append((p.ref, getattr(p, 'parnum', '')))
+        elif scope in ('page', 'doc'):
+            for p, r in self.parlocs.getParas(pgindx, inclafter = scope=='doc'):
+                if scope != "doc" or (p.book() == parref.book() and p.ref >= parref.ref):
+                    refs2del.append((p.ref, getattr(p, 'parnum', '')))
         elif scope == 'sprd':
             for pg in self.get_spread(pgindx):
                 for p, r in self.parlocs.getParas(pg):
