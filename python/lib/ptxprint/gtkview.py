@@ -5671,7 +5671,10 @@ class GtkViewModel(ViewModel):
                                             inbooks=self.get("c_hyphenLimitBooks"),
                                             addsyls=self.get("c_addSyllableBasedHyphens"),
                                             strict=self.get("c_hyphenApprovedWords"),
-                                            hyphen="\u2011" if self.get('c_nonBreakingHyphens') else "\u2010")
+                                            hyphen="\u2011" if self.get('c_nonBreakingHyphens') else "\u2010",
+                                            minprefix=int(self.get('s_hyphMinprefix')),
+                                            minword=int(self.get("s_hyphMinWord")),
+                                            minblock=int(self.get("s_hyphMinBlock")))
             self.doError(self.hyphenation.m1, secondary=self.hyphenation.m2)
         dialog.hide()
 

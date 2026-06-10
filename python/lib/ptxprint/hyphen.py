@@ -10,7 +10,8 @@ class Hyphenation:
     listlimit = 63929
 
     @classmethod
-    def fromPTXFile(cls, view, prjid, prjdir, inbooks=False, addsyls=False, strict=False, hyphen="\u2010"):
+    def fromPTXFile(cls, view, prjid, prjdir, inbooks=False, addsyls=False, strict=False, 
+                    hyphen="\u2010", minprefix=1, minword=5, minblock=9):
         infname = os.path.join(prjdir, 'hyphenatedWords.txt')
         outfname = os.path.join(prjdir, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
         hyphenatedWords = []
@@ -41,9 +42,9 @@ class Hyphenation:
                         # print(f"Skipped: {l}")
                         z += 1
                     else:
-                        if l[0] != "-" and len(l) > 5:
+                        if l.index("-") >= minprefix and len(l) > minword:
                             hyphenatedWords.append(l)
-                elif len(l) > 9:
+                elif len(l) > minblock:
                     # print(f"No hyphen data for long word: {l}")
                     nohyphendata.append(l)
         snippet = view.getScriptSnippet()
