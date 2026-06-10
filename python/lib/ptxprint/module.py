@@ -194,6 +194,7 @@ class Module:
                 for p in mod.doc.getroot():
                     p.parent = currp
                     currp.insert(curri, p)
+                    curri += 1
 
     def get_passage(self, ref, removes={}, strippara=False, context=None):
         if ref.first.book is None:

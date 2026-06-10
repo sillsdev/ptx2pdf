@@ -241,7 +241,24 @@ def pump_gtk():
      while Gtk.events_pending():
         Gtk.main_iteration()
 
-def background_msg(txt, resfn, timeout=0):
+def _place_dialog_bottom_right(dialog, parent_widget):
+    """Position dialog in the bottom-right of the parent's top-level window.
+    Must be called before show_all() so the window appears at the right place immediately."""
+    toplevel = parent_widget.get_toplevel()
+    if not isinstance(toplevel, Gtk.Window):
+        return
+    gdk_win = toplevel.get_window()
+    if gdk_win is None:
+        return
+    _, wx, wy = gdk_win.get_origin()
+    tw = toplevel.get_allocated_width()
+    th = toplevel.get_allocated_height()
+    _, nat = dialog.get_preferred_size()
+    margin = 120
+    dialog.move(wx + tw - nat.width - margin, wy + th - nat.height - margin)
+
+
+def background_msg(txt, resfn, timeout=0, parent=None):
     dialog = Gtk.MessageDialog(
         message_type=Gtk.MessageType.QUESTION,
         buttons=Gtk.ButtonsType.OK_CANCEL,
@@ -271,6 +288,8 @@ def background_msg(txt, resfn, timeout=0):
         resfn(rid)
 
     dialog.connect("response", onresponse)
+    if parent is not None:
+        _place_dialog_bottom_right(dialog, parent)
     dialog.show_all()
     return dialog
 

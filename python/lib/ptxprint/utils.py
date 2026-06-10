@@ -1,6 +1,9 @@
 import gettext
 import locale, codecs, traceback
 import os, sys, re, pathlib, zipfile
+if sys.platform.startswith("win"):
+    import winreg, ctypes
+    from ctypes import wintypes
 import xml.etree.ElementTree as et
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
@@ -10,6 +13,7 @@ from inspect import currentframe
 from struct import unpack
 import contextlib, pickle, gzip
 import regex
+import threading
 from subprocess import check_output, call
 import logging
 
@@ -1038,3 +1042,83 @@ def convert2mm(measure):
     num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
     unit = str(measure)[len(str(num)):].strip(" ")
     return (num * _unitConv[unit]) if unit in units else num
+
+
+# Paratext jump to reference integration
+
+def cleanParatextRef(ref):
+    """Normalise a scripture reference for Paratext.
+    Strips optional diglot suffix and converts dot chapter-verse separator to colon.
+    e.g. "JASL 3.4" → "JAS 3:4",  "MAT 5.3" → "MAT 5:3"
+    """
+    m = re.match(r'([123A-Z]{3})[LRABCDEFG]?\s*(\d+)\.(\d+)', ref.strip())
+    if m:
+        return f"{m.group(1)} {m.group(2)}:{m.group(3)}"
+    return re.sub(r'(\d+)\.(\d+)', r'\1:\2', ref.strip())
+
+def sendRefToParatext(ref):
+    """Write *ref* to the SantaFe registry key and broadcast the SantaFeFocus
+    Windows message so Paratext scrolls to that verse.
+    Returns True on success, False on any failure or on non-Windows platforms.
+    """
+    if not sys.platform.startswith("win"):
+        return False
+    key_path = r"Software\SantaFe\Focus\ScriptureReference"
+    try:
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
+    except FileNotFoundError:
+        logger.debug(f"Paratext registry key not found: {key_path}")
+        return False
+    try:
+        winreg.SetValueEx(key, "", 0, winreg.REG_SZ, ref)
+        winreg.CloseKey(key)
+        logger.debug(f"Set Paratext ref to: {ref}")
+    except WindowsError as e:
+        logger.debug(f"Could not write Paratext registry key: {e}")
+        return False
+    user32 = ctypes.windll.user32
+    user32.RegisterWindowMessageW.argtypes = [wintypes.LPCWSTR]
+    user32.RegisterWindowMessageW.restype  = wintypes.UINT
+    user32.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
+    user32.PostMessageW.restype  = wintypes.BOOL
+    user32.AllowSetForegroundWindow(-1)     # ASFW_ANY — permit focus steal
+    msg = user32.RegisterWindowMessageW("SantaFeFocus")
+    if msg:
+        user32.PostMessageW(0xFFFF, msg, 1, 0)
+    threading.Timer(0.15, bringParatextToForeground).start()
+    return True
+
+def bringParatextToForeground():
+    """Bring the Paratext main window to the foreground.
+    Safe to call even if Paratext is not running (no-op in that case).
+    Returns False so it can be used directly as a GLib.timeout_add callback.
+    """
+    if not sys.platform.startswith("win"):
+        return False
+    user32   = ctypes.windll.user32
+    kernel32 = ctypes.windll.kernel32
+    found = []
+
+    EnumProc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    def _enum(hwnd, _lp):
+        if user32.IsWindowVisible(hwnd):
+            n = user32.GetWindowTextLengthW(hwnd)
+            if n:
+                buf = ctypes.create_unicode_buffer(n + 1)
+                user32.GetWindowTextW(hwnd, buf, n + 1)
+                if 'paratext' in buf.value.lower():
+                    found.append(hwnd)
+        return True
+
+    user32.EnumWindows(EnumProc(_enum), 0)
+    if found:
+        hwnd = found[0]
+        if user32.IsIconic(hwnd):
+            user32.ShowWindow(hwnd, 9)      # SW_RESTORE — only if minimised
+        our_tid = kernel32.GetCurrentThreadId()
+        tgt_tid = user32.GetWindowThreadProcessId(hwnd, None)
+        user32.AttachThreadInput(our_tid, tgt_tid, True)
+        user32.BringWindowToTop(hwnd)
+        user32.SetForegroundWindow(hwnd)
+        user32.AttachThreadInput(our_tid, tgt_tid, False)
+    return False

@@ -225,8 +225,6 @@ class BookProgressDialog:
         self.stylep = Gtk.CssProvider()
         self.stylep.load_from_data(css)
 
-        self.window.show_all()
-
     def populate(self, bookList: list, stop_sensitive=True):
         """Rebuild cells for a new job. bookList contains 3-letter book codes."""
         # Remove existing children
@@ -251,20 +249,16 @@ class BookProgressDialog:
         self.stop_button.set_sensitive(stop_sensitive)
         self.stop_button.set_label(stoplabel)
         self.grid.show_all()
-        self.window.show_all()
 
-        # After GTK has laid out the widgets, resize window to its natural size.
-        # idle_add ensures this runs after the current layout pass completes.
-        GLib.idle_add(self._fit_to_content)
-
-    def _fit_to_content(self):
-        """Resize window to exactly fit its content. Called once via idle_add after layout."""
+        # Compute natural size before showing so we can position without a flash.
         min_w, nat_w = self.window.get_preferred_width()
         min_h, nat_h = self.window.get_preferred_height()
         screen = self.window.get_screen()
         max_h = int(screen.get_height() * 0.85) if screen else 900
-        self.window.resize(nat_w, min(nat_h, max_h))
-        return False  # don't repeat
+        dw, dh = nat_w, min(nat_h, max_h)
+        self.window.resize(dw, dh)
+        self._position_with_size(dw, dh)
+        self.window.show_all()
 
     def updateEvent(self, event):
         """Route a ProgressEvent to the correct BookProgressCell."""
@@ -275,8 +269,26 @@ class BookProgressDialog:
             cell.update(event)
 
     def show(self):
+        dw, dh = self.window.get_size()
+        self._position_with_size(dw, dh)
         self.window.show_all()
         self.window.present()
+
+    def _position_with_size(self, dw, dh):
+        try:
+            main_win = self.view.builder.get_object("mainapp_win")
+            if main_win is None:
+                return
+            gdk_win = main_win.get_window()
+            if gdk_win is None:
+                return
+            _, wx, wy = gdk_win.get_origin()
+            tw = main_win.get_allocated_width()
+            th = main_win.get_allocated_height()
+            margin = 20
+            self.window.move(wx + tw - dw - margin, wy + th - dh - margin)
+        except Exception:
+            pass
 
     def hide(self):
         self.window.hide()
