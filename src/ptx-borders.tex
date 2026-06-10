@@ -500,7 +500,7 @@
   \ifx\b@drright\tr@e\hasb@rdertrue\trace{eb}{Border: right}\fi
   \ifx\b@drtop\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Top}\fi
   \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
-  \ifx\b@drprop\N@nPublish@ble\hasb@rderfalse\trace{eb}{Border: nonpublishable}\else\trace{eb}{Border property: \b@drprop}\fi
+  \ifx\b@drprop\N@nPublish@ble\hasb@rderfalse\trace{eb}{Border: nonpublishable}\else\trace{eb}{Border property: \ifcsname b@drprop\endcsname\b@drprop\else undefined\fi}\fi
 }
 \newif\ifb@dr@t@os
 \newif\ifb@dr@b@os
@@ -525,9 +525,9 @@
     %Where does is the outer-edge of the  border or box,  relative to the contents?
     \edef\b@dr@top@edge{\the\dimexpr \ifb@dr@t@os  \border@tpadding + \b@drwidth pt  \fi  +\fb@tpadding\relax}%
     \edef\b@dr@bot@edge{\the\dimexpr \ifb@dr@b@os  \border@bpadding + \b@drwidth pt \fi  +\fb@bpadding\relax}%
-    %Where does the border (inner edge) go relative to the contents? (Subtliy different to other dims.
-    \xdef\b@x@lunpad{\the\dimexpr 0pt \ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \fi\relax}%
-    \xdef\b@x@runpad{\the\dimexpr 0pt \ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \fi\relax}%
+    %Where does the border (inner edge) - somtimes the reference point - go relative to the contents? (Subtliy different to other dims.
+    \xdef\b@x@lunpad{\the\dimexpr 0pt  \ifb@dr@l@os +\border@lmargin \else\ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \fi\fi\relax}%
+    \xdef\b@x@runpad{\the\dimexpr 0pt \ifb@dr@r@os +\border@rmargin \else\ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \fi\fi\relax}%
     \edef\b@drhsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
     \edef\b@drvsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@xintadj{\the\dimexpr \b@dr@top@edge - \b@dr@top@pad\relax}%
