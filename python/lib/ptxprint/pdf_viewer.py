@@ -7,7 +7,8 @@ import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.version import VersionStr
-from ptxprint.utils import _, f2s, coltoonemax, getcaller
+from ptxprint.utils import _, f2s, coltoonemax, getcaller, \
+    cleanParatextRef, sendRefToParatext
 from ptxprint.gtkutils import background_msg, pump_gtk
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
@@ -56,7 +57,7 @@ mstr = {
     'et':         _("Expand Text"),
     'es':         _("Edit Style"),
     'ecs':        _("Edit Caption Style"),
-    'j2pt':       _("Send Ref to Paratext"),
+    'j2pt':       _("Jump to Ref in Paratext"),
     'z2f':        _("Zoom to Fit"),
     'ancrdat':    _("Anchored at:"),
     'ianf':       _("Image Anchor Not Found"),
@@ -2270,59 +2271,6 @@ class PDFContentViewer(PDFFileViewer):
         self.model.mainapp.win.present()
         self.model.wiggleCurrentTabLabel()
         
-    def cleanRef(self, reference):
-        ''' JHN1.4 --> JHN 1:4, MRKL12.14 --> MRK 12:14 '''
-        pattern = r"([123A-Z]{3})\s?(?:[LRA-G]?)(\d+)\.(\d+)"
-        match = re.match(pattern, reference)
-        if not match:
-            return reference
-        book, chapter, verse = match.groups()
-        return f"{book} {chapter}:{verse}"
-    
     def on_broadcast_ref(self, widget, ref):
-        if not sys.platform.startswith("win"):
-            return
-
-        key_path = r"Software\SantaFe\Focus\ScriptureReference"
-        try:
-            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
-        except FileNotFoundError:
-            logger.debug(f"Error: Registry Key not found: {path}")
-            return
-
-        try:
-            if key is not None:
-                vref = self.cleanRef(ref)
-                winreg.SetValueEx(key, "", 0, winreg.REG_SZ, vref)
-                winreg.CloseKey(key)
-                logger.debug(f"Set Scr Ref in registry to: {vref}")
-        except WindowsError as e:
-            logger.debug(f"Error: {e} while trying to set ref in registry")
-            return
-
-        # Load user32.dll
-        user32 = ctypes.windll.user32
-
-        # Define argument and return types for RegisterWindowMessage and PostMessage
-        user32.RegisterWindowMessageW.argtypes = [wintypes.LPCWSTR]  # Wide string
-        user32.RegisterWindowMessageW.restype = wintypes.UINT        # Unsigned int
-
-        user32.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
-        user32.PostMessageW.restype = wintypes.BOOL                  # Boolean return
-
-        # Step 1: Register the custom Windows message
-        santa_fe_focus_msg = user32.RegisterWindowMessageW("SantaFeFocus")
-        if not santa_fe_focus_msg:
-            raise ctypes.WinError(ctypes.get_last_error())
-
-        # Step 2: Post the message to all top-level windows (-1 or HWND_BROADCAST)
-        HWND_BROADCAST = 0xFFFF  # -1 in the Windows API means broadcasting to all top-level windows
-        WPARAM = 1               # Parameter for the message
-        LPARAM = 0               # Additional parameter for the message
-
-        # Post the message
-        success = user32.PostMessageW(HWND_BROADCAST, santa_fe_focus_msg, WPARAM, LPARAM)
-        if not success:
-            raise ctypes.WinError(ctypes.get_last_error())
-        logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
+        sendRefToParatext(cleanParatextRef(ref))
 

@@ -1,12 +1,16 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase, Picture
-from ptxprint.utils import refSort, getlang, _, f2s, pycodedir
+from ptxprint.utils import refSort, getlang, _, f2s, pycodedir, \
+    cleanParatextRef, sendRefToParatext
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
 from typing import Dict
 from shutil import rmtree
-import os, re
+import os, re, sys, subprocess
 import logging
+if sys.platform.startswith("win"):
+    import winreg, ctypes
+    from ctypes import wintypes
 
 logger = logging.getLogger(__name__)
 
@@ -92,6 +96,7 @@ class PicList:
         self.picrect = None
         self.currows = []
         self.curriter = None
+        self.curFpath = None
         self.bookfilters = None
         sel = self.view.get_selection()
         sel.set_mode=Gtk.SelectionMode.SINGLE
@@ -518,6 +523,7 @@ class PicList:
             fpath = None
             a = currow[_pickeys['anchor']]
             pixbuf, fpath = self._getpixbuf(val, a)
+            self.curFpath = fpath
             self.setPreview(pixbuf, tooltip=fpath)
 
     def drawPreview(self, wid, cr):
@@ -621,16 +627,78 @@ class PicList:
             return False
         path, col, cell_x, cell_y = path_info
         if not self.selection.path_is_selected(path):
-            self.selection.select_path(path)
+            if self.selection.count_selected_rows() <= 1:
+                # Single (or no) selection: replace it with the right-clicked row
+                self.selection.unselect_all()
+                self.selection.select_path(path)
+            # else: multi-selection already in place — leave it for bulk action
         menu = Gtk.Menu()
-        for label, usfm3 in ((_('Copy \\fig string to clipboard (USFM3)'), True),
-                              (_('Copy \\fig string to clipboard (USFM2)'), False)):
-            item = Gtk.MenuItem(label=label)
-            item.connect('activate', self._copyFigToClipboard, usfm3)
+
+        item = Gtk.MenuItem(label=_('Copy \\fig String to Clipboard'))
+        item.connect('activate', self._copyFigToClipboard, True)
+        menu.append(item)
+
+        if sys.platform.startswith("win"):
+            item = Gtk.MenuItem(label=_('Jump to Ref in Paratext'))
+            item.connect('activate', self._jumpToAnchorInParatext)
             menu.append(item)
+
+        menu.append(Gtk.SeparatorMenuItem())
+
+        item = Gtk.MenuItem(label=_('Reveal in File Manager'))
+        item.connect('activate', self._revealInFileManager)
+        menu.append(item)
+
+        item = Gtk.MenuItem(label=_('Copy Image Filepath to Clipboard'))
+        item.connect('activate', self._copyImagePath)
+        menu.append(item)
+
+        menu.append(Gtk.SeparatorMenuItem())
+
+        count = len(self.currows)
+        label = _('Delete Picture') if count <= 1 else _('Delete {} Pictures').format(count)
+        item = Gtk.MenuItem(label=label)
+        item.connect('activate', self._deletePictures)
+        menu.append(item)
+
         menu.show_all()
         menu.popup_at_pointer(event)
         return True
+
+    def _deletePictures(self, menuitem):
+        self.del_row()
+
+    def _revealInFileManager(self, menuitem):
+        fpath = self.curFpath
+        if not fpath or not os.path.exists(fpath):
+            return
+        if sys.platform.startswith("win"):
+            shell32 = ctypes.windll.shell32
+            shell32.ILCreateFromPathW.restype = ctypes.c_void_p
+            shell32.ILCreateFromPathW.argtypes = [wintypes.LPCWSTR]
+            pidl = shell32.ILCreateFromPathW(os.path.normpath(fpath))
+            if pidl:
+                shell32.SHOpenFolderAndSelectItems(ctypes.c_void_p(pidl), 0, None, 0)
+                shell32.ILFree(ctypes.c_void_p(pidl))
+            else:
+                os.startfile(os.path.dirname(fpath))
+        elif sys.platform == 'darwin':
+            subprocess.Popen(['open', '-R', fpath])
+        else:
+            subprocess.Popen(['xdg-open', os.path.dirname(fpath)])
+
+    def _copyImagePath(self, menuitem):
+        fpath = self.curFpath
+        if fpath:
+            Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).set_text(fpath, -1)
+
+    def _jumpToAnchorInParatext(self, menuitem):
+        if not self.currows:
+            return
+        anchor = self.currows[0][_pickeys['anchor']] or ''
+        if not anchor:
+            return
+        sendRefToParatext(cleanParatextRef(anchor))
 
     def _buildFigString(self, row, usfm3=True):
         caption = row[_pickeys['caption']] or ''
