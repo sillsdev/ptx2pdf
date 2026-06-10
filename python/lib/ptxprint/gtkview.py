@@ -2625,6 +2625,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_savedConfig").set_text("")
             self.builder.get_object("t_configNotes").set_text("")
         self.configNoUpdate = False
+        self._updateConfigButtons(self.cfgid)
 
     def _fillConfigList(self, prjwname, configlist):
         impprj = self._getProject(prjwname)
@@ -4695,25 +4696,32 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(False)
             self.set(w, False, mod=False)
 
-    def doConfigNameChange(self, w):
+    def _updateConfigButtons(self, configName=None):
+        """Update Reset/Delete button visibility and lock-button sensitivity for configName."""
+        if configName is None:
+            configName = self.cfgid or "Default"
+        isDefault = configName == "Default"
         lockBtn = self.builder.get_object("btn_lockunlock")
-        isDefault = self.cfgid == "Default"
         lockBtn.set_sensitive(not isDefault)
         self.builder.get_object("btn_deleteConfig").set_visible(not isDefault)
         self.builder.get_object("btn_resetDefaults").set_visible(isDefault)
+
+    def doConfigNameChange(self, w):
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)
         configName = self.getConfigName()
+        # Use the newly-selected config name (not self.cfgid which is still the old config).
+        self._updateConfigButtons(configName)
         if self.gtkpolyglot is not None:
             self.gtkpolyglot.changeConfigName(configName)
+        lockBtn = self.builder.get_object("btn_lockunlock")
         if len(self.get("ecb_savedConfig")):
             if configName != "Default":
                 lockBtn.set_sensitive(True)
         else:
-            # self.builder.get_object("t_configNotes").set_text("") # Why are we doing this? (it often wipes it out!)
             lockBtn.set_sensitive(False)
         cpath = self.project.srcPath(configName) if self.project is not None else None
         if cpath is not None and os.path.exists(cpath):
@@ -5418,40 +5426,43 @@ class GtkViewModel(ViewModel):
         if getattr(self, '_restoringDiglot', False):
             return
 
-        # The user just deactivated the diglot checkbox.  Intercept this BEFORE any other
-        # action: restore the checkbox to True immediately, then show the Save-As-Monoglot
-        # dialog.  The checkbox cannot simply be deactivated – the user must first save the
-        # current settings under a new (monoglot) configuration name.
-        if not self.get("c_diglot") and not self.loadingConfig:
+        # GTK3 fires 'clicked' from set_active() as well as from real user clicks.
+        # During config/project loading, loadingConfig=True — run only the cheap UI
+        # updates and return immediately so no dialog can ever appear mid-load.
+        if self.loadingConfig:
+            self.sensiVisible("c_diglot")
+            self.colorTabs()
+            return
+
+        # ---- Interactive click only beyond this point ----
+
+        # User just unchecked diglot: restore it visually and offer Save-As-Monoglot.
+        if not self.get("c_diglot"):
             self._restoringDiglot = True
             btn.set_active(True)          # restore visual state (triggers clicked again)
             self._restoringDiglot = False
             self._showSaveAsMonoglotDialog()
             return
 
-        # Intercept activation: warn the user this is a significant, hard-to-reverse step.
-        # Only show the dialog for interactive clicks, not when loading a saved config.
-        if self.get("c_diglot") and not self.loadingConfig:
-            dialog = self.builder.get_object("dlg_confirmDiglot")
-            response = dialog.run()
-            dialog.hide()
-            if response != Gtk.ResponseType.YES:
-                # User declined – silently restore the checkbox to unchecked and return
-                # before any UI state has changed.  handler_block prevents re-entering
-                # this function; mod=False avoids marking the config as changed.
-                btn.handler_block_by_func(self.onDiglotClicked)
-                self.set("c_diglot", False, mod=False)
-                btn.handler_unblock_by_func(self.onDiglotClicked)
-                return
+        # User just checked diglot: confirm this is intentional.
+        dialog = self.builder.get_object("dlg_confirmDiglot")
+        response = dialog.run()
+        dialog.hide()
+        if response != Gtk.ResponseType.YES:
+            # User declined – silently restore the checkbox to unchecked and return
+            # before any UI state has changed.  handler_block prevents re-entering
+            # this function; mod=False avoids marking the config as changed.
+            btn.handler_block_by_func(self.onDiglotClicked)
+            self.set("c_diglot", False, mod=False)
+            btn.handler_unblock_by_func(self.onDiglotClicked)
+            return
 
-        # ---- Normal path: activation confirmed, or config is loading ----
+        # ---- Normal path: activation confirmed ----
         self.sensiVisible("c_diglot")
         self.colorTabs()
-        if self.loadingConfig:
-            return
         if self.get("c_diglot"):
             self.loadPolyglotSettings()
-            self.diglotViews['R'] = self.createDiglotView()
+            self.createDiglotView()  # stores result in self.diglotViews['R'] only when non-None
             self.set("c_doublecolumn", True)
             self.builder.get_object("c_doublecolumn").set_sensitive(False)
             # Open the Project dropdown for the R row so the user immediately knows
@@ -5502,10 +5513,10 @@ class GtkViewModel(ViewModel):
         msg_lbl.set_text(msg)
 
     def _showSaveAsMonoglotDialog(self):
-        """Show the 'Save As Monoglot' dialog and act on the response.
+        r"""Show the 'Save As Monoglot' dialog and act on the response.
 
-        Cancel  → c_diglot stays True (already restored before this is called).
-        OK      → The current settings are saved under the chosen name with
+        Cancel  -> c_diglot stays True (already restored before this is called).
+        OK      -> The current settings are saved under the chosen name with
                   c_diglot turned off; that new monoglot configuration becomes active.
                   The original diglot configuration is left untouched on disk.
         """
