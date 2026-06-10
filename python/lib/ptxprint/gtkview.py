@@ -4128,6 +4128,7 @@ class GtkViewModel(ViewModel):
             self.widgetnames[findname] = opt.name
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)
+            obj.connect("button-release-event", self.button_release_callback, label if wname.startswith("c_") else None)
             grid.attach(obj, 1, row, 1, 1)
             self.builder.expose_object(wname, obj)
             if wname in self.dict:
@@ -7160,11 +7161,15 @@ class GtkViewModel(ViewModel):
         # purposes) using Ctrl to toggle state then we want it to be a 
         # different color from the peachpuff which carries another meaning.
         if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
-            sc = widget.get_style_context()
-            if sc.has_class("yellowlighted"):
-                sc.remove_class("yellowlighted")
-            else:
-                sc.add_class("yellowlighted")
+            widgets = [widget]
+            if data is not None:
+                widgets.append(data)
+            for w in widgets:
+                sc = w.get_style_context()
+                if sc.has_class("yellowlighted"):
+                    sc.remove_class("yellowlighted")
+                else:
+                    sc.add_class("yellowlighted")
             return True
 
     def grab_notify_event(self, widget, event, data=None):
