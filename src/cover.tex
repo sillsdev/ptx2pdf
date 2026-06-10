@@ -95,12 +95,13 @@
     \trace{cov}{Request (#1) was (\the\PaperHeight x\the\PaperWidth) \ifcsname bpparam\endcsname bpparam=\bpp@ram\fi}%
     \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr \b@dr@right@pad\relax,\fb@rpadding>\space bdr,col hpadding and hbleed of \the\dimexpr \lble@d\relax + \the\dimexpr\rble@d\relax. Vpadding: <\the\dimexpr\b@dr@top@pad\relax,\fb@tpadding|\the\dimexpr \b@dr@bot@pad\relax,\fb@bpadding>, vbleed: \the\dimexpr \tble@d\relax+\the\dimexpr \bble@d\relax}%
     \ifhasb@rder
-      \trace{cov}{Cover (\the\ht\wholepagepic+\the\dp\wholepagepic)*\the\wd\wholepagepic had a border (flags: \ifvmode vmode \fi \ifble@d bleed \fi)}%
+      \trace{cov}{Cover (\the\ht\wholepagepic+\the\dp\wholepagepic)*\the\wd\wholepagepic had a border (flags: \ifvmode vmode \fi \ifble@d bleed \fi \ifvmode\else raised \the\dp\wholepagepic \ifx\bpp@ram\relax\else -\bwp@ram pt (bwp@ram) -\bpp@ram pt  (bpp@ram)\fi\fi)}%
       
       \ifvmode\else
        \raise\dimexpr \dp\wholepagepic 
-          \ifx\bpp@ram\relax\else -\bwp@ram pt -\bpp@ram pt \fi
-          %\ifble@d +\bble@d \fi
+          \ifx\bpp@ram\relax\else 
+            \ifdim \bpp@ram pt > -\bwp@ram pt\else -\bwp@ram pt -\bpp@ram pt \fi
+          \fi
       \fi
       \box\wholepagepic%
     \else

@@ -813,7 +813,7 @@
    \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
    \x@\writefigp@gelog\x@{\l@gstring}%
    \egroup 
-  \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
+  \message{\c@t@gory: \the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
   % ^^^ END OF GROUP! ^^^
   %
   \whichp@ge=\@@whichp@ge
@@ -862,6 +862,11 @@
   %Does the box have a defined size? 
   %
   % Reference dimensions
+  \trace{e}{Border on outside for: \ifb@dr@t@os t\fi\ifb@dr@b@os b\fi\ifb@dr@l@os l\fi\ifb@dr@r@os r\fi}%
+  \ifb@dr@l@os\let\lble@d\z@\fi
+  \ifb@dr@r@os\let\rble@d\z@\fi
+  \ifb@dr@t@os\let\tble@d\z@\fi
+  \ifb@dr@b@os\let\bble@d\z@\fi
   \edef\flble@d{\ifdim \lble@d > \figbleed \figbleed\else\lble@d\fi}% Figure bleeds
   \edef\frble@d{\ifdim \rble@d > \figbleed \figbleed\else\rble@d\fi}%
   \edef\ftble@d{\ifdim \tble@d > \figbleed \figbleed\else\tble@d\fi}%
@@ -1262,7 +1267,8 @@
         \fi
         \ifx\picl@c\loc@Full
           \trace{e}{Full page box \b@x@lunpad | \b@x@runpad}%
-          \setbox\extchunkb@x\hbox {\penalty-10001\kern\b@x@lunpad\box\extchunkb@x\kern \b@x@runpad}%
+          \setbox\extchunkb@x\hbox {\penalty-10001\ifb@dr@l@os\else\kern\b@x@lunpad\fi
+              \box\extchunkb@x\ifb@dr@l@os\else\kern \b@x@runpad\fi}%
           \d@figureFull\extchunkb@x
         \fi
         \ifx\picl@c\loc@Cut
