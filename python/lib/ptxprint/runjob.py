@@ -997,7 +997,7 @@ class RunJob:
         from ptxprint.pdf.pdfdiff import createDiff
         outname = pdfname[:-4] + "_diff.pdf" if outname is None else outname
         othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
-        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
+        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)}) to {outname}")
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
         if res == 2:
             self.res = 2

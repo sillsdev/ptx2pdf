@@ -332,6 +332,371 @@ THE SOFTWARE.
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
   </object>
+  <object class="GtkAdjustment" id="a_hyphMinBlock">
+    <property name="lower">1</property>
+    <property name="upper">50</property>
+    <property name="value">9</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_hyphMinWord">
+    <property name="lower">3</property>
+    <property name="upper">50</property>
+    <property name="value">5</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_hyphMinprefix">
+    <property name="lower">1</property>
+    <property name="upper">10</property>
+    <property name="value">1</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">1</property>
+  </object>
+  <object class="GtkDialog" id="dlg_createHyphenList">
+    <property name="can-focus">False</property>
+    <property name="halign">start</property>
+    <property name="valign">start</property>
+    <property name="title" translatable="yes">PTXprint: Create Hyphenation List</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type-hint">dialog</property>
+    <property name="skip-taskbar-hint">True</property>
+    <property name="deletable">False</property>
+    <property name="gravity">center</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">3</property>
+            <property name="margin-right">3</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_gnr8pl_ok1">
+                <property name="label">OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_gnr8pl_cancel1">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFrame">
+            <property name="width-request">270</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="halign">start</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="label-xalign">0.019999999552965164</property>
+            <child>
+              <object class="GtkAlignment">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="left-padding">12</property>
+                <child>
+                  <!-- n-columns=1 n-rows=6 -->
+                  <object class="GtkGrid">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin-right">12</property>
+                    <property name="margin-end">12</property>
+                    <property name="margin-top">12</property>
+                    <property name="margin-bottom">12</property>
+                    <property name="row-spacing">6</property>
+                    <property name="column-spacing">6</property>
+                    <child>
+                      <object class="GtkLabel" id="l_createHyphenList_booklist">
+                        <property name="width-request">250</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="margin-left">20</property>
+                        <property name="margin-start">24</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="label" translatable="yes">MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT</property>
+                        <property name="wrap">True</property>
+                        <property name="max-width-chars">40</property>
+                        <property name="xalign">0</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_addSyllableBasedHyphens">
+                        <property name="label" translatable="yes">Add Syllable-Based Hyphenated Words</property>
+                        <property name="name">Append syllable-based hyphenated words to hyphen list</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">This advanced hybrid option is only available if 
+Syllable Line Breaking has been enabled under 
+Additional Script Settings for Complex Scripts.
+
+If enabled, it will use Syllable Line Breaking to
+hyphenate words from the books selected
+so that a combination of manually-marked
+hyphenation along with automated hyphen-
+ation is possible.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">12</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSeparator">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">12</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_hyphenLimitBooks">
+                        <property name="label" translatable="yes">Limit Hyphenation List to Words Found in:</property>
+                        <property name="name">Limit hyphenation list to only include words in active books</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Normally ALL hyphenated words from ALL books
+are included in PTXprint's hyphenated wordlist.
+
+However, if the list of hyphenated words is too long
+(greater than 63929 words) then you can prioritize
+which words to include by enabling this option to
+only use words from the books being printed.
+
+Note that if there are too many words in the Paratext
+hyphenation file, PTXprint will automatically prioritize
+the list created for XeTeX based on frequency.</property>
+                        <property name="halign">start</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_hyphenApprovedWords">
+                        <property name="label" translatable="yes">Only Use Approved Hyphenation Words</property>
+                        <property name="name">Only use words where hyphenation points have been approved in Paratext</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">The Paratext WordList tool guesses hyphenation points
+based on syllable structure and patterns in the language.
+
+However, it expects the user to (i) check and, if appropriate,
+(ii) approve the suggested hyphenation points (by clicking
+the check mark making it appear green).
+
+Normally only the approved hyphenated words will be used
+when creating the hyphenation list for PTXprint/TeX to use.
+
+However, if you wish to include ALL words (regardless of
+their approval status) then disable this option.</property>
+                        <property name="halign">start</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkExpander">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <child>
+                          <!-- n-columns=2 n-rows=3 -->
+                          <object class="GtkGrid">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Minimum length of initial string
+before the first hyphen. If this
+is very short, don't include the word.</property>
+                                <property name="halign">end</property>
+                                <property name="margin-end">3</property>
+                                <property name="label" translatable="yes">Minimum prefix</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_hyphMinprefix">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="adjustment">a_hyphMinprefix</property>
+                                <property name="climb-rate">1</property>
+                                <property name="value">1</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Any words, including hyphens,
+shorter than this will not get
+hyphenated, including any hyphens.</property>
+                                <property name="halign">end</property>
+                                <property name="margin-end">3</property>
+                                <property name="label" translatable="yes">Minimum word</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_hyphMinWord">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="adjustment">a_hyphMinWord</property>
+                                <property name="climb-rate">1</property>
+                                <property name="value">5</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Minimum word length for a word
+to block hyphenation</property>
+                                <property name="label" translatable="yes">Min non-hyphen</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_hyphMinBlock">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="adjustment">a_hyphMinBlock</property>
+                                <property name="climb-rate">1</property>
+                                <property name="value">9</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Advanced</property>
+                            <attributes>
+                              <attribute name="weight" value="bold"/>
+                              <attribute name="foreground" value="#72729f9dcfcf"/>
+                            </attributes>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">5</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">When Creating Hyphenation List</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_gnr8pl_ok1</action-widget>
+      <action-widget response="-6">btn_gnr8pl_cancel1</action-widget>
+    </action-widgets>
+  </object>
   <object class="GtkAdjustment" id="a_inclSectionScale">
     <property name="upper">10</property>
     <property name="value">1</property>
@@ -2006,237 +2371,6 @@ then proceed with the step of enabling this option.
     <child type="titlebar">
       <placeholder/>
     </child>
-  </object>
-  <object class="GtkDialog" id="dlg_createHyphenList">
-    <property name="can-focus">False</property>
-    <property name="halign">start</property>
-    <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: Create Hyphenation List</property>
-    <property name="resizable">False</property>
-    <property name="modal">True</property>
-    <property name="window-position">center-on-parent</property>
-    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
-    <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
-    <property name="deletable">False</property>
-    <property name="gravity">center</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="halign">start</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="margin-left">3</property>
-            <property name="margin-right">3</property>
-            <property name="margin-start">3</property>
-            <property name="margin-end">3</property>
-            <property name="margin-top">3</property>
-            <property name="margin-bottom">3</property>
-            <property name="layout-style">end</property>
-            <child>
-              <object class="GtkButton" id="btn_gnr8pl_ok1">
-                <property name="label">OK</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="always-show-image">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn_gnr8pl_cancel1">
-                <property name="label">Cancel</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="always-show-image">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFrame">
-            <property name="width-request">270</property>
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="halign">start</property>
-            <property name="margin-left">6</property>
-            <property name="margin-right">6</property>
-            <property name="margin-start">6</property>
-            <property name="margin-end">6</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
-            <property name="label-xalign">0.019999999552965164</property>
-            <child>
-              <object class="GtkAlignment">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="left-padding">12</property>
-                <child>
-                  <!-- n-columns=1 n-rows=5 -->
-                  <object class="GtkGrid">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="margin-right">12</property>
-                    <property name="margin-end">12</property>
-                    <property name="margin-top">12</property>
-                    <property name="margin-bottom">12</property>
-                    <property name="row-spacing">6</property>
-                    <property name="column-spacing">6</property>
-                    <child>
-                      <object class="GtkLabel" id="l_createHyphenList_booklist">
-                        <property name="width-request">250</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="margin-left">20</property>
-                        <property name="margin-start">24</property>
-                        <property name="margin-bottom">10</property>
-                        <property name="label" translatable="yes">MAT MRK LUK JHN ACT ROM 1CO 2CO GAL EPH PHP COL 1TH 2TH 1TI 2TI TIT</property>
-                        <property name="wrap">True</property>
-                        <property name="max-width-chars">40</property>
-                        <property name="xalign">0</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_addSyllableBasedHyphens">
-                        <property name="label" translatable="yes">Add Syllable-Based Hyphenated Words</property>
-                        <property name="name">Append syllable-based hyphenated words to hyphen list</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">This advanced hybrid option is only available if 
-Syllable Line Breaking has been enabled under 
-Additional Script Settings for Complex Scripts.
-
-If enabled, it will use Syllable Line Breaking to
-hyphenate words from the books selected
-so that a combination of manually-marked
-hyphenation along with automated hyphen-
-ation is possible.</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="margin-top">12</property>
-                        <property name="margin-bottom">12</property>
-                        <property name="draw-indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">4</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkSeparator">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="margin-top">12</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">3</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_hyphenLimitBooks">
-                        <property name="label" translatable="yes">Limit Hyphenation List to Words Found in:</property>
-                        <property name="name">Limit hyphenation list to only include words in active books</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">Normally ALL hyphenated words from ALL books
-are included in PTXprint's hyphenated wordlist.
-
-However, if the list of hyphenated words is too long
-(greater than 63929 words) then you can prioritize
-which words to include by enabling this option to
-only use words from the books being printed.
-
-Note that if there are too many words in the Paratext
-hyphenation file, PTXprint will automatically prioritize
-the list created for XeTeX based on frequency.</property>
-                        <property name="halign">start</property>
-                        <property name="draw-indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_hyphenApprovedWords">
-                        <property name="label" translatable="yes">Only Use Approved Hyphenation Words</property>
-                        <property name="name">Only use words where hyphenation points have been approved in Paratext</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">The Paratext WordList tool guesses hyphenation points
-based on syllable structure and patterns in the language.
-
-However, it expects the user to (i) check and, if appropriate,
-(ii) approve the suggested hyphenation points (by clicking
-the check mark making it appear green).
-
-Normally only the approved hyphenated words will be used
-when creating the hyphenation list for PTXprint/TeX to use.
-
-However, if you wish to include ALL words (regardless of
-their approval status) then disable this option.</property>
-                        <property name="halign">start</property>
-                        <property name="active">True</property>
-                        <property name="draw-indicator">True</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">0</property>
-                      </packing>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child type="label">
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">When Creating Hyphenation List</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="-5">btn_gnr8pl_ok1</action-widget>
-      <action-widget response="-6">btn_gnr8pl_cancel1</action-widget>
-    </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_generateFRT">
     <property name="can-focus">False</property>
