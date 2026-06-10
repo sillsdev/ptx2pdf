@@ -1,0 +1,107 @@
+How to store 3 (large) arrays of dimens/counts:
+
+variants of set (all 5000) elements of all 3 vectors.
+
+Populating a single \def: 5919.94ms + apparent (memory usage?) degradation over 6 uses (try 6 ~= double try1)
+Populating 3 separate \defs: 10488.9ms + apparent (memory usage?) degradation over 6 uses (try 6 ~= double try1)
+Alterign one of the 3 \defs: (500 times) :  11961.4ms + apparent degredation over 6 uses (try 6 ~= double try1)
+
+Restricting to 500 elements (more reasonable):
+Populating 3 \defs : 66.5054ms  + degredation (try 6 is 13% longer than try1)
+Altering one of the 3(300 times):  107.74ms + degredation (try 6 is also 13% longer than try1)
+
+CLEARLY: Assiging multiple value(s) to a single or multiple \cseq is horribly inefficient. **AND SPLITTING TO MULTIPLE cseqs IT MAKES IT WORSE**
+
+
+Returning to 5000 of each sample.
+
+(initialising) Using a constructed csname for each value: 25.4211ms
+(initialising) Using a constructed csname for a combination of variables: 8.994ms 
+(modifying) one parameter (separate vars):  20.53ms
+(modifying) one parameter (combined vars):  22.313ms
+
+
+Using etex block-allocation of vectors:
+{
+ \ifcsname split@heights#1\endcsname\else
+    \x@\locdimenblk\csname @@@split@heights#1\endcsname{\MaxComplexLines}
+    \x@\locdimenblk\csname @@@split@insheights#1\endcsname{\MaxComplexLines}
+    \x@\loccountblk\csname @@@split@vrs#1\endcsname{\MaxComplexLines}
+    \x@\def\csname split@heights#1\endcsname##1{\x@\dimen\x@\numexpr \csname @@@split@heights#1\endcsname+##1\relax}
+    \x@\def\csname split@insheights#1\endcsname##1{\x@\dimen\numexpr \csname @@@split@insheights#1\endcsname+##1\relax}
+    \x@\def\csname split@vrs#1\endcsname##1{\x@\count\numexpr \csname @@@split@vrs#1\endcsname+##1\relax}
+  \fi
+  \tracetimset{local@split@defs}%
+  \x@\let\x@\split@vrs\csname split@vrs#1\endcsname
+  \x@\let\x@\split@heights\csname split@heights#1\endcsname
+  \x@\let\x@\split@insheights\csname split@insheights#1\endcsname
+  \count255=\MaxComplexLines 
+  \advance\count255 -1
+  \dimen1=-1sp
+  \loop
+    \split@insheights{\count255}=\dimen1
+    \split@heights{\count255}=\dimen1
+    \split@vrs{\count255}=-1 
+    \advance\count255 by -1 \ifnum\count255>0 \repeat
+  \tracetimcheck{local@split@defs}{prs \MaxComplexLines}%
+}
+
+Timing effects of variants of above, to set (all 5000) elements of all 3 vectors.
+
+Using \csname each time: 23.3103ms
+Not using csname 18.7327ms  -  About 4.6ms saving
+Use \dimen1 for -1sp value:15.1693ms - About 5.6ms
+using a \count for 0 and -1: 15.0197ms - About 0.14ms - probably not significant.
+Incremending above values (1 times): 33.2853ms-20.89=12.4ms
+Incremending above values (4 times): 50.2853ms
+
+=================
+awk script used to help analyse:
+grep tim timings.dat | awk 'function f(a){n=num[a]>0?num[a]:1; print a, n, r[a]/65.536/n "ms";}/local@split@defs/{if (NF==5) {A=$3 ":" $4} else {A=$3};print A":"$NF;r[A] += $NF;num[A]+=1;if (num[A]==1){ N[names]=A;names++;}}END{while (names>0) {names-- ; f(N[names]);} ;}'
+
+RAW resuls:
+cseq-inc:5000 30 31.3075ms
+var-inc:5000 12 33.4524ms
+cseq3-inc:200 12 45.9518ms
+var-inc2:5000 6 
+
+2seq:5000 18 10348.4ms
+2seq:500 4 65.5365ms
+2seq-m:500 6 66.5054ms
+2seq-mR:200 6 107.74ms
+2seqR:500 6 11961.4ms
+
+cseq3:5000 24 25.9972ms
+cseq3-inc:200 12 45.9518ms
+cseq:5000 100 9.08005ms
+cseq-inc:5000 72 31.7499ms
+mone2:5000 12 15.0197ms
+mone:5000 6 15.4775ms
+nocsn:5000 12 18.7327ms
+prs:5000 24 15.1602ms
+seq:5000 6 5919.94ms
+sh:5000 6 23.3103ms
+var:5000 18 20.8944ms
+var-inc:5000 12 33.4524ms
+
+=================
+Resources: (5000x3x3 variables)
+ 8410 strings out of 495016
+ 100364 string characters out of 6191606
+ 470934 words of memory out of 5000000
+ 12245 multiletter control sequences out of 15000+600000
+
+Resourses: (5000x3 combined cseq)
+ 23407 strings out of 495016
+ 247013 string characters out of 6191606
+ 854849 words of memory out of 5000000
+ 27242 multiletter control sequences out of 15000+600000
+=================
+
+CONCLUSION:
+* Minimal timing differences and massive differences in resource usage suggest
+the vector method [O(n)] is to be preferred for simple values. 
+* Defining values for all potential slots is time-consuming and 
+(presubably due to how TeX stores local variables) eventually stops being O(n) even
+for the vectors.
+

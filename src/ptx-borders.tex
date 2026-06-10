@@ -51,6 +51,14 @@
 \def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordertpadding}{#1}\setsbp@ram{borderbpadding}{#1}}
 \def\BorderPadding #1\relax{\initc@t\setsbp@ram{bordertpadding}{#1}\setsbp@ram{borderbpadding}{#1}\setsbp@ram{borderlpadding}{#1}\setsbp@ram{borderrpadding}{#1}}
 \def\BorderPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{borderpadinnerouter}{\t@st}}
+\def\BorderLMargin #1\relax{\initc@t\setsbp@ram{borderlmargin}{#1}}
+\def\BorderRMargin #1\relax{\initc@t\setsbp@ram{borderrmargin}{#1}}
+\def\BorderTMargin #1\relax{\initc@t\setsbp@ram{bordertmargin}{#1}}
+\def\BorderBMargin #1\relax{\initc@t\setsbp@ram{borderbmargin}{#1}}
+\def\BorderHMargin #1\relax{\initc@t\setsbp@ram{borderlmargin}{#1}\setsbp@ram{borderrmargin}{#1}}
+\def\BorderVMargin #1\relax{\initc@t\setsbp@ram{bordertmargin}{#1}\setsbp@ram{borderbmargin}{#1}}
+\def\BorderMargin #1\relax{\initc@t\setsbp@ram{bordertmargin}{#1}\setsbp@ram{borderbmargin}{#1}\setsbp@ram{borderlmargin}{#1}\setsbp@ram{borderrmargin}{#1}}
+\def\BorderMarginInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{bordermarginnerouter}{\t@st}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 \def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
@@ -385,6 +393,8 @@
   \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
   \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\xdef\border@tpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\xdef\border@bpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{bordertmargin}\ifx\cp@ram\relax\xdef\border@tmargin{0pt}\else\xdef\border@tmargin{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{borderbmargin}\ifx\cp@ram\relax\xdef\border@bmargin{0pt}\else\xdef\border@bmargin{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{boxtpadding}\xdef\fb@tpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
@@ -401,14 +411,18 @@
   \trace{eb}{Reading border horiz params for \c@tprefix\sb@rmarker (page \the\whichp@ge)}%
   \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
   \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
-  \t@mptrue
+  \t@mptrue%Left treated as left?
   \getsbp@ram{borderpadinnerouter}\ifx\cp@ram\tr@e\ifodd\whichp@ge\else\t@mpfalse\fi\fi
   \getsbp@ram{\ift@mp borderlpadding\else borderrpadding\fi}\ifx\cp@ram\relax\xdef\border@lpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@lpadding{\cp@ram pt}\fi
   \getsbp@ram{\ift@mp borderrpadding\else borderlpadding\fi}\ifx\cp@ram\relax\xdef\border@rpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@rpadding{\cp@ram pt}\fi
-  \t@mptrue
+  \t@mptrue%Left treated as left?
   \getsbp@ram{boxpadinnerouter}\ifx\cp@ram\tr@e\ifodd\whichp@ge\else\t@mpfalse\fi\fi
   \getsbp@ram{\ift@mp boxlpadding\else boxrpadding\fi}\xdef\fb@lpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
   \getsbp@ram{\ift@mp boxrpadding\else boxlpadding\fi}\xdef\fb@rpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
+  \t@mptrue %Left treated as left?
+  \getsbp@ram{bordermarginnerouter}\ifx\cp@ram\tr@e\ifodd\whichp@ge\else\t@mpfalse\fi\fi
+  \getsbp@ram{\ift@mp borderlmargin\else borderrmargin\fi}\ifx\cp@ram\relax\xdef\border@lmargin{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@lmargin{\cp@ram pt}\fi
+  \getsbp@ram{\ift@mp borderrmargin\else borderlmargin\fi}\ifx\cp@ram\relax\xdef\border@rmargin{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@rmargin{\cp@ram pt}\fi
     \trace{eb}{border@Xpadding: l \border@lpadding, r \border@rpadding. fb@Xpadding: l \fb@lpadding, r \fb@rpadding}%
   \traceifcheck{@get@Hborder@style@params}%
 }
@@ -425,7 +439,7 @@
   \getsbp@ram{properties}\let\b@drprop\cp@ram
   \trace{eb}{Params finished w:\b@drlinewidth \space lrtb:\b@drleft\b@drright\b@drtop\b@drbottom}%
 }
-\def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderlpadding,borderrpadding,bordertpadding,borderbpadding,boxlpadding,boxrpadding,boxtpadding,boxbpadding,raise,verticalalign,borderpadinnerouter,boxpadinnerouter}
+\def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderlpadding,borderrpadding,bordertpadding,borderbpadding,boxlpadding,boxrpadding,boxtpadding,boxbpadding,raise,verticalalign,borderpadinnerouter,boxpadinnerouter,borderlmargin,borderrmargin,bordertmargin,borderbmargin,bordermarginnerouter}
 %raise and verticalalign are not used by borders, but is by zrules
 
 
@@ -486,20 +500,34 @@
   \ifx\b@drright\tr@e\hasb@rdertrue\trace{eb}{Border: right}\fi
   \ifx\b@drtop\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Top}\fi
   \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
-  \ifx\b@drprop\N@nPublish@ble\hasb@rderfalse\trace{eb}{Border: nonpublishable}\else\trace{eb}{Border property: \b@drprop}\fi
+  \ifx\b@drprop\N@nPublish@ble\hasb@rderfalse\trace{eb}{Border: nonpublishable}\else\trace{eb}{Border property: \ifcsname b@drprop\endcsname\b@drprop\else undefined\fi}\fi
 }
-
+\newif\ifb@dr@t@os
+\newif\ifb@dr@b@os
+\newif\ifb@dr@l@os
+\newif\ifb@dr@r@os
 \def\prepb@rderdims{% Prepare all b@rderbox dimensions
   \ch@ckhasb@rder
   \@prepVb@rderdims
   \@prepHb@rderdims
+  \global\b@dr@t@osfalse
+  \global\b@dr@b@osfalse
+  \global\b@dr@l@osfalse
+  \global\b@dr@r@osfalse
   \ifhasb@rder
+    %Which is on the outside, border or box? (Count equal as false, as this affects bleed)
+    \ifdim\b@drwidth pt>0pt
+      \ifx\b@drtop\tr@e\ifdim\border@tpadding>-\b@drwidth pt \global\b@dr@t@ostrue\fi\fi
+      \ifx\b@drbottom\tr@e\ifdim\border@bpadding>-\b@drwidth pt \global\b@dr@b@ostrue\fi\fi
+      \ifx\b@drleft\tr@e\ifdim\border@lpadding>-\b@drwidth pt \global\b@dr@l@ostrue\fi\fi
+      \ifx\b@drright\tr@e\ifdim\border@rpadding>-\b@drwidth pt \global\b@dr@r@ostrue\fi\fi
+    \fi
     %Where does is the outer-edge of the  border or box,  relative to the contents?
-    \edef\b@dr@top@edge{\the\dimexpr \ifdim  \border@tpadding > -\b@drwidth pt  \border@tpadding + \b@drwidth pt  \fi  +\fb@tpadding\relax}%
-    \edef\b@dr@bot@edge{\the\dimexpr \ifdim  \border@bpadding > -\b@drwidth pt  \border@bpadding + \b@drwidth pt \fi  +\fb@bpadding\relax}%
-    %Where does the border go relative to the contents? (Subtliy different to other dims.
-    \xdef\b@x@lunpad{\the\dimexpr 0pt \ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \else  \fi\relax}%
-    \xdef\b@x@runpad{\the\dimexpr 0pt \ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \else \fi\relax}%
+    \edef\b@dr@top@edge{\the\dimexpr \ifb@dr@t@os  \border@tpadding + \b@drwidth pt  \fi  +\fb@tpadding\relax}%
+    \edef\b@dr@bot@edge{\the\dimexpr \ifb@dr@b@os  \border@bpadding + \b@drwidth pt \fi  +\fb@bpadding\relax}%
+    %Where does the border (inner edge) - somtimes the reference point - go relative to the contents? (Subtliy different to other dims.
+    \xdef\b@x@lunpad{\the\dimexpr 0pt  \ifb@dr@l@os +\border@lmargin \else\ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \fi\fi\relax}%
+    \xdef\b@x@runpad{\the\dimexpr 0pt \ifb@dr@r@os +\border@rmargin \else\ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \fi\fi\relax}%
     \edef\b@drhsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
     \edef\b@drvsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@xintadj{\the\dimexpr \b@dr@top@edge - \b@dr@top@pad\relax}%
