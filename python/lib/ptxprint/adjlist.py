@@ -197,7 +197,7 @@ class AdjList:
             r = self.liststore[i]
             if lastk[:3] == r[:3]:
                 self.liststore.remove(lastk)
-                self.db.pop(i)
+                self.db.pop(i-1)
             else:
                 i += 1
             last = r
