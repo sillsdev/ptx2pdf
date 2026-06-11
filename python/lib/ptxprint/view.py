@@ -296,7 +296,7 @@ class ViewModel:
                 res.append(r.first.book)
         return res
 
-    def getBooks(self, scope=None, files=False, local=False):
+    def getBooks(self, scope=None, files=False, local=False, errors=False):
         if self.project is None:
             return []
         if scope is None:
@@ -312,8 +312,9 @@ class ViewModel:
         try:
             bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
         except SyntaxError as e:
-            self.doError(str(e),
-                         secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
+            if errors:
+                self.doError(str(e),
+                             secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
             return []
         bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")

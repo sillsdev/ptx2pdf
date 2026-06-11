@@ -2321,7 +2321,7 @@ class GtkViewModel(ViewModel):
         print_count += 1
         self.set("_printcount", print_count, skipmissing=True)
 
-        jobs = self.getBooks(files=True)
+        jobs = self.getBooks(files=True, errors=True)
         if not len(jobs) or jobs[0] == '':
             self.doStatus(_("No books to print"))
             return
@@ -2469,6 +2469,10 @@ class GtkViewModel(ViewModel):
         self.doBookListChange()
 
     def doBookListChange(self):
+        self.bookrefs = None
+        return
+
+    def _bookListValidate(self):
         raw_bls = self.get('ecb_booklist', '').strip()
         normalized = unicodedata.normalize('NFD', raw_bls)
         no_accents = ''.join(ch for ch in normalized if unicodedata.category(ch) != 'Mn')
