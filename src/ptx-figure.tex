@@ -58,7 +58,7 @@
 \def\s@veclass@name#1{\s@veins@class@name{#1}{\s@veclass}}
 \def\m@kes@veb@x#1\E{\x@\newb@x\csname \s@veins@class@name{\ins@base}{#1}\endcsname}
 \def\s@veins#1\E{\x@\global\x@\setbox\csname \s@veclass@name{#1}\x@\endcsname\x@\@@action\csname #1\endcsname}
-\def\r@strins#1\E{\x@\setbox\x@3\x@\copy\csname \s@veclass@name{#1}\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
+\def\r@strins#1\E{\x@\setbox\x@3\x@\box\csname \s@veclass@name{#1}\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
 \def\sh@winsertdim#1\E{\x@\let\x@\tmp\csname \v@lpfx#1\v@lsfx\endcsname\immediate\write-1{\v@lpfx#1\v@lsfx: \ifx\tmp\relax\else\the\ht\tmp\space x \the\wd\tmp\fi}}
 
 \def\m@keinsertsaveboxes#1\E{\edef\ins@base{#1}\let\D@=\d@\let\d@=\m@kes@veb@x

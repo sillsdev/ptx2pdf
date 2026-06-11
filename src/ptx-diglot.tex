@@ -64,6 +64,7 @@
 \newif\ifdiglot@ecols % set if there are any empty columns
 \newif\ifdiglotb@dy % set if the diglot file is processing body text
 \newif\ifdiglotfirstb@dy % set if the diglot file is processing body text for the first time this loop.
+\newif\if@@collected
 \addtoeveryparhooks{\global\diglotcolh@scontenttrue}
 \useLeftMarkstrue
 \useRightMarkstrue
@@ -647,11 +648,11 @@
       \Showbox\@xcs
     \fi
     \savingvdiscards=1
-    \trace{D}{Splitting \c@rrdstat\space \the\ht\csname whole\c@rrdstat\endcsname to \the\availht (overwriting \the\ht\@xcs)}%
+    \trace{D}{Splitting \c@rrdstat\space \the\ht\csname whole\c@rrdstat\endcsname to \the\trialheight (overwriting \the\ht\@xcs)}%
     \ifdim\ht\csname whole\c@rrdstat\endcsname > 0pt 
       \global\setbox\@xcs\copy\csname whole\c@rrdstat\endcsname
     \fi
-    \global\setbox\p@rtl=\vsplit\@xcs to \availht
+    \global\setbox\p@rtl=\vsplit\@xcs to \trialheight
     \edef\tmpbadness{\the\badness}%
     \global\p@rtlsettrue
     \global\setbox\p@rtl\vbox{\unvbox\p@rtl}%
@@ -1169,6 +1170,7 @@
   \global\vsize=\availht
   \whichtrial
 }
+
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
@@ -1250,7 +1252,6 @@
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi [\digl@tc@ntentlist|\digl@tc@ntent@xcs]}%
   \edef\tmp{#2}
-  
   \ifdiglotcolh@scontent
     \ifx\tmp\empty\else
       \save@cutouts{\c@rrdstat}%
@@ -1262,22 +1263,29 @@
   %\global\savedpenalty=0 % avoid cross-contamination
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
-  \@@setside{#2}%Set the side to occur after the next swapcols penalty
-  \ifx\tmp\empty\else
+  \@@setside{#2}%Set the side to occur after the next swapcols penalty (n@xtdstat)
+  \ifx\n@xtdstat\empty\else
     \restore@cutouts{#2}%
   \fi
+  \tempfalse
   \ifdiglotcolh@scontent \temptrue \fi
   \ifnum\savedpenalty=-10000 \temptrue\fi
   \iftemp
+    \trace{D}{Expecting collect. \c@rrdstat vs:\the\vsize, pt:\the\pagetotal, pg:\the\pagegoal}%
+    \global\@@collectedfalse
     \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
     % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
     \relax
   \fi
   \ifintrial 
     \message{EEK! Still in trial! on page \the\pageno, somewhere near \c@rref. Expect synchronisation and text loss}%
-    \vskip0pt % some content...
+    \vbox to 0pt{}\vskip0pt % some content...
     \penalty\dgl@tPenColSwap\relax %Trigger collection of text.
   \fi
+  \trace{D}{Did collect run?\if@@collected yes\else no\fi\space  vs:\the\vsize, pt:\the\pagetotal, pg:\the\pagegoal}%
+  %\if@@collected\else
+    %\Showlists
+  %\fi
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
   \trace{D}{c@rrfontsize saved for side \@ldstat.}%
@@ -1464,8 +1472,8 @@
 \def\@setside#1{\setf@lwgdstat{#1}\setc@rdstat{#1}\xdef\n@xtdstat{#1}}
 
 \def\@@setside#1{\trace{D}{@@setside #1}%
-   \xdef\n@xtdstat{#1}%
-   }%
+ \xdef\n@xtdstat{#1}%
+}%
 
 \def\filter@list#1{%Add #1 to  @results if it is NOT \test
   \edef\t@st{#1}\ifx\t@st\test\else
@@ -1533,7 +1541,7 @@
  \fi
  \global\hsize=\w@dth\relax
  \global\diglotcolh@scontentfalse
- \trace{D}{end of swap@diglot: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip}%
+ \trace{D}{end of swap@diglot: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip, thh=\the\trialheight}%
 }%
 
 
@@ -2296,9 +2304,9 @@
     \advance\availht by -\m@xBelowBaseline
   }%
   %\tracingassigns=0
-  \ifdim\availht<2\@maxb@seline %
+  \ifdim\availht<\dimexpr \@maxb@seline*2\relax %
     \global\pagefulltrue%
-    \trace{D}{Declaring page full}%
+    \trace{D}{Declaring page full (\the\availht < 2 \@maxb@seline)}%
   \else%
     \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true \else false \fi tsr=\csname tri@lsplitRej\c@rrdstat\endcsname}%
     \ifpagefull\ifendbook\ifendbooknoeject
@@ -2311,15 +2319,11 @@
       \global\pagefulltrue
     \fi
   \fi%
+  \trace{D}{TempDim:\the\TempDim}%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
-<<<<<<< HEAD
     \global\trialheight=\availht\relax% Note that trialheight is not the same as vsize. trialheight is the cut point, vsize includes losses for notes/inserts.
     \global\vsize=\availht\relax%
-=======
-    \global\trialheight=\csname availht\c@rrdstat\endcsname\relax%
-    \global\vsize=\trialheight\relax%
->>>>>>> master
   \fi
   \ifpagefull%
     \traceifset{updp-full}%
@@ -2927,7 +2931,7 @@
   % assumes: \availht is correct, 
   % Fills: \excessX and \wholeX
   % Empties: \box255
-  \traceNum{D}{diglotCollect \c@rrdstat O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize. \ifintrial IN trial\fi}%
+  \traceNum{D}{diglotCollect \c@rrdstat O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize, pt:\the\pagetotal. \ifintrial IN trial\fi}%
   %\ifintrial\Showlists\fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount\Showbox{255}\fi
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
@@ -2975,6 +2979,7 @@
   \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi\ifintrial IN trial??\fi}%
+    \global\@@collectedtrue
     \ifallNeedEmptying
       \global\let\n@xtc@mmand=\diglot@run@trials
       %\global\allNeedEmptyingfalse
