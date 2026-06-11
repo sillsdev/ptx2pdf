@@ -115,6 +115,9 @@ class PicList:
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
         # self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
+        cr_scale = builder.get_object("cr_scale")
+        col_scale = builder.get_object("col_scale")
+        col_scale.add_attribute(cr_scale, "foreground", _pickeys['scale_colour'])
         self.clear()
         self.loading = False
 
@@ -328,8 +331,7 @@ class PicList:
                 self.builder.get_object('l_autoCopyAttrib').set_visible(status)
                 self.builder.get_object(v).set_visible(not status)
             elif k == 'size':
-                val = pgpos[0:1] if pgpos[0:1] in "PF" else ("c" if any(x in pgpos for x in "rl") else "s")
-                val = _sizekeys.get(val, "span")
+                val = currow[_pickeys['size']]
             else:
                 try:
                     val = currow[j]
@@ -429,12 +431,12 @@ class PicList:
         a = row[_pickeys['anchor']]
         pbuf, fname = self._getpixbuf(row[_pickeys['src']], a)
         if pbuf is None:
-            return "white"
+            return "#000000"
         imwidth = pbuf.get_width()
         imheight = pbuf.get_height()
         wscale = wfactor * imwidth / pwidth
         height = imheight / wscale
-        return "red" if height > mheight else "white"
+        return "#FF0000" if height > mheight else "#000000"
 
     def onPicframeSize(self, widget, allocation):
         if allocation.width <= 1 or allocation.height <= 1:
