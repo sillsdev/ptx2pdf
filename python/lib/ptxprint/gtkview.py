@@ -1089,6 +1089,7 @@ class GtkViewModel(ViewModel):
         self.fallbackPrj = None
         self.bkProgressDlg = None
         self.coverwiz = None
+        self._coverwiz_cfg_stash = None
 
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
@@ -2541,6 +2542,19 @@ class GtkViewModel(ViewModel):
         if self.project.prjid is not None:
             self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
+    def createConfig(self, diff=None):
+        config = super().createConfig(diff=diff)
+        if self.coverwiz is not None:
+            self.coverwiz.state.saveConfig(config)
+        elif self._coverwiz_cfg_stash is not None and \
+                self._coverwiz_cfg_stash.has_section("coverwiz"):
+            if not config.has_section("coverwiz"):
+                config.add_section("coverwiz")
+            for opt in self._coverwiz_cfg_stash.options("coverwiz"):
+                config.set("coverwiz", opt,
+                           self._coverwiz_cfg_stash.get("coverwiz", opt))
+        return config
+
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.project.srcPath(cfg)
@@ -2691,6 +2705,11 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
         for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
             self._updateSectionVisibility(key)
+        if config.has_section("coverwiz"):
+            if self.coverwiz is not None:
+                self.coverwiz.state.loadConfig(config)
+            else:
+                self._coverwiz_cfg_stash = config
         self.unpauseNoUpdate()
 
     def colorTabs(self):
@@ -6893,6 +6912,11 @@ class GtkViewModel(ViewModel):
     def onCoverWizardClicked(self, btn):
         if self.coverwiz is None:
             self.coverwiz = CoverWizardApp(view=self)
+            if self._coverwiz_cfg_stash is not None:
+                self.coverwiz.state.loadConfig(self._coverwiz_cfg_stash)
+                self._coverwiz_cfg_stash = None
+            else:
+                self.coverwiz.state.readFromView(self)
         self.coverwiz.run()
     
     def createCoverPeriphs(self, **kw):
