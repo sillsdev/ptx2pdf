@@ -428,14 +428,15 @@ class PicList:
         ffactor = float(self.parent.get("s_pagefullfactor", 1.0))
         mheight = ffactor * pheight
         wfactor = 0.5 if row[_pickeys['size']] == 'col' and self.parent.get("c_doublecolumn") else 1
+        scale = row[_pickeys['scale']] / 100.
         a = row[_pickeys['anchor']]
         pbuf, fname = self._getpixbuf(row[_pickeys['src']], a)
         if pbuf is None:
             return "#000000"
         imwidth = pbuf.get_width()
         imheight = pbuf.get_height()
-        wscale = wfactor * imwidth / pwidth
-        height = imheight / wscale
+        wscale = imwidth / (pwidth * wfactor)
+        height = scale * imheight / wscale
         return "#FF0000" if height > mheight else "#000000"
 
     def onPicframeSize(self, widget, allocation):
