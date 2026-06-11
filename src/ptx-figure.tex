@@ -1086,7 +1086,7 @@
         \fi
         \d@caption}\trace{g}{caption box is \the\ht0 high}%
       \dimen0=0pt\ifdim\ht0<0pt \dimen0=-\ht0\fi
-      \nointerlineskip\box0%\unvbox0
+      \ifvmode\nointerlineskip\fi\box0%\unvbox0
       \ifdim\dimen0=0pt\else \kern\dimen0 \fi
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi

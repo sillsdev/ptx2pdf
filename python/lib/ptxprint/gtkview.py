@@ -2966,7 +2966,7 @@ class GtkViewModel(ViewModel):
             return
         filtered = self.get("c_filterPicList")
         if bks is None and filtered:
-            bks = self.getBooks()
+            bks = self.getBooks(errors=True)
         if bks is None:
             bks = []
         elif not len(bks):
@@ -3016,7 +3016,7 @@ class GtkViewModel(ViewModel):
         self.changed()
 
     def onGeneratePicListClicked(self, btn):
-        bks2gen = self.getBooks()
+        bks2gen = self.getBooks(errors=True)
         if not len(bks2gen):
             return
         ab = self.getAllBooks()
@@ -3053,7 +3053,7 @@ class GtkViewModel(ViewModel):
         # priority=self.get("fcb_diglotPicListSources")
         pg = self.get("nbk_Viewer")
         pgid = self.notebooks['Viewer'][pg]
-        bks2gen = self.getBooks()
+        bks2gen = self.getBooks(errors=True)
         if not len(bks2gen):
             return
         bk = self.get("ecb_examineBook")
@@ -5663,7 +5663,7 @@ class GtkViewModel(ViewModel):
         scrsnpt = self.getScriptSnippet()
         # Show dialog with various options
         dialog = self.builder.get_object("dlg_createHyphenList")
-        self.set("l_createHyphenList_booklist", " ".join(self.getBooks()))
+        self.set("l_createHyphenList_booklist", " ".join(self.getBooks(errors=True)))
         sylbrk = scrsnpt.isSyllableBreaking(self)
         if not sylbrk:
             self.set("c_addSyllableBasedHyphens", False)
