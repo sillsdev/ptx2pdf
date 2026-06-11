@@ -170,9 +170,10 @@ class ProgressEvent:
 class Hooks:
 
     badness_stretch_tolerance   = 80   # avoid ±2
-    badness_spacing_tolerance   = 20    # paragraph spacing distortion
-    badness_shrink_preference   = 20   # + = prefer shrink, - = prefer stretch
+    badness_spacing_tolerance   = 20   # paragraph spacing distortion
+    badness_shrink_preference   = 10   # + = prefer shrink, - = prefer stretch
     badness_header_aversion     = 60   # avoid headers
+    badness_justification       = 20   # cost of being justified
     badness_line_density_factor = 1.0  # wide vs narrow text
     badness_line_weight         = 12
     badness_lastline_weight     = 20
@@ -272,8 +273,9 @@ class Hooks:
         # --- 1. Base cost per line change (asymmetric) ---
         # Prefer removing lines slightly over adding, especially for short paragraphs
         short_factor = (20 / min(lines + 1, 20)) ** 0.5
-        if delta > 0 and is_just:
-            res += self.badness_shrink_preference * delta * short_factor   # adding lines is more visible
+        if delta > 0:
+            res += self.badness_shrink_preference * delta * short_factor \
+                    * (self.badness_justification / 10. if is_just else 1.)
         elif delta < 0:
             res -= delta * short_factor  # removing lines less visible
 

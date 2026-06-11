@@ -157,11 +157,302 @@ class WorkingCoverState:
         self.isbn_hpos: str = "inner"   # inner | centre | outer
 
     def saveConfig(self, config):
+        if not config.has_section("coverwiz"):
+            config.add_section("coverwiz")
         for k, v in vars(self).items():
-            if isinstance(v, (int, str)):
-                config.set("coverwiz", k, str(v))
-            elif isinstance(v, bool):
+            if isinstance(v, bool):
                 config.set("coverwiz", k, "true" if v else "false")
+            elif isinstance(v, (int, float, str)):
+                config.set("coverwiz", k, str(v))
+
+    def loadConfig(self, config):
+        if not config.has_section("coverwiz"):
+            return False
+        defaults = WorkingCoverState()
+        for k, default_val in vars(defaults).items():
+            if not config.has_option("coverwiz", k):
+                continue
+            raw = config.get("coverwiz", k)
+            if isinstance(default_val, bool):
+                setattr(self, k, raw.lower() == "true")
+            elif isinstance(default_val, int):
+                try:
+                    setattr(self, k, int(float(raw)))
+                except (ValueError, TypeError):
+                    pass
+            elif isinstance(default_val, float):
+                try:
+                    setattr(self, k, float(raw))
+                except (ValueError, TypeError):
+                    pass
+            elif isinstance(default_val, str):
+                setattr(self, k, raw)
+        return True
+
+    def readFromView(self, view):
+        """Reconstruct wizard state from styles (ptxprint.sty) and FRTlocal.sfm.
+        Called when opening the wizard after a restart with no coverwiz config section."""
+        import os
+        se = view.styleEditor
+
+        def _color(mrk, key, default="#000000"):
+            raw = se.getval(mrk, key, None)
+            if not raw:
+                return default
+            raw = str(raw).strip().lstrip("x").lstrip("#")
+            return ("#" + raw) if len(raw) == 6 else default
+
+        def _float(mrk, key, default=0.0):
+            try:
+                return float(se.getval(mrk, key, default) or default)
+            except (ValueError, TypeError):
+                return default
+
+        # ── Publication variables ─────────────────────────────────────
+        t = view.getvar('maintitle', '')
+        if t:
+            self.title = t
+        sub = view.getvar('subtitle', '')
+        if sub:
+            self.subtitle = sub
+            self.subtitle_enabled = True
+        ln = view.getvar('languagename', '')
+        if ln:
+            self.langname = ln
+            self.langname_enabled = True
+        isb = view.getvar('isbn', '')
+        if isb:
+            self.isbn = isb
+            self.isbn_enabled = True
+
+        # ── Cover tab settings ────────────────────────────────────────
+        try:
+            self.spine_enabled = bool(view.get("c_inclSpine"))
+        except Exception:
+            pass
+        try:
+            self.rtl_binding = bool(view.get("c_RTLbookBinding"))
+        except Exception:
+            pass
+        try:
+            sw = float(view.get("l_spineWidth") or 0)
+            if sw > 0:
+                self.spine_width_computed_mm = sw
+                self.spine_width_mode = "manual"
+                self.spine_width_mm = sw
+        except (ValueError, TypeError, Exception):
+            pass
+        # Page count: prefer the cover tab's total-pages value, then PDF viewer
+        try:
+            if view.get("c_overridePageCount"):
+                pc = int(view.get("s_totalPages") or 0)
+            else:
+                pc = int(getattr(getattr(view, "pdf_viewer", None), "numpages", 0) or 0)
+            if pc > 0:
+                self.pagecount = pc
+        except (ValueError, TypeError, AttributeError, Exception):
+            pass
+
+        # ── Styles: border ────────────────────────────────────────────
+        border_val = se.getval("cat:coverfront|esb", "Border", None)
+        if border_val and str(border_val) not in ("", "None", "false"):
+            self.border_enabled = True
+            self.border_style = str(se.getval("cat:coverfront|esb", "BorderRef", "Han1"))
+            self.border_color = _color("cat:coverfront|esb", "BorderColor")
+
+        # ── Styles: background ────────────────────────────────────────
+        for mrk in ("cat:coverwhole|esb", "cat:coverfront|esb"):
+            bgc = se.getval(mrk, "BgColor", None)
+            if bgc and str(bgc) not in ("", "None"):
+                self.bg_mode = "solid"
+                self.bg_color = _color(mrk, "BgColor")
+                break
+        for mrk in ("cat:coverwhole|esb", "cat:coverfront|esb"):
+            alpha = se.getval(mrk, "Alpha", None)
+            if alpha is not None:
+                try:
+                    self.bg_opacity = max(0, min(100, int(float(alpha) * 100)))
+                except (ValueError, TypeError):
+                    pass
+                break
+
+        # ── Styles: background image ──────────────────────────────────
+        img_whole = se.getval("cat:coverwhole|esb", "BgImage", None)
+        img_front = se.getval("cat:coverfront|esb", "BgImage", None)
+        if img_whole and str(img_whole) not in ("", "None"):
+            self.img_primary_path = str(img_whole)
+            self.coverage_pattern = "wrap_all"
+            scale = str(se.getval("cat:coverwhole|esb", "BgImageScale", "1x1"))
+            self.img_primary_fit = "stretch" if scale == "1x1" else "crop_centre"
+            a = se.getval("cat:coverwhole|esb", "BgImageAlpha", None)
+            if a is not None:
+                try:
+                    self.img_primary_opacity = max(0, min(100, int(float(a) * 100)))
+                except (ValueError, TypeError):
+                    pass
+        elif img_front and str(img_front) not in ("", "None"):
+            self.img_primary_path = str(img_front)
+            self.coverage_pattern = "front_only"
+            scale = str(se.getval("cat:coverfront|esb", "BgImageScale", "1x1"))
+            self.img_primary_fit = "stretch" if scale == "1x1" else "crop_centre"
+            a = se.getval("cat:coverfront|esb", "BgImageAlpha", None)
+            if a is not None:
+                try:
+                    self.img_primary_opacity = max(0, min(100, int(float(a) * 100)))
+                except (ValueError, TypeError):
+                    pass
+
+        # ── Styles: text colours and sizes ────────────────────────────
+        base_mt1 = _float("mt1", "FontSize", 12.0)
+        v = se.getval("cat:coverfront|mt1", "FontSize", None)
+        if v is not None and base_mt1 > 0:
+            try:
+                self.title_size_pct = max(50, min(400, int(round(float(v) / base_mt1 * 100))))
+            except (ValueError, TypeError):
+                pass
+        c = se.getval("cat:coverfront|mt1", "Color", None)
+        if c:
+            self.title_color = _color("cat:coverfront|mt1", "Color")
+
+        base_mt2 = _float("mt2", "FontSize", base_mt1 * 0.8)
+        v = se.getval("cat:coverfront|mt2", "FontSize", None)
+        if v is not None and base_mt2 > 0:
+            try:
+                self.subtitle_size_pct = max(50, min(200, int(round(float(v) / base_mt2 * 100))))
+            except (ValueError, TypeError):
+                pass
+        c = se.getval("cat:coverfront|mt2", "Color", None)
+        if c:
+            self.subtitle_color = _color("cat:coverfront|mt2", "Color")
+
+        spine_v = se.getval("cat:coverspine|mt1", "FontSize", None)
+        if spine_v is not None and base_mt1 > 0:
+            # wizard set: base_mt1 * 0.65 * spine_text_size_pct / 100
+            try:
+                self.spine_text_size_pct = max(50, min(200,
+                    int(round(float(spine_v) / (base_mt1 * 0.65) * 100))))
+            except (ValueError, TypeError):
+                pass
+        c = se.getval("cat:coverspine|mt1", "Color", None)
+        if c:
+            self.spine_text_color = _color("cat:coverspine|mt1", "Color")
+
+        # ── FRTlocal.sfm ──────────────────────────────────────────────
+        frt_path = view.configFRT()
+        if frt_path and os.path.exists(frt_path):
+            try:
+                with open(frt_path, encoding="utf-8", errors="replace") as fh:
+                    self._readFRTPeriphs(fh.read(), view)
+            except OSError:
+                pass
+
+    def _readFRTPeriphs(self, frt_txt, view):
+        """Parse FRTlocal.sfm for cover periph content and reconstruct wizard state."""
+        import re
+
+        # Split into periph sections keyed by id
+        sections = {}
+        cur_id = None
+        cur_lines = []
+        for line in frt_txt.splitlines(keepends=True):
+            m = re.match(r'\s*\\periph\b[^|]*\|[^"]*id\s*=\s*"([^"]+)"', line)
+            if m:
+                if cur_id:
+                    sections[cur_id] = "".join(cur_lines)
+                cur_id = m.group(1)
+                cur_lines = [line]
+            elif cur_id is not None:
+                cur_lines.append(line)
+        if cur_id:
+            sections[cur_id] = "".join(cur_lines)
+
+        try:
+            _pwidth, pheight = view.calcPageSize()
+        except Exception:
+            pheight = 297.0  # A4 fallback
+
+        def _mm_from_zgap(val_str, unit):
+            v = float(val_str)
+            if unit == 'pt':
+                return v * 25.4 / 72.0
+            if unit == 'in':
+                return v * 25.4
+            return v  # assume mm
+
+        # ── Front cover ───────────────────────────────────────────────
+        front = sections.get("coverfront", "")
+        if front:
+            cum_mm = 0.0
+            for line in front.splitlines():
+                line = line.strip()
+                m = re.match(r'\\zgap\|([0-9.]+)(mm|pt|in|)\\?\*', line)
+                if m:
+                    cum_mm += _mm_from_zgap(m.group(1), m.group(2) or "mm")
+                elif r'\mt1' in line and r'\zvar|maintitle\*' in line:
+                    self.title_position_pct = max(0, min(100,
+                        int(round(cum_mm / pheight * 100))))
+                elif r'\mt2' in line and r'\zvar|subtitle\*' in line:
+                    self.subtitle_enabled = True
+                    self.subtitle_position_pct = max(0, min(100,
+                        int(round(cum_mm / pheight * 100))))
+                elif r'\mt3' in line and r'\zvar|languagename\*' in line:
+                    self.langname_enabled = True
+                    self.langname_position_pct = max(0, min(100,
+                        int(round(cum_mm / pheight * 100))))
+                elif r'\fig|' in line and 'pgpos="pc"' in line:
+                    self.fgimage_enabled = True
+                    self.fgimage_position_pct = max(0, min(100,
+                        int(round(cum_mm / pheight * 100))))
+                    src = re.search(r'src="([^"]+)"', line)
+                    if src:
+                        self.fgimage_path = src.group(1)
+
+        # ── Back cover ────────────────────────────────────────────────
+        back = sections.get("coverback", "")
+        if back:
+            # Back text: \m <text>  (may span one or more lines until next marker)
+            m = re.search(r'\\m (.+)', back)
+            if m:
+                bt = m.group(1).strip()
+                if bt:
+                    self.backtext = bt
+                    self.backtext_enabled = True
+
+            # Logo figure
+            logo_m = re.search(
+                r'\\fig\|src="([^"]+)"[^\n]*?pgpos="([^"]*)"[^\n]*?'
+                r'(?:scale="([^"]*)")?[^\n]*?\\fig\*',
+                back)
+            if logo_m:
+                self.logo_enabled = True
+                self.logo_path = logo_m.group(1)
+                pgpos_rev = {"qr": "inner", "p": "outer", "pc": "centre"}
+                self.logo_hpos = pgpos_rev.get(logo_m.group(2), "centre")
+                if logo_m.group(3):
+                    try:
+                        self.logo_scale = max(10, min(200,
+                            int(round(float(logo_m.group(3)) * 100))))
+                    except (ValueError, TypeError):
+                        pass
+                # logo zgap is written as absolute value (logo_vpos_pct/100*pheight),
+                # so use the last zgap before the figure, not the cumulative total
+                last_back_zgap_mm = 0.0
+                for bl in back.splitlines():
+                    bl = bl.strip()
+                    m2 = re.match(r'\\zgap\|([0-9.]+)(mm|pt|in|)\\?\*', bl)
+                    if m2:
+                        last_back_zgap_mm = _mm_from_zgap(m2.group(1), m2.group(2) or "mm")
+                    elif r'\fig|' in bl and 'pgpos=' in bl:
+                        if pheight > 0:
+                            self.logo_vpos_pct = max(0, min(100,
+                                int(round(last_back_zgap_mm / pheight * 100))))
+                        break
+
+            # ISBN horizontal position
+            isbn_m = re.search(r'\\esb\s*\\cat ISBNbox\\cat\*\s*\\(\w+)', back)
+            if isbn_m:
+                pos_rev = {"hr": "inner", "hl": "outer", "hc": "centre"}
+                self.isbn_hpos = pos_rev.get(isbn_m.group(1), "inner")
 
     def updateView(self, view):
         def setfront(k, v, all=False):
@@ -172,6 +463,9 @@ class WorkingCoverState:
             setfront("BorderRef", self.border_style)
             setfront("BorderColor", self.border_color)
             setfront("BorderFillColor", self.border_color)
+            setfront("BorderMargin", 15)
+            setfront("BorderWidth", 18)
+            view.set("c_useOrnaments", True)
         else:
             setfront("Border", None)
             for a in "Style Ref Color".split():
@@ -207,6 +501,9 @@ class WorkingCoverState:
         if self.isbn_enabled:
             positions = {"inner": "hr", "outer": "hl", "centre": "hc"}
             view.setvar('isbn', self.isbn)
+        if self.spine_width_computed_mm > 0.:
+            view.set("l_spineWidth", str(self.spine_width_computed_mm))
+            view.set("c_inclSpine", True)
         self.createCoverPeriphs(view)
 
     def getBorderVal(self, view, mkr, vh, key):
@@ -236,9 +533,9 @@ class WorkingCoverState:
                 hremove = 0
                 for p in ("Box", "Border"):
                     for v in ("T", "B"):
-                        vremove += self.getBorderVal(view, f"cat:cover{a}|esb", v, p)
+                        vremove += float(self.getBorderVal(view, f"cat:cover{a}|esb", v, p))
                     for v in ("L", "R"):
-                        hremove += self.getBorderVal(view, f"cat:cover{a}|esb", v, p)
+                        hremove += float(self.getBorderVal(view, f"cat:cover{a}|esb", v, p))
                 theight = pheight - vremove
                 twidth = pwidth - hremove
                 title_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
@@ -285,9 +582,6 @@ class WorkingCoverState:
             view.onLocalFRTclicked(None)
             view.onViewerChangePage(None, None, 0, forced=True)
 
-    def update_texmodel(self, model):
-        model.dict["cover/spinewidth"] = self.pine_width_computed_mm
-
     def computeSpineWidth(self):
         if self.spine_width_mode == "manual":
             self.spine_width_computed_mm = max(0.0, self.spine_width_mm)
@@ -313,6 +607,11 @@ def hexToRgb(h: str):
 def gdkColorToHex(rgba: Gdk.RGBA) -> str:
     return "#{:02x}{:02x}{:02x}".format(
         int(rgba.red*255), int(rgba.green*255), int(rgba.blue*255))
+
+def _applyColorToBtn(btn, hex_color):
+    rgba = Gdk.RGBA()
+    if rgba.parse(hex_color):
+        btn.set_rgba(rgba)
 
 def makeLabel(text, bold=False, dim=False, wrap=True, xalign=0.0):
     lbl = Gtk.Label()
@@ -495,6 +794,9 @@ class CoverWizardApp:
         # Guard re-entrant spinner updates
         self._updating_spinners = False
 
+        # Guard widget population (suppresses _refresh and auto-toggles during restore)
+        self._populating = False
+
         # ── Build window hierarchy programmatically (no .glade file) ────
         self.window = Gtk.Window(title="PTXprint Cover Wizard")
         self.window.set_position(Gtk.WindowPosition.CENTER)
@@ -615,10 +917,155 @@ class CoverWizardApp:
         self._buildPage7()
 
     def run(self):
+        # Pre-fill page count from the view's PDF if not already set
+        if self.state.pagecount == 0 and self.view is not None:
+            pc = self._getViewPageCount()
+            if pc > 0:
+                self.state.pagecount = pc
+        self._populateWidgets()
         self._stepIndex = 0
         self._updateStepList()
         self._goToStep(0)
         self.window.show_all()
+
+    def _getViewPageCount(self):
+        if self.view is None:
+            return 0
+        if getattr(self.view, "get", None) and self.view.get("c_overridePageCount"):
+            try:
+                return int(self.view.get("s_totalPages") or 0)
+            except (ValueError, TypeError):
+                pass
+        try:
+            return int(getattr(self.view.pdf_viewer, "numpages", 0) or 0)
+        except (AttributeError, TypeError, ValueError):
+            return 0
+
+    def _populateWidgets(self):
+        """Sync all GTK widgets to match self.state (called on every run())."""
+        s = self.state
+        self._populating = True
+        try:
+            # ── Step 1 ────────────────────────────────────────────────
+            self._t_pagecount.set_text(str(s.pagecount))
+            self._r_spine_yes.set_active(s.spine_enabled)
+            self._r_spine_no.set_active(not s.spine_enabled)
+            self._r_binding_hc.set_active(s.binding_type == "hardcover")
+            self._r_binding_pb.set_active(s.binding_type == "paperback")
+            is_auto = s.spine_width_mode == "auto"
+            self._r_sw_auto.set_active(is_auto)
+            self._r_sw_manual.set_active(not is_auto)
+            self._updating_spinners = True
+            self._sp_gsm.set_value(s.paper_gsm)
+            self._sp_um.set_value(s.paper_thickness_um)
+            self._updating_spinners = False
+            self._sp_spine_mm.set_value(s.spine_width_mm)
+            self._c_rtl.set_active(s.rtl_binding)
+            self._rv_binding_type.set_reveal_child(s.spine_enabled)
+            self._rv_sw_auto.set_reveal_child(is_auto)
+            self._rv_sw_manual.set_reveal_child(not is_auto)
+            self._updateSpineComputed()
+
+            # ── Step 2 ────────────────────────────────────────────────
+            _cov_radios = {
+                "none":                self._r_cov_none,
+                "wrap_all":            self._r_cov_wrap_all,
+                "front_only":          self._r_cov_front_only,
+                "front_spine":         self._r_cov_front_spine,
+                "back_only":           self._r_cov_back_only,
+                "back_spine":          self._r_cov_back_spine,
+                "front_back_separate": self._r_cov_front_back_separate,
+            }
+            if s.coverage_pattern in _cov_radios:
+                _cov_radios[s.coverage_pattern].set_active(True)
+            for key in ("primary", "secondary"):
+                path = getattr(s, f"img_{key}_path")
+                lbl  = getattr(self, f"_l_img_{key}_status")
+                if path:
+                    lbl.set_text(os.path.basename(path))
+                    lbl.set_tooltip_text(path)
+                getattr(self, f"_cb_img_{key}_fit").set_active_id(
+                    getattr(s, f"img_{key}_fit"))
+                getattr(self, f"_sl_img_{key}_opacity").set_value(
+                    getattr(s, f"img_{key}_opacity"))
+            self._c_border_enable.set_active(s.border_enabled)
+            self._cb_border_style.set_active_id(s.border_style)
+            _applyColorToBtn(self._cb_border_color, s.border_color)
+            self._rv_border.set_reveal_child(s.border_enabled)
+
+            # ── Step 3 ────────────────────────────────────────────────
+            self._r_bg_white.set_active(s.bg_mode == "white")
+            self._r_bg_solid.set_active(s.bg_mode == "solid")
+            _applyColorToBtn(self._cb_bgcolor, s.bg_color)
+            self._sl_bg_opacity.set_value(s.bg_opacity)
+            self._rv_bgcolor.set_reveal_child(s.bg_mode == "solid")
+
+            # ── Step 4 ────────────────────────────────────────────────
+            for key in ("title", "subtitle", "langname"):
+                getattr(self, f"_t_{key}").set_text(getattr(s, key))
+                _applyColorToBtn(getattr(self, f"_cb_{key}_color"),
+                                 getattr(s, f"{key}_color"))
+                getattr(self, f"_sl_{key}_size").set_value(
+                    getattr(s, f"{key}_size_pct"))
+                getattr(self, f"_sl_{key}_pos").set_value(
+                    getattr(s, f"{key}_position_pct"))
+            self._c_title_box.set_active(s.title_in_box)
+            self._c_subtitle_enable.set_active(s.subtitle_enabled)
+            self._rv_subtitle.set_reveal_child(s.subtitle_enabled)
+            self._c_langname_enable.set_active(s.langname_enabled)
+            self._rv_langname.set_reveal_child(s.langname_enabled)
+            self._c_fgimage_enable.set_active(s.fgimage_enabled)
+            if s.fgimage_path:
+                self._l_fgimage_status.set_text(os.path.basename(s.fgimage_path))
+                self._l_fgimage_status.set_tooltip_text(s.fgimage_path)
+            self._sl_fgimage_bg_trans.set_value(s.fgimage_bg_trans)
+            self._sl_fgimage_size.set_value(s.fgimage_size_pct)
+            self._sl_fgimage_pos.set_value(s.fgimage_position_pct)
+            self._rv_fgimage.set_reveal_child(s.fgimage_enabled)
+
+            # ── Step 5 ────────────────────────────────────────────────
+            self._c_spine_title.set_active(s.spine_title)
+            self._c_spine_subtitle.set_active(s.spine_subtitle)
+            self._c_spine_langname.set_active(s.spine_langname)
+            _applyColorToBtn(self._cb_spine_text_color, s.spine_text_color)
+            self._sl_spine_text_size.set_value(s.spine_text_size_pct)
+            self._sl_spine_text_vpos.set_value(s.spine_text_vpos_pct)
+            self._cb_spine_orientation.set_active_id(s.spine_orientation)
+            self._c_spine_publisher.set_active(s.spine_publisher_enabled)
+            self._t_spine_publisher.set_text(s.spine_publisher)
+            _applyColorToBtn(self._cb_spine_publisher_color, s.spine_publisher_color)
+            self._sl_spine_publisher_size.set_value(s.spine_publisher_size_pct)
+            self._sl_spine_publisher_vpos.set_value(s.spine_publisher_vpos_pct)
+            self._cb_pub_orientation.set_active_id(s.pub_orientation)
+            self._rv_spine_publisher.set_reveal_child(s.spine_publisher_enabled)
+            self._c_spine_pub_logo.set_active(s.spine_pub_logo_enabled)
+            if s.spine_pub_logo_path:
+                self._l_spine_pub_logo_status.set_text(
+                    os.path.basename(s.spine_pub_logo_path))
+                self._l_spine_pub_logo_status.set_tooltip_text(s.spine_pub_logo_path)
+            self._sl_spine_pub_logo_scale.set_value(s.spine_pub_logo_scale)
+            self._cb_spine_pub_logo_rot.set_active_id(s.spine_pub_logo_rotation)
+            self._sl_spine_pub_logo_vpos.set_value(s.spine_pub_logo_vpos_pct)
+            self._rv_spine_pub_logo.set_reveal_child(s.spine_pub_logo_enabled)
+
+            # ── Step 6 ────────────────────────────────────────────────
+            self._c_backtext_enable.set_active(s.backtext_enabled)
+            self._t_backtext.get_buffer().set_text(s.backtext)
+            self._rv_backtext.set_reveal_child(s.backtext_enabled)
+            self._c_isbn_enable.set_active(s.isbn_enabled)
+            self._t_isbn.set_text(s.isbn)
+            self._cb_isbn_hpos.set_active_id(s.isbn_hpos)
+            self._rv_isbn.set_reveal_child(s.isbn_enabled)
+            self._c_logo_enable.set_active(s.logo_enabled)
+            if s.logo_path:
+                self._l_logo_status.set_text(os.path.basename(s.logo_path))
+                self._l_logo_status.set_tooltip_text(s.logo_path)
+            self._sl_logo_scale.set_value(s.logo_scale)
+            self._cb_logo_hpos.set_active_id(s.logo_hpos)
+            self._sl_logo_vpos.set_value(s.logo_vpos_pct)
+            self._rv_logo.set_reveal_child(s.logo_enabled)
+        finally:
+            self._populating = False
 
     # ── Internal helpers ──────────────────────────────────────────────
 
@@ -626,6 +1073,8 @@ class CoverWizardApp:
         self._pages[page_num].pack_start(widget, expand, fill, padding)
 
     def _refresh(self):
+        if self._populating:
+            return
         total   = len(self._steps)
         self.btn_back.set_sensitive(self._stepIndex > 0)
         self.btn_next.set_sensitive(self._stepIndex < total - 1)
@@ -1609,15 +2058,17 @@ class CoverWizardApp:
             self.state.pagecount = int(widget.get_text().strip())
         except ValueError:
             self.state.pagecount = 0
-        if self.state.pagecount >= 80:
-            self._r_spine_yes.set_active(True)
-        else:
-            self._r_spine_no.set_active(True)
+        if not self._populating:
+            if self.state.pagecount >= 80:
+                self._r_spine_yes.set_active(True)
+            else:
+                self._r_spine_no.set_active(True)
         self._updateSpineComputed()
         self._refresh()
 
     def onSpineToggled(self, widget):
         if not widget.get_active(): return
+        if self._populating: return
         self.state.spine_enabled = self._r_spine_yes.get_active()
         self._rv_binding_type.set_reveal_child(self.state.spine_enabled)
         cur = self._steps[self._stepIndex]

@@ -1089,6 +1089,7 @@ class GtkViewModel(ViewModel):
         self.fallbackPrj = None
         self.bkProgressDlg = None
         self.coverwiz = None
+        self._coverwiz_cfg_stash = None
 
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
@@ -2321,7 +2322,7 @@ class GtkViewModel(ViewModel):
         print_count += 1
         self.set("_printcount", print_count, skipmissing=True)
 
-        jobs = self.getBooks(files=True)
+        jobs = self.getBooks(files=True, errors=True)
         if not len(jobs) or jobs[0] == '':
             self.doStatus(_("No books to print"))
             return
@@ -2469,6 +2470,10 @@ class GtkViewModel(ViewModel):
         self.doBookListChange()
 
     def doBookListChange(self):
+        self.bookrefs = None
+        return
+
+    def _bookListValidate(self):
         raw_bls = self.get('ecb_booklist', '').strip()
         normalized = unicodedata.normalize('NFD', raw_bls)
         no_accents = ''.join(ch for ch in normalized if unicodedata.category(ch) != 'Mn')
@@ -2536,6 +2541,19 @@ class GtkViewModel(ViewModel):
         super().writeConfig(cfgname=cfgname, force=force)
         if self.project.prjid is not None:
             self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
+
+    def createConfig(self, diff=None):
+        config = super().createConfig(diff=diff)
+        if self.coverwiz is not None:
+            self.coverwiz.state.saveConfig(config)
+        elif self._coverwiz_cfg_stash is not None and \
+                self._coverwiz_cfg_stash.has_section("coverwiz"):
+            if not config.has_section("coverwiz"):
+                config.add_section("coverwiz")
+            for opt in self._coverwiz_cfg_stash.options("coverwiz"):
+                config.set("coverwiz", opt,
+                           self._coverwiz_cfg_stash.get("coverwiz", opt))
+        return config
 
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
@@ -2687,6 +2705,11 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
         for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
             self._updateSectionVisibility(key)
+        if config.has_section("coverwiz"):
+            if self.coverwiz is not None:
+                self.coverwiz.state.loadConfig(config)
+            else:
+                self._coverwiz_cfg_stash = config
         self.unpauseNoUpdate()
 
     def colorTabs(self):
@@ -3012,7 +3035,7 @@ class GtkViewModel(ViewModel):
         self.changed()
 
     def onGeneratePicListClicked(self, btn):
-        bks2gen = self.getBooks()
+        bks2gen = self.getBooks(errors=True)
         if not len(bks2gen):
             return
         ab = self.getAllBooks()
@@ -3049,7 +3072,7 @@ class GtkViewModel(ViewModel):
         # priority=self.get("fcb_diglotPicListSources")
         pg = self.get("nbk_Viewer")
         pgid = self.notebooks['Viewer'][pg]
-        bks2gen = self.getBooks()
+        bks2gen = self.getBooks(errors=True)
         if not len(bks2gen):
             return
         bk = self.get("ecb_examineBook")
@@ -5659,7 +5682,7 @@ class GtkViewModel(ViewModel):
         scrsnpt = self.getScriptSnippet()
         # Show dialog with various options
         dialog = self.builder.get_object("dlg_createHyphenList")
-        self.set("l_createHyphenList_booklist", " ".join(self.getBooks()))
+        self.set("l_createHyphenList_booklist", " ".join(self.getBooks(errors=True)))
         sylbrk = scrsnpt.isSyllableBreaking(self)
         if not sylbrk:
             self.set("c_addSyllableBasedHyphens", False)
@@ -6889,6 +6912,11 @@ class GtkViewModel(ViewModel):
     def onCoverWizardClicked(self, btn):
         if self.coverwiz is None:
             self.coverwiz = CoverWizardApp(view=self)
+            if self._coverwiz_cfg_stash is not None:
+                self.coverwiz.state.loadConfig(self._coverwiz_cfg_stash)
+                self._coverwiz_cfg_stash = None
+            else:
+                self.coverwiz.state.readFromView(self)
         self.coverwiz.run()
     
     def createCoverPeriphs(self, **kw):
