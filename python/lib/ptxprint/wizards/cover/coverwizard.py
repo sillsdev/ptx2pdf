@@ -172,6 +172,9 @@ class WorkingCoverState:
             setfront("BorderRef", self.border_style)
             setfront("BorderColor", self.border_color)
             setfront("BorderFillColor", self.border_color)
+            setfront("BorderMargin", 15)
+            setfront("BorderWidth", 18)
+            view.set("c_useOrnaments", True)
         else:
             setfront("Border", None)
             for a in "Style Ref Color".split():
@@ -207,6 +210,9 @@ class WorkingCoverState:
         if self.isbn_enabled:
             positions = {"inner": "hr", "outer": "hl", "centre": "hc"}
             view.setvar('isbn', self.isbn)
+        if self.spine_width_computed_mm > 0.:
+            view.set("l_spineWidth", str(self.spine_width_computed_mm))
+            view.set("c_inclSpine", True)
         self.createCoverPeriphs(view)
 
     def getBorderVal(self, view, mkr, vh, key):
@@ -236,9 +242,9 @@ class WorkingCoverState:
                 hremove = 0
                 for p in ("Box", "Border"):
                     for v in ("T", "B"):
-                        vremove += self.getBorderVal(view, f"cat:cover{a}|esb", v, p)
+                        vremove += float(self.getBorderVal(view, f"cat:cover{a}|esb", v, p))
                     for v in ("L", "R"):
-                        hremove += self.getBorderVal(view, f"cat:cover{a}|esb", v, p)
+                        hremove += float(self.getBorderVal(view, f"cat:cover{a}|esb", v, p))
                 theight = pheight - vremove
                 twidth = pwidth - hremove
                 title_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
@@ -284,9 +290,6 @@ class WorkingCoverState:
             view.updateFrontMatter()
             view.onLocalFRTclicked(None)
             view.onViewerChangePage(None, None, 0, forced=True)
-
-    def update_texmodel(self, model):
-        model.dict["cover/spinewidth"] = self.pine_width_computed_mm
 
     def computeSpineWidth(self):
         if self.spine_width_mode == "manual":
