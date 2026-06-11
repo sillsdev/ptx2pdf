@@ -118,6 +118,12 @@ class PicList:
         cr_scale = builder.get_object("cr_scale")
         col_scale = builder.get_object("col_scale")
         col_scale.add_attribute(cr_scale, "foreground", _pickeys['scale_colour'])
+        cr_anchor = builder.get_object("cr_anchor")
+        col_anchor = builder.get_object("col_anchor")
+        col_anchor.add_attribute(cr_anchor, "foreground", _pickeys['scale_colour'])
+        cr_size = builder.get_object("cr_size")
+        col_frame = builder.get_object("col_frame")
+        col_frame.add_attribute(cr_size, "foreground", _pickeys['scale_colour'])
         self.clear()
         self.loading = False
 
@@ -441,7 +447,7 @@ class PicList:
         imheight = pbuf.get_height()
         wscale = imwidth / (pwidth * wfactor)
         height = scale * imheight / wscale
-        print(f"{a=} {height=} {mheight=}")
+        print(f"{a=} {height=} {mheight=} {fname=}")
         return "#FF0000" if height > mheight else "#000000"
 
     def onPicframeSize(self, widget, allocation):
