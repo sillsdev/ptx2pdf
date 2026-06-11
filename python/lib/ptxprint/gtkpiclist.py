@@ -249,12 +249,6 @@ class PicList:
                 else:
                     val = row[i]
                 p[e] = val
-#        breakpoint()
-#        for k,v in list(picinfos.items()):
-#            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
-#                if k.startswith("row"):
-#                    print(f"{k} removed")
-#                picinfos.remove(v)
         return picinfos
 
     def clearPicSources(self, picinfos):
@@ -447,7 +441,6 @@ class PicList:
         imheight = pbuf.get_height()
         wscale = imwidth / (pwidth * wfactor)
         height = scale * imheight / wscale
-        print(f"{a=} {height=} {mheight=} {fname=}")
         return "#FF0000" if height > mheight else "#000000"
 
     def onPicframeSize(self, widget, allocation):
@@ -489,6 +482,8 @@ class PicList:
                 currow[fieldi] = ""
             if not self.loading:
                 self.model.set_value(currow[-1], fieldi, currow[fieldi])
+            if key == "scale" or key == "size":
+                self.model.set_value(currow[-1], _pickeys['scale_colour'], self.calc_scale_colour(currow))
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")
@@ -508,23 +503,29 @@ class PicList:
         self.parent.setupPicinfos(self.picinfo)
         for p in self.picinfo.find(anchor=anchor):
             p.clear_src_paths()
-        dat = self.picinfo.getFigureSources(data=[{'src': src}], key='path', mode=self.picinfo.mode)
+        dat = self.picinfo.getFigureSources(data=[{'src': src}], key='path', mode=self.picinfo.mode, lowres=True)
         fpath = dat[0].get('path', None)
-        logger.debug(f"Figure Path={fpath}, {dat[0]}")
+        res = (None, fpath)
         if fpath is not None and os.path.exists(fpath):
-            if not self.parent._picframe_connected:
-                self.parent.picframe.connect("size-allocate", self.onPicframeSize)
-                self.parent._picframe_connected = True
-            if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
+            if nolimit:
                 try:
-                    if nolimit:
-                        pixbuf = GdkPixbuf.Pixbuf.new_from_file(fpath)
-                    else:
-                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file(fpath)
                 except GLib.GError:
                     pixbuf = None
-                return pixbuf, fpath
-        return None, fpath
+            else:
+                if not self.parent._picframe_connected:
+                    self.parent.picframe.connect("size-allocate", self.onPicframeSize)
+                    self.parent._picframe_connected = True
+                if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
+                    try:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                    except GLib.GError:
+                        pixbuf = None
+                else:
+                    pixbuf = None
+            res = (pixbuf, fpath)
+        logger.debug(f"Figure Path={fpath}, {dat[0]}, {res=}")
+        return res
 
     def _updatePreview(self, currow):
         r_image = self.parent.get("r_image", default="preview")
