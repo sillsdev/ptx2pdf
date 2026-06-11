@@ -2985,7 +2985,7 @@ class GtkViewModel(ViewModel):
             return
         filtered = self.get("c_filterPicList")
         if bks is None and filtered:
-            bks = self.getBooks(errors=True)
+            bks = self.getBooks()
         if bks is None:
             bks = []
         elif not len(bks):
