@@ -342,14 +342,14 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_hyphMinWord">
     <property name="lower">3</property>
     <property name="upper">50</property>
-    <property name="value">5</property>
+    <property name="value">7</property>
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_hyphMinprefix">
     <property name="lower">1</property>
     <property name="upper">10</property>
-    <property name="value">1</property>
+    <property name="value">3</property>
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
   </object>
@@ -568,16 +568,19 @@ their approval status) then disable this option.</property>
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="row-spacing">6</property>
+                            <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Minimum length of initial string
-before the first hyphen. If this
-is very short, don't include the word.</property>
+                                <property name="tooltip-text" translatable="yes">Do not add any words to the hyphenation
+list that include an optional hyphen less than
+this number of characters at the beginning
+or end of the the word.</property>
                                 <property name="halign">end</property>
                                 <property name="margin-end">3</property>
-                                <property name="label" translatable="yes">Minimum prefix</property>
+                                <property name="label" translatable="yes">Minimum affix:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
@@ -589,9 +592,13 @@ is very short, don't include the word.</property>
                               <object class="GtkSpinButton" id="s_hyphMinprefix">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">Do not add any words to the hyphenation
+list that include an optional hyphen less than
+this number of characters at the beginning
+or end of the the word.</property>
                                 <property name="adjustment">a_hyphMinprefix</property>
                                 <property name="climb-rate">1</property>
-                                <property name="value">1</property>
+                                <property name="value">3</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
@@ -602,12 +609,12 @@ is very short, don't include the word.</property>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">Any words, including hyphens,
-shorter than this will not get
-hyphenated, including any hyphens.</property>
+                                <property name="tooltip-text" translatable="yes">The minimum word length (including 
+optional hyphens) that will be added
+to the hyphenation list.</property>
                                 <property name="halign">end</property>
                                 <property name="margin-end">3</property>
-                                <property name="label" translatable="yes">Minimum word</property>
+                                <property name="label" translatable="yes">Minimum length:</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -618,9 +625,12 @@ hyphenated, including any hyphens.</property>
                               <object class="GtkSpinButton" id="s_hyphMinWord">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">The minimum word length (including 
+optional hyphens) that will be added
+to the hyphenation list.</property>
                                 <property name="adjustment">a_hyphMinWord</property>
                                 <property name="climb-rate">1</property>
-                                <property name="value">5</property>
+                                <property name="value">7</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
@@ -632,8 +642,8 @@ hyphenated, including any hyphens.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">Minimum word length for a word
-to block hyphenation</property>
-                                <property name="label" translatable="yes">Min non-hyphen</property>
+to block hyphenation.</property>
+                                <property name="label" translatable="yes">Min non-hyphen:</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -644,6 +654,8 @@ to block hyphenation</property>
                               <object class="GtkSpinButton" id="s_hyphMinBlock">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">Minimum word length for a word
+to block hyphenation.</property>
                                 <property name="adjustment">a_hyphMinBlock</property>
                                 <property name="climb-rate">1</property>
                                 <property name="value">9</property>
