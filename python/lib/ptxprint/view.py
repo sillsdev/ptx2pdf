@@ -296,7 +296,7 @@ class ViewModel:
                 res.append(r.first.book)
         return res
 
-    def getBooks(self, scope=None, files=False, local=False):
+    def getBooks(self, scope=None, files=False, local=False, errors=False):
         if self.project is None:
             return []
         if scope is None:
@@ -312,8 +312,9 @@ class ViewModel:
         try:
             bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
         except SyntaxError as e:
-            self.doError(str(e),
-                         secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
+            if errors:
+                self.doError(str(e),
+                             secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
             return []
         bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
@@ -1440,6 +1441,8 @@ class ViewModel:
                                 self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
+                        except ValueError as e:
+                            self.doError(f"{v.widget}: {e}")
                 elif sect in ("vars", "strongsvar") and (categories is None or 'variables' in categories):
                     if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
@@ -1960,11 +1963,16 @@ class ViewModel:
         basecfpath = baseprjid + "/shared/ptxprint/" + self.cfgid
         interlang = self.get("t_interlinearLang") if self.get("c_interlinear") else None
 
-        def bname(s):
+        def bname(s, prefix=''):
+            res = os.path.basename(s)
+            if res == ".":
+                return prefix
+            if prefix:
+                res = prefix + "/" + res
             if os.path.sep == "/":
-                return os.path.basename(str(s).replace("\\", "/"))
+                return res.replace("\\", "/")
             else:
-                return os.path.basename(str(s).replace("/", "\\"))
+                return res.replace("/", "\\")
 
         # pictures and texts
         fpath = baseprj.path
@@ -1981,7 +1989,7 @@ class ViewModel:
         for bk in books + ['INT']:
             fname = self.getBookSrcPath(bk, baseprjid, project=baseprj)
             if fname is not None:
-                res[fname] = baseprjid + "/" + bname(fname)
+                res[fname] = bname(fname, baseprjid)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
@@ -1991,16 +1999,16 @@ class ViewModel:
             self.setupPicinfos()
             self.picinfos.getFigureSources()
         if self.get("c_useCustomFolder"): # What is happening here? and why? (shouldn't it happen above before we getFigureSources?)
-            cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
+            cfgchanges["btn_selectFigureFolder"] = (Path("figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'src path'
         if self.picinfos is not None:
             for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
-                    res[f] = prjid + "/local/figures/"+bname(f)
+                    res[f] = bname(f, prjid+"/local/figures")
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
-            res[xrfile] = baseprjid + "/" + bname(xrfile)
-            cfgchanges["btn_selectXrFile"] = res[xrfile]
+            res[xrfile] = bname(xrfile, baseprjid)
+            cfgchanges["btn_selectXrFile"] = Path(bname(xrfile, "${prjdir}"))
 
         # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
@@ -2018,9 +2026,8 @@ class ViewModel:
         if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
             for p in extrapics:
-                b = bname(p)
                 if p not in res:
-                    res[p] = prjid + "/local/figures/" + b
+                    res[p] = bname(p, prjid+"/local/figures")
         else:
             allfonts = set()
 
@@ -2036,6 +2043,7 @@ class ViewModel:
                     fname = [fname]
                 for f in fname:
                     res[f.as_posix()] = baseprjid + "/shared/ptxprint/" + f.name
+                    cfgchanges[v[3]] = (Path("${prjdir}/shared/ptxprint/" + f.name), v[0])
 
         # fonts
         allfonts.update(self.getallfonts())
@@ -2043,8 +2051,7 @@ class ViewModel:
             cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
-            k = bname(v)
-            res[v] = prjid + "/local/ptxprint/" + cfgid + "/fonts/" + k
+            res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
 
         if baseprjid:
             mdir = os.path.join(self.project.path, "shared", "fonts", "mappings")
@@ -2060,9 +2067,8 @@ class ViewModel:
             for a in ('BgImage', 'FgImage'):
                 val = v.get(a, mystyles.basesheet.get(k, {}).get(a, None))
                 if val is not None:
-                    fname = bname(val)
-                    res[val] = baseprjid + "/figures/"+fname
-                    mystyles.setval(k, a, "../../../figures/" + fname)
+                    res[val] = bname(val, baseprjid + "/figures")
+                    mystyles.setval(k, a, bname(val, "../../../figures"))
 
 
         tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
@@ -2098,9 +2104,8 @@ class ViewModel:
 
         script = self.customScript
         if script: # is not None and len(script):
-            sname = bname(script) 
-            res[script] = baseprjid + "/" + sname
-            cfgchanges["btn_selectScript"] = os.path.join(self.project.path, sname)
+            res[script] = bname(script, baseprjid)
+            cfgchanges["btn_selectScript"] = bname(script, "${prjdir}")
 
         pts = self._getPtSettings(prjid=baseprjid)
         ptres = pts.getArchiveFiles()
@@ -2180,13 +2185,14 @@ class ViewModel:
                 self._writearchive(zf, k, v)
         tmpcfg = {}
         for k,v in cfgchanges.items():
-            if len(v) == 2 and v[1] is not None:
+            if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
                 tv = getattr(self, v[1])
                 setattr(self, v[1], v[0])
+                self.set(k, str(v[0]))
             else:
                 tv = None
+                self.set(k, str(v))
             tmpcfg[k] = (self.get(k), tv)
-            self.set(k, str(v if len(v) != 2 else v[0]))
         config = self.createConfig()
         configstr = StringIO()
         config.write(configstr)

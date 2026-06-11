@@ -97,7 +97,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             return {}
 
     paper = []
-    psize = kw.get('sheetsize', "210mm, 297mm (A4)").split(",")
+    psize = (kw.get('sheetsize', None) or "210mm, 297mm (A4)").split(",")
     for p in psize:
         m = re.match(r"^\s*([\d.]+)\s*(mm|in|pt)", p)
         if m:

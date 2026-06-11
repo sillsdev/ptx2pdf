@@ -191,7 +191,7 @@ class RunJob:
             return
         self.tmpdir = self.printer.project.printPath(configid)
         os.makedirs(self.tmpdir, exist_ok=True)
-        bks = self.printer.getBooks(files=True)
+        bks = self.printer.getBooks(files=True, errors=True)
         jobs = []       # [(bkid/module_path, False) or (RefList, True)] 
         logger.debug(f"{self.printer.bookrefs=}")
         lastbook = None
@@ -997,7 +997,7 @@ class RunJob:
         from ptxprint.pdf.pdfdiff import createDiff
         outname = pdfname[:-4] + "_diff.pdf" if outname is None else outname
         othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
-        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
+        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)}) to {outname}")
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
         if res == 2:
             self.res = 2

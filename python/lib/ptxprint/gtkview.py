@@ -2321,7 +2321,7 @@ class GtkViewModel(ViewModel):
         print_count += 1
         self.set("_printcount", print_count, skipmissing=True)
 
-        jobs = self.getBooks(files=True)
+        jobs = self.getBooks(files=True, errors=True)
         if not len(jobs) or jobs[0] == '':
             self.doStatus(_("No books to print"))
             return
@@ -2469,6 +2469,10 @@ class GtkViewModel(ViewModel):
         self.doBookListChange()
 
     def doBookListChange(self):
+        self.bookrefs = None
+        return
+
+    def _bookListValidate(self):
         raw_bls = self.get('ecb_booklist', '').strip()
         normalized = unicodedata.normalize('NFD', raw_bls)
         no_accents = ''.join(ch for ch in normalized if unicodedata.category(ch) != 'Mn')
@@ -2625,6 +2629,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_savedConfig").set_text("")
             self.builder.get_object("t_configNotes").set_text("")
         self.configNoUpdate = False
+        self._updateConfigButtons(self.cfgid)
 
     def _fillConfigList(self, prjwname, configlist):
         impprj = self._getProject(prjwname)
@@ -2961,7 +2966,7 @@ class GtkViewModel(ViewModel):
             return
         filtered = self.get("c_filterPicList")
         if bks is None and filtered:
-            bks = self.getBooks()
+            bks = self.getBooks(errors=True)
         if bks is None:
             bks = []
         elif not len(bks):
@@ -3011,7 +3016,7 @@ class GtkViewModel(ViewModel):
         self.changed()
 
     def onGeneratePicListClicked(self, btn):
-        bks2gen = self.getBooks()
+        bks2gen = self.getBooks(errors=True)
         if not len(bks2gen):
             return
         ab = self.getAllBooks()
@@ -3048,7 +3053,7 @@ class GtkViewModel(ViewModel):
         # priority=self.get("fcb_diglotPicListSources")
         pg = self.get("nbk_Viewer")
         pgid = self.notebooks['Viewer'][pg]
-        bks2gen = self.getBooks()
+        bks2gen = self.getBooks(errors=True)
         if not len(bks2gen):
             return
         bk = self.get("ecb_examineBook")
@@ -4127,6 +4132,7 @@ class GtkViewModel(ViewModel):
             self.widgetnames[findname] = opt.name
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)
+            obj.connect("button-release-event", self.button_release_callback, label if wname.startswith("c_") else None)
             grid.attach(obj, 1, row, 1, 1)
             self.builder.expose_object(wname, obj)
             if wname in self.dict:
@@ -4695,25 +4701,32 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(False)
             self.set(w, False, mod=False)
 
-    def doConfigNameChange(self, w):
+    def _updateConfigButtons(self, configName=None):
+        """Update Reset/Delete button visibility and lock-button sensitivity for configName."""
+        if configName is None:
+            configName = self.cfgid or "Default"
+        isDefault = configName == "Default"
         lockBtn = self.builder.get_object("btn_lockunlock")
-        isDefault = self.cfgid == "Default"
         lockBtn.set_sensitive(not isDefault)
         self.builder.get_object("btn_deleteConfig").set_visible(not isDefault)
         self.builder.get_object("btn_resetDefaults").set_visible(isDefault)
+
+    def doConfigNameChange(self, w):
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)
         configName = self.getConfigName()
+        # Use the newly-selected config name (not self.cfgid which is still the old config).
+        self._updateConfigButtons(configName)
         if self.gtkpolyglot is not None:
             self.gtkpolyglot.changeConfigName(configName)
+        lockBtn = self.builder.get_object("btn_lockunlock")
         if len(self.get("ecb_savedConfig")):
             if configName != "Default":
                 lockBtn.set_sensitive(True)
         else:
-            # self.builder.get_object("t_configNotes").set_text("") # Why are we doing this? (it often wipes it out!)
             lockBtn.set_sensitive(False)
         cpath = self.project.srcPath(configName) if self.project is not None else None
         if cpath is not None and os.path.exists(cpath):
@@ -5418,40 +5431,43 @@ class GtkViewModel(ViewModel):
         if getattr(self, '_restoringDiglot', False):
             return
 
-        # The user just deactivated the diglot checkbox.  Intercept this BEFORE any other
-        # action: restore the checkbox to True immediately, then show the Save-As-Monoglot
-        # dialog.  The checkbox cannot simply be deactivated – the user must first save the
-        # current settings under a new (monoglot) configuration name.
-        if not self.get("c_diglot") and not self.loadingConfig:
+        # GTK3 fires 'clicked' from set_active() as well as from real user clicks.
+        # During config/project loading, loadingConfig=True — run only the cheap UI
+        # updates and return immediately so no dialog can ever appear mid-load.
+        if self.loadingConfig:
+            self.sensiVisible("c_diglot")
+            self.colorTabs()
+            return
+
+        # ---- Interactive click only beyond this point ----
+
+        # User just unchecked diglot: restore it visually and offer Save-As-Monoglot.
+        if not self.get("c_diglot"):
             self._restoringDiglot = True
             btn.set_active(True)          # restore visual state (triggers clicked again)
             self._restoringDiglot = False
             self._showSaveAsMonoglotDialog()
             return
 
-        # Intercept activation: warn the user this is a significant, hard-to-reverse step.
-        # Only show the dialog for interactive clicks, not when loading a saved config.
-        if self.get("c_diglot") and not self.loadingConfig:
-            dialog = self.builder.get_object("dlg_confirmDiglot")
-            response = dialog.run()
-            dialog.hide()
-            if response != Gtk.ResponseType.YES:
-                # User declined – silently restore the checkbox to unchecked and return
-                # before any UI state has changed.  handler_block prevents re-entering
-                # this function; mod=False avoids marking the config as changed.
-                btn.handler_block_by_func(self.onDiglotClicked)
-                self.set("c_diglot", False, mod=False)
-                btn.handler_unblock_by_func(self.onDiglotClicked)
-                return
+        # User just checked diglot: confirm this is intentional.
+        dialog = self.builder.get_object("dlg_confirmDiglot")
+        response = dialog.run()
+        dialog.hide()
+        if response != Gtk.ResponseType.YES:
+            # User declined – silently restore the checkbox to unchecked and return
+            # before any UI state has changed.  handler_block prevents re-entering
+            # this function; mod=False avoids marking the config as changed.
+            btn.handler_block_by_func(self.onDiglotClicked)
+            self.set("c_diglot", False, mod=False)
+            btn.handler_unblock_by_func(self.onDiglotClicked)
+            return
 
-        # ---- Normal path: activation confirmed, or config is loading ----
+        # ---- Normal path: activation confirmed ----
         self.sensiVisible("c_diglot")
         self.colorTabs()
-        if self.loadingConfig:
-            return
         if self.get("c_diglot"):
             self.loadPolyglotSettings()
-            self.diglotViews['R'] = self.createDiglotView()
+            self.createDiglotView()  # stores result in self.diglotViews['R'] only when non-None
             self.set("c_doublecolumn", True)
             self.builder.get_object("c_doublecolumn").set_sensitive(False)
             # Open the Project dropdown for the R row so the user immediately knows
@@ -5502,10 +5518,10 @@ class GtkViewModel(ViewModel):
         msg_lbl.set_text(msg)
 
     def _showSaveAsMonoglotDialog(self):
-        """Show the 'Save As Monoglot' dialog and act on the response.
+        r"""Show the 'Save As Monoglot' dialog and act on the response.
 
-        Cancel  → c_diglot stays True (already restored before this is called).
-        OK      → The current settings are saved under the chosen name with
+        Cancel  -> c_diglot stays True (already restored before this is called).
+        OK      -> The current settings are saved under the chosen name with
                   c_diglot turned off; that new monoglot configuration becomes active.
                   The original diglot configuration is left untouched on disk.
         """
@@ -5647,7 +5663,7 @@ class GtkViewModel(ViewModel):
         scrsnpt = self.getScriptSnippet()
         # Show dialog with various options
         dialog = self.builder.get_object("dlg_createHyphenList")
-        self.set("l_createHyphenList_booklist", " ".join(self.getBooks()))
+        self.set("l_createHyphenList_booklist", " ".join(self.getBooks(errors=True)))
         sylbrk = scrsnpt.isSyllableBreaking(self)
         if not sylbrk:
             self.set("c_addSyllableBasedHyphens", False)
@@ -5659,7 +5675,10 @@ class GtkViewModel(ViewModel):
                                             inbooks=self.get("c_hyphenLimitBooks"),
                                             addsyls=self.get("c_addSyllableBasedHyphens"),
                                             strict=self.get("c_hyphenApprovedWords"),
-                                            hyphen="\u2011" if self.get('c_nonBreakingHyphens') else "\u2010")
+                                            hyphen="\u2011" if self.get('c_nonBreakingHyphens') else "\u2010",
+                                            minaffix=int(self.get('s_hyphMinprefix')),
+                                            minword=int(self.get("s_hyphMinWord")),
+                                            minblock=int(self.get("s_hyphMinBlock")))
             self.doError(self.hyphenation.m1, secondary=self.hyphenation.m2)
         dialog.hide()
 
@@ -7149,11 +7168,15 @@ class GtkViewModel(ViewModel):
         # purposes) using Ctrl to toggle state then we want it to be a 
         # different color from the peachpuff which carries another meaning.
         if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
-            sc = widget.get_style_context()
-            if sc.has_class("yellowlighted"):
-                sc.remove_class("yellowlighted")
-            else:
-                sc.add_class("yellowlighted")
+            widgets = [widget]
+            if data is not None:
+                widgets.append(data)
+            for w in widgets:
+                sc = w.get_style_context()
+                if sc.has_class("yellowlighted"):
+                    sc.remove_class("yellowlighted")
+                else:
+                    sc.add_class("yellowlighted")
             return True
 
     def grab_notify_event(self, widget, event, data=None):
