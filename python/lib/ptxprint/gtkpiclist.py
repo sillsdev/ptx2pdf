@@ -281,7 +281,7 @@ class PicList:
                     e.window = w
                     e.send_event = True
                     w.emit("focus-out-event", e)
-            self.currows[-1][_pickeys['scale_colour']] = self.calc_scale_colour(self.currows[-1])
+#            self.currows[-1][_pickeys['scale_colour']] = self.calc_scale_colour(self.currows[-1])
         model, paths = selection.get_selected_rows()
         self.currows = []
         for i, path in enumerate(paths):
@@ -294,6 +294,10 @@ class PicList:
                 self.curriter = cit
             self.currows.append(self.model[cit][:])    # copy it so that any edits don't mess with the model if the iterator moves
             self.currows[-1].append(cit)
+            new_colour = self.calc_scale_colour(self.currows[-1])
+            self.currows[-1][_pickeys['scale_colour']] = new_colour
+            self.model.set_value(cit, _pickeys['scale_colour'], new_colour)
+
         currow = self.currows[0]
         if not currow[_pickeys['pgpos']]:
             pgpos = ""
@@ -432,11 +436,12 @@ class PicList:
         a = row[_pickeys['anchor']]
         pbuf, fname = self._getpixbuf(row[_pickeys['src']], a, nolimit=True)
         if pbuf is None:
-            return "#000000"
+            return "#00FF00"
         imwidth = pbuf.get_width()
         imheight = pbuf.get_height()
         wscale = imwidth / (pwidth * wfactor)
         height = scale * imheight / wscale
+        print(f"{a=} {height=} {mheight=}")
         return "#FF0000" if height > mheight else "#000000"
 
     def onPicframeSize(self, widget, allocation):
