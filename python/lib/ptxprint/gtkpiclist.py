@@ -430,7 +430,7 @@ class PicList:
         wfactor = 0.5 if row[_pickeys['size']] == 'col' and self.parent.get("c_doublecolumn") else 1
         scale = row[_pickeys['scale']] / 100.
         a = row[_pickeys['anchor']]
-        pbuf, fname = self._getpixbuf(row[_pickeys['src']], a)
+        pbuf, fname = self._getpixbuf(row[_pickeys['src']], a, nolimit=True)
         if pbuf is None:
             return "#000000"
         imwidth = pbuf.get_width()
@@ -490,7 +490,7 @@ class PicList:
             pic.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
 
-    def _getpixbuf(self, src, anchor):
+    def _getpixbuf(self, src, anchor, nolimit=False):
         fpath = None
         if self.picinfo is None:
             return None, None
@@ -506,7 +506,10 @@ class PicList:
                 self.parent._picframe_connected = True
             if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
                 try:
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                    if nolimit:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file(fpath)
+                    else:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
                 except GLib.GError:
                     pixbuf = None
                 return pixbuf, fpath
