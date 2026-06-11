@@ -27159,7 +27159,6 @@ headers and footers.</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_scale"/>
                                               <attributes>
-                                                <attribute name="background">16</attribute>
                                                 <attribute name="text">4</attribute>
                                               </attributes>
                                             </child>
