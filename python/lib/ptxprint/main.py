@@ -105,8 +105,10 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     mainw.run(doit)
     if tester is not None:
         results = tester.run_finalise()
-        if not results:
-            print('TESTS PASSED: no differences found.')
+        if not sum(results.values(), []):
+            print('Test result: PASS. No differences found to test data.')
+        else:
+            print('Test result: FAIL. The following differences to test data were found:')
         for k, v in results.items():
             if len(v):
                 resv = "\n    ".join(v)

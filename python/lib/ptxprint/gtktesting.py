@@ -217,6 +217,7 @@ class GtkTester:
         return True         # we emitted a signal so go round
 
     def compare_cfg(self, old, new, **kw):
+        options_to_ignore = ["gitversion"]
         res = []
         oldc = ConfigParser()
         oldc.read_file(old)
@@ -240,7 +241,7 @@ class GtkTester:
                     continue
                 oldv = oldc.get(s, o)
                 newv = newc.get(s, o)
-                if oldv != newv:
+                if oldv != newv and o not in options_to_ignore:
                     res.append(f"{s}/{o}: {oldv} -> {newv}")
         return res
 
