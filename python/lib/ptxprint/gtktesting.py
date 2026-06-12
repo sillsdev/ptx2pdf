@@ -156,8 +156,6 @@ class GtkTester:
                 goround = False
             elif e[1] == "signal":
                 signal = e[2]
-                if w == "b_close" and signal == "clicked":
-                    continue
                 widget = self.view.builder.get_object(w)
                 widget.emit(signal, *e[3:])
                 goround = True
@@ -167,7 +165,8 @@ class GtkTester:
                     goround = m(w, *e[2:])
             if goround and self.runeventidx < len(self.runevents):
                 GLib.idle_add(self.run_action, noclose)
-                return
+            if self.runeventidx == len(self.runevents):
+                self.view.onDestroy(None)
 
     def run_finalise(self):
         results = {}
