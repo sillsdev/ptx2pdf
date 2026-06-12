@@ -499,7 +499,7 @@ class ViewModel:
 
     def calcPageSize(self):
         unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize") or "")
         if m:
             pagewidth  = float(m.group(1)) * unitConv.get(m.group(2), 1)
             pageheight = float(m.group(3)) * unitConv.get(m.group(4), 1)

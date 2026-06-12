@@ -48,6 +48,32 @@ _comblistcr = ['crVpos', 'crHpos']
 newrowcounter = 1
 previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
 
+_PEACH = (1.0, 0.855, 0.725)   # peach puff #FFDAB9
+
+
+class PeachCellRenderer(Gtk.CellRendererText):
+    """CellRendererText that paints a peach selection bar for red-flagged rows.
+
+    GTK ignores cell-background when SELECTED, so we draw the rectangle
+    ourselves then strip the SELECTED flag before chaining up, which keeps
+    the stored foreground colour instead of the theme's white-on-blue.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.isRedFlag = False  # set per-row by _applyRedFlag cell-data func
+
+    def do_render(self, cr, widget, backgroundArea, cellArea, flags):
+        if self.isRedFlag and (flags & Gtk.CellRendererState.SELECTED):
+            cr.save()
+            cr.rectangle(backgroundArea.x, backgroundArea.y,
+                         backgroundArea.width, backgroundArea.height)
+            cr.set_source_rgb(*_PEACH)
+            cr.fill()
+            cr.restore()
+            flags &= ~Gtk.CellRendererState.SELECTED
+        Gtk.CellRendererText.do_render(self, cr, widget, backgroundArea, cellArea, flags)
+
 _locGrid = {
 "1"   :    (0,0),"1-b":     (1,0),"1-cl":    (2,0),"1-cr":   (3,0),"1-hc":    (4,0),"1-hl":    (5,0),"1-hr":    (6,0),"1-p":     (7,0),
 "1-pa":    (0,1),"1-pb":    (1,1),"1-t":     (2,1),"2":      (3,1),"2-col-bl":(4,1),"2-col-br":(5,1),"2-col-cl":(6,1),"2-col-cr":(7,1),
@@ -115,15 +141,40 @@ class PicList:
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
         # self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
-        cr_scale = builder.get_object("cr_scale")
-        col_scale = builder.get_object("col_scale")
-        col_scale.add_attribute(cr_scale, "foreground", _pickeys['scale_colour'])
-        cr_anchor = builder.get_object("cr_anchor")
-        col_anchor = builder.get_object("col_anchor")
-        col_anchor.add_attribute(cr_anchor, "foreground", _pickeys['scale_colour'])
-        cr_size = builder.get_object("cr_size")
-        col_frame = builder.get_object("col_frame")
-        col_frame.add_attribute(cr_size, "foreground", _pickeys['scale_colour'])
+        # Replace all column renderers with PeachCellRenderer so that selecting
+        # a red-scale row shows a peach bar across every column, not a mix of
+        # peach and blue.  The three scale-coloured columns also get the
+        # foreground attribute bound to the scale_colour model column.
+        _col_spec = [
+            ("col_anchor",   _pickeys['anchor'],   True),
+            ("col_caption",  _pickeys['caption'],  False),
+            ("col_file",     _pickeys['src'],       False),
+            ("col_frame",    _pickeys['size'],      True),
+            ("col_scale",    _pickeys['scale'],     True),
+            ("col_posn",     _pickeys['pgpos'],     False),
+            ("col_ref",      _pickeys['ref'],       False),
+            ("col_desc",     _pickeys['alt'],       False),
+            ("col_copy",     _pickeys['copy'],      False),
+            ("col_mirror",   _pickeys['mirror'],    False),
+            ("col_caption2", _pickeys['captionR'],  False),
+            ("col_media",    _pickeys['media'],     False),
+        ]
+        for col_id, text_col, needs_fg in _col_spec:
+            col = builder.get_object(col_id)
+            col.clear()
+            cr = PeachCellRenderer()
+            col.pack_start(cr, True)
+            col.add_attribute(cr, "text", text_col)
+            if needs_fg:
+                col.add_attribute(cr, "foreground", _pickeys['scale_colour'])
+            col.set_cell_data_func(cr, self._applyRedFlag)
+            if col_id == "col_caption":
+                self.cr_caption = cr
+            elif col_id == "col_caption2":
+                self.cr_caption2 = cr
+        self.view.get_selection().connect("changed", lambda s: self.view.queue_draw())
+        self.view.set_has_tooltip(True)
+        self.view.connect("query-tooltip", self._onQueryTooltip)
         self.clear()
         self.loading = False
 
@@ -148,9 +199,8 @@ class PicList:
         self.model.refilter()
 
     def modify_font(self, p):
-        for a in ["cr_caption", "cr_caption2"]:
-            w = self.builder.get_object(a)
-            w.set_property("font-desc", p)
+        for cr in [self.cr_caption, self.cr_caption2]:
+            cr.set_property("font-desc", p)
 
     def isEmpty(self):
         return len(self.model) == 0
@@ -353,6 +403,7 @@ class PicList:
         self.parent.unpause_logging()
         self.loading = False
         self._updatePreview(currow)
+        self._updateScaleSpinnerColour(currow[_pickeys['scale_colour']])
         src = currow[_pickeys['src']]
         if src:
             self.parent.updatePicChecks(src)
@@ -427,6 +478,28 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblistcr)
         return res
 
+    def _applyRedFlag(self, col, cell, model, it, data=None):
+        cell.isRedFlag = (model.get_value(it, _pickeys['scale_colour']) == "#FF0000")
+
+    def _updateScaleSpinnerColour(self, colour):
+        ctx = self.builder.get_object("s_plScale").get_style_context()
+        if colour == "#FF0000":
+            ctx.add_class("highlighted")
+        else:
+            ctx.remove_class("highlighted")
+
+    def _onQueryTooltip(self, widget, x, y, keyboard_mode, tooltip):
+        ok, x, y, model, path, it = widget.get_tooltip_context(x, y, keyboard_mode)
+        if not ok:
+            return False
+        if model.get_value(it, _pickeys['scale_colour']) != "#FF0000":
+            return False
+        tooltip.set_text(_("Warning! It appears that the size/scale of this picture is too large"
+                           " to fit in the allocated space. Consider reducing the scale to make"
+                           " sure it fits."))
+        widget.set_tooltip_row(tooltip, path)
+        return True
+
     def calc_scale_colour(self, row):
         pwidth, pheight = self.parent.calcPageSize()
         ffactor = float(self.parent.get("s_pagefullfactor", 1.0))
@@ -484,6 +557,8 @@ class PicList:
                 self.model.set_value(currow[-1], fieldi, currow[fieldi])
             if key == "scale" or key == "size":
                 self.model.set_value(currow[-1], _pickeys['scale_colour'], self.calc_scale_colour(currow))
+        if key in ("scale", "size") and self.currows:
+            self._updateScaleSpinnerColour(self.calc_scale_colour(self.currows[0]))
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")

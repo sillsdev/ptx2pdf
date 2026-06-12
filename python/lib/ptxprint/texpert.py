@@ -284,6 +284,7 @@ texpertOptions = {
     "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2, -10, 50, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"),
                             _("Shift thumbtab text")),
 
+    "pbtimeout":          O("pbtimeout", "OTH", (100, 0, 1000, 1, 10, 0), None, _("Page fill timeout (mins)"), _("Cancel page filler books that take longer than this many minutes")),
     "pbSpacingTol":       O("pbspacingtol", "OTH", (20, 0, 200, 1, 10, 0), None, _("Page fill expansion cost"), _("Weighting of badness caused by expansion")),
     "pbShrinkPref":       O("pbshrinkpref", "OTH", (20, 0, 200, 1, 10, 0), None, _("Page fill longer paragraph cost"), _("Extra cost for making paragraphs longer")),
     "pbHeadings":         O("pbheadings", "OTH", (60, 0, 200, 1, 10, 0), None, _("Page fill heading cost"), _("Factor to pay for adjusting a heading")),

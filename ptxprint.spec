@@ -382,6 +382,9 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
       + [('docs/inno-docs/*.txt', 'ptxprint')]
       + [(os.path.dirname(usfmtc.__file__)+"/"+x, "usfmtc") for x in ("*.vrs", "*.rng")]
+      + [(f'python/lib/ptxprint/mo/{lang}/LC_MESSAGES/ptxprint.mo', f'ptxprint/mo/{lang}/LC_MESSAGES')
+         for lang in os.listdir('python/lib/ptxprint/mo')
+         if os.path.isdir(f'python/lib/ptxprint/mo/{lang}')]
     )
 
 print("binaries:", binaries)

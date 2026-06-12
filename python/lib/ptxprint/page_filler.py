@@ -159,7 +159,7 @@ class SolveResult:
 class ProgressEvent:
     book:   str
     page:   int
-    mode:   Literal["complete", "failed", "badpage", "goodpage"]
+    mode:   Literal["complete", "failed", "badpage", "goodpage", "already_filled"]
     msg:    Optional[str] = None
     total:  Optional[int] = None
 
@@ -401,7 +401,7 @@ class TypesetterSolver:
         try:
             layout = self.initial_probes(state, page, restart=restart)
         except TimeoutError:
-            return HumanFixRequest(page, "Timed out")
+            return HumanFixRequest(page, "Stopped" if self.hooks.cancelled else "Timed out")
         state.layout = layout
         wantprobe = False
         testloop = 10000
@@ -415,7 +415,7 @@ class TypesetterSolver:
                 logger.log(15, f"solve_complete pages=%s, underfills=%s", len(layout.pages),
                         str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None}))
                 self.noprobe = True
-                state = self.run_layout(self.base_params, state, {}, page, start_page)
+                # state = self.run_layout(self.base_params, state, {}, page, start_page)
                 state.failures = failed_pages
                 self.hooks.progress(ProgressEvent(book, page, "complete", f"Failed pages: {' '.join(str(p) for p in failed_pages)}" if failed_pages else None))
                 return state
@@ -423,7 +423,7 @@ class TypesetterSolver:
             try:
                 state = self.solve_page(state, page, start_page)
             except TimeoutError:
-                return HumanFixRequest(page, "Timed out")
+                return HumanFixRequest(page, "Stopped" if self.hooks.cancelled else "Timed out")
             if not state.passed:
                 if state.layout.first_failing_page is not None and state.layout.first_failing_page < page:
                     if page < testloop:
@@ -727,6 +727,7 @@ class PTXprinter:
         super().__init__()
         self.nid = nid
         self.timedout = False
+        self.cancelled = False
         self.progress_queue = progress_q
         self.view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
         self.view.setup_ini()
@@ -784,6 +785,8 @@ class PTXprinter:
         if init_layout is None:
             return (False, f"Failed: {bk}")
         if restart and init_layout.first_failing_page is None:
+            np = self.parlocs.numPages()
+            self.progress(ProgressEvent(bk, np, "already_filled", total=np))
             return (True, f"Complete {bk} Already good")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
@@ -814,7 +817,7 @@ class PTXprinter:
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
         self.adjs = AdjList(100, 95, 105, fname=adjfname)
-        logger.log(12, f"{parparms=}")
+        logger.log(12, f"{self.bk}: {parparms=}")
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
             self.adjs.setval(s[:3], f"{r[1]}.{r[2]}{r[5]}", para, p[1], None, expand=int(p[0]*100), append=True)
@@ -1087,10 +1090,12 @@ class Worker(mp.Process):
             if self.log_config:
                 self._setup_logger(bk)
             printer.timedout = False
+            printer.cancelled = False
             stop_monitoring = threading.Event()
             def interrupter_thread():
                 while not stop_monitoring.is_set():
                     if self.cancel_event.wait(timeout=0.5):
+                        printer.cancelled = True
                         printer.timedout = True
                         break
             threading.Thread(target=interrupter_thread, daemon=True).start()
@@ -1125,14 +1130,14 @@ class Worker(mp.Process):
 
 class MultiView:
     # look like a ViewModel
-    def __init__(self, prjtree, userconfig, scriptsdir, args=None, odir=None, view=None):
+    def __init__(self, prjtree, userconfig, scriptsdir, args=None, odir=None, view=None, timeout=None):
         self.prjtree = prjtree
         self.config = {section: dict(userconfig[section]) for section in userconfig.sections()}
         self.macrosdir = scriptsdir
         self.scriptsdir = odir
         self.args = args
         self.loglevel = None
-        self.timeout = args.timeout if args.timeout > 0 else None
+        self.timeout = timeout * 60 if timeout is not None else args.timeout
         if self.args.logging:
             try:
                 self.loglevel = int(args.logging)
@@ -1230,8 +1235,10 @@ class MultiView:
                     results.append(results_q.get(timeout=0.5))
                 except _queue.Empty:
                     continue
+            deadline = time() + 5
             for w in workers:
-                w.join(timeout=5)
+                w.join(timeout=max(0, deadline - time()))
+            for w in workers:
                 if w.is_alive():
                     w.terminate()
         self.workers = []
