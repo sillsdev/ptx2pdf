@@ -14448,14 +14448,13 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkCheckButton" id="c_findUnbalanced">
-            <property name="label" translatable="yes">Underfilled Pages</property>
+          <object class="GtkCheckButton" id="c_findBadGlyphs">
+            <property name="label" translatable="yes">Bad Glyphs</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">False</property>
             <property name="active">True</property>
             <property name="draw-indicator">True</property>
-            <signal name="clicked" handler="locateOptionsChanged" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -14512,13 +14511,14 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
           </packing>
         </child>
         <child>
-          <object class="GtkCheckButton" id="c_findBadGlyphs">
-            <property name="label" translatable="yes">Bad Glyphs</property>
+          <object class="GtkCheckButton" id="c_findUnbalanced">
+            <property name="label" translatable="yes">Underfilled Pages</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">False</property>
             <property name="active">True</property>
             <property name="draw-indicator">True</property>
+            <signal name="clicked" handler="locateOptionsChanged" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -14561,25 +14561,7 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="margin-top">2</property>
             <property name="margin-bottom">2</property>
             <child>
-              <object class="GtkLabel" id="l_pdfStatusLine">
-                <property name="can-focus">False</property>
-                <property name="no-show-all">True</property>
-                <property name="valign">center</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="hexpand">True</property>
-                <property name="label" translatable="yes">This is where the status messages appear for the job.</property>
-                <property name="ellipsize">end</property>
-                <property name="width-chars">50</property>
-                <property name="single-line-mode">True</property>
-                <property name="track-visited-links">False</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-                <property name="non-homogeneous">True</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <placeholder/>
@@ -15628,8 +15610,8 @@ highlighted as an issue.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
-                        <property name="tooltip-text" translatable="yes">Show/hide Auto Page Fill
-dialog and progress monitor</property>
+                        <property name="tooltip-text" translatable="yes">Show/hide Page Fill tool
+with progress monitor</property>
                         <property name="halign">start</property>
                         <signal name="toggled" handler="onProgressMonitorToggle" swapped="no"/>
                         <child>
