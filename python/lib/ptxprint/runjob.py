@@ -605,7 +605,15 @@ class RunJob:
                     "marginnotes":  (_("margin note positions"), True)}
         marginnotesfname = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".marginnotes"))
         if os.path.exists(marginnotesfname):
-            os.unlink(marginnotesfname)
+            for _attempt in range(4):
+                try:
+                    os.unlink(marginnotesfname)
+                    break
+                except PermissionError:
+                    if _attempt < 3:
+                        time.sleep(0.5)
+                    else:
+                        logger.warning(f"Cannot delete marginnotes file — still locked, skipping: {marginnotesfname}")
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a)))
         while numruns < self.maxRuns:

@@ -159,7 +159,7 @@ class SolveResult:
 class ProgressEvent:
     book:   str
     page:   int
-    mode:   Literal["complete", "failed", "badpage", "goodpage"]
+    mode:   Literal["complete", "failed", "badpage", "goodpage", "already_filled"]
     msg:    Optional[str] = None
     total:  Optional[int] = None
 
@@ -785,6 +785,8 @@ class PTXprinter:
         if init_layout is None:
             return (False, f"Failed: {bk}")
         if restart and init_layout.first_failing_page is None:
+            np = self.parlocs.numPages()
+            self.progress(ProgressEvent(bk, np, "already_filled", total=np))
             return (True, f"Complete {bk} Already good")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
@@ -1233,8 +1235,10 @@ class MultiView:
                     results.append(results_q.get(timeout=0.5))
                 except _queue.Empty:
                     continue
+            deadline = time() + 5
             for w in workers:
-                w.join(timeout=5)
+                w.join(timeout=max(0, deadline - time()))
+            for w in workers:
                 if w.is_alive():
                     w.terminate()
         self.workers = []
