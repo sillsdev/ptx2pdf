@@ -144,7 +144,7 @@ lang = None
 
 def setup_i18n(i18nlang):
     global lang    
-    localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
+    localedir = pycodedir("mo")
     if i18nlang is not None:
         os.environ["LANG"] = i18nlang
         lang = i18nlang
