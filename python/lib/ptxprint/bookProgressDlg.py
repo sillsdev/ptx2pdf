@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 # Status constants
 # ---------------------------------------------------------------------------
 STATUS_PENDING = "pending"
+STATUS_PROBING = "probing"
 STATUS_RUNNING = "running"
 STATUS_GOOD    = "good"
 STATUS_WARNING = "warning"
@@ -23,6 +24,7 @@ STATUS_FAILED  = "failed"
 # Colours drawn from report.py logcolors palette
 _STATUS_COLORS = {
     STATUS_PENDING: "#AAAAAA",   # grey — not started
+    STATUS_PROBING: "#98BCCA",   # pale blue — first probe pass in progress
     STATUS_RUNNING: "#87CEEB",   # lightskyblue — in progress
     STATUS_GOOD:    "#98FB98",   # palegreen — complete, all OK
     STATUS_WARNING: "#FFA500",   # orange — complete with bad pages
@@ -76,7 +78,7 @@ class BookProgressCell:
 
         # Single message label below the bar
         self._msgLabel = Gtk.Label(label="")
-        self._msgLabel.set_halign(Gtk.Align.START)
+        self._msgLabel.set_halign(Gtk.Align.CENTER)
         self._msgLabel.set_ellipsize(3)   # PANGO_ELLIPSIZE_END
         vbox.pack_start(self._msgLabel, False, False, 0)
 
@@ -121,7 +123,7 @@ class BookProgressCell:
             self._bar.set_fraction(min(frac, 1.0))
             self._bar.set_text(self._barText(page, total, prefix="init"))
             self._msgLabel.set_text("")
-            self._applyColor(STATUS_RUNNING)
+            self._applyColor(STATUS_PROBING)
 
         elif mode == "goodpage":
             frac = (page / self._total) if self._total else 0.0
@@ -169,7 +171,7 @@ class BookProgressDialog:
         self._cells = {}   # bookCode -> BookProgressCell
         self.view = view
 
-        self.window = Gtk.Window(title="Page Fill Progress")
+        self.window = Gtk.Window(title=_("PTXprint: Page Filler"))
         self.window.set_transient_for(parentWindow)
         self.window.set_destroy_with_parent(False)
         self.window.set_deletable(False)
@@ -202,18 +204,18 @@ class BookProgressDialog:
         button_box.set_margin_bottom(8)
         vbox.pack_start(button_box, False, False, 0)
 
-        # Resume Fill and Restart Fill buttons
+        # Start Fill, Resume Fill buttons
+        start_tip = _("Restart filling from the beginning of each book.\n\nWarning: CPU-hungry. Go to lunch!")
         resume_tip = _("Resume filling from the first underfilled page in each book.\n\nWarning: CPU-hungry. Go to lunch!")
-        restart_tip = _("Restart filling from the beginning of each book.\n\nWarning: CPU-hungry. Go to lunch!")
+        self.restart_button = Gtk.Button(label=_("Start Fill"))
+        self.restart_button.set_tooltip_text(start_tip)
+        self.restart_button.connect("clicked", lambda btn: self.view.onRestartFillClicked(btn))
+        button_box.add(self.restart_button)
+
         self.resume_button = Gtk.Button(label=_("Resume Fill"))
         self.resume_button.set_tooltip_text(resume_tip)
         self.resume_button.connect("clicked", lambda btn: self.view.onResumeFillClicked(btn))
         button_box.add(self.resume_button)
-
-        self.restart_button = Gtk.Button(label=_("Restart Fill"))
-        self.restart_button.set_tooltip_text(restart_tip)
-        self.restart_button.connect("clicked", lambda btn: self.view.onRestartFillClicked(btn))
-        button_box.add(self.restart_button)
 
         # The Stop button (insensitive until a fill is running)
         self.stop_button = Gtk.Button(label=stoplabel)
@@ -225,8 +227,9 @@ class BookProgressDialog:
         self.stylep = Gtk.CssProvider()
         self.stylep.load_from_data(css)
 
-    def populate(self, bookList: list, stop_sensitive=True):
-        """Rebuild cells for a new job. bookList contains 3-letter book codes."""
+    def populate(self, bookList: list, stop_sensitive=True, starting=False):
+        """Rebuild cells for a new job. bookList contains 3-letter book codes.
+        Pass starting=True when a fill is being launched so cells start pale-blue immediately."""
         # Remove existing children
         for child in self.grid.get_children():
             self.grid.remove(child)
@@ -241,6 +244,8 @@ class BookProgressDialog:
 
         for i, bk in enumerate(bookList):
             cell = BookProgressCell(bk, self.stylep)
+            if starting:
+                cell._applyColor(STATUS_PROBING)
             col = i // rows
             row = i % rows
             self.grid.attach(cell.frame, col, row, 1, 1)

@@ -8299,7 +8299,7 @@ Thank you,
         self._progress_watch_id = GLib.timeout_add(1000, self._pollFillProgress)
         if self.bkProgressDlg is None:
             self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)  
-        self.bkProgressDlg.populate(self.getBooks())
+        self.bkProgressDlg.populate(self.getBooks(), starting=True)
 
         self.fillThread = threading.Thread(target=self._fillPages_run, daemon=True)
         self.fillThread.start()

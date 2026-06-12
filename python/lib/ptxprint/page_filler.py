@@ -401,7 +401,7 @@ class TypesetterSolver:
         try:
             layout = self.initial_probes(state, page, restart=restart)
         except TimeoutError:
-            return HumanFixRequest(page, "Timed out")
+            return HumanFixRequest(page, "Stopped" if self.hooks.cancelled else "Timed out")
         state.layout = layout
         wantprobe = False
         testloop = 10000
@@ -423,7 +423,7 @@ class TypesetterSolver:
             try:
                 state = self.solve_page(state, page, start_page)
             except TimeoutError:
-                return HumanFixRequest(page, "Timed out")
+                return HumanFixRequest(page, "Stopped" if self.hooks.cancelled else "Timed out")
             if not state.passed:
                 if state.layout.first_failing_page is not None and state.layout.first_failing_page < page:
                     if page < testloop:
@@ -727,6 +727,7 @@ class PTXprinter:
         super().__init__()
         self.nid = nid
         self.timedout = False
+        self.cancelled = False
         self.progress_queue = progress_q
         self.view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
         self.view.setup_ini()
@@ -814,7 +815,7 @@ class PTXprinter:
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
         self.adjs = AdjList(100, 95, 105, fname=adjfname)
-        logger.log(12, f"{bk}: {parparms=}")
+        logger.log(12, f"{self.bk}: {parparms=}")
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
             self.adjs.setval(s[:3], f"{r[1]}.{r[2]}{r[5]}", para, p[1], None, expand=int(p[0]*100), append=True)
@@ -1087,10 +1088,12 @@ class Worker(mp.Process):
             if self.log_config:
                 self._setup_logger(bk)
             printer.timedout = False
+            printer.cancelled = False
             stop_monitoring = threading.Event()
             def interrupter_thread():
                 while not stop_monitoring.is_set():
                     if self.cancel_event.wait(timeout=0.5):
+                        printer.cancelled = True
                         printer.timedout = True
                         break
             threading.Thread(target=interrupter_thread, daemon=True).start()

@@ -14294,6 +14294,7 @@ project's Biblical Terms renderings.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
+                <property name="margin-start">6</property>
                 <property name="label" translatable="yes">Show PDF</property>
               </object>
             </child>
@@ -14320,6 +14321,7 @@ project's Biblical Terms renderings.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
+                <property name="margin-start">6</property>
                 <property name="label" translatable="yes">View Level</property>
               </object>
             </child>
@@ -14346,6 +14348,7 @@ project's Biblical Terms renderings.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
+                <property name="margin-start">6</property>
                 <property name="label" translatable="yes">Language</property>
               </object>
             </child>
