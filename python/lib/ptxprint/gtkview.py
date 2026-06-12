@@ -8287,7 +8287,7 @@ Thank you,
         tout = float(self.get("s_maxfilltime"))
         if tout > 0:
             args.timeout = 60 * tout
-        self.mview = MultiView(self.prjTree, self.userconfig, self.scriptsdir, args=args, odir=self.scriptsdir, view=self)
+        self.mview = MultiView(self.prjTree, self.userconfig, self.scriptsdir, args=args, odir=self.scriptsdir, view=self, timeout=float(self.get("s_pbtimeout")))
         numproc = int(self.get("s_maxproc"))
         if numproc == 0:
             numproc = 1

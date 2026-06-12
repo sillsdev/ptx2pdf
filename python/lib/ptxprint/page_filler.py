@@ -415,7 +415,7 @@ class TypesetterSolver:
                 logger.log(15, f"solve_complete pages=%s, underfills=%s", len(layout.pages),
                         str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None}))
                 self.noprobe = True
-                state = self.run_layout(self.base_params, state, {}, page, start_page)
+                # state = self.run_layout(self.base_params, state, {}, page, start_page)
                 state.failures = failed_pages
                 self.hooks.progress(ProgressEvent(book, page, "complete", f"Failed pages: {' '.join(str(p) for p in failed_pages)}" if failed_pages else None))
                 return state
@@ -814,7 +814,7 @@ class PTXprinter:
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
         self.adjs = AdjList(100, 95, 105, fname=adjfname)
-        logger.log(12, f"{parparms=}")
+        logger.log(12, f"{bk}: {parparms=}")
         for s, p in parparms.items():
             (r, para) = self.pidkey(s)
             self.adjs.setval(s[:3], f"{r[1]}.{r[2]}{r[5]}", para, p[1], None, expand=int(p[0]*100), append=True)
@@ -1125,14 +1125,14 @@ class Worker(mp.Process):
 
 class MultiView:
     # look like a ViewModel
-    def __init__(self, prjtree, userconfig, scriptsdir, args=None, odir=None, view=None):
+    def __init__(self, prjtree, userconfig, scriptsdir, args=None, odir=None, view=None, timeout=None):
         self.prjtree = prjtree
         self.config = {section: dict(userconfig[section]) for section in userconfig.sections()}
         self.macrosdir = scriptsdir
         self.scriptsdir = odir
         self.args = args
         self.loglevel = None
-        self.timeout = args.timeout if args.timeout > 0 else None
+        self.timeout = timeout * 60 if timeout is not None else args.timeout
         if self.args.logging:
             try:
                 self.loglevel = int(args.logging)
