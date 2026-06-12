@@ -60,7 +60,7 @@ def run_broadway(wnum):
         # logger.info("Broadway is already running")
         return None
     else:
-        bwname = "broadwayd" + ".exe" if sys.platform in ("win32", "cygwin") else ""
+        bwname = "broadwayd.exe" if sys.platform in ("win32", "cygwin") else "broadwayd"
         server = popen([bwname, "-p", str(pnum), ":"+str(wnum)])
     if testport("127.0.0.1", pnum):
         return server
@@ -105,7 +105,9 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     mainw.run(doit)
     if tester is not None:
         results = tester.run_finalise()
-        for k, v in results:
+        if not results:
+            print('TESTS PASSED: no differences found.')
+        for k, v in results.items():
             if len(v):
                 resv = "\n    ".join(v)
                 print(f"{k}: {resv}")
@@ -146,7 +148,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-M', '--module', help="Specify module to print")
     parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
     parser.add_argument('-T', '--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
-    parser.add_argument('-C', '--capture', help="Capture interaction events")
+    parser.add_argument('-C', '--capture', metavar='FILE', help="Capture interaction events from UI session to zip file")
     parser.add_argument('-t', '--test',help="test file to run interactive test against")
     parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
     

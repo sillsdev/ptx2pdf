@@ -1,9 +1,15 @@
 
 from gi.repository import Gtk, GObject, GLib
-import os, zipfile, json, shutil
+import io, os, zipfile, json, shutil
 from configparser import ConfigParser
 from ptxprint.usxutils import simple_parse
 from difflib import context_diff
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, "to_dict"):
+            return obj.to_dict()
+        return super().default(obj)
 
 class GtkTester:
     def __init__(self, fname, view):
@@ -65,7 +71,6 @@ class GtkTester:
             self.zip.mkdir("before")
         if self.zip is None:
             return
-            self.mkzipdir("before/{}".format(project.prjid))
         for a in ("Settings.xml", "PTXSettings.xml"):
             fname = os.path.join(project.path, a)
             if self.writefile(a, "before", project):
@@ -91,9 +96,10 @@ class GtkTester:
         return False
 
     def finalise(self):
-        if self.zip is None:
+        if self.zip is None or self.paused:
             return
 
+        self.pause()
         self.mkzipdir("after")
         for f in self.zip.infolist():
             if not f.filename.startswith("before/") or f.is_dir():
@@ -106,10 +112,9 @@ class GtkTester:
             self.mkzipdir("after/{}".format(b[1]))
             self.mkzipdir("after/{}/{}".format(b[1], b[2]))
             self.writefile(b[3], "after", project, cfgid)
-        events = json.dumps({"events": self.events}, ensure_ascii=False, indent=4)
+        events = json.dumps({"events": self.events}, ensure_ascii=False, indent=4, cls=CustomJSONEncoder)
         self.zip.writestr("events.json", events)
         self.zip.close()
-        self.pause()
 
     def setuprun(self, fname, view):
         self.pause()
@@ -170,11 +175,15 @@ class GtkTester:
         for fi in self.runzip.infolist():
             if not fi.filename.startswith("after/") or fi.is_dir():
                 continue
-            b = fi.filename.split("/", 3)[1:]
+            b = fi.filename.split("/", 3)
             if len(b) < 4:
                 continue        # only want configuration files
-            ext = os.path.splitext(b[3])
-            m = getattr(self, "compare_"+ext[1:].lower(), None)
+            if b[-1].endswith('.cfg'):
+                m = getattr(self, "compare_cfg", None)
+            elif b[-1].endswith('.sty'):
+                m = getattr(self, "compare_sty", None)
+            else:
+                raise Exception('Unexpected extension.')
             if m is None:
                 m = self.diffcompare
             if b[1] not in projects:
@@ -245,10 +254,10 @@ class GtkTester:
         diffs = newm.difference(oldm)
         if len(diffs):
             res.append(f"Different markers: {', '.join(sorted(diffs))}")
-        for m, r in newm.items():
+        for m, r in news.items():
             if m not in oldm:
                 continue
-            o = oldm[m]
+            o = olds[m]
             newk = set(r.keys())
             oldk = set(o.keys())
             diffs = newk.difference(oldk)
