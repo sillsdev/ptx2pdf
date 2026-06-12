@@ -173,6 +173,8 @@ class PicList:
             elif col_id == "col_caption2":
                 self.cr_caption2 = cr
         self.view.get_selection().connect("changed", lambda s: self.view.queue_draw())
+        self.view.set_has_tooltip(True)
+        self.view.connect("query-tooltip", self._onQueryTooltip)
         self.clear()
         self.loading = False
 
@@ -401,6 +403,7 @@ class PicList:
         self.parent.unpause_logging()
         self.loading = False
         self._updatePreview(currow)
+        self._updateScaleSpinnerColour(currow[_pickeys['scale_colour']])
         src = currow[_pickeys['src']]
         if src:
             self.parent.updatePicChecks(src)
@@ -478,6 +481,25 @@ class PicList:
     def _applyRedFlag(self, col, cell, model, it, data=None):
         cell.isRedFlag = (model.get_value(it, _pickeys['scale_colour']) == "#FF0000")
 
+    def _updateScaleSpinnerColour(self, colour):
+        ctx = self.builder.get_object("s_plScale").get_style_context()
+        if colour == "#FF0000":
+            ctx.add_class("highlighted")
+        else:
+            ctx.remove_class("highlighted")
+
+    def _onQueryTooltip(self, widget, x, y, keyboard_mode, tooltip):
+        ok, x, y, model, path, it = widget.get_tooltip_context(x, y, keyboard_mode)
+        if not ok:
+            return False
+        if model.get_value(it, _pickeys['scale_colour']) != "#FF0000":
+            return False
+        tooltip.set_text(_("Warning! It appears that the size/scale of this picture is too large"
+                           " to fit in the allocated space. Consider reducing the scale to make"
+                           " sure it fits."))
+        widget.set_tooltip_row(tooltip, path)
+        return True
+
     def calc_scale_colour(self, row):
         pwidth, pheight = self.parent.calcPageSize()
         ffactor = float(self.parent.get("s_pagefullfactor", 1.0))
@@ -535,6 +557,8 @@ class PicList:
                 self.model.set_value(currow[-1], fieldi, currow[fieldi])
             if key == "scale" or key == "size":
                 self.model.set_value(currow[-1], _pickeys['scale_colour'], self.calc_scale_colour(currow))
+        if key in ("scale", "size") and self.currows:
+            self._updateScaleSpinnerColour(self.calc_scale_colour(self.currows[0]))
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")

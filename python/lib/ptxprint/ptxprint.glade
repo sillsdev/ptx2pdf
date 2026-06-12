@@ -2076,7 +2076,7 @@ General section of the Advanced tab.&lt;/span&gt;</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
     <property name="version">Version 3.0.32</property>
-    <property name="copyright">© 2020-2025, SIL Global</property>
+    <property name="copyright">© 2020-2026, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
 XeTeX macros (ptx2pdf) with a long and reliable history.</property>
@@ -2085,7 +2085,6 @@ XeTeX macros (ptx2pdf) with a long and reliable history.</property>
     <property name="authors">Martin Hosken (Project Lead, System Architect, TeX macros)
 Mark Penny (UI Developer, Testing, Documentation)
 David Gardner (TeX Macro Coding, Diglot Specialist)
-David Coward (User Acceptance Testing)
 
 Built on the foundation laid by:
 Jonathan Kew (author of XeTeX + sfm2pdf)</property>
@@ -3102,6 +3101,7 @@ If in doubt, click Cancel.</property>
                     <child>
                       <object class="GtkButton">
                         <property name="label" translatable="yes">All Books</property>
+                        <property name="width-request">200</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
@@ -3208,14 +3208,18 @@ If in doubt, click Cancel.</property>
                     </child>
                     <child>
                       <object class="GtkButton">
-                        <property name="label" translatable="yes">Reset All</property>
+                        <property name="label" translatable="yes">Toggle Books</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
-                        <property name="tooltip-text" translatable="yes">Click to turn OFF all books.</property>
+                        <property name="tooltip-text" translatable="yes">Click to toggle ALL books.
+Those which are selected will be deselected,
+and the unselected ones will be selected.</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
                         <property name="margin-top">3</property>
                         <property name="margin-bottom">3</property>
-                        <signal name="clicked" handler="onClickmbs_none" swapped="no"/>
+                        <signal name="clicked" handler="onClickmbs_toggle" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -3224,13 +3228,20 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel">
+                      <object class="GtkButton">
+                        <property name="label" translatable="yes">Reset All</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="vexpand">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Click to turn OFF all books.</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">3</property>
+                        <property name="margin-bottom">3</property>
+                        <signal name="clicked" handler="onClickmbs_none" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
+                        <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">7</property>
                       </packing>
@@ -14282,8 +14293,8 @@ project's Biblical Terms renderings.</property>
               <object class="GtkLabel" id="l_menu_showPDF">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="halign">start</property>
                 <property name="label" translatable="yes">Show PDF</property>
-                <property name="xalign">0.20000000298023224</property>
               </object>
             </child>
           </object>
@@ -14308,8 +14319,8 @@ project's Biblical Terms renderings.</property>
               <object class="GtkLabel" id="l_menu_level">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="halign">start</property>
                 <property name="label" translatable="yes">View Level</property>
-                <property name="xalign">0.20000000298023224</property>
               </object>
             </child>
           </object>
@@ -14334,8 +14345,8 @@ project's Biblical Terms renderings.</property>
               <object class="GtkLabel" id="l_menu_uilang">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="halign">start</property>
                 <property name="label" translatable="yes">Language</property>
-                <property name="xalign">0.20000000298023224</property>
               </object>
             </child>
           </object>
@@ -14364,9 +14375,8 @@ Developers so that others can also benefit.
 
 &lt;a href="https://give.sil.org/campaign/725128/donate"&gt;give.sil.org/campaign/725128/donate&lt;/a&gt;
 </property>
-            <property name="hexpand">True</property>
+            <property name="halign">start</property>
             <property name="relief">none</property>
-            <property name="xalign">0</property>
             <signal name="clicked" handler="onDonateClicked" swapped="no"/>
           </object>
           <packing>
@@ -14392,9 +14402,8 @@ don't like. Tell us what you dream for in the future.
 
 Click this button to fill in the Google form or type
 this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxprintfeedback&lt;/a&gt;</property>
-            <property name="hexpand">True</property>
+            <property name="halign">start</property>
             <property name="relief">none</property>
-            <property name="xalign">0</property>
             <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
           </object>
           <packing>

@@ -4383,6 +4383,11 @@ class GtkViewModel(ViewModel):
     def onClickmbs_xtra(self, btn):
         self.toggleBooks(85,124)
 
+    def onClickmbs_toggle(self, btn):
+        for b in self.alltoggles:
+            if b.get_label() in allbooks[0:124]:
+                b.set_active(not b.get_active())
+
     def onClickmbs_none(self, btn):
         for b in self.alltoggles:
             if b.get_label() in allbooks[0:124]:
