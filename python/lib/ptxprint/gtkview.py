@@ -4229,6 +4229,7 @@ class GtkViewModel(ViewModel):
         lsbooks = self.builder.get_object("ls_books")
         bl = self.getBooks(scope="multiple", local=True)
         self.alltoggles = []
+        self._lastClickedToggle = None
         for i, b_row in enumerate(lsbooks):
             book_id = b_row[0]
             tbox = Gtk.ToggleButton(label=book_id)
@@ -4239,6 +4240,7 @@ class GtkViewModel(ViewModel):
             tbox.show()
             if book_id in bl:
                 tbox.set_active(True)
+            tbox.connect("button-press-event", self._onBookTogglePress, i)
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)
         response = dialog.run()
@@ -4353,6 +4355,19 @@ class GtkViewModel(ViewModel):
             return
         if bks is not None and len(bks):
             self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
+
+    def _onBookTogglePress(self, widget, event, idx):
+        if event.button != 1:
+            return False
+        if (event.state & Gdk.ModifierType.SHIFT_MASK) and self._lastClickedToggle is not None:
+            new_state = not widget.get_active()
+            lo, hi = min(self._lastClickedToggle, idx), max(self._lastClickedToggle, idx)
+            for i in range(lo, hi + 1):
+                self.alltoggles[i].set_active(new_state)
+            self._lastClickedToggle = idx
+            return True  # suppress default toggle since we set state explicitly
+        self._lastClickedToggle = idx
+        return False
 
     def toggleBooks(self,start,end):
         bp = self.ptsettings['BooksPresent']
