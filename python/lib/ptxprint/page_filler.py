@@ -1104,7 +1104,16 @@ class Worker(mp.Process):
                     printer.timedout = True
                 watchdog = threading.Timer(self.build_params.timeout, trigger_timeout)
                 watchdog.start()
-            res = printer.solve(bk, stop=self.stop, restart=self.build_params.args.restart)
+            try:
+                res = printer.solve(bk, stop=self.stop, restart=self.build_params.args.restart)
+            except Exception as e:
+                logging.exception(f"Unhandled error solving {bk}")
+                if self.build_params.timeout is not None:
+                    watchdog.cancel()
+                stop_monitoring.set()
+                self.progress_q.put(ProgressEvent(bk, 0, "failed", msg=f"Internal error: {e}"))
+                self.results_q.put((bk, self.nid, False, str(e)))
+                continue
             if self.build_params.timeout is not None:
                 watchdog.cancel()
             stop_monitoring.set()

@@ -272,6 +272,13 @@ texpertOptions = {
     "RiverOverlap":       O("riveroverlap", "PRV", (0.4, -5, 5, 0.1, 0.1, 1), "", _("River Detection minimum overlap (em)"),
                             _("Minimum overlap in ems required for two spaces above each other to be considered part of the same river")),
 
+    "pbtimeout":          O("pbtimeout", "APF", (100, 0, 1000, 1, 10, 0), None, _("Page fill timeout (mins)"), _("Cancel page filler books that take longer than this many minutes")),
+    "pbJustification":    O("pbjustify", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill justified text cost"), _("Factor to multiply stretching a justified paragraph over a non-justified")),
+    "pbSpacingTol":       O("pbspacingtol", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill expansion cost"), _("Weighting of badness caused by expansion")),
+    "pbShrinkPref":       O("pbshrinkpref", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill longer paragraph cost"), _("Extra cost for making paragraphs longer")),
+    "pbHeadings":         O("pbheadings", "APF", (60, 0, 200, 1, 10, 0), None, _("Page fill heading cost"), _("Factor to pay for adjusting a heading")),
+    "pbLastLine":         O("pblastline", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill last line effect weight"), _("Weighting of last line length effect costs")),
+
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),
     # "AttrMilestoneMatchesUnattr": O("attrmsmatchunattr", "OTH", False, "", _("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*.")),
@@ -284,12 +291,6 @@ texpertOptions = {
     "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2, -10, 50, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"),
                             _("Shift thumbtab text")),
 
-    "pbtimeout":          O("pbtimeout", "OTH", (100, 0, 1000, 1, 10, 0), None, _("Page fill timeout (mins)"), _("Cancel page filler books that take longer than this many minutes")),
-    "pbSpacingTol":       O("pbspacingtol", "OTH", (20, 0, 200, 1, 10, 0), None, _("Page fill expansion cost"), _("Weighting of badness caused by expansion")),
-    "pbShrinkPref":       O("pbshrinkpref", "OTH", (20, 0, 200, 1, 10, 0), None, _("Page fill longer paragraph cost"), _("Extra cost for making paragraphs longer")),
-    "pbHeadings":         O("pbheadings", "OTH", (60, 0, 200, 1, 10, 0), None, _("Page fill heading cost"), _("Factor to pay for adjusting a heading")),
-    "pbLastLine":         O("pblastline", "OTH", (20, 0, 200, 1, 10, 0), None, _("Page fill last line effect weight"), _("Weighting of last line length effect costs")),
-    "pbJustification":    O("pbjustify", "OTH", (20, 0, 200, 1, 10, 0), None, _("Page fill justified text cost"), _("Factor to multiply stretching a justified paragraph over a non-justified")),
 }                          # (default, lower, upper, stepIncr, pageIncr, decPlaces)
 
 def widgetName(opt):

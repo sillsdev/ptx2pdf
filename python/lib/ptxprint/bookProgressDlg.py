@@ -228,6 +228,18 @@ class BookProgressDialog:
         self.stop_button.set_sensitive(False)
         button_box.add(self.stop_button)
 
+        # Settings shortcut link — secondary child sits at the far left
+        settings_ebox = Gtk.EventBox()
+        settings_lbl = Gtk.Label()
+        settings_lbl.set_markup('<span foreground="#1c71d8" underline="single">Settings</span>')
+        settings_lbl.set_margin_start(4)
+        settings_lbl.set_margin_end(4)
+        settings_lbl.set_tooltip_text(_("Open Advanced → Other settings for page filler options"))
+        settings_ebox.add(settings_lbl)
+        settings_ebox.connect("button-release-event", self._onSettingsClicked)
+        button_box.add(settings_ebox)
+        button_box.set_child_secondary(settings_ebox, True)
+
         self.stylep = Gtk.CssProvider()
         self.stylep.load_from_data(css)
 
@@ -261,7 +273,7 @@ class BookProgressDialog:
         min_h, nat_h = self.window.get_preferred_height()
         screen = self.window.get_screen()
         max_h = int(screen.get_height() * 0.85) if screen else 900
-        dw, dh = nat_w, min(nat_h, max_h)
+        dw, dh = nat_w, max(360, min(nat_h, max_h))
         self.window.resize(dw, dh)
         self._position_with_size(dw, dh)
         self.window.show_all()
@@ -304,6 +316,10 @@ class BookProgressDialog:
             self.hide()
         else:
             self.show()
+
+    def _onSettingsClicked(self, widget, event):
+        self.view.highlightwidget('s_pbtimeout')
+        self.view.mainapp.win.present()
 
     def _onColorKeyClicked(self, button):
         pop = Gtk.Popover.new(button)

@@ -4056,6 +4056,7 @@ class GtkViewModel(ViewModel):
             'PIC': 'Pictures, Figures, Images, Sidebars', 
             'PDF': 'PDF Options, Covers, Show/Hide',
             'PRV': 'Preview Pane: Adjustment and Analysis Settings',
+            'APF': 'Automatic Page Filler',
             'OTH': 'Other Miscellaneous Settings' }
 
         texopts = self.builder.get_object("gr_texoptions")
