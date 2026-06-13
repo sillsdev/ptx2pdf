@@ -436,7 +436,7 @@ class TypesetterSolver:
                         logger.log(15, f"{page=} >= {testloop=} and bail")
                         return HumanFixRequest(page, "Caught in page loop")
                 if stop:
-                    return HumanFixRequest(page, "Couldn't solve page")
+                    return HumanFixRequest(page, f"Couldn't solve page {page}")
                 else:
                     while state.layout.first_failing_page is not None and state.layout.first_failing_page == page:
                         state.layout.next_bad()
@@ -786,8 +786,12 @@ class PTXprinter:
             return (False, f"Failed: {bk}")
         if restart and init_layout.first_failing_page is None:
             np = self.parlocs.numPages()
-            self.progress(ProgressEvent(bk, np, "already_filled", total=np))
-            return (True, f"Complete {bk} Already good")
+            if np > 0:
+                self.progress(ProgressEvent(bk, np, "already_filled", total=np))
+                return (True, f"Complete {bk} Already good")
+            else:
+                self.progress(ProgressEvent(bk, 0, "failed", msg="No page data"))
+                return (False, f"Failed: {bk} No page data")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
         state = EngineState(parms if restart else {p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
