@@ -14561,12 +14561,6 @@ this in a browser: &lt;a href="https://tiny.cc/ptxprintfeedback"&gt;tiny.cc/ptxp
             <property name="margin-top">2</property>
             <property name="margin-bottom">2</property>
             <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -14580,6 +14574,7 @@ Ctrl + Plus - zoom in
 Ctrl + Minus - zoom out
 Ctrl + 0 - fit to screen
 Ctrl + Scrollwheel - change zoom level</property>
+                    <property name="valign">center</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="label" translatable="yes">Zoom:</property>
@@ -14627,6 +14622,7 @@ Ctrl + Scrollwheel - change zoom level</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Zoom Fit to Screen</property>
                     <property name="halign">center</property>
+                    <property name="valign">center</property>
                     <property name="margin-start">12</property>
                     <property name="image">icon_zoom_fit</property>
                     <property name="relief">half</property>
@@ -14642,7 +14638,7 @@ Ctrl + Scrollwheel - change zoom level</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">3</property>
+                <property name="position">0</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14663,6 +14659,7 @@ Ctrl+End - Last page/spread
 Mouse Scroll also changes pages
 Ctrl+Mouse Scroll Zooms in/out</property>
                     <property name="halign">start</property>
+                    <property name="valign">center</property>
                     <property name="margin-left">6</property>
                     <property name="margin-right">6</property>
                     <property name="margin-end">3</property>
@@ -14708,6 +14705,7 @@ Ctrl+Mouse Scroll Zooms in/out</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">First page (or spread)</property>
                     <property name="halign">center</property>
+                    <property name="valign">center</property>
                     <property name="image">icon_page_first</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="onNavigatePageClicked" swapped="no"/>
@@ -14726,6 +14724,7 @@ Ctrl+Mouse Scroll Zooms in/out</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Previous page (or spread)</property>
                     <property name="halign">center</property>
+                    <property name="valign">center</property>
                     <property name="image">icon_page_previous</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="onNavigatePageClicked" swapped="no"/>
@@ -14752,6 +14751,7 @@ Mouse Scroll also changes pages
 Ctrl+Mouse Scroll Zooms in/out</property>
                     <property name="double-buffered">False</property>
                     <property name="halign">center</property>
+                    <property name="valign">center</property>
                     <property name="max-length">4</property>
                     <property name="has-frame">False</property>
                     <property name="width-chars">6</property>
@@ -14775,6 +14775,7 @@ Ctrl+Mouse Scroll Zooms in/out</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Next page (or spread)</property>
                     <property name="halign">center</property>
+                    <property name="valign">center</property>
                     <property name="image">icon_page_next</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="onNavigatePageClicked" swapped="no"/>
@@ -14793,6 +14794,7 @@ Ctrl+Mouse Scroll Zooms in/out</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Last page (or spread)</property>
                     <property name="halign">center</property>
+                    <property name="valign">center</property>
                     <property name="image">icon_page_last</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="onNavigatePageClicked" swapped="no"/>
@@ -14807,7 +14809,7 @@ Ctrl+Mouse Scroll Zooms in/out</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">4</property>
+                <property name="position">1</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14839,7 +14841,7 @@ Layout Analysis is active.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">5</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -14857,6 +14859,7 @@ Layout Analysis is active.</property>
                     <property name="no-show-all">True</property>
                     <property name="tooltip-markup" translatable="yes">Locate previous page with issues.</property>
                     <property name="halign">start</property>
+                    <property name="valign">center</property>
                     <property name="image">icon_seekPage2fill_prev</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="onSeekPage2fill" swapped="no"/>
@@ -14876,6 +14879,7 @@ Layout Analysis is active.</property>
                     <property name="no-show-all">True</property>
                     <property name="tooltip-markup" translatable="yes">Locate next page with issues.</property>
                     <property name="halign">end</property>
+                    <property name="valign">center</property>
                     <property name="image">icon_seekPage2fill_next</property>
                     <property name="relief">none</property>
                     <signal name="clicked" handler="onSeekPage2fill" swapped="no"/>
@@ -14890,33 +14894,23 @@ Layout Analysis is active.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">6</property>
+                <property name="position">3</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
-              <object class="GtkEventBox">
+              <object class="GtkSpinner" id="spin_preview">
+                <property name="width-request">24</property>
+                <property name="height-request">24</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Click here to change the
-Auto-update delay in
-Advanced &gt; Other options.</property>
-                <signal name="button-release-event" handler="onSpinnerClicked" swapped="no"/>
-                <child>
-                  <object class="GtkSpinner" id="spin_preview">
-                    <property name="width-request">24</property>
-                    <property name="height-request">24</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="valign">center</property>
-                    <property name="hexpand">True</property>
-                  </object>
-                </child>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">7</property>
+                <property name="position">4</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -14933,6 +14927,7 @@ Advanced &gt; Other options.</property>
 Shortcuts: Ctrl-P or click 
 the middle mouse button</property>
                 <property name="halign">end</property>
+                <property name="valign">center</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="resize-mode">immediate</property>
@@ -14943,8 +14938,57 @@ the middle mouse button</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">8</property>
+                <property name="position">5</property>
                 <property name="non-homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleButton" id="btn_prvAutoFill">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Show/hide Page Fill tool
+with progress monitor</property>
+                <property name="halign">end</property>
+                <property name="valign">center</property>
+                <signal name="toggled" handler="onProgressMonitorToggle" swapped="no"/>
+                <child>
+                  <object class="GtkImage" id="icon_prvAutoFill2">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Show/hide Auto Page Fill
+dialog and progress monitor</property>
+                    <property name="icon-name">thunderbolt-symbolic</property>
+                    <property name="icon_size">3</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_showSettings">
+                <property name="name">Show main PTXprint settings</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Show the main PTXprint
+dialog with all the settings. 
+Shortcut: Alt+S</property>
+                <property name="halign">end</property>
+                <property name="valign">center</property>
+                <property name="margin-end">8</property>
+                <property name="image">icon_settings</property>
+                <signal name="clicked" handler="onShowMainDialogClicked" swapped="no"/>
+                <accelerator key="s" signal="clicked" modifiers="GDK_MOD1_MASK"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">7</property>
               </packing>
             </child>
           </object>
@@ -15606,30 +15650,7 @@ highlighted as an issue.</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkToggleButton" id="btn_prvAutoFill">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">True</property>
-                        <property name="tooltip-text" translatable="yes">Show/hide Page Fill tool
-with progress monitor</property>
-                        <property name="halign">start</property>
-                        <signal name="toggled" handler="onProgressMonitorToggle" swapped="no"/>
-                        <child>
-                          <object class="GtkImage" id="icon_prvAutoFill2">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">Show/hide Auto Page Fill
-dialog and progress monitor</property>
-                            <property name="icon-name">thunderbolt-symbolic</property>
-                            <property name="icon_size">3</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">0</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                     <child>
                       <object class="GtkLabel">
@@ -15741,25 +15762,7 @@ to this device.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="btn_showSettings">
-                        <property name="name">Show main PTXprint settings</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">Show the main PTXprint
-dialog with all the settings. 
-Shortcut: Alt+S</property>
-                        <property name="halign">center</property>
-                        <property name="valign">center</property>
-                        <property name="image">icon_settings</property>
-                        <signal name="clicked" handler="onShowMainDialogClicked" swapped="no"/>
-                        <accelerator key="s" signal="clicked" modifiers="GDK_MOD1_MASK"/>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">7</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
