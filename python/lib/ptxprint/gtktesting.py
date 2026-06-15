@@ -12,7 +12,7 @@ class CustomJSONEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class GtkTester:
-    def __init__(self, fname, view):
+    def __init__(self, fname, view, full_archive=False):
         self.fname = fname
         self.view = view
         self.events = []
@@ -20,7 +20,11 @@ class GtkTester:
         self.usedids = set()
         self.projects = {}
         self.paused = False
-        self.zip = None
+        if full_archive:
+            self.view.createArchive(fname, close_zip=False)
+            self.zip = self.view.zf
+        else:
+            self.zip = None
 
     def addEvent(self, w, signal, t, val, a):
         ''' events are widget, type="signal", signal, parms; type="set", val '''
@@ -68,15 +72,15 @@ class GtkTester:
     def addid(self, project, cfgid):
         if self.zip is None and self.fname is not None:
             self.zip = zipfile.ZipFile(self.fname, mode="w", compression=zipfile.ZIP_BZIP2)
-            self.zip.mkdir("before")
+            self.zip.mkdir("{}/test/before".format(project.prjid))
         if self.zip is None:
             return
         for a in ("Settings.xml", "PTXSettings.xml"):
             fname = os.path.join(project.path, a)
-            if self.writefile(a, "before", project):
+            if self.writefile(a, "{}/test/before".format(project.prjid), project):
                 break
         for a in ("ptxprint.cfg", "ptxprint.sty"):
-            self.writefile(a, "before", project, cfgid)
+            self.writefile(a, "{}/test/before".format(project.prjid), project, cfgid)
         self.projects[project.prjid] = project
 
     def writefile(self, name, side, project, cfgid=None):
@@ -96,24 +100,25 @@ class GtkTester:
         return False
 
     def finalise(self):
+        project = self.currid[0]
         if self.zip is None or self.paused:
             return
 
         self.pause()
-        self.mkzipdir("after")
+        self.mkzipdir("{}/test/after".format(project.prjid))
         for f in self.zip.infolist():
-            if not f.filename.startswith("before/") or f.is_dir():
+            if not f.filename.startswith("{}/test/before".format(project.prjid)) or f.is_dir():
                 continue
-            b = f.filename.split("/", 3)
-            if len(b) < 4:
+            b = f.filename.split("/", 5)
+            if len(b) < 6:
                 continue
-            project = self.projects[b[1]]
-            cfgid = b[2]
-            self.mkzipdir("after/{}".format(b[1]))
-            self.mkzipdir("after/{}/{}".format(b[1], b[2]))
-            self.writefile(b[3], "after", project, cfgid)
+            project = self.projects[b[0]]
+            cfgid = b[4]
+            self.mkzipdir("{}/test/after/{}".format(project.prjid, b[3]))
+            self.mkzipdir("{}/test/after/{}/{}".format(project.prjid, b[3], b[4]))
+            self.writefile(b[5], "{}/test/after".format(project.prjid), project, cfgid)
         events = json.dumps({"events": self.events}, ensure_ascii=False, indent=4, cls=CustomJSONEncoder)
-        self.zip.writestr("events.json", events)
+        self.zip.writestr("{}/test/events.json".format(project.prjid), events)
         self.zip.close()
 
     def setuprun(self, fname, view):
@@ -121,7 +126,7 @@ class GtkTester:
         projects = {}
         self.runzip = zipfile.ZipFile(fname, "r")
         for fi in self.runzip.infolist():
-            if fi.filename == "events.json":
+            if fi.filename == "start/events.json":
                 with self.runzip.open(fi) as src:
                     self.runevents = json.load(src)['events']
             if not fi.filename.startswith("before/") or fi.is_dir():

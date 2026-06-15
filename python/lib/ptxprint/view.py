@@ -140,6 +140,7 @@ class ViewModel:
         self.periphs = {}
         self.hyphenation = None
         self.report = Report()
+        self.zf = None
 
         # private to this implementation
         self.dict = {}
@@ -2113,13 +2114,13 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def createArchive(self, filename=None, nobuild=False):
+    def createArchive(self, filename=None, nobuild=False, close_zip=True):
         if filename is None:
             filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
         if not filename.lower().endswith(".zip"):
             filename += ".zip"
         try:
-            zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
+            self.zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
         except OSError:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
@@ -2144,31 +2145,32 @@ class ViewModel:
                         if not found and os.path.exists(f):
                             temps.append(f)
                             break
-        self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
+        self._archiveAdd(self.zf, self.getBooks(files=True), xdv=xdvfile)
         working_dir = self.project.printPath(self.cfgid)
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
                 if v is None:
                     v = self.createDiglotView(k)
                 if v is not None:
-                    v._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
+                    v._archiveAdd(self.zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
-                    self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
+                    self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
         for f in set(self.tempFiles + ([] if runjob is None else runjob.picfiles) + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.project.path)
-                self._writearchive(zf, pf, os.path.join(self.project.prjid, outfname))
+                self._writearchive(self.zf, pf, os.path.join(self.project.prjid, outfname))
             else:
                 print(pf)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
             for f in fs:
                 if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    self._writearchive(zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
-        self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
-        zf.close()
+                    self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
+        self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
+        if close_zip:
+            self.zf.close()
         if res:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()

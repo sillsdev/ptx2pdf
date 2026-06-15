@@ -1655,7 +1655,7 @@ class GtkViewModel(ViewModel):
         self.setupTeXOptions()
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
-            self.testing = GtkTester(self.args.capture, self)
+            self.testing = GtkTester(self.args.capture, self, full_archive=True)
             self.starttime = time.time()
             for k, v in _signals.items():
                 for w in v:
