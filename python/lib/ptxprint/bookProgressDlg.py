@@ -281,7 +281,7 @@ class BookProgressDialog:
     def updateEvent(self, event):
         """Route a ProgressEvent to the correct BookProgressCell."""
         cell = self._cells.get(event.book)
-        print(f"{event.book=} {event.mode=} {event.page=} {event.total=}")
+        # print(f"{event.book=} {event.mode=} {event.page=} {event.total=}")
 
         if cell is not None:
             cell.update(event)

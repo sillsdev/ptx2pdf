@@ -9,6 +9,7 @@ except ModuleNotFoundError:
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
+gi.require_version('GtkSource', '3.0')
 from shutil import rmtree, copy2
 import datetime, time, locale, urllib.request, json, hashlib, argparse
 from ptxprint.utils import universalopen, refKey, refSort, chgsHeader, saferelpath, startfile
@@ -5115,10 +5116,8 @@ class GtkViewModel(ViewModel):
                            "All Files": {"pattern": "*"}},
                 multiple = False, basedir=tgtfldr)
         if moduleFile is not None:
-            print(moduleFile)
             moduleFile = [Path(saferelpath(x, prjdir)) for x in moduleFile]
             self.moduleFile = moduleFile[0]
-            print(self.moduleFile)
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
             self.set("r_book", "module")
@@ -6721,7 +6720,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("ptxprint").destroy()
         self.builder.get_object("dlg_preview").destroy()
         self.onDestroy(None)
-        print("Calling i18nize from changeInterfaceLang")
         self.i18nizeURIs()
             
     def onRHruleClicked(self, btn):
@@ -8332,7 +8330,6 @@ Thank you,
 
     def _fillPages_finish(self, results):
         self._pollFillProgress()
-        print("Fill finished")
         try:
             GLib.source_remove(self._progress_watch_id)
         except TypeError:       # self._progress_watch_id can be cleared many places
@@ -8391,7 +8388,6 @@ Thank you,
             self.bkProgressDlg.show()
         else:
             self.bkProgressDlg.hide()
-
 
     def onConfigWizardClicked(self, widget):
         launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),
