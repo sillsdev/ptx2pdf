@@ -7,7 +7,7 @@ from configparser import ConfigParser
 import heapq, re, os, logging, random, itertools, argparse, threading, queue as _queue
 import multiprocessing as mp
 from math import sqrt, log10
-from time import time, asctime
+from time import time, asctime, sleep
 from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob, unlockme
@@ -81,6 +81,7 @@ class LayoutRunResult:
     paragraph_total_lines: Dict[ParagraphRef, int]  # p -> total lines in this run
     paragraph_pages: Dict[ParagraphRef, List[Dict[PageIndex, ColMask]]]
     page_figures: Dict[PageIndex, List[FigurePlacement]]
+    result: int
 
     def _cmp(self, other):
         res = cmp(self.first_failing_page, other.first_failing_page)
@@ -187,7 +188,7 @@ class Hooks:
                   ("header_aversion", "pbheadings"),
                   ("lastline_weight", "pblastline")):
             val = float(printer.view.get("s_"+a[1]))
-            print(f"{a}, {val}")
+            logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
         vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
         logger.log(15, f"Badness parameters = {vals}")
@@ -200,9 +201,9 @@ class Hooks:
                    prompt: str = ".",
                    genfiles: bool = False) -> LayoutRunResult:
         try:
-            self.printer.run_layout(solver, paragraph_params, float_anchors, prompt=prompt, genfiles=genfiles)
+            runres = self.printer.run_layout(solver, paragraph_params, float_anchors, prompt=prompt, genfiles=genfiles)
         except FileNotFoundError as e:
-            print(f"run_layout failed {e}")
+            logger.debug(f"run_layout failed {e}")
             return None
         pages = []
         firstbad = None
@@ -214,7 +215,7 @@ class Hooks:
         plines = self.printer.get_plines()
         pmap = self.printer.get_pidmap()
         logger.log(15, f"{firstbad=}")
-        res = LayoutRunResult(pages, firstbad, plines, pmap, [])
+        res = LayoutRunResult(pages, firstbad, plines, pmap, [], runres)
         return res
 
 
@@ -389,7 +390,7 @@ class TypesetterSolver:
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
         if restart:
-            print(state.layout.first_failing_page)
+            logger.debug(state.layout.first_failing_page)
             self.base_params = {}
             for p, v in state.paragraph_params.items():
                 if self.hooks.get_first_page_for_para(p) <= state.layout.first_failing_page:
@@ -427,16 +428,16 @@ class TypesetterSolver:
             if not state.passed:
                 if state.layout.first_failing_page is not None and state.layout.first_failing_page < page:
                     if page < testloop:
-                        logger.log(15, f"{testloop=} page {state.layout.first_failing_page}")
+                        logger.log(15, f"{self.book}: {testloop=} page {state.layout.first_failing_page}")
                         testloop = min(page, testloop)
                         wantprobe = not self.noprobe
                         self.noprobe = True
                         continue
                     else:
-                        logger.log(15, f"{page=} >= {testloop=} and bail")
+                        logger.log(15, f"{self.book}: {page=} >= {testloop=} and bail")
                         return HumanFixRequest(page, "Caught in page loop")
                 if stop:
-                    return HumanFixRequest(page, "Couldn't solve page")
+                    return HumanFixRequest(page, f"Couldn't solve page {page}")
                 else:
                     while state.layout.first_failing_page is not None and state.layout.first_failing_page == page:
                         state.layout.next_bad()
@@ -448,8 +449,8 @@ class TypesetterSolver:
                     logger.warning(f"Could not solve page {page+1} after {paras[0] if len(paras) else 'UNK'} trying {state.layout.first_failing_page+1}")
                     start_page = state.layout.first_failing_page
                     continue
-            else:
-                self.hooks.progress(ProgressEvent(book, page, "goodpage"))
+            elif state.layout.first_failing_page is not None:
+                self.hooks.progress(ProgressEvent(book, state.layout.first_failing_page - 1, "goodpage"))
             solved = self.hooks.get_paragraphs_for_pages(page, page)
             #self.frozen_paragraphs.update(solved)
             self.init_state = state
@@ -625,10 +626,14 @@ class TypesetterSolver:
             collengths = [colfree[0], colfree[0]+colfree[1]]
         elif len(colfree) == 1:
             collengths = [colfree[0], colfree[0]]
+        count = 0
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
                 if state.paragraph_params.get(pars, (1.0, 0)) != (1.0, 0):
                     continue
+                if count > 100:
+                    break
+                count += 1
                 delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, _ in choice) + 5 * len(choice)
@@ -759,11 +764,14 @@ class PTXprinter:
         self.bk = bk        # needed by run()
         if bk not in self.view.getAllBooks().keys():
             return None
+        #def _print(level, s, *a):
+        #    print(bk+": "+(s % a))
+        #logger.log = _print
         self.view.set("c_allowUnbalanced", True)
         self.view.set("r_book", "single")
         self.view.set("ecb_book", bk)
         # suppress peripherals
-        for a in """c_inclFrontMatter c_autoToC c_frontmatter c_inclMaps
+        for a in """c_inclFrontMatter c_autoToC c_frontmatter c_inclMaps c_useSectIntros c_makeCoverPage
                     c_colophon c_inclBackMatter c_extradvproc c_inclSettingsInPDF c_applyWatermark
                     c_cropmarks c_extractInserts c_printArchive""".split():
             self.view.set(a, False)
@@ -786,13 +794,16 @@ class PTXprinter:
             return (False, f"Failed: {bk}")
         if restart and init_layout.first_failing_page is None:
             np = self.parlocs.numPages()
-            self.progress(ProgressEvent(bk, np, "already_filled", total=np))
-            return (True, f"Complete {bk} Already good")
+            if np > 0:
+                self.progress(ProgressEvent(bk, np, "already_filled", total=np))
+                return (True, f"Complete {bk} Already good")
+            else:
+                self.progress(ProgressEvent(bk, 0, "failed", msg="No page data"))
+                return (False, f"Failed: {bk} No page data")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
         state = EngineState(parms if restart else {p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
         self.hooks.basestate = state
-        print(f"Solving {bk}")
         starttime = time()
         solver = TypesetterSolver(self.hooks, pids)
         if restart:
@@ -879,7 +890,8 @@ class PTXprinter:
         self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
         logfile = self.job.outfname.replace(".tex", ".log")
         self.parselog(logfile)
-        print(prompt, flush=True, end="")
+        print(".", flush=True, end="")
+        return self.job.res
 
     def progress(self, pEvent):
         if self.progress_queue is None:
@@ -1107,7 +1119,7 @@ class Worker(mp.Process):
             try:
                 res = printer.solve(bk, stop=self.stop, restart=self.build_params.args.restart)
             except Exception as e:
-                logging.exception(f"Unhandled error solving {bk}")
+                logger.debug(f"Unhandled error solving {bk}: {e}")
                 if self.build_params.timeout is not None:
                     watchdog.cancel()
                 stop_monitoring.set()
