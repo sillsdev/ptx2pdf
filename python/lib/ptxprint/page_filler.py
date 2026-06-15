@@ -7,7 +7,7 @@ from configparser import ConfigParser
 import heapq, re, os, logging, random, itertools, argparse, threading, queue as _queue
 import multiprocessing as mp
 from math import sqrt, log10
-from time import time, asctime
+from time import time, asctime, sleep
 from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob, unlockme
@@ -449,8 +449,8 @@ class TypesetterSolver:
                     logger.warning(f"Could not solve page {page+1} after {paras[0] if len(paras) else 'UNK'} trying {state.layout.first_failing_page+1}")
                     start_page = state.layout.first_failing_page
                     continue
-            else:
-                self.hooks.progress(ProgressEvent(book, page, "goodpage"))
+            elif state.layout.first_failing_page is not None:
+                self.hooks.progress(ProgressEvent(book, state.layout.first_failing_page - 1, "goodpage"))
             solved = self.hooks.get_paragraphs_for_pages(page, page)
             #self.frozen_paragraphs.update(solved)
             self.init_state = state
@@ -626,10 +626,14 @@ class TypesetterSolver:
             collengths = [colfree[0], colfree[0]+colfree[1]]
         elif len(colfree) == 1:
             collengths = [colfree[0], colfree[0]]
+        count = 0
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
                 if state.paragraph_params.get(pars, (1.0, 0)) != (1.0, 0):
                     continue
+                if count > 100:
+                    break
+                count += 1
                 delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, _ in choice) + 5 * len(choice)
@@ -886,6 +890,7 @@ class PTXprinter:
         self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
         logfile = self.job.outfname.replace(".tex", ".log")
         self.parselog(logfile)
+        print(".", flush=True, end="")
         return self.job.res
 
     def progress(self, pEvent):

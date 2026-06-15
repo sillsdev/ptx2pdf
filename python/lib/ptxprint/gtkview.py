@@ -8325,6 +8325,7 @@ Thank you,
         except:
             mview.teardown()
             self.mview = None
+            return
         #logger.debug(f"page fill results: {results}")
         GLib.idle_add(self._fillPages_finish, results)
 
@@ -8365,7 +8366,8 @@ Thank you,
         try:
             while True:
                 event = q.get_nowait()
-                self._fill_progress(event)
+                if event is not None:
+                    self._fill_progress(event)
         except queue.Empty:
             pass
         return GLib.SOURCE_CONTINUE
