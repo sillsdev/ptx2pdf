@@ -1429,11 +1429,14 @@
  \add@to@digl@tc@ntentlist{#1}%
  \ifnum\@numcuts>0
    \x@\let\x@\tmp\csname @#1egap\endcsname
-   \ifdim \tmp >\baselineskip
-     \count255=\dimexpr \tmp / \baselineskip\relax
-     \trace{C}{Cutout \c@rrdstat \space needs to be adjusted by (\tmp / \the\baselineskip) \the\count255}%
-     \prevgraf=\the\count255 
-     \cutoutcarryover
+   \trace{D}{numcuts:\the\@numcuts, @#1egap='\tmp'}%
+   \ifx\tmp\relax\else
+     \ifdim \tmp >\baselineskip
+       \count255=\dimexpr \tmp / \baselineskip\relax
+       \trace{C}{Cutout \c@rrdstat \space needs to be adjusted by (\tmp / \the\baselineskip) \the\count255}%
+       \prevgraf=\the\count255 
+       \cutoutcarryover
+     \fi
    \fi
  \fi
  \ifdiglotb@dy

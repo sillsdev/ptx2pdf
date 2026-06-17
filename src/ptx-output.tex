@@ -771,7 +771,7 @@
     \global\advance\availht by -\ht\th@cl@ss
     \global\advance\availht by -\dp\th@cl@ss
     \iff@rstnote\advance\availht by -\AboveNoteSpace
-      \global\advance\availht by -\BelowFootNoteSpace
+      %\global\advance\availht by -\BelowFootNoteRuleSpace
       \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
       \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveNoteSpace}%
      \global\advance\availht -\dp\pstr@t \global\f@rstnotefalse % ensure we don't impinge on the depth
