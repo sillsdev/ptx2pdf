@@ -57,8 +57,8 @@
 \def\s@veins@class@name#1#2{save#1#2}
 \def\s@veclass@name#1{\s@veins@class@name{#1}{\s@veclass}}
 \def\m@kes@veb@x#1\E{\x@\newb@x\csname \s@veins@class@name{\ins@base}{#1}\endcsname}
-\def\s@veins#1\E{\x@\global\x@\setbox\csname \s@veclass@name{#1}\x@\endcsname\x@\@@action\csname #1\endcsname}
-\def\r@strins#1\E{\x@\setbox\x@3\x@\box\csname \s@veclass@name{#1}\endcsname\x@\global\x@\setbox\csname #1\endcsname\box3}
+\def\s@veins#1\E{\trace{gI}{s@veins #1 \l@gdims{\csname #1\endcsname}}\x@\global\x@\setbox\csname \s@veclass@name{#1}\x@\endcsname\x@\@@action\csname #1\endcsname}
+\def\r@strins#1\E{\x@\setbox\x@3\x@\@@action\csname \s@veclass@name{#1}\endcsname\ifvoid3\else\trace{gI}{Restoring #1 \l@gdims{3}}\fi\x@\global\x@\setbox\csname #1\endcsname\box3}
 \def\sh@winsertdim#1\E{\x@\let\x@\tmp\csname \v@lpfx#1\v@lsfx\endcsname\immediate\write-1{\v@lpfx#1\v@lsfx: \ifx\tmp\relax\else\the\ht\tmp\space x \the\wd\tmp\fi}}
 
 \def\m@keinsertsaveboxes#1\E{\edef\ins@base{#1}\let\D@=\d@\let\d@=\m@kes@veb@x
@@ -82,13 +82,21 @@
   \x@\cstackdown\ins@rts\E
 }
 
-\def\r@storeinserts#1{%loop through \ins@rts and save them
+\def\r@storeinserts#1{%loop through \ins@rts and restore(\copy) them
   \trace{gI}{Restoring inserts (#1)}%
   \edef\s@veclass{#1}%
+  \let\@@action\copy
   \let\d@=\r@strins
   \x@\cstackdown\ins@rts\E
 }
 
+\def\r@storeinsertsNS#1{%loop through \ins@rts and restore(\box) them
+  \trace{gI}{Restoring inserts (#1) (destructively)}%
+  \edef\s@veclass{#1}%
+  \let\@@action\box
+  \let\d@=\r@strins
+  \x@\cstackdown\ins@rts\E
+}
 
 % Helper function for figure parameters which might come from the fig line, a stylesheet, or a default.
 \def\setf@gval#1#2#3#4{\let#1\empty

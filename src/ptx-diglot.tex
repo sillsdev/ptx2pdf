@@ -1134,7 +1134,7 @@
   \trace{d}{@coll@ct@overrun: \the\insertpenalties, vs:\the\vsize, pg:\the\pagegoal}%
   %\Showbox{255}%
   \ifnum\outputpenalty=\dgl@tPenOverrun\else
-    \message{Ooof, wrong penalty while collecting overrunning inserts!}%
+    \message{!!! EEK. Wrong penalty while collecting overrunning inserts!}%
   \fi
   \s@venotes{\g@tndstat}{2}%Save notes for next page
   \r@storenotes{\g@tndstat}{3}%
@@ -2872,14 +2872,14 @@
   \xdef\firstRmark{}%
   \xdef\botRmark{}%
   \@mptyinserts
-  \r@storeinserts{nxtpg}%
+  \r@storeinsertsNS{nxtpg}%Figures
   \s@veinserts{chunk}%
   \s@veinserts{col}%
   \nextshipout
   \let\col@do=\diglot@applypgnotes
   \x@\each@col\diglot@list\E
   %\r@storeallnotes{2}%
-  \clear@allsaves{1}%
+  \clear@allsaves{1}%Notes
   \clear@allsaves{2}%
   \clear@allsaves{3}%
   \ifdiglotDebugFollowContents
