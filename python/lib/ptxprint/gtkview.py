@@ -9,6 +9,7 @@ except ModuleNotFoundError:
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
+gi.require_version('GtkSource', '3.0')
 from shutil import rmtree, copy2
 import datetime, time, locale, urllib.request, json, hashlib, argparse
 from ptxprint.utils import universalopen, refKey, refSort, chgsHeader, saferelpath, startfile
@@ -291,7 +292,7 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        "btn_layoutWizard") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover tb_Printers lb_Expert bx_statusMsgBar l_pdfStatusLine fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
+_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover tb_Printers lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -1089,6 +1090,7 @@ class GtkViewModel(ViewModel):
         self.fallbackPrj = None
         self.bkProgressDlg = None
         self.coverwiz = None
+        self._coverwiz_cfg_stash = None
 
         self.initialize_uiLevel_menu()
         self.updateShowPDFmenu()
@@ -2541,6 +2543,19 @@ class GtkViewModel(ViewModel):
         if self.project.prjid is not None:
             self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
+    def createConfig(self, diff=None):
+        config = super().createConfig(diff=diff)
+        if self.coverwiz is not None:
+            self.coverwiz.state.saveConfig(config)
+        elif self._coverwiz_cfg_stash is not None and \
+                self._coverwiz_cfg_stash.has_section("coverwiz"):
+            if not config.has_section("coverwiz"):
+                config.add_section("coverwiz")
+            for opt in self._coverwiz_cfg_stash.options("coverwiz"):
+                config.set("coverwiz", opt,
+                           self._coverwiz_cfg_stash.get("coverwiz", opt))
+        return config
+
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.project.srcPath(cfg)
@@ -2691,6 +2706,11 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
         for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
             self._updateSectionVisibility(key)
+        if config.has_section("coverwiz"):
+            if self.coverwiz is not None:
+                self.coverwiz.state.loadConfig(config)
+            else:
+                self._coverwiz_cfg_stash = config
         self.unpauseNoUpdate()
 
     def colorTabs(self):
@@ -2966,7 +2986,7 @@ class GtkViewModel(ViewModel):
             return
         filtered = self.get("c_filterPicList")
         if bks is None and filtered:
-            bks = self.getBooks(errors=True)
+            bks = self.getBooks()
         if bks is None:
             bks = []
         elif not len(bks):
@@ -4037,6 +4057,7 @@ class GtkViewModel(ViewModel):
             'PIC': 'Pictures, Figures, Images, Sidebars', 
             'PDF': 'PDF Options, Covers, Show/Hide',
             'PRV': 'Preview Pane: Adjustment and Analysis Settings',
+            'APF': 'Automatic Page Filler',
             'OTH': 'Other Miscellaneous Settings' }
 
         texopts = self.builder.get_object("gr_texoptions")
@@ -4209,6 +4230,7 @@ class GtkViewModel(ViewModel):
         lsbooks = self.builder.get_object("ls_books")
         bl = self.getBooks(scope="multiple", local=True)
         self.alltoggles = []
+        self._lastClickedToggle = None
         for i, b_row in enumerate(lsbooks):
             book_id = b_row[0]
             tbox = Gtk.ToggleButton(label=book_id)
@@ -4219,6 +4241,7 @@ class GtkViewModel(ViewModel):
             tbox.show()
             if book_id in bl:
                 tbox.set_active(True)
+            tbox.connect("button-press-event", self._onBookTogglePress, i)
             self.alltoggles.append(tbox)
             mbs_grid.attach(tbox, i // 13, i % 13, 1, 1)
         response = dialog.run()
@@ -4334,6 +4357,19 @@ class GtkViewModel(ViewModel):
         if bks is not None and len(bks):
             self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
 
+    def _onBookTogglePress(self, widget, event, idx):
+        if event.button != 1:
+            return False
+        if (event.state & Gdk.ModifierType.SHIFT_MASK) and self._lastClickedToggle is not None:
+            new_state = not widget.get_active()
+            lo, hi = min(self._lastClickedToggle, idx), max(self._lastClickedToggle, idx)
+            for i in range(lo, hi + 1):
+                self.alltoggles[i].set_active(new_state)
+            self._lastClickedToggle = idx
+            return True  # suppress default toggle since we set state explicitly
+        self._lastClickedToggle = idx
+        return False
+
     def toggleBooks(self,start,end):
         bp = self.ptsettings['BooksPresent']
         cPresent = sum(1 for x in bp[start:end] if x == "1")
@@ -4363,6 +4399,11 @@ class GtkViewModel(ViewModel):
 
     def onClickmbs_xtra(self, btn):
         self.toggleBooks(85,124)
+
+    def onClickmbs_toggle(self, btn):
+        for b in self.alltoggles:
+            if b.get_label() in allbooks[0:124]:
+                b.set_active(not b.get_active())
 
     def onClickmbs_none(self, btn):
         for b in self.alltoggles:
@@ -5075,10 +5116,8 @@ class GtkViewModel(ViewModel):
                            "All Files": {"pattern": "*"}},
                 multiple = False, basedir=tgtfldr)
         if moduleFile is not None:
-            print(moduleFile)
             moduleFile = [Path(saferelpath(x, prjdir)) for x in moduleFile]
             self.moduleFile = moduleFile[0]
-            print(self.moduleFile)
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
             self.set("r_book", "module")
@@ -6681,7 +6720,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("ptxprint").destroy()
         self.builder.get_object("dlg_preview").destroy()
         self.onDestroy(None)
-        print("Calling i18nize from changeInterfaceLang")
         self.i18nizeURIs()
             
     def onRHruleClicked(self, btn):
@@ -6893,6 +6931,11 @@ class GtkViewModel(ViewModel):
     def onCoverWizardClicked(self, btn):
         if self.coverwiz is None:
             self.coverwiz = CoverWizardApp(view=self)
+            if self._coverwiz_cfg_stash is not None:
+                self.coverwiz.state.loadConfig(self._coverwiz_cfg_stash)
+                self._coverwiz_cfg_stash = None
+            else:
+                self.coverwiz.state.readFromView(self)
         self.coverwiz.run()
     
     def createCoverPeriphs(self, **kw):
@@ -8258,7 +8301,7 @@ Thank you,
         tout = float(self.get("s_maxfilltime"))
         if tout > 0:
             args.timeout = 60 * tout
-        self.mview = MultiView(self.prjTree, self.userconfig, self.scriptsdir, args=args, odir=self.scriptsdir, view=self)
+        self.mview = MultiView(self.prjTree, self.userconfig, self.scriptsdir, args=args, odir=self.scriptsdir, view=self, timeout=float(self.get("s_pbtimeout")))
         numproc = int(self.get("s_maxproc"))
         if numproc == 0:
             numproc = 1
@@ -8282,12 +8325,12 @@ Thank you,
         except:
             mview.teardown()
             self.mview = None
+            return
         #logger.debug(f"page fill results: {results}")
         GLib.idle_add(self._fillPages_finish, results)
 
     def _fillPages_finish(self, results):
         self._pollFillProgress()
-        print("Fill finished")
         try:
             GLib.source_remove(self._progress_watch_id)
         except TypeError:       # self._progress_watch_id can be cleared many places
@@ -8323,7 +8366,8 @@ Thank you,
         try:
             while True:
                 event = q.get_nowait()
-                self._fill_progress(event)
+                if event is not None:
+                    self._fill_progress(event)
         except queue.Empty:
             pass
         return GLib.SOURCE_CONTINUE
@@ -8346,7 +8390,6 @@ Thank you,
             self.bkProgressDlg.show()
         else:
             self.bkProgressDlg.hide()
-
 
     def onConfigWizardClicked(self, widget):
         launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),
