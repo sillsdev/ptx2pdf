@@ -343,7 +343,7 @@ class Paragraphs(list):
                 else:
                     currr.yend = readpts(p[1])
                     endx = readpts(p[0])
-                ps.lastwidth = (endx - cinfo.topx) / cinfo.width
+                ps.lastwidth = (endx - cinfo.topx) / cinfo.width if cinfo.width else 0
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend

@@ -486,6 +486,18 @@ class WorkingCoverState:
             setfront("BgImageScale", "1x1" if self.img_primary_fit == "stretch" else "1", all=wrap_all)
             setfront("BgImageAlpha", self.img_primary_opacity / 100, all=wrap_all)
             setfront("BgImageAlpha", 1 - (self.img_primary_opacity / 100), all=not wrap_all)
+            # Set Alpha (background-colour opacity) inversely on whichever cover style(s) carry
+            # the image, so high image-opacity → low white-overlay → image shows through.
+            inv_alpha = 1 - self.img_primary_opacity / 100
+            for _tgt in {
+                "wrap_all":            ["coverwhole"],
+                "front_only":          ["coverfront"],
+                "front_spine":         ["coverfront", "coverspine"],
+                "back_only":           ["coverback"],
+                "back_spine":          ["coverback", "coverspine"],
+                "front_back_separate": ["coverfront"],
+            }.get(self.coverage_pattern, ["coverfront"]):
+                view.styleEditor.setval(f"cat:{_tgt}|esb", "Alpha", inv_alpha)
             # todo: cropping images
         for m in (('mt1', 'title'), ('mt2', 'subtitle')):
             sz = view.styleEditor.getval(m[0], 'FontSize', 1.0)
@@ -2454,16 +2466,34 @@ class CoverWizardApp:
         s.computeSpineWidth()
 
         MARGIN = 18
-        drawW  = W - 2*MARGIN
-        drawH  = H - 2*MARGIN
-        topY   = MARGIN
+        availW = W - 2*MARGIN
+        availH = H - 2*MARGIN
+
+        # Determine actual page size so we can lock the preview aspect ratio.
+        try:
+            pwidth_mm, pheight_mm = self.view.calcPageSize() if self.view is not None else (148.0, 210.0)
+        except Exception:
+            pwidth_mm, pheight_mm = 148.0, 210.0
+
+        spine_mm   = s.spine_width_computed_mm if (s.spine_enabled and s.spine_width_computed_mm > 0) else 0.0
+        cover_w_mm = 2 * pwidth_mm + spine_mm
+
+        # Letterbox/pillarbox: fit cover into available space at correct ratio.
+        target_ratio = cover_w_mm / pheight_mm if pheight_mm > 0 else 1.4
+        if availH > 0 and availW / availH > target_ratio:
+            drawH = availH
+            drawW = int(availH * target_ratio)
+        else:
+            drawW = availW
+            drawH = int(availW / target_ratio) if target_ratio > 0 else availH
+
+        leftX = MARGIN + (availW - drawW) // 2
+        topY  = MARGIN + (availH - drawH) // 2
 
         # Spine pixel width scaled to preview
-        REF_PAGE_MM = 148.0
-        if s.spine_enabled and s.spine_width_computed_mm > 0:
-            total_mm = 2*REF_PAGE_MM + s.spine_width_computed_mm
-            spineFrac = s.spine_width_computed_mm / total_mm
-            spinePx  = max(10, int(drawW * spineFrac))
+        if s.spine_enabled and spine_mm > 0:
+            spineFrac = spine_mm / cover_w_mm
+            spinePx   = max(10, int(drawW * spineFrac))
         elif s.spine_enabled:
             spinePx = max(10, int(drawW * 0.06))
         else:
@@ -2474,12 +2504,12 @@ class CoverWizardApp:
         rtl    = s.rtl_binding
 
         if not rtl:
-            backX = MARGIN;         backW = sideW
-            spineX = MARGIN + sideW
+            backX = leftX;         backW = sideW
+            spineX = leftX + sideW
             frontX = spineX + spinePx
         else:
-            frontX = MARGIN
-            spineX = MARGIN + frontW
+            frontX = leftX
+            spineX = leftX + frontW
             backX  = spineX + spinePx; backW = sideW
 
         panelH = drawH
@@ -2490,7 +2520,7 @@ class CoverWizardApp:
         hlBack  = pg == "pg_step6_back"
         hlAll   = pg in ("pg_step2_coverage","pg_step3_background","pg_step7_review")
 
-        self._drawBg(cr, s, MARGIN, topY, drawW, panelH)
+        self._drawBg(cr, s, leftX, topY, drawW, panelH)
         self._drawCoverage(cr, s, backX, backW, spineX, spinePx, frontX, frontW, topY, panelH)
 
         # Dividers
@@ -2503,13 +2533,13 @@ class CoverWizardApp:
             cr.move_to(divX,topY); cr.line_to(divX,topY+panelH); cr.stroke()
 
         cr.set_source_rgb(0.3,0.3,0.3); cr.set_line_width(1)
-        cr.rectangle(MARGIN,topY,drawW,panelH); cr.stroke()
+        cr.rectangle(leftX,topY,drawW,panelH); cr.stroke()
 
         HL = 3
         def hl(x,y,w,h):
             cr.set_source_rgb(0,0,0); cr.set_line_width(HL)
             cr.rectangle(x+HL/2,y+HL/2,w-HL,h-HL); cr.stroke()
-        if hlAll:    hl(MARGIN,topY,drawW,panelH)
+        if hlAll:    hl(leftX,topY,drawW,panelH)
         elif hlFront: hl(frontX,topY,frontW,panelH)
         elif hlSpine and s.spine_enabled: hl(spineX,topY,spinePx,panelH)
         elif hlBack:  hl(backX,topY,backW,panelH)
