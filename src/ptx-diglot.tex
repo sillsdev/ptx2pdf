@@ -998,9 +998,13 @@
     %\clearn@tes% And clear them
     %\cle@rn@tesaves{\g@tndstat}{2}%Things fit or this is a new chunk. No excess notes to carry over.
     \ifdim\TempDim<-0.3\@bls % Coarse test. main trial routine can be pickier if it wants
-      \trace{D}{Initial Content does not fit (th:\the\trialheight, pg:\the\pagegoal, pt:\the\pagetotal, td:\the\TempDim, av:\the\availht)}%
+      \trace{D}{Initial Content does not fit (th:\the\trialheight, pg:\the\pagegoal, pt:\the\pagetotal, td:\the\TempDim, av:\the\availht), \l@gdims{\trialbox}}%
       \global\holdinginserts=1
       \global\tri@ldelta=\dimexpr \ht\trialbox+\dp\trialbox -\trialheight\relax
+      \ifdim\tri@ldelta>0pt 
+        \trace{D}{Initial calc ends up positive: \the\tri@ldelta, using \the\TempDim instead.}%
+        \global\tri@ldelta=\TempDim
+      \fi
       \global\trialfailedtrue
     \else
       \trace{D}{Initial content fits(th:\the\trialheight, av:\the\availht, box:\the\ht\trialbox d:\the\TempDim)}%
@@ -1062,7 +1066,7 @@
       \ifdim\pagegoal>\@bls
         \ifdim\tri@ldelta<-1\@bls
           \trace{d}{Trial overshoot with delta of \the\tri@ldelta}\trialfailedtrue
-          \global\advance\tri@ldelta by -\tri@ldelta % Undo last delta
+          \global\advance\trialheight by -\tri@ldelta % Undo last delta
           \global\divide\tri@ldelta by 2
         \fi
       \fi
@@ -1090,7 +1094,7 @@
         \global\setbox255=\box\voidb@x
         \let\after@this=\whichtrial% 
       \else 
-        \traceNum{D}{Backing up \the\@bls \space and trying again (\the\trialheight)}%
+        \traceNum{D}{Backing up and trying again (th:\the\trialheight)}%
         \r@storenotes{\g@tndstat}{1}%
         \r@storeinserts{col}
         \let\after@this=\d@resplit@galley
@@ -1499,11 +1503,14 @@
  \add@to@digl@tc@ntentlist{#1}%
  \ifnum\@numcuts>0
    \x@\let\x@\tmp\csname @#1egap\endcsname
-   \ifdim \tmp >\baselineskip
-     \count255=\dimexpr \tmp / \baselineskip\relax
-     \trace{C}{Cutout \c@rrdstat \space needs to be adjusted by (\tmp / \the\baselineskip) \the\count255}%
-     \prevgraf=\the\count255 
-     \cutoutcarryover
+   \trace{D}{numcuts:\the\@numcuts, @#1egap='\tmp'}%
+   \ifx\tmp\relax\else
+     \ifdim \tmp >\baselineskip
+       \count255=\dimexpr \tmp / \baselineskip\relax
+       \trace{C}{Cutout \c@rrdstat \space needs to be adjusted by (\tmp / \the\baselineskip) \the\count255}%
+       \prevgraf=\the\count255 
+       \cutoutcarryover
+     \fi
    \fi
  \fi
  \ifdiglotb@dy
