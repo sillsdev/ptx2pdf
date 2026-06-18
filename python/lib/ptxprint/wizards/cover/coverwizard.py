@@ -562,14 +562,14 @@ class WorkingCoverState:
             elif a == 'spine':
                 theight = self.spine_width_computed_mm
                 text_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
-                res.append(rf"\mt2 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*")
+                res.append(rf"\mt2 \zvar|maintitle\* - \zvar|subtitle\*")
             elif a == "back":
                 back_height = view.styleEditor.getval(f"cat:cover{a}|m", "LineSpacing", 1.0)
                 positions = {"inner": "qr", "centre": "pc", "outer": "p"}
                 res.append(r"\zgap|1in\*")
                 res.append(rf"\m {self.backtext}")
                 if self.logo_enabled:
-                    res.append(rf"\zgap|{self.logo_vpos_pct / 100 * pheight}\*")
+                    res.append(rf"\zgap|{self.logo_vpos_pct / 100 * pheight}mm\*")
                     res.append(rf'\fig|src="{self.logo_path}" pgpos="{positions[self.logo_hpos]}" size="col" scale="{self.logo_scale / 100}"\fig*')
                 res.append(r"\vfill")
                 if self.isbn_enabled:
@@ -1121,19 +1121,21 @@ class CoverWizardApp:
     def _updateSummary(self):
         s = self.state
         s.computeSpineWidth()
-        lines = []
+        rows = []  # list of (key, value) tuples, or None for a section gap
 
-        # ── Page 1: Book & spine ─────────────────────────────────────
+        # ── Page 1: Book & spine ──────────────────────────────────────
         if s.spine_enabled:
             spine_mm = f"{s.spine_width_computed_mm:.1f} mm"
             binding  = "hardcover" if s.binding_type == "hardcover" else "paperback"
-            lines.append(f"Book:         {s.pagecount} pages · {binding} with spine ({spine_mm})")
+            book_val = f"{s.pagecount} pages · {binding} with spine ({spine_mm})"
         else:
-            lines.append(f"Book:         {s.pagecount} pages · no spine")
+            book_val = f"{s.pagecount} pages · no spine"
         if s.rtl_binding:
-            lines.append(f"              RTL binding")
+            book_val += " · RTL binding"
+        rows.append(("Book", book_val))
 
-        # ── Page 2: Coverage & images ────────────────────────────────
+        # ── Page 2: Coverage & images ─────────────────────────────────
+        rows.append(None)
         cov_labels = {
             "wrap_all":            "full-spread image",
             "front_only":          "front image only",
@@ -1154,17 +1156,17 @@ class CoverWizardApp:
                 img_parts.append(f"back: {os.path.basename(s.img_secondary_path)}")
         if s.border_enabled:
             img_parts.append(f"border: {s.border_style}")
-        lines.append(f"Images:       {' · '.join(img_parts)}")
+        rows.append(("Images", " · ".join(img_parts)))
 
-        # ── Page 3: Background ───────────────────────────────────────
+        # ── Page 3: Background ────────────────────────────────────────
         if s.bg_mode == "solid":
             op_str = f" {s.bg_opacity}% opacity" if s.bg_opacity < 100 else ""
-            lines.append(f"Background:   solid colour {s.bg_color}{op_str}")
+            rows.append(("Background", f"solid colour {s.bg_color}{op_str}"))
         elif s.bg_mode == "gradient":
-            lines.append(f"Background:   gradient")
-        # white = default, skip
+            rows.append(("Background", "gradient"))
 
-        # ── Page 4: Front cover text ─────────────────────────────────
+        # ── Page 4: Front cover text ──────────────────────────────────
+        rows.append(None)
         if s.title:
             title_str = f'"{s.title}"'
             attrs = []
@@ -1174,9 +1176,9 @@ class CoverWizardApp:
                 attrs.append("boxed")
             if attrs:
                 title_str += f" ({', '.join(attrs)})"
-            lines.append(f"Title:        {title_str}  [pos {s.title_position_pct}%]")
+            rows.append(("Title", f"{title_str}  [pos {s.title_position_pct}%]"))
         else:
-            lines.append(f"Title:        (not set)")
+            rows.append(("Title", "(not set)"))
 
         if s.subtitle_enabled and s.subtitle:
             sub_attrs = []
@@ -1185,17 +1187,18 @@ class CoverWizardApp:
             sub_str = f'"{s.subtitle}"'
             if sub_attrs:
                 sub_str += f" ({', '.join(sub_attrs)})"
-            lines.append(f"Subtitle:     {sub_str}  [pos {s.subtitle_position_pct}%]")
+            rows.append(("Subtitle", f"{sub_str}  [pos {s.subtitle_position_pct}%]"))
 
         if s.langname_enabled and s.langname:
-            lines.append(f"Language:     \"{s.langname}\"  [pos {s.langname_position_pct}%]")
+            rows.append(("Language", f'"{s.langname}"  [pos {s.langname_position_pct}%]'))
 
         if s.fgimage_enabled:
             fg_str = os.path.basename(s.fgimage_path) if s.fgimage_path else "(no file)"
-            lines.append(f"Fg image:     {fg_str}  [pos {s.fgimage_position_pct}%]")
+            rows.append(("Fg image", f"{fg_str}  [pos {s.fgimage_position_pct}%]"))
 
-        # ── Page 5: Spine text (only if spine exists) ────────────────
+        # ── Page 5: Spine text (only if spine exists) ─────────────────
         if s.spine_enabled:
+            rows.append(None)
             spine_parts = []
             if s.spine_title:    spine_parts.append("title")
             if s.spine_subtitle and s.subtitle_enabled: spine_parts.append("subtitle")
@@ -1205,10 +1208,10 @@ class CoverWizardApp:
             if spine_parts:
                 spine_str = ", ".join(spine_parts)
                 size_str = f" {s.spine_text_size_pct}%" if s.spine_text_size_pct != 100 else ""
-                lines.append(f"Spine text:   {spine_str}{size_str} {orient}  "
-                             f"[pos {s.spine_text_vpos_pct}%]")
+                rows.append(("Spine text",
+                             f"{spine_str}{size_str} {orient}  [pos {s.spine_text_vpos_pct}%]"))
             else:
-                lines.append(f"Spine text:   (none selected)")
+                rows.append(("Spine text", "(none selected)"))
 
             if s.spine_publisher_enabled:
                 pub_parts = []
@@ -1221,9 +1224,10 @@ class CoverWizardApp:
                           else f" {s.spine_pub_logo_rotation}"
                     pub_parts.append(f"logo: {logo_name}{rot}")
                 if pub_parts:
-                    lines.append(f"Publisher:    {' · '.join(pub_parts)}")
+                    rows.append(("Publisher", " · ".join(pub_parts)))
 
-        # ── Page 6: Back cover ───────────────────────────────────────
+        # ── Page 6: Back cover ────────────────────────────────────────
+        rows.append(None)
         back_parts = []
         if s.backtext_enabled:
             snippet = s.backtext.strip()[:35]
@@ -1244,12 +1248,30 @@ class CoverWizardApp:
             if logo_attrs:
                 logo_str += f" ({', '.join(logo_attrs)})"
             back_parts.append(f"logo: {logo_str}")
-        if back_parts:
-            lines.append(f"Back cover:   {' · '.join(back_parts)}")
-        else:
-            lines.append(f"Back cover:   (nothing added)")
+        rows.append(("Back cover", " · ".join(back_parts) if back_parts else "(nothing added)"))
 
-        self._l_summary.set_text("\n".join(lines))
+        # ── Rebuild the grid ──────────────────────────────────────────
+        for child in self._summary_grid.get_children():
+            self._summary_grid.remove(child)
+        for grid_row, item in enumerate(rows):
+            if item is None:
+                spacer = Gtk.Label(label="")
+                spacer.set_size_request(-1, 4)
+                spacer.show()
+                self._summary_grid.attach(spacer, 0, grid_row, 2, 1)
+            else:
+                key, value = item
+                lbl_key = makeLabel(key, bold=True, xalign=1.0, wrap=False)
+                lbl_key.set_valign(Gtk.Align.START)
+                self._summary_grid.attach(lbl_key, 0, grid_row, 1, 1)
+                lbl_val = Gtk.Label(label=value)
+                lbl_val.set_xalign(0.0)
+                lbl_val.set_yalign(0.0)
+                lbl_val.set_line_wrap(True)
+                lbl_val.set_selectable(True)
+                lbl_val.set_valign(Gtk.Align.START)
+                lbl_val.show()
+                self._summary_grid.attach(lbl_val, 1, grid_row, 1, 1)
 
     # ── Pixbuf cache ──────────────────────────────────────────────────
 
@@ -2038,15 +2060,20 @@ class CoverWizardApp:
         self._pack(p, makeLabel(
             "Check the preview on the right, then click Finish to save your settings.",
             dim=True))
-        self._l_summary = Gtk.Label(label="Summary will appear here.")
-        self._l_summary.set_xalign(0); self._l_summary.set_yalign(0)
-        self._l_summary.set_line_wrap(True); self._l_summary.set_selectable(True)
-        self._l_summary.show()
-        vp = Gtk.Viewport(); vp.set_shadow_type(Gtk.ShadowType.NONE)
-        vp.add(self._l_summary); vp.show()
+        self._summary_grid = Gtk.Grid()
+        self._summary_grid.set_column_spacing(12)
+        self._summary_grid.set_row_spacing(3)
+        self._summary_grid.set_margin_top(8)
+        self._summary_grid.show()
+        vp = Gtk.Viewport()
+        vp.set_shadow_type(Gtk.ShadowType.NONE)
+        vp.add(self._summary_grid)
+        vp.show()
         sw = Gtk.ScrolledWindow()
         sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        sw.set_hexpand(True); sw.add(vp); sw.show()
+        sw.set_hexpand(True)
+        sw.add(vp)
+        sw.show()
         self._pack(p, sw, expand=True)
 
     # ─────────────────────────────────────────────────────────────────
