@@ -296,7 +296,10 @@
           \b@xedstyletrue}%
       \fi 
       \getmcp@ram{raise}%
-      \ifx\p@ram\relax\else \b@xedstyletrue\fi
+      \ifx\p@ram\relax\else
+        \ifdim\p@ram=0pt\else
+         \trace{sb}{Non-zero raise for \newch@rstyle}%
+         \b@xedstyletrue\fi\fi
       \ch@ckb@xedstyle{\styst@kfirst}{\styst@k}%
     \fi
     \ifb@xedstyle
