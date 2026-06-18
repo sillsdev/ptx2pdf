@@ -49,26 +49,30 @@ newrowcounter = 1
 previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
 
 _PEACH = (1.0, 0.855, 0.725)   # peach puff #FFDAB9
+_LIGHT_GRAY = (0.88, 0.88, 0.88)  # very light gray for "picture not found" rows #E0E0E0
 
 
 class PeachCellRenderer(Gtk.CellRendererText):
-    """CellRendererText that paints a peach selection bar for red-flagged rows.
+    """CellRendererText that paints a custom selection bar for flagged rows.
 
     GTK ignores cell-background when SELECTED, so we draw the rectangle
     ourselves then strip the SELECTED flag before chaining up, which keeps
     the stored foreground colour instead of the theme's white-on-blue.
+    Red rows (scale too large) get a peach bar; gray rows (picture not found)
+    get a very light gray bar.
     """
 
     def __init__(self):
         super().__init__()
-        self.isRedFlag = False  # set per-row by _applyRedFlag cell-data func
+        self.isRedFlag = False   # set per-row by _applyRedFlag cell-data func
+        self.isGrayFlag = False  # set per-row by _applyRedFlag cell-data func
 
     def do_render(self, cr, widget, backgroundArea, cellArea, flags):
-        if self.isRedFlag and (flags & Gtk.CellRendererState.SELECTED):
+        if (self.isRedFlag or self.isGrayFlag) and (flags & Gtk.CellRendererState.SELECTED):
             cr.save()
             cr.rectangle(backgroundArea.x, backgroundArea.y,
                          backgroundArea.width, backgroundArea.height)
-            cr.set_source_rgb(*_PEACH)
+            cr.set_source_rgb(*(_PEACH if self.isRedFlag else _LIGHT_GRAY))
             cr.fill()
             cr.restore()
             flags &= ~Gtk.CellRendererState.SELECTED
@@ -479,7 +483,9 @@ class PicList:
         return res
 
     def _applyRedFlag(self, col, cell, model, it, data=None):
-        cell.isRedFlag = (model.get_value(it, _pickeys['scale_colour']) == "#FF0000")
+        colour = model.get_value(it, _pickeys['scale_colour'])
+        cell.isRedFlag = (colour == "#FF0000")
+        cell.isGrayFlag = (colour == "#808080")
 
     def _updateScaleSpinnerColour(self, colour):
         ctx = self.builder.get_object("s_plScale").get_style_context()
@@ -492,11 +498,16 @@ class PicList:
         ok, x, y, model, path, it = widget.get_tooltip_context(x, y, keyboard_mode)
         if not ok:
             return False
-        if model.get_value(it, _pickeys['scale_colour']) != "#FF0000":
+        colour = model.get_value(it, _pickeys['scale_colour'])
+        if colour == "#FF0000":
+            tooltip.set_text(_("Warning! It appears that the size/scale of this picture is too large"
+                               " to fit in the allocated space. Consider reducing the scale to make"
+                               " sure it fits."))
+        elif colour == "#808080":
+            tooltip.set_text(_("Warning! The picture file could not be found."
+                               " Try setting the Picture Folder on the Global Options section."))
+        else:
             return False
-        tooltip.set_text(_("Warning! It appears that the size/scale of this picture is too large"
-                           " to fit in the allocated space. Consider reducing the scale to make"
-                           " sure it fits."))
         widget.set_tooltip_row(tooltip, path)
         return True
 
@@ -509,7 +520,7 @@ class PicList:
         a = row[_pickeys['anchor']]
         pbuf, fname = self._getpixbuf(row[_pickeys['src']], a, nolimit=True)
         if pbuf is None:
-            return "#00FF00"
+            return "#808080"
         imwidth = pbuf.get_width()
         imheight = pbuf.get_height()
         wscale = imwidth / (pwidth * wfactor)
@@ -698,7 +709,6 @@ class PicList:
     def clearPreview(self):
         pic = self.builder.get_object("img_picPreview")
         pic.clear()
-        tooltip = ""
         
     def set_src(self, src):
         wid = _form_structure.get('src', 'src')
