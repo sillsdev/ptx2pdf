@@ -1,15 +1,17 @@
 PTXprint 3.0.33 Release Notes
-13 Jun 2026
+18 Jun 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.33 - (13 Jun 2026)
+Bug fixes and Improvements in 3.0.33 - (18 Jun 2026)
 
-  * Automatic Page Filler
+  * Automatic Page Filler (Note: This is still an experimental feature)
     - Make Auto Page Filler (in PDFviewer) more intuitive to use
     - Add parameters to control Page Fill algorithm
     - Improve color-coding and wording of Page Fill dialog with Color Key button
+    - Make the completed page reporting more accurate
+    - Disable all peripherals for page_filler
 
   * Diglot/Polyglot
     - Add a Diglot-specific Front Matter template
@@ -20,10 +22,11 @@ Bug fixes and Improvements in 3.0.33 - (13 Jun 2026)
     - Don't make it too easy to enable Diglot (and warn about implications first)
     - When Diglot is enabled, show the project selector for the Sec project
     - Add warning and "Save as Monoglot..." dialog when disabling a Diglot
+    - Cope with cutouts when there has not been a previous chunk
     - Fix bug blocking switch to another config when Diglot was enabled
     - Fix bottom pictures in diglot
 
-  * Covers
+  * Covers (for alpha testing - work in progress)
     - Get covers working from the wizard (see top of Peripherals tab)
     - Fix border maths for covers (#1231)
     - Finish implementing BorderMargins
@@ -33,6 +36,7 @@ Bug fixes and Improvements in 3.0.33 - (13 Jun 2026)
 
   * Pictures
     - Add various items to PicList context menu
+    - Use gray in PicList to indicate if picture is missing / source not found
     - Add peachpuff highlighting for selected problem rows in PicList
     - Add Tooltip for scale error on PicList and peachpuff Scale spinner
     - Fix bug of Frame Size being set to span when inner or outer was selected
@@ -49,7 +53,7 @@ Bug fixes and Improvements in 3.0.33 - (13 Jun 2026)
     - Try to improve placement of temp msgs and dialogs in PDFviewer
     - Add reset all adjustments until end of book to context menu
   
-  * Miscellaneous
+  * Other
     - Add highlighting capability (Ctrl-Click) to Adv->Other settings
     - Ensure Reset/Delete config always shows the right button/label
     - Improve "Jump to Ref in Paratext" by foregrounding PT after sending Ref
