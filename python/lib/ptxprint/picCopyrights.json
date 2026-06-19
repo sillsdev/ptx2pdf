@@ -1,5 +1,5 @@
 {
-    "rtl": [ ],
+    "rtl": [],
     "plurals": {
         "en": {
             "2": "{0} and {1}",
@@ -87,6 +87,10 @@
             "pt": {
                 "1": "Ilustração na página {0}",
                 "mult": "Ilustrações nas páginas {0}"
+            },
+            "id": {
+                "1": "Ilustrasi pada halaman {0}",
+                "mult": "Ilustrasi pada halaman {0}"
             }
         },
         "imageExceptions": {
@@ -113,6 +117,10 @@
             "pt": {
                 "1": "(exceto na página {0})",
                 "mult": "(exceto nas páginas {0})"
+            },
+            "id": {
+                "1": "(kecuali pada halaman {0})",
+                "mult": "(kecuali pada halaman {0})"
             }
         },
         "allIllustrations": {
@@ -121,19 +129,22 @@
             "hu": "Az összes illusztráció{1} {0}",
             "ro": "Toate ilustrațiile{1} {0}",
             "es": "Todas las ilustraciones{1} {0}",
-            "pt": "Todas as ilustrações{1} {0}"
+            "pt": "Todas as ilustrações{1} {0}",
+            "id": "Semua ilustrasi{1} {0}"
         },
         "exceptIllustrations": {
             "en": "All other illustrations{1} {0}",
             "fr": "Toute autre illustration{1} {0}",
             "es": "Todas las demás ilustraciones{1} {0}",
-            "pt": "Todas as outras ilustrações{1} {0}"
+            "pt": "Todas as outras ilustrações{1} {0}",
+            "id": "Semua ilustrasi lain{1} {0}"
         },
         "openbible.info": {
             "en": "Cross references from www.openbible.info, ©_2021 licensed under CC-BY.",
             "fr": "Références croisées de www.openbible.info, ©_2021 sous licence CC-BY.",
             "es": "Referencias cruzadas de www.openbible.info, ©_2021 con licencia CC-BY.",
-            "pt": "Referências cruzadas de www.openbible.info, ©_2021 licenciado sob CC-BY."
+            "pt": "Referências cruzadas de www.openbible.info, ©_2021 licenciado sob CC-BY.",
+            "id": "Referensi silang dari www.openbible.info, ©_2021 dilisensikan berdasarkan CC-BY."
         }
     },
     "copyrights": {
@@ -143,7 +154,8 @@
                 "en": "©_ABS_WARNING: Unpermitted_Use!",
                 "es": "©_ABS_ADVERTENCIA: ¡Uso no permitido!",
                 "fr": "©_ABS_AVERTISSEMENT: Utilisation_non_autorisée!",
-                "pt": "©_ABS_AVISO: Uso_não_permitido!"
+                "pt": "©_ABS_AVISO: Uso_não_permitido!",
+                "id": "©_ABS_PERINGATAN: Penggunaan_tidak_diizinkan!"
             },
             "media": {
                 "default": "x",
@@ -152,7 +164,8 @@
                     "en": "Sorry, but permission to use these images in ANY media has been withdrawn!",
                     "es": "Lo sentimos, pero se ha retirado el permiso para utilizar estas imágenes en CUALQUIER medio de comunicación.",
                     "fr": "Désolé, mais l'autorisation d'utiliser ces images dans TOUS les médias a été retirée !",
-                    "pt": "Desculpe, mas a permissão para usar estas imagens em QUALQUER meio de comunicação foi retirada!"
+                    "pt": "Desculpe, mas a permissão para usar estas imagens em QUALQUER meio de comunicação foi retirada!",
+                    "id": "Maaf, tetapi izin untuk menggunakan gambar-gambar ini di media APA PUN telah dicabut!"
                 }
             }
         },
@@ -162,13 +175,15 @@
                 "en": "©_1996_David_C_Cook.",
                 "es": "©_1996_David_C_Cook.",
                 "fr": "©_1996_David_C_Cook.",
-                "pt": "©_1996_David_C_Cook."
+                "pt": "©_1996_David_C_Cook.",
+                "id": "©_1996_David_C_Cook."
             },
             "sensitive": {
                 "en": "©_DCC,_1996.",
                 "es": "©_DCC,_1996.",
                 "fr": "©_DCC,_1996.",
-                "pt": "©_DCC,_1996."
+                "pt": "©_DCC,_1996.",
+                "id": "©_DCC,_1996."
             },
             "media": {
                 "default": "paw",
@@ -177,14 +192,16 @@
                     "en": "Any media, but needs written permission",
                     "es": "Cualquier medio de comunicación, pero necesita permiso por escrito",
                     "fr": "Tout média, mais nécessite une autorisation écrite",
-                    "pt": "Qualquer meio de comunicação, mas necessita de permissão por escrito"
+                    "pt": "Qualquer meio de comunicação, mas necessita de permissão por escrito",
+                    "id": "Media apa pun diperbolehkan, tetapi memerlukan izin tertulis"
                 }
             },
             "credit": {
                 "en": "©_DCC",
                 "es": "©_DCC",
                 "fr": "©_DCC",
-                "pt": "©_DCC"
+                "pt": "©_DCC",
+                "id": "©_DCC"
             }
         },
         "co": {
@@ -193,13 +210,15 @@
                 "en": "©_1996_David_C_Cook.",
                 "es": "©_1996_David_C_Cook.",
                 "fr": "©_1996_David_C_Cook.",
-                "pt": "©_1996_David_C_Cook."
+                "pt": "©_1996_David_C_Cook.",
+                "id": "©_1996_David_C_Cook."
             },
             "sensitive": {
                 "en": "©_DCC,_1996.",
                 "es": "©_DCC,_1996.",
                 "fr": "©_DCC,_1996.",
-                "pt": "©_DCC,_1996."
+                "pt": "©_DCC,_1996.",
+                "id": "©_DCC,_1996."
             },
             "media": {
                 "default": "paw",
@@ -208,20 +227,23 @@
                     "en": "Any media, but needs written permission",
                     "es": "Cualquier medio de comunicación, pero necesita permiso por escrito",
                     "fr": "Tout média, mais nécessite une autorisation écrite",
-                    "pt": "Qualquer meio de comunicação, mas necessita de permissão por escrito"
+                    "pt": "Qualquer meio de comunicação, mas necessita de permissão por escrito",
+                    "id": "Media apa pun diperbolehkan, tetapi memerlukan izin tertulis"
                 }
             },
             "creditsensitive": {
                 "en": "© DCC",
                 "es": "© DCC",
                 "fr": "© DCC",
-                "pt": "© DCC"
+                "pt": "© DCC",
+                "id": "© DCC"
             },
             "credit": {
                 "en": "© David C Cook",
                 "es": "© David C Cook",
                 "fr": "© David C Cook",
-                "pt": "© David C Cook"
+                "pt": "© David C Cook",
+                "id": "© David C Cook"
             }
         },
         "hk": {
@@ -230,13 +252,15 @@
                 "en": "by_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
                 "es": "por_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
                 "fr": "de_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
-                "pt": "por_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995."
+                "pt": "por_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
+                "id": "oleh_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995."
             },
             "sensitive": {
                 "en": "©_BFBS,_1995.",
                 "es": "©_BFBS,_1995.",
                 "fr": "©_BFBS,_1995.",
-                "pt": "©_BFBS,_1995."
+                "pt": "©_BFBS,_1995.",
+                "id": "©_BFBS,_1995."
             },
             "media": {
                 "default": "p",
@@ -245,7 +269,8 @@
                     "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
                     "es": "La impresión está permitida, pero el uso de la App requiere un acuerdo formal y un informe. El uso en la web no está permitido.",
                     "fr": "L'impression est autorisée, mais l'utilisation dans une application nécessite un accord formel et un rapport. L'utilisation sur le Web n'est pas autorisée.",
-                    "pt": "A impressão é permitida, mas o uso em App requer um acordo formal e relatório. O uso na web não é permitido."
+                    "pt": "A impressão é permitida, mas o uso em App requer um acordo formal e relatório. O uso na web não é permitido.",
+                    "id": "Cetak diperbolehkan, tetapi penggunaan Aplikasi memerlukan perjanjian formal dan pelaporan. Penggunaan Web tidak diizinkan."
                 }
             }
         },
@@ -255,13 +280,15 @@
                 "en": "by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
                 "es": "por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
                 "fr": "de_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
-                "pt": "por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
+                "pt": "por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
+                "id": "oleh_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
             },
             "sensitive": {
                 "en": "©_BFBS,_1994.",
                 "es": "©_BFBS,_1994.",
                 "fr": "©_BFBS,_1994.",
-                "pt": "©_BFBS,_1994."
+                "pt": "©_BFBS,_1994.",
+                "id": "©_BFBS,_1994."
             },
             "media": {
                 "default": "p",
@@ -270,7 +297,8 @@
                     "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
                     "es": "La impresión está permitida, pero el uso de la App requiere un acuerdo formal y un informe. El uso en la web no está permitido.",
                     "fr": "L'impression est autorisée, mais l'utilisation dans une application nécessite un accord formel et un rapport. L'utilisation sur le Web n'est pas autorisée.",
-                    "pt": "A impressão é permitida, mas o uso em App requer um acordo formal e relatório. O uso na web não é permitido."
+                    "pt": "A impressão é permitida, mas o uso em App requer um acordo formal e relatório. O uso na web não é permitido.",
+                    "id": "Cetak diperbolehkan, tetapi penggunaan Aplikasi memerlukan perjanjian formal dan pelaporan. Penggunaan Web tidak diizinkan."
                 }
             }
         },
@@ -280,13 +308,15 @@
                 "en": "by_Horace_Knowles revised by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
                 "es": "por_Horace_Knowles revised by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
                 "fr": "de_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
-                "pt": "por_Horace_Knowles revisado por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
+                "pt": "por_Horace_Knowles revisado por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
+                "id": "oleh_Horace_Knowles direvisi oleh_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994."
             },
             "sensitive": {
                 "en": "©_BFBS,_1994.",
                 "es": "©_BFBS,_1994.",
                 "fr": "©_BFBS,_1994.",
-                "pt": "©_BFBS,_1994."
+                "pt": "©_BFBS,_1994.",
+                "id": "©_BFBS,_1994."
             },
             "media": {
                 "default": "p",
@@ -295,7 +325,8 @@
                     "en": "Print is fine, but App use requires a formal agreement and reporting. Web use is not permitted.",
                     "es": "La impresión está permitida, pero el uso de la App requiere un acuerdo formal y un informe. El uso en la web no está permitido.",
                     "fr": "L'impression est autorisée, mais l'utilisation dans une application nécessite un accord formel et un rapport. L'utilisation sur le Web n'est pas autorisée.",
-                    "pt": "A impressão é permitida, mas o uso em App requer um acordo formal e relatório. O uso na web não é permitido."
+                    "pt": "A impressão é permitida, mas o uso em App requer um acordo formal e relatório. O uso na web não é permitido.",
+                    "id": "Cetak diperbolehkan, tetapi penggunaan Aplikasi memerlukan perjanjian formal dan pelaporan. Penggunaan Web tidak diizinkan."
                 }
             }
         },
@@ -305,7 +336,8 @@
                 "en": "used by_permission of_Louise_Bass.",
                 "es": "utilizado con_permiso de_Louise_Bass.",
                 "fr": "utilisé avec la_permission de_Louise_Bass.",
-                "pt": "usado com_permissão de_Louise_Bass."
+                "pt": "usado com_permissão de_Louise_Bass.",
+                "id": "digunakan atas_izin dari_Louise_Bass."
             },
             "media": {
                 "default": "paw",
@@ -314,7 +346,8 @@
                     "en": "Any media is fine without restriction",
                     "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction",
-                    "pt": "Qualquer meio de comunicação é permitido sem restrição"
+                    "pt": "Qualquer meio de comunicação é permitido sem restrição",
+                    "id": "Semua media boleh digunakan tanpa batasan"
                 }
             }
         },
@@ -324,13 +357,15 @@
                 "en": "by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
                 "es": "por_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
                 "fr": "de_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International.",
-                "pt": "por_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International."
+                "pt": "por_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International.",
+                "id": "oleh_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. dan dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License."
             },
             "sensitive": {
                 "en": "by_Carolyn_Dyk, ©_2001_WBT_Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
                 "es": "por_Carolyn_Dyk, ©_2001_WBT_Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
                 "fr": "de_Carolyn_Dyk, ©_2001_WBT_Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International.",
-                "pt": "por_Carolyn_Dyk, ©_2001_WBT_Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International."
+                "pt": "por_Carolyn_Dyk, ©_2001_WBT_Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International.",
+                "id": "oleh_Carolyn_Dyk, ©_2001_WBT_Inc. dan dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License."
             },
             "media": {
                 "default": "paw",
@@ -339,7 +374,8 @@
                     "en": "Any media is fine without restriction",
                     "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction",
-                    "pt": "Qualquer meio de comunicação é permitido sem restrição"
+                    "pt": "Qualquer meio de comunicação é permitido sem restrição",
+                    "id": "Semua media boleh digunakan tanpa batasan"
                 }
             }
         },
@@ -349,13 +385,15 @@
                 "en": "by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. and licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
-                "pt": "por_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+                "pt": "por_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
+                "id": "oleh_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. dan dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "sensitive": {
                 "en": "by_Gordon_Thompson ©_2012_WBT_Inc. and licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_Gordon_Thompson ©_2012_WBT_Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_Gordon_Thompson ©_2012_WBT_Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
-                "pt": "por_Gordon_Thompson ©_2012_WBT_Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+                "pt": "por_Gordon_Thompson ©_2012_WBT_Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
+                "id": "oleh_Gordon_Thompson ©_2012_WBT_Inc. dan dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "media": {
                 "default": "paw",
@@ -364,7 +402,8 @@
                     "en": "Any media is fine without restriction",
                     "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction",
-                    "pt": "Qualquer meio de comunicação é permitido sem restrição"
+                    "pt": "Qualquer meio de comunicação é permitido sem restrição",
+                    "id": "Semua media boleh digunakan tanpa batasan"
                 }
             }
         },
@@ -374,13 +413,15 @@
                 "en": "by_Scott_Hayes ©_2023_Scott_Hayes, licensed under_the Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0) license.",
                 "es": "por_Scott_Hayes ©_2023_Scott_Hayes, con licencia bajo_Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0).",
                 "fr": "de_Scott_Hayes ©_2023_Scott_Hayes, autorisé sous la_licence Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0).",
-                "pt": "por_Scott_Hayes ©_2023_Scott_Hayes, licenciado sob a_licença Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0)."
+                "pt": "por_Scott_Hayes ©_2023_Scott_Hayes, licenciado sob a_licença Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0).",
+                "id": "oleh_Scott_Hayes ©_2023_Scott_Hayes, dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0)."
             },
             "sensitive": {
                 "en": "by_Scott_Hayes ©_2023_Scott_Hayes, licensed under_the Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0) license.",
                 "es": "por_Scott_Hayes ©_2023_Scott_Hayes, con licencia bajo_Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0).",
                 "fr": "de_Scott_Hayes ©_2023_Scott_Hayes, autorisé sous la_licence Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0).",
-                "pt": "por_Scott_Hayes ©_2023_Scott_Hayes, licenciado sob a_licença Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0)."
+                "pt": "por_Scott_Hayes ©_2023_Scott_Hayes, licenciado sob a_licença Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0).",
+                "id": "oleh_Scott_Hayes ©_2023_Scott_Hayes, dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0)."
             },
             "media": {
                 "default": "paw",
@@ -389,7 +430,8 @@
                     "en": "Any media is fine for non commercial use. For inquiries regarding a commercial license please email Scott Hayes at hayesvienna@gmail.com",
                     "es": "Cualquier medio está permitido para uso no comercial. Para consultas sobre una licencia comercial, envíe un correo electrónico a Scott Hayes a hayesvienna@gmail.com",
                     "fr": "Tout média est autorisé pour un usage non commercial. Pour toute demande de licence commerciale, veuillez envoyer un courriel à Scott Hayes à hayesvienna@gmail.com",
-                    "pt": "Qualquer meio de comunicação é permitido para uso não comercial. Para consultas sobre licença comercial, envie um e-mail para Scott Hayes em hayesvienna@gmail.com"
+                    "pt": "Qualquer meio de comunicação é permitido para uso não comercial. Para consultas sobre licença comercial, envie um e-mail para Scott Hayes em hayesvienna@gmail.com",
+                    "id": "Semua media boleh digunakan untuk keperluan non-komersial. Untuk pertanyaan mengenai lisensi komersial, silakan hubungi Scott Hayes melalui email hayesvienna@gmail.com"
                 }
             }
         },
@@ -399,13 +441,15 @@
                 "en": "by_David_Healey ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_David_Healey ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_David_Healey ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
-                "pt": "por_David_Healey ©_2012_Wycliffe Bible Translators Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+                "pt": "por_David_Healey ©_2012_Wycliffe Bible Translators Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
+                "id": "oleh_David_Healey ©_2012_Wycliffe Bible Translators Inc. dan dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "sensitive": {
                 "en": "by_David_Healey ©_2012_WBT_Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_David_Healey ©_2012_WBT_Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_David_Healey ©_2012_WBT_Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
-                "pt": "por_David_Healey ©_2012_WBT_Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+                "pt": "por_David_Healey ©_2012_WBT_Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
+                "id": "oleh_David_Healey ©_2012_WBT_Inc. dan dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "media": {
                 "default": "paw",
@@ -414,7 +458,8 @@
                     "en": "Any media is fine without restriction",
                     "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction",
-                    "pt": "Qualquer meio de comunicação é permitido sem restrição"
+                    "pt": "Qualquer meio de comunicação é permitido sem restrição",
+                    "id": "Semua media boleh digunakan tanpa batasan"
                 }
             }
         },
@@ -424,13 +469,15 @@
                 "en": "by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
-                "pt": "por_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+                "pt": "por_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
+                "id": "oleh_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. dan dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "sensitive": {
                 "en": "by_Michael_Harrar ©_2012_WBT_Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_Michael_Harrar ©_2012_WBT_Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_Michael_Harrar ©_2012_WBT_Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
-                "pt": "por_Michael_Harrar ©_2012_WBT_Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+                "pt": "por_Michael_Harrar ©_2012_WBT_Inc. e licenciado sob a_licença Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia.",
+                "id": "oleh_Michael_Harrar ©_2012_WBT_Inc. dan dilisensikan berdasarkan_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "media": {
                 "default": "paw",
@@ -439,7 +486,8 @@
                     "en": "Any media is fine without restriction",
                     "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction",
-                    "pt": "Qualquer meio de comunicação é permitido sem restrição"
+                    "pt": "Qualquer meio de comunicação é permitido sem restrição",
+                    "id": "Semua media boleh digunakan tanpa batasan"
                 }
             }
         },
@@ -449,7 +497,8 @@
                 "en": "used by_permission_of_Muze_Tshilombo.",
                 "es": "utilizado con_permiso de_Muze_Tshilombo.",
                 "fr": "utilisé avec la_permission de_Muze_Tshilombo.",
-                "pt": "usado com_permissão de_Muze_Tshilombo."
+                "pt": "usado com_permissão de_Muze_Tshilombo.",
+                "id": "digunakan atas_izin_dari_Muze_Tshilombo."
             },
             "media": {
                 "default": "paw",
@@ -458,7 +507,8 @@
                     "en": "Any media is fine without restriction",
                     "es": "Cualquier medio está bien sin restricción",
                     "fr": "Tout média est permis sans restriction",
-                    "pt": "Qualquer meio de comunicação é permitido sem restrição"
+                    "pt": "Qualquer meio de comunicação é permitido sem restrição",
+                    "id": "Semua media boleh digunakan tanpa batasan"
                 }
             }
         },
@@ -468,13 +518,15 @@
                 "en": "by_Graham_Wade, ©_United Bible Societies, 1989.",
                 "es": "por_Graham_Wade, ©_United Bible Societies, 1989.",
                 "fr": "de_Graham_Wade, ©_United Bible Societies, 1989.",
-                "pt": "por_Graham_Wade, ©_United Bible Societies, 1989."
+                "pt": "por_Graham_Wade, ©_United Bible Societies, 1989.",
+                "id": "oleh_Graham_Wade, ©_United Bible Societies, 1989."
             },
             "sensitive": {
                 "en": "©_UBS,_1989.",
                 "es": "©_UBS,_1989.",
                 "fr": "©_UBS,_1989.",
-                "pt": "©_UBS,_1989."
+                "pt": "©_UBS,_1989.",
+                "id": "©_UBS,_1989."
             },
             "media": {
                 "default": "p",
@@ -485,7 +537,8 @@
                     "fr": "Seulement les médias imprimés",
                     "ro": "Numai pentru imprimare",
                     "hu": "Csak nyomtatás",
-                    "pt": "Apenas meios impressos"
+                    "pt": "Apenas meios impressos",
+                    "id": "Hanya media cetak"
                 }
             }
         },
@@ -495,13 +548,15 @@
                 "en": "by_Darwin_Dunham, ©_United Bible Societies, 1989.",
                 "es": "por_Darwin_Dunham, ©_United Bible Societies, 1989.",
                 "fr": "de_Darwin_Dunham, ©_United Bible Societies, 1989.",
-                "pt": "por_Darwin_Dunham, ©_United Bible Societies, 1989."
+                "pt": "por_Darwin_Dunham, ©_United Bible Societies, 1989.",
+                "id": "oleh_Darwin_Dunham, ©_United Bible Societies, 1989."
             },
             "sensitive": {
                 "en": "©_UBS,_1989.",
                 "es": "©_UBS,_1989.",
                 "fr": "©_UBS,_1989.",
-                "pt": "©_UBS,_1989."
+                "pt": "©_UBS,_1989.",
+                "id": "©_UBS,_1989."
             },
             "media": {
                 "default": "p",
@@ -512,7 +567,8 @@
                     "fr": "Seulement les médias imprimés",
                     "ro": "Numai pentru imprimare",
                     "hu": "Csak nyomtatás",
-                    "pt": "Apenas meios impressos"
+                    "pt": "Apenas meios impressos",
+                    "id": "Hanya media cetak"
                 }
             }
         },
@@ -522,7 +578,8 @@
                 "en": "(in color) by Dr._Farid_Faadil. ©_Biblica,_Inc. Used_by_permission. All_rights_reserved_worldwide.",
                 "es": "(en color) por_Dr._Farid_Faadil. ©_Biblica,_Inc. Usado_con_permiso. Todos_los_derechos_reservados_en_el_mundo.",
                 "fr": "(en couleur) par_Dr._Farid_Faadil. ©_Biblica,_Inc. Utilisé_par_permission. Tous_droits_réservés dans le_monde_entier.",
-                "pt": "(em cor) pelo_Dr._Farid_Faadil. ©_Biblica,_Inc. Usado_com_permissão. Todos_os_direitos_reservados_no_mundo."
+                "pt": "(em cor) pelo_Dr._Farid_Faadil. ©_Biblica,_Inc. Usado_com_permissão. Todos_os_direitos_reservados_no_mundo.",
+                "id": "(berwarna) oleh Dr._Farid_Faadil. ©_Biblica,_Inc. Digunakan_atas_izin. Hak_cipta_dilindungi."
             },
             "media": {
                 "default": "p",
@@ -533,7 +590,8 @@
                     "fr": "Seulement les médias imprimés",
                     "ro": "Numai pentru imprimare",
                     "hu": "Csak nyomtatás",
-                    "pt": "Apenas meios impressos"
+                    "pt": "Apenas meios impressos",
+                    "id": "Hanya media cetak"
                 }
             }
         },
@@ -543,7 +601,8 @@
                 "en": "©_BIBLICA_WARNING: Unpermitted_Use!",
                 "es": "©_BIBLICA_ADVERTENCIA: ¡Uso no permitido!",
                 "fr": "©_BIBLICA_AVERTISSEMENT: Utilisation_non_autorisée!",
-                "pt": "©_BIBLICA_AVISO: Uso_não_permitido!"
+                "pt": "©_BIBLICA_AVISO: Uso_não_permitido!",
+                "id": "©_BIBLICA_PERINGATAN: Penggunaan_tidak_diizinkan!"
             },
             "media": {
                 "default": "x",
@@ -552,22 +611,41 @@
                     "en": "Sorry, but permission to use these images in ANY media has been withdrawn!",
                     "es": "Lo sentimos, pero se ha retirado el permiso para utilizar estas imágenes en CUALQUIER medio de comunicación.",
                     "fr": "Désolé, mais l'autorisation d'utiliser ces images dans TOUS les médias a été retirée !",
-                    "pt": "Desculpe, mas a permissão para usar estas imagens em QUALQUER meio de comunicação foi retirada!"
+                    "pt": "Desculpe, mas a permissão para usar estas imagens em QUALQUER meio de comunicação foi retirada!",
+                    "id": "Maaf, tetapi izin untuk menggunakan gambar-gambar ini di media APA PUN telah dicabut!"
                 }
             }
         }
+    },
+    "_review_needed": {
+        "id": [
+            "copyrights.ab.media.tip",
+            "copyrights.cn.media.tip",
+            "copyrights.co.media.tip",
+            "copyrights.hk.media.tip",
+            "copyrights.lb.media.tip",
+            "copyrights.bk.media.tip",
+            "copyrights.sh.media.tip",
+            "copyrights.xb.media.tip"
+        ]
     },
     "postreg": {
         "hu": {
             "replacements": {
                 "defArt": [
-                        ["\\b([Aa]) 1\\.", "\\1z 1."],
-                        ["\\b([Aa]) ([5aeiouóöőúüűíéá])", "\\1z \\2"]
+                    [
+                        "\\b([Aa]) 1\\.",
+                        "\\1z 1."
+                    ],
+                    [
+                        "\\b([Aa]) ([5aeiouóöőúüűíéá])",
+                        "\\1z \\2"
+                    ]
                 ]
-             },
+            },
             "templates": {
-                "imageCopyrights" : "defArt",
-                "imageExceptions" : "defArt"
+                "imageCopyrights": "defArt",
+                "imageExceptions": "defArt"
             }
         }
     }

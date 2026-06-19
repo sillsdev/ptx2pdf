@@ -71,7 +71,7 @@
         {
           "Type": "insert",
           "Label": "\\zimagecopyrights[LANG]",
-          "Description": "Insert image copyrights for a language",
+          "Description": "Insert image copyrights for a language (en,fr,es,pt)",
           "CodeSnippet": "\\zimagecopyrightsfr"
         },
         {
