@@ -391,6 +391,7 @@
    \ifunprintable\else 
      \decr{\availht}{\topins}%pictures
      % Reduce by the height of whichever top picture takes the most space.
+     % column-bottom pictures don't work the same way.
      \let\col@do=\max@Tinsdim
      \dimen1=0pt
      \x@\each@col\diglot@list\E%
@@ -485,7 +486,9 @@
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
   \trace{d}{rej@ctgalley (\c@rrdstat) reflow:\refl@wlist}%
   \r@storenotes{\g@tndstat}{1}%
-  \r@storeinserts{col}
+  %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
+  \r@storeinserts{col}%
+  %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
   \restore@oldmarks{\c@rrdstat}%
   \ifdim\trialheight<0pt
     \boxmovedtrue % and drop through
@@ -500,16 +503,16 @@
 }
 
 \def\d@resplit@galley{%Old diglot@backingup's use of input stack caused needless problems.
-  \traceNum{d}{d@resplit@galley \c@rrdstat\space\the\trialheight\space bls:\the\baselineskip\space @bls:\the\@bls}%
+  \traceNum{d}{d@resplit@galley \c@rrdstat\space\l@gdims{\galley}, \the\trialheight\space bls:\the\baselineskip\space @bls:\the\@bls}%
   \dimen0=\vfuzz
   \vfuzz=\maxdimen
+  \global\tri@ldelta=0pt
   \global\haveb@ckeduptrue
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname
-  %\global\setbox\@xcs\copy\csname whole\c@rrdstat\endcsname
   \setbox0\vbox{\penalty9000\unvcopy\csname whole\c@rrdstat\endcsname}%
-  \dimen1=\ht\galley\advance\dimen1 by \dp\galley\relax
+  \dimen1=\ht0\advance\dimen1 by \dp0\relax
   \ifdim\dimen1<\trialheight
-    \trace{D}{ODD: trialheight bigger than contents. Probably a footnote/fig.  Reducing trialheight from \the\trialheight to \the\dimen1}%
+    \trace{D}{trialheight bigger than contents. Reducing trialheight from \the\trialheight to \the\dimen1}%
     \global\trialheight=\dimen1
   \fi
   %\splittopskip=0pt
@@ -524,7 +527,7 @@
     \vfuzz=\dimen0
     \let\after@this=\whichtrial
   \else 
-    \trace{D}{Split result:ht=\the\ht1, dp=\the\dp1. Remainder \ifvoid 0 void\else \the\ht0+\the\dp0\fi}%
+    \trace{D}{Split result for \c@rrdstat:ht=\the\ht1, dp=\the\dp1. Remainder \ifvoid 0 void\else \the\ht0+\the\dp0\fi}%
     \savingvdiscards=1
     \setbox\@xcs\copy\csname whole\c@rrdstat\endcsname
     \global\setbox\galley=\vsplit\@xcs to \trialheight
@@ -540,7 +543,8 @@
     \ifvoid\@xcs\else
       \global\setbox\@xcs\vbox{\vskip\ht3\penalty10000\unvbox\@xcs}%
     \fi
-    \trace{D}{galley/xs now \the\ht\galley+\the\dp\galley, / \the\ht\@xcs+\the\dp\@xcs, gp:\the\galleypenalty}%
+    \vsize=\csname availht\c@rrdstat\endcsname
+    \trace{D}{galley/xs now \the\ht\galley+\the\dp\galley, / \the\ht\@xcs+\the\dp\@xcs, gp:\the\galleypenalty, vs:\the\vsize}%
     \ifnum\TRACEcount=\diglotDbgJoinboxes
      \Showbox\galley\Showbox\@xcs
     \fi
@@ -555,7 +559,6 @@
   \global\intrialtrue
   \global\vsize=\availht
   \global\setbox\trialbox=\box\voidb@x
-  \global\tri@ldelta=0pt
   \global\output={\diglot@any@trial}%calls \whichtrial on success
   \tracetimset{any@trial}%
   \unvcopy\galley\relax %process newly-shrunk galley
@@ -616,6 +619,10 @@
     \fi
     \savingvdiscards=1
     \trace{D}{Splitting \c@rrdstat\space \the\ht\@whl+\the\dp\@whl\space to \the\trialheight (overwriting \the\ht\@xcs)}%
+    \dimen0=\ht\@whl\advance\dimen0\dp\@whl
+    \ifdim\dimen0>\trialheight
+      \global\trialheight=\dimen0
+    \fi
     \global\setbox\@xcs\copy\@whl
     \global\setbox\p@rtl=\vsplit\@xcs to \trialheight
     \edef\tmpbadness{\the\badness}%
@@ -762,6 +769,7 @@
       \@trial@failed{1}%
     \else
       \makevtop{\trialbox}%
+      \s@veinserts{col}%
       \ifvoid\@xcs
         %\tracingmacros=1\tracingassigns=1
         \TempDim=\availht %Recalc in case there's an issue
@@ -807,7 +815,6 @@
   \x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\csname partial\c@rrdstat\endcsname}{\csname excess\c@rrdstat\endcsname}{3}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
   \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
   \ifdiglotDebugFollowContents
-    \trace{D}{Showing galley@xcess}%
     \trace{D}{Showing restored excess\c@rrdstat}%
     \x@\Showbox\csname excess\c@rrdstat\endcsname
     \x@\Showbox\csname partial\c@rrdstat\endcsname
@@ -902,10 +909,10 @@
  %if the galley fits then there are no discards and 
  %it calls whichtrial 
  %as though it hadn't been here.
- %Assumptions: holdinginserts=1 material in \galley and \excessX
+ %Assumptions: holdinginserts=1 material in \galley and \excessX (and \whole)
   \tracetimcheck{any@trial}{output}%
   \traceifset{diglot@any@trial}%
-  \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles,  th:\the\trialheight, pg:\the\pagegoal, pt:\the\pagetotal, p:\the\ht\p@rtl, split inserts:\the\insertpenalties}%
+  \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles,  vs:\the\vsize, th:\the\trialheight, pg:\the\pagegoal, pt:\the\pagetotal, p:\the\ht\p@rtl, split inserts:\the\insertpenalties}%
   \@bls=\csname b@selineskip\c@rrdstat\endcsname
   \ifnum\holdinginserts=0\relax\else
     \ifvoid\trialbox
@@ -916,14 +923,29 @@
       \fi
     \fi
   \fi
-  \ifdim\ht255<0pt 
-    \trace{d}{Uh oh. Negative box!}%
+  %\ifdim\ht255<0pt 
+    %\trace{d}{Uh oh. Negative box! \the\ht255. vs:\the\vsize}% This isn't really a problem, except some of the rest here isn't needed.
+    %\Showbox{255}%
     %\global\trialfailedtrue
     %\pagefulltrue
+  %\fi
+  \let\n@xt\diglot@trial@tail
+  \ifnum\endtri@lpen@lty=\outputpenalty
+    \let\n@xt\diglot@trial@good
   \fi
+  \n@xt
+}
+\def\diglot@trial@good{% This lot is important for good trials, but worth skipping if we're not going to use this trial result.
+  \setbox255\vbox{\unvbox255}%
+  \dimen0=\ht255\advance\dimen0\dp255
+  \trace{D}{revised ht \the\ht255+\the\dp255}%
   \let\\=\shown@tedims\the\n@tecl@sses
+  \ifdim\pagegoal=\trialheight\else
+    {\IfTr@ce{gI}{%
+      \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
+    }}%
+  \fi
   \ifdim\@ftergalleyskip=0pt \else 
-    \setbox255\vbox{\unvbox255}%
     \ifdim\dimexpr \trialheight-\ht255-\dp255 - \@ftergalleyskip\relax >0pt
       \trace{D}{reinserting @ftergalleyskip (\the\@ftergalleyskip) after trial}%
       \setbox255\vbox{\unvbox255\vskip\@ftergalleyskip}%
@@ -974,7 +996,11 @@
     \fi
     \xdef\@djustskip{\the\dimen0}%
     \trace{D}{Adjusted topskip correction \the\dimen0}%
-  }%
+ }%
+ \diglot@trial@tail
+}
+
+\def\diglot@trial@tail{%
   \setbox255=\vbox{\vskip\@djustskip\penalty10000\unvbox255}%
   \ifdiglotDebugFollowContents
     \Showbox{255}%
@@ -1016,20 +1042,14 @@
   \else
     \advance\TempDim by -\ht\trialbox\relax
     \advance\TempDim by -\dp\trialbox\relax
+    \trace{D}{Extra content found before end of trial (tb:\l@gdims{\trialbox} th:\the\trialheight) \the\ht255+\the\dp255 (trial failed) td:\the\TempDim, vs:\the\vsize, av:\the\availht}%
+    \global\holdinginserts=1
+    \global\trialfailedtrue
+    \global\vsize=\textheight
     \ifnum 1=\ifdim\TempDim<-0.3\@bls  1\else\ifhaveb@ckedup 1 \else 0 \fi\fi
-      \trace{D}{Extra content found before end of trial (tb:\l@gdims{\trialbox} th:\the\trialheight) \the\ht255+\the\dp255 (trial failed) td:\the\TempDim, vs:\the\vsize, av:\the\availht}%
-      \ifnum\outputpenalty=\endtri@lpen@lty\relax
-      \else
-        %\Showbox\trialbox
-        %\Showbox\galley
-        %\Showlists
-      \fi
-      \global\holdinginserts=1
-      \global\trialfailedtrue
-      \global\vsize=\textheight
       \ifdim\ht255> 4 \@bls 
         \ifdim\trialheight>0.5\ht255
-          \trace{D}{Big excess. Reducing th(\the\trialheight) by \the\dimexpr 0.5\ht255\relax}%
+          \trace{D}{Big excess. th:\the\trialheight, g:\the\ht\galley, Reducing th(\the\trialheight) by \the\dimexpr 0.5\ht255\relax}%
           \global\tri@ldelta=-0.5\ht255
         \else
           \trace{D}{Big excess. Reducing th(\the\trialheight) to \the\dimexpr 4\@bls\relax}%
@@ -1096,7 +1116,9 @@
       \else 
         \traceNum{D}{Backing up and trying again (th:\the\trialheight)}%
         \r@storenotes{\g@tndstat}{1}%
-        \r@storeinserts{col}
+        %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
+        \r@storeinserts{col}%
+        %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
         \let\after@this=\d@resplit@galley
       \fi
     \else
@@ -1147,7 +1169,7 @@
   \setbox0\box255
   \setbox255\box10
   %\global\@@debugnotesfalse
-  \global\vsize=\availht
+  \global\vsize=\csname availht\c@rrdstat\endcsname
   \whichtrial
 }
 
@@ -2268,7 +2290,7 @@
   \let\col@do=\store@marks
   \x@\each@col\diglot@list\E %remember old marks state
   %\s@veallnotes{2}% remember old notestate 
-  \s@veinserts{chunk}%
+  \s@veinserts{chunk}% Restore state if the chunk is rejected.
   %
   % Save current column contents as n@xtp@rtial
   %
@@ -3370,7 +3392,7 @@
   \x@\each@col\diglot@list\E% 
   \let\col@do=\restore@storedmarks
   \x@\each@col\diglot@list\E% 
-  \r@storeinserts{chunk}
+  \r@storeinserts{chunk}%
 }
 
 \def\tri@llist{}%Trials to be run.
@@ -3442,7 +3464,7 @@
   \trace{d}{check@and@update reflow:\refl@wlist\space t:\tri@llist}%
   \ifboxmoved
     \IfTr@ce{gI}{%
-      \let\d@=\sh@winsertdim\edef\v@lpfx{save}\edef\v@lsfx{chunk}%
+      \let\d@=\sh@winsertdim\edef\v@lpfx{save}\edef\v@lsfx{chunk}%%TESTING
        \x@\cstackdown\ins@rts\E
       \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
     }%

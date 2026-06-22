@@ -923,8 +923,8 @@
 
 %+c_setcolhts
 \def\s@tcolhts#1{%
-    \colhtA=#1 \decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
-    \colhtB=#1 \decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
+    \colhtA=#1\relax\decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
+    \colhtB=#1\relax\decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
     \ifColNotes
       \ifx\XrefNotes\empty\relax\else
         \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname
