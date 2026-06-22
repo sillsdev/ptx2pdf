@@ -1,9 +1,14 @@
 
 from gi.repository import Gtk, GObject, GLib
-import io, os, zipfile, json, shutil
+import io, os, zipfile, json, shutil, tempfile
 from configparser import ConfigParser
-from ptxprint.usxutils import simple_parse
 from difflib import context_diff
+from pathlib import Path
+from glob import glob
+
+from ptxprint.usxutils import simple_parse
+from ptxprint.project import Project, ProjectDir
+
 
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -126,7 +131,7 @@ class GtkTester:
         projects = {}
         self.runzip = zipfile.ZipFile(fname, "r")
         for fi in self.runzip.infolist():
-            if fi.filename == "start/events.json":
+            if fi.filename.endswith("events.json"):
                 with self.runzip.open(fi) as src:
                     self.runevents = json.load(src)['events']
             if not fi.filename.startswith("before/") or fi.is_dir():
@@ -177,10 +182,10 @@ class GtkTester:
         results = {}
         projects = {}
         for fi in self.runzip.infolist():
-            if not fi.filename.startswith("after/") or fi.is_dir():
+            if not 'after/' in fi.filename or fi.is_dir():
                 continue
-            b = fi.filename.split("/", 3)
-            if len(b) < 4:
+            b = fi.filename.split('after/')[-1].split("/")
+            if len(b) < 3:
                 continue        # only want configuration files
             if b[-1].endswith('.cfg'):
                 m = getattr(self, "compare_cfg", None)
@@ -190,13 +195,15 @@ class GtkTester:
                 raise Exception('Unexpected extension.')
             if m is None:
                 m = self.diffcompare
-            if b[1] not in projects:
-                projects[b[1]] = self.view.prjTree.findProject(b[1])
-            outpath = os.path.join(projects[b[1]].path, "shared", "ptxprint", b[2], b[3])
+            if b[0] not in projects:
+                projects[b[0]] = self.view.prjTree.findProject(b[0])
+            if projects[b[0]] is None:
+                raise Exception("Project {} is not available! Use a test containing a full project archive.".format(b[0]))
+            outpath = os.path.join(projects[b[0]].path, "shared", "ptxprint", b[-2], b[-1])
             fpin = open(outpath, encoding="utf-8")
             zfbin = self.runzip.open(fi)
             zfin = io.TextIOWrapper(zfbin, encoding="utf-8")
-            results["{1}/{2}/{3}".format(*b[3])] = m(fpin, zfin, filename=b[3])
+            results["{1}/{2}/{3}".format(*b[2])] = m(fpin, zfin, filename=b[0])
             zfin.close()
             fpin.close()
         return results
@@ -282,4 +289,18 @@ class GtkTester:
         res = context_diff(oldl, newl, fromfile="test/"+fname, tofile="result/"+fname, lineterm="")
         return res
 
-
+def load_project_from_archive(zf, dir_to_extract=None):
+    """
+    zf is an open zipfile, containing an archive of a project created using the createArchive method
+    Will be extracted to dir_to_extract if specified, to a temporary directory if not
+    """
+    if not dir_to_extract:
+        dir_to_extract = tempfile.mkdtemp()
+    zf.extractall(dir_to_extract)
+    before_cfg_path = glob('{}/*/test/before/*/*/ptxprint.cfg'.format(dir_to_extract))
+    if len(before_cfg_path) != 1:
+        raise Exception("1 cfg file was expected in before/but {} were found.".format(len(before_cfg_path)))
+    prjid = Path(before_cfg_path[0]).parts[3]
+    project_dir = ProjectDir(prjid, None, dir_to_extract)
+    project = Project(project_dir)
+    return project

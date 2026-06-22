@@ -1,9 +1,9 @@
 
-import configparser, os, re, regex, random, collections
+import configparser, os, re, regex, random, collections, sys, glob
 from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
-from ptxprint.project import ProjectList
+from ptxprint.project import Project, ProjectList
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
@@ -23,9 +23,8 @@ from ptxprint.polyglot import PolyglotConfig
 from ptxprint.version import VersionStr, GitVersionStr, ConfigVersion
 from ptxprint.report import Report
 import ptxprint.pdfrw.errors
-import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
-from tempfile import NamedTemporaryFile
+import tempfile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
 from shutil import rmtree
@@ -144,6 +143,7 @@ class ViewModel:
 
         # private to this implementation
         self.dict = {}
+
 
     def __eq__(self, other):
         if self.project is None or other.project is None:
@@ -2072,11 +2072,11 @@ class ViewModel:
                     mystyles.setval(k, a, bname(val, "../../../figures"))
 
 
-        tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
-        mystyles.output_diffile(tempfile, inArchive=True)
-        tempfile.close()
-        res[tempfile.name] = basecfpath + "/ptxprint.sty"
-        tmpfiles.append(tempfile.name)
+        tmpfile = tempfile.NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
+        mystyles.output_diffile(tmpfile, inArchive=True)
+        tmpfile.close()
+        res[tmpfile.name] = basecfpath + "/ptxprint.sty"
+        tmpfiles.append(tmpfile.name)
 
         # config files - take the whole tree even if not needed
         ppath = self.project.srcPath(self.cfgid)
@@ -2169,6 +2169,16 @@ class ViewModel:
                 if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
                     self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
         self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
+
+        test_userconfig = self.userconfig
+        test_userconfig.remove_section('projectdirs')
+
+        with StringIO() as ss:
+            test_userconfig.write(ss)
+            ss.seek(0)
+            userconfig_str = ss.read()
+        self.zf.writestr('/ptxprint_user.cfg', userconfig_str)
+
         if close_zip:
             self.zf.close()
         if res:
@@ -2563,4 +2573,3 @@ set stack_size=32768""".format(self.cfgid)
                 with open(v, "rb") as inf:
                     d = inf.read()
                 ozip.write(f"{k}.pdf", d)
-
