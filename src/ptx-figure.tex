@@ -1164,7 +1164,11 @@
       \pdfsavepos\penalty10000
       \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}\penalty10000%
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
-      \unpenalty\setbox1=\lastbox\unvbox1\setbox1=\lastbox\vbox{\unvbox1\global\skip1=\lastskip\unskip}%
+      \skip1=\z@ \relax%ensure it doesn't do look-ahead.
+      \unpenalty\setbox1=\lastbox
+      \ifvbox1 
+        \unvbox1 \setbox1=\lastbox \ifvbox1 \vbox{\unvbox1 \global\skip1=\lastskip\unskip}\fi%
+      \fi
       \pdfsavepos
       \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
       \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
