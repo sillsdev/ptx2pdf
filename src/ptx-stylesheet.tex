@@ -1381,6 +1381,7 @@
 \def\lastc@rref{}\def\lastc@rradj{1}
 {\catcode`\1=11\xdef\@neletter{1}}
 \def\docvhook{\ifdiglot\edef\c@rref{\id@@@\c@rrdstat\ch@pter.\v@rse}\else\edef\c@rref{\id@@@\ch@pter.\v@rse}\fi
+  \trace{T}{docvhook \c@rref}%
   \csname cv-\c@rref\endcsname
   %\trace{v}{verse: \v@rse, catcodes:\x@\getcatcodes\v@rse\E, and of one:\x@\getcatcodes\@neletter\E}%
   \ifnum\ifnum\lastc@rradj>1 1\else\ifx\v@rse\@neletter 1\else 0\fi\fi =1

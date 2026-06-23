@@ -134,6 +134,8 @@
 \def\zNeedEvenPage{\message{Even page wanted on \the\pageno}\need@evenpage{\tp@lbout}}
 \def\zNeedOddPage{\message{Odd page wanted on \the\pageno}\need@oddpage{\tp@lbout}}
 \def\zNeedQuadPage{\message{Quad page wanted on \the\pageno}\need@quadpage{\tp@lbout}}
+\def\Showbox#1{{\count255=\interactionmode\relax \interactionmode=2\relax \showbox#1\interactionmode=\count255\relax}}
+\def\Showlists{{\count255=\interactionmode\relax \interactionmode=2\relax \showlists\interactionmode=\count255\relax}}
 %-c_evenpage
 \newcount\p@rnum %used by triggers, figures, etc. 
 \let\c@rref\empty
