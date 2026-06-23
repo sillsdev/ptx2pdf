@@ -360,7 +360,7 @@
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\dglt@calc@vailht{%
-   \trace{D}{dglt@calc@vailht \ifloc@lht loc@lht \else page \fi \c@rrdstat (\number\partial), \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax \space th=\the\textheight, trh=\the\trialheight}%
+   \trace{D}{dglt@calc@vailht \ifloc@lht loc@lht \else page \fi \c@rrdstat (\number\partial), \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax \space txh=\the\textheight, th=\the\trialheight}%
    \global\availht=\textheight %
    \global\advance\availht by -\ht\partial\relax %
    \global\advance\availht by -\dp\partial\relax %
@@ -590,7 +590,7 @@
   \haveb@ckedupfalse % If we have been backing up, then we don't add back extra conent!
   \let\after@run@a@trial=\relax
   \s@tbaseline{p}{p}%
-  \trace{D}{baseline: \the\baselineskip, av:\the\availht}%
+  \trace{D}{baseline: \the\baselineskip, av:\the\availht, av\c@rrdstat:\the\csname availht\c@rrdstat\endcsname}%
   \ifdim\availht>\baselineskip
     \trace{D}{Preparing for trial}%
     \global\trialheight=\csname availht\c@rrdstat\endcsname %Non-notes version
@@ -618,11 +618,11 @@
       \x@\Showbox\x@{\@whl}%
     \fi
     \savingvdiscards=1
-    \trace{D}{Splitting \c@rrdstat\space \the\ht\@whl+\the\dp\@whl\space to \the\trialheight (overwriting \the\ht\@xcs)}%
     \dimen0=\ht\@whl\advance\dimen0\dp\@whl
-    \ifdim\dimen0>\trialheight
+    \ifdim\dimen0<\trialheight
       \global\trialheight=\dimen0
     \fi
+    \trace{D}{Splitting \c@rrdstat\space \the\ht\@whl+\the\dp\@whl\space to \the\trialheight (overwriting \the\ht\@xcs)}%
     \global\setbox\@xcs\copy\@whl
     \global\setbox\p@rtl=\vsplit\@xcs to \trialheight
     \edef\tmpbadness{\the\badness}%
