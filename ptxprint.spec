@@ -303,7 +303,7 @@ icon_mappings = {
 "gtk-clear": "edit-clear",
 }
 
-icons = set("""applications-system-symbolic changes-allow changes-prevent document-print-symbolic document-revert document-save-as-symbolic edit-clear edit-clear-rtl edit-clear-symbolic-rtl emblem-documents view-list-bullet-symbolic folder-documents folder-download folder-music folder-new-symbolic folder-open folder-open-symbolic folder-pictures-symbolic folder-videos-symbolic format-justify-fill go-bottom go-first-symbolic go-previous-symbolic go-next-symbolic go-last-symbolic go-top help-about-symbolic list-add list-remove media-seek-backward-symbolic media-seek-forward-symbolic object-select open-menu pan-down pan-end pan-up preferences-system-sharing printer software-update-available system-run user-desktop user-home x-office-document-symbolic text-x-generic-symbolic view-refresh-symbolic view-dual view-grid view-fullscreen-symbolic media-seek-backward-symbolic-rtl.symbolic media-seek-forward-symbolic-rtl.symbolic process-working-symbolic.svg edit-copy-symbolic""".split())
+icons = set("""applications-system-symbolic.svg changes-allow changes-prevent document-print-symbolic document-revert document-save-as-symbolic edit-clear edit-clear-rtl edit-clear-symbolic-rtl emblem-documents view-list-bullet-symbolic folder-documents folder-download folder-music folder-new-symbolic folder-open folder-open-symbolic folder-pictures-symbolic folder-videos-symbolic format-justify-fill go-bottom go-first-symbolic go-previous-symbolic go-next-symbolic go-last-symbolic go-top help-about-symbolic list-add list-remove media-seek-backward-symbolic media-seek-forward-symbolic object-select open-menu pan-down pan-end pan-up preferences-system-sharing printer software-update-available system-run user-desktop user-home x-office-document-symbolic text-x-generic-symbolic view-refresh-symbolic view-dual view-grid view-fullscreen-symbolic media-seek-backward-symbolic-rtl.symbolic media-seek-forward-symbolic-rtl.symbolic process-working-symbolic.svg edit-copy-symbolic thunderbolt-symbolic.svg""".split())
 
 icons.update([icon_mappings["gtk-"+i] for i in \
         ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
@@ -382,6 +382,9 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
       + [('docs/inno-docs/*.txt', 'ptxprint')]
       + [(os.path.dirname(usfmtc.__file__)+"/"+x, "usfmtc") for x in ("*.vrs", "*.rng")]
+      + [(f'python/lib/ptxprint/mo/{lang}/LC_MESSAGES/ptxprint.mo', f'ptxprint/mo/{lang}/LC_MESSAGES')
+         for lang in os.listdir('python/lib/ptxprint/mo')
+         if os.path.isdir(f'python/lib/ptxprint/mo/{lang}')]
     )
 
 print("binaries:", binaries)

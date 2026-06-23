@@ -1,8 +1,73 @@
-PTXprint 3.0.32 Release Notes
-4 Jun 2026
+PTXprint 3.0.33 Release Notes
+18 Jun 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.33 - (18 Jun 2026)
+
+  * Automatic Page Filler (Note: This is still an experimental feature)
+    - Make Auto Page Filler (in PDFviewer) more intuitive to use
+    - Add parameters to control Page Fill algorithm
+    - Improve color-coding and wording of Page Fill dialog with Color Key button
+    - Make the completed page reporting more accurate
+    - Disable all peripherals for page_filler
+
+  * Diglot/Polyglot
+    - Add a Diglot-specific Front Matter template
+    - Allow pdf viewer to switch around polyglot views
+    - Handle diglot folders for pictures from multiple sources
+    - Refactor picinfo searchlist to support searching across diglot projects
+    - Ensure Secondary project sets S/R flag when adjustments are made to the project
+    - Don't make it too easy to enable Diglot (and warn about implications first)
+    - When Diglot is enabled, show the project selector for the Sec project
+    - Add warning and "Save as Monoglot..." dialog when disabling a Diglot
+    - Cope with cutouts when there has not been a previous chunk
+    - Fix bug blocking switch to another config when Diglot was enabled
+    - Fix bottom pictures in diglot
+
+  * Covers (for alpha testing - work in progress)
+    - Get covers working from the wizard (see top of Peripherals tab)
+    - Fix border maths for covers (#1231)
+    - Finish implementing BorderMargins
+    - Implement \csname cover-hinge\endcsname parameter (TeX) for hardbacks
+    - Add some docs, centre rotated spines
+    - Minor fix for negative spine-widths
+
+  * Pictures
+    - Add various items to PicList context menu
+    - Use gray in PicList to indicate if picture is missing / source not found
+    - Add peachpuff highlighting for selected problem rows in PicList
+    - Add Tooltip for scale error on PicList and peachpuff Scale spinner
+    - Fix bug of Frame Size being set to span when inner or outer was selected
+    - Fix big pictures not appearing (part 1)
+
+  * Book Selection
+    - Add Toggle Books button on book chooser dialog
+    - Only validate the book list on print
+
+  * PDFviewer
+    - Add support to detect and highlight in purple bad/missing glyphs (Tofu)
+    - Move PDFviewer status messages to become a Tooltip on (i) button - right edge
+    - Make sure Ctrl-scroll zooming also works when cursor is NOT hovering over page or spread
+    - Try to improve placement of temp msgs and dialogs in PDFviewer
+    - Add reset all adjustments until end of book to context menu
+  
+  * Other
+    - Add highlighting capability (Ctrl-Click) to Adv->Other settings
+    - Ensure Reset/Delete config always shows the right button/label
+    - Improve "Jump to Ref in Paratext" by foregrounding PT after sending Ref
+    - Add a standard for BSB test
+    - Cleanup adjlists to remove duplicates, before saving
+    - Improve archive creation (generating better paths for files)
+    - Add hyphenation word list advanced controls
+    - Tidy up and fill in missing info in TechRef documentation
+    - Fix missing Localization
+    - Fix back to front reading of (sub)modules
+    - Fix TOC again
+    - Fix typo in copyright file reading
+    - Flag unexpected state rather than just pretending it is not there
+    - Add import site to pdfinish
 
 Bug fixes and Improvements in 3.0.32 - (4 Jun 2026)
   * Make sure settings are stored in all PDFs when 2-up pagination is set

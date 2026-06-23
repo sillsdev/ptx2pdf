@@ -190,6 +190,18 @@ class AdjList:
                 outf.write(line + "\n")
         self.ftime = os.lstat(fname).st_ctime
 
+    def cleanup(self):
+        lastk = [None] * 3
+        i = 0
+        while i < len(self.liststore):
+            r = self.liststore[i]
+            if lastk[:3] == r[:3]:
+                self.liststore.remove(lastk)
+                self.db.pop(i-1)
+            else:
+                i += 1
+            last = r
+
     def _createUIExtensionLines(self, i):
         r = self.liststore[i]
         d = self.db[i]
@@ -236,6 +248,7 @@ class AdjList:
     def save(self):
         if self.adjfile is None:
             return False
+        self.cleanup()
         self.createAdjlist()
         self.createTriggerlist()
         # possibly loop through the poly-glot configs here and then call createChanges with 

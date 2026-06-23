@@ -1603,15 +1603,13 @@ class TexModel:
         langs = set(self.imageCopyrightLangs.keys())
         langs.add("en")
         for lang in sorted(langs):
-            crdtsstarted = False
+            mkr = self.imageCopyrightLangs.get(lang, "pc")
+            rtl = lang in cinfo.get('rtl', [])
+            if rtl == (self.dict['document/ifrtl'] == "false"):
+                mkr += "\\begin" + ("R" if rtl else "L")
+            crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
             if os.path.exists(picpagesfile):
                 hasOut = False
-                mkr = self.imageCopyrightLangs.get(lang, "pc")
-                rtl = lang in cinfo.get('rtl', [])
-                if rtl == (self.dict['document/ifrtl'] == "false"):
-                    mkr += "\\begin" + ("R" if rtl else "L")
-                crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
-                crdtsstarted = True
                 plrls = cinfo.get('plurals', None)
                 plstr = "" if plrls is None else plrls.get(lang, plrls["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
@@ -1683,12 +1681,8 @@ class TexModel:
                 else:
                     msg = getattr(self, 'xrefcopyright', None)
                 if msg is not None:
-                    if not crdtsstarted:
-                        crdts.append("\\def\\zimagecopyrights{}{{%".format(lang.lower()))
-                        crdtsstarted = True
                     crdts.append(msg)
-            if crdtsstarted:
-                crdts.append("}")
+            crdts.append("}")
         if len(crdts):
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts) + ("\n" if len(crdts) else "")

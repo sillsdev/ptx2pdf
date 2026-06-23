@@ -388,11 +388,11 @@
       \line{\hskip\dimen0
         \ifRTL
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftbal\hfil\fi\fi\fi
-          \lochcaer@f{\getnth@line}%
+          \lochcaer@f{\csname \c@tprefix tc\the\@col :fill\endcsname\getnth@line}%
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\r@ght\hfil\fi\fi
         \else
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\r@ght\hfil\fi\fi
-          \f@reachcol{\getnth@line}%
+          \f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}%
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftbal\hfil\fi\fi\fi
         \fi
         \hskip\trmargin}%
@@ -454,7 +454,7 @@
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\relax \getp@ram{justification}{\tc@ll}{\tc@ll}\s@ttc@lign\let\the@lign\mytmp\fi
-    %\ifx\the@lign\empty \let\the@lign\cell@l\fi
+    \ifx\the@lign\empty \let\the@lign\cell@l\fi
     \trace{t}{Pre(\c@tprefix \tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \edef\l@drsl{}\edef\l@drsr{}%
     \ifx\the@lign\cell@r
@@ -523,28 +523,19 @@
     \fi
     \trace{t}{column \the\@col[\p@ram]. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
     \advance \nth@line by -\count255
-    \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi
-      \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}%
-      \global\t@mpfalse
-    \else
+    \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
       \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell
         \@@@LOOP \ifnum\nth@line<\lct@mp
           \setbox0=\lastbox \unskip\unpenalty
           \advance\lct@mp by -1 \@@@REPEAT
         \global\setbox1=\lastbox}%
       \trace{t}{nth@line=\the\nth@line, linec@unt=\the\linec@unt, lct@mp=\the\lct@mp, count255=\the\count255}%
-      \ifnum\nth@line=\lct@mp \global\t@mptrue\else\global\t@mpfalse\fi
     \fi
   \egroup
   \trace{t}{bls:\the\baselineskip,  width=\the\wd1}%
   \ifsp@ncols\wd1=\csname colwidth-\the\@col\endcsname \fi
   \ifh@lfrow\lower 0.5\baselineskip\fi
-  \ifRTL\ifnum\@col=\maxtablec@l\else
-    \ift@mp\csname \c@tprefix tc\the\@col :fill\endcsname\else\hfill\fi\fi\fi
   \box1%
-  \trace{t}{t@mp\ift@mp true\else false\fi \space col=\the\@col \space max=\the\maxtablec@l}%
-  \ifRTL\else\ifnum\@col=\maxtablec@l\else
-    \ift@mp\csname \c@tprefix tc\the\@col :fill\endcsname\else\hfill\fi\fi\fi
 }
 \newcount\nth@line
 

@@ -293,7 +293,7 @@ class Paragraphs(list):
                 colinfos[polycol] = cinfo
                 colcount[polycol] = colcount.get(polycol, 0) + 1
                 if currps.get(polycol, None) is not None:
-                    if currr is not None and currr.yend == 0:
+                    if currr is not None and currr.yend == 0 and currps[polycol].rects:
                         currps[polycol].rects.pop()
                     currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
@@ -343,7 +343,7 @@ class Paragraphs(list):
                 else:
                     currr.yend = readpts(p[1])
                     endx = readpts(p[0])
-                ps.lastwidth = (endx - cinfo.topx) / cinfo.width
+                ps.lastwidth = (endx - cinfo.topx) / cinfo.width if cinfo.width else 0
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
