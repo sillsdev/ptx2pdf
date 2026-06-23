@@ -1,10 +1,10 @@
 PTXprint 3.0.33 Release Notes
-18 Jun 2026
+24 Jun 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.33 - (18 Jun 2026)
+Bug fixes and Improvements in 3.0.33 - (24 Jun 2026)
 
   * Automatic Page Filler (Note: This is still an experimental feature)
     - Make Auto Page Filler (in PDFviewer) more intuitive to use
@@ -62,12 +62,18 @@ Bug fixes and Improvements in 3.0.33 - (18 Jun 2026)
     - Improve archive creation (generating better paths for files)
     - Add hyphenation word list advanced controls
     - Tidy up and fill in missing info in TechRef documentation
+    - Fix the zimagecopyrights generation in other languages - especially 'in'donesian.
+    - Update picCopyrights.json with missing fr,es,pt localized strings
     - Fix missing Localization
     - Fix back to front reading of (sub)modules
     - Fix TOC again
     - Fix typo in copyright file reading
     - Flag unexpected state rather than just pretending it is not there
     - Add import site to pdfinish
+    - Prevent unvboxing of things that are not vboxes
+    - Fix timewasting (cycle-wasting) typo
+    - Allow zero \Raise to be considered the same as no \Raise entry
+    - Ensure that texpert note estimation controls match TeXs values
 
 Bug fixes and Improvements in 3.0.32 - (4 Jun 2026)
   * Make sure settings are stored in all PDFs when 2-up pagination is set
