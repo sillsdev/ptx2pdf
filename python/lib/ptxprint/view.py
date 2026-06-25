@@ -2114,11 +2114,14 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def createArchive(self, filename=None, nobuild=False, close_zip=True):
-        if filename is None:
-            filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
-        if not filename.lower().endswith(".zip"):
-            filename += ".zip"
+    def createArchive(self, filename=None, nobuild=False, close_zip=True, in_memory=False):
+        if in_memory:
+            filename = BytesIO()
+        else:
+            if filename is None:
+                filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
+            if not filename.lower().endswith(".zip"):
+                filename += ".zip"
         try:
             self.zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
         except OSError:
@@ -2184,6 +2187,9 @@ class ViewModel:
         if res:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()
+
+        if in_memory:
+            return filename
 
     def _writearchive(self, zf, ifile, fname):
         if fname not in zf.NameToInfo:      # do what zipfile should do

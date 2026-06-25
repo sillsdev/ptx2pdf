@@ -108,15 +108,12 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         GLib.idle_add(tester.run_action, args.testwithgui)
     mainw.run(doit)
     if tester is not None:
-        results = tester.run_finalise()
-        if not sum(results.values(), []):
+        test_result = tester.run_finalise()
+        if not test_result:
             print('Test result: PASS. No differences found to test data.')
         else:
             print('Test result: FAIL. The following differences to test data were found:')
-        for k, v in results.items():
-            if len(v):
-                resv = "\n    ".join(v)
-                print(f"{k}: {resv}")
+            print(test_result)
     if server is not None:
         server.terminate()
         server.wait()
