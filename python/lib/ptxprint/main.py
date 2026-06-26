@@ -288,7 +288,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     if args.test:
         with ZipFile(args.test) as zf:
             zip_contains_full_archive = any(
-                PurePosixPath(name).match("*/ptxSettings.xml")
+                Path(name).match("*/ptxSettings.xml")
                 for name in zf.namelist()
             )
             if zip_contains_full_archive:

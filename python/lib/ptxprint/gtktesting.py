@@ -168,22 +168,20 @@ class GtkTester:
         with zipfile.ZipFile(self.fname) as z_initial:
             z_initial.extractall(reference_tmpdir)
 
-        modified_files_dir = f"{reference_tmpdir}/{self.view.project.prjid}/test/modified_files/"
-
-        for root, dirs, files in os.walk(modified_files_dir):
-            for file in files:
-                source_path = f"{root}/{file}"
-                dest_path = source_path.replace(f"{self.view.project.prjid}/test/modified_files/", "")
+        modified_files_dir = Path(reference_tmpdir) / self.view.project.prjid / "test" / "modified_files"
+        for source_path in modified_files_dir.rglob("*"):
+            if source_path.is_file():
+                dest_path = Path(reference_tmpdir) / source_path.relative_to(modified_files_dir)
                 try:
                     shutil.copyfile(str(source_path), str(dest_path))
                 except Exception as e:
                     print(f"Error moving {source_path}: {e}")
 
-        with open(f"{reference_tmpdir}/{self.view.project.prjid}/test/deleted_files.txt") as f:
+        deleted_files_path = Path(reference_tmpdir) / self.view.project.prjid / "test" / "deleted_files.txt"
+        with open(deleted_files_path) as f:
             deleted_files = [f.strip() for f in f.readlines()]
-
         for file in deleted_files:
-            os.remove(f"{reference_tmpdir}/{file}")
+            (Path(reference_tmpdir) / file).unlink()
 
         # also, remove the unique.id file and local/ dir created when running the test since this doesn't exist in the reference
         if os.path.isfile(os.path.join(self.view.project.path, "unique.id")):
@@ -192,7 +190,7 @@ class GtkTester:
             shutil.rmtree(os.path.join(self.view.project.path, "local"))
 
         # reference is prepared, now we just run a diff
-        return self.prepare_diff_report(self.view.project.path, f"{reference_tmpdir}/{self.view.project.prjid}")
+        return self.prepare_diff_report(self.view.project.path, str(Path(reference_tmpdir) / self.view.project.prjid))
 
     def prepare_diff_report(self, testdir, refdir):
         diff_results = {"test": [], "ref": [], "diff": [], "cfg": [], "sty": []}
@@ -200,11 +198,11 @@ class GtkTester:
 
         def collect_diff(cmp_obj):
             for file in cmp_obj.diff_files:
-                diff_results["diff"].append((f"{cmp_obj.left}/{file}", f"{cmp_obj.right}/{file}"))
+                diff_results["diff"].append((str(Path(cmp_obj.left) / file), str(Path(cmp_obj.right) / file)))
             for file in cmp_obj.left_only:
-                diff_results["test"].append(f"{cmp_obj.left}/{file}")
+                diff_results["test"].append(str(Path(cmp_obj.left) / file))
             for file in cmp_obj.right_only:
-                diff_results["ref"].append(f"{cmp_obj.right}/{file}")
+                diff_results["ref"].append(str(Path(cmp_obj.right) / file))
             for subdir_cmp in cmp_obj.subdirs.values():
                 collect_diff(subdir_cmp)
 
@@ -316,10 +314,10 @@ def load_project_from_archive(zf, dir_to_extract=None):
     if not dir_to_extract:
         dir_to_extract = tempfile.mkdtemp()
     zf.extractall(dir_to_extract)
-    before_cfg_path = glob('{}/*/shared/ptxprint/*/ptxprint.cfg'.format(dir_to_extract))
-    if len(before_cfg_path) != 1:
-        raise Exception("1 cfg file was expected in before/but {} were found.".format(len(before_cfg_path)))
-    prjid = Path(before_cfg_path[0]).parts[3]
+    cfg_path = list(Path(dir_to_extract).glob("*/shared/ptxprint/*/ptxprint.cfg"))
+    if len(cfg_path) != 1:
+        raise Exception("1 cfg file was expected in the archive but {} were found.".format(len(cfg_path)))
+    prjid = cfg_path[0].parts[3]
     project_dir = ProjectDir(prjid, None, dir_to_extract)
     project = Project(project_dir)
     return project
