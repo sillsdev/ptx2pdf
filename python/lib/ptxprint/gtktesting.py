@@ -1,6 +1,6 @@
 
 from gi.repository import Gtk, GObject, GLib
-import io, os, zipfile, json, shutil, tempfile
+import io, os, zipfile, json, shutil, tempfile, filecmp
 import subprocess
 from configparser import ConfigParser
 from difflib import context_diff
@@ -185,18 +185,47 @@ class GtkTester:
         for file in deleted_files:
             os.remove(f"{reference_tmpdir}/{file}")
 
-        # also, remove the unique.id file created when running the test since this doesn't exist in the reference
-        # os.remove(f"{self.view.project.path}/unique.id")
-        os.remove(os.path.join(self.view.project.path, "unique.id"))
+        # also, remove the unique.id file and local/ dir created when running the test since this doesn't exist in the reference
+        if os.path.isfile(os.path.join(self.view.project.path, "unique.id")):
+            os.remove(os.path.join(self.view.project.path, "unique.id"))
+        if os.path.isdir(os.path.join(self.view.project.path, "local")):
+            shutil.rmtree(os.path.join(self.view.project.path, "local"))
 
-        # reference is prepared, now we just run a diff, subprocess is the simplest way
-        # TODO: use filecmp instead
-        result = subprocess.run(["diff", "-r", self.view.project.path, f"{reference_tmpdir}/{self.view.project.prjid}"], capture_output=True, text=True)
+        # reference is prepared, now we just run a diff
+        return self.prepare_diff_report(self.view.project.path, f"{reference_tmpdir}/{self.view.project.prjid}")
 
-        # clean up
-        # shutil.rmtree(os.path.dirname(self.view.project.path))
-        # shutil.rmtree(reference_tmpdir)
-        return result.stdout
+    def prepare_diff_report(self, testdir, refdir):
+        diff_results = {"test": [], "ref": [], "diff": [], "cfg": [], "sty": []}
+        comparison = filecmp.dircmp(testdir, refdir)
+
+        def collect_diff(cmp_obj):
+            for file in cmp_obj.diff_files:
+                diff_results["diff"].append((f"{cmp_obj.left}/{file}", f"{cmp_obj.right}/{file}"))
+            for file in cmp_obj.left_only:
+                diff_results["test"].append(f"{cmp_obj.left}/{file}")
+            for file in cmp_obj.right_only:
+                diff_results["ref"].append(f"{cmp_obj.right}/{file}")
+            for subdir_cmp in cmp_obj.subdirs.values():
+                collect_diff(subdir_cmp)
+
+        collect_diff(comparison)
+        for f in diff_results["diff"]:
+            if f[0].endswith('.cfg'):
+                with open(f[0]) as f0, open(f[1]) as f1:
+                    cfg_diff = self.compare_cfg(f0, f1)
+                if cfg_diff:
+                    diff_results['cfg'] = cfg_diff
+
+            elif f[0].endswith('.sty'):
+                with open(f[0]) as f0, open(f[1]) as f1:
+                    sty_diff = self.compare_sty(f0, f1)
+                if sty_diff:
+                    diff_results['sty'] = sty_diff
+        diff_results["diff"] = [f for f in diff_results["diff"] if not f[0].endswith('.cfg') and not f[0].endswith('.sty')]
+        return diff_results
+
+
+
 
 #### special handlers
     def s_rowactivated(self, w, signal, t, val, p, col, *a):
@@ -219,7 +248,7 @@ class GtkTester:
         return True         # we emitted a signal so go round
 
     def compare_cfg(self, old, new, **kw):
-        options_to_ignore = ["gitversion"]
+        options_to_ignore = ["gitversion", "config"]
         res = []
         oldc = ConfigParser()
         oldc.read_file(old)

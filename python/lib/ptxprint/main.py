@@ -109,11 +109,20 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     mainw.run(doit)
     if tester is not None:
         test_result = tester.run_finalise()
-        if not test_result:
+        if not any(test_result.values()):
             print('Test result: PASS. No differences found to test data.')
         else:
             print('Test result: FAIL. The following differences to test data were found:')
-            print(test_result)
+            if test_result['cfg']:
+                print(f"The following differences were found in the cfg:\n\t {'\n\t'.join(test_result['cfg'])}")
+            if test_result['sty']:
+                print(f"The following differences were found in the sty:\n\t {'\n\t'.join(test_result['sty'])}")
+            if test_result['ref']:
+                print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
+            if test_result['test']:
+                print(f"The following files were found only in the test run: {', '.join(test_result['test'])}")
+            if test_result['diff']:
+                print(f"The following files were not identical: {', '.join([f'{a} and {b}' for a, b in test_result['diff']])}")
     if server is not None:
         server.terminate()
         server.wait()
