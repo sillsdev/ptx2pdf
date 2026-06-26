@@ -352,19 +352,19 @@
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
   \initThumbT@bs%becomes \relax after 1st run, unless reset
   \let\st@rtatedge=T% Does a horizontal chunk of text in a box  start nearest to the page edge away from the binding (False for English on odd-numbered pages) (depends on page sequence, matching LTR/RTL)
-  \ifodd\pageno \st@rtatedge=F \fi
-%    \ifRTL
-%      \ifBookOpenLeft\let\st@rtatedge=F\fi
-%    \else
-%      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
-%    \fi
-%  \else
-%    \ifRTL
-%      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
-%    \else
-%      \ifBookOpenLeft\let\st@rtatedge=F\fi
-%    \fi
-%  \fi
+  \ifodd\pageno
+    \ifRTL
+      \ifBookOpenLeft\let\st@rtatedge=F\fi
+    \else
+      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
+    \fi
+  \else
+    \ifRTL
+      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
+    \else
+      \ifBookOpenLeft\let\st@rtatedge=F\fi
+    \fi
+  \fi
  \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort, pg:\the\pageno}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
  \XeTeXuseglyphmetrics=3
