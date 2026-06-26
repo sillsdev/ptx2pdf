@@ -24,6 +24,7 @@ from ptxprint.version import VersionStr, GitVersionStr, ConfigVersion
 from ptxprint.report import Report
 import ptxprint.pdfrw.errors
 from configparser import NoSectionError, NoOptionError, _UNSET
+import pathlib
 import tempfile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
@@ -2114,7 +2115,7 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def createArchive(self, filename=None, nobuild=False, close_zip=True, in_memory=False):
+    def createArchive(self, filename=None, nobuild=False, for_test=False, in_memory=False):
         if in_memory:
             filename = BytesIO()
         else:
@@ -2158,19 +2159,19 @@ class ViewModel:
                     v._archiveAdd(self.zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
-                    self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
+                    self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"), for_test=True)
         for f in set(self.tempFiles + ([] if runjob is None else runjob.picfiles) + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.project.path)
-                self._writearchive(self.zf, pf, os.path.join(self.project.prjid, outfname))
+                self._writearchive(self.zf, pf, os.path.join(self.project.prjid, outfname), for_test=True)
             else:
                 print(pf)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
             for f in fs:
                 if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
+                    self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f), for_test=True)
         self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
 
         test_userconfig = self.userconfig
@@ -2182,7 +2183,7 @@ class ViewModel:
             userconfig_str = ss.read()
         self.zf.writestr('/ptxprint_user.cfg', userconfig_str)
 
-        if close_zip:
+        if not for_test:
             self.zf.close()
         if res:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
@@ -2191,7 +2192,10 @@ class ViewModel:
         if in_memory:
             return filename
 
-    def _writearchive(self, zf, ifile, fname):
+    def _writearchive(self, zf, ifile, fname, for_test=False):
+        if for_test:
+            if pathlib.Path(fname).parts[1] == 'local':
+                return  # we can exclude the local subdirectory from the test archive
         if fname not in zf.NameToInfo:      # do what zipfile should do
             zf.write(ifile, fname)
 
@@ -2200,7 +2204,7 @@ class ViewModel:
         logger.debug(f"{entries=}, {cfgchanges=}, {tmpfiles=}")
         for k, v in entries.items():
             if os.path.exists(k):
-                self._writearchive(zf, k, v)
+                self._writearchive(zf, k, v, for_test=True)
         tmpcfg = {}
         for k,v in cfgchanges.items():
             if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
@@ -2230,7 +2234,7 @@ class ViewModel:
             fpath = getfontcache().get('Source Code Pro')
             if fpath is None:
                 continue
-            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.project.prjid, os.path.basename(fpath)))
+            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.project.prjid, os.path.basename(fpath)), for_test=True)
 
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.project.prjid), writefontsconf(None, archivedir=True))

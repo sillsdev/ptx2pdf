@@ -28,7 +28,7 @@ class GtkTester:
         self.paused = False
         self.full_archive = full_archive
         if self.full_archive:
-            self.view.createArchive(fname, close_zip=False)
+            self.view.createArchive(fname, for_test=True)
             self.zip = self.view.zf
         else:
             self.zip = None
