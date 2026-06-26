@@ -440,6 +440,7 @@
 }
 
 \def\dglt@calc@vailht@mods{%
+   \global\advance\availht by \m@xBelowBaseline
    \x@\ifx\csname BelowBaseline\c@rrdstat\endcsname\empty\else
      \global\advance\availht by -\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
      \trace{Dh}{BelowBaseline: \csname BelowBaseline\c@rrdstat\endcsname x \csname b@selineskip\c@rrdstat\endcsname -> \the\availht}%
@@ -2309,7 +2310,7 @@
     \advance\availht by -\m@xBelowBaseline
   }%
   %\tracingassigns=0
-  \ifdim\availht<\dimexpr \@maxb@seline*2\relax %
+  \ifdim\availht<\@maxb@seline
     \global\pagefulltrue%
     \trace{D}{Declaring page full (\the\availht < 2 \@maxb@seline)}%
   \else%
