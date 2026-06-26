@@ -3,9 +3,11 @@ import argparse, sys, os, re, configparser, shlex
 import site, logging, time, socket, multiprocessing
 from shutil import rmtree
 from zipfile import ZipFile
+from pathlib import PurePosixPath
 
 import ptxprint
 from ptxprint.utils import saferelpath, appdirs, bookcodes
+from ptxprint.gtktesting import load_project_from_archive
 from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
@@ -60,7 +62,7 @@ def run_broadway(wnum):
         # logger.info("Broadway is already running")
         return None
     else:
-        bwname = "broadwayd" + ".exe" if sys.platform in ("win32", "cygwin") else ""
+        bwname = "broadwayd.exe" if sys.platform in ("win32", "cygwin") else "broadwayd"
         server = popen([bwname, "-p", str(pnum), ":"+str(wnum)])
     if testport("127.0.0.1", pnum):
         return server
@@ -94,21 +96,33 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     if args.test is not None:
         # copy files before loading config
         tester = GtkTester(None, mainw)
+        tester.project = project
         tester.setuprun(args.test, mainw)
     if args.pid:
         mainw.setPrjid(args.pid, project.guid)
         mainw.setConfigId(args.config or "Default")
     else:
         mainw.setFallbackProject()
+
     if tester is not None:
         GLib.idle_add(tester.run_action, args.testwithgui)
     mainw.run(doit)
     if tester is not None:
-        results = tester.run_finalise()
-        for k, v in results:
-            if len(v):
-                resv = "\n    ".join(v)
-                print(f"{k}: {resv}")
+        test_result = tester.run_finalise()
+        if not any(test_result.values()):
+            print('Test result: PASS. No differences found to test data.')
+        else:
+            print('Test result: FAIL. The following differences to test data were found:')
+            if test_result['cfg']:
+                print(f"The following differences were found in the cfg:\n\t {'\n\t'.join(test_result['cfg'])}")
+            if test_result['sty']:
+                print(f"The following differences were found in the sty:\n\t {'\n\t'.join(test_result['sty'])}")
+            if test_result['ref']:
+                print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
+            if test_result['test']:
+                print(f"The following files were found only in the test run: {', '.join(test_result['test'])}")
+            if test_result['diff']:
+                print(f"The following files were not identical: {', '.join([f'{a} and {b}' for a, b in test_result['diff']])}")
     if server is not None:
         server.terminate()
         server.wait()
@@ -146,7 +160,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-M', '--module', help="Specify module to print")
     parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
     parser.add_argument('-T', '--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
-    parser.add_argument('-C', '--capture', help="Capture interaction events")
+    parser.add_argument('-C', '--capture', metavar='FILE', help="Capture interaction events from UI session to zip file")
     parser.add_argument('-t', '--test',help="test file to run interactive test against")
     parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
     
@@ -270,6 +284,18 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         if pdir is not None:
             args.projects.append(pdir)
         savetreedirs = True
+
+    if args.test:
+        with ZipFile(args.test) as zf:
+            zip_contains_full_archive = any(
+                Path(name).match("*/ptxSettings.xml")
+                for name in zf.namelist()
+            )
+            if zip_contains_full_archive:
+                test_project = load_project_from_archive(zf)
+                args.pid = test_project.prjid
+                conffile = '{}/ptxprint_user.cfg'.format(test_project.path)
+                args.projects.append(test_project.path)
 
     if (args.extras & 16) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
@@ -446,7 +472,6 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         if args.config:
             if project is None or project.srcPath(args.config) is None:
                 args.config = None
-
     if args.test is not None:
         runtest(prjTree, config, macrosdir, project, doit, args)
     elif args.print or args.cmd is not None or retview:

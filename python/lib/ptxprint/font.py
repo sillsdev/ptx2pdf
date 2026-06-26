@@ -1024,6 +1024,9 @@ class FontRef:
     def __eq__(self, other):
         return self._iseq(other)
 
+    def to_dict(self):
+        return {'name': self.name, 'style': self.style, 'isGraphite': self.isGraphite, 'isCtxtSpace': self.isCtxtSpace, 'feats': self.lang, 'feats': self.lang}
+
     @classmethod
     def fromConfig(cls, txt):
         bits = txt.split("|")

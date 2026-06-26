@@ -1655,7 +1655,7 @@ class GtkViewModel(ViewModel):
         self.setupTeXOptions()
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
-            self.testing = GtkTester(self.args.capture, self)
+            self.testing = GtkTester(self.args.capture, self, full_archive=True)
             self.starttime = time.time()
             for k, v in _signals.items():
                 for w in v:
@@ -2537,6 +2537,8 @@ class GtkViewModel(ViewModel):
             self.userconfig.set("init", "config", self.cfgid)
         self.saveConfig(force=force)
         self.onSaveEdits(None)
+        if self.testing is not None:
+            self.finalise_testing()
 
     def writeConfig(self, cfgname=None, force=False):
         super().writeConfig(cfgname=cfgname, force=force)
@@ -8395,3 +8397,62 @@ Thank you,
         launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),
              projectDir=self.project.path, configName=self.cfgid,
              ptxprintVersion=VersionStr, onApply=lambda _: self.saveConfig())
+
+
+    def onStartTestRecording(self, btn):
+        if self.args.capture:
+            raise Exception("--capture was specified on the command line, so test recording is already in progress.")
+
+        testing_active = btn.get_active()
+        if testing_active:  # testing has just been turned on
+            dialog = Gtk.FileChooserDialog(
+                title="Select Output Zip File",
+                parent=self.mainapp.win,  # your main window
+                action=Gtk.FileChooserAction.SAVE
+            )
+
+            dialog.add_buttons(
+                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_SAVE, Gtk.ResponseType.OK
+            )
+
+            dialog.set_current_folder(os.path.expanduser("~"))
+
+            filter_zip = Gtk.FileFilter()
+            filter_zip.set_name("ZIP files")
+            filter_zip.add_pattern("*.zip")
+            dialog.add_filter(filter_zip)
+
+            response = dialog.run()
+
+            if response == Gtk.ResponseType.OK:
+                zip_file = dialog.get_filename()
+                dialog.destroy()
+                self.emission_hook_ids = []
+                for k, v in _signals.items():
+                    for w in v:
+                        o = getattr(Gtk, w)
+                        sigid = GObject.signal_lookup(k, o)
+                        hook_id = GObject.add_emission_hook(o, k, self.emission_hook, k)
+                        self.emission_hook_ids.append((o, k, hook_id))
+                self.testing = GtkTester(zip_file, self, full_archive=True)
+                self.starttime = time.time()
+            else:
+                dialog.destroy()
+                btn.set_active(False)
+
+        else:  # testing has just been turned off
+            self.finalise_testing()
+        print('hello')
+
+    def finalise_testing(self):
+        if self.testing is None:
+            return
+        if hasattr(self, 'emission_hook_ids'):
+            for obj, signal_name, hook_id in self.emission_hook_ids:
+                GObject.remove_emission_hook(obj, signal_name, hook_id)
+            self.emission_hook_ids = []
+        self.testing.setid(self.project, self.cfgid)
+        self.testing.finalise()
+        self.testing = None
+        self.builder.get_object("c_testrecording").set_active(False)

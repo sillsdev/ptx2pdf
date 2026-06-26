@@ -1,12 +1,24 @@
 
 from gi.repository import Gtk, GObject, GLib
-import os, zipfile, json, shutil
+import io, os, zipfile, json, shutil, tempfile, filecmp
+import subprocess
 from configparser import ConfigParser
-from ptxprint.usxutils import simple_parse
 from difflib import context_diff
+from pathlib import Path
+from glob import glob
+
+from ptxprint.usxutils import simple_parse
+from ptxprint.project import Project, ProjectDir
+
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, "to_dict"):
+            return obj.to_dict()
+        return super().default(obj)
 
 class GtkTester:
-    def __init__(self, fname, view):
+    def __init__(self, fname, view, full_archive=False):
         self.fname = fname
         self.view = view
         self.events = []
@@ -14,7 +26,12 @@ class GtkTester:
         self.usedids = set()
         self.projects = {}
         self.paused = False
-        self.zip = None
+        self.full_archive = full_archive
+        if self.full_archive:
+            self.view.createArchive(fname, for_test=True)
+            self.zip = self.view.zf
+        else:
+            self.zip = None
 
     def addEvent(self, w, signal, t, val, a):
         ''' events are widget, type="signal", signal, parms; type="set", val '''
@@ -31,7 +48,6 @@ class GtkTester:
             else:
                 laste = e
             if self.currid is not None and self.currid not in self.usedids:
-                self.addid(*self.currid)
                 self.usedids.add(self.currid)
         elif (m := getattr(self, "s_"+signal.replace("-", ""), None)) is not None:
             e = m(w, signal, t, val, *a)
@@ -59,21 +75,6 @@ class GtkTester:
         except KeyError:
             self.zip.mkdir(name)
 
-    def addid(self, project, cfgid):
-        if self.zip is None and self.fname is not None:
-            self.zip = zipfile.ZipFile(self.fname, mode="w", compression=zipfile.ZIP_BZIP2)
-            self.zip.mkdir("before")
-        if self.zip is None:
-            return
-            self.mkzipdir("before/{}".format(project.prjid))
-        for a in ("Settings.xml", "PTXSettings.xml"):
-            fname = os.path.join(project.path, a)
-            if self.writefile(a, "before", project):
-                break
-        for a in ("ptxprint.cfg", "ptxprint.sty"):
-            self.writefile(a, "before", project, cfgid)
-        self.projects[project.prjid] = project
-
     def writefile(self, name, side, project, cfgid=None):
         if cfgid is None:
             fname = os.path.join(project.path, name)
@@ -91,52 +92,50 @@ class GtkTester:
         return False
 
     def finalise(self):
-        if self.zip is None:
+        project = self.currid[0]
+        if self.zip is None or self.paused:
             return
 
-        self.mkzipdir("after")
-        for f in self.zip.infolist():
-            if not f.filename.startswith("before/") or f.is_dir():
-                continue
-            b = f.filename.split("/", 3)
-            if len(b) < 4:
-                continue
-            project = self.projects[b[1]]
-            cfgid = b[2]
-            self.mkzipdir("after/{}".format(b[1]))
-            self.mkzipdir("after/{}/{}".format(b[1], b[2]))
-            self.writefile(b[3], "after", project, cfgid)
-        events = json.dumps({"events": self.events}, ensure_ascii=False, indent=4)
-        self.zip.writestr("events.json", events)
-        self.zip.close()
         self.pause()
+        self.mkzipdir("{}/test".format(project.prjid))
+
+        if self.full_archive:
+            after_archive = self.view.createArchive(in_memory=True)
+
+        initial_files = {name: self.zip.read(name) for name in self.zip.namelist()}
+
+        after_archive.seek(0)
+        with zipfile.ZipFile(after_archive) as z_final:
+            final_files = {name: z_final.read(name)
+                        for name in z_final.namelist()}
+
+        modified_files = []
+        deleted_files = []
+
+        for name, content in final_files.items():
+            if name not in initial_files or initial_files[name] != content:
+                modified_files.append(name)
+                self.zip.writestr("{}/test/modified_files/{}".format(project.prjid, name), content)
+        for name in initial_files:
+            if name not in final_files and 'test' not in name:
+                deleted_files.append(name)
+
+        self.zip.writestr("{}/test/deleted_files.txt".format(project.prjid), '\n'.join(deleted_files))
+
+        events = json.dumps({"events": self.events}, ensure_ascii=False, indent=4, cls=CustomJSONEncoder)
+        self.zip.writestr("{}/test/events.json".format(project.prjid), events)
+        self.zip.close()
 
     def setuprun(self, fname, view):
         self.pause()
         projects = {}
+        self.fname = fname
         self.runzip = zipfile.ZipFile(fname, "r")
         for fi in self.runzip.infolist():
-            if fi.filename == "events.json":
+            if fi.filename.endswith("events.json"):
                 with self.runzip.open(fi) as src:
                     self.runevents = json.load(src)['events']
-            if not fi.filename.startswith("before/") or fi.is_dir():
-                continue
-            b = fi.filename.split("/", 3)[1:]
-            f = b.pop()
-            p = None; c = None
-            if len(b) > 1:
-                p, c = b[-2:]
-            elif len(b):
-                p = b[-1]
-            if p is not None:
-                if p not in projects:
-                    projects[p] = view.prjTree.findProject(p)
-                outpath = projects[p].path
-                if c is not None:
-                    outpath = os.path.join(outpath, "shared", "ptxprint", c)
-                outpath = os.path.join(outpath, f)
-                with self.runzip.open(fi) as src, open(outpath, "wb") as tgt:
-                    shutil.copyfileobj(src, tgt)
+
         self.runeventidx = 0
 
     def run_action(self, noclose):
@@ -151,8 +150,6 @@ class GtkTester:
                 goround = False
             elif e[1] == "signal":
                 signal = e[2]
-                if w == "b_close" and signal == "clicked":
-                    continue
                 widget = self.view.builder.get_object(w)
                 widget.emit(signal, *e[3:])
                 goround = True
@@ -162,31 +159,71 @@ class GtkTester:
                     goround = m(w, *e[2:])
             if goround and self.runeventidx < len(self.runevents):
                 GLib.idle_add(self.run_action, noclose)
-                return
+            if self.runeventidx == len(self.runevents):
+                self.view.onDestroy(None)
 
     def run_finalise(self):
-        results = {}
-        projects = {}
-        for fi in self.runzip.infolist():
-            if not fi.filename.startswith("after/") or fi.is_dir():
-                continue
-            b = fi.filename.split("/", 3)[1:]
-            if len(b) < 4:
-                continue        # only want configuration files
-            ext = os.path.splitext(b[3])
-            m = getattr(self, "compare_"+ext[1:].lower(), None)
-            if m is None:
-                m = self.diffcompare
-            if b[1] not in projects:
-                projects[b[1]] = self.view.prjTree.findProject(b[1])
-            outpath = os.path.join(projects[b[1]].path, "shared", "ptxprint", b[2], b[3])
-            fpin = open(outpath, encoding="utf-8")
-            zfbin = self.runzip.open(fi)
-            zfin = io.TextIOWrapper(zfbin, encoding="utf-8")
-            results["{1}/{2}/{3}".format(*b[3])] = m(fpin, zfin, filename=b[3])
-            zfin.close()
-            fpin.close()
-        return results
+        # unpack the test zipfile to a temp location, then modify and delete files to allow use as a reference
+        reference_tmpdir = tempfile.mkdtemp()
+        with zipfile.ZipFile(self.fname) as z_initial:
+            z_initial.extractall(reference_tmpdir)
+
+        modified_files_dir = Path(reference_tmpdir) / self.view.project.prjid / "test" / "modified_files"
+        for source_path in modified_files_dir.rglob("*"):
+            if source_path.is_file():
+                dest_path = Path(reference_tmpdir) / source_path.relative_to(modified_files_dir)
+                try:
+                    shutil.copyfile(str(source_path), str(dest_path))
+                except Exception as e:
+                    print(f"Error moving {source_path}: {e}")
+
+        deleted_files_path = Path(reference_tmpdir) / self.view.project.prjid / "test" / "deleted_files.txt"
+        with open(deleted_files_path) as f:
+            deleted_files = [f.strip() for f in f.readlines()]
+        for file in deleted_files:
+            (Path(reference_tmpdir) / file).unlink()
+
+        # also, remove the unique.id file and local/ dir created when running the test since this doesn't exist in the reference
+        if os.path.isfile(os.path.join(self.view.project.path, "unique.id")):
+            os.remove(os.path.join(self.view.project.path, "unique.id"))
+        if os.path.isdir(os.path.join(self.view.project.path, "local")):
+            shutil.rmtree(os.path.join(self.view.project.path, "local"))
+
+        # reference is prepared, now we just run a diff
+        return self.prepare_diff_report(self.view.project.path, str(Path(reference_tmpdir) / self.view.project.prjid))
+
+    def prepare_diff_report(self, testdir, refdir):
+        diff_results = {"test": [], "ref": [], "diff": [], "cfg": [], "sty": []}
+        comparison = filecmp.dircmp(testdir, refdir)
+
+        def collect_diff(cmp_obj):
+            for file in cmp_obj.diff_files:
+                diff_results["diff"].append((str(Path(cmp_obj.left) / file), str(Path(cmp_obj.right) / file)))
+            for file in cmp_obj.left_only:
+                diff_results["test"].append(str(Path(cmp_obj.left) / file))
+            for file in cmp_obj.right_only:
+                diff_results["ref"].append(str(Path(cmp_obj.right) / file))
+            for subdir_cmp in cmp_obj.subdirs.values():
+                collect_diff(subdir_cmp)
+
+        collect_diff(comparison)
+        for f in diff_results["diff"]:
+            if f[0].endswith('.cfg'):
+                with open(f[0]) as f0, open(f[1]) as f1:
+                    cfg_diff = self.compare_cfg(f0, f1)
+                if cfg_diff:
+                    diff_results['cfg'] = cfg_diff
+
+            elif f[0].endswith('.sty'):
+                with open(f[0]) as f0, open(f[1]) as f1:
+                    sty_diff = self.compare_sty(f0, f1)
+                if sty_diff:
+                    diff_results['sty'] = sty_diff
+        diff_results["diff"] = [f for f in diff_results["diff"] if not f[0].endswith('.cfg') and not f[0].endswith('.sty')]
+        return diff_results
+
+
+
 
 #### special handlers
     def s_rowactivated(self, w, signal, t, val, p, col, *a):
@@ -209,6 +246,7 @@ class GtkTester:
         return True         # we emitted a signal so go round
 
     def compare_cfg(self, old, new, **kw):
+        options_to_ignore = ["gitversion", "config"]
         res = []
         oldc = ConfigParser()
         oldc.read_file(old)
@@ -232,7 +270,7 @@ class GtkTester:
                     continue
                 oldv = oldc.get(s, o)
                 newv = newc.get(s, o)
-                if oldv != newv:
+                if oldv != newv and o not in options_to_ignore:
                     res.append(f"{s}/{o}: {oldv} -> {newv}")
         return res
 
@@ -245,10 +283,10 @@ class GtkTester:
         diffs = newm.difference(oldm)
         if len(diffs):
             res.append(f"Different markers: {', '.join(sorted(diffs))}")
-        for m, r in newm.items():
+        for m, r in news.items():
             if m not in oldm:
                 continue
-            o = oldm[m]
+            o = olds[m]
             newk = set(r.keys())
             oldk = set(o.keys())
             diffs = newk.difference(oldk)
@@ -268,4 +306,18 @@ class GtkTester:
         res = context_diff(oldl, newl, fromfile="test/"+fname, tofile="result/"+fname, lineterm="")
         return res
 
-
+def load_project_from_archive(zf, dir_to_extract=None):
+    """
+    zf is an open zipfile, containing an archive of a project created using the createArchive method
+    Will be extracted to dir_to_extract if specified, to a temporary directory if not
+    """
+    if not dir_to_extract:
+        dir_to_extract = tempfile.mkdtemp()
+    zf.extractall(dir_to_extract)
+    cfg_path = list(Path(dir_to_extract).glob("*/shared/ptxprint/*/ptxprint.cfg"))
+    if len(cfg_path) != 1:
+        raise Exception("1 cfg file was expected in the archive but {} were found.".format(len(cfg_path)))
+    prjid = cfg_path[0].parts[3]
+    project_dir = ProjectDir(prjid, None, dir_to_extract)
+    project = Project(project_dir)
+    return project
