@@ -500,7 +500,7 @@ class WorkingCoverState:
                 view.styleEditor.setval(f"cat:{_tgt}|esb", "Alpha", inv_alpha)
             # todo: cropping images
         for m in (('mt1', 'title'), ('mt2', 'subtitle')):
-            sz = view.styleEditor.getval(m[0], 'FontSize', 1.0)
+            sz = float(view.styleEditor.getval(m[0], 'FontSize', 1.0))
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'FontSize', sz * getattr(self, m[1]+"_size_pct") / 100)
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'Color', getattr(self, m[1]+"_color").replace("#", "x"))
             view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'FontSize', sz * 0.65 * getattr(self, "spine_text_size_pct") / 100)
@@ -550,13 +550,13 @@ class WorkingCoverState:
                         hremove += float(self.getBorderVal(view, f"cat:cover{a}|esb", v, p))
                 theight = pheight - vremove
                 twidth = pwidth - hremove
-                title_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
+                title_height = float(view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0))
                 bits.append((theight * self.title_position_pct / 100, title_height * linefactor, r"\mt1 \zvar|maintitle\*"))
                 if self.subtitle_enabled:
-                    subtitle_height = view.styleEditor.getval(f"cat:cover{a}|mt2", "LineSpacing", 1.0)
+                    subtitle_height = float(view.styleEditor.getval(f"cat:cover{a}|mt2", "LineSpacing", 1.0))
                     bits.append((theight * self.subtitle_position_pct / 100, subtitle_height * linefactor, r"\mt2 \zvar|subtitle\*"))
                 if self.langname_enabled:
-                    langname_height = view.styleEditor.getval(f"cat:cover{a}|mt3", "LineSpacing", 1.0)
+                    langname_height = float(view.styleEditor.getval(f"cat:cover{a}|mt3", "LineSpacing", 1.0))
                     bits.append((theight * self.langname_position_pct / 100, langname_height * linefactor, r"\mt3 \zvar|languagename\*"))
                 if self.fgimage_enabled:
                     fgimage_height = self.get_image_height(self.fgimage_path, twidth, theight)
