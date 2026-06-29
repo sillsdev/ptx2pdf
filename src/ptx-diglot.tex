@@ -440,8 +440,9 @@
 }
 
 \def\dglt@calc@vailht@mods{%
-   \global\advance\availht by \m@xBelowBaseline
-   \x@\ifx\csname BelowBaseline\c@rrdstat\endcsname\empty\else
+   \x@\ifx\csname BelowBaseline\c@rrdstat\endcsname\empty
+     %\global\advance\availht by \m@xBelowBaseline
+   \else
      \global\advance\availht by -\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
      \trace{Dh}{BelowBaseline: \csname BelowBaseline\c@rrdstat\endcsname x \csname b@selineskip\c@rrdstat\endcsname -> \the\availht}%
    \fi
@@ -1196,8 +1197,9 @@
   \edef\@xtra{lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}}%
   \ifnum\tmpcount=11
     \dimen0=\lastskip
-    \edef\@xtra{\@xtra\space \the\dimen0}%
-    \vbox to 0pt{}%
+    \edef\@xtra{\@xtra\space \the\dimen0 [removed]}%
+    \unskip
+    \vbox to \dimen0{\vss}%
   \fi 
   \ifnum\tmpcount=13
     \edef\@xtra{\@xtra\space \the\savedpenalty}%
