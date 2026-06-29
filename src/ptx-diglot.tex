@@ -2312,9 +2312,9 @@
     \advance\availht by -\m@xBelowBaseline
   }%
   %\tracingassigns=0
-  \ifdim\availht<\@maxb@seline
+  \ifdim\availht<\dimexpr \@minb@seline *2\relax
     \global\pagefulltrue%
-    \trace{D}{Declaring page full (\the\availht < 2 \@maxb@seline)}%
+    \trace{D}{Declaring page full (\the\availht < 2x \@maxb@seline, cf: \the\TempDim)}%
   \else%
     \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true \else false \fi tsr=\csname tri@lsplitRej\c@rrdstat\endcsname}%
     \ifpagefull\ifendbook\ifendbooknoeject
