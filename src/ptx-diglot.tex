@@ -636,8 +636,9 @@
       \Showbox3
       \Showbox\p@rtl
     \fi
-    {\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
-    \global\vsize=\availht}% let grouping undo addition
+    {\dimen0=\csname availht\c@rrdstat\endcsname
+    \advance\dimen0  by \baselineskip \relax% avoid underfull box in case of footnote
+    \global\vsize=\dimen0}% let grouping undo addition
     \ifvoid\@xcs
       \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{}%
     \else
