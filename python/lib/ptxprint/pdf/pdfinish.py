@@ -22,6 +22,7 @@ from ptxprint.utils import saferelpath
 from ptxprint.pdf.pdfsig import make_signatures, get_page_size
 from ptxprint.pdf.pdfdiff import createDiff
 from ptxprint.pdf.procpdf import procpdf
+from ptxprint.pdf.pdf_settings_report import PDFSettingsExtractor, generate_single_html, generate_compare_html
 from ptxprint.pdfrw import PdfReader, PdfWriter, PageMerge
 from ptxprint.pdfblender import blend_pdf
 
@@ -57,6 +58,9 @@ class Finisher(Gtk.Application):
         self.tmp_file_1 = None
         self.tmp_file_2 = None
         self.errored = False
+
+        self.builder.get_object("fp_input").connect(
+            "file-set", lambda w: self._update_settings_pdf_label())
 
         self.mw.show_all()
         Gtk.main()
@@ -242,6 +246,78 @@ class Finisher(Gtk.Application):
         for page in base.pages:
             PageMerge(page).add(watermark_page, prepend=True).render()
         PdfWriter(output_pdf_path, trailer=base).write()
+
+    # ------------------------------------------------------------------
+    # Settings Report tab
+    # ------------------------------------------------------------------
+
+    def onSettingsCompareToggled(self, btn):
+        visible = btn.get_active()
+        self.builder.get_object("fp_settingsPDFB").set_visible(visible)
+
+    def onSettingsReportClicked(self, btn):
+        pdf_a = self.builder.get_object("fp_input").get_filename()
+        if not pdf_a:
+            self._settings_status("No input PDF selected. Use the file picker above.")
+            return
+        if not pdf_a.endswith(".pdf"):
+            self._settings_status("Input file must be a .pdf file.")
+            return
+
+        compare_on = self.builder.get_object("c_settingsCompare").get_active()
+        pdf_b = self.builder.get_object("fp_settingsPDFB").get_filename() if compare_on else None
+
+        if compare_on and not pdf_b:
+            self._settings_status("Select a second PDF for comparison, or uncheck 'Compare'.")
+            return
+
+        ext_a = PDFSettingsExtractor(pdf_a)
+        if not ext_a.extract():
+            self._settings_status(
+                "No PTXprint settings found in this PDF.\n"
+                "Enable 'Include settings in PDF' in PTXprint's Finishing tab before printing."
+            )
+            return
+
+        out_dir = self.tmp_dir.name
+        if compare_on:
+            ext_b = PDFSettingsExtractor(pdf_b)
+            if not ext_b.extract():
+                self._settings_status(
+                    f"No PTXprint settings found in the second PDF:\n{pdf_b}"
+                )
+                return
+            out_path = os.path.join(out_dir, "settings_compare.html")
+            ok = generate_compare_html(ext_a, ext_b, out_path)
+        else:
+            proj = ext_a.get("project", "id", "report") or "report"
+            cfg  = ext_a.get("config",  "name", "") or ""
+            stem = f"{proj}_{cfg}_settings" if cfg else f"{proj}_settings"
+            out_path = os.path.join(out_dir, stem + ".html")
+            ok = generate_single_html(ext_a, out_path)
+
+        if not ok or not os.path.exists(out_path):
+            self._settings_status("Failed to generate report. Check the log for details.")
+            return
+
+        self._settings_status(f"Report generated. Opening in browser…")
+        if platform.system() == "Darwin":
+            subprocess.call(("open", out_path))
+        elif platform.system() == "Windows":
+            os.startfile(out_path)
+        else:
+            subprocess.call(("xdg-open", out_path))
+
+    def _settings_status(self, msg):
+        self.builder.get_object("l_settingsStatus").set_text(msg)
+
+    # ------------------------------------------------------------------
+    # Update the Settings tab's source-PDF label when the input changes
+    # ------------------------------------------------------------------
+
+    def _update_settings_pdf_label(self):
+        pdf = self.builder.get_object("fp_input").get_filename() or "(select input PDF above)"
+        self.builder.get_object("l_settingsPDFApath").set_text(pdf)
 
     def _get_sheet_size(self, sheet_text):
         sheet_sizes = {
