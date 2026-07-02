@@ -180,7 +180,11 @@
 \or adjust\or lig\or disc\or whatsit\or math%10
 \or glue\or  kern\or penalty\or unset\or mathmode%15
 \else UNK\fi\fi}
-
+\def\decod@group#1{\ifnum #1<1 none\else \ifcase #1\or%0
+simple\or hbox\or adjusted hbox\or vbox\or vtop\or%5
+align\or no align\or output\or math\or disc\or%10
+insert\or vcenter\or math choice\or semi simple\or math shift\or%15
+math left\else UNK\fi\fi}
 %Defined penalties
 \xdef\sp@cialpen{-10001}
 \def\newsp@cialpen#1{%define a new special penalty {#1}  which gets set as the next special penalty number (assuming all special penalties are registered with this function.
