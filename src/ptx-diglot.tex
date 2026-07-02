@@ -65,6 +65,7 @@
 \newif\ifdiglotb@dy % set if the diglot file is processing body text
 \newif\ifdiglotfirstb@dy % set if the diglot file is processing body text for the first time this loop.
 \newif\if@@collected
+\globcount\GrowUnprintableLimit \GrowUnprintableLimit=2 % Do we grow the page by a line if the alternative is unprintable? Old behaviour equivalent to 0.
 \addtoeveryparhooks{\global\diglotcolh@scontenttrue}
 \useLeftMarkstrue
 \useRightMarkstrue
@@ -496,11 +497,6 @@
     \boxmovedtrue % and drop through
   \else
     \d@resplit@galley %
-    %\global\output={\diglot@backingup}%
-    %\global\intrialtrue
-    %\global\holdinginserts=1
-    %\penalty\endtri@lpen@lty
-    %\relax
   \fi
 }
 
@@ -508,7 +504,6 @@
   \traceNum{d}{d@resplit@galley \c@rrdstat\space\l@gdims{\galley}, \the\trialheight\space bls:\the\baselineskip\space @bls:\the\@bls}%
   \dimen0=\vfuzz
   \vfuzz=\maxdimen
-  \global\tri@ldelta=0pt
   \global\haveb@ckeduptrue
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname
   \setbox0\vbox{\penalty9000\unvcopy\csname whole\c@rrdstat\endcsname}%
@@ -602,6 +597,7 @@
     \global\trialfailedfalse
     \global\intrialtrue
     \global\deadcycles=0
+    \global\tri@ldelta=-\csname b@selineskip\c@rrdstat\endcsname
     \global\holdinginserts=0
     %Make sure partialX (last galley) is dropped or recycled ...
     \iflate@stage@reflow
@@ -636,9 +632,9 @@
       \Showbox3
       \Showbox\p@rtl
     \fi
-    {\dimen0=\csname availht\c@rrdstat\endcsname
+    {\dimen0=\csname availht\c@rrdstat\endcsname% Use the pre-notes version of available space.
     \advance\dimen0  by \baselineskip \relax% avoid underfull box in case of footnote
-    \global\vsize=\dimen0}% let grouping undo addition
+    \global\vsize=\dimen0}% let grouping restore dimen0
     \ifvoid\@xcs
       \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{}%
     \else
@@ -1008,13 +1004,16 @@
   \ifdiglotDebugFollowContents
     \Showbox{255}%
   \fi
+  %Calculate \TempDim. It will give the availht if the current box were to be added.
   \ifdim\ht255>0pt
     \advance\TempDim by -\ht255\relax
     \ifdim\dp255>0.5\@bls
       \advance\TempDim by -\dp255\relax
     \fi
   \else
-    \advance\TempDim by \ht255\relax
+    \trace{D}{Negative height for box255:\l@gdims{255}}%
+    %\advance\TempDim by \ht255\relax
+    \TempDim=\ht255
     \advance\TempDim by -\dp255\relax
   \fi 
   \ifvoid\trialbox
@@ -1023,15 +1022,15 @@
       \Showbox\trialbox
     \fi
     \update@marks@partone
-    %\s@venotes{\g@tndstat}{1}% Save *these* notes (page1 notes)
-    %\clearn@tes% And clear them
-    %\cle@rn@tesaves{\g@tndstat}{2}%Things fit or this is a new chunk. No excess notes to carry over.
     \ifdim\TempDim<-0.3\@bls % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (th:\the\trialheight, pg:\the\pagegoal, pt:\the\pagetotal, td:\the\TempDim, av:\the\availht), \l@gdims{\trialbox}}%
       \global\holdinginserts=1
       \global\tri@ldelta=\dimexpr \ht\trialbox+\dp\trialbox -\trialheight\relax
-      \ifdim\tri@ldelta>0pt 
-        \trace{D}{Initial calc ends up positive: \the\tri@ldelta, using \the\TempDim instead.}%
+      \ifdim\tri@ldelta<\z@ \else
+        \ifdim\TempDim<-\ht\trialbox
+          \TempDim=-\@bls
+        \fi
+        \trace{D}{Initial calc ends up 0 or positive: \the\tri@ldelta, using \the\TempDim instead.}%
         \global\tri@ldelta=\TempDim
       \fi
       \global\trialfailedtrue
@@ -1082,6 +1081,7 @@
       \fi
     \fi
   \fi
+  \trace{D}{status: \l@gdims{\trialbox} Δ:\the\tri@ldelta, th:\the\trialheight, \iftrialfailed trialfailed, \fi\ifextr@content extr@content\fi}%
   \let\after@this=\relax
   \ifnum\outputpenalty=\endtri@lpen@lty\relax
     \global\intrialfalse
@@ -1102,7 +1102,7 @@
         \t@mptrue
       \fi
       \ifdim\tri@ldelta=0pt
-        \t@mptrue
+        \t@mptrue%FIXME! Sometimes the intial value gets here.
       \fi
       \ift@mp
         \trace{D}{Abandoning trial for \c@rrdstat, no space for galley at all}%
@@ -1175,7 +1175,7 @@
   \global\vsize=\csname availht\c@rrdstat\endcsname
   \whichtrial
 }
-
+\newcount\unprint@ble
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \tmpcount=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
@@ -1194,6 +1194,7 @@
       \global\savedpenalty=\tmpcount
     \fi
   \fi
+  \global\unprint@ble=\z@
   \tmpcount=\lastnodetype
   \edef\@xtra{lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}}%
   \ifnum\tmpcount=11
@@ -2317,7 +2318,7 @@
     \global\pagefulltrue%
     \trace{D}{Declaring page full (\the\availht < 2x \@maxb@seline, cf: \the\TempDim)}%
   \else%
-    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true \else false \fi tsr=\csname tri@lsplitRej\c@rrdstat\endcsname}%
+    \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true \else false \fi tsr=\csname tri@lsplitRej\c@rrdstat\endcsname, rfl=\refl@wlist, xs=\digl@tc@ntent@xcs}%
     \ifpagefull\ifendbook\ifendbooknoeject
       \trace{d}{some space and end of a book, cancelling pagefull}%
       \global\pagefullfalse
@@ -3468,9 +3469,11 @@
   \trace{d}{check@and@update reflow:\refl@wlist\space t:\tri@llist}%
   \ifboxmoved
     \IfTr@ce{gI}{%
+      \tr@ceout{gI}{Inserts and notes:}%
       \let\d@=\sh@winsertdim\edef\v@lpfx{save}\edef\v@lsfx{chunk}%%TESTING
        \x@\cstackdown\ins@rts\E
       \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
+      \shown@tedims
     }%
     \r@storeinserts{chunk}%
     \trace{d}{Resetting notes: \refl@wlist}%
@@ -3487,15 +3490,20 @@
       \global\lastchunkpenalty=0
     \else
       \ifdim\dimexpr \ht\partial + \dp\partial + \ht\n@xtpartial + \dp\n@xtpartial\relax =0pt
-        \message{UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere between \tri@lfirstmarks-\c@rref}%
+        \message{UNPRINTABLE PAGE CONTENTS! Image too big? \l@gdims{\partial},\l@gdims{\n@xtpartial}. Somewhere between \tri@lfirstmarks-\c@rref}%
         \let\\=\shown@tedims\the\n@tecl@sses
-        \ifunprintable
+        \ifnum\unprint@ble>\GrowUnprintableLimit
           \errmessage{Cannot continue}%
-          \divide \count0 by 0 
+          \divide \count0 by 0 % Errmessage should stop us, this might do better.
         \else
-          \message{Trying to continue by breaking rules}%
+          \ifnum\GrowUnprintableLimit=\unprint@ble
+            \global\unprintabletrue
+          \else
+            \global\advance \adjustp@ge by\@bls
+          \fi
+          \message{Trying to continue by breaking rules (\the\adjustp@ge, \the\unprint@ble)}%
+          \global\advance\unprint@ble by 1
         \fi
-        \global\unprintabletrue
       \else
         \@add@n@xtpartial
         \@writep@ge
