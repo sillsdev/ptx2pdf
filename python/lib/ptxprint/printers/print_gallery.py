@@ -1,5 +1,10 @@
-from gi.repository import Gtk
+r"""Print Gallery (Ernakulam, India) — local pricing model.
 
+Rates were derived by querying the print shop directly; interiors are
+printed on A3 sheets (4 book pages per sheet), A5 books 2-up in pairs.
+"""
+
+from ptxprint.printers.base import PrinterBase, Choice, Output, BINDING_SADDLE
 from ptxprint.printers.currency import formatCurrency
 
 RATES = {
@@ -13,209 +18,124 @@ RATES = {
     "staple": 55         # ₹/copy (staple binding)
 }
 
-# Interior cost multipliers per paper type (index matches paperCombo order)
-PAPER_MULTIPLIERS = [1.0, 1.1, 1.15, 1.6]
+# Interior cost multiplier and label per paper option
+PAPERS = [
+    ("70",  "Plain white (70 gsm)",  1.0),
+    ("80",  "Plain white (80 gsm)",  1.1),
+    ("85",  "Off white (85 gsm)",    1.15),
+    ("120", "Glossy (120 gsm)",      1.6),
+]
+
+# Shared binding class → (rate key, label)
+BINDINGS = {
+    "soft":   ("perfect", "Perfect (Glued)"),
+    "hard":   ("case",    "Case (Hardcover)"),
+    "saddle": ("staple",  "Stapled (Center pinned)"),
+}
+
+STAPLE_MAX_PAGES = 100
+
+# Largest trim size that can still go 2-up on A3 (A5 plus a little grace)
+TWOUP_MAX_W = 150
+TWOUP_MAX_H = 212
 
 
-class PrintGallery:
+def fmtRupees(amount):
+    return formatCurrency(amount, "INR")
+
+
+class PrintGallery(PrinterBase):
+    pid = "print_gallery"
     displayName = "Print Gallery"
+    country = "IN"
+    countryName = "India"
     homeCurrency = "INR"
-    compareWidget = "c_pg_comparePrinters"
+    url = "https://www.printgallery.in/"
 
-    def __init__(self, view):
-        self.view = view
-        self._setupDone = False
+    options = [
+        Choice("fcb_pg_paper", "Paper type:",
+               [(k, lbl) for k, lbl, m in PAPERS], default="70"),
+        Choice("fcb_pg_lam", "Lamination:",
+               [("no", "No"), ("yes", "Yes")], default="no"),
+    ]
 
-    def getEstimate(self, quantities):
-        """Per-copy prices in INR at each quantity, for the current settings."""
-        self.prepare()      # make sure widgets exist and page count is current
-        return self.getPerCopyData(quantities)
+    outputs = [
+        Output("l_pg_impose",   "Imposition:"),
+        Output("l_pg_covers",   "Covers:"),
+        Output("l_pg_interior", "Interior:"),
+        Output("l_pg_lam",      "Lamination:"),
+        Output("l_pg_bind",     "Binding:"),
+    ]
 
-    def _widget(self, wname):
-        return self.view.builder.get_object(wname)
+    def _bindingKey(self, job):
+        key = BINDINGS.get(job.binding, ("perfect",))[0]
+        if key == "staple" and self._roundPages(job) > STAPLE_MAX_PAGES:
+            key = "perfect"     # staple not suitable for thick books
+        return key
 
-    def setup(self):
-        """Initialize default values and set up the calculator."""
-        if self._setupDone:
-            return
-        self._setupDone = True
-        try:
-            # Populate combo boxes
-            sizeCombo = self._widget("sizeCombo")
-            sizeCombo.append_text("A5 (2-up A4 sheets on A3)")
-            sizeCombo.append_text("Larger than A5 (1-up on A3)")
-            sizeCombo.set_active(0)  # A5 as default
+    def _isTwoUp(self, job):
+        return job.widthMm <= TWOUP_MAX_W and job.heightMm <= TWOUP_MAX_H
 
-            bindingCombo = self._widget("bindingCombo")
-            bindingCombo.append_text("Perfect (Glued)")
-            bindingCombo.append_text("Case (Hardcover)")
-            bindingCombo.append_text("Stapled (Center pinned)")
-            bindingCombo.set_active(2)  # Staple as default
+    def _roundPages(self, job):
+        return ((job.pages + 3) // 4) * 4      # A3 sheets hold 4 pages
 
-            printCombo = self._widget("printCombo")
-            printCombo.append_text("Black & White")
-            printCombo.append_text("Color")
-            printCombo.set_active(0)  # B&W as default
+    def _paperMultiplier(self):
+        pid = self.get("fcb_pg_paper") or "70"
+        for k, lbl, m in PAPERS:
+            if k == pid:
+                return m
+        return 1.0
 
-            paperCombo = self._widget("paperCombo")
-            paperCombo.append_text("Plain white (70 gsm)")
-            paperCombo.append_text("Plain white (80 gsm)")
-            paperCombo.append_text("Off white (85 gsm)")
-            paperCombo.append_text("Glossy (120 gsm)")
-            paperCombo.set_active(0)
+    def costs(self, job, copies):
+        """Cost components (total ₹, not per copy) at the given quantity."""
+        twoUp = self._isTwoUp(job)
+        pages = self._roundPages(job)
+        if twoUp and copies % 2:
+            copies += 1                         # 2-up books are printed in pairs
+        sheetsPerCopy = pages / 4
+        sets = copies / 2 if twoUp else copies  # A3 print runs
+        printRate = RATES["color" if job.color else "bw"] * self._paperMultiplier()
+        lamRate = RATES["lam"] if self.get("fcb_pg_lam") == "yes" else 0
+        return {
+            "copies":   copies,
+            "covers":   sets * RATES["cover300"],
+            "interior": sets * sheetsPerCopy * printRate,
+            "lam":      copies * lamRate,
+            "bind":     copies * RATES[self._bindingKey(job)],
+        }
 
-            lamCombo = self._widget("lamCombo")
-            lamCombo.append_text("No")
-            lamCombo.append_text("Yes")
-            lamCombo.set_active(0)  # No lamination as default
+    def warnings(self, job):
+        w = []
+        pages = self._roundPages(job)
+        if pages != job.pages:
+            w.append(f"Pages rounded up to {pages} (multiple of 4).")
+        if self._isTwoUp(job) and job.copies % 2:
+            w.append(f"Copies rounded up to {job.copies + 1} (A5 books are printed in pairs).")
+        if job.binding == BINDING_SADDLE and pages > STAPLE_MAX_PAGES:
+            w.append(f"Stapled binding is unsuitable beyond {STAPLE_MAX_PAGES} pages; "
+                     "Perfect binding is priced instead.")
+        return w
 
-            # Set spin button default values
-            pagesSpin = self._widget("pagesSpin")
-            pagesSpin.set_value(128)
+    def estimate(self, job, quantities):
+        if not job.pages:
+            return None
+        result = {}
+        for qty in quantities:
+            if qty <= 0:
+                continue
+            c = self.costs(job, qty)
+            total = c["covers"] + c["interior"] + c["lam"] + c["bind"]
+            result[qty] = total / c["copies"]
+        return result
 
-            copiesSpin = self._widget("copiesSpin")
-            copiesSpin.set_value(10)
-
-            # Connect signals
-            pagesSpin.connect("value-changed", self.onInputChanged)
-            copiesSpin.connect("value-changed", self.onInputChanged)
-            sizeCombo.connect("changed", self.onInputChanged)
-            bindingCombo.connect("changed", self.onInputChanged)
-            printCombo.connect("changed", self.onInputChanged)
-            paperCombo.connect("changed", self.onInputChanged)
-            lamCombo.connect("changed", self.onInputChanged)
-            
-            # Initial calculation
-            self.onInputChanged()
-            
-        except Exception as e:
-            print(f"ERROR in Print Gallery setup: {e}")
-            import traceback
-            traceback.print_exc()
-
-    def prepare(self):
-        """Called when the Print Gallery tab is selected."""
-        self.setup()
-        numpages = self.view.getPageCount()
-        if numpages:
-            self._widget("pagesSpin").set_value(numpages)
-
-    def onInputChanged(self, widget=None):
-        """Handle changes to any input widget and update all output labels."""
-        try:
-            # Get input values directly from widgets (these IDs have no prefix convention)
-            rawPages = int(self._widget("pagesSpin").get_value())
-            rawCopies = int(self._widget("copiesSpin").get_value())
-            sizeComboIdx = self._widget("sizeCombo").get_active()
-            printComboIdx = self._widget("printCombo").get_active()
-            paperComboIdx = self._widget("paperCombo").get_active()
-            lamComboIdx = self._widget("lamCombo").get_active()
-
-            # Manage staple availability: staple not suitable for > 100 pages
-            bindingCombo = self._widget("bindingCombo")
-            stapleCurrentlyAvailable = len(bindingCombo.get_model()) == 3
-            if rawPages > 100 and stapleCurrentlyAvailable:
-                if bindingCombo.get_active() == 2:  # Staple selected — switch to Perfect
-                    bindingCombo.set_active(0)
-                bindingCombo.remove(2)
-            elif rawPages <= 100 and not stapleCurrentlyAvailable:
-                bindingCombo.append_text("Staple")
-            bindingComboIdx = bindingCombo.get_active()
-
-            # Determine size (A5 = 0, Larger = 1)
-            isA5 = (sizeComboIdx == 0)
-
-            # Normalize pages to multiple of 4
-            pages = ((rawPages + 3) // 4) * 4
-            pageWarnText = ""
-            if pages != rawPages:
-                pageWarnText = f"Round up: {pages}"
-            self._widget("pageWarnLabel").set_text(pageWarnText)
-
-            # Normalize copies for A5 (pair them up if odd)
-            copies = rawCopies
-            copyWarnText = ""
-            if isA5 and (rawCopies % 2) != 0:
-                copies = rawCopies + 1
-                copyWarnText = f"Round up: {copies}"
-            self._widget("copyWarnLabel").set_text(copyWarnText)
-
-            # Calculate interior sheets per copy
-            interiorSheetsPerCopy = pages / 4
-
-            # Calculate costs
-            bindingRates = [RATES["perfect"], RATES["case"], RATES["staple"]]
-            # If staple was removed, index 2 no longer exists — guard against it
-            bindingCost = bindingRates[min(bindingComboIdx, len(bindingRates) - 1)]
-            printCost = [RATES["bw"], RATES["color"]][printComboIdx] * PAPER_MULTIPLIERS[paperComboIdx]
-            lamCost = RATES["lam"] if lamComboIdx == 1 else 0
-
-            # Cover cost calculation
-            if isA5:
-                coverCost = (copies / 2) * RATES["cover300"]
-            else:
-                coverCost = copies * RATES["cover300"]
-
-            # Interior cost calculation
-            if isA5:
-                interiorSheets = (copies / 2) * interiorSheetsPerCopy
-            else:
-                interiorSheets = copies * interiorSheetsPerCopy
-
-            interiorCost = interiorSheets * printCost
-
-            # Lamination cost: flat ₹10 per book cover
-            lamTotalCost = copies * lamCost
-
-            # Binding cost (per copy)
-            bindingTotalCost = copies * bindingCost
-
-            # Total cost
-            totalCost = coverCost + interiorCost + lamTotalCost + bindingTotalCost
-            perCopyCost = totalCost / copies if copies > 0 else 0
-
-            fmt = self.formatIndianCurrency
-            self._widget("coverBreakAmt").set_text(fmt(coverCost))
-            self._widget("interiorBreakAmt").set_text(fmt(interiorCost))
-            self._widget("lamBreakAmt").set_text(fmt(lamTotalCost))
-            self._widget("bindBreakAmt").set_text(fmt(bindingTotalCost))
-            self._widget("totalBreakAmt").set_markup(f"<b>{fmt(totalCost)}</b>")
-            self._widget("perCopyBreakAmt").set_text(fmt(perCopyCost))
-
-        except Exception as e:
-            print(f"Error in onInputChanged: {e}")
-
-    def getPerCopyData(self, quantities):
-        """Return {qty: per_copy_price_INR} for the current settings at each quantity."""
-        try:
-            rawPages     = int(self._widget("pagesSpin").get_value())
-            sizeComboIdx = self._widget("sizeCombo").get_active()
-            printComboIdx = self._widget("printCombo").get_active()
-            paperComboIdx = self._widget("paperCombo").get_active()
-            lamComboIdx  = self._widget("lamCombo").get_active()
-            bindingCombo = self._widget("bindingCombo")
-            bindingComboIdx = bindingCombo.get_active()
-            isA5 = (sizeComboIdx == 0)
-            pages = ((rawPages + 3) // 4) * 4
-            interiorSheetsPerCopy = pages / 4
-            bindingRates = [RATES["perfect"], RATES["case"], RATES["staple"]]
-            bindingCost  = bindingRates[min(bindingComboIdx, len(bindingRates) - 1)]
-            printCost    = [RATES["bw"], RATES["color"]][printComboIdx] * PAPER_MULTIPLIERS[paperComboIdx]
-            lamCost      = RATES["lam"] if lamComboIdx == 1 else 0
-            result = {}
-            for rawCopies in quantities:
-                copies = rawCopies + 1 if (isA5 and rawCopies % 2 != 0) else rawCopies
-                coverCost    = (copies / 2 if isA5 else copies) * RATES["cover300"]
-                interiorSheets = (copies / 2 if isA5 else copies) * interiorSheetsPerCopy
-                interiorCost = interiorSheets * printCost
-                lamTotal     = copies * lamCost
-                bindTotal    = copies * bindingCost
-                total        = coverCost + interiorCost + lamTotal + bindTotal
-                result[rawCopies] = total / copies if copies > 0 else 0
-            return result
-        except Exception:
-            return {}
-
-    def formatIndianCurrency(self, amount):
-        """Format amount as Indian currency (₹X,XX,XXX.xx)."""
-        return formatCurrency(amount, "INR")
+    def update(self, job):
+        if self._isTwoUp(job):
+            self.set("l_pg_impose", "A5, 2-up on A3")
+        else:
+            self.set("l_pg_impose", "1-up on A3")
+        copies = max(job.copies, 1)
+        c = self.costs(job, copies)
+        self.set("l_pg_covers", fmtRupees(c["covers"]))
+        self.set("l_pg_interior", fmtRupees(c["interior"]))
+        self.set("l_pg_lam", fmtRupees(c["lam"]))
+        self.set("l_pg_bind", fmtRupees(c["bind"]))

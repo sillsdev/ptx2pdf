@@ -54,7 +54,7 @@ from ptxprint.tatweel import TatweelDialog
 from ptxprint.gtkpolyglot import PolyglotSetup
 from ptxprint.report import Report
 from ptxprint.gtktesting import GtkTester
-from ptxprint.printers import init_printers, printer_from_label
+from ptxprint.printers import init_printers, comparePrinterPrices
 from ptxprint.page_filler import MultiView
 from ptxprint.bookProgressDlg import BookProgressDialog
 from ptxprint.wizards.cover.coverwizard import CoverWizardApp
@@ -3188,13 +3188,15 @@ class GtkViewModel(ViewModel):
             adj.sort()
             adj.changed = True
 
-    def onChangedPrinterTab(self, nbk_printers, scrollObject, pgnum=-1):
-        ppage = nbk_printers.get_nth_page(pgnum)
-        lw = nbk_printers.get_tab_label(ppage)
-        lid = self.getWidgetId(lw)
-        k = printer_from_label(lid)
-        if k:
-            self.printers[k].prepare()
+    def ensurePrinterTab(self):
+        if getattr(self, 'printerTab', None) is None:
+            from ptxprint.printers.tab import PrinterTab
+            self.printerTab = PrinterTab(self)
+        return self.printerTab
+
+    def onComparePrinterPrices(self, btn):
+        self.ensurePrinterTab()
+        comparePrinterPrices(self)
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
@@ -3210,8 +3212,7 @@ class GtkViewModel(ViewModel):
             if sel.count_selected_rows() > 0:
                 self.picListView.row_select(sel)
         elif pgid == "tb_Printers":
-            nbkw = self.builder.get_object("nbk_printers")
-            self.onChangedPrinterTab(nbkw, None, nbkw.get_current_page())
+            self.ensurePrinterTab().refresh()
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
@@ -5765,9 +5766,8 @@ class GtkViewModel(ViewModel):
             self.pdf_viewer.loadnshow(None)
         GLib.idle_add(self._setStaleIndicator, not passed)
         # TO DO: enable/disable the Permission Letter button
-        for printer in self.printers.values():
-            if hasattr(printer, 'refreshPageCount'):
-                printer.refreshPageCount()
+        if getattr(self, 'printerTab', None) is not None:
+            GLib.idle_add(self.printerTab.refreshPageCount)
 
     def _setStaleIndicator(self, stale):
         w = self.builder.get_object("bx_statusMsgBar")

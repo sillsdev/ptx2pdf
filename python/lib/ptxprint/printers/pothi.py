@@ -1,50 +1,41 @@
-from gi.repository import Gtk
+r"""Pothi.com (India) — local pricing model.
 
+Validated against 40 Pothi.com data points across all 8 sizes — zero error.
+Formula per copy:
+  price = fixed + rate * pages
+        + BINDING_ADJ[binding]
+        + color_rate * pages        (if Full Color; size-specific)
+        + COATED_RATE * pages       (if Full Color AND Coated paper)
+"""
+
+from ptxprint.printers.base import PrinterBase, Choice, Output, BINDING_SADDLE, BINDING_SOFT
 from ptxprint.printers.currency import formatCurrency
 
-# ---------------------------------------------------------------------------
-# Pricing constants
-# Validated against 40 Pothi.com data points across all 8 sizes — zero error.
-# Formula per copy:
-#   price = fixed + rate * pages
-#         + BINDING_ADJ[binding]
-#         + color_rate * pages        (if Full Color; size-specific)
-#         + COATED_RATE * pages       (if Full Color AND Coated paper)
-# ---------------------------------------------------------------------------
-
-# SIZE_PARAMS — one entry per sizeCombo index position (see setup()).
+# One entry per catalogue size: (label, width mm, height mm, params)
 #
 # 'color_rate': ₹/page premium for Full Color interior (size-specific).
 #               None = no data collected yet; calculator suppresses color output.
 # 'color_pts':  number of Full Color data points used to derive color_rate.
 #               1 = single point (estimate — collect a second to confirm);
 #               2 = two or more points (reliable).
-SIZE_PARAMS = [
-    # index 0 — "5 inch x 7 inch"
+SIZES = [
     # B&W: 3 pts (100p=137, 200p=207, 400p=347). Color: 1 pt (100p=367).
-    {"fixed": 67.0, "rate": 0.70, "color_rate": 2.30, "color_pts": 1},
-    # index 1 — "5 inch x 8 inch"
+    ("5 inch x 7 inch",    127, 178, {"fixed": 67.0, "rate": 0.70, "color_rate": 2.30, "color_pts": 1}),
     # B&W: 3 pts (100p=137, 200p=207, 400p=347). Color: 1 pt (100p=367).
     # NOTE: 5×7 and 5×8 price identically across all tested configurations.
-    {"fixed": 67.0, "rate": 0.70, "color_rate": 2.30, "color_pts": 1},
-    # index 2 — "A5"
+    ("5 inch x 8 inch",    127, 203, {"fixed": 67.0, "rate": 0.70, "color_rate": 2.30, "color_pts": 1}),
     # B&W: 5 pts (100–600p). Color: 2 pts (100p coated, 100p coated hard).
-    {"fixed": 67.0, "rate": 0.85, "color_rate": 3.25, "color_pts": 2},
-    # index 3 — "5.5 inch x 8.5 inch"
+    ("A5",                 148, 210, {"fixed": 67.0, "rate": 0.85, "color_rate": 3.25, "color_pts": 2}),
     # B&W: 3 pts (60p saddle, 250p, 500p soft). Color: 2 pts (1200p plain hard, coated hard).
-    {"fixed": 72.0, "rate": 0.80, "color_rate": 2.20, "color_pts": 2},
-    # index 4 — "6 inch x 9 inch"
+    ("5.5 inch x 8.5 inch", 140, 216, {"fixed": 72.0, "rate": 0.80, "color_rate": 2.20, "color_pts": 2}),
     # B&W: 3 pts (100p=157, 200p=242, 400p=412). Color: 1 pt (100p=447).
-    {"fixed": 72.0, "rate": 0.85, "color_rate": 2.90, "color_pts": 1},
-    # index 5 — "7 inch x 9 inch"
+    ("6 inch x 9 inch",    152, 229, {"fixed": 72.0, "rate": 0.85, "color_rate": 2.90, "color_pts": 1}),
     # B&W: 3 pts (100p=190, 200p=305, 400p=535). Color: 1 pt (100p=495).
-    {"fixed": 75.0, "rate": 1.15, "color_rate": 3.05, "color_pts": 1},
-    # index 6 — "8 inch x 11 inch"
+    ("7 inch x 9 inch",    178, 229, {"fixed": 75.0, "rate": 1.15, "color_rate": 3.05, "color_pts": 1}),
     # B&W: 3 pts (100p=203, 200p=323, 400p=563). Color: 1 pt (100p=558).
-    {"fixed": 83.0, "rate": 1.20, "color_rate": 3.55, "color_pts": 1},
-    # index 7 — "A4"
+    ("8 inch x 11 inch",   203, 279, {"fixed": 83.0, "rate": 1.20, "color_rate": 3.55, "color_pts": 1}),
     # B&W: 4 pts (100p, 200p, 400p soft; 1000p hard). Color: 0 pts — not yet collected.
-    {"fixed": 83.0, "rate": 1.30, "color_rate": None, "color_pts": 0},
+    ("A4",                 210, 297, {"fixed": 83.0, "rate": 1.30, "color_rate": None, "color_pts": 0}),
 ]
 
 # Binding adjustment added to the base price (₹, flat per copy).
@@ -54,9 +45,6 @@ BINDING_ADJ = {
     "saddle": -25,  # Saddle Stitched — ₹25 cheaper than soft cover
     "hard":   +45,  # Hard Cover — ₹45 more than soft cover
 }
-
-# Binding keys by bindingCombo index
-BINDING_KEYS = ["soft", "saddle", "hard"]
 
 # Coated paper surcharge — applies ONLY when interior is Full Color.
 # Verified at 1.15 ₹/page for 5.5×8.5; assumed consistent across sizes.
@@ -78,228 +66,126 @@ SOFT_MIN_PAGES   = 50
 SOFT_MAX_PAGES   = 500
 
 
-class Pothi:
-    displayName = "Pothi"
-    homeCurrency = "INR"
-    compareWidget = "c_pothi_comparePrinters"
-
-    def __init__(self, view):
-        self.view = view
-        self._setupDone = False
-
-    def getEstimate(self, quantities):
-        """Per-copy prices in INR at each quantity, for the current settings."""
-        self.prepare()      # make sure widgets exist and page count is current
-        return self.getPerCopyData(quantities)
-
-    def _widget(self, wname):
-        return self.view.builder.get_object(wname)
-
-    def setup(self):
-        """Initialise default values and connect signals. Runs once only."""
-        if self._setupDone:
-            return
-        self._setupDone = True
-        try:
-            sizeCombo = self._widget("p_sizeCombo")
-            for label in [
-                "5 inch x 7 inch",
-                "5 inch x 8 inch",
-                "A5",
-                "5.5 inch x 8.5 inch",
-                "6 inch x 9 inch",
-                "7 inch x 9 inch",
-                "8 inch x 11 inch",
-                "A4",
-            ]:
-                sizeCombo.append_text(label)
-            sizeCombo.set_active(2)  # Default: A5
-
-            bindingCombo = self._widget("p_bindingCombo")
-            for label in ["Soft Cover", "Saddle Stitched Binding", "Hard Cover"]:
-                bindingCombo.append_text(label)
-            bindingCombo.set_active(0)  # Default: Soft Cover
-
-            paperCombo = self._widget("p_paperCombo")
-            for label in [
-                "Plain White (70-80 GSM)",
-                "Plain Natural Shade (70-80 GSM)",
-                "Coated (90-120 GSM)",
-            ]:
-                paperCombo.append_text(label)
-            paperCombo.set_active(0)  # Default: Plain White
-
-            colorCombo = self._widget("p_colorCombo")
-            for label in [
-                "B&W interior (colored cover)",
-                "Full Color (Interior & Cover)",
-            ]:
-                colorCombo.append_text(label)
-            colorCombo.set_active(0)  # Default: B&W
-
-            pagesSpin = self._widget("p_pagesSpin")
-            pagesSpin.set_value(200)
-
-            qtySpin = self._widget("p_qtySpin")
-            qtySpin.set_value(1)
-
-            # Connect signals — all trigger the same recalculation handler
-            pagesSpin.connect("value-changed", self.onInputChanged)
-            qtySpin.connect("value-changed", self.onInputChanged)
-            sizeCombo.connect("changed", self.onInputChanged)
-            bindingCombo.connect("changed", self.onInputChanged)
-            paperCombo.connect("changed", self.onInputChanged)
-            colorCombo.connect("changed", self.onInputChanged)
-
-            self.onInputChanged()
-
-        except Exception as e:
-            print(f"ERROR in Pothi setup: {e}")
-            import traceback
-            traceback.print_exc()
-
-    def prepare(self):
-        """Called every time the Pothi tab is made active."""
-        self.setup()
-        numpages = self.view.getPageCount()
-        if numpages:
-            self._widget("p_pagesSpin").set_value(numpages)
-
-    def onInputChanged(self, widget=None):
-        """Recalculate and update all output labels whenever any input changes."""
-        try:
-            pages      = int(self._widget("p_pagesSpin").get_value())
-            qty        = int(self._widget("p_qtySpin").get_value())
-            sizeIdx    = self._widget("p_sizeCombo").get_active()
-            bindingIdx = self._widget("p_bindingCombo").get_active()
-            paperIdx   = self._widget("p_paperCombo").get_active()
-            colorIdx   = self._widget("p_colorCombo").get_active()
-
-            params      = SIZE_PARAMS[sizeIdx]
-            bindingKey  = BINDING_KEYS[bindingIdx]
-            isCoated    = (paperIdx == 2)
-            isFullColor = (colorIdx == 1)
-
-            # --- Warnings ---
-            warnings = []
-            if isFullColor and params["color_rate"] is None:
-                warnings.append(
-                    "Full Color pricing for this page size has not yet been collected. "
-                    "B&W prices are shown; color output is suppressed."
-                )
-            if bindingKey == "saddle" and pages > SADDLE_MAX_PAGES:
-                warnings.append(
-                    f"Saddle Stitched Binding is only available up to {SADDLE_MAX_PAGES} pages."
-                )
-            if bindingKey == "soft" and pages < SOFT_MIN_PAGES:
-                warnings.append(
-                    f"Soft Cover requires a minimum of {SOFT_MIN_PAGES} pages."
-                )
-            if bindingKey == "soft" and pages > SOFT_MAX_PAGES:
-                warnings.append(
-                    f"Soft Cover maximum is {SOFT_MAX_PAGES} pages."
-                )
-            if qty >= 1500:
-                warnings.append(
-                    "For 1500+ copies, contact Pothi.com directly for a custom quote."
-                )
-
-            self._widget("p_warnLabel").set_text("  ".join(warnings))
-
-            # --- Calculations ---
-            base       = params["fixed"] + params["rate"] * pages
-            bindAdj    = BINDING_ADJ[bindingKey]
-            colorCost  = (params["color_rate"] * pages) if (isFullColor and params["color_rate"]) else 0.0
-            coatedCost = (COATED_RATE * pages) if (isCoated and isFullColor) else 0.0
-            price1     = base + bindAdj + colorCost + coatedCost
-
-            discPct = 0
-            for minQty, pct in DISCOUNT_TIERS:
-                if qty >= minQty:
-                    discPct = pct
-            priceAtQty = price1 * (1 - discPct / 100)
-            total      = priceAtQty * qty
-
-            # --- Summary labels ---
-            discStr = f"({discPct}% off) " if discPct else ""
-            self._widget("p_priceQAmt").set_text(discStr + fmtRupees(priceAtQty))
-            self._widget("p_priceTotalAmt").set_markup(f"<b>{fmtRupees(total)}</b>")
-
-            # --- Breakdown labels ---
-            self._widget("p_baseBreakAmt").set_text(
-                f"{fmtRupees(params['fixed'])} + "
-                f"₹{params['rate']:.2f}/pg × {pages} = {fmtRupees(base)}"
-            )
-            if bindAdj != 0:
-                sign = "+" if bindAdj > 0 else ""
-                self._widget("p_bindBreakAmt").set_text(f"{sign}{fmtRupees(bindAdj)}")
-            else:
-                self._widget("p_bindBreakAmt").set_text("—")
-
-            if isFullColor and params["color_rate"]:
-                cr   = params["color_rate"]
-                note = " (1 data pt)" if params["color_pts"] == 1 else ""
-                self._widget("p_colorBreakAmt").set_text(
-                    f"₹{cr:.2f}/pg × {pages} = {fmtRupees(colorCost)}{note}"
-                )
-            elif isFullColor and params["color_rate"] is None:
-                self._widget("p_colorBreakAmt").set_text("No data — not yet collected")
-            else:
-                self._widget("p_colorBreakAmt").set_text("—")
-
-            if isCoated and isFullColor:
-                self._widget("p_coatedBreakAmt").set_text(
-                    f"₹{COATED_RATE:.2f}/pg × {pages} = {fmtRupees(coatedCost)}"
-                )
-            else:
-                self._widget("p_coatedBreakAmt").set_text("—")
-
-            self._widget("p_totalBreakAmt").set_markup(f"<b>{fmtRupees(price1)}</b>")
-
-            # --- Discount tier grid ---
-            for i, (minQty, pct) in enumerate(DISCOUNT_TIERS):
-                p     = price1 * (1 - pct / 100)
-                label = self._widget(f"p_discPrice{i}")
-                if pct == discPct:
-                    label.set_markup(f"<b>{fmtRupees(p)}</b>")
-                else:
-                    label.set_text(fmtRupees(p))
-
-        except Exception as e:
-            print(f"ERROR in Pothi onInputChanged: {e}")
-            import traceback
-            traceback.print_exc()
-
-
-    def getPerCopyData(self, quantities):
-        """Return {qty: per_copy_price_INR} for the current settings at each quantity."""
-        try:
-            pages      = int(self._widget("p_pagesSpin").get_value())
-            sizeIdx    = self._widget("p_sizeCombo").get_active()
-            bindingIdx = self._widget("p_bindingCombo").get_active()
-            paperIdx   = self._widget("p_paperCombo").get_active()
-            colorIdx   = self._widget("p_colorCombo").get_active()
-            params      = SIZE_PARAMS[sizeIdx]
-            bindingKey  = BINDING_KEYS[bindingIdx]
-            isCoated    = (paperIdx == 2)
-            isFullColor = (colorIdx == 1)
-            base       = params["fixed"] + params["rate"] * pages
-            bindAdj    = BINDING_ADJ[bindingKey]
-            colorCost  = (params["color_rate"] * pages) if (isFullColor and params["color_rate"]) else 0.0
-            coatedCost = (COATED_RATE * pages) if (isCoated and isFullColor) else 0.0
-            price1     = base + bindAdj + colorCost + coatedCost
-            result = {}
-            for qty in quantities:
-                discPct = 0
-                for minQty, pct in DISCOUNT_TIERS:
-                    if qty >= minQty:
-                        discPct = pct
-                result[qty] = price1 * (1 - discPct / 100)
-            return result
-        except Exception:
-            return {}
-
-
 def fmtRupees(amount):
-    """Format a float as Indian-locale rupees: ₹X,XX,XXX.XX"""
     return formatCurrency(amount, "INR")
+
+
+def discountPct(qty):
+    pct = 0
+    for minQty, p in DISCOUNT_TIERS:
+        if qty >= minQty:
+            pct = p
+    return pct
+
+
+class Pothi(PrinterBase):
+    pid = "pothi"
+    displayName = "Pothi"
+    country = "IN"
+    countryName = "India"
+    homeCurrency = "INR"
+    url = "https://pothi.com"
+
+    options = [
+        Choice("fcb_pothi_paper", "Paper type:", [
+            ("plain",   "Plain White (70-80 GSM)"),
+            ("natural", "Plain Natural Shade (70-80 GSM)"),
+            ("coated",  "Coated (90-120 GSM)"),
+        ], default="plain"),
+    ]
+
+    outputs = [
+        Output("l_pothi_size",   "Nearest size:"),
+        Output("l_pothi_base",   "Base (fixed + per-page):"),
+        Output("l_pothi_bind",   "Binding adjustment:"),
+        Output("l_pothi_color",  "Full color premium:"),
+        Output("l_pothi_coated", "Coated paper surcharge:"),
+        Output("l_pothi_one",    "1-copy price:", bold=True),
+    ]
+
+    def nearestSize(self, job):
+        """Index of the smallest catalogue size that holds the trim size,
+        else the closest size overall."""
+        fits = [i for i, (n, w, h, p) in enumerate(SIZES)
+                if w >= job.widthMm - 2 and h >= job.heightMm - 2]
+        pool = fits if fits else range(len(SIZES))
+        return min(pool, key=lambda i: (SIZES[i][1] - job.widthMm) ** 2
+                                     + (SIZES[i][2] - job.heightMm) ** 2)
+
+    def onePrice(self, job):
+        """(single-copy price, cost components) for the current settings."""
+        name, w, h, params = SIZES[self.nearestSize(job)]
+        isCoated = self.get("fcb_pothi_paper") == "coated"
+        colorRate = params["color_rate"]
+        base       = params["fixed"] + params["rate"] * job.pages
+        bindAdj    = BINDING_ADJ.get(job.binding, 0)
+        colorCost  = (colorRate * job.pages) if (job.color and colorRate) else 0.0
+        coatedCost = (COATED_RATE * job.pages) if (isCoated and job.color) else 0.0
+        parts = {"size": name, "params": params, "base": base, "bindAdj": bindAdj,
+                 "colorCost": colorCost, "coatedCost": coatedCost}
+        return base + bindAdj + colorCost + coatedCost, parts
+
+    def warnings(self, job):
+        w = []
+        name, _w, _h, params = SIZES[self.nearestSize(job)]
+        if job.color and params["color_rate"] is None:
+            w.append("Full Color pricing for this page size has not yet been "
+                     "collected. B&W prices are shown; color output is suppressed.")
+        if job.binding == BINDING_SADDLE and job.pages > SADDLE_MAX_PAGES:
+            w.append(f"Saddle Stitched Binding is only available up to {SADDLE_MAX_PAGES} pages.")
+        if job.binding == BINDING_SOFT and job.pages < SOFT_MIN_PAGES:
+            w.append(f"Soft Cover requires a minimum of {SOFT_MIN_PAGES} pages.")
+        if job.binding == BINDING_SOFT and job.pages > SOFT_MAX_PAGES:
+            w.append(f"Soft Cover maximum is {SOFT_MAX_PAGES} pages.")
+        if job.copies >= 1500:
+            w.append("For 1500+ copies, contact Pothi.com directly for a custom quote.")
+        return w
+
+    def estimate(self, job, quantities):
+        if not job.pages:
+            return None
+        price1, parts = self.onePrice(job)
+        return {qty: price1 * (1 - discountPct(qty) / 100) for qty in quantities}
+
+    def update(self, job):
+        price1, parts = self.onePrice(job)
+        params = parts["params"]
+        self.set("l_pothi_size", parts["size"])
+        self.set("l_pothi_base",
+                 f"{fmtRupees(params['fixed'])} + "
+                 f"₹{params['rate']:.2f}/pg × {job.pages} = {fmtRupees(parts['base'])}")
+        bindAdj = parts["bindAdj"]
+        if bindAdj != 0:
+            sign = "+" if bindAdj > 0 else ""
+            self.set("l_pothi_bind", f"{sign}{fmtRupees(bindAdj)}")
+        else:
+            self.set("l_pothi_bind", "—")
+
+        if job.color and params["color_rate"]:
+            note = " (1 data pt)" if params["color_pts"] == 1 else ""
+            self.set("l_pothi_color",
+                     f"₹{params['color_rate']:.2f}/pg × {job.pages} = "
+                     f"{fmtRupees(parts['colorCost'])}{note}")
+        elif job.color:
+            self.set("l_pothi_color", "No data — not yet collected")
+        else:
+            self.set("l_pothi_color", "—")
+
+        if parts["coatedCost"]:
+            self.set("l_pothi_coated",
+                     f"₹{COATED_RATE:.2f}/pg × {job.pages} = {fmtRupees(parts['coatedCost'])}")
+        else:
+            self.set("l_pothi_coated", "—")
+
+        self.set("l_pothi_one", f"<b>{fmtRupees(price1)}</b>", useMarkup=True)
+
+        curPct = discountPct(job.copies)
+        for i, (minQty, pct) in enumerate(DISCOUNT_TIERS):
+            p = fmtRupees(price1 * (1 - pct / 100))
+            self.set(f"l_pothi_tier{i}", f"<b>{p}</b>" if pct == curPct else p,
+                     useMarkup=True)
+
+    def panelExtras(self, panel):
+        # quantity discount strip: one column per tier, current tier bolded
+        headers = ["1"] + [f"{q}+" for q, p in DISCOUNT_TIERS[1:]]
+        panel.addTierStrip("pothi", headers, [f"l_pothi_tier{i}" for i in range(len(DISCOUNT_TIERS))])

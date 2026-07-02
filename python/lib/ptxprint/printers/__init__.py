@@ -2,78 +2,67 @@ import importlib
 
 from ptxprint.printers.currency import allcurrencies      # noqa: F401 (re-export)
 
+# module name: PrinterBase subclass. Adding a printer = one module + one line.
 printerlist = {
-    'pretore':       ('Pretore',      'l_pr_pretore'),
-    'print_gallery': ('PrintGallery', 'l_pr_print_gallery'),
-    'pothi':         ('Pothi',        'l_pr_pothi'),
+    'pretore':       'Pretore',
+    'print_gallery': 'PrintGallery',
+    'pothi':         'Pothi',
+    'snowfall':      'Snowfall',
 }
 
 def init_printers(view):
     res = {}
     for k, v in printerlist.items():
         module = importlib.import_module("ptxprint.printers."+k)
-        c = getattr(module, v[0])
+        c = getattr(module, v)
         res[k] = c(view)
     return res
-
-def printer_from_label(lid):
-    for k, v in printerlist.items():
-        if v[1] == lid:
-            return k
-    return None
 
 def comparePrinterPrices(view):
     """Show the multi-printer price comparison graph.
 
-    Collects per-copy price curves from every participating printer: local
-    pricing models are computed directly; printers with a live API (Pretore)
-    are queried only when usable (account + job fields present). All prices
-    are converted into one display currency, so the graph works with any
-    combination of printers.
+    Collects per-copy price curves from every printer ticked in the printer
+    list: local pricing models are computed directly; printers with a live
+    API (Pretore) are queried when usable (account + job fields present).
+    All prices are converted into the display currency, so the graph works
+    with any combination of printers.
     """
     from ptxprint.printers.currency import getExchangeRates, quoteQuantities, allcurrencies
     from ptxprint.printers.pricing_graph import PricingGraphViewer
 
-    printers = getattr(view, 'printers', {})
+    tab = getattr(view, 'printerTab', None)
+    if tab is None:
+        return
+    job = tab.jobSpec()
+    quantities = quoteQuantities(job.copies)
     rates = getExchangeRates()
     rates.startFetch()
-    try:
-        copies = int(float(view.get("s_prnl_copies") or 0))
-    except (TypeError, ValueError):
-        copies = 0
-    quantities = quoteQuantities(copies)
-    pretore = printers.get("pretore")
-    displayCurrency = pretore.currency if pretore is not None else "EUR"
 
-    localData = {}      # displayName: (perCopyDict, homeCurrency)
-    for printer in printers.values():
-        if not hasattr(printer, 'getEstimate'):
+    results = {}        # displayName: (perCopyDict, homeCurrency)
+    liveQueue = []      # printers that must be queried asynchronously
+    for pid, printer in view.printers.items():
+        if not tab.isCompared(pid):
             continue
-        compareWidget = getattr(printer, 'compareWidget', None)
-        if compareWidget and not view.get(compareWidget):
-            continue
-        data = printer.getEstimate(quantities)
+        data = printer.estimate(job, quantities)
         if data:
-            localData[printer.displayName] = (data, printer.homeCurrency)
+            results[printer.displayName] = (data, printer.homeCurrency)
+        elif getattr(printer, 'liveQuotes', False):
+            liveQueue.append(printer)
 
     def convertSeries(data, home):
-        if home == displayCurrency:
+        if home == job.currency:
             return data
         out = {}
         for q, p in data.items():
-            c = rates.convert(p, home, displayCurrency)
+            c = rates.convert(p, home, job.currency)
             if c is None:
                 return None
             out[q] = c
         return out
 
-    def showGraph(pretoreData):
+    def showGraph():
         allData = {}
-        if pretoreData:
-            converted = convertSeries(pretoreData, pretore.homeCurrency)
-            if converted is not None:
-                allData[pretore.displayName] = converted
-        for name, (data, home) in localData.items():
+        for name, (data, home) in results.items():
             converted = convertSeries(data, home)
             if converted is None:
                 print(f"No exchange rate for {home}; {name} excluded from comparison")
@@ -83,10 +72,21 @@ def comparePrinterPrices(view):
             print("No printer pricing available to compare")
             return
         viewer = PricingGraphViewer(allData, parentWindow=view.mainapp.win,
-                currencySymbol=allcurrencies.get(displayCurrency, displayCurrency))
+                currencySymbol=allcurrencies.get(job.currency, job.currency))
         viewer.show()
+        tab.updateAll()     # live quotes fetched here may now be cached
 
-    if pretore is not None:
-        pretore.getEstimateAsync(quantities, showGraph)
+    if liveQueue:
+        remaining = [len(liveQueue)]
+        def makeCallback(printer):
+            def _cb(data):
+                if data:
+                    results[printer.displayName] = (data, printer.homeCurrency)
+                remaining[0] -= 1
+                if remaining[0] == 0:
+                    showGraph()
+            return _cb
+        for printer in liveQueue:
+            printer.estimateAsync(job, quantities, makeCallback(printer))
     else:
-        showGraph(None)
+        showGraph()

@@ -928,6 +928,20 @@ to block hyphenation.</property>
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
   </object>
+  <object class="GtkAdjustment" id="a_prn_copies">
+    <property name="lower">1</property>
+    <property name="upper">99999</property>
+    <property name="value">50</property>
+    <property name="step-increment">5</property>
+    <property name="page-increment">50</property>
+  </object>
+  <object class="GtkAdjustment" id="a_prn_pages">
+    <property name="lower">1</property>
+    <property name="upper">9999</property>
+    <property name="value">200</property>
+    <property name="step-increment">2</property>
+    <property name="page-increment">20</property>
+  </object>
   <object class="GtkAdjustment" id="a_ruleThickness">
     <property name="lower">0.01</property>
     <property name="upper">1</property>
@@ -38543,1875 +38557,236 @@ output with a previous PDF.</property>
                             <property name="orientation">vertical</property>
                             <property name="spacing">6</property>
                             <child>
-                              <object class="GtkNotebook" id="nbk_printers">
+                              <object class="GtkBox" id="bx_printersMain">
                                 <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="halign">start</property>
-                                <property name="valign">start</property>
-                                <signal name="switch-page" handler="onChangedPrinterTab" swapped="no"/>
+                                <property name="can-focus">False</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">8</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="margin-top">6</property>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkFrame" id="fr_prnJobSpec">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="hexpand">True</property>
+                                    <property name="label-xalign">0.02</property>
                                     <child>
-                                      <!-- n-columns=5 n-rows=13 -->
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="valign">start</property>
-                                        <property name="margin-start">9</property>
-                                        <property name="margin-end">12</property>
-                                        <property name="margin-top">9</property>
-                                        <property name="margin-bottom">6</property>
-                                        <property name="hexpand">True</property>
+                                        <property name="margin-start">10</property>
+                                        <property name="margin-end">10</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">8</property>
                                         <property name="row-spacing">6</property>
-                                        <property name="column-spacing">6</property>
+                                        <property name="column-spacing">8</property>
                                         <child>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">How will you refer to this print job?
-It is common to use the Project ID,
-Language, and Configuration name.</property>
+                                            <property name="tooltip-text" translatable="yes">Number of pages in the book. Filled in automatically from the most recently created PDF, but can be adjusted manually.</property>
                                             <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Book Identifier:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">A more descriptive explanation of what
-is in the publications is always helpful.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Description:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Specify the finishing for the cover.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Cover Lamination:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">7</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">The higher the number of pages, the thinner
-the paper needs to be, but the thinner the
-paper, the higher the cost. So keep an eye on
-the cost and the thickness of the book.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Paper Type:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">4</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Paperback is cheaper than hardback.
-Hardback is more durable, but costs more.
-If you require one or more ribbons then
-these are only available for hardback books.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Binding:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">5</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">How many copies of the book
-are you ordering to be printed?
-
-Note that Pretore has a minimum
-print run of 50 copies.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Copies:</property>
-                                            <property name="xalign">1</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">6</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_prnl_copies">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">How many copies of the book
-are you ordering to be printed?
-
-Note that Pretore has a minimum
-print run of 50 copies.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="max-length">5</property>
-                                            <property name="width-chars">5</property>
-                                            <property name="text" translatable="yes">50</property>
-                                            <property name="progress-pulse-step">0</property>
-                                            <property name="adjustment">a_prnl_copies</property>
-                                            <property name="climb-rate">5</property>
-                                            <property name="value">50</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">4</property>
-                                            <property name="top-attach">6</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_prnl_selectAccount">
-                                            <property name="label" translatable="yes">Select Account...</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Prior to obtaining quotations from
-Pretore, you must have an account
-to log in with.</property>
-                                            <signal name="clicked" handler="printers/pretore/select_account" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">1</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_prnl_getQuote">
-                                            <property name="label" translatable="yes">Get Precise Quotation</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Calculate the total cost of the job
-excluding shipping based on the
-number of copies selected and all
-the specified parameters.</property>
-                                            <property name="valign">center</property>
-                                            <signal name="clicked" handler="printers/pretore/quote" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">7</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-bottom">3</property>
-                                            <property name="label" translatable="yes">Pricing:</property>
-                                            <attributes>
-                                              <attribute name="weight" value="bold"/>
-                                              <attribute name="scale" value="1.2"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">4</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="fcb_prnl_binding">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Paperback is cheaper than hardback.
-Hardback is more durable, but costs more.
-If you require one or more ribbons then
-these are only available for hardback books.</property>
-                                            <property name="valign">center</property>
-                                            <property name="active">0</property>
-                                            <property name="active-id">307</property>
-                                            <items>
-                                              <item id="307" translatable="yes">Paperback</item>
-                                              <item id="306" translatable="yes">Hardback</item>
-                                            </items>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">5</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="fcb_prnl_paperType">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">The higher the number of pages, the thinner
-the paper needs to be, but the thinner the
-paper, the higher the cost. So keep an eye on
-the cost and the thickness of the book.</property>
-                                            <property name="valign">center</property>
-                                            <property name="active">0</property>
-                                            <property name="active-id">755</property>
-                                            <items>
-                                              <item id="755" translatable="yes">40 gsm ThinLeaf FSC</item>
-                                              <item id="355" translatable="yes">50 gsm Thinopaque white FSC</item>
-                                              <item id="364" translatable="yes">80 gsm woodfree offset FSC</item>
-                                              <item id="366" translatable="yes">90 gsm woodfree offset FSC</item>
-                                              <item id="575" translatable="yes">100 gsm woodfree offset FSC</item>
-                                            </items>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">4</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_prnl_userid">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">start</property>
-                                            <property name="label" translatable="yes">Test Account</property>
-                                            <attributes>
-                                              <attribute name="foreground" value="#1a1a5f5fb4b4"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">2</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_prnl_configureProject">
-                                            <property name="label" translatable="yes">Configure Settings</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Clicking this button will ensure that the
-settings to meet the requirements of 
-this particular printing press are correct.</property>
-                                            <property name="valign">center</property>
-                                            <signal name="clicked" handler="printers/pretore/configure" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">0</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_prnl_createOrder">
-                                            <property name="label" translatable="yes">Create Order</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Click this button to create an order on
-Pretore's system. Note that you may create
-different orders, and later visit their website
-to remove unwanted orders, or even modify
-the order.
-
-Note that NOTHING will be printed until the
-specific order has been paid for via the website
-and the ZIP file with the book has been uploaded.</property>
-                                            <property name="valign">center</property>
-                                            <signal name="clicked" handler="printers/pretore/createOrder" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">9</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLinkButton" id="lb_prnl_completeOrder">
-                                            <property name="label" translatable="yes">Complete Order &amp; Payment via website</property>
-                                            <property name="name">Link to Pretore's Job Submission Page</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="focus-on-click">False</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="no-show-all">True</property>
-                                            <property name="tooltip-text" translatable="yes">Once you have created an order, you need
-to visit the Pretore (NL) website to make
-the payment and upload the ZIP file (shown
-above) which contains all the files required
-for printing the book.</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">start</property>
-                                            <property name="relief">none</property>
-                                            <property name="uri">https://ptxprint.pretore.com/orders/</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">12</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkComboBoxText" id="fcb_prnl_coverLamination">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Specify the finishing for the cover.</property>
-                                            <property name="valign">center</property>
-                                            <property name="active">0</property>
-                                            <property name="active-id">455</property>
-                                            <items>
-                                              <item id="455" translatable="yes">Gloss</item>
-                                              <item id="453" translatable="yes">Scuff free matte</item>
-                                              <item id="452" translatable="yes">Linen</item>
-                                            </items>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">7</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkEntry" id="t_prnl_bookID">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">How will you refer to this print job?
-It is common to use the Project ID,
-Language, and Configuration name.</property>
-                                            <property name="placeholder-text" translatable="yes">e.g. XYZ-Language-TrialMiniNT</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkEntry" id="t_prnl_description">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">A more descriptive explanation of what
-is in the publications is always helpful.</property>
-                                            <property name="placeholder-text" translatable="yes">e.g. Gospels and Acts in Diglot</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Pretore has a minimum page count
-of 120 pages, and maximum of 2000.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
                                             <property name="label" translatable="yes">Pages:</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">3</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkBox">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="spacing">6</property>
-                                            <child>
-                                              <object class="GtkSpinButton" id="s_prnl_pages">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="tooltip-text" translatable="yes">Pretore has a minimum page count
-of 120 pages, and maximum of 2000.</property>
-                                                <property name="valign">center</property>
-                                                <property name="max-length">5</property>
-                                                <property name="width-chars">5</property>
-                                                <property name="progress-pulse-step">0</property>
-                                                <property name="adjustment">a_prnl_pages</property>
-                                                <property name="climb-rate">2</property>
-                                                <property name="numeric">True</property>
-                                                <property name="value">200</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="hexpand">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">True</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The final thickness of the finished
-book including the cover binding.</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="label" translatable="yes">Thickness:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_prnl_thickness">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The final thickness of the finished
-book including the cover binding.</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">-</property>
-                                                <attributes>
-                                                  <attribute name="foreground" value="#1a1a5f5fb4b4"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">3</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">0</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">For hardback publications you can add
-upto three ribbons (of different colours).</property>
+                                            <property name="tooltip-text" translatable="yes">Finished page size of the book, from the Layout page settings.</property>
                                             <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Ribbons:</property>
+                                            <property name="label" translatable="yes">Trim size:</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">6</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSpinButton" id="s_prnl_ribbons">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="tooltip-text" translatable="yes">For hardback publications you can add
-upto three ribbons (of different colours).</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="max-length">5</property>
-                                            <property name="width-chars">5</property>
-                                            <property name="text" translatable="yes">0</property>
-                                            <property name="progress-pulse-step">0</property>
-                                            <property name="adjustment">a_prnl_ribbons</property>
-                                            <property name="climb-rate">1</property>
-                                            <property name="value">3</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">6</property>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">0</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Does each book need to be wrapped
-individually in plastic film?</property>
+                                            <property name="tooltip-text" translatable="yes">How many copies of the book to be printed.</property>
                                             <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Shrink Wrap:</property>
+                                            <property name="label" translatable="yes">Copies:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">4</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Whether the inside pages are printed in black &amp; white or full color.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Interior:</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">8</property>
+                                            <property name="top-attach">1</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkComboBoxText" id="fcb_prnl_wrap">
+                                          <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Does each book need to be wrapped
-individually in plastic film?</property>
-                                            <property name="valign">center</property>
-                                            <items>
-                                              <item id="475" translatable="yes">Sealfoil (Strong BE13)</item>
-                                              <item id="779" translatable="yes">Sealfoil (Ultra Strong BE19)</item>
-                                              <item translatable="yes">None</item>
-                                            </items>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">8</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkSeparator">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">center</property>
-                                            <property name="margin-start">24</property>
-                                            <property name="margin-end">24</property>
-                                            <property name="hexpand">True</property>
+                                            <property name="tooltip-text" translatable="yes">Preferred binding style. Each printer maps this onto the nearest option it offers.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Binding:</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
                                             <property name="top-attach">1</property>
-                                            <property name="height">8</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="btn_prnl_multiQuote">
-                                            <property name="label" translatable="yes">Multi-Quote Comparison...</property>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Currency used to display all quotations and estimates.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Currency:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">4</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinButton" id="s_prn_pages">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Show a price comparison curve for this
-publication at different print volumes.
-e.g. 50, 100, 500, 1000, 2000 copies</property>
-                                            <property name="valign">center</property>
-                                            <signal name="clicked" handler="printers/pretore/show_multi_quote_comparison" swapped="no"/>
+                                            <property name="width-chars">5</property>
+                                            <property name="adjustment">a_prn_pages</property>
+                                            <property name="numeric">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">5</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkBox">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="spacing">6</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The cost of each book
-excluding shipping.</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="label" translatable="yes">Per Copy:</property>
-                                                <property name="justify">right</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_prnl_percopy">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The cost of each book
-excluding shipping.</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">-</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="hexpand">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The cost of the entire job
-excluding shipping.</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="label" translatable="yes">Total Job:</property>
-                                                <attributes>
-                                                  <attribute name="weight" value="bold"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_prnl_total">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The cost of the entire job
-excluding shipping.</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">-</property>
-                                                <attributes>
-                                                  <attribute name="weight" value="bold"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">4</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">8</property>
-                                            <property name="width">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">This order number is important to
-keep track of your print job.
-
-Note that you may create different orders, 
-and later visit their website to remove 
-unwanted orders, or even modify the order.
-
-Note that NOTHING will be printed until the
-specific order has been paid for via the website
-and the ZIP file with the book has been uploaded.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">Order Ref:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">10</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">File to upload:</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">11</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_prnl_orderRef">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">This order number is important to
-keep track of your print job.
-
-Note that you may create different orders, 
-and later visit their website to remove 
-unwanted orders, or even modify the order.
-
-Note that NOTHING will be printed until the
-specific order has been paid for via the website
-and the ZIP file with the book has been uploaded.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">26 0557</property>
-                                            <attributes>
-                                              <attribute name="weight" value="bold"/>
-                                              <attribute name="foreground" value="#1a1a5f5fb4b4"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">10</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin-start">6</property>
-                                            <property name="label" translatable="yes">Print Job Specifications:</property>
-                                            <attributes>
-                                              <attribute name="weight" value="bold"/>
-                                              <attribute name="scale" value="1.2"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">0</property>
+                                            <property name="left-attach">1</property>
                                             <property name="top-attach">0</property>
-                                            <property name="width">2</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkBox">
+                                          <object class="GtkLabel" id="l_prn_trimSize">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <child>
-                                              <object class="GtkLabel" id="l_prnl_zipFilename">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">This tooltip needs to be replaced with
-the complete filepath, and the button
-on the right needs to copy that filepath
-to the clipboard.</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Pretore-26-0557-XYZ-Default.zip</property>
-                                                <attributes>
-                                                  <attribute name="foreground" value="#1a1a5f5fb4b4"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="hexpand">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkButton" id="b_prn_cpzip">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">Copy Complete Filename with Path to Clipboard</property>
-                                                <property name="valign">center</property>
-                                                <property name="relief">none</property>
-                                                <property name="always-show-image">True</property>
-                                                <signal name="clicked" handler="printers/pretore/copy_zipfname" swapped="no"/>
-                                                <child>
-                                                  <object class="GtkImage">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="icon-name">edit-copy-symbolic</property>
-                                                    <signal name="button-press-event" handler="printers/pretore/copy_zipfname" swapped="no"/>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">False</property>
-                                                <property name="position">2</property>
-                                              </packing>
-                                            </child>
+                                            <property name="halign">start</property>
+                                            <property name="label">-</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">3</property>
-                                            <property name="top-attach">11</property>
-                                            <property name="width">2</property>
+                                            <property name="top-attach">0</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkBox">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">end</property>
-                                            <property name="spacing">6</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Select display currency. Rates are loaded from frankfurter.dev.</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="label" translatable="yes">Currency:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="fcb_prnl_currency">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Select display currency. Rates are loaded from frankfurter.dev.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="has-entry">True</property>
-                                                <signal name="changed" handler="printers/pretore/change_currency" swapped="no"/>
-                                                <child internal-child="entry">
-                                                  <object class="GtkEntry">
-                                                    <property name="can-focus">False</property>
-                                                    <property name="max-length">3</property>
-                                                    <property name="width-chars">5</property>
-                                                    <property name="text" translatable="yes">EUR</property>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">4</property>
-                                            <property name="top-attach">4</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_prnl_orderStatus">
-                                            <property name="visible">True</property>
-                                            <property name="sensitive">False</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Feature not yet implemented.</property>
-                                            <property name="valign">end</property>
-                                            <property name="label" translatable="yes">(awaiting payment)</property>
-                                            <attributes>
-                                              <attribute name="foreground" value="#e6e661610000"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">4</property>
-                                            <property name="top-attach">10</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="l_prnl_important">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Once you have created an order, you need
-to visit the Pretore (NL) website to make
-the payment and upload the ZIP file (shown
-above) which contains all the files required
-for printing the book.</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Important! --&gt;</property>
-                                            <attributes>
-                                              <attribute name="weight" value="bold"/>
-                                              <attribute name="foreground" value="#c0c01c1c2828"/>
-                                            </attributes>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">12</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkButton" id="btn_infoViewEdit1">
+                                          <object class="GtkSpinButton" id="s_prn_copies">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="focus-on-click">False</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">FSC (Forest Stewardship Council) certified paper ensures products come from responsibly managed forests that provide environmental, social, and economic benefits. It guarantees ethical harvesting, chain-of-custody tracking from forest to consumer, and adherence to strict standards to prevent deforestation and support biodiversity.
-
-Pretore B.V. is an FSC®-certified company with certificate number SGSCH-COC-030130 under license code FSC-C213509.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="relief">none</property>
-                                            <child>
-                                              <object class="GtkImage" id="icon_infoViewEdit2">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="icon-name">help-about-symbolic</property>
-                                                <property name="icon_size">3</property>
-                                              </object>
-                                            </child>
+                                            <property name="width-chars">6</property>
+                                            <property name="adjustment">a_prn_copies</property>
+                                            <property name="numeric">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="left-attach">5</property>
+                                            <property name="top-attach">0</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkComboBoxText" id="fcb_prn_interior">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="active">0</property>
+                                            <items>
+                                              <item id="bw" translatable="yes">Black &amp; white</item>
+                                              <item id="color" translatable="yes">Full color</item>
+                                            </items>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkComboBoxText" id="fcb_prn_binding">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="active">0</property>
+                                            <items>
+                                              <item id="soft" translatable="yes">Paperback (soft cover)</item>
+                                              <item id="hard" translatable="yes">Hardcover</item>
+                                              <item id="saddle" translatable="yes">Saddle-stitched (stapled)</item>
+                                            </items>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">3</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
+                                          <object class="GtkComboBoxText" id="fcb_prn_currency">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">5</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
                                         </child>
                                       </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
                                     </child>
-                                  </object>
-                                </child>
-                                <child type="tab">
-                                  <object class="GtkLabel" id="l_pr_pretore">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Pretore B.V., Netherlands
-We supply high-quality hardcovers, flex covers and paperbacks. For missionary organisations and Bible publishers, we produce both compact and luxury Bibles, with options such as marker ribbons, foil stamping and gold edging.</property>
-                                    <property name="label" translatable="yes">Pretore, NL</property>
-                                  </object>
-                                  <packing>
-                                    <property name="tab-fill">False</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">center</property>
-                                    <property name="orientation">vertical</property>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLinkButton">
-                                        <property name="label" translatable="yes">Visit Snowfall Press Website</property>
+                                    <child type="label">
+                                      <object class="GtkLabel">
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="uri">https://www.snowfallpress.com/</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="label" translatable="yes">Book &amp; Job Specification</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                        </attributes>
                                       </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
                                     </child>
                                   </object>
-                                  <packing>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child type="tab">
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="label" translatable="yes">Snowfall, US</property>
-                                  </object>
-                                  <packing>
-                                    <property name="position">1</property>
-                                    <property name="tab-fill">False</property>
-                                  </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkBox" id="bx_printerSplit">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="margin-end">12</property>
-                                    <property name="margin-top">12</property>
-                                    <property name="margin-bottom">12</property>
-                                    <property name="spacing">18</property>
+                                    <property name="spacing">10</property>
                                     <child>
                                       <object class="GtkBox">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="valign">start</property>
-                                        <property name="orientation">vertical</property>
-                                        <property name="spacing">12</property>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">&lt;b&gt;Book Cost Calculator&lt;/b&gt;</property>
-                                            <property name="use-markup">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <!-- n-columns=3 n-rows=7 -->
-                                          <object class="GtkGrid">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="row-spacing">8</property>
-                                            <property name="column-spacing">12</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Book Size:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="sizeCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">A5 books are printed 2-up on an A3 sheet, halving interior sheet costs.
-Larger books use one A3 sheet per page, so interior costs are higher.</property>
-                                                <property name="active">0</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Text Color:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="printCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Black &amp; White: ₹10/sheet (base rate).
-Color: ₹14/sheet — 40% more than B&amp;W.
-Both rates are adjusted by the Paper Type selection.</property>
-                                                <property name="active">0</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Paper Type:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="paperCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Paper type affects interior printing costs:
-  Plain white 70 gsm — base rate (standard Bible paper)
-  Plain white 80 gsm — 10% more
-  Off white 85 gsm   — 15% more (softer tone, easier on the eyes)
-  Glossy 120 gsm     — 60% more (vivid color reproduction)</property>
-                                                <property name="active">0</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Binding Type:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="bindingCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Binding cost is per copy:
-  Perfect (Glued)     — ₹150/copy, durable flat-spine paperback
-  Case (Hardcover)    — ₹250/copy, premium hardbound
-  Stapled             — ₹55/copy, cheapest option, limited to ≤100 pages</property>
-                                                <property name="active">2</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Lamination:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="lamCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Thermal lamination applied to the book cover:
-  No  — no extra cost
-  Yes — ₹10/copy, adds a protective gloss or matte film to the cover</property>
-                                                <property name="active">0</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Pages:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkBox">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="spacing">6</property>
-                                                <child>
-                                                  <object class="GtkSpinButton" id="pagesSpin">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="adjustment">adj_pages</property>
-                                                    <property name="climb-rate">1</property>
-                                                    <property name="numeric">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="pageWarnLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="halign">start</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">1</property>
-                                                  </packing>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Copies:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">6</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkBox">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="spacing">6</property>
-                                                <child>
-                                                  <object class="GtkSpinButton" id="copiesSpin">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="adjustment">adj_copies</property>
-                                                    <property name="climb-rate">1</property>
-                                                    <property name="numeric">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel" id="copyWarnLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="halign">start</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">1</property>
-                                                  </packing>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">6</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSeparator">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="orientation">vertical</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="valign">start</property>
-                                        <property name="orientation">vertical</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <!-- n-columns=3 n-rows=7 -->
-                                          <object class="GtkGrid">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="row-spacing">4</property>
-                                            <property name="column-spacing">12</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">&lt;b&gt;Cost Breakdown:&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
-                                                <property name="width">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Covers:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="coverBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">₹0.00</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Interior:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="interiorBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">₹0.00</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Lamination:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="lamBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">₹0.00</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Binding:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="bindBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">₹0.00</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">&lt;b&gt;Total:&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="totalBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">&lt;b&gt;₹0.00&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Per Copy:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">6</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="perCopyBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">₹0.00</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">6</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkBox">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <child>
-                                              <object class="GtkCheckButton" id="c_pg_comparePrinters">
-                                                <property name="label" translatable="yes">Compare with other Printers</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="draw-indicator">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">True</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLinkButton" id="printGalleryLink">
-                                                <property name="label" translatable="yes">Visit PrintGallery.in</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="halign">end</property>
-                                                <property name="uri">https://www.printgallery.in/</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="position">3</property>
-                                  </packing>
-                                </child>
-                                <child type="tab">
-                                  <object class="GtkLabel" id="l_pr_print_gallery">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Print Gallery, Kottayam, India
-Comprehensive Print on Demand digital book printing solutions with custom binding and finishing options. Excellent quality with 2400x2400dpi laser printing in either b/w or color.</property>
-                                    <property name="label" translatable="yes">Print Gallery, IN</property>
-                                  </object>
-                                  <packing>
-                                    <property name="position">3</property>
-                                    <property name="tab-fill">False</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="margin-start">9</property>
-                                    <property name="margin-end">12</property>
-                                    <property name="margin-top">9</property>
-                                    <property name="margin-bottom">6</property>
-                                    <property name="spacing">18</property>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="valign">start</property>
                                         <property name="orientation">vertical</property>
                                         <property name="spacing">6</property>
                                         <child>
-                                          <object class="GtkLabel">
+                                          <object class="GtkScrolledWindow" id="scr_printerList">
                                             <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">&lt;b&gt;Pothi.com Book Cost Calculator&lt;/b&gt;</property>
-                                            <property name="use-markup">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="hscrollbar-policy">never</property>
+                                            <property name="shadow-type">in</property>
+                                            <property name="min-content-width">340</property>
+                                            <property name="min-content-height">230</property>
+                                            <property name="propagate-natural-width">True</property>
+                                            <property name="propagate-natural-height">True</property>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
                                           </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
                                         </child>
                                         <child>
-                                          <!-- n-columns=3 n-rows=7 -->
-                                          <object class="GtkGrid">
+                                          <object class="GtkButton" id="btn_prn_compare">
+                                            <property name="label" translatable="yes">Compare Prices...</property>
                                             <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="row-spacing">8</property>
-                                            <property name="column-spacing">12</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Page size:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="p_sizeCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Page size of the printed book.
-All sizes are B&amp;W verified (formula validated against real Pothi.com quotes).
-Full Color pricing:
-  Reliable (2+ data pts): A5, 5.5×8.5 inch
-  Estimate (1 data pt):   5×7, 5×8, 6×9, 7×9, 8×11 inch
-  No data yet:            A4 (B&amp;W prices still shown correctly)</property>
-                                                <property name="active">0</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Binding:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="p_bindingCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Binding type affects the per-copy price:
-  Soft Cover             — standard flat-spine paperback (50–500 pages)
-  Saddle Stitched Binding — stapled through the spine (10–64 pages max)
-  Hard Cover             — premium hardbound (+₹45 over soft cover)
-Saddle stitching is ₹25 cheaper than soft cover at the same page count.</property>
-                                                <property name="active">0</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Paper type:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="p_paperCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Paper stock for the interior pages.
-  Plain White (70-80 GSM)         — standard uncoated paper
-  Plain Natural Shade (70-80 GSM) — cream-toned uncoated; prices identically to Plain White
-  Coated (90-120 GSM)             — glossy/art paper; adds ₹1.15/page surcharge
-                                      (only when Full Color is selected)</property>
-                                                <property name="active">0</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Interior color:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkComboBoxText" id="p_colorCombo">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Interior printing method:
-  B&amp;W interior (colored cover)  — black and white interior, full-color cover
-  Full Color (Interior &amp; Cover) — full color throughout
-Full color adds a size-specific per-page premium (₹2.20–₹3.55/page depending on size).
-Coated paper surcharge (₹1.15/page) only applies with Full Color.
-A4 Full Color pricing has not yet been collected.</property>
-                                                <property name="active">0</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Pages:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkSpinButton" id="p_pagesSpin">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="tooltip-text" translatable="yes">Total number of pages in the book (both sides of each leaf count as 2 pages).
-Pothi.com requires even page counts. Constraints by binding:
-  Soft Cover:          50–500 pages
-  Saddle Stitched:     10–64 pages
-  Hard Cover:          up to ~500 pages (verify for very large books)</property>
-                                                <property name="adjustment">p_adj_pages</property>
-                                                <property name="climb-rate">1</property>
-                                                <property name="numeric">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Copies:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkSpinButton" id="p_qtySpin">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="tooltip-text" translatable="yes">Number of copies to order. Bulk discounts are applied automatically:
-  1 copy:      full price
-  50+ copies:  10% off
-  100+ copies: 20% off
-  250+ copies: 25% off
-  500+ copies: 40% off
-  1000+ copies: 50% off
-For 1500+ copies, contact Pothi.com directly for a custom quote.</property>
-                                                <property name="adjustment">p_adj_qty</property>
-                                                <property name="climb-rate">1</property>
-                                                <property name="numeric">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_warnLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="wrap">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">6</property>
-                                                <property name="width">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Show a graph comparing per-copy prices at several quantities across all the printers ticked in the list above.</property>
+                                            <property name="halign">start</property>
+                                            <signal name="clicked" handler="onComparePrinterPrices" swapped="no"/>
                                           </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
                                         </child>
                                       </object>
                                       <packing>
@@ -40421,482 +38796,19 @@ For 1500+ copies, contact Pothi.com directly for a custom quote.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkSeparator">
+                                      <object class="GtkStack" id="stk_printerDetail">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="orientation">vertical</property>
+                                        <property name="hhomogeneous">True</property>
+                                        <property name="vhomogeneous">False</property>
                                       </object>
                                       <packing>
-                                        <property name="expand">False</property>
+                                        <property name="expand">True</property>
                                         <property name="fill">True</property>
                                         <property name="position">1</property>
                                       </packing>
                                     </child>
-                                    <child>
-                                      <object class="GtkBox">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="valign">start</property>
-                                        <property name="orientation">vertical</property>
-                                        <property name="spacing">8</property>
-                                        <child>
-                                          <!-- n-columns=3 n-rows=8 -->
-                                          <object class="GtkGrid">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="row-spacing">4</property>
-                                            <property name="column-spacing">12</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Base (fixed + per-page):</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_baseBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Binding adjustment:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_bindBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Full color premium:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_colorBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Coated paper surcharge:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_coatedBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">&lt;b&gt;1-copy price:&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_totalBreakAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">&lt;b&gt;—&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Price per copy (your qty):</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">6</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_priceQAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">6</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">&lt;b&gt;Total for quantity:&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">7</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_priceTotalAmt">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="label">&lt;b&gt;—&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">7</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <!-- n-columns=6 n-rows=2 -->
-                                          <object class="GtkGrid">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="row-spacing">4</property>
-                                            <property name="column-spacing">8</property>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">&lt;b&gt;1&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">&lt;b&gt;50+&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">&lt;b&gt;100+&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">2</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">&lt;b&gt;250+&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">3</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">&lt;b&gt;500+&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">4</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">&lt;b&gt;1000+&lt;/b&gt;</property>
-                                                <property name="use-markup">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">5</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_discPrice0">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_discPrice1">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_discPrice2">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">2</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_discPrice3">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">3</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_discPrice4">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">4</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="p_discPrice5">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
-                                                <property name="label">—</property>
-                                                <property name="selectable">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">5</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkBox">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <child>
-                                              <object class="GtkCheckButton" id="c_pothi_comparePrinters">
-                                                <property name="label" translatable="yes">Compare with other Printers</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="draw-indicator">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">True</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLinkButton" id="p_pothiLink">
-                                                <property name="label" translatable="yes">Visit Pothi.com</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="halign">end</property>
-                                                <property name="uri">https://pothi.com</property>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">2</property>
-                                          </packing>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
                                   </object>
-                                  <packing>
-                                    <property name="position">4</property>
-                                  </packing>
-                                </child>
-                                <child type="tab">
-                                  <object class="GtkLabel" id="l_pr_pothi">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Pothi.com, India
-Print-on-demand publisher offering verified pricing for A5, 5.5×8.5 inch, and A4 books.
-Bulk discounts available from 50 copies.</property>
-                                    <property name="label" translatable="yes">Pothi.com, IN</property>
-                                  </object>
-                                  <packing>
-                                    <property name="position">4</property>
-                                    <property name="tab-fill">False</property>
-                                  </packing>
                                 </child>
                               </object>
                               <packing>
