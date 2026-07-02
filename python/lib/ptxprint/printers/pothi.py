@@ -91,7 +91,9 @@ class Pothi(PrinterBase):
             ("plain",   "Plain White (70-80 GSM)"),
             ("natural", "Plain Natural Shade (70-80 GSM)"),
             ("coated",  "Coated (90-120 GSM)"),
-        ], default="plain"),
+        ], default="plain",
+           tip="Pothi's B&W pricing does not vary by paper type. "
+               "Coated paper adds ₹1.15/page, but only with a Full Color interior."),
     ]
 
     outputs = [
@@ -174,6 +176,8 @@ class Pothi(PrinterBase):
         if parts["coatedCost"]:
             self.set("l_pothi_coated",
                      f"₹{COATED_RATE:.2f}/pg × {job.pages} = {fmtRupees(parts['coatedCost'])}")
+        elif self.get("fcb_pothi_paper") == "coated":
+            self.set("l_pothi_coated", "— (charged only with a Full Color interior)")
         else:
             self.set("l_pothi_coated", "—")
 
