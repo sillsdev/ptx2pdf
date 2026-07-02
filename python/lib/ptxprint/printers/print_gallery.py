@@ -1,5 +1,7 @@
 from gi.repository import Gtk
 
+from ptxprint.printers.currency import formatCurrency
+
 RATES = {
     "cover300": 20,      # ₹/A3 sheet (300 GSM wrap cover)
     "cover130": 19,      # ₹/A3 sheet (130 GSM board cover)
@@ -16,9 +18,18 @@ PAPER_MULTIPLIERS = [1.0, 1.1, 1.15, 1.6]
 
 
 class PrintGallery:
+    displayName = "Print Gallery"
+    homeCurrency = "INR"
+    compareWidget = "c_pg_comparePrinters"
+
     def __init__(self, view):
         self.view = view
         self._setupDone = False
+
+    def getEstimate(self, quantities):
+        """Per-copy prices in INR at each quantity, for the current settings."""
+        self.prepare()      # make sure widgets exist and page count is current
+        return self.getPerCopyData(quantities)
 
     def _widget(self, wname):
         return self.view.builder.get_object(wname)
@@ -207,39 +218,4 @@ class PrintGallery:
 
     def formatIndianCurrency(self, amount):
         """Format amount as Indian currency (₹X,XX,XXX.xx)."""
-        # Round to 2 decimal places
-        amount = round(amount, 2)
-        
-        # Split into integer and decimal parts
-        intPart = int(amount)
-        decPart = int(round((amount - intPart) * 100))
-        
-        # Format integer part with Indian locale commas
-        if intPart < 100000:
-            # Standard comma grouping (1,00,000+)
-            intStr = "{:,}".format(intPart).replace(",", "X")  # Temp replace
-            # Convert to Indian style: every 2 digits from right (after first 3)
-            intStr = str(intPart)
-            if intPart >= 100000:
-                # 1,23,456 format
-                intStr = intStr[:-5] + "," + intStr[-5:-3] + "," + intStr[-3:]
-            elif intPart >= 1000:
-                # 12,345 format
-                intStr = intStr[:-3] + "," + intStr[-3:]
-        else:
-            intStr = str(intPart)
-            # Full Indian formatting
-            parts = []
-            while intStr:
-                if len(parts) == 0:
-                    parts.append(intStr[-3:])
-                    intStr = intStr[:-3]
-                else:
-                    parts.append(intStr[-2:])
-                    intStr = intStr[:-2]
-            intStr = ",".join(reversed(parts))
-        
-        # Format decimal part
-        decStr = f"{decPart:02d}"
-        
-        return f"₹{intStr}.{decStr}"
+        return formatCurrency(amount, "INR")

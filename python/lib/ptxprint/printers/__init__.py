@@ -1,5 +1,7 @@
 import importlib
 
+from ptxprint.printers.currency import allcurrencies      # noqa: F401 (re-export)
+
 printerlist = {
     'pretore':       ('Pretore',      'l_pr_pretore'),
     'print_gallery': ('PrintGallery', 'l_pr_print_gallery'),
@@ -20,112 +22,71 @@ def printer_from_label(lid):
             return k
     return None
 
-allcurrencies = {
-    "AFN":  "؋",
-    "AMD":  "֏",
-    "AOA":  "Kz",
-    "ARS":  "$",
-    "AUD":  "A$",
-    "AZN":  "₼",
-    "BAM":  "KM",
-    "BBD":  "$",
-    "BDT":  "৳",
-    "BMD":  "$",
-    "BND":  "$",
-    "BOB":  "Bs",
-    "BRL":  "R$",
-    "BSD":  "$",
-    "BWP":  "P",
-    "BZD":  "$",
-    "CAD":  "CA$",
-    "CLP":  "$",
-    "CNY":  "CN¥",
-    "COP":  "$",
-    "CRC":  "₡",
-    "CUC":  "$",
-    "CUP":  "$",
-    "CZK":  "Kč",
-    "DKK":  "kr",
-    "DOP":  "$",
-    "EGP":  "E£",
-    "ESP":  "₧",
-    "EUR":  "€",
-    "FJD":  "$",
-    "FKP":  "£",
-    "GBP":  "£",
-    "GEL":  "₾",
-    "GHS":  "GH₵",
-    "GIP":  "£",
-    "GNF":  "FG",
-    "GTQ":  "Q",
-    "GYD":  "$",
-    "HKD":  "HK$",
-    "HNL":  "L",
-    "HRK":  "kn",
-    "HUF":  "Ft",
-    "IDR":  "Rp",
-    "ILS":  "₪",
-    "INR":  "₹",
-    "ISK":  "kr",
-    "JMD":  "$",
-    "JPY":  "JP¥",
-    "KGS":  "⃀",
-    "KHR":  "៛",
-    "KMF":  "CF",
-    "KPW":  "₩",
-    "KRW":  "₩",
-    "KYD":  "$",
-    "KZT":  "₸",
-    "LAK":  "₭",
-    "LBP":  "L£",
-    "LKR":  "Rs",
-    "LRD":  "$",
-    "LTL":  "Lt",
-    "LVL":  "Ls",
-    "MGA":  "Ar",
-    "MMK":  "K",
-    "MNT":  "₮",
-    "MUR":  "Rs",
-    "MXN":  "MX$",
-    "MYR":  "RM",
-    "NAD":  "$",
-    "NGN":  "₦",
-    "NIO":  "C$",
-    "NOK":  "kr",
-    "NPR":  "Rs",
-    "NZD":  "NZ$",
-    "PHP":  "₱",
-    "PKR":  "Rs",
-    "PLN":  "zł",
-    "PYG":  "₲",
-    "RON":  "lei",
-    "RUB":  "₽",
-    "RWF":  "RF",
-    "SAR":  "⃁",
-    "SBD":  "$",
-    "SEK":  "kr",
-    "SGD":  "$",
-    "SHP":  "£",
-    "SRD":  "$",
-    "SSP":  "£",
-    "STN":  "Db",
-    "SYP":  "£",
-    "THB":  "฿",
-    "TOP":  "T$",
-    "TRY":  "₺",
-    "TTD":  "$",
-    "TWD":  "NT$",
-    "UAH":  "₴",
-    "USD":  "US$",
-    "UYU":  "$",
-    "VEF":  "Bs",
-    "VND":  "₫",
-    "XAF":  "FCFA",
-    "XCD":  "EC$",
-    "XCG":  "Cg.",
-    "XOF":  "F CFA",
-    "XPF":  "CFPF",
-    "XXX":  "¤",
-    "ZAR":  "R",
-    "ZMW":  "ZK",
-}
+def comparePrinterPrices(view):
+    """Show the multi-printer price comparison graph.
+
+    Collects per-copy price curves from every participating printer: local
+    pricing models are computed directly; printers with a live API (Pretore)
+    are queried only when usable (account + job fields present). All prices
+    are converted into one display currency, so the graph works with any
+    combination of printers.
+    """
+    from ptxprint.printers.currency import getExchangeRates, quoteQuantities, allcurrencies
+    from ptxprint.printers.pricing_graph import PricingGraphViewer
+
+    printers = getattr(view, 'printers', {})
+    rates = getExchangeRates()
+    rates.startFetch()
+    try:
+        copies = int(float(view.get("s_prnl_copies") or 0))
+    except (TypeError, ValueError):
+        copies = 0
+    quantities = quoteQuantities(copies)
+    pretore = printers.get("pretore")
+    displayCurrency = pretore.currency if pretore is not None else "EUR"
+
+    localData = {}      # displayName: (perCopyDict, homeCurrency)
+    for printer in printers.values():
+        if not hasattr(printer, 'getEstimate'):
+            continue
+        compareWidget = getattr(printer, 'compareWidget', None)
+        if compareWidget and not view.get(compareWidget):
+            continue
+        data = printer.getEstimate(quantities)
+        if data:
+            localData[printer.displayName] = (data, printer.homeCurrency)
+
+    def convertSeries(data, home):
+        if home == displayCurrency:
+            return data
+        out = {}
+        for q, p in data.items():
+            c = rates.convert(p, home, displayCurrency)
+            if c is None:
+                return None
+            out[q] = c
+        return out
+
+    def showGraph(pretoreData):
+        allData = {}
+        if pretoreData:
+            converted = convertSeries(pretoreData, pretore.homeCurrency)
+            if converted is not None:
+                allData[pretore.displayName] = converted
+        for name, (data, home) in localData.items():
+            converted = convertSeries(data, home)
+            if converted is None:
+                print(f"No exchange rate for {home}; {name} excluded from comparison")
+            else:
+                allData[name] = converted
+        if not len(allData):
+            print("No printer pricing available to compare")
+            return
+        viewer = PricingGraphViewer(allData, parentWindow=view.mainapp.win,
+                currencySymbol=allcurrencies.get(displayCurrency, displayCurrency))
+        viewer.show()
+
+    if pretore is not None:
+        pretore.getEstimateAsync(quantities, showGraph)
+    else:
+        showGraph(None)

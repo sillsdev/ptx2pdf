@@ -1,5 +1,7 @@
 from gi.repository import Gtk
 
+from ptxprint.printers.currency import formatCurrency
+
 # ---------------------------------------------------------------------------
 # Pricing constants
 # Validated against 40 Pothi.com data points across all 8 sizes — zero error.
@@ -77,9 +79,18 @@ SOFT_MAX_PAGES   = 500
 
 
 class Pothi:
+    displayName = "Pothi"
+    homeCurrency = "INR"
+    compareWidget = "c_pothi_comparePrinters"
+
     def __init__(self, view):
         self.view = view
         self._setupDone = False
+
+    def getEstimate(self, quantities):
+        """Per-copy prices in INR at each quantity, for the current settings."""
+        self.prepare()      # make sure widgets exist and page count is current
+        return self.getPerCopyData(quantities)
 
     def _widget(self, wname):
         return self.view.builder.get_object(wname)
@@ -291,15 +302,4 @@ class Pothi:
 
 def fmtRupees(amount):
     """Format a float as Indian-locale rupees: ₹X,XX,XXX.XX"""
-    paise   = round(amount * 100)
-    decPart = paise % 100
-    intPart = paise // 100
-    intStr  = str(intPart)
-    if intPart >= 1000:
-        parts  = [intStr[-3:]]
-        intStr = intStr[:-3]
-        while intStr:
-            parts.append(intStr[-2:])
-            intStr = intStr[:-2]
-        intStr = ",".join(reversed(parts))
-    return f"₹{intStr}.{decPart:02d}"
+    return formatCurrency(amount, "INR")

@@ -5,8 +5,7 @@ logger = logging.getLogger(__name__)
 from shutil import copy
 from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
-from ptxprint.printers import allcurrencies
-from ptxprint.printers.pricing_graph import PricingGraphViewer
+from ptxprint.printers.currency import allcurrencies, getExchangeRates
 from zipfile import ZipFile, ZIP_DEFLATED
 
 querymap = {
@@ -43,13 +42,15 @@ def message(text):
 
 
 class Pretore:
+    displayName = "Pretore"
+    homeCurrency = "EUR"
+
     def __init__(self, view):
         self.view = view
         self.user = None
-        self.rates = {}
+        self.exchangeRates = getExchangeRates()
         self.currency = "EUR"
         self.thread = None
-        self.exchange_thread = None
         self._autoDescription = None
         self._widgetsDone = False
 
@@ -59,28 +60,8 @@ class Pretore:
     def set(self, wname, val, **kw):
         return self.view.set(wname, val, **kw)
 
-    def get_exchange_rates(self, force=False):
-        if not force and len(self.rates):
-            return self.rates
-        headers = {'User-Agent': "Mozilla/5.0 (Windows NT 11.0; Win64; x64)"}
-        url = f"https://api.frankfurter.dev/v1/latest?base=EUR&symbols="+",".join(sorted(allcurrencies.keys()))
-        try:
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req) as response:
-                if response.getcode() == 200:
-                    data = json.loads(response.read().decode("utf-8"))
-                    rates = data.get('rates', {})
-                else:
-                    print (f"Response code: {response.getcode()}")
-        except Exception as e:
-            print(f"Error: {e}")
-            return
-        GLib.idle_add(self.set_exchange_rates, rates)
-
-    def set_exchange_rates(self, rates):
-        rates["EUR"] = 1.0  # EUR is the base currency
-        self.rates = rates
-        self._populateCurrencyCombo()
+    def _ratesArrived(self, rates):
+        GLib.idle_add(self._populateCurrencyCombo)
 
     def _populateCurrencyCombo(self):
         combo = self.view.builder.get_object("fcb_prnl_currency")
@@ -88,7 +69,7 @@ class Pretore:
             return
         current = self.currency
         combo.remove_all()
-        for code in sorted(self.rates.keys()):
+        for code in sorted(self.exchangeRates.rates.keys()):
             combo.append(code, code)
         combo.set_active_id(current)
 
@@ -170,8 +151,7 @@ class Pretore:
                 w.connect("value-changed", self._updateThickness)
         if self.user is not None:
             return
-        self.exchange_thread = threading.Thread(target=self.get_exchange_rates)
-        self.exchange_thread.start()
+        self.exchangeRates.startFetch(onDone=self._ratesArrived)
         self.configdir = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "printers", "pretore")
         os.makedirs(self.configdir, exist_ok=True)
 
@@ -300,7 +280,7 @@ class Pretore:
         if not hasattr(self, 'amount') or self.amount is None:
             return
         copies = int(self.get("s_prnl_copies"))
-        amount = self.rates.get(self.currency, 1.0) * self.amount
+        amount = (self.exchangeRates.rate(self.currency) or 1.0) * self.amount
         cs = allcurrencies.get(self.currency, "\u20AC")
         self.set('l_prnl_total', "{}{:.2f}".format(cs, amount))
         self.set('l_prnl_percopy', "{}{:.2f}".format(cs, amount / copies))
@@ -315,26 +295,24 @@ class Pretore:
         self.amount = result['cost'][str(copies)]
         self._refreshCurrencyDisplay()
 
-    def updateMultiQuote(self, result, curr, extraData=None):
-        if result is None:
-            print("Failed quote")
+    def getEstimateAsync(self, quantities, callback):
+        """Fetch per-copy prices from the API for each quantity.
+
+        callback({qty: perCopyEUR}) runs on the GTK main loop; called with
+        None when no account is configured, the job fields are incomplete,
+        or the quote fails.
+        """
+        self.setup()
+        if self.user is None or not self.get("t_prnl_bookID") or not self.get("t_prnl_description"):
+            callback(None)
             return
-        if curr is not None:
-            self.currency = curr
-        currFactor = self.rates.get(self.currency, 1.0)
-        sampleData = {}
-        for k, v in result['cost'].items():
-            sampleData[int(k)] = v / int(k) * currFactor
-        allData = {"Pretore": sampleData}
-        if extraData:
-            allData.update(extraData)
-        currencySymbol = allcurrencies.get(self.currency, "€")
-        viewer = PricingGraphViewer(
-            allData,
-            parentWindow=self.view.mainapp.win,
-            currencySymbol=currencySymbol
-        )
-        viewer.show()
+        def _cb(result, curr):
+            if result is None or 'cost' not in result:
+                print("Failed quote")
+                callback(None)
+                return
+            callback({int(k): v / int(k) for k, v in result['cost'].items()})
+        self.do_quote("calculate", cb=_cb, quantities=quantities)
 
     def showCreateResults(self, result, curr):
         if result is None:
@@ -364,11 +342,8 @@ class Pretore:
                     print (f"Response code: {response.getcode()}")
         except urllib.error.HTTPError as e:
             print(f"Error: {e}\nHeaders: {e.headers}\nBody: {e.read().decode('utf-8')}")
-        curr = None
-        if self.exchange_thread is not None and self.exchange_thread.is_alive():
-            self.exchange_thread.join(10)       # wait another 10s for the exchange info
-            if self.exchange_thread.is_alive():
-                curr = "EUR"
+        # if rates are still unavailable after a grace period, fall back to EUR
+        curr = None if self.exchangeRates.wait(10) else "EUR"
         GLib.idle_add(callback, result, curr)
 
     def do_quote(self, command, cb=None, quantities=None):
@@ -415,31 +390,12 @@ class Pretore:
 
     def change_currency(self, w, *a):
         curr = self.get("fcb_prnl_currency")
-        if curr in self.rates:
+        if self.exchangeRates.rate(curr) is not None:
             self.currency = curr
             self._refreshCurrencyDisplay()
 
     def show_multi_quote_comparison(self, btn, *a):
+        from ptxprint.printers import comparePrinterPrices
         btn.set_sensitive(False)
-        quantities = sorted(set([50, 100, 250, 500, 1000, int(self.get("s_prnl_copies"))]))
-        extraData = {}
-        printers = self.view.printers
-        inrRate = self.rates.get("INR", None)
-        currRate = self.rates.get(self.currency, 1.0)
-        inrFactor = (currRate / inrRate) if inrRate else None
-        if self.view.get("c_pg_comparePrinters") and "print_gallery" in printers:
-            data = printers["print_gallery"].getPerCopyData(quantities)
-            if data and inrFactor is not None:
-                data = {k: v * inrFactor for k, v in data.items()}
-            if data:
-                extraData["Print Gallery"] = data
-        if self.view.get("c_pothi_comparePrinters") and "pothi" in printers:
-            data = printers["pothi"].getPerCopyData(quantities)
-            if data and inrFactor is not None:
-                data = {k: v * inrFactor for k, v in data.items()}
-            if data:
-                extraData["Pothi"] = data
-        def _cb(result, curr):
-            self.updateMultiQuote(result, curr, extraData=extraData)
-        self.do_quote("calculate", cb=_cb, quantities=quantities)
+        comparePrinterPrices(self.view)
         btn.set_sensitive(True)
