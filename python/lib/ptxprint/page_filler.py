@@ -11,7 +11,7 @@ from time import time, asctime, sleep
 from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob, unlockme
-from ptxprint.utils import refSort, bookcodes
+from ptxprint.utils import refSort, bookcodes, f_
 from ptxprint.view import ViewModel
 from ptxprint.project import ProjectList
 from usfmtc.usfmparser import Grammar
@@ -128,6 +128,7 @@ class EngineState:
     float_anchors: Dict[Any, VerseRef]
     layout: LayoutRunResult
     parlocs: Paragraphs
+    page: int
     passed: bool = False
 
     def _cmp(self, other):
@@ -148,6 +149,7 @@ class EngineState:
 
 @dataclass
 class HumanFixRequest:
+    state: EngineState
     page: PageIndex
     message: str
 
@@ -218,7 +220,6 @@ class Hooks:
         res = LayoutRunResult(pages, firstbad, plines, pmap, [], runres)
         return res
 
-
     def get_paragraphs_for_pages(self,
                                         first: PageIndex,
                                         last: PageIndex,
@@ -239,6 +240,10 @@ class Hooks:
 
     def get_first_page_for_para(self, para):
         return self.printer.get_paragraph_start_page(para)
+
+    @property
+    def cancelled(self):
+        return self.printer.cancelled
 
     def is_header_at_column_start(self,
                                   paragraph: ParagraphRef,
@@ -389,6 +394,8 @@ class TypesetterSolver:
         self.init_state = state
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
+        if state.layout.first_failing_page is None:
+            return state
         if restart:
             logger.debug(state.layout.first_failing_page)
             self.base_params = {}
@@ -402,7 +409,7 @@ class TypesetterSolver:
         try:
             layout = self.initial_probes(state, page, restart=restart)
         except TimeoutError:
-            return HumanFixRequest(page, "Stopped" if self.hooks.cancelled else "Timed out")
+            return HumanFixRequest(state, page, "Stopped" if self.hooks.cancelled else "Timed out")
         state.layout = layout
         wantprobe = False
         testloop = 10000
@@ -424,7 +431,7 @@ class TypesetterSolver:
             try:
                 state = self.solve_page(state, page, start_page)
             except TimeoutError:
-                return HumanFixRequest(page, "Stopped" if self.hooks.cancelled else "Timed out")
+                return HumanFixRequest(state, page, "Stopped" if self.hooks.cancelled else "Timed out")
             if not state.passed:
                 if state.layout.first_failing_page is not None and state.layout.first_failing_page < page:
                     if page < testloop:
@@ -435,14 +442,14 @@ class TypesetterSolver:
                         continue
                     else:
                         logger.log(15, f"{self.book}: {page=} >= {testloop=} and bail")
-                        return HumanFixRequest(page, "Caught in page loop")
+                        return HumanFixRequest(state, page, "Caught in page loop")
                 if stop:
-                    return HumanFixRequest(page, f"Couldn't solve page {page}")
+                    return HumanFixRequest(state, page, f"Couldn't solve page {page}")
                 else:
                     while state.layout.first_failing_page is not None and state.layout.first_failing_page == page:
                         state.layout.next_bad()
                     if state.layout.first_failing_page is None:
-                        return HumanFixRequest(page, "Couldn't solve all the pages")
+                        return HumanFixRequest(state, page, "Couldn't solve all the pages")
                     failed_pages.append(page)
                     self.hooks.progress(ProgressEvent(book, page, "badpage"))
                     paras = self.get_candidate_paragraphs(state, page)
@@ -566,7 +573,7 @@ class TypesetterSolver:
                 str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
                 combo)
         self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
-        return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs)
+        return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
 
     def collect_probes(self, layout, paragraphs, params):
         for p in paragraphs:
@@ -783,7 +790,6 @@ class PTXprinter:
         self.job = None
         self.hascash = False
         if restart:
-            #printbk(bk, -1)
             adjlist = self.view.get_adjlist(bk, save=False)
             parms = adjlist.get_params()
         else:
@@ -802,13 +808,21 @@ class PTXprinter:
                 return (False, f"Failed: {bk} No page data")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
-        state = EngineState(parms if restart else {p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs)
+        state = EngineState(parms if restart else {p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs, 0)
         self.hooks.basestate = state
         starttime = time()
         solver = TypesetterSolver(self.hooks, pids)
         if restart:
             solver.shape_cache, solver.probe_cache = adjlist.get_cache()
         res = solver.solve(state, start_page=-1, stop=stop, restart=restart, book=bk)
+        if isinstance(res, HumanFixRequest):
+            state = res.state
+            page = res.page
+        else:
+            state = res
+            page = state.page
+        if self.filter_params(state.paragraph_params, solver, page):
+            self.createAdjs(state.paragraph_params, None)   # no probes
         endtime = time()
         unlockme()
         self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
@@ -821,9 +835,7 @@ class PTXprinter:
             retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
         return retval
         
-    def run_layout(self, solver, parparms, floats, genfiles=False, prompt="."):
-        if self.timedout:
-            raise TimeoutError()
+    def createAdjs(self, parparms, solver):
         tname = self.view.getLocalTriggerFilename(self.bk)
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
@@ -851,6 +863,10 @@ class PTXprinter:
         tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
         self.adjs.createTriggerlist(fname=tpath)
 
+    def run_layout(self, solver, parparms, floats, genfiles=False, prompt="."):
+        if self.timedout:
+            raise TimeoutError()
+        self.createAdjs(parparms, solver)
         if self.job is None:
             self.job = RunJob(self.view, self.view.scriptsdir, self.macrosdir, self.view.args)
             self.job.norun = True
@@ -1023,6 +1039,26 @@ class PTXprinter:
             pass
         self.parlocs.getnbadspaces()
 
+    def filter_params(self, params, solver, page):
+        if page is None:
+            page = -1
+        res = False
+        lastp = 0
+        for pid, (e, s) in list(params.items()):
+            p = self.get_paragraph_end_page(pid) or lastp
+            lastp = p
+            if p <= page:
+                continue
+            #print(f"Deleting {pid}")
+            params[pid] = (1, 0)
+            res = True
+            # delta = solver.probe_cache[(pid, e, s)]
+            # beste, bests = solver.shape_cache[(pid, delta)]
+            # if beste != e or bests != s:
+            #     res = True
+            #     params[pid] = (beste, bests)
+        return res
+
 
 class GLibCompatQueue:
     """A progress queue safe to share with worker processes on Windows.
@@ -1119,7 +1155,7 @@ class Worker(mp.Process):
             try:
                 res = printer.solve(bk, stop=self.stop, restart=self.build_params.args.restart)
             except Exception as e:
-                logger.debug(f"Unhandled error solving {bk}: {e}")
+                logger.debug(f"Unhandled error solving {bk}: {e}\n{f_('')}")
                 if self.build_params.timeout is not None:
                     watchdog.cancel()
                 stop_monitoring.set()
