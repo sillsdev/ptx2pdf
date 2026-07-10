@@ -8322,7 +8322,8 @@ Thank you,
         mview = self.mview
         try:
             results = mview.run_all(stop=True)
-        except:
+        except Exception as e:
+            print(e)
             mview.teardown()
             self.mview = None
             return
