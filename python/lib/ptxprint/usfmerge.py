@@ -598,8 +598,8 @@ class Collector:
                 if bi is None:
                     bi=i-1
                 logger.log(7, f"Merge.5b: {self.acc[bi].position} , {self.acc[i].position}?")
-                self.acc[i].verse = self.acc[i].verse
-                self.acc[i].pnum = self.acc[i].pnum
+                self.acc[i].verse = self.acc[bi].verse
+                self.acc[i].pnum = self.acc[bi].pnum
                 self.acc[i].insert(0,self.acc[bi][0])
                 #self.acc[bi].syncp = self.acc[i].syncp
                 #self.acc[bi].type = ChunkType.USERSYNC
@@ -664,7 +664,9 @@ class Collector:
             else:
               logger.log(7, f"r: {i}, '-//-', {self.acc[i].type=}, {self.acc[i]=}")
 
-    def score(self,results={}):
+    def score(self, results=None):
+        if results is None:
+            results = {}
         """Calculate the scores for each chunk, returning an array of non-zero scores (potential break points)
         If the results parameter is given, then the return value is a summation
         """
