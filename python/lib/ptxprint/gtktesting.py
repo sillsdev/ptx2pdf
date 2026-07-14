@@ -129,7 +129,8 @@ class GtkTester:
 
     def setuprun(self, fname, view):
         self.pause()
-        self.fname = fname
+        if fname is not None:
+            self.fname = os.path.abspath(fname)
         self.runzip = zipfile.ZipFile(fname, "r")
         for fi in self.runzip.infolist():
             if fi.filename.endswith("events.json"):
@@ -165,6 +166,8 @@ class GtkTester:
     def run_finalise(self):
         # unpack the test zipfile to a temp location, then modify and delete files to allow use as a reference
         reference_tmpdir = tempfile.mkdtemp()
+        if self.fname is not None:
+            self.fname = os.path.abspath(self.fname)
         with zipfile.ZipFile(self.fname) as z_initial:
             z_initial.extractall(reference_tmpdir)
 
