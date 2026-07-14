@@ -109,8 +109,10 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     if tester is not None:
         test_result = tester.run_finalise()
         if not any(test_result.values()):
+            exit_code = 0
             print('Test result: PASS. No differences found to test data.')
         else:
+            exit_code = 1
             print('Test result: FAIL. The following differences to test data were found:')
             if test_result['cfg']:
                 cfg_str = '\n\t'.join(['', *test_result['cfg']])
@@ -127,6 +129,7 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     if server is not None:
         server.terminate()
         server.wait()
+    return exit_code
 
 commands = {
     'print': (),
@@ -193,6 +196,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-z', '--extras', type=int, default=0, help="Special flags (verbosity of xdvipdfmx, request PTdir, no config)")
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
     parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
+
+    exit_code = 0
 
     if argsfn is not None:
         argsfn(parser)
@@ -474,7 +479,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             if project is None or project.srcPath(args.config) is None:
                 args.config = None
     if args.test is not None:
-        runtest(prjTree, config, macrosdir, project, doit, args)
+        exit_code = runtest(prjTree, config, macrosdir, project, doit, args)
     elif args.print or args.cmd is not None or retview:
         mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()
@@ -582,6 +587,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             log.debug(f"Writing user config to {conffile}")
             with open(conffile, "w", encoding="utf-8") as outf:
                 config.write(outf)
+    return exit_code
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
