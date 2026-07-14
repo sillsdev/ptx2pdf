@@ -35251,10 +35251,95 @@ changed while doing final page layout.</property>
                                             <property name="position">1</property>
                                           </packing>
                                         </child>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="width-request">700</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin-left">6</property>
+                                            <property name="margin-right">6</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="margin-end">6</property>
+                                            <property name="spacing">7</property>
+                                            <child>
+                                              <object class="GtkFrame" id="fr_testrecording">
+                                                <property name="width-request">500</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">start</property>
+                                                <property name="margin-right">5</property>
+                                                <property name="margin-end">5</property>
+                                                <property name="label-xalign">0.019999999552965164</property>
+                                                <child>
+                                                  <!-- n-columns=1 n-rows=1 -->
+                                                  <object class="GtkGrid">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="margin-left">12</property>
+                                                    <property name="margin-right">6</property>
+                                                    <property name="margin-start">12</property>
+                                                    <property name="margin-end">6</property>
+                                                    <property name="margin-top">4</property>
+                                                    <property name="margin-bottom">6</property>
+                                                    <property name="row-spacing">4</property>
+                                                    <property name="column-spacing">16</property>
+                                                    <child>
+                                                      <object class="GtkCheckButton" id="c_testrecording">
+                                                        <property name="label" translatable="yes">Test recording in progress</property>
+                                                        <property name="name">Sensitive project</property>
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">True</property>
+                                                        <property name="receives-default">False</property>
+                                                        <property name="tooltip-text" translatable="yes">Record PTXPrint options clicked
+for use in creating an automated test.
+
+Will stop recording when Save is pressed
+or the checkbox is unticked and a dialog
+will allow saving the test in zip format.</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="valign">center</property>
+                                                        <property name="margin-top">6</property>
+                                                        <property name="draw-indicator">True</property>
+                                                        <signal name="toggled" handler="onStartTestRecording" swapped="no"/>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left-attach">0</property>
+                                                        <property name="top-attach">0</property>
+                                                      </packing>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                                <child type="label">
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="label" translatable="yes">Capture tests?</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>
                                 </child>
+
                               </object>
                             </child>
                             <child type="tab">

@@ -1,9 +1,9 @@
 
-import configparser, os, re, regex, random, collections
+import configparser, os, re, regex, random, collections, sys, glob, copy
 from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
-from ptxprint.project import ProjectList
+from ptxprint.project import Project, ProjectList
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
@@ -23,9 +23,9 @@ from ptxprint.polyglot import PolyglotConfig
 from ptxprint.version import VersionStr, GitVersionStr, ConfigVersion
 from ptxprint.report import Report
 import ptxprint.pdfrw.errors
-import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
-from tempfile import NamedTemporaryFile
+import pathlib
+import tempfile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
 from shutil import rmtree
@@ -140,9 +140,11 @@ class ViewModel:
         self.periphs = {}
         self.hyphenation = None
         self.report = Report()
+        self.zf = None
 
         # private to this implementation
         self.dict = {}
+
 
     def __eq__(self, other):
         if self.project is None or other.project is None:
@@ -2074,11 +2076,11 @@ class ViewModel:
                     mystyles.setval(k, a, bname(val, "../../../figures"))
 
 
-        tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
-        mystyles.output_diffile(tempfile, inArchive=True)
-        tempfile.close()
-        res[tempfile.name] = basecfpath + "/ptxprint.sty"
-        tmpfiles.append(tempfile.name)
+        tmpfile = tempfile.NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
+        mystyles.output_diffile(tmpfile, inArchive=True)
+        tmpfile.close()
+        res[tmpfile.name] = basecfpath + "/ptxprint.sty"
+        tmpfiles.append(tmpfile.name)
 
         # config files - take the whole tree even if not needed
         ppath = self.project.srcPath(self.cfgid)
@@ -2116,13 +2118,16 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def createArchive(self, filename=None, nobuild=False):
-        if filename is None:
-            filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
-        if not filename.lower().endswith(".zip"):
-            filename += ".zip"
+    def createArchive(self, filename=None, nobuild=False, for_test=False, in_memory=False):
+        if in_memory:
+            filename = BytesIO()
+        else:
+            if filename is None:
+                filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
+            if not filename.lower().endswith(".zip"):
+                filename += ".zip"
         try:
-            zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
+            self.zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
         except OSError:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
@@ -2147,36 +2152,53 @@ class ViewModel:
                         if not found and os.path.exists(f):
                             temps.append(f)
                             break
-        self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
+        self._archiveAdd(self.zf, self.getBooks(files=True), xdv=xdvfile)
         working_dir = self.project.printPath(self.cfgid)
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
                 if v is None:
                     v = self.createDiglotView(k)
                 if v is not None:
-                    v._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
+                    v._archiveAdd(self.zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
-                    self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
+                    self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"), for_test=True)
         for f in set(self.tempFiles + ([] if runjob is None else runjob.picfiles) + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.project.path)
-                self._writearchive(zf, pf, os.path.join(self.project.prjid, outfname))
+                self._writearchive(self.zf, pf, os.path.join(self.project.prjid, outfname), for_test=True)
             else:
                 print(pf)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
             for f in fs:
                 if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    self._writearchive(zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
-        self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
-        zf.close()
+                    self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f), for_test=True)
+        self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
+
+        test_userconfig = copy.deepcopy(self.userconfig)
+        test_userconfig.remove_section('projectdirs')
+
+        with StringIO() as ss:
+            test_userconfig.write(ss)
+            ss.seek(0)
+            userconfig_str = ss.read()
+        self.zf.writestr('/ptxprint_user.cfg', userconfig_str)
+
+        if not for_test:
+            self.zf.close()
         if res:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()
 
-    def _writearchive(self, zf, ifile, fname):
+        if in_memory:
+            return filename
+
+    def _writearchive(self, zf, ifile, fname, for_test=False):
+        if for_test:
+            if pathlib.Path(fname).parts[1] == 'local':
+                return  # we can exclude the local subdirectory from the test archive
         if fname not in zf.NameToInfo:      # do what zipfile should do
             zf.write(ifile, fname)
 
@@ -2185,7 +2207,7 @@ class ViewModel:
         logger.debug(f"{entries=}, {cfgchanges=}, {tmpfiles=}")
         for k, v in entries.items():
             if os.path.exists(k):
-                self._writearchive(zf, k, v)
+                self._writearchive(zf, k, v, for_test=True)
         tmpcfg = {}
         for k,v in cfgchanges.items():
             if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
@@ -2215,7 +2237,7 @@ class ViewModel:
             fpath = getfontcache().get('Source Code Pro')
             if fpath is None:
                 continue
-            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.project.prjid, os.path.basename(fpath)))
+            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.project.prjid, os.path.basename(fpath)), for_test=True)
 
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.project.prjid), writefontsconf(None, archivedir=True))
@@ -2564,4 +2586,3 @@ set stack_size=32768""".format(self.cfgid)
                 with open(v, "rb") as inf:
                     d = inf.read()
                 ozip.write(f"{k}.pdf", d)
-
