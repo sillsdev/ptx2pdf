@@ -210,7 +210,7 @@ def getcaller(count=0):
 def refKey(r, info=""):
     """ Returns (bknum, chap, versenum, book/glot, info, verseextra, extras) """
     # bk, glot, c, v, postv, extras
-    m = re.match(r"^(\d\D\D|\D{3})?([A-Z]?)\s*(\d*)[.:]?(\d*)(\S*?)(\s+.*)?$", r)
+    m = re.match(r"^(\d\D\D|\D{3})?([A-Z]?)\s*(\d*)[.:]?(\d*)([^\s.]*?)\.?(\s+.*)?$", r)
     if m:
         bkid = m.group(1) or ""
         return (books.get(bkid[:3], 99)+1, int(m.group(3) or 0), int(m.group(4) or 0), m.group(2), info, m.group(5), m.group(6) or "")

@@ -369,7 +369,7 @@
    \trace{Dh}{after part1:\the\availht}%
    \ifcsname @nxtchunkLht\endcsname
      \ifdim\availht=\textheight\relax \else % joint calcs only apply if the page has content!
-       {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht} \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}%
+       {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht}\edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}%
          \x@\def\x@\tmsg\x@{\tmsg}%
          \trace{Dh}{dglt@calc@vailht:  \tmsg}
        }%
@@ -378,7 +378,7 @@
        \global\advance\availht by -\thisjointDelta \relax%
      \fi
    \fi
-   \global\advance\availht by \adjustp@ge\relax % Panic measure.. Needs to be applied after checking for content.
+   \global\advance\availht by \adjustp@ge\relax % Panic measure.. for users Needs to be applied after checking for content.
    \trace{Dh}{after part2:\the\availht}%
    \f@rstnotetrue
    \ifversion{9}{}{%
@@ -434,13 +434,15 @@
      \f@rstnotetrue
      \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
      \trace{Dh}{Final (after notes):\the\availht}%
-   }{
+   }{%
      \trace{D}{Final:\the\availht}%
    }%
 }
 
 \def\dglt@calc@vailht@mods{%
-   \x@\ifx\csname BelowBaseline\c@rrdstat\endcsname\empty\else
+   \x@\ifx\csname BelowBaseline\c@rrdstat\endcsname\empty
+     %\global\advance\availht by \m@xBelowBaseline
+   \else
      \global\advance\availht by -\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
      \trace{Dh}{BelowBaseline: \csname BelowBaseline\c@rrdstat\endcsname x \csname b@selineskip\c@rrdstat\endcsname -> \the\availht}%
    \fi
@@ -681,7 +683,7 @@
       \trace{D}{Showing galley locn 4}%
       \Showbox\galley
     \fi
-    \global\output{\diglot@any@trial}
+    \global\output{\diglot@any@trial}%
     \unvcopy\galley
     \unpenalty
     \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
@@ -731,7 +733,7 @@
   \let\after@this=\after@after@a@trial
   \iftrialfailed\else
     \TempDim=\dimexpr \availht-\ht\trialbox\relax
-    \ifdim \dp\trialbox > 0.5\baselineskip % Is the depth of the box significant?
+    \ifdim \dp\trialbox >0.5\baselineskip % Is the depth of the box significant?
       \advance\TempDim by -\dp\trialbox \relax
     \fi
     \ifvoid\@xcs %Was that the whole input?
@@ -1195,8 +1197,9 @@
   \edef\@xtra{lnt:\the\tmpcount(\decod@lastnode{\the\tmpcount}}%
   \ifnum\tmpcount=11
     \dimen0=\lastskip
-    \edef\@xtra{\@xtra\space \the\dimen0}%
-    \vbox to 0pt{}%
+    \edef\@xtra{\@xtra\space \the\dimen0 [removed]}%
+    \unskip
+    \vbox to \dimen0{\vss}%
   \fi 
   \ifnum\tmpcount=13
     \edef\@xtra{\@xtra\space \the\savedpenalty}%
@@ -1253,7 +1256,7 @@
   \fi
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi [\digl@tc@ntentlist|\digl@tc@ntent@xcs]}%
-  \edef\tmp{#2}
+  \edef\tmp{#2}%
   \ifdiglotcolh@scontent
     \ifx\tmp\empty\else
       \save@cutouts{\c@rrdstat}%
@@ -1546,11 +1549,11 @@
  \fi
  \global\hsize=\w@dth\relax
  \global\diglotcolh@scontentfalse
- \trace{D}{end of swap@diglot: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip, thh=\the\trialheight}%
+ \trace{D}{end of swap@diglot: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip, th=\the\trialheight}%
 }%
 
 
-\def\setdiglotlang#1{
+\def\setdiglotlang#1{%
  \ifcsname language#1\endcsname
     \x@\language\csname language#1\endcsname
  \fi
@@ -1627,12 +1630,12 @@
  \setbox0=\copy#1\setbox1=\vtop{\unvbox 0\setbox2=\lastbox}%Work on a copy so we don't break stuff.
  \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\TempDim}%
  % Now ready to (A) remove topskip, later replacing it with baselineskip. (B) append kern if needed.
- \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt \ifdim\TempDim=0pt \else\kern-\TempDim\fi\fi}
+ \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt \ifdim\TempDim=0pt \else\kern-\TempDim\fi\fi}%
 }
 \let\lAd@do\relax
 \let\log@ut\empty
 
-\def\l@gdims#1{\the\ht#1 +\the\dp#1 x\the\wd#1}
+\def\l@gdims#1{\the\ht#1+\the\dp#1x\the\wd#1}
 \def\l@gboxdims#1{\edef\lb@tmpnam{\v@lpfx#1\v@lsfx}\x@\let\x@\lb@tmptb@x\csname\lb@tmpnam\endcsname \edef\log@ut{\log@ut\space \lb@tmpnam: \the\ht\lb@tmptb@x +\the\dp\lb@tmptb@x\space x \the\wd\lb@tmptb@x}}
 % Log dimensions of all columns
 \def\l@gm@dims{\relax\let\lAd@do=\col@do\let\col@do=\l@gboxdims
@@ -1752,10 +1755,10 @@
  %\Showbox#1\Showbox#2%
  \bgroup
   \ifnum\TRACEcount=\diglotDbgJoinboxes
-    \Showbox#1\Showbox#2
+    \Showbox#1\Showbox#2%
   \fi\relax
-  \setbox0=\box#1
-  \setbox1=\box#2
+  \setbox0=\box#1%
+  \setbox1=\box#2%
   \dimen0=0pt \relax
   \ifdim\ht0>0pt \ifdim\dp0<0.5\baselineskip
     %box0 is not a vtop, it's a vbox, so won't have text hanging below its baseline.
@@ -1795,8 +1798,8 @@
   \def\col@do##1{\advance\count255 by 1}%
   \count255=0
   \x@\each@col\layout@list\E
-  \xdef\colc@unt{\the\count255}
-  \advance\dimen0 by -\numexpr \colc@unt - 1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
+  \xdef\colc@unt{\the\count255}%
+  \advance\dimen0 by -\numexpr \colc@unt -1\relax\gutter \relax\advance\dimen0 by -\count255\columnshift\relax
   \def\col@do##1{%
     \ifcsname  Diglot##1Fraction\endcsname
       \csname column##1width\endcsname=\csname Diglot##1Fraction\endcsname\dimen0
@@ -1817,7 +1820,7 @@
     % step 0 what maxbaselineskip applies?
     {\edef\tmsg{@cur}\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
     \x@\def\x@\tmsg\x@{\tmsg}%
-    \trace{dP}{do@joint@calc: \tmsg}
+    \trace{dP}{do@joint@calc: \tmsg}%
     }%
     \dimen1=0pt
     \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
@@ -1858,7 +1861,7 @@
   \ifx\m@x@at@col\diglotgridcolumn\else
     \dimen2=\csname #1\diglotgridcolumn ht\endcsname
     \trace{d}{@do@jointcalc@simplecols@gridone maxht:\the\dimen1, control:\the\dimen2. Diff:\the\dimexpr \dimen2-\dimen1\relax}%
-    \advance \dimen2 - \dimen1
+    \advance \dimen2 -\dimen1
     \dimen0=\csname b@selineskip\diglotgridcolumn\endcsname
     \m@d % see ptx-para-style
     \ifdim\dimen3>\diglotgridneg
@@ -2309,9 +2312,9 @@
     \advance\availht by -\m@xBelowBaseline
   }%
   %\tracingassigns=0
-  \ifdim\availht<\dimexpr \@maxb@seline*2\relax %
+  \ifdim\availht<\dimexpr \@minb@seline *2\relax
     \global\pagefulltrue%
-    \trace{D}{Declaring page full (\the\availht < 2 \@maxb@seline)}%
+    \trace{D}{Declaring page full (\the\availht < 2x \@maxb@seline, cf: \the\TempDim)}%
   \else%
     \trace{D}{Page not full actually (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1) pagefull\ifpagefull true\else false\fi\space endbook\ifendbook true \else false \fi tsr=\csname tri@lsplitRej\c@rrdstat\endcsname}%
     \ifpagefull\ifendbook\ifendbooknoeject
@@ -2375,7 +2378,7 @@
   \IfTr@ce{u}{\tracingassigns=1 }% \tracingmacros=1%
   \x@\let\x@\s@mebox\csname #1\endcsname
   \ifx\pagecontents\empty\else
-    \ifdim\dimexpr \ht\s@mebox+\dp\s@mebox + \dimen0 > \textheight
+    \ifdim\dimexpr \ht\s@mebox+\dp\s@mebox +\dimen0 > \textheight
       \trace{u}{Printing}%
       \plainoutput
       \let\pagecontents\empty
@@ -2592,7 +2595,7 @@
 \newif\ifactually@write
 \newif\if@@bg
 \def\diglot@writeparpageend#1{\ifhmode\beginL\fi\pdfsavepos \write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{#1}}\ifhmode\endL\fi}%Logging routine
-\def\@do@writep@ge@simplecols{
+\def\@do@writep@ge@simplecols{%
   \traceifset{@do@writep@ge@simplecols}%
   \traceifset{@do@writep@ge@simplecols-a}%
   \trace{d}{do@writep@ge@simplecols \the\pageno (\the\MaxPages) actually@write\ifactually@write true\else false\fi}%
@@ -2650,7 +2653,7 @@
   \trace{d}{Bottom Fig Gutter \the\dimen8 hight, \the\dimen9 deep}%
   \dimen7=\dimen9
   \advance\dimen7 by \dimen8\relax
-  \ifnum 0> \numexpr  \ifvoid\bottomleftins 0 \else 1 \fi + \ifvoid\bottomrightins 0 \else 1 \fi\relax
+  \ifnum 0> \numexpr  \ifvoid\bottomleftins 0 \else 1 \fi +\ifvoid\bottomrightins 0 \else 1 \fi\relax
     \setbox\botchunk=\hbox to \textwidth{%\vllap{\the\ht\Lbox \the\dp\Lbox}%
       \hbox to\columnshift{}%
       \ifdiglotN@rmal%Are the sides swapped?
@@ -2774,7 +2777,7 @@
            \box0
            \let\c@rrdstat\c@rrdstattmp
          \fi
-         \traceifcheck{@@setppagecontents-c}
+         \traceifcheck{@@setppagecontents-c}%
          \x@\let\x@\tmplist\ifdiglotN@rmal\layout@list \else \rev@layout@list\fi
          %\hrule
          \traceifcheck{@@setppagecontents-c}%
@@ -2848,7 +2851,7 @@
   \traceifcheck{@@setppagecontents}%
 }
 
-\def\abortpage{
+\def\abortpage{%
     \edef\b@xseq{topins,topchunk,partial,botchunk,bottomins,notechunk,verybottomins,}%
     \dimen0=0pt
     \tmpt@ks{}%
@@ -2863,7 +2866,7 @@
     \ifdiglotSepNotes\else
       \r@storeallnotes{2}%
       \f@rstnotetrue%
-      \def\pagecontents{
+      \def\pagecontents{%
         \m@kenotebox\unvbox2 % defined by m@kenotebox
       }\plainoutput
     \fi
@@ -3328,7 +3331,7 @@
   \pickn@xtpartial
   \ifvoid\partial
     \ifVisTrace
-      \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}
+      \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}%
         %\ifpagefull
           %\vbox to 0pt{\vrule width 2pt height \availht \vss}%
         %\fi
@@ -3337,7 +3340,7 @@
       \global\setbox\partial=\box\n@xtpartial
     \fi
   \else
-    \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}
+    \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}%
     %\ifVisTrace\ifpagefull
       %\vbox to 0pt{\hbox{\vrule width 2pt height \availht} \vss}%
     %\fi\fi
@@ -3376,7 +3379,7 @@
     \trace{D}{LBP:\the\Lboxpenalty, RBP:\the\Rboxpenalty,  plp:\the\partialLpenalty, prp:\the\partialRpenalty}%
     {\edef\tmsg{@cur}\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
     \x@\def\x@\tmsg\x@{\tmsg}%
-    \trace{dP}{@aanp: \tmsg}
+    \trace{dP}{@aanp: \tmsg}%
     }%
     \let\col@do=\set@ht %uses iftemp and m@xht
     \x@\each@col\diglot@list\E
@@ -3721,7 +3724,7 @@
        \fi
        \hfil}%\dp5=#3 \box5
       \vss}%
-    \dp4=#3
+    \dp4=#3\relax
     \box4
   \hss}}
 
@@ -3738,9 +3741,9 @@
 \addtoendptxhooks{%
     \bgroup\ifdiglot\ifnum\pageno>0 \relax
     \let\col@do=\log@cumulative 
-    \def\logt@mp{}
+    \def\logt@mp{}%
     \x@\each@col\diglot@list\E
-     \message{Column deltas for book: \logt@mp} \fi\fi\egroup \relax
+     \message{Column deltas for book: \logt@mp}\fi\fi\egroup \relax
  }%
 \addtoendhooks{\ifdiglot\ifvoid\partial\else\@writep@ge\fi\fi}
 
@@ -3782,9 +3785,9 @@
     \let\digl@tc@ntentlist=\old@cts
     %Now make the reversed layout list
     \let\col@do=\mkrev@list\def\list@type{layout}%
-    \xdef\rev@layout@list{}
+    \xdef\rev@layout@list{}%
     \x@\each@col\diglot@list\E% 
-    {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}
+    {\edef\sfx{#1}\let\wh@t\n@wSpecificDim \pr@cessSpecificDim}%
     \x@\let\csname #1isDiglotColumn\endcsname\empty
 %    \x@\newb@x\csname #1discards\endcsname
     \x@\newb@x\csname #1box\endcsname

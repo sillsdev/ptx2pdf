@@ -35090,8 +35090,10 @@ PTXprint from accessing the internet.</property>
                                                             <property name="can-focus">False</property>
                                                             <property name="tooltip-text" translatable="yes">Some advanced features load extra code
 that is not normally needed. List them
-here if you need to use them.
-e.g. polyglot-simplepages</property>
+here if you need to use them. For example,
+if you are generating a QR code, then you
+need to add qr to the list of plugins. For a
+polyglot, you can add polyglot-simplepages</property>
                                                             <property name="label" translatable="yes">Plugins:</property>
                                                           </object>
                                                           <packing>
@@ -35107,8 +35109,10 @@ e.g. polyglot-simplepages</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="tooltip-text" translatable="yes">Some advanced features load extra code
 that is not normally needed. List them
-here if you need to use them.
-e.g. polyglot-simplepages</property>
+here if you need to use them. For example,
+if you are generating a QR code, then you
+need to add qr to the list of plugins. For a
+polyglot, you can add polyglot-simplepages</property>
                                                             <property name="progress-pulse-step">0</property>
                                                           </object>
                                                           <packing>
