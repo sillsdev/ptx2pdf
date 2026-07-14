@@ -102,25 +102,28 @@ class GtkTester:
         if self.full_archive:
             after_archive = self.view.createArchive(in_memory=True)
 
-        initial_files = {name: self.zip.read(name) for name in self.zip.namelist()}
+            initial_files = {name: self.zip.read(name) for name in self.zip.namelist()}
 
-        after_archive.seek(0)
-        with zipfile.ZipFile(after_archive) as z_final:
-            final_files = {name: z_final.read(name)
-                        for name in z_final.namelist()}
+            after_archive.seek(0)
+            with zipfile.ZipFile(after_archive) as z_final:
+                final_files = {name: z_final.read(name)
+                            for name in z_final.namelist()}
 
-        modified_files = []
-        deleted_files = []
+            modified_files = []
+            deleted_files = []
 
-        for name, content in final_files.items():
-            if name not in initial_files or initial_files[name] != content:
-                modified_files.append(name)
-                self.zip.writestr("{}/test/modified_files/{}".format(project.prjid, name), content)
-        for name in initial_files:
-            if name not in final_files and 'test' not in name:
-                deleted_files.append(name)
+            for name, content in final_files.items():
+                if name not in initial_files or initial_files[name] != content:
+                    modified_files.append(name)
+                    self.zip.writestr("{}/test/modified_files/{}".format(project.prjid, name), content)
+            for name in initial_files:
+                if name not in final_files and 'test' not in name:
+                    deleted_files.append(name)
 
-        self.zip.writestr("{}/test/deleted_files.txt".format(project.prjid), '\n'.join(deleted_files))
+            self.zip.writestr("{}/test/deleted_files.txt".format(project.prjid), '\n'.join(deleted_files))
+        else:
+            # not implemented right now, but here it could be possible to have a more minimal test eg comparing only cfg files
+            raise NotImplementedError
 
         events = json.dumps({"events": self.events}, ensure_ascii=False, indent=4, cls=CustomJSONEncoder)
         self.zip.writestr("{}/test/events.json".format(project.prjid), events)
