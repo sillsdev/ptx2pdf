@@ -1,5 +1,5 @@
 
-import configparser, os, re, regex, random, collections, sys, glob
+import configparser, os, re, regex, random, collections, sys, glob, copy
 from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
@@ -2174,7 +2174,7 @@ class ViewModel:
                     self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f), for_test=True)
         self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
 
-        test_userconfig = self.userconfig
+        test_userconfig = copy.deepcopy(self.userconfig)
         test_userconfig.remove_section('projectdirs')
 
         with StringIO() as ss:

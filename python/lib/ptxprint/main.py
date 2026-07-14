@@ -3,7 +3,6 @@ import argparse, sys, os, re, configparser, shlex
 import site, logging, time, socket, multiprocessing
 from shutil import rmtree
 from zipfile import ZipFile
-from pathlib import PurePosixPath
 
 import ptxprint
 from ptxprint.utils import saferelpath, appdirs, bookcodes
@@ -114,9 +113,11 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         else:
             print('Test result: FAIL. The following differences to test data were found:')
             if test_result['cfg']:
-                print(f"The following differences were found in the cfg:\n\t {'\n\t'.join(test_result['cfg'])}")
+                cfg_str = '\n\t'.join(['', *test_result['cfg']])
+                print(f"The following differences were found in the cfg:{cfg_str}")
             if test_result['sty']:
-                print(f"The following differences were found in the sty:\n\t {'\n\t'.join(test_result['sty'])}")
+                sty_str = '\n\t'.join(['', *test_result['sty']])
+                print(f"The following differences were found in the sty:{sty_str}")
             if test_result['ref']:
                 print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
             if test_result['test']:

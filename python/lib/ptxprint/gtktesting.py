@@ -1,7 +1,6 @@
 
 from gi.repository import Gtk, GObject, GLib
-import io, os, zipfile, json, shutil, tempfile, filecmp
-import subprocess
+import os, zipfile, json, shutil, tempfile, filecmp
 from configparser import ConfigParser
 from difflib import context_diff
 from pathlib import Path
@@ -92,10 +91,9 @@ class GtkTester:
         return False
 
     def finalise(self):
-        project = self.currid[0]
         if self.zip is None or self.paused:
             return
-
+        project = self.currid[0]
         self.pause()
         self.mkzipdir("{}/test".format(project.prjid))
 
@@ -131,7 +129,6 @@ class GtkTester:
 
     def setuprun(self, fname, view):
         self.pause()
-        projects = {}
         self.fname = fname
         self.runzip = zipfile.ZipFile(fname, "r")
         for fi in self.runzip.infolist():
@@ -182,7 +179,7 @@ class GtkTester:
 
         deleted_files_path = Path(reference_tmpdir) / self.view.project.prjid / "test" / "deleted_files.txt"
         with open(deleted_files_path) as f:
-            deleted_files = [f.strip() for f in f.readlines()]
+            deleted_files = [deleted_file.strip() for deleted_file in f.readlines()]
         for file in deleted_files:
             (Path(reference_tmpdir) / file).unlink()
 

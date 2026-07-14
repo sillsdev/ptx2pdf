@@ -1025,7 +1025,7 @@ class FontRef:
         return self._iseq(other)
 
     def to_dict(self):
-        return {'name': self.name, 'style': self.style, 'isGraphite': self.isGraphite, 'isCtxtSpace': self.isCtxtSpace, 'feats': self.lang, 'feats': self.lang}
+        return {'name': self.name, 'style': self.style, 'isGraphite': self.isGraphite, 'isCtxtSpace': self.isCtxtSpace, 'feats': self.lang}
 
     @classmethod
     def fromConfig(cls, txt):

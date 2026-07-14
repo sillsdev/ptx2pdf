@@ -8443,7 +8443,6 @@ Thank you,
 
         else:  # testing has just been turned off
             self.finalise_testing()
-        print('hello')
 
     def finalise_testing(self):
         if self.testing is None:
