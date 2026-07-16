@@ -491,6 +491,7 @@
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
   \trace{d}{rej@ctgalley (\c@rrdstat) reflow:\refl@wlist}%
   \r@storenotes{\g@tndstat}{1}%
+  \ifdiglotSepNotes\else\crosscoll@notes{entry}\fi
   %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
   \r@storeinserts{col}%
   %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
@@ -528,7 +529,7 @@
   \else 
     \trace{D}{Split result for \c@rrdstat:ht=\the\ht1, dp=\the\dp1. Remainder \ifvoid 0 void\else \the\ht0+\the\dp0\fi}%
     \savingvdiscards=1
-    \setbox\@xcs\copy\csname whole\c@rrdstat\endcsname
+    \global\setbox\@xcs\copy\csname whole\c@rrdstat\endcsname
     \global\setbox\galley=\vsplit\@xcs to \trialheight
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 3}%
@@ -582,7 +583,7 @@
 \newif\ifhaveb@ckedup
 \def\run@a@trial{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
-  \traceNum{d}{run@a@trial \show@dstat, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty}%
+  \traceNum{d}{run@a@trial \show@dstat, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty \iflate@stage@reflow LSR\fi}%
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %last galley
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname %source
   \x@\let\x@\@whl\csname whole\c@rrdstat\endcsname %source
@@ -612,12 +613,19 @@
     \global\holdinginserts=0
     %Make sure partialX (last galley) is dropped or recycled ...
     \iflate@stage@reflow
-      \trace{D}{restoring notes, trigger:\late@stage@trigger}%
-      \r@storenotes{\g@tndstat}{1}%
-      \ifNoMergeReflow\else
-        \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
+     % \x@\advance\csname availht\c@rrdstat\endcsname\csname ov@rfull\c@rrdstat\endcsname
+      \ifdiglotSepNotes\else
+        %\x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
       \fi
+      \global\trialheight=\availht
+      \trace{D}{late stage reflow, \csname ov@rfull\c@rrdstat\endcsname -> av:\the\availht}%
+      %\trace{D}{restoring notes, trigger:\late@stage@trigger}%
+      %\r@storenotes{\g@tndstat}{1}%
+      %\ifNoMergeReflow\else
+        %\x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
+      %\fi
       % No need to *save* notes after restoring, because they're already saved.
+      %\diglotDebugFollowContentstrue
     \else
       \s@venotes{\g@tndstat}{1}%
     \fi
@@ -664,7 +672,7 @@
       \fi
     }%
     \global\galleypenalty=0
-    \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\global\@ftergalleyskip=\lastskip\unskip\penalty\endtri@lpen@lty}%
+    \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\global\@ftergalleyskip=\lastskip\unskip\ifVisTraceExtra\doVisTrace{*}\kern -\baselineskip\box0\kern\baselineskip\fi\penalty\endtri@lpen@lty}%
     \ifdim\ht\@xcs>0pt 
       \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{\the\dimexpr \the\trialheight -\the\ht\galley\relax}% The trial already rejected this much content, don't re-try it.
     \else
@@ -686,17 +694,22 @@
         \showbox\p@rtl
       \fi
     \fi
+    \iflate@stage@reflow \global\setbox\p@rtl\box\voidb@x\fi % Don't let p@rtl carry over. 
     \tracetimset{any@trial}%
     \ifdiglotDebugFollowContents
       \trace{D}{Showing galley locn 4}%
       \Showbox\galley
     \fi
     \global\output{\diglot@any@trial}%
+    \trace{D}{TRIAL! \the\ht\galley+\the\dp\galley}%
+    \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
     \unvcopy\galley
     \unpenalty
-    \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
     \traceifset{run@a@trial\the\r@a@trialdepth}%
+    \relax
     \penalty\endtri@lpen@lty
+    \relax
+    %\iflate@stage@reflow \showlists\fi
     \traceifcheck{run@a@trial\the\r@a@trialdepth}%
     \advance\r@a@trialdepth by -1
     \relax\relax
@@ -707,6 +720,7 @@
     \let\after@run@a@trial=\after@after@a@trial
     \x@\xdef\csname tri@lsplitRej\c@rrdstat\endcsname{\the\trialheight}% The trial already rejected the whole lot.
   \fi
+  \trace{D}{End of run@a@trial}%
   \after@run@a@trial
 }
 
@@ -822,6 +836,7 @@
 }
 
 \def\@trial@failed#1{%
+  \trace{d}{@REACHED HERE@}%
   \trace{D}{trial failed (class #1), (end of?) input moved. refilling excess\c@rrdstat - \refl@wlist. \ifp@rtlset partial\c@rrdstat\space was set\fi}%(the start may have been set already
   %Undo the vsplit (all mtl into excessX)
   %\x@\global\x@\setbox\csname excess\c@rrdstat\x@\endcsname\x@\copy\csname whole\c@rrdstat\endcsname
@@ -1154,6 +1169,7 @@
       \else 
         \traceNum{D}{Backing up and trying again (th:\the\trialheight)}%
         \r@storenotes{\g@tndstat}{1}%
+        \ifdiglotSepNotes\else\crosscoll@notes{entry}\fi
         %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
         \r@storeinserts{col}%
         %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
@@ -1172,6 +1188,17 @@
     \fi
 }
 
+\def\crosscoll@notes#1{%Account for the effect of footnotes on the other column.
+  {\edef\tmpav{\the\availht}%\edef\tmpavc{\the\csname availht\c@rrdstat\endcsname}
+  \global\availht=0pt
+  \f@rstnotetrue
+  \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
+  \x@\xdef\csname #1@n@teht\c@rrdstat\endcsname{\the\availht}%
+  \trace{D}{#1@n@teht\c@rrdstat=\the\availht}%
+  \global\availht=\tmpav
+  %\x@\global\x@\csname availht\c@rrdstat\endcsname=\tmpavc
+  }%
+}
 \def\coll@ct@overrun{% Need another output cycle to protect overrunning notes and inserts
   \trace{d}{coll@ct@overrun: \the\insertpenalties, \l@gdims{255}}%
   \global\setbox10=\box255% Stash away the current box
@@ -3105,7 +3132,9 @@
   \x@\let\x@\@xcs\csname excess#1\endcsname
   \x@\let\x@\@whl\csname whole#1\endcsname
   \ifvoid\p@rtl\else
-    \setbox\@xcs\copy\@whl
+    \trace{D}{resetting xcs#1 to whole}%
+    \global\setbox\@xcs\copy\@whl
+    \global\setbox\p@rtl\box\voidb@x
     \let\rdtmp\col@do
     \tempfalse
     \ifx\tri@llist\empty\else
@@ -3461,7 +3490,7 @@
 \def\n@xttrial#1#2\E{%
   \xdef\tri@llist{#2}%
   \trace{D}{n@xttrial #1 (#2)}%
-  \setc@rdstat{#1}\setLRspecific
+  \setc@rdstat{#1}%
 }
 
 \def\ch@ckcontents#1#2\E{%
@@ -3472,15 +3501,28 @@
   \edef\c@rrdstat{#1}%
   \edef\oldavht{\x@\the\csname availht\c@rrdstat\endcsname}%
   \x@\ifvoid\csname \c@rrdstat box\endcsname \else
-    \trace{D}{side \c@rrdstat\space has material to put on the page \x@\l@gdims\x@{\csname \c@rrdstat box\endcsname}}%
     \global\not@emptytrue
     \loc@lhttrue\dglt@calc@vailht
-    \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<-2pt 1 \else 0 \fi\fi
+    \x@\let\x@\tmp\csname \c@rrdstat box\endcsname
+    \trace{D}{side \c@rrdstat\space has material to put on the page \x@\l@gdims\x@{\csname \c@rrdstat box\endcsname}/\the\availht/\oldavht}%
+    \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<\dimexpr \the\ht\tmp+\the\dp\tmp - \DiglotOverfill \relax 1 \else 0 \fi\fi
+      \ifboxmoved
+        \x@\xdef\csname ov@rfull\c@rrdstat\endcsname{0pt}%
+      \else
+        \x@\xdef\csname ov@rfull\c@rrdstat\endcsname{\the\dimexpr \availht - \ht\tmp - \dp\tmp}%
+      \fi
       \late@stage@reflowtrue
       \gdef\late@stage@trigger{ch@ckcontents}%
-      \xdef\refl@wlist{\refl@wlist\c@rrdstat}%
-      \trace{D}{No space (\the\availht) for material (now, was \oldavht) reflow:\refl@wlist}%
-    %\else
+      \tempfalse
+      \let\test\c@rrdstat
+      \let\col@do\check@dup
+      \x@\each@col\refl@wlist\E%
+      \iftemp\else
+        \xdef\refl@wlist{\refl@wlist\c@rrdstat}%
+      \fi
+      \trace{D}{No space (\ifboxmoved boxmoved:\fi\the\availht<(\the\ht\tmp+\the\dp\tmp)) for #1 material on \folio, (was \oldavht) reflow:\refl@wlist}%
+    \else
+      \x@\xdef\csname ov@rfull\c@rrdstat\endcsname{0pt}%
       %\x@\ifvoid\csname excess\c@rrdstat\endcsname\else
      %  \global\pagefulltrue % If we are here with stuff left to set, then clearly the page has filled up? No, the page-length may have been underestimated.
       %\fi
@@ -3573,9 +3615,14 @@
       \x@\each@col\diglot@list\E% 
     \fi
     \global\boxmovedfalse
+    \let\n@xt=\relax
   \else
     \ifnot@empty 
-      \global\late@stage@reflowfalse
+      \iflate@stage@reflow
+        \let\n@xt=\dolate@stage
+      \else
+        \let\n@xt=\upd@tep@rtial
+      \fi
     \else
       \ifx\tri@llist\empty\else
         \ifnum\triall@@pcount>10
@@ -3583,13 +3630,26 @@
           \global\pagefulltrue
         \fi
       \fi
+      \let\n@xt=\upd@tep@rtial
     \fi
-    \upd@tep@rtial
   \fi
-  \trace{d}{check@and@update end \the\triall@@pcount, reflow:\refl@wlist\space t:\tri@llist\space xs:\digl@tc@ntent@xcs}%
-  \traceifcheck{check@and@update}%
+  \trace{d}{check@and@update end \the\triall@@pcount, \iflate@stage@reflow LATE-\fi reflow:\refl@wlist\space t:\tri@llist\space xs:\digl@tc@ntent@xcs}%
+ \traceifcheck{check@and@update}%
+ \n@xt
 }
 
+\def\dolate@stage{%
+  \trace{d}{dolate@stage \refl@wlist}%
+  \ifx\refl@wlist\empty
+    \global\late@stage@reflowfalse
+  \else
+    \let\tri@llist\refl@wlist
+    \empty@partials
+    \let\tri@llist\refl@wlist
+    \diglot@run@nxt@trial
+  \fi
+  %\check@and@update
+}
 \newcount\triall@@pcount
 
 \def\diglot@run@trials{% for X as L, R, (eventually others)
@@ -3627,15 +3687,18 @@
     \loop
       \x@\n@xttrial\tri@llist\E
       \trace{D}{Blanking partial\c@rrdstat}%
-      \x@\setbox\csname partial\c@rrdstat\endcsname=\box\voidb@x
+      \x@\global\x@\setbox\csname partial\c@rrdstat\endcsname=\box\voidb@x
     \unless\ifx\tri@llist\empty\repeat
   \fi
 }
 
 \newif\ifp@rtlset
 \def\diglot@run@nxt@trial{%
-  \traceNum{d}{diglot@run@nxt@trial}%
+  \traceNum{d}{diglot@run@nxt@trial [\tri@llist]}%
+  %\global\late@stage@reflowfalse
+  \ifx\tri@llist\empty\errmessage{Caught internal error - cannot run an empty trial list}\fi%
   \x@\n@xttrial\tri@llist\E % cuts 1st column off tri@llist and makes it current.
+  \setLRspecific
   \ifx\c@rrdstat\empty %End of the loop.
   \else
     \dimen0=\dimexpr \ht\csname whole\c@rrdstat\endcsname + \dp\csname whole\c@rrdstat\endcsname\relax\relax
@@ -3699,7 +3762,9 @@
       \global\let\refl@wlist\empty
     \fi
     \ifx\tri@llist\empty
+      %\trace{D}{next: relax}%
       \let\n@xt=\relax
+      %\Showlists
     \else
       \relax
       \ifx\tri@llist\diglot@list\else %Complex mess which might help, maybe??

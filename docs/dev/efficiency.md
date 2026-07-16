@@ -20,12 +20,12 @@ This document is an attempt to get some real results and see how much the affect
 
 After (column) runs, each with 30000 loops, these results were obtained for the different tests.
 XeTeX:
-maxa 61 148.305ms
-maxb 61 122.123ms
-maxc 21 151.03ms
-maxd 21 154.049ms
-maxe 40 149.188ms
-maxf 40 141.495ms
+* maxa 61 148.305ms
+* maxb 61 122.123ms
+* maxc 21 151.03ms
+* maxd 21 154.049ms
+* maxe 40 149.188ms
+* maxf 40 141.495ms
 
 
 It can be seen that the multiple `\dimexpr` calls of maxa are not efficient, and surprisingly, the cost of parsing the if structure of maxd outweighs the re-assignment and re-testing in maxc.
