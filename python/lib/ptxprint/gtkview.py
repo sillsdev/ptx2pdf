@@ -8406,29 +8406,13 @@ Thank you,
 
         testing_active = btn.get_active()
         if testing_active:  # testing has just been turned on
-            dialog = Gtk.FileChooserDialog(
-                title="Select Output Zip File",
-                parent=self.mainapp.win,  # your main window
-                action=Gtk.FileChooserAction.SAVE
-            )
-
-            dialog.add_buttons(
-                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_SAVE, Gtk.ResponseType.OK
-            )
-
-            dialog.set_current_folder(os.path.expanduser("~"))
-
-            filter_zip = Gtk.FileFilter()
-            filter_zip.set_name("ZIP files")
-            filter_zip.add_pattern("*.zip")
-            dialog.add_filter(filter_zip)
-
-            response = dialog.run()
-
-            if response == Gtk.ResponseType.OK:
-                zip_file = dialog.get_filename()
-                dialog.destroy()
+            zip_file = self.fileChooser(_("Select the location and name for the test archive file"),
+                    filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
+                    multiple=False, folder=False, save=True,
+                    basedir=os.path.join(self.project.printPath(self.cfgid), '..'))
+            if zip_file is not None:
+                zip_file = str(zip_file[0])
+                print(zip_file)
                 self.emission_hook_ids = []
                 for k, v in _signals.items():
                     for w in v:
@@ -8438,10 +8422,6 @@ Thank you,
                         self.emission_hook_ids.append((o, k, hook_id))
                 self.testing = GtkTester(zip_file, self, full_archive=True)
                 self.starttime = time.time()
-            else:
-                dialog.destroy()
-                btn.set_active(False)
-
         else:  # testing has just been turned off
             self.finalise_testing()
 

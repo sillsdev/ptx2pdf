@@ -1,4 +1,6 @@
 
+import gi
+gi.require_version("Gtk", '3.0')
 from gi.repository import Gtk, GObject, GLib
 import os, zipfile, json, shutil, tempfile, filecmp
 from configparser import ConfigParser
@@ -27,7 +29,7 @@ class GtkTester:
         self.paused = False
         self.full_archive = full_archive
         if self.full_archive:
-            self.view.createArchive(fname, for_test=True)
+            self.view.createArchive(fname, for_test=True, nobuild=True)
             self.zip = self.view.zf
         else:
             self.zip = None
@@ -98,7 +100,8 @@ class GtkTester:
         self.mkzipdir("{}/test".format(project.prjid))
 
         if self.full_archive:
-            after_archive = self.view.createArchive(in_memory=True)
+            after_archive = self.view.createArchive(in_memory=True, for_test=True, nobuild=True)
+            self.view.zf.close()
 
             initial_files = {name: self.zip.read(name) for name in self.zip.namelist()}
 
@@ -160,12 +163,15 @@ class GtkTester:
                     goround = m(w, *e[2:])
             if goround and self.runeventidx < len(self.runevents):
                 GLib.idle_add(self.run_action, noclose)
-            if self.runeventidx == len(self.runevents):
+            if not noclose and self.runeventidx == len(self.runevents):
                 self.view.onDestroy(None)
+
+    test_ignores = set(["fonts.conf", "ptxprint_user.cfg", "runtex.sh", "runtex.txt", "test", "fonts"])
 
     def run_finalise(self):
         # unpack the test zipfile to a temp location, then modify and delete files to allow use as a reference
         reference_tmpdir = tempfile.mkdtemp()
+        print(f"{reference_tmpdir=}")
         if self.fname is not None:
             self.fname = os.path.abspath(self.fname)
         with zipfile.ZipFile(self.fname) as z_initial:
@@ -182,15 +188,16 @@ class GtkTester:
 
         deleted_files_path = Path(reference_tmpdir) / self.view.project.prjid / "test" / "deleted_files.txt"
         with open(deleted_files_path) as f:
-            deleted_files = [deleted_file.strip() for deleted_file in f.readlines()]
+            deleted_files = [deleted_file.strip() for deleted_file in f.readlines() if deleted_file.strip()]
         for file in deleted_files:
             (Path(reference_tmpdir) / file).unlink()
 
         # also, remove the unique.id file and local/ dir created when running the test since this doesn't exist in the reference
-        if os.path.isfile(os.path.join(self.view.project.path, "unique.id")):
-            os.remove(os.path.join(self.view.project.path, "unique.id"))
-        if os.path.isdir(os.path.join(self.view.project.path, "local")):
-            shutil.rmtree(os.path.join(self.view.project.path, "local"))
+        #if os.path.isfile(os.path.join(self.view.project.path, "unique.id")):
+        #    os.remove(os.path.join(self.view.project.path, "unique.id"))
+
+        #if os.path.isdir(os.path.join(self.view.project.path, "local")):
+        #    shutil.rmtree(os.path.join(self.view.project.path, "local"))
 
         # reference is prepared, now we just run a diff
         return self.prepare_diff_report(self.view.project.path, str(Path(reference_tmpdir) / self.view.project.prjid))
@@ -205,7 +212,8 @@ class GtkTester:
             for file in cmp_obj.left_only:
                 diff_results["test"].append(str(Path(cmp_obj.left) / file))
             for file in cmp_obj.right_only:
-                diff_results["ref"].append(str(Path(cmp_obj.right) / file))
+                if os.path.basename(file) not in self.test_ignores:
+                    diff_results["ref"].append(str(Path(cmp_obj.right) / file))
             for subdir_cmp in cmp_obj.subdirs.values():
                 collect_diff(subdir_cmp)
 

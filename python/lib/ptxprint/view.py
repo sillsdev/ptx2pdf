@@ -2170,11 +2170,12 @@ class ViewModel:
                 self._writearchive(self.zf, pf, os.path.join(self.project.prjid, outfname), for_test=True)
             else:
                 print(pf)
-        ptxmacrospath = self.scriptsdir
-        for dp, d, fs in os.walk(ptxmacrospath):
-            for f in fs:
-                if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f), for_test=True)
+        if not for_test:
+            ptxmacrospath = self.scriptsdir
+            for dp, d, fs in os.walk(ptxmacrospath):
+                for f in fs:
+                    if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
+                        self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f), for_test=True)
         self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
 
         test_userconfig = copy.deepcopy(self.userconfig)
@@ -2184,7 +2185,7 @@ class ViewModel:
             test_userconfig.write(ss)
             ss.seek(0)
             userconfig_str = ss.read()
-        self.zf.writestr('/ptxprint_user.cfg', userconfig_str)
+        self.zf.writestr(f'{self.project.prjid}/ptxprint_user.cfg', userconfig_str)
 
         if not for_test:
             self.zf.close()

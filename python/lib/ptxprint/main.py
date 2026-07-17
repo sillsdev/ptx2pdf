@@ -78,8 +78,8 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         server = run_broadway(broadway_display)
         os.environ['GDK_BACKEND'] = "broadway"
         os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
-    else:
-        setup_wm(args.nox11)
+    #else:
+    #    setup_wm(args.nox11)
     from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
     from ptxprint.gtktesting import GtkTester
     from ptxprint.utils import setup_i18n
@@ -122,8 +122,8 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
                 print(f"The following differences were found in the sty:{sty_str}")
             if test_result['ref']:
                 print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
-            if test_result['test']:
-                print(f"The following files were found only in the test run: {', '.join(test_result['test'])}")
+            #if test_result['test']:
+            #    print(f"The following files were found only in the test run: {', '.join(test_result['test'])}")
             if test_result['diff']:
                 print(f"The following files were not identical: {', '.join([f'{a} and {b}' for a, b in test_result['diff']])}")
     if server is not None:
