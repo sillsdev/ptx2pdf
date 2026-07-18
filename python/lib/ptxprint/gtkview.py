@@ -1655,7 +1655,7 @@ class GtkViewModel(ViewModel):
         self.setupTeXOptions()
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
-            self.testing = GtkTester(self.args.capture, self)
+            self.testing = GtkTester(self.args.capture, self, full_archive=True)
             self.starttime = time.time()
             for k, v in _signals.items():
                 for w in v:
@@ -2537,6 +2537,8 @@ class GtkViewModel(ViewModel):
             self.userconfig.set("init", "config", self.cfgid)
         self.saveConfig(force=force)
         self.onSaveEdits(None)
+        if self.testing is not None:
+            self.finalise_testing()
 
     def writeConfig(self, cfgname=None, force=False):
         super().writeConfig(cfgname=cfgname, force=force)
@@ -7013,29 +7015,30 @@ class GtkViewModel(ViewModel):
         severity_color = None
         # file_age_seconds = 190 * 24 * 3600 # 36000 # useful for testing - set a hypothetical age of the executable
         if newv > currv:
-            already2monthsOld = file_age_seconds > 60 * 24 * 3600 
-            already6monthsOld = file_age_seconds > 180 * 24 * 3600 
+            already2monthsOld = file_age_seconds > 60 * 24 * 3600
+            already6monthsOld = file_age_seconds > 180 * 24 * 3600
 
-            # Default to blue for any update
-            severity_color = "blue" # Patch version change (e.g., 2.8.15 -> 2.8.17)
-            if newv[0] == currv[0] and newv[1] == currv[1]:
-                extraMsg = _("FYI: Minor patch version change.")
-            else:
-                extraMsg = _("Recent major version change.")
-
-            # Promote to orange for a minor version change
-            if newv[0] == currv[0] and newv[1] > currv[1] or (already2monthsOld and not already6monthsOld):
+            # Base severity is driven purely by the size of the version delta
+            if newv[0] > currv[0]:
+                severity_color = "red" # Major version change (e.g., 1.x -> 2.x)
+                extraMsg = _("WARNING: This is a very old version!")
+            elif newv[0] == currv[0] and newv[1] > currv[1]:
                 severity_color = "orange" # Minor version change (e.g., 2.7.x -> 2.8.x)
                 extraMsg = _("You are using an outdated version!")
-                if already2monthsOld:
-                    logger.debug(f"Update is ORANGE because installation is 2+ months old.")
-                    
-            # Promote to red for a major version change > 2 months ago OR if the app is > 6 months old
-            elif (newv[0] > currv[0] and already2monthsOld) or already6monthsOld:
-                severity_color = "red" # Major version change (e.g., 1.x -> 2.x) or very old
+            else:
+                severity_color = "blue" # Patch version change (e.g., 2.8.15 -> 2.8.17)
+                extraMsg = _("FYI: Minor patch version change.")
+
+            # Install age is only a minor factor: it may nudge severity up by
+            # at most one tier, but it never overrides the version-delta color.
+            if severity_color == "blue" and already2monthsOld:
+                severity_color = "orange"
+                extraMsg = _("You are using an outdated version!")
+                logger.debug(f"Update is ORANGE because installation is 2+ months old.")
+            elif severity_color == "orange" and already6monthsOld:
+                severity_color = "red"
                 extraMsg = _("WARNING: This is a very old version!")
-                if already6monthsOld:
-                    logger.debug(f"Update is RED because installation is very old.")
+                logger.debug(f"Update is RED because installation is very old.")
 
         def enabledownload(extraMsg):
             tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.").format(version)
@@ -7087,14 +7090,16 @@ class GtkViewModel(ViewModel):
             return
 
         # Calculate the age of the running executable
+        # sys.executable only points to ptxprint.exe in a frozen build; when running
+        # from source it points at the Python interpreter, whose mtime is meaningless here.
         file_age_seconds = 0
-        try:
-            # sys.executable points to ptxprint.exe in a frozen build
-            exe_mtime = os.path.getmtime(sys.executable)
-            file_age_seconds = time.time() - exe_mtime
-            logger.debug(f"Current PTXprint installation is {file_age_seconds / (24*3600):.1f} days old.")
-        except OSError as e:
-            logger.warning(f"Could not determine executable modification time: {e}")
+        if getattr(sys, "frozen", False):
+            try:
+                exe_mtime = os.path.getmtime(sys.executable)
+                file_age_seconds = time.time() - exe_mtime
+                logger.debug(f"Current PTXprint installation is {file_age_seconds / (24*3600):.1f} days old.")
+            except OSError as e:
+                logger.warning(f"Could not determine executable modification time: {e}")
 
         version = None
         if self.noInt is None or self.noInt:
@@ -8322,7 +8327,8 @@ Thank you,
         mview = self.mview
         try:
             results = mview.run_all(stop=True)
-        except:
+        except Exception as e:
+            print(e)
             mview.teardown()
             self.mview = None
             return
@@ -8395,3 +8401,41 @@ Thank you,
         launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),
              projectDir=self.project.path, configName=self.cfgid,
              ptxprintVersion=VersionStr, onApply=lambda _: self.saveConfig())
+
+
+    def onStartTestRecording(self, btn):
+        if self.args.capture:
+            raise Exception("--capture was specified on the command line, so test recording is already in progress.")
+
+        testing_active = btn.get_active()
+        if testing_active:  # testing has just been turned on
+            zip_file = self.fileChooser(_("Select the location and name for the test archive file"),
+                    filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
+                    multiple=False, folder=False, save=True,
+                    basedir=os.path.join(self.project.printPath(self.cfgid), '..'))
+            if zip_file is not None:
+                zip_file = str(zip_file[0])
+                print(zip_file)
+                self.emission_hook_ids = []
+                for k, v in _signals.items():
+                    for w in v:
+                        o = getattr(Gtk, w)
+                        sigid = GObject.signal_lookup(k, o)
+                        hook_id = GObject.add_emission_hook(o, k, self.emission_hook, k)
+                        self.emission_hook_ids.append((o, k, hook_id))
+                self.testing = GtkTester(zip_file, self, full_archive=True)
+                self.starttime = time.time()
+        else:  # testing has just been turned off
+            self.finalise_testing()
+
+    def finalise_testing(self):
+        if self.testing is None:
+            return
+        if hasattr(self, 'emission_hook_ids'):
+            for obj, signal_name, hook_id in self.emission_hook_ids:
+                GObject.remove_emission_hook(obj, signal_name, hook_id)
+            self.emission_hook_ids = []
+        self.testing.setid(self.project, self.cfgid)
+        self.testing.finalise()
+        self.testing = None
+        self.builder.get_object("c_testrecording").set_active(False)

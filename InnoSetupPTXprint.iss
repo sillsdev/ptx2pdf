@@ -55,7 +55,10 @@ Type: filesandordirs; Name: "{app}\ptxprint\xetex\bin\windows"
 [Files]
 Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "locale,gspawn-win64-helper.exe"
+Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "locale,gspawn-win64-helper.exe,adobe-source-code-pro,cantarell"
+; Also register Source Code Pro as an installed Windows font (in addition to the app-local copy above,
+; which is only used by PTXprint's own bundled XeTeX/fontconfig):
+Source: "dist\ptxprint\fonts\SourceCodePro-Regular.ttf"; DestDir: "{autofonts}"; FontInstall: "Source Code Pro"; Flags: onlyifdoesntexist uninsneveruninstall
 ; These are the (14) languages that PTXprint's UI is available in:
 Source: "dist\ptxprint\share\locale\ar\*"; DestDir: "{app}\share\locale\ar\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\en\*"; DestDir: "{app}\share\locale\en\"; Flags: ignoreversion recursesubdirs createallsubdirs

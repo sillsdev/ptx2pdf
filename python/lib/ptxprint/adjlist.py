@@ -279,7 +279,8 @@ class AdjList:
             i += 1
             rk = self.calckey([cp[0], "200:200", 1, 0, "", 100, ""])
         if rk == cpk:
-            doit(r, i)
+            if 0 <= i < len(self.db):
+                doit(r, i)
         elif rk > cpk:
             if insert:
             # book, c:v, para, stretch, mkr, expand, comment%

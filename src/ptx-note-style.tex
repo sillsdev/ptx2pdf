@@ -699,7 +699,8 @@
 \def\FootNoteRuleWidth{1}
 \def\FootNoteRuleLeftIndent{\hskip 0.00 mm}
 \def\FootNoteRuleRightIndent{\hss}
-\def\AboveStudyNoteSpace{\AboveNoteSpace}
+\newdimen\AboveStudyNoteSpace
+\AboveStudyNoteSpace=\medskipamount
 \def\BelowStudyNoteRuleSpace{0.5\AboveStudyNoteSpace}
 
 \def\StudyNoteRuleThickness{0.4pt}
