@@ -94,6 +94,11 @@ class PrinterBase:
         """List of constraint warnings for this job, in the user's terms."""
         return []
 
+    def billedCopies(self, job):
+        """Copies actually invoiced for job.copies (accounts for printer-
+        specific rounding, e.g. print runs sold in pairs). Default: none."""
+        return max(job.copies, 1)
+
     def estimate(self, job, quantities):
         """{quantity: perCopy} in homeCurrency, or None when unavailable.
 

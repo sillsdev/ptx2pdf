@@ -193,7 +193,7 @@ class PrinterTab:
                     value, home = perCopy[pid]
                     self.view.set("l_prn_{}_percopy".format(pid), self._priceText(value, home, job))
                     self.view.set("l_prn_{}_total".format(pid),
-                                  self._priceText(value, home, job, copies=job.copies))
+                                  self._priceText(value, home, job, copies=printer.billedCopies(job)))
                 else:
                     self.view.set("l_prn_{}_percopy".format(pid), "-")
                     self.view.set("l_prn_{}_total".format(pid), "-")

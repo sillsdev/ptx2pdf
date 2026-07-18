@@ -76,6 +76,12 @@ class PrintGallery(PrinterBase):
     def _isTwoUp(self, job):
         return job.widthMm <= TWOUP_MAX_W and job.heightMm <= TWOUP_MAX_H
 
+    def billedCopies(self, job):
+        copies = max(job.copies, 1)
+        if self._isTwoUp(job) and copies % 2:
+            copies += 1
+        return copies
+
     def _roundPages(self, job):
         return ((job.pages + 3) // 4) * 4      # A3 sheets hold 4 pages
 
@@ -109,8 +115,10 @@ class PrintGallery(PrinterBase):
         pages = self._roundPages(job)
         if pages != job.pages:
             w.append(f"Pages rounded up to {pages} (multiple of 4).")
-        if self._isTwoUp(job) and job.copies % 2:
-            w.append(f"Copies rounded up to {job.copies + 1} (A5 books are printed in pairs).")
+        if job.copies > 0:
+            billed = self.billedCopies(job)
+            if billed != job.copies:
+                w.append(f"Copies rounded up to {billed} (A5 books are printed in pairs).")
         if job.binding == BINDING_SADDLE and pages > STAPLE_MAX_PAGES:
             w.append(f"Stapled binding is unsuitable beyond {STAPLE_MAX_PAGES} pages; "
                      "Perfect binding is priced instead.")
@@ -133,8 +141,7 @@ class PrintGallery(PrinterBase):
             self.set("l_pg_impose", "A5, 2-up on A3")
         else:
             self.set("l_pg_impose", "1-up on A3")
-        copies = max(job.copies, 1)
-        c = self.costs(job, copies)
+        c = self.costs(job, self.billedCopies(job))
         self.set("l_pg_covers", fmtRupees(c["covers"]))
         self.set("l_pg_interior", fmtRupees(c["interior"]))
         self.set("l_pg_lam", fmtRupees(c["lam"]))
