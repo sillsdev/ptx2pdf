@@ -71,21 +71,6 @@ class PrinterPanel:
         self.expose("l_prn_{}_warn".format(pid), self.warnLabel)
         self.box.pack_start(self.warnLabel, False, False, 0)
 
-        price = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        for wid, caption, bold in (("l_prn_{}_percopy".format(pid), _("Per Copy:"), False),
-                                   ("l_prn_{}_total".format(pid), _("Total Job:"), True)):
-            cap = Gtk.Label()
-            if bold:
-                cap.set_markup("<b>{}</b>".format(caption))
-            else:
-                cap.set_label(caption)
-            price.pack_start(cap, False, False, 6)
-            val = Gtk.Label(label="-")
-            val.set_halign(Gtk.Align.START)
-            self.expose(wid, val)
-            price.pack_start(val, False, False, 0)
-        self.box.pack_end(price, False, False, 2)
-
     def _label(self, text):
         label = Gtk.Label(label=text)
         label.set_halign(Gtk.Align.END)
@@ -109,6 +94,8 @@ class PrinterPanel:
             adj = Gtk.Adjustment(value=opt.default, lower=opt.lower, upper=opt.upper,
                                  step_increment=opt.step, page_increment=opt.step * 5)
             w = Gtk.SpinButton(adjustment=adj, numeric=True)
+            if opt.width:
+                w.set_width_chars(opt.width)
             w.connect("value-changed", self.onChanged)
         else:
             raise NotImplementedError(f"Unknown option type {opt}")
@@ -136,15 +123,19 @@ class PrinterPanel:
         self.expose(wid, entry)
         return self.addRow(labelText, entry)
 
-    def addButtonRow(self, wid, labelText, handler, labelWid=None):
-        """A button in the widget column; labelWid adds a value label beside it."""
+    def addButtonRow(self, wid, labelText, handler, labelWid=None, labelCaption=None, labelDefault=""):
+        """A button in the widget column; labelWid adds a value label beside it,
+        optionally preceded by a labelCaption (e.g. "Ref:")."""
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         btn = Gtk.Button(label=labelText)
         btn.connect("clicked", handler)
         self.expose(wid, btn)
         box.pack_start(btn, False, False, 0)
         if labelWid is not None:
-            val = Gtk.Label(label="")
+            if labelCaption is not None:
+                cap = Gtk.Label(label=labelCaption)
+                box.pack_start(cap, False, False, 0)
+            val = Gtk.Label(label=labelDefault)
             val.set_halign(Gtk.Align.START)
             self.expose(labelWid, val)
             box.pack_start(val, False, False, 0)

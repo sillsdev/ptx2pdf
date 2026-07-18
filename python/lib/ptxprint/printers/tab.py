@@ -50,6 +50,21 @@ class PrinterTab:
                     " · ".join(x for x in (printer.countryName, domain) if x))
             self.store.append([pid, self.compare[pid], name, "—"])
 
+        priceBox = builder.get_object("bx_prn_priceInfo")
+        for wid, caption, bold in (("l_prn_percopy", _("Per Copy:"), False),
+                                   ("l_prn_total", _("Total Job:"), True)):
+            cap = Gtk.Label()
+            if bold:
+                cap.set_markup("<b>{}</b>".format(caption))
+            else:
+                cap.set_label(caption)
+            priceBox.pack_start(cap, False, False, 0)
+            val = Gtk.Label(label="-")
+            val.set_halign(Gtk.Align.START)
+            builder.expose_object(wid, val)
+            priceBox.pack_start(val, False, False, 0)
+        priceBox.show_all()
+
         tv = Gtk.TreeView(model=self.store)
         tv.set_headers_visible(True)
         toggle = Gtk.CellRendererToggle()
@@ -168,6 +183,10 @@ class PrinterTab:
             if len(comparable) > 1:
                 best = min(comparable, key=comparable.get)
 
+        visiblePid = self.stack.get_visible_child_name()
+        self.view.set("l_prn_percopy", "-")
+        self.view.set("l_prn_total", "-")
+        self.view.set("l_prn_thickness", "-")
         for row in self.store:
             pid = row[0]
             printer = self.view.printers[pid]
@@ -188,14 +207,13 @@ class PrinterTab:
                 text = "—\n<small>{}</small>".format(_("no model yet"))
             row[3] = text
 
-            if self._canPrice(printer):
-                if pid in perCopy:
+            if pid == visiblePid:
+                if self._canPrice(printer) and pid in perCopy:
                     value, home = perCopy[pid]
-                    self.view.set("l_prn_{}_percopy".format(pid), self._priceText(value, home, job))
-                    self.view.set("l_prn_{}_total".format(pid),
+                    self.view.set("l_prn_percopy", self._priceText(value, home, job))
+                    self.view.set("l_prn_total",
                                   self._priceText(value, home, job, copies=printer.billedCopies(job)))
-                else:
-                    self.view.set("l_prn_{}_percopy".format(pid), "-")
-                    self.view.set("l_prn_{}_total".format(pid), "-")
+                thickness = printer.thicknessText(job)
+                self.view.set("l_prn_thickness", thickness if thickness is not None else "-")
             self.view.set("l_prn_{}_warn".format(pid), "  ".join(printer.warnings(job)))
             printer.update(job)

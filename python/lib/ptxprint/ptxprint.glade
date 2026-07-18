@@ -896,6 +896,20 @@ to block hyphenation.</property>
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_prn_copies">
+    <property name="lower">1</property>
+    <property name="upper">99999</property>
+    <property name="value">50</property>
+    <property name="step-increment">5</property>
+    <property name="page-increment">50</property>
+  </object>
+  <object class="GtkAdjustment" id="a_prn_pages">
+    <property name="lower">1</property>
+    <property name="upper">9999</property>
+    <property name="value">200</property>
+    <property name="step-increment">2</property>
+    <property name="page-increment">20</property>
+  </object>
   <object class="GtkAdjustment" id="a_prnl_copies">
     <property name="lower">50</property>
     <property name="upper">99999</property>
@@ -927,20 +941,6 @@ to block hyphenation.</property>
     <property name="upper">3</property>
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
-  </object>
-  <object class="GtkAdjustment" id="a_prn_copies">
-    <property name="lower">1</property>
-    <property name="upper">99999</property>
-    <property name="value">50</property>
-    <property name="step-increment">5</property>
-    <property name="page-increment">50</property>
-  </object>
-  <object class="GtkAdjustment" id="a_prn_pages">
-    <property name="lower">1</property>
-    <property name="upper">9999</property>
-    <property name="value">200</property>
-    <property name="step-increment">2</property>
-    <property name="page-increment">20</property>
   </object>
   <object class="GtkAdjustment" id="a_ruleThickness">
     <property name="lower">0.01</property>
@@ -35353,7 +35353,6 @@ will allow saving the test in zip format.</property>
                                     </child>
                                   </object>
                                 </child>
-
                               </object>
                             </child>
                             <child type="tab">
@@ -38645,17 +38644,18 @@ output with a previous PDF.</property>
                               <object class="GtkBox" id="bx_printersMain">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="orientation">vertical</property>
-                                <property name="spacing">8</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">8</property>
                                 <child>
                                   <object class="GtkFrame" id="fr_prnJobSpec">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="label-xalign">0.02</property>
+                                    <property name="label-xalign">0.019999999552965164</property>
                                     <child>
+                                      <!-- n-columns=8 n-rows=3 -->
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -38682,12 +38682,37 @@ output with a previous PDF.</property>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Spine/book thickness for the currently selected printer, based on its paper stock and binding.</property>
+                                            <property name="halign">end</property>
+                                            <property name="label" translatable="yes">Thickness:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_prn_thickness">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="label">-</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">3</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">Finished page size of the book, from the Layout page settings.</property>
                                             <property name="halign">end</property>
                                             <property name="label" translatable="yes">Trim size:</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">2</property>
+                                            <property name="left-attach">4</property>
                                             <property name="top-attach">0</property>
                                           </packing>
                                         </child>
@@ -38700,7 +38725,7 @@ output with a previous PDF.</property>
                                             <property name="label" translatable="yes">Copies:</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">4</property>
+                                            <property name="left-attach">6</property>
                                             <property name="top-attach">0</property>
                                           </packing>
                                         </child>
@@ -38739,7 +38764,7 @@ output with a previous PDF.</property>
                                             <property name="label" translatable="yes">Currency:</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">4</property>
+                                            <property name="left-attach">6</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -38764,7 +38789,7 @@ output with a previous PDF.</property>
                                             <property name="label">-</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">3</property>
+                                            <property name="left-attach">5</property>
                                             <property name="top-attach">0</property>
                                           </packing>
                                         </child>
@@ -38777,7 +38802,7 @@ output with a previous PDF.</property>
                                             <property name="numeric">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">5</property>
+                                            <property name="left-attach">7</property>
                                             <property name="top-attach">0</property>
                                           </packing>
                                         </child>
@@ -38810,6 +38835,7 @@ output with a previous PDF.</property>
                                           <packing>
                                             <property name="left-attach">3</property>
                                             <property name="top-attach">1</property>
+                                            <property name="width">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -38818,9 +38844,33 @@ output with a previous PDF.</property>
                                             <property name="can-focus">False</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">5</property>
+                                            <property name="left-attach">7</property>
                                             <property name="top-attach">1</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                     </child>
@@ -38835,6 +38885,11 @@ output with a previous PDF.</property>
                                       </object>
                                     </child>
                                   </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <object class="GtkBox" id="bx_printerSplit">
@@ -38861,17 +38916,51 @@ output with a previous PDF.</property>
                                               <placeholder/>
                                             </child>
                                           </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="btn_prn_compare">
-                                            <property name="label" translatable="yes">Compare Prices...</property>
+                                          <object class="GtkBox" id="bx_prn_compareRow">
                                             <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Show a graph comparing per-copy prices at several quantities across all the printers ticked in the list above.</property>
-                                            <property name="halign">start</property>
-                                            <signal name="clicked" handler="onComparePrinterPrices" swapped="no"/>
+                                            <property name="can-focus">False</property>
+                                            <property name="spacing">10</property>
+                                            <child>
+                                              <object class="GtkButton" id="btn_prn_compare">
+                                                <property name="label" translatable="yes">Compare Prices...</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Show a graph comparing per-copy prices at several quantities across all the printers ticked in the list above.</property>
+                                                <property name="halign">start</property>
+                                                <signal name="clicked" handler="onComparePrinterPrices" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkBox" id="bx_prn_priceInfo">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="spacing">6</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">True</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
                                           </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
                                         </child>
                                       </object>
                                       <packing>
@@ -38884,8 +38973,10 @@ output with a previous PDF.</property>
                                       <object class="GtkStack" id="stk_printerDetail">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="hhomogeneous">True</property>
                                         <property name="vhomogeneous">False</property>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">True</property>
@@ -38894,6 +38985,11 @@ output with a previous PDF.</property>
                                       </packing>
                                     </child>
                                   </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>

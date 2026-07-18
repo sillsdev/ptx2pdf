@@ -50,6 +50,20 @@ BINDING_ADJ = {
 # Verified at 1.15 ₹/page for 5.5×8.5; assumed consistent across sizes.
 COATED_RATE = 1.15  # ₹/page
 
+# Paper option → mm per page (approx caliper for offset paper stock)
+PAPER_THICKNESS = {
+    "plain":   0.090,   # 70-80 GSM plain white
+    "natural": 0.090,   # 70-80 GSM natural shade
+    "coated":  0.115,   # 90-120 GSM coated
+}
+
+# Binding class → cover thickness in mm (both covers combined)
+COVER_THICKNESS = {
+    "soft":   1.5,   # Soft Cover — flexible card cover
+    "hard":   8.0,   # Hard Cover — boards + liner
+    "saddle": 0.3,   # Saddle Stitched — no separate cover stock
+}
+
 # Bulk discount tiers: (minimum quantity, discount percentage)
 DISCOUNT_TIERS = [
     (1,    0),
@@ -148,6 +162,11 @@ class Pothi(PrinterBase):
             return None
         price1, parts = self.onePrice(job)
         return {qty: price1 * (1 - discountPct(qty) / 100) for qty in quantities}
+
+    def thicknessText(self, job):
+        mmPerPage = PAPER_THICKNESS.get(self.get("fcb_pothi_paper") or "plain", 0.090)
+        coverMm = COVER_THICKNESS.get(job.binding, 1.5)
+        return "{:.1f} mm".format(job.pages * mmPerPage + coverMm)
 
     def update(self, job):
         price1, parts = self.onePrice(job)

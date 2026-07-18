@@ -55,6 +55,7 @@ class Spin:
     step: float = 1
     default: float = 0
     tip: str = None
+    width: int = None           # narrow the widget to this many chars, if set
 
 
 @dataclass
@@ -116,6 +117,12 @@ class PrinterBase:
     def update(self, job):
         """Refresh this printer's output rows (cost breakdown, warnings)."""
         pass
+
+    def thicknessText(self, job):
+        """Formatted spine/book thickness for this job, or None if this
+        printer doesn't model it. Shown in the shared job spec strip
+        whenever this printer's panel is the one visible."""
+        return None
 
     def panelExtras(self, panel):
         """Hook for custom panel content (e.g. an ordering workflow).

@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 from shutil import copy
 from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
-from ptxprint.printers.base import PrinterBase, Choice, Spin, Output, BINDING_HARD, BINDING_SADDLE
+from ptxprint.printers.base import PrinterBase, Choice, Spin, BINDING_HARD, BINDING_SADDLE
 from zipfile import ZipFile, ZIP_DEFLATED
 
 querymap = {
@@ -70,13 +70,11 @@ class Pretore(PrinterBase):
             ("779", "Sealfoil (Ultra Strong BE19)"),
             ("",    "None"),
         ], default="475"),
-        Spin("s_prnl_ribbons", "Ribbons:", lower=0, upper=3, default=0,
+        Spin("s_prnl_ribbons", "Ribbons:", lower=0, upper=3, default=0, width=2,
              tip="Number of marker ribbons (Hardback only)"),
     ]
 
-    outputs = [
-        Output("l_prnl_thickness", "Thickness:"),
-    ]
+    outputs = []
 
     # Paper type ID → mm per page (single page, not leaf)
     _paperThickness = {
@@ -192,38 +190,64 @@ class Pretore(PrinterBase):
             callback(data)
         self.do_quote("calculate", cb=_cb, quantities=quantities, job=job)
 
-    def update(self, job):
+    def thicknessText(self, job):
         paperID = self.get("fcb_prnl_paperType") or "755"
         mmPerPage = self._paperThickness.get(paperID, 0.050)
         coverMm = self._coverThickness.get(self.bookType(job), 1.5)
-        self.set("l_prnl_thickness", "{:.1f} mm".format(job.pages * mmPerPage + coverMm))
+        return "{:.1f} mm".format(job.pages * mmPerPage + coverMm)
 
     def panelExtras(self, panel):
         panel.addEntryRow("t_prnl_bookID", _("Book Identifier:"),
                           onChanged=self._updateButtonSensitivity)
         panel.addEntryRow("t_prnl_description", _("Description:"),
                           onChanged=self._updateButtonSensitivity)
-        accountBtn = panel.addButtonRow("btn_prnl_selectAccount", _("Select Account..."),
+        accountBtn = panel.addButtonRow("btn_prnl_selectAccount", _("Account..."),
                                         self.select_account,
                                         labelWid="l_prnl_userid")
         quoteBtn = panel.addButtonRow("btn_prnl_getQuote", _("Get Precise Quotation"),
                                       self.quote)
         orderBtn = panel.addButtonRow("btn_prnl_createOrder", _("Create Order"),
-                                      self.createOrder)
-        panel.addOutputRow("l_prnl_orderRef", _("Order Ref:"))
-        zipBox = panel.addOutputRow("l_prnl_zipFilename", _("File to upload:"))
+                                      self.createOrder,
+                                      labelWid="l_prnl_orderRef", labelCaption=_("Ref:"),
+                                      labelDefault="-")
+
+        fileStatusGrid = Gtk.Grid()
+        fileStatusGrid.set_row_spacing(1)
+        fileStatusGrid.set_column_spacing(8)
+
+        zipLabel = Gtk.Label(label=_("File to upload:"))
+        zipLabel.set_halign(Gtk.Align.END)
+        fileStatusGrid.attach(zipLabel, 0, 0, 1, 1)
+        zipBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        zipVal = Gtk.Label(label="-")
+        zipVal.set_halign(Gtk.Align.START)
+        panel.expose("l_prnl_zipFilename", zipVal)
+        zipBox.pack_start(zipVal, False, False, 0)
         cpBtn = Gtk.Button.new_from_icon_name("edit-copy-symbolic", Gtk.IconSize.BUTTON)
         cpBtn.set_relief(Gtk.ReliefStyle.NONE)
         cpBtn.set_tooltip_text(_("Copy the full path of the .zip file"))
         cpBtn.connect("clicked", self.copy_zipfname)
         panel.expose("b_prn_cpzip", cpBtn)
         zipBox.pack_start(cpBtn, False, False, 0)
-        statusBox = panel.addOutputRow("l_prnl_orderStatus", _("Status:"))
+        fileStatusGrid.attach(zipBox, 1, 0, 1, 1)
+
+        statusLabel = Gtk.Label(label=_("Status:"))
+        statusLabel.set_halign(Gtk.Align.END)
+        fileStatusGrid.attach(statusLabel, 0, 1, 1, 1)
+        statusBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        statusVal = Gtk.Label(label="-")
+        statusVal.set_halign(Gtk.Align.START)
+        panel.expose("l_prnl_orderStatus", statusVal)
+        statusBox.pack_start(statusVal, False, False, 0)
         link = Gtk.LinkButton(uri="https://ptxprint.pretore.com/login/",
                 label=_("Complete Order & Payment via website"))
         link.set_halign(Gtk.Align.START)
         panel.expose("lb_prnl_completeOrder", link)
         statusBox.pack_start(link, False, False, 0)
+        fileStatusGrid.attach(statusBox, 1, 1, 1, 1)
+
+        panel.grid.attach(fileStatusGrid, 0, panel._row, 2, 1)
+        panel._row += 1
 
     def _updateButtonSensitivity(self, *a):
         ok = bool(self.get("t_prnl_bookID")) and bool(self.get("t_prnl_description"))

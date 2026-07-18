@@ -33,6 +33,21 @@ BINDINGS = {
     "saddle": ("staple",  "Stapled (Center pinned)"),
 }
 
+# Paper option → mm per page (approx caliper for offset paper stock)
+PAPER_THICKNESS = {
+    "70":  0.085,
+    "80":  0.095,
+    "85":  0.100,
+    "120": 0.140,
+}
+
+# Binding class → cover thickness in mm (both covers combined)
+COVER_THICKNESS = {
+    "soft":   1.5,   # Perfect (Glued) — flexible card cover
+    "hard":   8.0,   # Case (Hardcover) — boards + liner
+    "saddle": 0.3,   # Stapled — no separate cover stock
+}
+
 STAPLE_MAX_PAGES = 100
 
 # Largest trim size that can still go 2-up on A3 (A5 plus a little grace)
@@ -135,6 +150,11 @@ class PrintGallery(PrinterBase):
             total = c["covers"] + c["interior"] + c["lam"] + c["bind"]
             result[qty] = total / c["copies"]
         return result
+
+    def thicknessText(self, job):
+        mmPerPage = PAPER_THICKNESS.get(self.get("fcb_pg_paper") or "70", 0.085)
+        coverMm = COVER_THICKNESS.get(job.binding, 1.5)
+        return "{:.1f} mm".format(job.pages * mmPerPage + coverMm)
 
     def update(self, job):
         if self._isTwoUp(job):
