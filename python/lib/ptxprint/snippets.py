@@ -151,7 +151,7 @@ class PDFx1aOutput(Snippet):
 /OutputConditionIdentifier (Custom)
 /Info (Boilerplate null output intent)
 /DestOutputProfile @OBJCVR
-/RegistryName (http://www.color.og)
+/RegistryName (http://www.color.org)
 >> <<
 /Type/OutputIntent
 /S/GTS_PDFA1
@@ -159,7 +159,7 @@ class PDFx1aOutput(Snippet):
 /OutputConditionIdentifier (Custom)
 /Info (Boilerplate null output intent)
 /DestOutputProfile @OBJCVR
-/RegistryName (http://www.color.og)
+/RegistryName (http://www.color.org)
 >> ]
 >>}}
 \egroup
