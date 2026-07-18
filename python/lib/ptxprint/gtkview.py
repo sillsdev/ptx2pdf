@@ -7015,29 +7015,30 @@ class GtkViewModel(ViewModel):
         severity_color = None
         # file_age_seconds = 190 * 24 * 3600 # 36000 # useful for testing - set a hypothetical age of the executable
         if newv > currv:
-            already2monthsOld = file_age_seconds > 60 * 24 * 3600 
-            already6monthsOld = file_age_seconds > 180 * 24 * 3600 
+            already2monthsOld = file_age_seconds > 60 * 24 * 3600
+            already6monthsOld = file_age_seconds > 180 * 24 * 3600
 
-            # Default to blue for any update
-            severity_color = "blue" # Patch version change (e.g., 2.8.15 -> 2.8.17)
-            if newv[0] == currv[0] and newv[1] == currv[1]:
-                extraMsg = _("FYI: Minor patch version change.")
-            else:
-                extraMsg = _("Recent major version change.")
-
-            # Promote to orange for a minor version change
-            if newv[0] == currv[0] and newv[1] > currv[1] or (already2monthsOld and not already6monthsOld):
+            # Base severity is driven purely by the size of the version delta
+            if newv[0] > currv[0]:
+                severity_color = "red" # Major version change (e.g., 1.x -> 2.x)
+                extraMsg = _("WARNING: This is a very old version!")
+            elif newv[0] == currv[0] and newv[1] > currv[1]:
                 severity_color = "orange" # Minor version change (e.g., 2.7.x -> 2.8.x)
                 extraMsg = _("You are using an outdated version!")
-                if already2monthsOld:
-                    logger.debug(f"Update is ORANGE because installation is 2+ months old.")
-                    
-            # Promote to red for a major version change > 2 months ago OR if the app is > 6 months old
-            elif (newv[0] > currv[0] and already2monthsOld) or already6monthsOld:
-                severity_color = "red" # Major version change (e.g., 1.x -> 2.x) or very old
+            else:
+                severity_color = "blue" # Patch version change (e.g., 2.8.15 -> 2.8.17)
+                extraMsg = _("FYI: Minor patch version change.")
+
+            # Install age is only a minor factor: it may nudge severity up by
+            # at most one tier, but it never overrides the version-delta color.
+            if severity_color == "blue" and already2monthsOld:
+                severity_color = "orange"
+                extraMsg = _("You are using an outdated version!")
+                logger.debug(f"Update is ORANGE because installation is 2+ months old.")
+            elif severity_color == "orange" and already6monthsOld:
+                severity_color = "red"
                 extraMsg = _("WARNING: This is a very old version!")
-                if already6monthsOld:
-                    logger.debug(f"Update is RED because installation is very old.")
+                logger.debug(f"Update is RED because installation is very old.")
 
         def enabledownload(extraMsg):
             tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.").format(version)
@@ -7089,14 +7090,16 @@ class GtkViewModel(ViewModel):
             return
 
         # Calculate the age of the running executable
+        # sys.executable only points to ptxprint.exe in a frozen build; when running
+        # from source it points at the Python interpreter, whose mtime is meaningless here.
         file_age_seconds = 0
-        try:
-            # sys.executable points to ptxprint.exe in a frozen build
-            exe_mtime = os.path.getmtime(sys.executable)
-            file_age_seconds = time.time() - exe_mtime
-            logger.debug(f"Current PTXprint installation is {file_age_seconds / (24*3600):.1f} days old.")
-        except OSError as e:
-            logger.warning(f"Could not determine executable modification time: {e}")
+        if getattr(sys, "frozen", False):
+            try:
+                exe_mtime = os.path.getmtime(sys.executable)
+                file_age_seconds = time.time() - exe_mtime
+                logger.debug(f"Current PTXprint installation is {file_age_seconds / (24*3600):.1f} days old.")
+            except OSError as e:
+                logger.warning(f"Could not determine executable modification time: {e}")
 
         version = None
         if self.noInt is None or self.noInt:
