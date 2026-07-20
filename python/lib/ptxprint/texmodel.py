@@ -85,7 +85,7 @@ _periphids = {
 
 
 class TexModel:
-    _ptxversion = 9
+    _ptxversion = 10
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophesy"), ("TOB-LAO", "intdc"), 

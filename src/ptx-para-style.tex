@@ -257,7 +257,7 @@
       %\setbox0=\vbox{\box#1}%
       \trace{h}{after killingdescenders: ht=\the\ht0, dp=\the\dp0}
       \ifVisTraceExtra
-        \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
+        \setbox0=\vbox{\lineskip=0pt \baselineskip=0pt \box0\doVisTraceT{G}\box0}%
       \fi
       \ift@tle\lastdepth=0pt \fi
       \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth; upwardsHackDiff=\the\upwardsHackDiff}%
