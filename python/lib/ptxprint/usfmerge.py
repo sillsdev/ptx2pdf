@@ -136,6 +136,7 @@ _marker_modes = {
     'd': ChunkType.CHAPTERDESC, # this gets overwritten.
     'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
     'nb': ChunkType.NB,
+    'q': ChunkType.POETRY, # this sometimes gets overwritten
     'q1': ChunkType.POETRY, # this sometimes gets overwritten
     'q2': ChunkType.POETRY, # this sometimes gets overwritten
     'q3': ChunkType.POETRY # this sometimes gets overwritten
@@ -173,7 +174,7 @@ class Chunk(list):
         self.pnum = pnum
         self.syncp = syncp #  Note that non-default syncp will reorder verse content on output.
         self.hasVerse = False
-        if mode in (ChunkType.MIDVERSEPAR, ChunkType.VERSE, ChunkType.PARVERSE):
+        if mode in (ChunkType.MIDVERSEPAR, ChunkType.MIDVERSEPOETRY, ChunkType.VERSE, ChunkType.PARVERSE):
             self.verseText = True
         else:
             self.verseText = False
@@ -375,11 +376,11 @@ class Collector:
                     mode = ChunkType.VERSE
             else:
                 mode = _marker_modes.get(name, _textype_map.get(self.texttype(c), self.mode))
-                logger.log(8, f'Modecheck: {name=} mm={_marker_modes.get(name,"")} {c=} tt={self.texttype(c)} -> {mode=}')
+                logger.log(8, f'Modecheck: {name=} mm={_marker_modes.get(name,"")} {c=} tt={self.texttype(c)} -> {mode=}, sm={self.mode}')
                 if mode == ChunkType.HEADING:
                     if self.waschap:
                         mode = ChunkType.CHAPTERHEAD
-                elif mode in (ChunkType.BODY,ChunkType.POETRY) and c.tag == "para":
+                elif mode in (ChunkType.BODY,ChunkType.POETRY,ChunkType.MIDVERSEPOETRY) and c.tag == "para":
                     if mode==ChunkType.POETRY:
                         midvmode = ChunkType.MIDVERSEPOETRY
                     else: 
@@ -567,7 +568,7 @@ class Collector:
                         self.acc[i-1].extend(self.acc[i+1])
                         logger.debug('Merged.4a')
                         self.acc[i+1].deleteme = True
-                    if i>2 and self.acc[i-2].type in (ChunkType.VERSE, ChunkType.MIDVERSEPAR, ChunkType.PARVERSE, ChunkType.PREVERSEPAR):
+                    if i>2 and self.acc[i-2].type in (ChunkType.VERSE, ChunkType.MIDVERSEPOETRY, ChunkType.MIDVERSEPAR, ChunkType.PARVERSE, ChunkType.PREVERSEPAR):
                         self.acc[i-2].extend(self.acc[i-1])
                         self.acc[i-1].deleteme = True
                         logger.debug('Merged.4b')
