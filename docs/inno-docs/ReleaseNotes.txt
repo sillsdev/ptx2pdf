@@ -1,14 +1,16 @@
-PTXprint 3.0.34 Release Notes
+PTXprint 3.0.35 Release Notes
 21 Jul 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.34 - (21 Jul 2026)
+Bug fixes and Improvements in 3.0.35 - (21 Jul 2026)
 
   * Diglot
     - Diglot: the page-full maths was confused, fix it
     - 2 minbaselines works much better across multiple projects than 1 maxbaseline
+    - Make paragraph counting during diglot merges fractional
+    - Deactivating not-activated custom chars should *not* cause a crash
     - Solve the unexpected lineskips
     - Clean up random spaces
     - Make AboveStudyNoteSpace a variable (Fix #1245)
