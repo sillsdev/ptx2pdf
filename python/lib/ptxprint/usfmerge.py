@@ -48,8 +48,10 @@ class ChunkType(Enum):
     CHAPTERHEAD = 20
     CHAPTERDESC = 21
     PREVERSEHEAD = 22
-    USERSYNC = 23
-    PARUSERSYNC =24 # User
+    GAP=23
+    MIDVERSEGAP=24
+    USERSYNC = 25
+    PARUSERSYNC =26 # User
 
 _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the config file.
     ChunkType.CHAPTER :"A normal chapter number",
@@ -73,6 +75,8 @@ _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the con
     ChunkType.CHAPTERPAR :"A PREVERSEPAR that is following a chapter - not normally a good sync point!",
     ChunkType.CHAPTERHEAD:"A Heading that is (was) following a chapter (and sometimes also the chapter number)",
     ChunkType.PREVERSEHEAD:"A Heading that is just before PREVERSEPAR",
+    ChunkType.GAP:"A vertical gap",
+    ChunkType.MIDVERSEGAP:"A vertical gap in the middle of verse text",
     ChunkType.USERSYNC:"A preprocessing-inserted / manual sync point.",
     ChunkType.PARUSERSYNC:"A preprocessing-inserted / manual sync point, just after starting a paragraph."
 }
@@ -91,12 +95,14 @@ ChunkType.VERSE:'VERSE',
 ChunkType.PARVERSE:'VERSE',
 ChunkType.MIDVERSEPAR:'BODY',
 ChunkType.MIDVERSEPOETRY:'BODY',
+ChunkType.MIDVERSEGAP:'BODY',
 ChunkType.PREVERSEPAR:'BODY',
 ChunkType.NOVERSEPAR:'BODY',
 ChunkType.NPARA:'BODY',
 ChunkType.NB:'BODY',
 ChunkType.NBCHAPTER:'CHAPTER',
 ChunkType.CHAPTERPAR:'BODY',
+ChunkType.GAP:'BODY',
 ChunkType.CHAPTERDESC:'BODY',
 ChunkType.CHAPTERHEAD:'CHAPTER',
 ChunkType.PREVERSEHEAD:'HEADING',
@@ -135,6 +141,8 @@ _marker_modes = {
     'c': ChunkType.CHAPTER,
     'd': ChunkType.CHAPTERDESC, # this gets overwritten.
     'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
+    'b': ChunkType.GAP, # A fixed vertical gap
+    'zgap': ChunkType.GAP, # An adjustable vertical gap
     'nb': ChunkType.NB,
     'q': ChunkType.POETRY, # this sometimes gets overwritten
     'q1': ChunkType.POETRY, # this sometimes gets overwritten
@@ -155,10 +163,13 @@ _canonical_order={
     ChunkType.PARVERSE:5,
     ChunkType.VERSE:6,
     ChunkType.MIDVERSEPAR:7,
+    ChunkType.MIDVERSEPOETRY:7,
     ChunkType.HEADING:7,
     ChunkType.USERSYNC:7,
     ChunkType.PARUSERSYNC:7,
     ChunkType.BODY:7,
+    ChunkType.GAP:9,
+    ChunkType.MIDVERSEGAP:9,
 }
     
 
@@ -174,7 +185,7 @@ class Chunk(list):
         self.pnum = pnum
         self.syncp = syncp #  Note that non-default syncp will reorder verse content on output.
         self.hasVerse = False
-        if mode in (ChunkType.MIDVERSEPAR, ChunkType.MIDVERSEPOETRY, ChunkType.VERSE, ChunkType.PARVERSE):
+        if mode in (ChunkType.MIDVERSEPAR, ChunkType.MIDVERSEGAP, ChunkType.MIDVERSEPOETRY, ChunkType.VERSE, ChunkType.PARVERSE):
             self.verseText = True
         else:
             self.verseText = False
@@ -192,6 +203,7 @@ class Chunk(list):
           m=re.match(r"\|p(\d+)$",syncp)
           if m:
             pnum=int(m.group(1))-1
+            logger.debug(f"matching {syncp=} -> {pnum}")
             syncp="~"
             self.type=ChunkType.MIDVERSEPAR
         self.chapter = chap
@@ -239,7 +251,7 @@ nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp'))
 
 SyncPoints = {
     "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:0,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # Just split at chapters
-    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, 
+    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.MIDVERSEGAP:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, 
     "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # split at every verse
     "custom":{} # No default
 }
@@ -275,7 +287,7 @@ class Collector:
         self.book = None
         self.waspar = False # Was the previous item an empty paragraph mark of some type?
         self.waschap = False # Was the previous item a chapter number?
-        self.counts = {}
+        self.counts = [0,0,0,0,0,0,0,0,0,0]
         self.scores = {} 
         self.currChunk = None
         self.mode = ChunkType.INTRO
@@ -332,9 +344,11 @@ class Collector:
     def pnum(self, c):
         if c is None:
             return 0
-        self.counts[c] = self.counts.get(c, 0) + 1 
-        res = self.counts['ALL'] = self.counts.get('ALL', 0) + 1 
-        return res
+        depth= _canonical_order[c] if c in _canonical_order else 9
+        self.counts[depth] = self.counts[depth] + 1 
+        #self.counts[depth+1:]= [0] * (10-depth)
+        logger.debug(f"Paragraph number for {c=}, {depth=}, {self.counts}")
+        return sum(self.counts[x]*10**-x for x in range(0,9) )
 
     def makeChunk(self, c=None):
         global _validatedhpi, _headingidx, globalcl
@@ -380,15 +394,19 @@ class Collector:
                 if mode == ChunkType.HEADING:
                     if self.waschap:
                         mode = ChunkType.CHAPTERHEAD
-                elif mode in (ChunkType.BODY,ChunkType.POETRY,ChunkType.MIDVERSEPOETRY) and c.tag == "para":
+                elif mode in (ChunkType.BODY,ChunkType.POETRY,ChunkType.GAP) and c.tag == "para":
                     if mode==ChunkType.POETRY:
                         midvmode = ChunkType.MIDVERSEPOETRY
+                    elif mode==ChunkType.GAP:
+                        midvmode = ChunkType.MIDVERSEGAP
                     else: 
                         midvmode = ChunkType.MIDVERSEPAR
                     logger.log(8, f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}: {len(self.acc)}')
                     if len(c) == 0:
-                        logger.log(8, f'Bodypar(simple): {name} {c.text}')
+                        logger.log(8, f'Bodypar(simple): {name} {c.text=}')
                         if c.text and len(c.text.strip()) and self.currChunk.verseText:
+                            mode = midvmode
+                        elif mode == ChunkType.GAP:
                             mode = midvmode
                     elif len(c):
                         cs = list(c)
@@ -471,7 +489,8 @@ class Collector:
                     e = 0
                 self.verse = v
                 self.end = e
-                self.counts = {}
+                self.counts[0] = v
+                self.counts[1:] = [0] * 9 
                 self.currChunk.hasVerse = True
                 if MergeF.ChunkOnVerses in settings:
                     logger.log(7, f"newchunk because ChunkOnVerses")
@@ -568,7 +587,7 @@ class Collector:
                         self.acc[i-1].extend(self.acc[i+1])
                         logger.debug('Merged.4a')
                         self.acc[i+1].deleteme = True
-                    if i>2 and self.acc[i-2].type in (ChunkType.VERSE, ChunkType.MIDVERSEPOETRY, ChunkType.MIDVERSEPAR, ChunkType.PARVERSE, ChunkType.PREVERSEPAR):
+                    if i>2 and self.acc[i-2].type in (ChunkType.VERSE, ChunkType.MIDVERSEGAP, ChunkType.MIDVERSEPOETRY, ChunkType.MIDVERSEPAR, ChunkType.PARVERSE, ChunkType.PREVERSEPAR):
                         self.acc[i-2].extend(self.acc[i-1])
                         self.acc[i-1].deleteme = True
                         logger.debug('Merged.4b')

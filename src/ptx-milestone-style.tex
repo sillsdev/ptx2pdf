@@ -519,7 +519,9 @@
     \trace{m}{Rule \rule@wid, thick \rule@thk,  style \rule@style}%
     \csname drawzrule-\rule@style\endcsname
   \egroup 
-  \lastdepth=\prevdepth
+  \ifvmode
+    \lastdepth=\prevdepth
+  \fi
 }
 
 \x@\def\csname drawzrule-plain\endcsname{% 

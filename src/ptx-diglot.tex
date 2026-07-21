@@ -1304,7 +1304,12 @@
     \trace{D}{Trying to cope with chunk-end skip of \the\dimen0}%
     %\vbox to 0pt{}% This adds a baselineskip:-(
     \ifdim\dimen0<\baselineskip
-      \unskip
+      \ifinner 
+        \unskip
+      \else
+        \vskip -\baselineskip
+        \vbox to 0pt{}% This adds a baselineskip:-(
+      \fi
     \else
       \vskip -\baselineskip
       \vbox to 0pt{}% This adds a baselineskip:-(
