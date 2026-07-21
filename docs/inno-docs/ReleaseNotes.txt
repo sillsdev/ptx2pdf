@@ -1,8 +1,57 @@
-PTXprint 3.0.33 Release Notes
-24 Jun 2026
+PTXprint 3.0.34 Release Notes
+21 Jul 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.34 - (21 Jul 2026)
+
+  * Diglot
+    - Diglot: the page-full maths was confused, fix it
+    - 2 minbaselines works much better across multiple projects than 1 maxbaseline
+    - Solve the unexpected lineskips
+    - Clean up random spaces
+    - Make AboveStudyNoteSpace a variable (Fix #1245)
+    - Let midverse poetry paragraphs chain
+    - Fix note positions
+    - Fix error in height calcs when BelowBaseline is active
+
+  * Printers tab
+    - Rebuild Printers tab: shared job spec, printer directory list, dynamic panels
+    - Refine the Printers tab to make it more compact
+    - Extract shared currency service and decouple price comparison from Pretore
+    - Fix total price for 2-up print jobs on Printers tab
+    - Explain why Pothi paper type often leaves the price unchanged
+
+  * Page Filler
+    - Fix stopping page filler
+    - Support expanded regular font
+    - Clear probes after failing page
+    - Solve(?) late-stage reflow issues
+
+  * Pictures
+    - Stop smart quotes before loading piclist (#1175)
+    - Solve repeated image bug
+
+  * Testing Framework
+    - Reduce test file sizes, use a better default location, limit redundant test error reporting
+    - Return exit code 1 when a test fails
+    - Ensure testing works with relative paths
+    - Allow test recording via GUI
+    - Modify code dealing with filepaths to hopefully work cross-platform
+    - Check diffs for cfg and sty files, otherwise just report files are not identical
+    - Exclude the local subdir from the test reduced archive
+    - Compare all files after running test
+    - Raise NotImplementedError if full_archive is False
+
+  * Other
+    - Fix TypeError in Cover Wizard when LineSpacing/FontSize returned as string
+    - Find missing icons; make sure fonts are installed in the right place
+    - Register Source Code Pro as an installed Windows font
+    - Fix version out of date messaging
+    - Attempt a slightly more nuanced approach to unprintable contents
+    - Add QR to tooltip so that it appears when a user searches for it
+    - Fix color.org typo
 
 Bug fixes and Improvements in 3.0.33 - (24 Jun 2026)
 
