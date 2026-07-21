@@ -2279,7 +2279,7 @@
 
 \def\@ctivate{\ifcsname save-cat-\the\count255\endcsname\else \x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}\fi%Only define the old value once
   \catcode\the\count255=\active\relax}
-\def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
+\def\de@ctivate{\ifcsname save-cat-\the\count255\endcsname\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax\fi}
 
 \def\activ@tecustomch@rs{% activate all the chars configured with \DefineActiveChar
  \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
