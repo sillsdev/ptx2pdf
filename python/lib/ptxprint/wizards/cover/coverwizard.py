@@ -517,8 +517,10 @@ class WorkingCoverState:
         if self.spine_enabled and self.spine_width_computed_mm > 0.:
             view.set("l_spineWidth", str(self.spine_width_computed_mm))
             view.set("c_inclSpine", True)
+            view.set("s_coverBleed", float(view.get("s_bleed")))
         else:
             view.set("c_inclSpine", False)
+            view.set("s_coverBleed", 0)
         self.createCoverPeriphs(view)
 
     def getBorderVal(self, view, mkr, vh, key):
