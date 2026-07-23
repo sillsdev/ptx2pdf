@@ -1,8 +1,15 @@
-PTXprint 3.0.36 Release Notes
-22 Jul 2026
+PTXprint 3.0.37 Release Notes
+23 Jul 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.37 - (23 Jul 2026)
+  * Don't output cropmarks for covers with no spine
+  * If no spine, then no cover bleed
+  * Improve merging behaviour and write versioning info to merge file
+  * Build the merge score/weight array from the 'Weight' column
+  * Make some versions of python happy
 
 Bug fixes and Improvements in 3.0.36 - (22 Jul 2026)
   - Fix installer: remove old font folders before copying new files into place
