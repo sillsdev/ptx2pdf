@@ -11,6 +11,7 @@ from itertools import groupby
 from functools import reduce
 import configparser
 import logging
+from datetime import date
 
 class MergeF(Flag):
     ChunkOnVerses=1
@@ -23,6 +24,7 @@ class MergeF(Flag):
 settings= MergeF.NoSplitNB | MergeF.HeadWithChapter 
 logger = logging.getLogger(__name__)
 debugPrint = False
+MergeFileVersion=2
 
 class ChunkType(Enum):
     DEFSCORE = 0        # Value for default scores
@@ -74,6 +76,7 @@ _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the con
     ChunkType.NBCHAPTER :"A chapter that is followed by an NB - not normally a good sync point",
     ChunkType.CHAPTERPAR :"A PREVERSEPAR that is following a chapter - not normally a good sync point!",
     ChunkType.CHAPTERHEAD:"A Heading that is (was) following a chapter (and sometimes also the chapter number)",
+    ChunkType.CHAPTERDESC:"A chapter-level description",
     ChunkType.PREVERSEHEAD:"A Heading that is just before PREVERSEPAR",
     ChunkType.GAP:"A vertical gap",
     ChunkType.MIDVERSEGAP:"A vertical gap in the middle of verse text",
@@ -113,6 +116,7 @@ ChunkType.PARUSERSYNC:'BODY'
 splitpoints={
         ChunkType.VERSE:True
 } 
+
 _textype_map = {
     "ChapterNumber":   ChunkType.CHAPTER,
     "Section":   ChunkType.HEADING,
@@ -252,7 +256,7 @@ nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp'))
 SyncPoints = {
     "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:0,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # Just split at chapters
     "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.MIDVERSEGAP:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, 
-    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # split at every verse
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PARVERSE:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # split at every verse
     "custom":{} # No default
 }
 
@@ -345,10 +349,14 @@ class Collector:
         if c is None:
             return 0
         depth= _canonical_order[c] if c in _canonical_order else 9
-        self.counts[depth] = self.counts[depth] + 1 
-        #self.counts[depth+1:]= [0] * (10-depth)
-        logger.debug(f"Paragraph number for {c=}, {depth=}, {self.counts}")
-        return sum(self.counts[x]*10**-x for x in range(0,9) )
+        if c in (ChunkType.VERSE,ChunkType.PARVERSE,ChunkType.PREVERSEPAR): # Normally verse has depth 6, with parverse=5
+            depth=0
+            ret=self.counts[depth]
+        else:
+            self.counts[depth] = self.counts[depth] + 1 
+            logger.debug(f"Paragraph number for {c=}, {depth=}, {self.counts}")
+            ret=sum(self.counts[x]*10**-x for x in range(0,9) )
+        return ret
 
     def makeChunk(self, c=None):
         global _validatedhpi, _headingidx, globalcl
@@ -453,7 +461,9 @@ class Collector:
             newchunk = False
             name = c.get("style", "")
             if c.tag == "para" or c.tag == "book":
-                newmode = _marker_modes.get(name, _textype_map.get(self.texttype(c), self.mode))
+                tmp=_textype_map.get(self.texttype(c), self.mode if c.tag=="book" else ChunkType.BODY)
+                logger.log(7, f"para or book {c}:{name} > '{self.texttype(c)}  context:{self.mode} > {tmp}")
+                newmode = _marker_modes.get(name, tmp)
                 ok = (newmode == ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
                 if name not in nestedparas and ((newmode != self.mode and not ok) \
                             or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE, ChunkType.HEADER)):
@@ -986,29 +996,40 @@ modes = {
     "scores" : alignScores
 }
 
-def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
+def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise,scorearr):
     config = {}#configparser.ConfigParser()
     flaga = {}
+    config["FILE"]={"ConfigVersion":MergeFileVersion,"Date":f'{date.today():%Y-%m-%d}'}
     for k in MergeF:
       flaga[k.name] = k in settings
     config['FLAGS'] = flaga
     config['DEFAULT'] = {k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
-    config['L'] = {'WEIGHT': 51}
-    config['R'] = {'WEIGHT': 51}
+    logger.debug(f"Writing default configuration to {mergeconfigfile} {scorearr=}")
+    for k in scorearr:
+        config[k] = {'WEIGHT': scorearr[k]}
     if variety != "":
         config[variety] = {}
     if confname != "":
         config[confname] = {}
-    logger.debug(f"Writing default configuration to {mergeconfigfile}")
+    if synchronise is None:
+        basefile = mergeconfigfile
+        mergeconfigfile = mergeconfigfile + "-new"
     with open(mergeconfigfile,'w') as configfile:
-        configfile.write("# Custom merge configuration file.\n")
-        configfile.write(f"# This was written because no merge-{synchronise}.cfg file could be found.\n")
-        configfile.write(f"# As generated it contains all potential break-points the program expects,\n")
-        configfile.write(f"# with settings appropriate for the '{synchronise}' merge. Customisation of\n")
-        configfile.write(f"# this file can entirely change the behaviour of merge strategy '{synchronise}'\n")
-        configfile.write("""#(delete file to reverse any customisation)
-#
-# YOU HAVE BEEN WARNED! 
+        if synchronise is None:
+            configfile.write("# Replacement merge configuration file.\n")
+            configfile.write(f"# This was written because {basefile} is out of date.\n")
+            configfile.write(f"# As generated it contains all potential break-points the program expects,\n")
+            configfile.write(f"# but it will not contain special configuration options.\n")
+            configfile.write(f"# Use it to update the break-point list(s) from a modified file, or remove {basefile} if no customisation has been done.\n")
+        else:
+            configfile.write("# Custom merge configuration file.\n")
+            configfile.write("#(delete file to generate a new file without any customisation)\n")
+            configfile.write(f"# This was written because no merge-{synchronise}.cfg file could be found.\n")
+            configfile.write(f"# As generated it contains all potential break-points the program expects,\n")
+            configfile.write(f"# with settings appropriate for the '{synchronise}' merge. Customisation of\n")
+            configfile.write(f"# this file can entirely change the behaviour of merge strategy '{synchronise}'\n")
+            configfile.write(f"# YOU HAVE BEEN WARNED!\n")
+        configfile.write(f"""
 # 
 # Items in the [FLAGS] section (if specified) are global values, affecting the
 # entire merge process, and override the defaults, including such matters as
@@ -1018,14 +1039,19 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
 # there are no overriding values in a given section.  Valid sections include
 # [L] and [R] (primary and secondary), [configuration], and [variety] for
 # custom-variety.
-# Sections [L] and [R] are ignored if the file is in the root paratext
+# Sections [L] and [R] (etc) are ignored if the file is in the root paratext
 # directory.  The scores (from all columns) are added and a sum of 100 or more
 # at a given point causes splitting and synchronisation.
 # Any value not listed is assumed to be 0.
-# Values -2<=x<=2 are treated as multiplyers of the WEIGHT value.  Other values
+# Values -2<=x<=2 are treated as multiplyers of the WEIGHT value, normally supplied 
+# from elsewhere. Other values
 # are treated as absolute values. Non-integer values (e.g. 0.5) are allowed.
-# Chapter and verse numbers are remembered, other break-points increment a
-# paragraph counter.\n""")
+# Note that as with everything in this file, WEIGHT values if uncommented
+# override values supplied from elsewhere.
+# 
+# Specialist customisations may selected based on the  
+# 
+# \n""")
         #configfile.write("# The number at the end of the comment indicates the group a given break-point falls into,\n")
         #configfile.write("# i.e. to which other positions it will be compared\n")
         for section in config:
@@ -1038,19 +1064,34 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
                         #cannon=_canonical_order[k] if k in _canonical_order else 9
                         #configfile.write(f"#{comment} ({cannon})\n{k.name} = {v}\n")
                         configfile.write(f"#{comment}\n{k.name} = {v}\n")
-                elif section == "FLAGS":
+                elif section == "FLAGS" or  len(section)==1:
                     configfile.write(f"# {k} = {v}\n")
                 else:
                     configfile.write(f"{k} = {v}\n")
         #config.write(configfile)
 
 def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
-    """ Given a specified filepath, column (or None if this is a generic config), custime-variety and config name, find the relevant sycnpoints for a given file.
+    """ Given a specified filepath, column (or None if this is a generic config), custom-variety and config name, find the relevant sycnpoints for a given file.
     """
     global settings
     logger.debug(f"Reading config file {mergeconfigfile} for ({column if column is not None else ''}, {variety}, {confname})")
+    if type(fallbackweight) == dict:
+        startvals=fallbackweight
+        fallbackweight=startvals[ChunkType.DEFSCORE]
+    else:
+        startvals={}
     config = configparser.ConfigParser()
     config.read(mergeconfigfile)
+    uptodate=False
+    fileversion=0
+    filedate="Date Unknown"
+    if config.has_section("FILE"):
+        fileversion=config.getfloat("FILE","ConfigVersion")
+        filedate=config.get("FILE","Date")
+        if fileversion == MergeFileVersion:
+            uptodate=True
+    if not uptodate:
+        logger.error(f"Config file {mergeconfigfile} was written ({filedate}) with old version {fileversion}: Some configuration options / sync-points will not be present. Manually merge any modifications from {mergeconfigfile}-new.")
     if config.has_section("FLAGS"):
       for key in MergeF:
         if config.has_option("FLAGS", key.name):
@@ -1072,11 +1113,12 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
             keys = [column, confname, "zzzDEFAULT"]
         else:
             keys = [variety + "-" + column, variety, column, confname, "zzzDEFAULT"]
+    # Keys is a prioritized list of sections, the first matching one wins.
     logger.debug(f"Keys: {keys}")
     for key in keys:
         if config.has_section(key):
             weight = config.getfloat(key, "WEIGHT", fallback=fallbackweight)
-            scores={}
+            scores=startvals
             for st in ChunkType:
                 if st == ChunkType.DEFSCORE:
                     continue
@@ -1086,12 +1128,15 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
                 else:
                     scores[st] = val
                 logger.log(7,f"score for {st} is {val} -> {scores[st]}")
+            if not uptodate:
+                logger.error(f"Writing config file")
+                WriteSyncPoints(mergeconfigfile,variety,confname,scores,None,{"X":fallbackweight})
             return(scores)
         else:
             logger.debug(f"No section {key}")
-    if synchronise in  SyncPoints:
-        synchronise = "normal"
-    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting {synchronise}.")
+    synchronise = "normal"
+    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting to {synchronise}.")
+        
     return(SyncPoints[{synchronise}])
     
 def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
@@ -1212,16 +1257,16 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                     (confpath,useLR)=searchpair
                     logger.debug(f"Checking if {colkey} config file {confpath} exists")
                     if (os.path.exists(confpath)):
-                        scorearr[colkey]=ReadSyncPoints(confpath,(colkey if useLR else None),variety,confname)
+                        scorearr[colkey]=ReadSyncPoints(confpath,(colkey if useLR else None),variety,confname,scorearr[colkey])
                         logger.debug(f"found {confpath}!")
                         done=1
                         break
                 if (not done):
                     logger.debug(f"Did not find expected custom merge file. Resorting to normal.")
                     if os.path.exists(priconfpath):
-                        WriteSyncPoints(os.path.join(priconfpath,cfile),variety,confname,SyncPoints[synchronise],synchronise)
+                        WriteSyncPoints(os.path.join(priconfpath,cfile),variety,confname,SyncPoints[synchronise],synchronise,scorearr)
                     else:
-                        WriteSyncPoints(os.path.join(prifilepath,cfile),variety,confname,SyncPoints[synchronise],synchronise)
+                        WriteSyncPoints(os.path.join(prifilepath,cfile),variety,confname,SyncPoints[synchronise],synchronise,scorearr)
 
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
