@@ -370,6 +370,17 @@ class RunJob:
             diginfo["cfgrpath_"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
             self.info.dict["diglots_"][k] = diginfo
 
+        # Build the merge score/weight array from the "Weight" column on the Diglot(/Polyglot) page
+        # (self.printer.polyglots[k].weight), falling back to an even split for any project that
+        # doesn't have a weight set.
+        defweight = int(1 + 100 / len(keyarr))
+        scorearr = {}
+        for k in keyarr:
+            pg = self.printer.polyglots.get(k)
+            w = getattr(pg, "weight", None) if pg is not None else None
+            scorearr[k] = int(round(w)) if w is not None else defweight
+        logger.debug(f"Diglot merge {scorearr=} from {keyarr=}")
+
         donebooks = []
         versification = None
         reversifyinfo = None
@@ -420,7 +431,7 @@ class RunJob:
                 # Do we ask the merge process to write verification files? (use diff -Bws to confirm they are they same as the input)
                 debugmerge = logger.getEffectiveLevel() <= 5 
                 if not self.noaction:
-                    usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=self.info.changes.get("merged", []), book=b)
+                    usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, scorearr=scorearr, changes=self.info.changes.get("merged", []), book=b)
                 texfiles += [outFile, logFile]
         
         if not len(donebooks): # or not len(digdonebooks):
