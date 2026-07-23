@@ -902,15 +902,16 @@
   \dimen5=\PaperWidth \dimen6=\PaperHeight
   \PaperWidth=\wd#2 \PaperHeight=\ht#2%
   \dimen7=\pdfpagewidth \dimen8=\pdfpageheight
-  \ifdim #3<0pt
-    \dimen0=0pt
-  \else
+  \ifdim #3>0pt
     \m@keid@line
     \setbox1=\box\topcr@p \setbox2=\box\bottomcr@p
     \sp@newidth=#3 \bl@eds=#4 \h@nge=#5 \makecr@ps
     \setbox\instopcr@p=\box\topcr@p \setbox\insbottomcr@p=\box\bottomcr@p
     \setbox\topcr@p=\box1 \setbox\bottomcr@p=\box2
     \dimen0=0.5in
+    \trace{cov}{spine=#3}%
+  \else
+    \dimen0=0pt
   \fi
   %\advance\PaperWidth by 2\dimen0 % increase PDF media size
   %\advance\PaperHeight by 2\dimen0

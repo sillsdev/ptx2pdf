@@ -1,6 +1,6 @@
 ; Inno Setup Script
 #define MyAppName "PTXprint"
-#define MyAppVersion "3.0.34"
+#define MyAppVersion "3.0.36"
 #define MyAppPublisher "SIL Global"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -51,6 +51,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Type: filesandordirs; Name: "{app}\xetex"
 Type: filesandordirs; Name: "{app}\ptx2pdf"
 Type: filesandordirs; Name: "{app}\ptxprint\xetex\bin\windows"
+; Older installs put each font in its own like-named folder (e.g. fonts\Charis-Bold.ttf\Charis-Bold.ttf).
+; Fonts are now installed flat (fonts\Charis-Bold.ttf), so remove any leftover folders that would
+; otherwise collide with the new files during the [Files] copy step.
+Type: filesandordirs; Name: "{app}\fonts\*.ttf"
 
 [Files]
 Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
