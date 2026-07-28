@@ -4,6 +4,7 @@
 \c 1
 \s2 This is a demonstration of some of the new picture positions.
 \p
+\zlistentry|type="FIG" title="Introduction"\*
 \v 1 There are three new \bd in-line\bd* picture positions, for when the normal
 top-left/bottom-right, etc. are not appropriate. These positions are: 
 \q1 '\bd here\bd*' (h);  
