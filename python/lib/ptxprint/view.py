@@ -2271,8 +2271,7 @@ set stack_size=32768""".format(self.cfgid)
 
     _includeexts = (".cfg", ".txt", ".adj", ".sfm", ".tex", ".sty", ".piclist")
 
-    def createSettingsZip(self, outf):
-        res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
+    def createSettingsZip(self, zfile, prefices=None):
         sdir = self.project.srcPath(self.cfgid)
         for d in (None, 'AdjLists', 'Triggers'):
             ind = sdir if d is None else os.path.join(sdir, d)
@@ -2283,8 +2282,17 @@ set stack_size=32768""".format(self.cfgid)
                     continue
                 fpath = os.path.realpath(os.path.join(ind, f))
                 if os.path.isfile(fpath):
-                    res.write(fpath, f if d is None else os.path.join(d, f))
-        return res
+                    opath = []
+                    if prefices is not None:
+                        opath.extend(prefices)
+                    if d is not None:
+                        opath.append(d)
+                    opath.append(f)
+                    zfile.write(fpath, os.path.join(*opath))
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                v.createSettingsZip(zfile, prefices=["_diglot", k])
+        return zfile
 
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):
         inf = BytesIO(zipdata)

@@ -777,7 +777,7 @@ class Usfm:
                     for a in range(1, len(b), 2):
                         if showall or st not in found.get(b[a], []):
                             e = self.factory("ms", parent=x, attrib={"style": "xts", "strongs": st.lstrip("GH"), "align": "r"})
-                            e.tail = "\u2064\u200A" + b[a]
+                            e.tail = "\u200A" + b[a]
                             found.setdefault(b[a], []).append(st)
                             if a < len(b) - 1:
                                 e.tail += b[a+1]

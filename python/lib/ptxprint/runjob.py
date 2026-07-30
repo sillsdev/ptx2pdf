@@ -1,4 +1,5 @@
 import os, sys, re, subprocess, time, traceback
+import zipfile
 from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree, copy2, copystat
@@ -999,11 +1000,14 @@ class RunJob:
             else:
                 kw[a] = self.info['finishing/'+a]
         kw['date'] = self.info["pdfdate_"]
+
         def doSettingsZip(zio):
-            z = self.info.printer.createSettingsZip(zio)
+            z = zipfile.ZipFile(zio, "w", compression=zipfile.ZIP_DEFLATED)
+            self.info.printer.createSettingsZip(z)
             report = checkoutput(["xetex", "--version"], path='xetex')
             z.writestr("_runinfo.txt", report)
             z.close()
+
         self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, **kw)
         return True
         if cover:
