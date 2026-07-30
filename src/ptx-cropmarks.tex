@@ -718,6 +718,8 @@
     \cp@p\global\let\l@stgprule\empty
   \egroup
 }
+\def\s@t@abtmp#1#2#3\E{\def\atmp{#1}\def\btmp{#2}}%
+
 \def\doGridLines{%
   \bgroup\topskip=0pt\parindent=0pt\everypar{}\relax
     \ifrotate\hsize=\pdfpageheight\vsize=\pdfpagewidth\else
@@ -784,7 +786,7 @@
     \divide\dimen2 by 2
     \ifdiglot
       \ifnum 1=\numexpr 1 \ifdiglotInnerOuter \ifodd\pageno\else * -1\fi\fi \ifdiglotSwap *-1\fi\relax
-        \def\atmp{L}\def\btmp{R}\else\def\atmp{R}\def\btmp{L}\fi
+        \x@\s@t@abtmp\layout@list\E \else \x@\s@t@abtmp\rev@layout@list\E\fi
       \MSG{side \the\pageno, gs:\g@tterside, at:\atmp}%
       \dimen4=\csname column\atmp width\endcsname\advance\dimen4 0.5\gutter
       \ifx\TextBorderColumns\empty\else
