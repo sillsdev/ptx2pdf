@@ -352,19 +352,19 @@
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
   \initThumbT@bs%becomes \relax after 1st run, unless reset
   \let\st@rtatedge=T% Does a horizontal chunk of text in a box  start nearest to the page edge away from the binding (False for English on odd-numbered pages) (depends on page sequence, matching LTR/RTL)
-  \ifodd\pageno \st@rtatedge=F \fi
-%    \ifRTL
-%      \ifBookOpenLeft\let\st@rtatedge=F\fi
-%    \else
-%      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
-%    \fi
-%  \else
-%    \ifRTL
-%      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
-%    \else
-%      \ifBookOpenLeft\let\st@rtatedge=F\fi
-%    \fi
-%  \fi
+  \ifodd\pageno
+    \ifRTL
+      \ifBookOpenLeft\let\st@rtatedge=F\fi
+    \else
+      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
+    \fi
+  \else
+    \ifRTL
+      \ifBookOpenLeft\else\let\st@rtatedge=F\fi
+    \else
+      \ifBookOpenLeft\let\st@rtatedge=F\fi
+    \fi
+  \fi
  \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort, pg:\the\pageno}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
  \XeTeXuseglyphmetrics=3
@@ -691,7 +691,28 @@
     \cp@p\global\let\l@stgprule\empty
   \egroup
 }
+\newif\ifDgltHdrOffsetCenter
+\def\c@lcctr@offset{%
+  \trace{h}{c@lcctr@offset: \ifdiglotInnerOuter InnerOuter \fi \ifdiglotSwap diglotSwap \fi \the\pageno}%
+  \ifDgltHdrOffsetCenter
+    \ifnum 1=\numexpr 1 \ifdiglotInnerOuter \ifodd\pageno\else * -1\fi\fi \ifdiglotSwap *-1\fi\relax
+      \x@\s@t@abtmp\layout@list\E \else \x@\s@t@abtmp\rev@layout@list\E
+    \fi
+    % TODO: Currently the offset is to the 1st transition. Test for ctmp being empty, and decide which transition actually makes more sense.
+    % NB: Alterate maths (compare to mid-point) makes more sense for 3+ columns.
+    \dimen0=0.5\dimexpr \csname column\atmp fullwidth\endcsname  - \csname column\btmp fullwidth\endcsname \relax 
+    \trace{h}{Offset: \the\dimen0}%
+    \ifdim \dimen0=0pt \else
+      \let\ctr@ffset\doctr@ffset
+      \xdef\ctr@ffsetA{\kern \the\dimen0 }%
+      \xdef\ctr@ffsetB{\kern \the\dimexpr -\dimen0 \relax}%
+    \fi
+  \fi
+}
 
+\def\doctr@ffset#1{%
+  \ctr@ffsetA#1\ctr@ffsetB
+}
 \def\doNoteLines{%
   \trace{G}{doNoteLines}%
   \bgroup\topskip=0pt\baselineskip=0pt\parindent=0pt\everypar{}\let\par\endgraf\relax
@@ -718,6 +739,10 @@
     \cp@p\global\let\l@stgprule\empty
   \egroup
 }
+\def\s@t@abtmp#1#2\E{\def\atmp{#1}\def\btmp{#2}\ifx\btmp\empty\let\ctmp\empty\else\s@t@bctmp#2\E\fi}% Split 1-N columns into A,B,(rest)
+\def\s@t@bctmp#1#2\E{\def\btmp{#1}\def\ctmp{#2}}%
+
+
 \def\doGridLines{%
   \bgroup\topskip=0pt\parindent=0pt\everypar{}\relax
     \ifrotate\hsize=\pdfpageheight\vsize=\pdfpagewidth\else
@@ -784,7 +809,7 @@
     \divide\dimen2 by 2
     \ifdiglot
       \ifnum 1=\numexpr 1 \ifdiglotInnerOuter \ifodd\pageno\else * -1\fi\fi \ifdiglotSwap *-1\fi\relax
-        \def\atmp{L}\def\btmp{R}\else\def\atmp{R}\def\btmp{L}\fi
+        \x@\s@t@abtmp\layout@list\E \else \x@\s@t@abtmp\rev@layout@list\E\fi
       \MSG{side \the\pageno, gs:\g@tterside, at:\atmp}%
       \dimen4=\csname column\atmp width\endcsname\advance\dimen4 0.5\gutter
       \ifx\TextBorderColumns\empty\else
@@ -902,15 +927,16 @@
   \dimen5=\PaperWidth \dimen6=\PaperHeight
   \PaperWidth=\wd#2 \PaperHeight=\ht#2%
   \dimen7=\pdfpagewidth \dimen8=\pdfpageheight
-  \ifdim #3<0pt
-    \dimen0=0pt
-  \else
+  \ifdim #3>0pt
     \m@keid@line
     \setbox1=\box\topcr@p \setbox2=\box\bottomcr@p
     \sp@newidth=#3 \bl@eds=#4 \h@nge=#5 \makecr@ps
     \setbox\instopcr@p=\box\topcr@p \setbox\insbottomcr@p=\box\bottomcr@p
     \setbox\topcr@p=\box1 \setbox\bottomcr@p=\box2
     \dimen0=0.5in
+    \trace{cov}{spine=#3}%
+  \else
+    \dimen0=0pt
   \fi
   %\advance\PaperWidth by 2\dimen0 % increase PDF media size
   %\advance\PaperHeight by 2\dimen0

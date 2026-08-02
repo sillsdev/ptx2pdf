@@ -7,7 +7,7 @@ Include a table of contents
 \ztoc|nt\*
 ```
 ## Description
-This milestone imports table of contents data.
+This milestone imports table of contents, or list of things data.
 ` \ztoc|keyword\*`  Where &lt;keyword&gt; can be replaced with:
 
 *  main – primary, all-inclusive table of contents, in order of occurance.
@@ -21,7 +21,15 @@ This milestone imports table of contents data.
 *  sortb – alphabetical (main) list sorted by \toc2
 *  sortc – alphabetical (main) list sorted by \toc3
 
+
 The data for `main` is produced directly by the previous XeTeX runs. Other collations / selections are performed by the PTXprint (python) code.
+
+### Pre-defined list of things categories
+Usage is exactly the same as for table of contents.  Other types may be defined.
+
+* `FIG`– List of figures (automatically populated from figure captions)
+* `TAB`– List of tables (populate with [zlistentry](zlistentry.md))
+* `PRAY`– List of prayers (populate with [zlistentry](zlistentry.md))
 
 ## Attributes
 * `id` - which sort of TOC is desired.

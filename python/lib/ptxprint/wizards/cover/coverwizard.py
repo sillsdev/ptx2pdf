@@ -500,11 +500,12 @@ class WorkingCoverState:
                 view.styleEditor.setval(f"cat:{_tgt}|esb", "Alpha", inv_alpha)
             # todo: cropping images
         for m in (('mt1', 'title'), ('mt2', 'subtitle')):
-            sz = view.styleEditor.getval(m[0], 'FontSize', 1.0)
+            sz = float(view.styleEditor.getval(m[0], 'FontSize', 1.0))
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'FontSize', sz * getattr(self, m[1]+"_size_pct") / 100)
             view.styleEditor.setval(f"cat:coverfront|{m[0]}", 'Color', getattr(self, m[1]+"_color").replace("#", "x"))
-            view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'FontSize', sz * 0.65 * getattr(self, "spine_text_size_pct") / 100)
-            view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'Color', getattr(self, "spine_text_color").replace("#", "x"))
+            if self.spine_enabled:
+                view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'FontSize', sz * 0.65 * getattr(self, "spine_text_size_pct") / 100)
+                view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'Color', getattr(self, "spine_text_color").replace("#", "x"))
         view.setvar('maintitle', self.title)
         if self.subtitle_enabled:
             view.setvar('subtitle', self.subtitle)
@@ -513,9 +514,13 @@ class WorkingCoverState:
         if self.isbn_enabled:
             positions = {"inner": "hr", "outer": "hl", "centre": "hc"}
             view.setvar('isbn', self.isbn)
-        if self.spine_width_computed_mm > 0.:
+        if self.spine_enabled and self.spine_width_computed_mm > 0.:
             view.set("l_spineWidth", str(self.spine_width_computed_mm))
             view.set("c_inclSpine", True)
+            view.set("s_coverBleed", float(view.get("s_bleed")))
+        else:
+            view.set("c_inclSpine", False)
+            view.set("s_coverBleed", 0)
         self.createCoverPeriphs(view)
 
     def getBorderVal(self, view, mkr, vh, key):
@@ -537,6 +542,8 @@ class WorkingCoverState:
         pwidth, pheight = view.calcPageSize()
         linefactor = float(view.get("s_linespacing")) * 72 / 25.4
         for a in ('front', 'spine', 'back'):
+            if a == "spine" and not self.spine_enabled:
+                continue
             res = []
             res.append(fr'\periph {a}|id="cover{a}"')
             if a == 'front':
@@ -550,13 +557,13 @@ class WorkingCoverState:
                         hremove += float(self.getBorderVal(view, f"cat:cover{a}|esb", v, p))
                 theight = pheight - vremove
                 twidth = pwidth - hremove
-                title_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
+                title_height = float(view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0))
                 bits.append((theight * self.title_position_pct / 100, title_height * linefactor, r"\mt1 \zvar|maintitle\*"))
                 if self.subtitle_enabled:
-                    subtitle_height = view.styleEditor.getval(f"cat:cover{a}|mt2", "LineSpacing", 1.0)
+                    subtitle_height = float(view.styleEditor.getval(f"cat:cover{a}|mt2", "LineSpacing", 1.0))
                     bits.append((theight * self.subtitle_position_pct / 100, subtitle_height * linefactor, r"\mt2 \zvar|subtitle\*"))
                 if self.langname_enabled:
-                    langname_height = view.styleEditor.getval(f"cat:cover{a}|mt3", "LineSpacing", 1.0)
+                    langname_height = float(view.styleEditor.getval(f"cat:cover{a}|mt3", "LineSpacing", 1.0))
                     bits.append((theight * self.langname_position_pct / 100, langname_height * linefactor, r"\mt3 \zvar|languagename\*"))
                 if self.fgimage_enabled:
                     fgimage_height = self.get_image_height(self.fgimage_path, twidth, theight)

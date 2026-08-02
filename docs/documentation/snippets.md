@@ -886,6 +886,29 @@ is identical to that found in the Fancy Headers snippet above with just GLO
 changed to CNC.
 
 
+## Diglot page length
+Is your diglot strangely trying to put too much text on page 112?
+```
+\makeatletter
+\sethook{page}{112}{\global\adjustp@ge=-10pt}
+\makeatother
+```
+
+Would it make life so much better if page 96 was just a five points longer?
+```
+\makeatletter
+\sethook{page}{96}{\global\adjustp@ge=5pt}
+\makeatother
+```
+Do you want the diglot to be slightly or much pickier about the bottom of the page?
+You can adjust the definition of \DiglotOverfill. The default is `0.3\@bls` (0.3 of the 
+line spacing), but at various times in the past it has been `0.1\@bls`, 
+and can also be set to `\z@` (zero).
+```
+\makeatletter
+\def\DiglotOverfill{\z@}% Entirely picky.
+\makeatother
+```
 ## Coloured diacritics
 
 PTXprint includes code to process the generated xdv file between its creation by

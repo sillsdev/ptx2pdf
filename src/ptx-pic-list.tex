@@ -141,6 +141,7 @@
 %+cpic_read
 \newread\p@clist
 \def\openpiclist "#1" {%
+  \csname liter@lkerns\endcsname % If character-kerning is loaded, make sure they're not active right now.
   \closein\p@clist
 %  \immediate\write-1{(opening piclist "#1")}%
   \openin\p@clist="#1"

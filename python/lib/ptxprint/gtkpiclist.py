@@ -1,4 +1,6 @@
 
+import gi
+gi.require_version('Gtk', '3.0')
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase, Picture
 from ptxprint.utils import refSort, getlang, _, f2s, pycodedir, \
@@ -75,7 +77,7 @@ class PeachCellRenderer(Gtk.CellRendererText):
             cr.set_source_rgb(*(_PEACH if self.isRedFlag else _LIGHT_GRAY))
             cr.fill()
             cr.restore()
-            flags &= ~Gtk.CellRendererState.SELECTED
+            flags = Gtk.CellRendererState(flags & ~Gtk.CellRendererState.SELECTED)
         Gtk.CellRendererText.do_render(self, cr, widget, backgroundArea, cellArea, flags)
 
 _locGrid = {
