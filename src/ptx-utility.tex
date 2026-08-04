@@ -180,7 +180,6 @@
 \or adjust\or lig\or disc\or whatsit\or math%10
 \or glue\or  kern\or penalty\or unset\or mathmode%15
 \else UNK\fi\fi}
-
 % we can't turn count255 into a letter with \char, as \char gives the font character.
 \def\@Alph#1{\ifnum #1<0 \error{Number too low}\else \ifcase #1
 @\or A\or B\or C\or D\or E\or F\or G\or H\or I\or J\or 
@@ -188,6 +187,12 @@ K\or L\or M\or N\or O\or P\or Q\or R\or S\or
 T\or U\or V\or W\or X\or Y\or Z\else \error{Number too high}\fi\fi}
 
 \def\sw@llowtwo#1#2{}
+
+\def\decod@group#1{\ifnum #1<1 none\else \ifcase #1\or%0
+simple\or hbox\or adjusted hbox\or vbox\or vtop\or%5
+align\or no align\or output\or math\or disc\or%10
+insert\or vcenter\or math choice\or semi simple\or math shift\or%15
+math left\else UNK\fi\fi}
 
 %Defined penalties
 \xdef\sp@cialpen{-10001}

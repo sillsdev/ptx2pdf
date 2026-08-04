@@ -28,7 +28,7 @@ if '_uuid' not in sys.modules:
 
 import usfmtc           # so we can find its data files
 
-version="3.0.30"
+version="3.0.37"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -303,7 +303,7 @@ icon_mappings = {
 "gtk-clear": "edit-clear",
 }
 
-icons = set("""applications-system-symbolic changes-allow changes-prevent document-print-symbolic document-revert document-save-as-symbolic edit-clear edit-clear-rtl edit-clear-symbolic-rtl emblem-documents view-list-bullet-symbolic folder-documents folder-download folder-music folder-new-symbolic folder-open folder-open-symbolic folder-pictures-symbolic folder-videos-symbolic format-justify-fill go-bottom go-first-symbolic go-previous-symbolic go-next-symbolic go-last-symbolic go-top help-about-symbolic list-add list-remove media-seek-backward-symbolic media-seek-forward-symbolic object-select open-menu pan-down pan-end pan-up preferences-system-sharing printer software-update-available system-run user-desktop user-home x-office-document-symbolic text-x-generic-symbolic view-refresh-symbolic view-dual view-grid view-fullscreen-symbolic media-seek-backward-symbolic-rtl.symbolic media-seek-forward-symbolic-rtl.symbolic process-working-symbolic.svg edit-copy-symbolic""".split())
+icons = set("""applications-system-symbolic changes-allow changes-prevent document-print-symbolic document-revert document-save-as-symbolic edit-clear edit-clear-rtl edit-clear-symbolic-rtl emblem-documents view-list-bullet-symbolic folder-documents folder-download folder-music folder-new-symbolic folder-open folder-open-symbolic folder-pictures-symbolic folder-videos-symbolic format-justify-fill go-bottom go-first-symbolic go-previous-symbolic go-next-symbolic go-last-symbolic go-top help-about-symbolic list-add list-remove media-seek-backward-symbolic media-seek-forward-symbolic object-select-symbolic open-menu-symbolic pan-down-symbolic pan-end-symbolic pan-up-symbolic preferences-system-sharing printer software-update-available system-run user-desktop user-home x-office-document-symbolic text-x-generic-symbolic view-refresh-symbolic view-dual-symbolic view-grid-symbolic view-fullscreen-symbolic media-seek-backward-symbolic-rtl media-seek-forward-symbolic-rtl process-working process-working-symbolic process-working-symbolic.svg edit-copy-symbolic thunderbolt-symbolic""".split())
 
 icons.update([icon_mappings["gtk-"+i] for i in \
         ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
@@ -357,7 +357,7 @@ binaries = (binaries
       + [('python/lib/ptxprint/unicode/*.bz2', 'ptxprint/unicode')]
       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
       + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
-      + [('fonts/' + f, 'fonts/' + f) for f in ['empties.ttf', 'SourceCodePro-Regular.ttf'] + [f'Charis-{x}.ttf' for x in 'Regular Bold Italic BoldItalic'.split()]]
+      + [('fonts/' + f, 'fonts') for f in ['empties.ttf', 'SourceCodePro-Regular.ttf'] + [f'Charis-{x}.ttf' for x in 'Regular Bold Italic BoldItalic'.split()]]
       + [('src/mappings/*.tec', 'ptxprint/ptx2pdf/mappings')]
       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptxprint/PDFassets/reference')]
       + [('docs/documentation/PTXprintTechRef.pdf',  'ptxprint/PDFassets/reference')]
@@ -382,6 +382,9 @@ datas = (   [('python/lib/ptxprint/'+x, 'ptxprint') for x in
       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]
       + [('docs/inno-docs/*.txt', 'ptxprint')]
       + [(os.path.dirname(usfmtc.__file__)+"/"+x, "usfmtc") for x in ("*.vrs", "*.rng")]
+      + [(f'python/lib/ptxprint/mo/{lang}/LC_MESSAGES/ptxprint.mo', f'ptxprint/mo/{lang}/LC_MESSAGES')
+         for lang in os.listdir('python/lib/ptxprint/mo')
+         if os.path.isdir(f'python/lib/ptxprint/mo/{lang}')]
     )
 
 print("binaries:", binaries)
@@ -389,7 +392,7 @@ print("datas:", datas)
 
 jobs = {
     "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
-#    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
 }
 tcolls = []
 for k, v in jobs.items():
@@ -426,7 +429,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             binaries = binaries,
             datas = datas,
                 # The registry tends not to get included
-            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid"] if sys.platform.startswith("win") else []) \
+            hiddenimports = (['_winreg', 'gi.repository.win32', "_uuid", "_wmi"] if sys.platform.startswith("win") else []) \
                 + ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._core._exceptions'],
             runtime_hooks = [],
             hookspath = [os.path.abspath("pyinstallerhooks")],
@@ -437,6 +440,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             noarchive = False)
 
 a1.binaries = stripbinaries(a1.binaries, f'xetex/bin/{bindir}')
+a1.binaries = [x for x in a1.binaries if "aom" not in x and "av1" not in x]
 print("Binaries:", a1.binaries)
 pyz1 = PYZ(a1.pure, a1.zipped_data)
 app_name = 'PTXprint'

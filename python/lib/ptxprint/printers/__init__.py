@@ -1,131 +1,92 @@
 import importlib
 
+from ptxprint.printers.currency import allcurrencies      # noqa: F401 (re-export)
+
+# module name: PrinterBase subclass. Adding a printer = one module + one line.
 printerlist = {
-    'pretore':       ('Pretore',      'l_pr_pretore'),
-    'print_gallery': ('PrintGallery', 'l_pr_print_gallery'),
-    'pothi':         ('Pothi',        'l_pr_pothi'),
+    'pretore':       'Pretore',
+    'print_gallery': 'PrintGallery',
+    'pothi':         'Pothi',
+    'snowfall':      'Snowfall',
 }
 
 def init_printers(view):
     res = {}
     for k, v in printerlist.items():
         module = importlib.import_module("ptxprint.printers."+k)
-        c = getattr(module, v[0])
+        c = getattr(module, v)
         res[k] = c(view)
     return res
 
-def printer_from_label(lid):
-    for k, v in printerlist.items():
-        if v[1] == lid:
-            return k
-    return None
+def comparePrinterPrices(view):
+    """Show the multi-printer price comparison graph.
 
-allcurrencies = {
-    "AFN":  "؋",
-    "AMD":  "֏",
-    "AOA":  "Kz",
-    "ARS":  "$",
-    "AUD":  "A$",
-    "AZN":  "₼",
-    "BAM":  "KM",
-    "BBD":  "$",
-    "BDT":  "৳",
-    "BMD":  "$",
-    "BND":  "$",
-    "BOB":  "Bs",
-    "BRL":  "R$",
-    "BSD":  "$",
-    "BWP":  "P",
-    "BZD":  "$",
-    "CAD":  "CA$",
-    "CLP":  "$",
-    "CNY":  "CN¥",
-    "COP":  "$",
-    "CRC":  "₡",
-    "CUC":  "$",
-    "CUP":  "$",
-    "CZK":  "Kč",
-    "DKK":  "kr",
-    "DOP":  "$",
-    "EGP":  "E£",
-    "ESP":  "₧",
-    "EUR":  "€",
-    "FJD":  "$",
-    "FKP":  "£",
-    "GBP":  "£",
-    "GEL":  "₾",
-    "GHS":  "GH₵",
-    "GIP":  "£",
-    "GNF":  "FG",
-    "GTQ":  "Q",
-    "GYD":  "$",
-    "HKD":  "HK$",
-    "HNL":  "L",
-    "HRK":  "kn",
-    "HUF":  "Ft",
-    "IDR":  "Rp",
-    "ILS":  "₪",
-    "INR":  "₹",
-    "ISK":  "kr",
-    "JMD":  "$",
-    "JPY":  "JP¥",
-    "KGS":  "⃀",
-    "KHR":  "៛",
-    "KMF":  "CF",
-    "KPW":  "₩",
-    "KRW":  "₩",
-    "KYD":  "$",
-    "KZT":  "₸",
-    "LAK":  "₭",
-    "LBP":  "L£",
-    "LKR":  "Rs",
-    "LRD":  "$",
-    "LTL":  "Lt",
-    "LVL":  "Ls",
-    "MGA":  "Ar",
-    "MMK":  "K",
-    "MNT":  "₮",
-    "MUR":  "Rs",
-    "MXN":  "MX$",
-    "MYR":  "RM",
-    "NAD":  "$",
-    "NGN":  "₦",
-    "NIO":  "C$",
-    "NOK":  "kr",
-    "NPR":  "Rs",
-    "NZD":  "NZ$",
-    "PHP":  "₱",
-    "PKR":  "Rs",
-    "PLN":  "zł",
-    "PYG":  "₲",
-    "RON":  "lei",
-    "RUB":  "₽",
-    "RWF":  "RF",
-    "SAR":  "⃁",
-    "SBD":  "$",
-    "SEK":  "kr",
-    "SGD":  "$",
-    "SHP":  "£",
-    "SRD":  "$",
-    "SSP":  "£",
-    "STN":  "Db",
-    "SYP":  "£",
-    "THB":  "฿",
-    "TOP":  "T$",
-    "TRY":  "₺",
-    "TTD":  "$",
-    "TWD":  "NT$",
-    "UAH":  "₴",
-    "USD":  "US$",
-    "UYU":  "$",
-    "VEF":  "Bs",
-    "VND":  "₫",
-    "XAF":  "FCFA",
-    "XCD":  "EC$",
-    "XCG":  "Cg.",
-    "XOF":  "F CFA",
-    "XPF":  "CFPF",
-    "XXX":  "¤",
-    "ZAR":  "R",
-    "ZMW":  "ZK",
-}
+    Collects per-copy price curves from every printer ticked in the printer
+    list: local pricing models are computed directly; printers with a live
+    API (Pretore) are queried when usable (account + job fields present).
+    All prices are converted into the display currency, so the graph works
+    with any combination of printers.
+    """
+    from ptxprint.printers.currency import getExchangeRates, quoteQuantities, allcurrencies
+    from ptxprint.printers.pricing_graph import PricingGraphViewer
+
+    tab = getattr(view, 'printerTab', None)
+    if tab is None:
+        return
+    job = tab.jobSpec()
+    quantities = quoteQuantities(job.copies)
+    rates = getExchangeRates()
+    rates.startFetch()
+
+    results = {}        # displayName: (perCopyDict, homeCurrency)
+    liveQueue = []      # printers that must be queried asynchronously
+    for pid, printer in view.printers.items():
+        if not tab.isCompared(pid):
+            continue
+        data = printer.estimate(job, quantities)
+        if data:
+            results[printer.displayName] = (data, printer.homeCurrency)
+        elif getattr(printer, 'liveQuotes', False):
+            liveQueue.append(printer)
+
+    def convertSeries(data, home):
+        if home == job.currency:
+            return data
+        out = {}
+        for q, p in data.items():
+            c = rates.convert(p, home, job.currency)
+            if c is None:
+                return None
+            out[q] = c
+        return out
+
+    def showGraph():
+        allData = {}
+        for name, (data, home) in results.items():
+            converted = convertSeries(data, home)
+            if converted is None:
+                print(f"No exchange rate for {home}; {name} excluded from comparison")
+            else:
+                allData[name] = converted
+        if not len(allData):
+            print("No printer pricing available to compare")
+            return
+        viewer = PricingGraphViewer(allData, parentWindow=view.mainapp.win,
+                currencySymbol=allcurrencies.get(job.currency, job.currency))
+        viewer.show()
+        tab.updateAll()     # live quotes fetched here may now be cached
+
+    if liveQueue:
+        remaining = [len(liveQueue)]
+        def makeCallback(printer):
+            def _cb(data):
+                if data:
+                    results[printer.displayName] = (data, printer.homeCurrency)
+                remaining[0] -= 1
+                if remaining[0] == 0:
+                    showGraph()
+            return _cb
+        for printer in liveQueue:
+            printer.estimateAsync(job, quantities, makeCallback(printer))
+    else:
+        showGraph()

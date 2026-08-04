@@ -1,9 +1,9 @@
 
-import configparser, os, re, regex, random, collections
+import configparser, os, re, regex, random, collections, sys, glob, copy
 from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
-from ptxprint.project import ProjectList
+from ptxprint.project import Project, ProjectList
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
@@ -23,9 +23,9 @@ from ptxprint.polyglot import PolyglotConfig
 from ptxprint.version import VersionStr, GitVersionStr, ConfigVersion
 from ptxprint.report import Report
 import ptxprint.pdfrw.errors
-import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
-from tempfile import NamedTemporaryFile
+import pathlib
+import tempfile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
 from shutil import rmtree
@@ -140,9 +140,18 @@ class ViewModel:
         self.periphs = {}
         self.hyphenation = None
         self.report = Report()
+        self.zf = None
 
         # private to this implementation
         self.dict = {}
+
+
+    def __eq__(self, other):
+        if self.project is None or other.project is None:
+            return False
+        if self.cfgid != other.cfgid:
+            return False
+        return self.project == other.project
 
     def setup_ini(self):
         self.setDate()
@@ -289,7 +298,7 @@ class ViewModel:
                 res.append(r.first.book)
         return res
 
-    def getBooks(self, scope=None, files=False, local=False):
+    def getBooks(self, scope=None, files=False, local=False, errors=False):
         if self.project is None:
             return []
         if scope is None:
@@ -305,8 +314,9 @@ class ViewModel:
         try:
             bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
         except SyntaxError as e:
-            self.doError(str(e),
-                         secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
+            if errors:
+                self.doError(str(e),
+                             secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
             return []
         bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
@@ -491,7 +501,7 @@ class ViewModel:
 
     def calcPageSize(self):
         unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize") or "")
         if m:
             pagewidth  = float(m.group(1)) * unitConv.get(m.group(2), 1)
             pageheight = float(m.group(3)) * unitConv.get(m.group(4), 1)
@@ -863,7 +873,7 @@ class ViewModel:
                 try:
                     cupdates = json.load(inf)
                     self.copyrightInfo.update(cupdates)
-                except json.decode.JSONDecodeError as e:
+                except json.decoder.JSONDecodeError as e:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
         return self.copyrightInfo
@@ -1011,7 +1021,10 @@ class ViewModel:
                 if val is None:
                     continue
                 if v[1]:
-                    val = "\n".join(x.withvars(self, relto=self.project.path) for x in val)
+                    if isinstance(val, list):
+                        val = "\n".join(x.withvars(self, relto=self.project.path) for x in val)
+                    else:
+                        val = re.sub(r"\s*,\s*", "\n", val)
                 else:
                     val = val.withvars(self, relto=self.project.path)
             elif v.widget.startswith("bl_"):
@@ -1433,6 +1446,8 @@ class ViewModel:
                                 self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
+                        except ValueError as e:
+                            self.doError(f"{v.widget}: {e}")
                 elif sect in ("vars", "strongsvar") and (categories is None or 'variables' in categories):
                     if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
@@ -1532,6 +1547,7 @@ class ViewModel:
             changed = True
         else:
             cfgt = os.stat(cfgpath).st_mtime
+        vcsnoted = self.triggervcs  # capture before writeConfig() resets it
         self.writeConfig(force=force)
         if not changed:
             os.utime(cfgpath, (cfgt, cfgt))
@@ -1541,6 +1557,11 @@ class ViewModel:
             if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
+            elif v is not None and vcsnoted:
+                # Primary adjlists changed (e.g. via PDF viewer context menu) —
+                # the diglot output has changed so signal the secondary project too.
+                v.triggervcs = True
+                v.writeConfig()
         self.isChanged = False
 
     def saveAdjlists(self, force=False):
@@ -1685,6 +1706,8 @@ class ViewModel:
             srcp = os.path.join(pycodedir(), "FRTtemplateBasic.txt")
         elif frtype == "advanced":
             srcp = os.path.join(pycodedir(), "FRTtemplateAdvanced.txt")
+        elif frtype == "diglot":
+            srcp = os.path.join(pycodedir(), "FRTtemplateDiglot.txt")
         elif frtype == "paratext":
             srcp = self.getBookSrcPath("FRT", self.project.prjid)
             if srcp is None:
@@ -1912,6 +1935,19 @@ class ViewModel:
             digView.picinfos.load_files(digView)
         self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
 
+    def setupPicinfos(self, picinfos=None, diglots=True):
+        if picinfos is None:
+            picinfos = self.picinfos
+        vlist = [self]
+        if diglots:
+            vlist = vlist + list(self.diglotViews.values())
+        for i, v in enumerate(vlist):
+            exclusive = v.get("c_exclusiveFiguresFolder")
+            fldr      = v.get("lb_selectFigureFolder", "") if v.get("c_useCustomFolder") else ""
+            imgorder  = v.get("t_imageTypeOrder")
+            lowres    = v.get("r_pictureRes") == "Low"
+            picinfos.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres, append=i!=0)
+
     def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
@@ -1932,11 +1968,16 @@ class ViewModel:
         basecfpath = baseprjid + "/shared/ptxprint/" + self.cfgid
         interlang = self.get("t_interlinearLang") if self.get("c_interlinear") else None
 
-        def bname(s):
+        def bname(s, prefix=''):
+            res = os.path.basename(s)
+            if res == ".":
+                return prefix
+            if prefix:
+                res = prefix + "/" + res
             if os.path.sep == "/":
-                return os.path.basename(str(s).replace("\\", "/"))
+                return res.replace("\\", "/")
             else:
-                return os.path.basename(str(s).replace("/", "\\"))
+                return res.replace("/", "\\")
 
         # pictures and texts
         fpath = baseprj.path
@@ -1953,25 +1994,26 @@ class ViewModel:
         for bk in books + ['INT']:
             fname = self.getBookSrcPath(bk, baseprjid, project=baseprj)
             if fname is not None:
-                res[fname] = baseprjid + "/" + bname(fname)
+                res[fname] = bname(fname, baseprjid)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(baseprjid, intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
-            self.picinfos.getFigureSources(exclusive=exclFigsFolder)
+            self.setupPicinfos()
+            self.picinfos.getFigureSources()
         if self.get("c_useCustomFolder"): # What is happening here? and why? (shouldn't it happen above before we getFigureSources?)
-            cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
+            cfgchanges["btn_selectFigureFolder"] = (Path("figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'src path'
         if self.picinfos is not None:
             for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
-                    res[f] = prjid + "/local/figures/"+bname(f)
+                    res[f] = bname(f, prjid+"/local/figures")
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
-            res[xrfile] = baseprjid + "/" + bname(xrfile)
-            cfgchanges["btn_selectXrFile"] = res[xrfile]
+            res[xrfile] = bname(xrfile, baseprjid)
+            cfgchanges["btn_selectXrFile"] = Path(bname(xrfile, "${prjdir}"))
 
         # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
@@ -1989,9 +2031,8 @@ class ViewModel:
         if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
             for p in extrapics:
-                b = bname(p)
                 if p not in res:
-                    res[p] = prjid + "/local/figures/" + b
+                    res[p] = bname(p, prjid+"/local/figures")
         else:
             allfonts = set()
 
@@ -2007,6 +2048,7 @@ class ViewModel:
                     fname = [fname]
                 for f in fname:
                     res[f.as_posix()] = baseprjid + "/shared/ptxprint/" + f.name
+                    cfgchanges[v[3]] = (Path("${prjdir}/shared/ptxprint/" + f.name), v[0])
 
         # fonts
         allfonts.update(self.getallfonts())
@@ -2014,8 +2056,7 @@ class ViewModel:
             cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
-            k = bname(v)
-            res[v] = prjid + "/local/ptxprint/" + cfgid + "/fonts/" + k
+            res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
 
         if baseprjid:
             mdir = os.path.join(self.project.path, "shared", "fonts", "mappings")
@@ -2031,16 +2072,15 @@ class ViewModel:
             for a in ('BgImage', 'FgImage'):
                 val = v.get(a, mystyles.basesheet.get(k, {}).get(a, None))
                 if val is not None:
-                    fname = bname(val)
-                    res[val] = baseprjid + "/figures/"+fname
-                    mystyles.setval(k, a, "../../../figures/" + fname)
+                    res[val] = bname(val, baseprjid + "/figures")
+                    mystyles.setval(k, a, bname(val, "../../../figures"))
 
 
-        tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
-        mystyles.output_diffile(tempfile, inArchive=True)
-        tempfile.close()
-        res[tempfile.name] = basecfpath + "/ptxprint.sty"
-        tmpfiles.append(tempfile.name)
+        tmpfile = tempfile.NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
+        mystyles.output_diffile(tmpfile, inArchive=True)
+        tmpfile.close()
+        res[tmpfile.name] = basecfpath + "/ptxprint.sty"
+        tmpfiles.append(tmpfile.name)
 
         # config files - take the whole tree even if not needed
         ppath = self.project.srcPath(self.cfgid)
@@ -2069,9 +2109,8 @@ class ViewModel:
 
         script = self.customScript
         if script: # is not None and len(script):
-            sname = bname(script) 
-            res[script] = baseprjid + "/" + sname
-            cfgchanges["btn_selectScript"] = os.path.join(self.project.path, sname)
+            res[script] = bname(script, baseprjid)
+            cfgchanges["btn_selectScript"] = bname(script, "${prjdir}")
 
         pts = self._getPtSettings(prjid=baseprjid)
         ptres = pts.getArchiveFiles()
@@ -2079,21 +2118,28 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def createArchive(self, filename=None):
-        if filename is None:
-            filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
-        if not filename.lower().endswith(".zip"):
-            filename += ".zip"
+    def createArchive(self, filename=None, nobuild=False, for_test=False, in_memory=False):
+        if in_memory:
+            filename = BytesIO()
+        else:
+            if filename is None:
+                filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
+            if not filename.lower().endswith(".zip"):
+                filename += ".zip"
         try:
-            zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
+            self.zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
         except OSError:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
         temps = []
-        from ptxprint.runjob import RunJob
-        runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
-        runjob.doit(noview=True)
-        res = runjob.wait()
+        if not nobuild:
+            from ptxprint.runjob import RunJob
+            runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
+            runjob.doit(noview=True)
+            res = runjob.wait()
+        else:
+            runjob = None
+            res = 0
         found = False
         # TODO: include burst pdfs
         xdvfile = None
@@ -2106,36 +2152,54 @@ class ViewModel:
                         if not found and os.path.exists(f):
                             temps.append(f)
                             break
-        self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
+        self._archiveAdd(self.zf, self.getBooks(files=True), xdv=xdvfile)
         working_dir = self.project.printPath(self.cfgid)
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
                 if v is None:
                     v = self.createDiglotView(k)
                 if v is not None:
-                    v._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
+                    v._archiveAdd(self.zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
-                    self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
-        for f in set(self.tempFiles + runjob.picfiles + temps):
+                    self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"), for_test=True)
+        for f in set(self.tempFiles + ([] if runjob is None else runjob.picfiles) + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.project.path)
-                self._writearchive(zf, pf, os.path.join(self.project.prjid, outfname))
+                self._writearchive(self.zf, pf, os.path.join(self.project.prjid, outfname), for_test=True)
             else:
                 print(pf)
-        ptxmacrospath = self.scriptsdir
-        for dp, d, fs in os.walk(ptxmacrospath):
-            for f in fs:
-                if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    self._writearchive(zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
-        self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
-        zf.close()
+        if not for_test:
+            ptxmacrospath = self.scriptsdir
+            for dp, d, fs in os.walk(ptxmacrospath):
+                for f in fs:
+                    if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
+                        self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f), for_test=True)
+        self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
+
+        test_userconfig = copy.deepcopy(self.userconfig)
+        test_userconfig.remove_section('projectdirs')
+
+        with StringIO() as ss:
+            test_userconfig.write(ss)
+            ss.seek(0)
+            userconfig_str = ss.read()
+        self.zf.writestr(f'{self.project.prjid}/ptxprint_user.cfg', userconfig_str)
+
+        if not for_test:
+            self.zf.close()
         if res:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()
 
-    def _writearchive(self, zf, ifile, fname):
+        if in_memory:
+            return filename
+
+    def _writearchive(self, zf, ifile, fname, for_test=False):
+        if for_test:
+            if pathlib.Path(fname).parts[1] == 'local':
+                return  # we can exclude the local subdirectory from the test archive
         if fname not in zf.NameToInfo:      # do what zipfile should do
             zf.write(ifile, fname)
 
@@ -2144,16 +2208,17 @@ class ViewModel:
         logger.debug(f"{entries=}, {cfgchanges=}, {tmpfiles=}")
         for k, v in entries.items():
             if os.path.exists(k):
-                self._writearchive(zf, k, v)
+                self._writearchive(zf, k, v, for_test=True)
         tmpcfg = {}
         for k,v in cfgchanges.items():
-            if len(v) == 2 and v[1] is not None:
+            if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
                 tv = getattr(self, v[1])
                 setattr(self, v[1], v[0])
+                self.set(k, str(v[0]))
             else:
                 tv = None
+                self.set(k, str(v))
             tmpcfg[k] = (self.get(k), tv)
-            self.set(k, str(v if len(v) != 2 else v[0]))
         config = self.createConfig()
         configstr = StringIO()
         config.write(configstr)
@@ -2173,7 +2238,7 @@ class ViewModel:
             fpath = getfontcache().get('Source Code Pro')
             if fpath is None:
                 continue
-            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.project.prjid, os.path.basename(fpath)))
+            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.project.prjid, os.path.basename(fpath)), for_test=True)
 
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.project.prjid), writefontsconf(None, archivedir=True))
@@ -2206,8 +2271,7 @@ set stack_size=32768""".format(self.cfgid)
 
     _includeexts = (".cfg", ".txt", ".adj", ".sfm", ".tex", ".sty", ".piclist")
 
-    def createSettingsZip(self, outf):
-        res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
+    def createSettingsZip(self, zfile, prefices=None):
         sdir = self.project.srcPath(self.cfgid)
         for d in (None, 'AdjLists', 'Triggers'):
             ind = sdir if d is None else os.path.join(sdir, d)
@@ -2218,8 +2282,17 @@ set stack_size=32768""".format(self.cfgid)
                     continue
                 fpath = os.path.realpath(os.path.join(ind, f))
                 if os.path.isfile(fpath):
-                    res.write(fpath, f if d is None else os.path.join(d, f))
-        return res
+                    opath = []
+                    if prefices is not None:
+                        opath.extend(prefices)
+                    if d is not None:
+                        opath.append(d)
+                    opath.append(f)
+                    zfile.write(fpath, os.path.join(*opath))
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                v.createSettingsZip(zfile, prefices=["_diglot", k])
+        return zfile
 
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):
         inf = BytesIO(zipdata)
@@ -2522,4 +2595,3 @@ set stack_size=32768""".format(self.cfgid)
                 with open(v, "rb") as inf:
                     d = inf.read()
                 ozip.write(f"{k}.pdf", d)
-

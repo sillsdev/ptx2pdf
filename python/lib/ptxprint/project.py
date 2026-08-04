@@ -174,6 +174,11 @@ class Project:
         logger.debug(f"Creating Project({self.prjid}) at {self.path} guid={self.guid}")
         self.findConfigs(self.path)
 
+    def __eq__(self, other):
+        return self.prjid == other.prjid \
+                and self.guid == other.guid \
+                and self.path == other.path
+
     def __repr__(self):
         return f"{self.prjid}[{self.guid}] {self.path}"
 

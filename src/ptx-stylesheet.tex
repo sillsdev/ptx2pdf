@@ -1383,6 +1383,7 @@
 \def\lastc@rref{}\def\lastc@rradj{1}
 {\catcode`\1=11\xdef\@neletter{1}}
 \def\docvhook{\ifdiglot\edef\c@rref{\id@@@\c@rrdstat\ch@pter.\v@rse}\else\edef\c@rref{\id@@@\ch@pter.\v@rse}\fi
+  \trace{T}{docvhook \c@rref}%
   \csname cv-\c@rref\endcsname
   %\trace{v}{verse: \v@rse, catcodes:\x@\getcatcodes\v@rse\E, and of one:\x@\getcatcodes\@neletter\E}%
   \ifnum\ifnum\lastc@rradj>1 1\else\ifx\v@rse\@neletter 1\else 0\fi\fi =1
@@ -2135,6 +2136,7 @@
  \fi
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
+ \deactiv@tecustomch@rs
  \openpiclist "\the\PicListPath#1.piclist"
  \opentriglist "#1.triggers"
  \multitriglists "#1"
@@ -2281,7 +2283,7 @@
 
 \def\@ctivate{\ifcsname save-cat-\the\count255\endcsname\else \x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}\fi%Only define the old value once
   \catcode\the\count255=\active\relax}
-\def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
+\def\de@ctivate{\ifcsname save-cat-\the\count255\endcsname\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax\fi}
 
 \def\activ@tecustomch@rs{% activate all the chars configured with \DefineActiveChar
  \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  

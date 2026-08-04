@@ -1,4 +1,5 @@
 import os, sys, re, subprocess, time, traceback
+import zipfile
 from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree, copy2, copystat
@@ -191,7 +192,7 @@ class RunJob:
             return
         self.tmpdir = self.printer.project.printPath(configid)
         os.makedirs(self.tmpdir, exist_ok=True)
-        bks = self.printer.getBooks(files=True)
+        bks = self.printer.getBooks(files=True, errors=True)
         jobs = []       # [(bkid/module_path, False) or (RefList, True)] 
         logger.debug(f"{self.printer.bookrefs=}")
         lastbook = None
@@ -364,9 +365,22 @@ class RunJob:
             sheets[k] = diginfo.printer.getStyleSheets()
             keyarr.append(k)
             if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
-                texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext="tex", withext="_INTR.SFM"))))
+                intf = diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext="tex", withext="_INTR.SFM")))
+                if intf is not None:
+                    texfiles.append(intf)
             diginfo["cfgrpath_"] = saferelpath(diginfo.printer.project.srcPath(diginfo.printer.cfgid), docdir).replace("\\","/")
             self.info.dict["diglots_"][k] = diginfo
+
+        # Build the merge score/weight array from the "Weight" column on the Diglot(/Polyglot) page
+        # (self.printer.polyglots[k].weight), falling back to an even split for any project that
+        # doesn't have a weight set.
+        defweight = int(1 + 100 / len(keyarr))
+        scorearr = {}
+        for k in keyarr:
+            pg = self.printer.polyglots.get(k)
+            w = getattr(pg, "weight", None) if pg is not None else None
+            scorearr[k] = int(round(w)) if w is not None else defweight
+        logger.debug(f"Diglot merge {scorearr=} from {keyarr=}")
 
         donebooks = []
         versification = None
@@ -418,7 +432,7 @@ class RunJob:
                 # Do we ask the merge process to write verification files? (use diff -Bws to confirm they are they same as the input)
                 debugmerge = logger.getEffectiveLevel() <= 5 
                 if not self.noaction:
-                    usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, changes=self.info.changes.get("merged", []), book=b)
+                    usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, scorearr=scorearr, changes=self.info.changes.get("merged", []), book=b)
                 texfiles += [outFile, logFile]
         
         if not len(donebooks): # or not len(digdonebooks):
@@ -461,12 +475,16 @@ class RunJob:
             self.info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
         if self.info["project/sectintros"]:
-            genfiles.append(self.info.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_INT.SFM"))))
+            intf = self.info.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_INT.SFM")))
+            if intf is not None:
+                genfiles.append(intf)
             if diglots:
                 addintlist = [r"\diglottrue\zglot|L\*"+self.info["project/intfile"]]
                 for k in self.printer.diglotViews.keys():
                     diginfo = self.info.dict["diglots_"][k]
-                    genfiles.append(diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=f"_INT{k}.SFM"))))
+                    intf = diginfo.addInt(os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=f"_INT{k}.SFM")))
+                    if intf is not None:
+                        genfiles.append(intf)
                     addintlist.append(f"\\zglot|{k}\\*"+diginfo["project/intfile"])
                 addintlist.append(r"\zglot|\*")
                 self.info["project/intfile"] = "".join(addintlist)
@@ -599,7 +617,15 @@ class RunJob:
                     "marginnotes":  (_("margin note positions"), True)}
         marginnotesfname = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".marginnotes"))
         if os.path.exists(marginnotesfname):
-            os.unlink(marginnotesfname)
+            for _attempt in range(4):
+                try:
+                    os.unlink(marginnotesfname)
+                    break
+                except PermissionError:
+                    if _attempt < 3:
+                        time.sleep(0.5)
+                    else:
+                        logger.warning(f"Cannot delete marginnotes file — still locked, skipping: {marginnotesfname}")
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a)))
         while numruns < self.maxRuns:
@@ -776,26 +802,25 @@ class RunJob:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
                     sl = self.printer.builder.get_object("l_statusLine")
-                    sl.set_text("")
-                    sl.set_tooltip_text("")
                 if smry["E"] + smry["W"] > 0:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
-                    if not self.noview and not self.args.print and not self.printer.showPDFmode == "preview":
+                    if not self.noview and not self.args.print:
+                        severity = "error" if smry["E"] > 0 else "warn"
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
-                            sl.set_text(msgs)
-                            sl.set_tooltip_text(msgs)
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
                             self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
+                            self.printer.onIdle(sl.set_tooltip_text, "" if msgs == chkmsg else msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, "error" if smry["E"] > 0 else None)
                         else:
-                            sl.set_text(summaryLine)
-                            sl.set_tooltip_text(msgs)
-                            self.printer.set("l_statusLine", summaryLine)
+                            self.printer.onIdle(self.printer.set, "l_statusLine", summaryLine)
+                            self.printer.onIdle(sl.set_tooltip_text, "" if msgs == summaryLine else msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, summaryLine, msgs, severity)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
             
@@ -969,17 +994,20 @@ class RunJob:
         return pdffile
 
     def procpdf(self, outfname, pdffile, cover=False, **kw):
-        for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'paper/cropmarks', 'document/ifrtl'):
+        for a in ('spotcolor', 'spottolerance', 'pgsperspread', 'sheetsize', 'sheetsinsigntr', 'foldcutmargin', 'foldfirst', 'inclsettings', 'scaletofit', 'paper/cropmarks', 'document/ifrtl'):
             if '/' in a:
                 kw[a[a.find("/")+1:]] = self.info[a]
             else:
                 kw[a] = self.info['finishing/'+a]
         kw['date'] = self.info["pdfdate_"]
+
         def doSettingsZip(zio):
-            z = self.info.printer.createSettingsZip(zio)
+            z = zipfile.ZipFile(zio, "w", compression=zipfile.ZIP_DEFLATED)
+            self.info.printer.createSettingsZip(z)
             report = checkoutput(["xetex", "--version"], path='xetex')
             z.writestr("_runinfo.txt", report)
             z.close()
+
         self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, **kw)
         return True
         if cover:
@@ -992,7 +1020,7 @@ class RunJob:
         from ptxprint.pdf.pdfdiff import createDiff
         outname = pdfname[:-4] + "_diff.pdf" if outname is None else outname
         othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
-        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
+        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)}) to {outname}")
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
         if res == 2:
             self.res = 2
@@ -1041,17 +1069,11 @@ class RunJob:
         if self.info['document/ifinclfigs'] == 'false':
             # print("NoFigs")
             return []
-        picinfos.build_searchlist()
+        self.printer.setupPicinfos(picinfos, diglots)
         books = [r[0][0].first.book if r[1] else "MOD" for r in jobs] + ["FRT","COV"]
-        exclusive = self.printer.get("c_exclusiveFiguresFolder")
-        fldr      = self.printer.get("lb_selectFigureFolder", "") if self.printer.get("c_useCustomFolder") else ""
-        imgorder  = self.printer.get("t_imageTypeOrder")
-        lowres    = self.printer.get("r_pictureRes") == "Low"
-        picinfos.srchlist = None
         for j in books:
             logger.debug(f"getsrc&dest for {j}")
-            picinfos.getFigureSources(keys=j, exclusive=exclusive, mode=self.ispdfxa,
-                                      figFolder=fldr, imgorder=imgorder, lowres=lowres)
+            picinfos.getFigureSources(keys=j, mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         logger.debug(f"{books=}, {[x.fields for x in picinfos.pics.values()]}")
         missingPics = [v['src'] for v in picinfos.get_pics() if v['anchor'][:3] in books and 'destfile' not in v and 'src' in v]

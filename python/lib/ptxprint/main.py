@@ -5,7 +5,8 @@ from shutil import rmtree
 from zipfile import ZipFile
 
 import ptxprint
-from ptxprint.utils import saferelpath, appdirs
+from ptxprint.utils import saferelpath, appdirs, bookcodes
+from ptxprint.gtktesting import load_project_from_archive
 from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
@@ -60,7 +61,7 @@ def run_broadway(wnum):
         # logger.info("Broadway is already running")
         return None
     else:
-        bwname = "broadwayd" + ".exe" if sys.platform in ("win32", "cygwin") else ""
+        bwname = "broadwayd.exe" if sys.platform in ("win32", "cygwin") else "broadwayd"
         server = popen([bwname, "-p", str(pnum), ":"+str(wnum)])
     if testport("127.0.0.1", pnum):
         return server
@@ -77,8 +78,8 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
         server = run_broadway(broadway_display)
         os.environ['GDK_BACKEND'] = "broadway"
         os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
-    else:
-        setup_wm(args.nox11)
+    #else:
+    #    setup_wm(args.nox11)
     from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
     from ptxprint.gtktesting import GtkTester
     from ptxprint.utils import setup_i18n
@@ -94,24 +95,47 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     if args.test is not None:
         # copy files before loading config
         tester = GtkTester(None, mainw)
+        tester.project = project
         tester.setuprun(args.test, mainw)
     if args.pid:
         mainw.setPrjid(args.pid, project.guid)
         mainw.setConfigId(args.config or "Default")
     else:
         mainw.setFallbackProject()
+
     if tester is not None:
         GLib.idle_add(tester.run_action, args.testwithgui)
     mainw.run(doit)
     if tester is not None:
-        results = tester.run_finalise()
-        for k, v in results:
-            if len(v):
-                resv = "\n    ".join(v)
-                print(f"{k}: {resv}")
+        test_result = tester.run_finalise()
+        if not any(test_result.values()):
+            exit_code = 0
+            print('Test result: PASS. No differences found to test data.')
+        else:
+            exit_code = 1
+            print('Test result: FAIL. The following differences to test data were found:')
+            if test_result['cfg']:
+                cfg_str = '\n\t'.join(['', *test_result['cfg']])
+                print(f"The following differences were found in the cfg:{cfg_str}")
+            if test_result['sty']:
+                sty_str = '\n\t'.join(['', *test_result['sty']])
+                print(f"The following differences were found in the sty:{sty_str}")
+            if test_result['ref']:
+                print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
+            #if test_result['test']:
+            #    print(f"The following files were found only in the test run: {', '.join(test_result['test'])}")
+            if test_result['diff']:
+                print(f"The following files were not identical: {', '.join([f'{a} and {b}' for a, b in test_result['diff']])}")
     if server is not None:
         server.terminate()
         server.wait()
+    return exit_code
+
+commands = {
+    'print': (),
+    'fill': (),
+    'archive': ()
+}
 
 def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None):
     parser = argparse.ArgumentParser(description="PTXprint command-line interface")
@@ -119,6 +143,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     # Positional Argument
     parser.add_argument('pid', nargs="?", help="Project ID or full path to a ptxprint.cfg file")
+    parser.add_argument('cmd', nargs="?", choices=list(commands.keys()), help="Non interactive command to execute")
 
     # Commonly Used Arguments
     parser.add_argument('-b', '--books', help="List of books to print")
@@ -134,12 +159,13 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     # Execution & Processing
     parser.add_argument('-A', '--action', help="Perform a specific action instead of printing")
+    parser.add_argument("-o", '--output', help="Output file for actions like archive")
     parser.add_argument('-m', '--macros', help="Directory containing TeX macros (paratext2.tex)")
     parser.add_argument('-M', '--module', help="Specify module to print")
     parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
-    parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
-    parser.add_argument('-C', '--capture', help="Capture interaction events (not yet used)")
-    parser.add_argument('-t','--test',help="test file to run interactive test against")
+    parser.add_argument('-T', '--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
+    parser.add_argument('-C', '--capture', metavar='FILE', help="Capture interaction events from UI session to zip file")
+    parser.add_argument('-t', '--test',help="test file to run interactive test against")
     parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
     
     # Performance & Debugging
@@ -171,6 +197,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-I', '--identify', action="store_true", help="Add widget names to tooltips")
     parser.add_argument('-E', '--experimental', type=int, default=0, help="Enable experimental features (0 = UI extensions)")
 
+    exit_code = 0
+
     if argsfn is not None:
         argsfn(parser)
 
@@ -195,6 +223,14 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         opts = shlex.split(argsline)
         args = parser.parse_args(opts, args)
     args = parser.parse_args(None, args)
+    if args.pid in commands and args.cmd is None:
+        args.cmd = args.pid
+        args.pid = None
+    if args.cmd is None:
+        if args.print:
+            args.cmd = "print"
+        elif args.action == "createArchive":
+            args.cmd = "archive"
 
     # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
     # setup_i18n()
@@ -231,7 +267,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         sys.stdio = StreamLogger(log, logging.INFO)
         sys.stderr = StreamLogger(log, logging.ERROR)
 
-    from ptxprint.utils import _, setup_i18n, get_ptsettings, find_pt_candidates, pt_bindir, putenv
+    from ptxprint.utils import _, setup_i18n, get_ptsettings, find_pt_candidates, \
+                                pt_bindir, putenv, attach_console
     from ptxprint.font import initFontCache, cachepath, writefontsconf
 
     fontconfig_path = writefontsconf(args.fontpath,testsuite=args.testsuite)
@@ -242,8 +279,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     from ptxprint.runjob import RunJob, isLocked
     from ptxprint.project import ProjectList
 
+    attach_console()
     if viewClass is None:
-        viewClass = ViewModel
+        viewClass = MultiView if args.cmd == "fill" else ViewModel
     savetreedirs = False
     ptxdir = None
     # necessary for the side effect of setting pt_bindir :(
@@ -252,6 +290,18 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         if pdir is not None:
             args.projects.append(pdir)
         savetreedirs = True
+
+    if args.test:
+        with ZipFile(args.test) as zf:
+            zip_contains_full_archive = any(
+                Path(name).match("*/ptxSettings.xml")
+                for name in zf.namelist()
+            )
+            if zip_contains_full_archive:
+                test_project = load_project_from_archive(zf)
+                args.pid = test_project.prjid
+                conffile = '{}/ptxprint_user.cfg'.format(test_project.path)
+                args.projects.append(test_project.path)
 
     if (args.extras & 16) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
@@ -291,7 +341,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             args.projects.append(candidates[0]['path'])
             print(f"Adding {candidates[0]['path']}")
         elif len(candidates) > 1:
-            if not args.print and args.test is None:
+            if not args.print and args.test is None and not args.cmd:
                 from ptxprint.gtkview import chooseProjectsDir
                 chosen = chooseProjectsDir(candidates)
                 if chosen is None:
@@ -312,7 +362,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     if sys.platform.startswith("linux") and not args.nox11:
         os.environ['GDK_BACKEND'] = 'x11'
     if (args.extras & 8) != 0 or not len(args.projects):
-        if not args.print and args.test is None:
+        if not args.print and args.test is None and not args.cmd:
             from ptxprint.gtkview import chooseProjectsDir
             chosen = chooseProjectsDir(find_pt_candidates())
             if chosen is None:
@@ -428,10 +478,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         if args.config:
             if project is None or project.srcPath(args.config) is None:
                 args.config = None
-
     if args.test is not None:
-        runtest(prjTree, config, macrosdir, project, doit, args)
-    elif args.print or args.action is not None or retview:
+        exit_code = runtest(prjTree, config, macrosdir, project, doit, args)
+    elif args.print or args.cmd is not None or retview:
         mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()
         if args.pid:
@@ -441,7 +490,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
-        if args.print or retview:
+        if args.print or retview or args.cmd in ("print", "fill"):
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)
@@ -467,14 +516,18 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             mainw.saveAdjlists()
             if not args.enablescripts:
                 mainw.set("c_processScript", False)
-            job = doit(mainw, noview=True, nothreads=True)
-            if job is not None:
-                res = job.res
+            if args.cmd == "fill":
+                mainw.initScheduler(args.jobs, None)
+                results = mainw.run_all(False)
+                print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))
             else:
-                res = 0
+                job = doit(mainw, noview=True, nothreads=True)
+                res = 0 if job is None else job.res
+                print(f"{res=}")
         if args.action:
             print(getattr(mainw, args.action)())
-        print(f"{res=}")
+        elif args.cmd == "archive":
+            mainw.createArchive(args.output, nobuild=True)
         sys.exit(res)
     else:
         from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
@@ -534,6 +587,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             log.debug(f"Writing user config to {conffile}")
             with open(conffile, "w", encoding="utf-8") as outf:
                 config.write(outf)
+    return exit_code
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -116,7 +116,7 @@ class Report:
         et.SubElement(body, "hr")
 
         lasts = []
-        for s, t in sorted(self.sections.items()):
+        for s, t in sorted(self.sections.items(), key=lambda x: (int(x[0].split('.')[0]) if x[0].split('.')[0].isdigit() else 999, x[0])):
             if not len(t):
                 continue
             nexts = s.split("/")

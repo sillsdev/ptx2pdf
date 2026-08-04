@@ -78,7 +78,7 @@ class TestUSFMClass(unittest.TestCase):
             res = "\u201CDue to God loving the people"
         refrange = Ref("JHN 3:16")
         subdoc = self.usfmdoc.getsubbook(refrange, addintro=False, headers=False, titles=False).getroot()
-        t = str(subdoc[0][0][0])[9:9+len(res)] if self.mode == "usfm" else subdoc[0][0].tail[:len(res)]
+        t = str(subdoc[1][0][0])[9:9+len(res)] if self.mode == "usfm" else subdoc[1][0].tail[:len(res)]
         self.assertEqual(t, res)
 
     def test_transform(self):
@@ -101,7 +101,7 @@ class TestUSFMClass(unittest.TestCase):
         else:
             res = "\u201CDue to God \u200b"
         subdoc = self.usfmdoc.getsubbook(refrange, addintro=False, headers=False, titles=False).getroot()
-        t = str(subdoc[0][0][0])[9:9+len(res)] if self.mode == "usfm" else subdoc[0][0].tail[:len(res)]
+        t = str(subdoc[1][0][0])[9:9+len(res)] if self.mode == "usfm" else subdoc[1][0].tail[:len(res)]
         self.assertEqual(t, res)
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ import re
 from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
+from usfmtc.reference import RefList
 from collections import namedtuple
 # from filelock import FileLock
 
@@ -89,9 +90,13 @@ def make_paths(projectsdir, project, config, logging):
     except configparser.NoOptionError:
         ismult = cfg.getboolean("project", "multiplebooks")
     if ismult:
+        bs = RefList(cfg.get('project', 'booklist'))
         bks = []
-        bks = [x for x in cfg.get("project", "booklist").split() \
-            if os.path.exists(os.path.join(projectsdir, project, ptsettings.getBookFilename(x)))]
+        for b in bs:
+            if b.first.book != b.last.book:
+                bks.extend([b.first.book, b.last.book])
+            else:
+                bks.append(b.book)
     else:
         prjmode = cfg.get("project", "bookscope")
         if prjmode == "module":

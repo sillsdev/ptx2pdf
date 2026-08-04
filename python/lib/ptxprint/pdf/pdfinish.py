@@ -61,15 +61,7 @@ class Finisher(Gtk.Application):
         self.mw.show_all()
         Gtk.main()
 
-    def onProcessClicked(self, btn):
-        self.errored = False
-        self.input_pdf_path = self.builder.get_object("fp_input").get_filename()
-        if not self.input_pdf_path:
-            self.show_error("You need to select an input file!")
-            return
-        elif not self.input_pdf_path.endswith('.pdf'):
-            self.show_error("You must select an input file with a .pdf extension.")
-            return
+    def onSelectOutputClicked(self, btn):
         dialog = Gtk.FileChooserDialog(
             title="Select output file",
             parent=self.mw,
@@ -79,6 +71,27 @@ class Finisher(Gtk.Application):
                 Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                 Gtk.STOCK_SAVE, Gtk.ResponseType.OK
         )
+        dialog.set_do_overwrite_confirmation(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self.output_filepath = dialog.get_filename()
+            self.builder.get_object("btn_process").set_sensitive(True)
+        dialog.destroy()
+        if response != Gtk.ResponseType.OK:
+            return
+        elif not self.output_filepath.endswith('.pdf'):
+            self.show_error("You must select an input file with a .pdf extension.")
+            return
+
+    def onProcessClicked(self, btn):
+        self.errored, self.tmp_file_1, self.tmp_file_2 = False, None, None
+        self.input_pdf_path = self.builder.get_object("fp_input").get_filename()
+        if not self.input_pdf_path:
+            self.show_error("You need to select an input file!")
+            return
+        elif not self.input_pdf_path.endswith('.pdf'):
+            self.show_error("You must select an input file with a .pdf extension.")
+            return
 
         checkbox_action_mapping = [
             ('c_watermark',   self._run_watermark),
@@ -98,14 +111,6 @@ class Finisher(Gtk.Application):
             self.run_action(action)
 
         if self.errored:
-            return
-
-        dialog.set_do_overwrite_confirmation(True)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            self.output_filepath = dialog.get_filename()
-        dialog.destroy()
-        if response != Gtk.ResponseType.OK:
             return
 
         if self.tmp_file_1 is not None and os.path.exists(self.tmp_file_1):
@@ -186,14 +191,19 @@ class Finisher(Gtk.Application):
         sheets_per_sig = int(self.builder.get_object("s_sheetsPerSignature").get_value())
         fold_cut_margin = self.builder.get_object("s_foldCutMargin").get_value()
         add_crop_marks = self.builder.get_object("c_cropmarks").get_active()
-        right_to_left = self.builder.get_object("c_RTL").get_active()
+        right_to_left = str(self.builder.get_object("c_RTL").get_active())  # procpdf wants a string
         fold_first = self.builder.get_object("c_foldFirst").get_active()
         selected_sheet_size = self._get_sheet_size(sheetsize_active_text)
+        scale_to_fit = self.builder.get_object("c_scaleToFit").get_active()
         if selected_sheet_size is None:
             return
         outwidth, outheight = get_page_size(selected_sheet_size)
-        make_signatures(input_pdf_path, outwidth, outheight, pages_per_spread,
-                        sheets_per_sig, fold_cut_margin, add_crop_marks, right_to_left, fold_first, outfname=output_pdf_path)
+        page_size = f"{outwidth} pt, {outheight} pt"
+        procpdf(output_pdf_path, input_pdf_path, "None", doError, None,
+                cover=None, pgsperspread=pages_per_spread, sheetsinsigntr=sheets_per_sig,
+                sheetsize=page_size, foldcutmargin=fold_cut_margin, cropmarks=add_crop_marks,
+                ifrtl=right_to_left, foldfirst=fold_first, scaletofit=scale_to_fit,
+                output_filepath=output_pdf_path)
 
     def _run_procpdf(self, input_pdf_path, output_pdf_path):
         """
@@ -205,7 +215,7 @@ class Finisher(Gtk.Application):
         spotcolor = f"rgb({spot_rgba.red * 256}, {spot_rgba.green  * 256}, {spot_rgba.blue  * 256})"
 
         # run procpdf - what does outfname do?
-        procpdf(output_pdf_path, input_pdf_path, output_format, doError, None, cover=None, spottolerance=spottolerance, spotcolor=spotcolor, output_filepath=output_pdf_path)
+        procpdf(output_pdf_path, input_pdf_path, output_format, doError, None, cover=None, spottolerance=spottolerance, spotcolor=spotcolor, scaletofit=scale_to_fit, output_filepath=output_pdf_path)
 
     def _run_overlay(self, input_pdf_path, output_pdf_path):
         """

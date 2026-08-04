@@ -5,16 +5,52 @@ picreverse = OK
 piccreditbox = 
 piccredit = 
 
-[james_1_1_ap_06_13]
+[oi00150]
+approved = false
+
+[oi00254]
+approved = false
+
+[oi00417]
+approved = false
+
+[oi00340]
+approved = false
+
+[oi00317]
+approved = false
+
+[oi00029]
+approved = false
+
+[oi00031]
+approved = false
+
+[oi00153]
+approved = false
+
+[oi00185]
+approved = false
+
+[oi00170]
+approved = false
+
+[oi00375]
+approved = false
+
+[oi00180]
+approved = false
+
+[oi00223]
+approved = false
+
+[oi00227]
+approved = false
+
+[oi00237]
 approved = false
 
 [co00604]
 picclear = yes
-approved = false
-
-[cn01613]
-approved = false
-
-[lb00035]
 approved = false
 

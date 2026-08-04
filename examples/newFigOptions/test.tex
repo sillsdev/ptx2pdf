@@ -1,6 +1,10 @@
 % Test the 'hook' code.
 \input "paratext2.tex"
+\tracing{t}
+\GenerateTOC{test.toc}
+\input test.lot
 \stylesheet{usfm.sty}
+\stylesheet{ptx2pdf.sty}
 \BodyColumns=2
 \input "usfmTex-settings.tex"
 %\input "usfmTex-ext.tex"
@@ -16,6 +20,14 @@
 \tracing{o}
 \tracing{g}
 \tracingoutput=1
+\ptxfile{}
+\prepusfm
+\ztoc|id="FIG" h1="Caption" h2="Page" title="List of figures"\*
+\ztoc|id="FIG"\*
+\unprepusfm
 \unbalancedtrue
+\lastptxfiletrue
 \ptxfile{test.usfm}
+~
+\supereject
 \bye

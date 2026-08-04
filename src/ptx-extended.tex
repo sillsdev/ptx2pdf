@@ -317,6 +317,7 @@
   \getwh@chpage % Necessary for accurate border measurements
   \@get@Hborder@style@params
   \@get@Vborder@style@params
+  \prepb@rderdims
   \getsbp@ram{posn}%
   \ifx\cp@ram\relax
     \gdef\sb@rpos{b}%
@@ -330,23 +331,24 @@
   \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
   \global\let\fgfig@cutout\false
   \ifx\cp@ram\relax
+    \trace{e}{Sidbar width not yet set for \c@tegory}%
     \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end% sets up temp[abcd] 
     \@@setsbp@cinswid% sets p@cinswid
     % Now apply scale..
-    \edef\sb@rrefwid{\the\dimen1}%
     \getsbp@ram{scale}%
-    \ifx\cp@ram\relax\else
+    \ifx\cp@ram\relax
+      \def\cp@ram{1}%
+    \else
       \dimen1=\cp@ram\dimen1
-      \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
-      \edef\sb@rrefwid{\the\dimen1}%
     \fi
-    \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-    \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
-    \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
+    \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
+    \edef\sb@rrefwid{\the\dimen1}%
+    %\getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+    %\getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+    %\getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
     \trace{e}{fgfigsp@c=\fgfigsp@c}%
     % And shrink further if s has been specified for the fg picture
     \ifx\fgfigsp@c\relax\else
-      \prepb@rderdims
       \set@ref@dims
       \p@rsefigscale{fg}%
       \let\crop@fig@pre\empty\let\crop@fig@post\empty\let\crop@fig@after\empty
@@ -457,23 +459,26 @@
     \fi
     \trace{e}{tempc=\tempc}%
     \@@sb@width@calcs
-    \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
-      \if p\tempc\relax\else
-        \if c\tempc\relax\else
-          \ifx\c@tprefix\empty\else\setsbp@ram{w@dth}{\the\dimen1}\fi%
+    \@@sb@height@calcs
+    \ifx\c@tprefix\empty\else
+      \if h\tempc\relax\else% Don't store width for class h, p, or c sidebars, as they may appear full width or single column
+        \if p\tempc\relax\else
+          \if c\tempc\relax\else
+            \setsbp@ram{w@dth}{\the\dimen1}%
+          \fi
         \fi
       \fi
-    \fi
-    \let\t@mploc\tempc % Will be overwriting tempc soon
-    \ifx\tempd\empty\else
-      \tempfalse
-      \ifx\t@mploc\loc@Full\temptrue\else
-        \ifx\t@mploc\loc@Page\temptrue\fi
-      \fi
-      \iftemp
-        \x@\minip@rs@two\tempd\end
-        \if f\tempd\relax
-          \setsbp@ram{outerh@ight}{\sb@height}%
+      \let\t@mploc\tempc % Will be overwriting tempc soon
+      \ifx\tempd\empty\else
+        \tempfalse
+        \ifx\t@mploc\loc@Full\temptrue\else
+          \ifx\t@mploc\loc@Page\temptrue\fi
+        \fi
+        \iftemp
+          \x@\minip@rs@two\tempd\end
+          \if f\tempd\relax
+            \setsbp@ram{outerh@ight}{\sb@height}%
+          \fi
         \fi
       \fi
     \fi  
@@ -481,20 +486,35 @@
    \dimen1=\cp@ram
   \fi
   \sb@rwidth=\dimen1
-  \trace{e}{text box width is \the\sb@rwidth}%
+  \trace{e}{text box width (\c@tegory) is \the\sb@rwidth}%
   \hsize=\sb@rwidth
 }
 \def\@@sb@width@calcs{%
+    \trace{e}{Border on outside for: \ifb@dr@t@os t\fi\ifb@dr@b@os b\fi\ifb@dr@l@os l\fi\ifb@dr@r@os r\fi}%
     \advance\dimen1 by -\dimexpr \fb@lpadding + \fb@rpadding\relax
-    \ifx\b@drleft\tr@e\ifdim \border@lpadding>-\b@drwidth pt
+    \ifb@dr@l@os
         \advance\dimen1 by -\b@drwidth pt 
         \advance\dimen1 by -\border@lpadding
-    \fi\fi
-    \ifx\b@drright\tr@e\ifdim \border@rpadding>-\b@drwidth pt   
+        \advance\dimen1 by -\border@lmargin
+    \fi
+    \ifb@dr@r@os
         \advance\dimen1 by -\b@drwidth pt 
         \advance\dimen1 by -\border@rpadding
-    \fi\fi
+        \advance\dimen1 by -\border@rmargin
+    \fi
     \trace{e}{calculated with dimen1=\the\dimen1}%
+}
+\def\@@sb@height@calcs{%
+  \dimen0=0pt
+  \ifb@dr@t@os
+    \advance\dimen0 by \border@tmargin
+  \fi
+  \ifb@dr@b@os
+    \advance\dimen0 by \border@bmargin
+  \fi
+  \ifdim\dimen0=0pt\else
+    \edef\sb@height{\the\dimexpr \sb@height -\dimen0\relax}%
+  \fi
 }
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
@@ -813,7 +833,7 @@
    \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
    \x@\writefigp@gelog\x@{\l@gstring}%
    \egroup 
-  \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
+  \message{\c@t@gory: \the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
   % ^^^ END OF GROUP! ^^^
   %
   \whichp@ge=\@@whichp@ge
@@ -862,6 +882,11 @@
   %Does the box have a defined size? 
   %
   % Reference dimensions
+  \trace{e}{Border on outside for: \ifb@dr@t@os t\fi\ifb@dr@b@os b\fi\ifb@dr@l@os l\fi\ifb@dr@r@os r\fi}%
+  \ifb@dr@l@os\let\lble@d\z@\fi
+  \ifb@dr@r@os\let\rble@d\z@\fi
+  \ifb@dr@t@os\let\tble@d\z@\fi
+  \ifb@dr@b@os\let\bble@d\z@\fi
   \edef\flble@d{\ifdim \lble@d > \figbleed \figbleed\else\lble@d\fi}% Figure bleeds
   \edef\frble@d{\ifdim \rble@d > \figbleed \figbleed\else\rble@d\fi}%
   \edef\ftble@d{\ifdim \tble@d > \figbleed \figbleed\else\tble@d\fi}%
@@ -1126,7 +1151,7 @@
     \fi
     \ifhasb@rder % any border
       \dob@rder % Actually generate the border
-      \dimen1=\dimexpr -\b@rderbox@depth\relax
+      \dimen1=\dimexpr -\b@rderbox@depth \ifb@dr@b@os -\border@bmargin\fi\relax
       \advance\dimen1 by -\sp@ceafter
       \relax
       \ifdoIntskip
@@ -1155,7 +1180,7 @@
         \vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi
         \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox
         \kern\dimen1
-        \vskip\sp@ceafter
+        \vskip\dimexpr \sp@ceafter \ifb@dr@b@os +\border@bmargin\fi\relax
       }%
     \else
       \ifBoxLikeBorder
@@ -1262,7 +1287,8 @@
         \fi
         \ifx\picl@c\loc@Full
           \trace{e}{Full page box \b@x@lunpad | \b@x@runpad}%
-          \setbox\extchunkb@x\hbox {\penalty-10001\kern\b@x@lunpad\box\extchunkb@x\kern \b@x@runpad}%
+          \setbox\extchunkb@x\hbox {\penalty-10001\kern\b@x@lunpad
+              \box\extchunkb@x\kern \b@x@runpad}%
           \d@figureFull\extchunkb@x
         \fi
         \ifx\picl@c\loc@Cut
@@ -1421,6 +1447,7 @@
   \EndCategory\stylesheet{#1}\EndCategory
   \subc@llfalse
 }
+% This lot turns the unordered list from \Border into valid booleans
 \def\B@rderTOP{\setsbp@ram{bordertop}{T}}
 \def\B@rderBOTTOM{\setsbp@ram{borderbottom}{T}}
 \def\B@rderLEFT{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}

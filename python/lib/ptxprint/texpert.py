@@ -70,7 +70,7 @@ texpertOptions = {
 
     "MaxProcesses":         O("maxproc", "LAY", (int(cpu_count() * 0.9), 1, cpu_count(), 1, 1, 1), None, _("Maximum parallel processes"),
                             _("The maximum number of parallel processes to use for example when page filling")),
-    "MaxFillTime":          O("maxfilltime", "LAY", (0, 100, 0.1, 1, 1, 1), None, _("Maximum Filling Time (mins)"),
+    "MaxFillTime":          O("maxfilltime", "LAY", (0, 0, 100, 0.1, 1, 1), None, _("Maximum Filling Time (mins)"),
                             _("Stop page filling a book after this many minutes")),
 
     #"versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
@@ -167,13 +167,19 @@ texpertOptions = {
                             _("If a footnote is being shaved (split onto next page), what is the minimum number of lines to move?")),
     "NoteShaveStay":      O("nshavestay", "NTS", (2, 0, 100, 1, 1, 0), r"\def{0}{{{1}}}", _("Split notes: note lines to stay"),
                             _("If a footnote is being shaved (split onto next page), how many lines of (all) notes must remain on the page?")),
-    "FootnoteMulS":       O("footnotemuls", "NTS", (100, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Single column"),
+    "FootnoteMulStS":       O("footnotemulsts", "NTS", (400, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Study note factor-Single column"),
+                            _("To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")),
+    "FootnoteMulStT":       O("footnotemulstt", "NTS", (800, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Study note factor-Two column"),
+                            _("To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")),
+    "FootnoteMulStD":       O("footnotemulstd", "NTS", (500, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Study note factor-Diglot"),
+                            _("To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")),
+    "FootnoteMulS":       O("footnotemuls", "NTS", (400, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Single column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")),
-    "FootnoteMulT":       O("footnotemult", "NTS", (100, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Two column"),
+    "FootnoteMulT":       O("footnotemult", "NTS", (800, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Two column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")),
-    "FootnoteMulD":       O("footnotemuld", "NTS", (900, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"),
+    "FootnoteMulD":       O("footnotemuld", "NTS", (10, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")),
-    "FootnoteMulC":       O("footnotemulc", "NTS", (0, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
+    "FootnoteMulC":       O("footnotemulc", "NTS", (1, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
 
     "diglotBalNotes":         O("diglotbalnotes", "DIG", False, None, _("Balance diglot/polyglot notes"),
@@ -189,12 +195,16 @@ texpertOptions = {
     "VisTrace":           O("vistrace", "DIG", False, None, _("Show Diglot Trace Marks"),
                             _("Insert visible trace marks in diglot output")),
     "VisTraceExtra":      O("vistracex", "DIG", False, None, _("Extra Trace Mark Info"),
-                            _("Add extra information to diglot trace marks")),
+                            _("Add extra information to diglot trace marks. (debugging only - can alter layout)")),
     "DiglotColourPad":    O("diglotcolourpad", "DIG", (3, -20, 20, 1, 1, 0), r"\def{0}{{{1}pt}}", _("Diglot Shading Padding"),
                             _("The amount of side padding (pt) on the shaded background of a diglot")),
     "TextBorderMode":     O("textbordermode", "DIG",
                             {"1": _("Borders start at body text"), "0": _("Borders include book intros"), "2": _("Wide book intros for per-column textborders")}, r"{0}={1}",
                             _("How does text-border behave in diglots?"), _("Historically, diglot text-borders put the border around book introductions. This control allows that (substandard) behaviour to be chosen, and also allows  experimental code to make books with per-column textborders use full-width text for introductory text.")),
+    "GrowUnprintableLimit":           O("growunprintable", "DIG", (2,-1,10,1,1,0), r"{0}={1}",  _("Unprintable page recovery."),
+                            _("If notes / figures make a page unprintable: -1: immediately stop; 0: print failed contents and try to struggle on; >0 grow page height by up to N lines.")),
+    "PageFullTest":       O("pagefulltest", "DIG", {"A":_("1xBiggest baseline"), "B":_("2xSmallest baseline"),"C":_("2xBiggest baseline"), "D":_("3xSmallest baseline")}, r"\let{0}={0}{1}",  _("Page-full test."),
+                            _("When a (non-title) chunk has finished, the amount of unused space below which diglot will immediately output a page,  rather than trying to fit the next chunk. (irrespective of how short it is). Higher values encourage underfilled pages, but can prevent orphaning of the 1st line of poetry.")),
     "figlocleft":         O("figleft", "PIC", True, None, _("Default Figures Top Left"),
                             _("Default figure positions to top left")),
     "CaptionRefFirst":    O("captreffirst", "PIC", False, None, _("Ref Before Caption"),
@@ -272,6 +282,13 @@ texpertOptions = {
     "RiverOverlap":       O("riveroverlap", "PRV", (0.4, -5, 5, 0.1, 0.1, 1), "", _("River Detection minimum overlap (em)"),
                             _("Minimum overlap in ems required for two spaces above each other to be considered part of the same river")),
 
+    "pbtimeout":          O("pbtimeout", "APF", (100, 0, 1000, 1, 10, 0), None, _("Page fill timeout (mins)"), _("Cancel page filler books that take longer than this many minutes")),
+    "pbJustification":    O("pbjustify", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill justified text cost"), _("Factor to multiply stretching a justified paragraph over a non-justified")),
+    "pbSpacingTol":       O("pbspacingtol", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill expansion cost"), _("Weighting of badness caused by expansion")),
+    "pbShrinkPref":       O("pbshrinkpref", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill longer paragraph cost"), _("Extra cost for making paragraphs longer")),
+    "pbHeadings":         O("pbheadings", "APF", (60, 0, 200, 1, 10, 0), None, _("Page fill heading cost"), _("Factor to pay for adjusting a heading")),
+    "pbLastLine":         O("pblastline", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill last line effect weight"), _("Weighting of last line length effect costs")),
+
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),
     # "AttrMilestoneMatchesUnattr": O("attrmsmatchunattr", "OTH", False, "", _("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*.")),
@@ -284,10 +301,6 @@ texpertOptions = {
     "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2, -10, 50, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"),
                             _("Shift thumbtab text")),
 
-    "pbSpacingTol":       O("pbspacingtol", "OTH", (20, 0, 200, 1, 10, 0), None, _("Badness for expansion"), _("Weighting of badness caused by expansion")),
-    "pbShrinkPref":       O("pbshrinkpref", "OTH", (20, 0, 200, 1, 10, 0), None, _("Longer paragraph cost"), _("Extra cost for making paragraphs longer")),
-    "pbHeadings":         O("pbheadings", "OTH", (60, 0, 200, 1, 10, 0), None, _("Heading cost"), _("Factor to pay for adjusting a heading")),
-    "pbLastLine":         O("pblastline", "OTH", (20, 0, 200, 1, 10, 0), None, _("Last line effect weight"), _("Weighting of last line length effect costs"))
 }                          # (default, lower, upper, stepIncr, pageIncr, decPlaces)
 
 def widgetName(opt):

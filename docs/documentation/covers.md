@@ -20,9 +20,10 @@ any borders and text that has been defined.
 The four elements are defined as sidebars, using the normal sidebar styling options, and their
 contents are defined using `\periph` elements. As sidebars may contain other sidebars, which may themselves have borders, background colours, and so on, the potential designs are quite significant.
 
-The GUI gives access to all of these settings, however the documentation below
-concentrates on the configuration files that it generates.
-
+The GUI gives access to most of these settings, however the documentation below concentrates on the configuration files that it generates.
+## Dimensions
+It's important to understand what measurements are being discussed. It is hoped that this picture helps...
+![ ](/home/david/src/ptx2pdf/docs/documentation/imgs/covers.svg  "Padding and margin measurements")
 
 ## General principles
 The cover-generating macro (\\m@kecover) arranges four sidebars to make the cover:
