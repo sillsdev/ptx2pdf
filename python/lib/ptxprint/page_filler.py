@@ -740,7 +740,7 @@ class GrowList(list):
             self.extend([None] * (index - len(self) + 1))
 
 
-class PTXprinter:
+class PTXFiller:
 
     reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+?)\]\s+ht=([\d.]+?)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
 
@@ -1134,7 +1134,7 @@ class GLibCompatQueue:
         self._mp_queue = state['_mp_queue']
 
 
-class Worker(mp.Process):
+class FillWorker(mp.Process):
 
     def __init__(self, queues, build_params, log_config, nid, stop=False):
         super().__init__()
@@ -1159,7 +1159,7 @@ class Worker(mp.Process):
         logging.info(f"Opened log file {asctime()}")
 
     def run(self):
-        printer = PTXprinter(self.build_params, self.nid, progress_q = self.progress_q)
+        printer = PTXFiller(self.build_params, self.nid, progress_q = self.progress_q)
         printer.timedout = False
         printer.cancelled = False
         stop_monitoring = threading.Event()
@@ -1304,14 +1304,14 @@ class MultiView:
         results_q = self.queues['results_q']
         ce = self.queues.get('cancel_event')
         if self.numproc == 1:
-            worker = Worker(self.queues, self.build_params, self.log_config, None, stop=stop)
+            worker = FillWorker(self.queues, self.build_params, self.log_config, None, stop=stop)
             self.workers = [worker]
             worker.run()
             results = []
             while not results_q.empty():
                 results.append(results_q.get())
         else:
-            workers = [Worker(self.queues, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
+            workers = [FillWorker(self.queues, self.build_params, self.log_config, i, stop=stop) for i in range(self.numproc)]
             self.workers = workers
             for i, w in enumerate(workers):
                 w.start()
