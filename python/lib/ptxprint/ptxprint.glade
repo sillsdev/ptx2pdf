@@ -14244,6 +14244,8 @@ project's Biblical Terms renderings.</property>
       <column type="gboolean"/>
       <!-- column-name Background -->
       <column type="gchararray"/>
+      <!-- column-name Publishable -->
+      <column type="gboolean"/>
     </columns>
     <data>
       <row>
@@ -14251,30 +14253,35 @@ project's Biblical Terms renderings.</property>
         <col id="1">God's Word</col>
         <col id="2">True</col>
         <col id="3" translatable="yes"/>
+        <col id="4">True</col>
       </row>
       <row>
         <col id="0">subtitle</col>
         <col id="1">The New Testament with Psalms and Proverbs</col>
         <col id="2">True</col>
         <col id="3" translatable="yes"/>
+        <col id="4">True</col>
       </row>
       <row>
         <col id="0">copiesprinted</col>
         <col id="1">50</col>
         <col id="2">True</col>
         <col id="3" translatable="yes"/>
+        <col id="4">False</col>
       </row>
       <row>
         <col id="0">languagename</col>
         <col id="1">Wakawaka</col>
         <col id="2">True</col>
         <col id="3" translatable="yes"/>
+        <col id="4">False</col>
       </row>
       <row>
         <col id="0">verseident</col>
         <col id="1" translatable="yes" comments="This is the letter (or abbreviation) for &quot;verse&quot;. So in English we use 'v' to refer to verse; so v16 points us to verse 16 of the (same) chapter. Used in external cross-reference lists, particularly in Strong's list.">v</col>
         <col id="2">True</col>
         <col id="3" translatable="yes"/>
+        <col id="4">False</col>
       </row>
     </data>
   </object>
@@ -37340,6 +37347,20 @@ table of variable names and values.</property>
                                         <property name="show-expanders">False</property>
                                         <child internal-child="selection">
                                           <object class="GtkTreeSelection"/>
+                                        </child>
+                                        <child>
+                                          <object class="GtkTreeViewColumn" id="col_zvar_pub">
+                                            <property name="sizing">fixed</property>
+                                            <property name="title" translatable="yes">Pub</property>
+                                            <child>
+                                              <object class="GtkCellRendererToggle" id="cr_zvar_pub">
+                                                <signal name="toggled" handler="on_zvarPubToggled" swapped="no"/>
+                                              </object>
+                                              <attributes>
+                                                <attribute name="active">4</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
                                         </child>
                                         <child>
                                           <object class="GtkTreeViewColumn" id="col_zvar_name">

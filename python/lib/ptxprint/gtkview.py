@@ -33,7 +33,7 @@ from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpi
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
-            _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates, f2s
+            _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates, f2s, BuildParams
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
 from ptxprint.piclist import Piclist
@@ -55,7 +55,7 @@ from ptxprint.gtkpolyglot import PolyglotSetup
 from ptxprint.report import Report
 from ptxprint.gtktesting import GtkTester
 from ptxprint.printers import init_printers, comparePrinterPrices
-from ptxprint.page_filler import MultiView
+from ptxprint.multiprint import MultiPrint
 from ptxprint.bookProgressDlg import BookProgressDialog
 from ptxprint.wizards.cover.coverwizard import CoverWizardApp
 from ptxprint.wizards.configuration import launchWizard
@@ -246,7 +246,7 @@ fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapte
 tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestionsLang t_txlQuestionsLang
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
 tb_Peripherals bx_ToC c_autoToC t_tocTitle c_frontmatter
-gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value
+gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value col_zvar_pub cr_zvar_pub
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF c_createDiff
 btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
@@ -1200,7 +1200,7 @@ class GtkViewModel(ViewModel):
         tv = self.builder.get_object("tv_zvarEdit")
         tv.connect("key-press-event", self.on_variables_keypress)
 
-        value_col = tv.get_columns()[1]          # or find by title
+        value_col = tv.get_columns()[2]          # or find by title
         renderer = value_col.get_cells()[0]      # usually the CellRendererText
 
         self.var_value_renderer = renderer
@@ -2196,15 +2196,21 @@ class GtkViewModel(ViewModel):
             varlist = self.strongsvarlist
         # elif dest == "sbcats":
             # varlist = self.sbcatlist
+        pub = self.pubvars_publishable.get(k, False)
         for r in varlist:
             if r[0] == k:
                 r[1] = v
                 r[2] = editable
                 if colour is not None:
                     r[3] = colour
+                r[4] = pub
                 break
         else:
-            varlist.append([k, v, editable, colour])
+            varlist.append([k, v, editable, colour, pub])
+
+    def on_zvarPubToggled(self, cr, path):
+        self.pubvarlist[path][4] = not self.pubvarlist[path][4]
+        self.pubvars_publishable[self.pubvarlist[path][0]] = self.pubvarlist[path][4]
 
     def allvars(self, dest=None):
         if dest is None:
@@ -8292,25 +8298,34 @@ Thank you,
 
     def _onFillPagesClicked(self, resume=False):
         self.saveAdjlists()
-        mview = getattr(self, 'mview', None)
-        if mview is not None:
-            for w in getattr(mview, 'workers', []):
-                if w.is_alive():
-                    logger.debug(f"Terminating orphaned worker {w.pid}")
-                    w.terminate()
-                    w.join(timeout=3)
-            mview.teardown()
-            self.mview = None
+        mprint = getattr(self, 'mprint', None)
+        if mprint is not None:
+            self.mprint.terminate()
+        else:
+            numproc = int(self.get("s_maxproc"))
+            if numproc == 0:
+                numproc = 1
+            self.mprint = MultiPrint(numproc=numproc, progress=True)
+
         args = argparse.Namespace(**vars(self.args))
         args.restart = resume
-        tout = float(self.get("s_maxfilltime"))
-        if tout > 0:
-            args.timeout = 60 * tout
-        self.mview = MultiView(self.prjTree, self.userconfig, self.scriptsdir, args=args, odir=self.scriptsdir, view=self, timeout=float(self.get("s_pbtimeout")))
-        numproc = int(self.get("s_maxproc"))
-        if numproc == 0:
-            numproc = 1
-        self.mview.initScheduler(numproc, None, progress=True)
+        tout = float(self.get("s_pbtimeout")) * 60
+        if tout < 1:
+            tout = float(self.get("s_maxfilltime")) * 60
+        build_params = BuildParams(
+                prjtree = self.prjTree,
+                config = self.userconfig,
+                macrosdir = self.scriptsdir,
+                scriptsdir = self.scriptsdir,
+                args = args,
+                restart = resume,
+                pid = self.project.prjid,
+                guid = self.project.guid,
+                cfgid = self.cfgid,
+                timeout = tout,
+                loglevel = getattr(logging, args.logging.upper(), int(args.logging)) if args.logging else None)
+        bks = self.getBooks()
+        self.mprint.submit_fill_jobs(bks, build_params, stop=False)
         # Poll for progress events every 100 ms — simpler and more reliable
         # on Windows than io_add_watch + socketpair.
         if getattr(self, '_progress_watch_id', None) is not None:
@@ -8318,41 +8333,8 @@ Thank you,
         self._progress_watch_id = GLib.timeout_add(1000, self._pollFillProgress)
         if self.bkProgressDlg is None:
             self.bkProgressDlg = BookProgressDialog(self.builder.get_object("dlg_fillProgress"), self)  
-        self.bkProgressDlg.populate(self.getBooks())
+        self.bkProgressDlg.populate(bks)
 
-        self.fillThread = threading.Thread(target=self._fillPages_run, daemon=True)
-        self.fillThread.start()
-
-    def _fillPages_run(self):
-        mview = self.mview
-        try:
-            results = mview.run_all(stop=True)
-        except Exception as e:
-            print(e)
-            mview.teardown()
-            self.mview = None
-            return
-        #logger.debug(f"page fill results: {results}")
-        GLib.idle_add(self._fillPages_finish, results)
-
-    def _fillPages_finish(self, results):
-        self._pollFillProgress()
-        try:
-            GLib.source_remove(self._progress_watch_id)
-        except TypeError:       # self._progress_watch_id can be cleared many places
-            pass
-        self._progress_watch_id = None
-        self.bkProgressDlg.finished()
-        self.mview.teardown()
-        self.mview = None
-        for i, bk in enumerate(self.getBooks()):
-            self.adjlists.pop(bk, None)
-            a = self.get_adjlist(bk, save=False)
-            if i == 0:
-                self.adjView.set_model(a)
-        self.onOK(None)
-        return False            # make idle_add happy to stop it rerunning
-        
     def onResumeFillClicked(self, widget, *a):
         self._onFillPagesClicked(resume=True)
 
@@ -8361,11 +8343,8 @@ Thank you,
 
     def _pollFillProgress(self):
         """GLib.timeout_add callback: drain all pending progress events."""
-        mview = getattr(self, 'mview', None)
-        if mview is None:
-            self._progress_watch_id = None
-            return GLib.SOURCE_REMOVE
-        q = mview.queues.get('progress_q')
+        mprint = getattr(self, 'mprint', None)
+        q = None if mprint is None else mprint.progress_q
         if q is None:
             self._progress_watch_id = None
             return GLib.SOURCE_REMOVE
@@ -8376,11 +8355,23 @@ Thank you,
                     self._fill_progress(event)
         except queue.Empty:
             pass
+
+        if mprint.is_finished():
+            self._progress_watch_id = None
+            self.bkProgressDlg.finished()
+            mprint.teardown()
+            for i, bk in enumerate(self.getBooks()):
+                self.adjlists.pop(bk, None)
+                a = self.get_adjlist(bk, save=False)
+                if i == 0:
+                    self.adjView.set_model(a)
+            self.onOK(None)
+            return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE
 
     def onFillCancelled(self):
-        if self.mview is not None:
-            self.mview.cancel()
+        if self.mprint is not None:
+            self.mprint.cancel()
 
     def _fill_progress(self, event):
         if self.bkProgressDlg is None:
