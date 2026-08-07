@@ -737,11 +737,9 @@
     \fi
     \global\output{\diglot@any@trial}%
     \setbox0\vbox{\unvcopy\galley\unpenalty}%
-    \unvbox0
     \trace{D}{TRIAL! \the\ht\galley+\the\dp\galley}%
     \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
-    \unvcopy\galley
-    \unpenalty
+    \unvbox0
     \traceifset{run@a@trial\the\r@a@trialdepth}%
     \relax
     \penalty\endtri@lpen@lty
