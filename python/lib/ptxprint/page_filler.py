@@ -374,14 +374,14 @@ class TypesetterSolver:
         self.probe_cache: Dict[Tuple[Any, float, int], int] = {}
         self.shape_cache: Dict[Tuple[Any, int], ParamSig] = {}
         self.baseline_lines: Dict[Any, int] = {}
-        self.base_params = {p: (1.0, 0) for p in self.paragraph_order}
+        self.base_params = {p: (expand, 0) for p in self.paragraph_order}
         self.tried = set()
         self.itercount = 0
         self.frozen_paragraphs = set()
         self.noprobe = False
         self.bk = None
-        self.all_probes = [(expand, 0), (expand, -1), (minexp, -1), ((minexp + expand) / 2, -1),
-                (maxexp, 1), ((maxexp + expand) / 2, 1)]
+        self.all_probes = [(expand, -1), (minexp, -1), ((minexp + expand) / 2, -1),
+                (maxexp, 1), ((maxexp + expand) / 2, 1), (expand, 0)]
 
     def solve(self, state, start_page:int=-1, stop:bool=True, restart:bool=False, book=None):
         self.bk = book
@@ -510,7 +510,7 @@ class TypesetterSolver:
 
     def initial_probes(self, state, page, restart=False):
         paragraphs = self.paragraph_order
-        unity = (1.0, 0)
+        unity = (self.expand, 0)
         probes = self.all_probes[:6]
         newstate = state
         layout = state.layout
@@ -602,7 +602,7 @@ class TypesetterSolver:
             first_para = None
         if first_para is not None:
             l = self.hooks.get_lines_for_para_page(first_para, page)
-            if state.paragraph_params.get(first_para, (1.0, 0)) != (1.0, 0):
+            if state.paragraph_params.get(first_para, (self.expand, 0)) != (self.expand, 0):
                 first_para_adj = 1
             elif l == 0:
                 pass
@@ -612,7 +612,7 @@ class TypesetterSolver:
         for (p, d), (e, s) in self.shape_cache.items():
             if p not in pset or d == 0:
                 continue
-            score = self.hooks.design_badness(p, e, s, d)
+            score = self.hooks.design_badness(p, e/self.expand, s, d)
             moves.append((score, p, d))
         moves.sort()
         by_para = {}
@@ -633,7 +633,7 @@ class TypesetterSolver:
         count = 0
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
-                if state.paragraph_params.get(pars, (1.0, 0)) != (1.0, 0):
+                if state.paragraph_params.get(pars, (self.expand, 0)) != (self.expand, 0):
                     continue
                 if count > 100:
                     break
@@ -645,7 +645,7 @@ class TypesetterSolver:
                     # have we done the same net col line change before?
                     col_deltas = [0, 0, 0, 0, 0, 0]
                     # skip if another page has modified this para
-                    if any(self.base_params.get(p, (1.0, 0)) != (1.0, 0) for p in combo.keys()):
+                    if any(self.base_params.get(p, (self.expand, 0)) != (self.expand, 0) for p in combo.keys()):
                         continue
                     for p, d in combo.items():
                         if (p, d) not in self.shape_cache:
@@ -692,6 +692,7 @@ class TypesetterSolver:
         return i
 
     def get_candidate_paragraphs(self, state, page):
+        logger.debug(f"{state.layout.paragraph_pages=}")
         start = max(0, page - 4)
         pars = self.hooks.get_paragraphs_for_pages(page, page, state=state)
         pars.sort(key=self._para_order)
@@ -800,11 +801,11 @@ class PTXFiller:
         try:
             self.minexp = float(self.view.get("s_shrinktextlimit", "95")) / 100
         except ValueError:
-            self.minexp = 0.95
+            self.minexp = 0.95 * self.expand
         try:
             self.maxexp = float(self.view.get("s_maxtextlimit", "105")) / 100
         except ValueError:
-            self.maxexp = 1.05
+            self.maxexp = 1.05 * self.expand
         init_layout = self.hooks.run_layout(None, parms, {}, -1, genfiles=True)
         if init_layout is None:
             return (False, f"Failed: {bk}")
@@ -818,7 +819,7 @@ class PTXFiller:
                 return (False, f"Failed: {bk} No page data")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
-        state = EngineState(parms if restart else {p: (1.0, 0) for p in pids}, [], init_layout, self.parlocs, 0)
+        state = EngineState(parms if restart else {p: (self.expand, 0) for p in pids}, [], init_layout, self.parlocs, 0)
         self.hooks.basestate = state
         starttime = time()
         solver = TypesetterSolver(self.hooks, pids, expand=self.expand, minexp=self.minexp, maxexp=self.maxexp)

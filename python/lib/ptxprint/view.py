@@ -2071,7 +2071,8 @@ class ViewModel:
             cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
-            res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
+            # res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
+            res[v] = bname(v, prjid + "/shared/fonts")
 
         if baseprjid:
             mdir = os.path.join(self.project.path, "shared", "fonts", "mappings")
@@ -2215,7 +2216,9 @@ class ViewModel:
         if for_test:
             if pathlib.Path(fname).parts[1] == 'local':
                 return  # we can exclude the local subdirectory from the test archive
-        if fname not in zf.NameToInfo:      # do what zipfile should do
+        try:
+            zinfo = zf.getinfo(fname)
+        except KeyError:
             zf.write(ifile, fname)
 
     def _archiveAdd(self, zf, books, parent=None, parentcfg=None, xdv=None):

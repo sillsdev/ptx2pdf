@@ -8323,7 +8323,7 @@ Thank you,
                 guid = self.project.guid,
                 cfgid = self.cfgid,
                 timeout = tout,
-                loglevel = getattr(logging, args.logging.upper(), int(args.logging)) if args.logging else None)
+                loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
         bks = self.getBooks()
         self.mprint.submit_fill_jobs(bks, build_params, stop=False)
         # Poll for progress events every 100 ms — simpler and more reliable

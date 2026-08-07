@@ -211,6 +211,7 @@
      \x@\def\x@\tr@gtmp\x@{\tr@gtmp#1}%
    \fi
    \x@\global\x@\let\csname\trign@me\endcsname\tr@gtmp
+   \trace{T}{\trign@me -> \meaning\tr@gtmp}%
 }
 
 \def\r@ntr@g#1\E{\p@sheof\scantokens{#1\noexpand}\p@peof}

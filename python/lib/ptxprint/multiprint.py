@@ -72,8 +72,10 @@ class GLibCompatQueue:
     mp.Queue is passed (see __getstate__ / __setstate__).
     """
 
-    def __init__(self):
-        self._mp_queue = mp.Queue()
+    def __init__(self, ctx=None):
+        if ctx is None:
+            ctx = mp
+        self._mp_queue = ctx.Queue()
 
     def put(self, item):
         """Called by worker processes (or main process for single-book jobs)."""
@@ -217,9 +219,10 @@ class MultiPrint:
     """Multiprocessing scheduler managing job dispatching across worker processes."""
 
     def __init__(self, numproc: Optional[int] = None, progress: bool = False):
+        self.ctx = mp.get_context('spawn')
         self.numproc = numproc or max(1, mp.cpu_count() - 2)
-        self.progress_q = GLibCompatQueue() if progress else None
-        self.cancel_event = mp.Value('b', False)
+        self.progress_q = GLibCompatQueue(self.ctx) if progress else None
+        self.cancel_event = self.ctx.Value('b', False)
 
         self.executor: Optional[ProcessPoolExecutor] = None
         self.pending_futures: dict[Future, Job] = {}
@@ -228,6 +231,7 @@ class MultiPrint:
         """Start the worker pool."""
         self.cancel_event.value = False
         self.executor = ProcessPoolExecutor(
+            mp_context=self.ctx,
             max_workers=self.numproc,
             initializer=_init_worker,
             initargs=(self.progress_q, self.cancel_event)
