@@ -131,6 +131,7 @@ class ViewModel:
         self.triggervcs = False
         self.copyrightInfo = None
         self.pubvars = {}
+        self.pubvars_publishable = {}
         self.strongsvars = {}
         self.font2baselineRatio = 1.
         self.docreatediff = False
@@ -1043,6 +1044,8 @@ class ViewModel:
                 self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
         for k in self.allvars():
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
+            if self.pubvars_publishable.get(k, False):
+                self._configset(config, f"vars.publishable/{k}", True, update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
         # for attribute, value in vars(self.polyglots).items():
@@ -1408,6 +1411,18 @@ class ViewModel:
             if clearvars:
                 self.clearvars()
         varcolour = "#FFDAB9" if not clearvars else None
+        # set publishable category first so when we read the var we can also set the publishable
+        if categories is None or 'variables' in categories:
+            sect = "vars.publishable"
+            onlist = ("maintitle", "subtitle")
+            if config.has_section(sect):
+                for opt in config.options(sect):
+                    default = opt in onlist
+                    val = config.getboolean(sect, opt, fallback=default)
+                    self.pubvars_publishable[opt] = val
+            else:
+                for k in onlist:
+                    self.pubvars_publishable[k] = True
         for sect in config.sections():
             for opt in config.options(sect):
                 editableOverride = len(opt) != len(opt.strip("*"))
@@ -2056,7 +2071,8 @@ class ViewModel:
             cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
-            res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
+            # res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
+            res[v] = bname(v, prjid + "/shared/fonts")
 
         if baseprjid:
             mdir = os.path.join(self.project.path, "shared", "fonts", "mappings")
@@ -2200,7 +2216,9 @@ class ViewModel:
         if for_test:
             if pathlib.Path(fname).parts[1] == 'local':
                 return  # we can exclude the local subdirectory from the test archive
-        if fname not in zf.NameToInfo:      # do what zipfile should do
+        try:
+            zinfo = zf.getinfo(fname)
+        except KeyError:
             zf.write(ifile, fname)
 
     def _archiveAdd(self, zf, books, parent=None, parentcfg=None, xdv=None):

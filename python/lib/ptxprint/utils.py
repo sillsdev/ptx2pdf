@@ -11,6 +11,8 @@ from ptxprint.changes import runChanges as crunChanges
 from shutil import copy2
 from inspect import currentframe
 from struct import unpack
+from dataclasses import dataclass
+from typing import Any, Optional
 import contextlib, pickle, gzip
 import regex
 import threading
@@ -136,6 +138,21 @@ chgsHeader = """# This (changes.txt) file is for configuration-specific changes 
 # More generic project-wide changes can be specified in PrintDraftChanges.txt.
 include "../../../PrintDraftChanges.txt"
 """
+
+@dataclass
+class BuildParams:
+    prjtree: Any
+    config: Any
+    macrosdir: str
+    args: Any
+    restart: bool
+    pid: str
+    guid: str
+    cfgid: str
+    scriptsdir: str
+    timeout: Optional[int]
+    loglevel: Optional[int]
+
 
 _ = gettext.gettext
 __file__ = os.path.abspath(__file__)
