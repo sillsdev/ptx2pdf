@@ -1512,6 +1512,7 @@
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\xdef\c@rrdstat{#1}%
+ \xdef\ds@ffix{#1}%
  \ifx\c@rrdstat\empty
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
@@ -1521,7 +1522,7 @@
 }
 \def\usediglot#1{\xdef\c@rrdstat{#1}}
 
-\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}}% Restore to correct value for new text. Mainly for use in Collect
+\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}\xdef\ds@ffix{\f@lwgdstat}}% Restore to correct value for new text. Mainly for use in Collect
 
 \def\diglotLtrue{%
   \oldboole@n{L}{diglotLtrue}%

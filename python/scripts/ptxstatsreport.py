@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 from math import log10
 from simpleapp import *
