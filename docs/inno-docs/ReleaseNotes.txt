@@ -1,8 +1,30 @@
-PTXprint 3.0.37 Release Notes
-23 Jul 2026
+PTXprint 3.0.38 Release Notes
+14 Aug 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.38 - (14 Aug 2026)
+
+  * Diglot
+    - Add diglot settings to pdf
+    - Fix centering of diglot header page numbers (#1243)
+    - Fix diglots where secondaries were stuck with primary's linespacing
+
+  * Multiprint / Page Filler
+    - Refactor multiview into multiprint, to allow printing multiple jobs at once, with publication-controlled toggle
+    - Rename internal page_filler classes ready for general multiprint support
+    - Further page_filler fixes to keep final output consistent; add fonts to archives in shared/fonts
+
+  * Lists
+    - Add support for custom Lists (e.g. List of Measurements/Prayers) via \DefineListOf, \zlistentry and \ztoc (#534)
+
+  * Other
+    - Refactor picture reading to be much quicker (was causing slow startup/switching)
+    - Fix Table of Contents regression
+    - Fix tex GridLines code for odd orders
+    - Protect triggers against active characters (names from \k may include active characters)
+    - Move poetry hanging indent out to ptx-ptxprint.tex
 
 Bug fixes and Improvements in 3.0.37 - (23 Jul 2026)
   * Don't output cropmarks for covers with no spine
@@ -12,7 +34,7 @@ Bug fixes and Improvements in 3.0.37 - (23 Jul 2026)
   * Make some versions of python happy
 
 Bug fixes and Improvements in 3.0.36 - (22 Jul 2026)
-  - Fix installer: remove old font folders before copying new files into place
+  * Fix installer: remove old font folders before copying new files into place
 
 Bug fixes and Improvements in 3.0.35 - (21 Jul 2026)
 
