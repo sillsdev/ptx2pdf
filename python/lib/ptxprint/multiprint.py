@@ -192,6 +192,7 @@ class WorkerContext:
             else:
                 res = printer.solve(job.books, cfgid_override=job.cfgid)
         except Exception as e:
+            print(f"Exception {job.books[0]}: {e}")
             logger.debug(f"Unhandled error during {job.action} for {target_id}: {e}\n{f_('Traceback: ')}")
             if watchdog:
                 watchdog.cancel()

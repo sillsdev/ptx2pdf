@@ -808,14 +808,17 @@ class PTXFiller:
             self.maxexp = 1.05 * self.expand
         init_layout = self.hooks.run_layout(None, parms, {}, -1, genfiles=True)
         if init_layout is None:
+            printbk(bk, "!")
             return (False, f"Failed: {bk}")
         if restart and init_layout.first_failing_page is None:
             np = self.parlocs.numPages()
             if np > 0:
                 self.progress(ProgressEvent(bk, np, "already_filled", total=np))
+                printbk(bk, "\u2713")
                 return (True, f"Complete {bk} Already good")
             else:
                 self.progress(ProgressEvent(bk, 0, "failed", msg="No page data"))
+                printbk(bk, "x")
                 return (False, f"Failed: {bk} No page data")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
@@ -842,8 +845,10 @@ class PTXFiller:
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
             self.progress(ProgressEvent(bk, res.page, 'failed', res.message, -1))
+            printbk(bk, "T")
         else:
             retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
+            printbk(bk, "Y")
         return retval
         
     def createAdjs(self, parparms, solver):

@@ -961,7 +961,7 @@ class ViewModel:
                 # except (OSError, PermissionError):
                     # pass
         if forcerewrite:
-            self.writeConfig(cfgname=cfgname, force=forcerewrite, diff=None)
+            self.writeConfig(cfgname=cfgname, force=forcerewrite)
         return oldversion
 
     def writeConfig(self, cfgname=None, force=False, diff=None):

@@ -180,11 +180,11 @@
 \def\fnname{}
 \newcount\t@ccount %unique count, as there are \globals around.
 \def\@TOCcolumn#1{%
-  \def\t@mpa{#1}%
+  \edef\t@mpa{#1}%
   \ifx\t@mpa\empty\else
     \trace{t}{A: \t@mpd \space \t@mpa}%
     \ifx\int@c\empty\else\msg{TOC[\int@c ] col \the\t@ccount \space \t@mpd}\fi
-    \csname \t@mpd\endcsname \t@mpa
+    \x@\csname \x@\t@mpd\x@\endcsname \t@mpa
     \ifcsname \tcb@se{\the\t@ccount}:fill\endcsname\else\d@ftoc{\the\t@ccount}{fill}{\hfill}\fi
     \ifcsname \tcb@se{\the\t@ccount}:verticalalign\endcsname\else\d@ftoc{\the\t@ccount}{verticalalign}{b}\fi
     \ifcsname \tcb@se{\the\t@ccount}:rightmargin\endcsname\else\d@ftoc{\the\t@ccount}{rightmargin}{0}\fi
