@@ -46,14 +46,17 @@ class ViewPrinter:
         )
         runjob.nothreads = True
         runjob.silent = True
-        return runjob.doit(noview=True, noaction=False)
+        res = runjob.doit(noview=True, noaction=False)
+        if self.build_params.resultfn is not None:
+            res = self.build_params.resultfn(self.view)
+        return res
 
 
 @dataclass
 class Job:
     action: str                       # 'fill' or 'print'
     books: list[str]                  # List of book IDs
-    build_params: Any                 # BuildParams object
+    build_params: BuildParams         # BuildParams object
     log_config: Optional[dict] = None
     stop: bool = False
     cfgid: Optional[str] = None
@@ -136,6 +139,9 @@ class WorkerContext:
             else:
                 raise ValueError(f"Unknown job action: {job.action}")
             self.last_job = job
+        # always set up the view even if same as before
+        if job.action == 'print' and job.build_params.setupfn is not None:
+            job.build_params.setupfn(self.current_printer.view, job.build_params.setup_args)
 
         return self.current_printer
 
@@ -186,6 +192,7 @@ class WorkerContext:
             else:
                 res = printer.solve(job.books, cfgid_override=job.cfgid)
         except Exception as e:
+            print(f"Exception {job.books[0]}: {e}")
             logger.debug(f"Unhandled error during {job.action} for {target_id}: {e}\n{f_('Traceback: ')}")
             if watchdog:
                 watchdog.cancel()
@@ -237,7 +244,7 @@ class MultiPrint:
             initargs=(self.progress_q, self.cancel_event)
         )
 
-    def submit_fill_jobs(self, books: list[str], build_params: Any, log_config: Optional[dict] = None, stop: bool = False):
+    def submit_fill_jobs(self, books: list[str], build_params: BuildParams, log_config: Optional[dict] = None, stop: bool = False):
         """Enqueues fill jobs (sorted longest-first) in non-blocking fashion."""
         if not self.executor:
             self.start()
@@ -249,7 +256,7 @@ class MultiPrint:
             fut = self.executor.submit(_worker_dispatch, job)
             self.pending_futures[fut] = job
 
-    def submit_print_job(self, books: list[str], build_params: Any, cfgid: Optional[str] = None, log_config: Optional[dict] = None) -> Future:
+    def submit_print_job(self, books: list[str], build_params: BuildParams, cfgid: Optional[str] = None, log_config: Optional[dict] = None) -> Future:
         """Enqueues a print job and returns the Future handle immediately."""
         if not self.executor:
             self.start()

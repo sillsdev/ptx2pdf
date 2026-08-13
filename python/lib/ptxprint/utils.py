@@ -11,8 +11,8 @@ from ptxprint.changes import runChanges as crunChanges
 from shutil import copy2
 from inspect import currentframe
 from struct import unpack
-from dataclasses import dataclass
-from typing import Any, Optional
+from dataclasses import dataclass, field
+from typing import Any, Optional, Callable
 import contextlib, pickle, gzip
 import regex
 import threading
@@ -152,6 +152,9 @@ class BuildParams:
     scriptsdir: str
     timeout: Optional[int]
     loglevel: Optional[int]
+    setupfn: Optional[Callable] = None
+    setupargs: Optional[Any] = field(default=None, compare=False)
+    resultfn: Optional[Callable] = None
 
 
 _ = gettext.gettext
