@@ -520,11 +520,10 @@ class PicList:
         wfactor = 0.5 if row[_pickeys['size']] == 'col' and self.parent.get("c_doublecolumn") else 1
         scale = row[_pickeys['scale']] / 100.
         a = row[_pickeys['anchor']]
-        pbuf, fname = self._getpixbuf(row[_pickeys['src']], a, nolimit=True)
-        if pbuf is None:
+        fpath = self._getpixbuf_file(row[_pickeys['src']], a)
+        if fpath is None or not os.path.exists(fpath):
             return "#808080"
-        imwidth = pbuf.get_width()
-        imheight = pbuf.get_height()
+        iformat, imwidth, imheight = GdkPixbuf.Pixbuf.get_file_info(fpath)
         wscale = imwidth / (pwidth * wfactor)
         height = scale * imheight / wscale
         return "#FF0000" if height > mheight else "#000000"
@@ -584,7 +583,7 @@ class PicList:
             pic.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
 
-    def _getpixbuf(self, src, anchor, nolimit=False):
+    def _getpixbuf_file(self, src, anchor):
         fpath = None
         if self.picinfo is None:
             return None, None
@@ -594,6 +593,10 @@ class PicList:
         dat = self.picinfo.getFigureSources(data=[{'src': src}], key='path', mode=self.picinfo.mode, lowres=True)
         fpath = dat[0].get('path', None)
         res = (None, fpath)
+        return fpath
+
+    def _getpixbuf(self, src, anchor, nolimit=False):
+        fpath = self._getpixbuf_file(src, anchor)
         if fpath is not None and os.path.exists(fpath):
             if nolimit:
                 try:
@@ -612,7 +615,7 @@ class PicList:
                 else:
                     pixbuf = None
             res = (pixbuf, fpath)
-        logger.debug(f"Figure Path={fpath}, {dat[0]}, {res=}")
+        logger.debug(f"Figure Path={fpath}, {res=}")
         return res
 
     def _updatePreview(self, currow):
