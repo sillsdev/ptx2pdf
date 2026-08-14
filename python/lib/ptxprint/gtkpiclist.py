@@ -513,7 +513,7 @@ class PicList:
         widget.set_tooltip_row(tooltip, path)
         return True
 
-    def calc_scale_colour(self, row):
+    def calc_scale_colour(self, row, force=False):
         k = row[_pickeys['key']]
         p = self.picinfo.get(k, {})
         pwidth, pheight = self.parent.calcPageSize()
@@ -521,7 +521,7 @@ class PicList:
         mheight = ffactor * pheight
         wfactor = 0.5 if row[_pickeys['size']] == 'col' and self.parent.get("c_doublecolumn") else 1
         scale = row[_pickeys['scale']] / 100.
-        if 'aspect' in p:
+        if not force and 'aspect' in p:
             aspect = float(p['aspect']) / 100.
         else:
             a = row[_pickeys['anchor']]
@@ -565,6 +565,7 @@ class PicList:
             if key == "src":
                 if i == 0:
                     self._updatePreview(currow)
+                self.calc_scale_colour(currow, force=True)
                 self.parent.updatePicChecks(val)       # only update checks if src exists
                 self.mask_media(currow)
                 if True: # val != oldval: # New source implies new destination file
