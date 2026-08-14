@@ -514,18 +514,26 @@ class PicList:
         return True
 
     def calc_scale_colour(self, row):
+        k = row[_pickeys['key']]
+        p = self.picinfo.get(k, {})
         pwidth, pheight = self.parent.calcPageSize()
         ffactor = float(self.parent.get("s_pagefullfactor", 1.0))
         mheight = ffactor * pheight
         wfactor = 0.5 if row[_pickeys['size']] == 'col' and self.parent.get("c_doublecolumn") else 1
         scale = row[_pickeys['scale']] / 100.
-        a = row[_pickeys['anchor']]
-        fpath = self._getpixbuf_file(row[_pickeys['src']], a)
-        if fpath is None or not os.path.exists(fpath):
-            return "#808080"
-        iformat, imwidth, imheight = GdkPixbuf.Pixbuf.get_file_info(fpath)
-        wscale = imwidth / (pwidth * wfactor)
-        height = scale * imheight / wscale
+        if 'aspect' in p:
+            aspect = float(p['aspect']) / 100.
+        else:
+            a = row[_pickeys['anchor']]
+            fpath = self._getpixbuf_file(row[_pickeys['src']], a)
+            if fpath is None or not os.path.exists(fpath):
+                return "#808080"
+            logger.debug(f"{fpath} measuring")
+            iformat, imwidth, imheight = GdkPixbuf.Pixbuf.get_file_info(fpath)
+            aspect = imheight / imwidth
+            p['aspect'] = str(int(aspect * 100))
+            logger.debug(f"{fpath}: {aspect}")
+        height = scale * pwidth * wfactor * aspect
         return "#FF0000" if height > mheight else "#000000"
 
     def onPicframeSize(self, widget, allocation):
@@ -592,7 +600,6 @@ class PicList:
             p.clear_src_paths()
         dat = self.picinfo.getFigureSources(data=[{'src': src}], key='path', mode=self.picinfo.mode, lowres=True)
         fpath = dat[0].get('path', None)
-        res = (None, fpath)
         return fpath
 
     def _getpixbuf(self, src, anchor, nolimit=False):
