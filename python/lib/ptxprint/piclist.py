@@ -262,7 +262,8 @@ class Picture:
         if usedest:
             p3p = ["destfile"] + pos3parms[1:]
         else:
-            p3p = pos3parms
+            p3p = pos3parms[:]
+        p3p.append("aspect")
         mediaval = self.get('media', None)
         if (mediaval is None or mediaval == '') and picMedia is not None:
             mediaval = picMedia(self.get('src', ""))[0]
@@ -291,7 +292,7 @@ class Picture:
                 val = creditbox[_creditcomps[x]]
             if not val:
                 continue
-            line.append('{}="{}"'.format(pos3parms[i], val))
+            line.append('{}="{}"'.format(pos3parms[i] if i < len(pos3parms) else p3p[i], val))
         return (outk, self.get('caption', ''), " ".join(line))
 
     def anchor_matches(self, src, bk=None):
