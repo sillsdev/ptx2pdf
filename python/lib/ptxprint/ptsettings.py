@@ -13,7 +13,7 @@ ptrefsepvals = {
     'cvsep': 'ChapterVerseSeparator',
     'rangemk': 'RangeIndicator',
     'chaprange': 'ChapterRangeSeparator',
-    'bookcsep': 'BookChapterSeparator'
+    'bookcsep': 'BookChapterSeparator',
 }
 
 _versifications = ["", "", "lxx", "vul", "eng", "rsc", "rso"]    # 0=unk, 1=org
@@ -48,7 +48,7 @@ class ParatextSettings:
             if os.path.exists(path):
                 doc = et.parse(path)
                 for c in doc.getroot():
-                    self.dict[c.tag] = c.text
+                    self.dict[c.tag] = c.text or ""
                 self.calcbookspresent()
                 self.read_ldml()
                 break
@@ -136,8 +136,7 @@ class ParatextSettings:
                     if s[i] == " ":
                         break
                     bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
-        if len(bkstrs):
-            self.bkNames = {k:v for k,v in bkstrs.items() if v != ""}
+        self.bkNames = {k:v for k,v in bkstrs.items() if v != ""}
 
     def default_bookNames(self):
         self.bkNames = {k: k for k, v in chaps.items() if 0 < int(v) < 999}
@@ -186,8 +185,8 @@ class ParatextSettings:
                 s = min(bki, numi)
                 e = max(bki+3, numi+2)
                 (pre, main, post) = f[:s], f[s:e], f[e:]
-                self.dict['FileNamePrePart'] = pre
-                self.dict['FileNamePostPart'] = post
+                self.dict['FileNamePrePart'] = pre or ""
+                self.dict['FileNamePostPart'] = post or ""
                 main = main[:numi-s] + "41" + main[numi-s+2:]
                 main = main[:bki-s] + "MAT" + main[bki-s+3:]
                 self.dict['FileNameBookNameForm'] = main

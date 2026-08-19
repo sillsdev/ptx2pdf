@@ -1,7 +1,7 @@
 from gi.repository import Gtk, Gdk
 from ptxprint.utils import _
 
-headers = ['Book', 'C.V', 'Para', 'Stretch', 'Marker', 'Expand', 'Comment']
+headers = ['Book', 'C.V', 'Para', 'Stretch', 'Marker', 'Expand', 'Parameters', 'Comment']
 
 class AdjListView:
     def __init__(self, parent):
@@ -16,7 +16,7 @@ class AdjListView:
         self.view.connect("button-press-event", self.on_right_click)
         self.view.connect("key-press-event", self.on_key_press)
 
-        for i in range(7):
+        for i in range(len(headers)):
             cr = Gtk.CellRendererText(editable=True)
             cr.connect("edited", self.edit, i)
             col = Gtk.TreeViewColumn(cell_renderer=cr, text=i, title=headers[i])

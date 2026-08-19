@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PTXprint Wizard Question Tree (v2)",
+  "type": "object",
+  "required": ["version", "pages"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {"type": "integer", "enum": [2]},
+    "pages": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/page"},
+      "minItems": 1
+    }
+  },
+  "definitions": {
+    "page": {
+      "type": "object",
+      "required": ["id", "step", "titleString", "tooltipString", "questions"],
+      "additionalProperties": true,
+      "properties": {
+        "id":           {"type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9]*$"},
+        "step":         {"type": "string", "enum": ["intent", "production", "layout"]},
+        "titleString":  {"type": "string", "minLength": 1},
+        "helpString":   {"type": "string"},
+        "tooltipString":{"type": "string"},
+        "showIf":       {"oneOf": [{"type": "null"}, {"$ref": "#/definitions/condition"}]},
+        "staticPanel":  {"oneOf": [{"type": "null"}, {"type": "string"}]},
+        "questions": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/question"},
+          "minItems": 1
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "required": ["id", "type", "label", "required"],
+      "additionalProperties": true,
+      "properties": {
+        "id":            {"type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9]*$"},
+        "type":          {"type": "string", "enum": ["singleSelect", "multiSelect", "notchedSlider", "centredSlider", "dropdownDual"]},
+        "label":         {"type": "string"},
+        "help":          {"type": "string"},
+        "translatorNote":{"type": "string"},
+        "required":      {"type": "boolean"},
+        "showIf":        {"oneOf": [{"type": "null"}, {"$ref": "#/definitions/condition"}]},
+        "affects":       {"type": "array", "items": {"type": "string"}},
+        "options":       {"type": "array", "items": {"$ref": "#/definitions/option"}},
+        "rankBy": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["answers", "promote"],
+            "properties": {
+              "answers": {"type": "object"},
+              "promote": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        "maxSelections": {"type": "integer", "minimum": 1},
+        "notches":       {"type": "array", "items": {"type": "number"}},
+        "notchLabels":   {"type": "array", "items": {"type": "string"}},
+        "leftLabel":     {"type": "string"},
+        "centreLabel":   {"type": "string"},
+        "rightLabel":    {"type": "string"},
+        "default":       {}
+      }
+    },
+    "option": {
+      "type": "object",
+      "required": ["id", "label", "description"],
+      "additionalProperties": true,
+      "properties": {
+        "id":          {"type": "string"},
+        "label":       {"type": "string"},
+        "rangeLabel":  {"type": "string"},
+        "description": {"type": "string"},
+        "pros":        {"type": "array", "items": {"type": "string"}},
+        "cons":        {"type": "array", "items": {"type": "string"}},
+        "showOnlyIf":  {"$ref": "#/definitions/condition"},
+        "recommendIf": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["level", "when"],
+            "properties": {
+              "level":  {"type": "string", "enum": ["recommended", "notOptimal", "notAdvised"]},
+              "when":   {"$ref": "#/definitions/condition"},
+              "reason": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "answers": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {"type": "string"},
+              {"type": "boolean"},
+              {"type": "number"},
+              {"type": "null"},
+              {
+                "type": "object",
+                "properties": {
+                  "gt":       {"type": "number"},
+                  "lt":       {"type": "number"},
+                  "gte":      {"type": "number"},
+                  "lte":      {"type": "number"},
+                  "between":  {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+                  "in":       {"type": "array"},
+                  "contains": {"type": "string"}
+                }
+              }
+            ]
+          }
+        },
+        "not":   {},
+        "anyOf": {"type": "array"},
+        "allOf": {"type": "array"}
+      }
+    }
+  }
+}

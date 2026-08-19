@@ -1,0 +1,41 @@
+# BT changes - RIGHT
+include "../../../PrintDraftChanges.txt"
+at INT "Sotpela nem" > "Sotpela//nem"
+at INT "Pasin bilong Gutpela Sindaun" > "Pasin bilong// Gutpela Sindaun"
+at INT "Saveman i autim tingting bilong en o Eklisiastis " > "Saveman i autim tingting bilong en// o Eklisiastis "
+# Use styles to stretch or shrink paragraphs by shinking or growing a paragraph by a percentage
+#at 1PE 1.0 "\\p" > "\\p^95"
+# at 2PE 1.10 "\\p" > "\\p^95"
+
+#Below is an obsolute method using different styles
+# Shrink or grow text
+#at LUK 2:21,6:8 "\\p" > "\\p_93"
+#at JAS 1.21 "\\p" > "\\p_95 
+#at JHN 7:27; JHN 7:36; GAL 5:12; 1JN 3:3,20 "\\p" > "\\p_105"
+#at 2JN "\\ip Jon i" > "\\ip_101 Jon i"
+
+# Vertically squeeze text
+#at LUK 7:19; JHN 3:14, 12:43; 1JN 3:10 "\\p" > "\\p_99" # squeezes vertically
+
+#at LUK 2:1-4 "\\v 4 " > "\\m\n\\v 4 "
+
+# Temporary hack for thumbtabs until PTXPrint gets fixed. Turn next line on or off. Must be "off" in aArpBT, on in aArp.
+# "\\toc3 " > "\\zthumbtab "
+
+#When we  want shaded sidebars for the intro, turn on the following two lines. On 2022-11-28, not working in diglots. 
+# To stop the intro disappearing altogether, turn on esb's on the Notes & Refs page. 
+#"(\\imt1 )" > "\\esb \\cat intro\\cat*\n\1"
+#"(\\c 1[\s\r\n]+)" > "\\esbe\n\1"  
+# at 1TH; ACT; 3JN "(\\c 1[\s\r\n]+)" >"\\pb\n\1"
+
+# Place GLO cross-references in parentheses
+# Disabled because parentheses are now in the text itself.
+# at GLO "\\xt " > "\\xt ("
+# at GLO "\\xt\*" > ")\\xt*"
+
+# This replaces the \p with \li only in the GLO book. 
+at GLO "\\p \\k " > "\\li \\k "
+at GLO "\\p " > "\\pi "
+at GLO in '\\fig.*?\\fig\*': '\\ref="\d+\.\d+"' >''
+
+# "(\\[a-z0-9]+)_([0-9]+)" > "\1^\2"

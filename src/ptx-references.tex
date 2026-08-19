@@ -263,35 +263,43 @@
 	\ifx\RFtitleevenleft\undefined\let\RF@left\RFtitleleft\else\let\RF@left\RFtitleevenleft\fi
 	\ifx\RFtitleevenright\undefined\let\RF@right\RFtitleright\else\let\RF@center\RFtitleevenright\fi
 	\ifx\RFtitleevencenter\undefined\let\RF@center\RFtitlecenter\else\let\RF@center\RFtitleevencenter\fi
+        \let\ctr@ffset\relax
+        \ifdiglot\c@lcctr@offset\fi
 }
 \def\RF@odd@set{%
 	\ifx\RFtitleoddleft\undefined\let\RF@left\RFtitleleft\else\let\RF@left\RFtitleoddleft\fi
 	\ifx\RFtitleoddright\undefined\let\RF@right\RFtitleright\else\let\RF@right\RFtitleoddright\fi
 	\ifx\RFtitleoddcenter\undefined\let\RF@center\RFtitlecenter\else\let\RF@center\RFtitleoddcenter\fi
+        \let\ctr@ffset\relax
+        \ifdiglot\c@lcctr@offset\fi
 }
 \def\RH@even@set{%
 	\ifx\RHtitleevenleft\undefined\let\RH@left\RHtitleleft\else\let\RH@left\RHtitleevenleft\fi
 	\ifx\RHtitleevenright\undefined\let\RH@right\RHtitleright\else\let\RH@center\RHtitleevenright\fi
 	\ifx\RHtitleevencenter\undefined\let\RH@center\RHtitlecenter\else\let\RH@center\RHtitleevencenter\fi
+        \let\ctr@ffset\relax
+        \ifdiglot\c@lcctr@offset\fi
 }
 \def\RH@odd@set{%
 	\ifx\RHtitleoddleft\undefined\let\RH@left\RHtitleleft\else\let\RH@left\RHtitleoddleft\fi
 	\ifx\RHtitleoddright\undefined\let\RH@right\RHtitleright\else\let\RH@right\RHtitleoddright\fi
 	\ifx\RHtitleoddcenter\undefined\let\RH@center\RHtitlecenter\else\let\RH@center\RHtitleoddcenter\fi
+        \let\ctr@ffset\relax
+        \ifdiglot\c@lcctr@offset\fi
 }
 
 \def\sethe@ddbl#1#2#3#4{%
-  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\hbox{\csname #4#1#2left\endcsname}}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\csname #4#1#2center\endcsname\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\hbox{\csname #4#1#2right\endcsname}}\rshiftc@lumn{\ifRTL 0\else 1\fi}}%
+  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\hbox{\csname #4#1#2left\endcsname}}\hfil\rshiftc@l@mn{\ifRTL 1\else 0\fi}\ctr@ffset{\csname #4#1#2center\endcsname}\lshiftc@l@mn{\ifRTL 0\else 1\fi}\hfil\llap{\hbox{\csname #4#1#2right\endcsname}}\rshiftc@lumn{\ifRTL 0\else 1\fi}}%
 }
 
 \def\sethe@dsgl#1#2#3#4{%
-  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\the\pageno}\rlap{\hbox{\csname #4#1#2left\endcsname}}\hfil\csname #4#1#2center\endcsname\hfil\llap{\hbox{\csname #4#1#2right\endcsname}}\rshiftc@lumn{\the\pageno}}%
+  \csname #1#2#3\endcsname={\csname #4@#2@set\endcsname\lshiftc@lumn{\the\pageno}\rlap{\hbox{\csname #4#1#2left\endcsname}}\hfil\ctr@ffset{\csname #4#1#2center\endcsname}\hfil\llap{\hbox{\csname #4#1#2right\endcsname}}\rshiftc@lumn{\the\pageno}}%
 }
 \def\@sethe@d#1{\edef\tmp{#1}%
   \expandafter\@@sethe@d\tmp\relax\relax\relax}
 
 \def\defineheads{
-  \trace{M}{Defining heads for \mainBodyColumns \space columns}%
+  \trace{h}{Defining heads for \mainBodyColumns \space columns}%
   \ifnum\mainBodyColumns=2
     \let\@@sethe@d\sethe@ddbl
   \else

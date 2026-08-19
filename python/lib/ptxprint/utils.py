@@ -1,14 +1,21 @@
 import gettext
 import locale, codecs, traceback
 import os, sys, re, pathlib, zipfile
+if sys.platform.startswith("win"):
+    import winreg, ctypes
+    from ctypes import wintypes
 import xml.etree.ElementTree as et
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
+from ptxprint.changes import runChanges as crunChanges
 from shutil import copy2
 from inspect import currentframe
 from struct import unpack
+from dataclasses import dataclass, field
+from typing import Any, Optional, Callable
 import contextlib, pickle, gzip
 import regex
+import threading
 from subprocess import check_output, call
 import logging
 
@@ -132,6 +139,24 @@ chgsHeader = """# This (changes.txt) file is for configuration-specific changes 
 include "../../../PrintDraftChanges.txt"
 """
 
+@dataclass
+class BuildParams:
+    prjtree: Any
+    config: Any
+    macrosdir: str
+    args: Any
+    restart: bool
+    pid: str
+    guid: str
+    cfgid: str
+    scriptsdir: str
+    timeout: Optional[int]
+    loglevel: Optional[int]
+    setupfn: Optional[Callable] = None
+    setupargs: Optional[Any] = field(default=None, compare=False)
+    resultfn: Optional[Callable] = None
+
+
 _ = gettext.gettext
 __file__ = os.path.abspath(__file__)
 
@@ -139,7 +164,7 @@ lang = None
 
 def setup_i18n(i18nlang):
     global lang    
-    localedir = os.path.join(getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__))), "mo")
+    localedir = pycodedir("mo")
     if i18nlang is not None:
         os.environ["LANG"] = i18nlang
         lang = i18nlang
@@ -205,7 +230,7 @@ def getcaller(count=0):
 def refKey(r, info=""):
     """ Returns (bknum, chap, versenum, book/glot, info, verseextra, extras) """
     # bk, glot, c, v, postv, extras
-    m = re.match(r"^(\d\D\D|\D{3})?([A-Z]?)\s*(\d*)[.:]?(\d*)(\S*?)(\s+.*)?$", r)
+    m = re.match(r"^(\d\D\D|\D{3})?([A-Z]?)\s*(\d*)[.:]?(\d*)([^\s.]*?)\.?(\s+.*)?$", r)
     if m:
         bkid = m.group(1) or ""
         return (books.get(bkid[:3], 99)+1, int(m.group(3) or 0), int(m.group(4) or 0), m.group(2), info, m.group(5), m.group(6) or "")
@@ -367,7 +392,8 @@ def getPDFconfig(fname):
     return None
 
 if sys.platform.startswith("win"):
-    import winreg
+    import winreg, ctypes
+    kernel32 = ctypes.windll.kernel32
 
     def openkey(path):
         try:
@@ -378,6 +404,13 @@ if sys.platform.startswith("win"):
 
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
+
+    def attach_console():
+        if kernel32.AttachConsole(-1):
+            sys.stdout = open("CONOUT$", "w", buffering=1)
+            sys.stderr = open("CONOUT$", "w", buffering=1)
+            return True
+        return False
 else:
     def openkey(path, doError=None):
         basepath = os.path.expanduser("~/.config/paratext/registry/LocalMachine/software")
@@ -394,16 +427,23 @@ else:
         else:
             return res.text
 
+    def attach_console():
+        return False
+
 def saferelpath(p, r="."):
     if p is None or not len(str(p)):
         return p
     try:
-        return os.path.relpath(p, r)
+        res = os.path.relpath(p, r)
     except ValueError:      # different drives on Windows
         return p
+    return res.rstrip("/")
 
-def pycodedir():
-    return os.path.abspath(os.path.dirname(__file__))
+def pycodedir(*subdirs):
+    logger.debug(f"pycodedir {subdirs}")
+    if getattr(sys, 'frozen', False):
+        return os.path.join(sys._MEIPASS, 'ptxprint', *subdirs)
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), *subdirs))
 
 def pt_bindir():
     basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
@@ -414,42 +454,87 @@ def pt_bindir():
     logger.debug(f"pt_bindir= {res}")
     return res
 
-def get_ptsettings():
-    pt_settings = None
-    pt10base = os.path.join(os.path.expanduser("~/.paratext-10-studio"), "projects", "Paratext 9 Projects")
-    if os.path.exists(pt10base):
-        return pt10base
+def _dir_has_projects(path):
+    """Return True if path contains at least one apparent Paratext project directory."""
+    try:
+        for d in os.listdir(path):
+            p = os.path.join(path, d)
+            if not os.path.isdir(p):
+                continue
+            if any(os.path.exists(os.path.join(p, f)) for f in ('Settings.xml', 'ptxSettings.xml')):
+                return True
+            try:
+                if any(f.lower().endswith('.sfm') for f in os.listdir(p)):
+                    return True
+            except OSError:
+                pass
+    except OSError:
+        pass
+    return False
 
+
+def find_pt_candidates():
+    """Return a list of dicts {'path': str, 'label': str, 'has_projects': bool}
+    for every Paratext projects directory found on this machine.
+    Candidates are deduplicated by resolved absolute path.
+    """
+    seen = set()
+    candidates = []
+
+    def _add(path, label):
+        if not path:
+            return
+        path = str(path)
+        if not os.path.isdir(path):
+            return
+        real = os.path.realpath(os.path.abspath(path))
+        if real in seen:
+            return
+        seen.add(real)
+        has = _dir_has_projects(path)
+        candidates.append({'path': path, 'label': label, 'has_projects': has})
+        logger.debug(f"Found Paratext candidate: {path!r} ({label}, has_projects={has})")
+
+    # Paratext 10 Studio (Linux/macOS)
+    pt10base = os.path.join(os.path.expanduser("~/.paratext-10-studio"), "projects", "Paratext 9 Projects")
+    _add(pt10base, "Paratext 10 Studio")
+
+    # Windows registry (Paratext 8/9)
     ptob = openkey("Paratext/8")
-    if ptob is None:
-        logger.debug(f"No registry key found for Paratext. Searching for data folder...")
+    if ptob is not None:
+        reg_path = queryvalue(ptob, 'Settings_Directory')
+        if reg_path:
+            _add(reg_path, "Paratext (registry)")
+
+    # Filesystem scan
+    if sys.platform.startswith("win"):
         for v in ('9', '8'):
-            if sys.platform.startswith("win"):
-                for d in map(chr, range(ord('C'), ord('Z')+1)):
-                    if os.path.exists("{}:\\".format(d)):
-                        tempstr = "{}:\\My Paratext {} Projects"
-                        path = tempstr.format(d,v)
-                        if os.path.exists(path):
-                            pt_settings = path
-                            logger.debug(f"Found Paratext data folder: {path}")
-                            break
-                else:
-                    continue
-                break
-            else:
-                if sys.platform.startswith("darwin"):
-                    tempstr = os.path.expanduser("~/Library/Application Support/paratextlite/Paratext{}Projects")
-                else:
-                    tempstr = os.path.expanduser("~/Paratext{}Projects")
-                path = tempstr.format(v)
-                if os.path.exists(path):
-                    pt_settings = path
-                    logger.debug(f"Found Paratext data folder: {path}")
-                    break
-        logger.debug(f"ERROR: Unable to find a Paratext data folder! Searched C,D,E,...,Z drives")
+            for d in map(chr, range(ord('C'), ord('Z') + 1)):
+                if os.path.exists("{}:\\".format(d)):
+                    _add("{}:\\My Paratext {} Projects".format(d, v),
+                         "Paratext {} Projects (drive {})".format(v, d))
+    elif sys.platform.startswith("darwin"):
+        for v in ('9', '8'):
+            _add(os.path.expanduser("~/Library/Application Support/paratextlite/Paratext{}Projects".format(v)),
+                 "Paratext {} Projects".format(v))
     else:
-        pt_settings = queryvalue(ptob, 'Settings_Directory')
-    return pt_settings
+        # Linux — check both naming conventions Paratext uses
+        for v in ('9', '8'):
+            _add(os.path.expanduser("~/My Paratext {} Projects".format(v)),
+                 "Paratext {} Projects".format(v))
+            _add(os.path.expanduser("~/Paratext{}Projects".format(v)),
+                 "Paratext {} Projects".format(v))
+        _add(os.path.expanduser("~/My Paratext Projects"), "Paratext Projects")
+
+    if not candidates:
+        logger.debug("No Paratext project directories found on this machine")
+    return candidates
+
+
+def get_ptsettings():
+    """Legacy wrapper — returns the path of the first candidate found, or None."""
+    candidates = find_pt_candidates()
+    return candidates[0]['path'] if candidates else None
 
 def get_gitver(gitdir=None, version=None):
     if gitdir is None:
@@ -596,33 +681,8 @@ def ustr(x):
     return res
 
 def runChanges(changes, bk, dat, errorfn=None):
-    if dat is None:
-        return dat
-    def wrap(t, l):
-        def proc(m):
-            res = m.expand(t) if isinstance(t, str) else t(m)
-            logger.log(5, "match({0},{1})={2}->{3} at {4}".format(m.start(), m.end(), m.string[m.start():m.end()], res, l))
-            return res
-        return proc
-    for c in changes:
-        if bk is not None:
-            logger.debug("at {} Change: {}".format(bk, c))
-        try:
-            if c[0] is None:
-                dat = c[1].sub(wrap(c[2], c[3]), dat)
-            elif isinstance(c[0], str):
-                if c[0] == bk:
-                    dat = c[1].sub(wrap(c[2], c[3]), dat)
-            else:
-                def simple(s):
-                    return c[1].sub(wrap(c[2], c[3]), s)
-                dat = c[0](simple, bk, dat)
-        except TypeError as e:
-            raise TypeError(str(e) + "\n at "+c[3])
-        except regex._regex_core.error as e:
-            if errorfn is not None:
-                errorfn(str(e) + "\n at " + c[3])
-    return dat
+    res = crunChanges(changes, dat, bk=bk, errorfn=errorfn)
+    return res.res
 
 _htmlentities = {
     '&': 'amp',
@@ -700,11 +760,17 @@ def extraDataDir(base, dirname, create=False):
         return None
 
 def getResourcesDir():
+    trials = []
     if hasattr(sys, '_MEIPASS'):
-        res = os.path.join(getattr(sys, '_MEIPASS'), 'ptxprint', 'resources')
+        trials.append(os.path.join(getattr(sys, '_MEIPASS'), 'ptxprint', 'resources'))
     else:
-        res = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources')
-    return res
+        trials.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'resources'))
+    if sys.platform == "linux":
+        trials.append("/usr/share/ptx2pdf/resources")
+    for res in trials:
+        if os.path.exists(res):
+            return res
+    return None
 
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
@@ -996,3 +1062,83 @@ def convert2mm(measure):
     num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
     unit = str(measure)[len(str(num)):].strip(" ")
     return (num * _unitConv[unit]) if unit in units else num
+
+
+# Paratext jump to reference integration
+
+def cleanParatextRef(ref):
+    """Normalise a scripture reference for Paratext.
+    Strips optional diglot suffix and converts dot chapter-verse separator to colon.
+    e.g. "JASL 3.4" → "JAS 3:4",  "MAT 5.3" → "MAT 5:3"
+    """
+    m = re.match(r'([123A-Z]{3})[LRABCDEFG]?\s*(\d+)\.(\d+)', ref.strip())
+    if m:
+        return f"{m.group(1)} {m.group(2)}:{m.group(3)}"
+    return re.sub(r'(\d+)\.(\d+)', r'\1:\2', ref.strip())
+
+def sendRefToParatext(ref):
+    """Write *ref* to the SantaFe registry key and broadcast the SantaFeFocus
+    Windows message so Paratext scrolls to that verse.
+    Returns True on success, False on any failure or on non-Windows platforms.
+    """
+    if not sys.platform.startswith("win"):
+        return False
+    key_path = r"Software\SantaFe\Focus\ScriptureReference"
+    try:
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
+    except FileNotFoundError:
+        logger.debug(f"Paratext registry key not found: {key_path}")
+        return False
+    try:
+        winreg.SetValueEx(key, "", 0, winreg.REG_SZ, ref)
+        winreg.CloseKey(key)
+        logger.debug(f"Set Paratext ref to: {ref}")
+    except WindowsError as e:
+        logger.debug(f"Could not write Paratext registry key: {e}")
+        return False
+    user32 = ctypes.windll.user32
+    user32.RegisterWindowMessageW.argtypes = [wintypes.LPCWSTR]
+    user32.RegisterWindowMessageW.restype  = wintypes.UINT
+    user32.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
+    user32.PostMessageW.restype  = wintypes.BOOL
+    user32.AllowSetForegroundWindow(-1)     # ASFW_ANY — permit focus steal
+    msg = user32.RegisterWindowMessageW("SantaFeFocus")
+    if msg:
+        user32.PostMessageW(0xFFFF, msg, 1, 0)
+    threading.Timer(0.15, bringParatextToForeground).start()
+    return True
+
+def bringParatextToForeground():
+    """Bring the Paratext main window to the foreground.
+    Safe to call even if Paratext is not running (no-op in that case).
+    Returns False so it can be used directly as a GLib.timeout_add callback.
+    """
+    if not sys.platform.startswith("win"):
+        return False
+    user32   = ctypes.windll.user32
+    kernel32 = ctypes.windll.kernel32
+    found = []
+
+    EnumProc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    def _enum(hwnd, _lp):
+        if user32.IsWindowVisible(hwnd):
+            n = user32.GetWindowTextLengthW(hwnd)
+            if n:
+                buf = ctypes.create_unicode_buffer(n + 1)
+                user32.GetWindowTextW(hwnd, buf, n + 1)
+                if 'paratext' in buf.value.lower():
+                    found.append(hwnd)
+        return True
+
+    user32.EnumWindows(EnumProc(_enum), 0)
+    if found:
+        hwnd = found[0]
+        if user32.IsIconic(hwnd):
+            user32.ShowWindow(hwnd, 9)      # SW_RESTORE — only if minimised
+        our_tid = kernel32.GetCurrentThreadId()
+        tgt_tid = user32.GetWindowThreadProcessId(hwnd, None)
+        user32.AttachThreadInput(our_tid, tgt_tid, True)
+        user32.BringWindowToTop(hwnd)
+        user32.SetForegroundWindow(hwnd)
+        user32.AttachThreadInput(our_tid, tgt_tid, False)
+    return False

@@ -15,9 +15,14 @@ def onTextEditKeypress(widget, event, bufView):
         # if i < len(bindings) and keyval in bindings[i]:
             # info = bindings[i][keyval]
             # info[0](buffer, view, model, info[1:])
-    if ((state & Gdk.ModifierType.CONTROL_MASK) != 0 or
-        (state & Gdk.ModifierType.MOD1_MASK) != 0):
-        if i < len(bindings) and keyval in bindings[i]:
+    ctrl = (state & Gdk.ModifierType.CONTROL_MASK) != 0
+    alt  = (state & Gdk.ModifierType.MOD1_MASK) != 0
+    if (ctrl or alt) and i < len(bindings) and keyval in bindings[i]:
+        # KEY_x is Alt-only (show unicode values); skip if Ctrl is held so
+        # Ctrl+X remains the standard cut operation
+        if keyval == Gdk.KEY_x and ctrl:
+            pass
+        else:
             info = bindings[i][keyval]
             info[0](buffer, view, model, info[1:])
 
@@ -147,6 +152,7 @@ def showUnicodeValues(buffer, view, model, *a):
         selected_text = buffer.get_text(start_iter, end_iter, True)
         unicode_values = "".join(f"\\u{ord(c):04X}" for c in selected_text[:20])
         model.doStatus(unicode_values)
+        view.stop_emission_by_name("key-press-event")
 
 # Each dict within the list represents a different tab on the View+Edit page
 bindings = [

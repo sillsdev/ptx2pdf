@@ -1,6 +1,6 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
-DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+DIR:=$(shell dirname `find ../../..  \( -name test -prune -or -name tmp -prune \) -or -name paratext2.tex -print`)
 usfmerge=../../../python/scripts/usfmerge
 
 mergedAB.usfm: SampleA.usfm SampleB.usfm

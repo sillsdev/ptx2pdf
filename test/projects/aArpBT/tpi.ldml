@@ -1,0 +1,158 @@
+﻿<ldml>
+  <identity>
+    
+    
+    
+  <version number="" /><generation date="2016-08-26T12:16:20Z" /><language type="tpi" /></identity>
+  <characters>
+    
+    
+    <special xmlns:sil="urn://www.sil.org/ldml/0.1">
+      
+      
+      
+      
+      
+      
+    <sil:exemplarCharacters type="diacritics">[]</sil:exemplarCharacters><sil:exemplarCharacters type="wordFormingPunctuation">[]</sil:exemplarCharacters><sil:exemplarCharacters type="footnotes">[]</sil:exemplarCharacters><sil:exemplarCharacters type="crossrefs">[]</sil:exemplarCharacters><sil:exemplarCharacters type="verseSegments">[a b c d e f g h i j k l m n o p q r s t u v w x y z {aa} {bb} {cc} {dd} {ee} {ff} {gg} {hh} {ii} {jj} {kk} {ll} {mm} {nn} {oo} {pp} {qq} {rr} {ss} {tt} {uu} {vv} {ww} {xx} {yy} {zz}]</sil:exemplarCharacters><sil:exemplarCharacters type="wordBreaks">[]</sil:exemplarCharacters></special>
+  <exemplarCharacters>[A-Za-z]</exemplarCharacters><exemplarCharacters type="punctuation">[!\&amp;(),-/\:-&lt;&gt;?\u00A9\u200C\u200D\u2014{!)}{!&lt;&lt;}{!&gt;}{!&gt;&gt;}{!&gt;&gt;(}{!&gt;&gt;&lt;&lt;}{!&gt;&gt;&gt;}{'.}{)(}{),}{).}{).&gt;&gt;}{,(}{,)}{,&lt;}{,&lt;&lt;}{,&lt;&lt;&lt;}{,&gt;}{,&gt;&gt;}{,&gt;&gt;(}{,&gt;&gt;&gt;}{.(}{.)}{...}{.&lt;}{.&lt;&lt;}{.&gt;}{.&gt;&gt;}{.&gt;&gt;(}{.&gt;&gt;)}{.&gt;&gt;)(}{.&gt;&gt;&lt;&lt;}{.&gt;&gt;&gt;}{.&gt;&gt;&gt;&gt;&gt;}{.&gt;?&gt;&gt;}{.\]}{\:&lt;}{\:&lt;&lt;}{;(}{&lt;&lt;}{&lt;&lt;&lt;}{&gt;.}{&gt;&gt;}{&gt;&gt;(}{&gt;&gt;).}{&gt;&gt;.}{&gt;?}{?(}{?)}{?&lt;}{?&lt;&lt;}{?&gt;}{?&gt;&gt;}{?&gt;&gt;(}{?&gt;&gt;&gt;}{?&gt;&gt;&gt;&gt;&gt;}]</exemplarCharacters></characters>
+  <delimiters>
+    <special xmlns:sil="urn://www.sil.org/ldml/0.1">
+      <sil:matched-pairs>
+        
+        
+        
+      <sil:matched-pair open="(" close=")" paraClose="false" /><sil:matched-pair open="[" close="]" paraClose="false" /><sil:matched-pair open="{" close="}" paraClose="false" /></sil:matched-pairs>
+      <sil:punctuation-patterns>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      <sil:punctuation-pattern pattern="._" context="final" /><sil:punctuation-pattern pattern=",_" context="final" /><sil:punctuation-pattern pattern=",_&lt;&lt;" context="medial" /><sil:punctuation-pattern pattern=".&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern="_&lt;&lt;" context="init" /><sil:punctuation-pattern pattern="&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern="-" context="medial" /><sil:punctuation-pattern pattern="_&lt;" context="init" /><sil:punctuation-pattern pattern="!_" context="final" /><sil:punctuation-pattern pattern="&gt;_" context="final" /><sil:punctuation-pattern pattern="?&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern="?_" context="final" /><sil:punctuation-pattern pattern="!&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=":_" context="final" /><sil:punctuation-pattern pattern="_(" context="init" /><sil:punctuation-pattern pattern=")_" context="final" /><sil:punctuation-pattern pattern="_—_" context="isolate" /><sil:punctuation-pattern pattern=";_" context="final" /><sil:punctuation-pattern pattern=")._" context="final" /><sil:punctuation-pattern pattern=".]_" context="final" /><sil:punctuation-pattern pattern=":_&lt;&lt;" context="medial" /><sil:punctuation-pattern pattern=".)_" context="final" /><sil:punctuation-pattern pattern="._(" context="medial" /><sil:punctuation-pattern pattern=",_(" context="medial" /><sil:punctuation-pattern pattern=",_&lt;" context="medial" /><sil:punctuation-pattern pattern="),_" context="final" /><sil:punctuation-pattern pattern=".&gt;&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=".&gt;_" context="final" /><sil:punctuation-pattern pattern=":_&lt;" context="medial" /><sil:punctuation-pattern pattern="!&gt;&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=",&gt;_" context="final" /><sil:punctuation-pattern pattern="?&gt;_" context="final" /><sil:punctuation-pattern pattern=",&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern="?&gt;&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=").&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=".&gt;&gt;_(" context="medial" /><sil:punctuation-pattern pattern="!&gt;_" context="final" /><sil:punctuation-pattern pattern=",_&lt;&lt;&lt;" context="medial" /><sil:punctuation-pattern pattern="&gt;&gt;._" context="final" /><sil:punctuation-pattern pattern="&gt;._" context="final" /><sil:punctuation-pattern pattern="!&gt;&gt;_(" context="medial" /><sil:punctuation-pattern pattern="?&gt;&gt;_(" context="medial" /><sil:punctuation-pattern pattern="._&lt;&lt;" context="medial" /><sil:punctuation-pattern pattern=".&gt;?&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=".&gt;&gt;_&lt;&lt;" context="medial" /><sil:punctuation-pattern pattern=".&gt;&gt;)_" context="final" /><sil:punctuation-pattern pattern="_&lt;&lt;&lt;" context="init" /><sil:punctuation-pattern pattern="?&gt;&gt;&gt;&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=".&gt;&gt;&gt;&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=")_(" context="medial" /><sil:punctuation-pattern pattern=",)_" context="final" /><sil:punctuation-pattern pattern=";_(" context="medial" /><sil:punctuation-pattern pattern="&gt;&gt;)._" context="final" /><sil:punctuation-pattern pattern="_©_" context="isolate" /><sil:punctuation-pattern pattern="_&amp;_" context="isolate" /><sil:punctuation-pattern pattern="_&lt;_" context="isolate" /><sil:punctuation-pattern pattern="_._._._" context="isolate" /><sil:punctuation-pattern pattern="&gt;&gt;_(" context="medial" /><sil:punctuation-pattern pattern="?_&lt;&lt;" context="medial" /><sil:punctuation-pattern pattern="!&gt;&gt;_&lt;&lt;" context="medial" /><sil:punctuation-pattern pattern="!_&lt;&lt;" context="medial" /><sil:punctuation-pattern pattern="!&gt;_&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=".&gt;_&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern="?&gt;_&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=",_&lt;&lt;_&lt;" context="medial" /><sil:punctuation-pattern pattern="_&lt;&lt;_&lt;" context="init" /><sil:punctuation-pattern pattern=",&gt;_&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern=",&gt;&gt;_(" context="medial" /><sil:punctuation-pattern pattern="._&lt;" context="medial" /><sil:punctuation-pattern pattern=".&gt;&gt;_&gt;_&gt;&gt;_" context="final" /><sil:punctuation-pattern pattern="?_&lt;" context="medial" /><sil:punctuation-pattern pattern="?&gt;&gt;" context="medial" /><sil:punctuation-pattern pattern="/_" context="final" /><sil:punctuation-pattern pattern=".&gt;&gt;)_(" context="medial" /><sil:punctuation-pattern pattern="!)_" context="final" /><sil:punctuation-pattern pattern="?)_" context="final" /><sil:punctuation-pattern pattern="‌" context="medial" /><sil:punctuation-pattern pattern="‍" context="medial" /><sil:punctuation-pattern pattern="'._" context="final" /><sil:punctuation-pattern pattern="?_(" context="medial" /><sil:punctuation-pattern pattern="&gt;?_" context="final" /></sil:punctuation-patterns>
+      <sil:quotation-marks paraContinueType="all">
+        
+        
+      <sil:quotationContinue></sil:quotationContinue><sil:quotation open="&lt;&lt;" close="&gt;&gt;" level="3" /></sil:quotation-marks>
+    </special>
+    
+    
+    
+    
+  <quotationStart>&lt;&lt;</quotationStart><quotationEnd>&gt;&gt;</quotationEnd><alternateQuotationStart>&lt;</alternateQuotationStart><alternateQuotationEnd>&gt;</alternateQuotationEnd></delimiters>
+  <layout>
+    <orientation>
+      
+    <characterOrder>left-to-right</characterOrder></orientation>
+  </layout>
+  <collations>
+    <defaultCollation>standard</defaultCollation>
+    
+  <collation type="standard"><cr><![CDATA[&[before 1] [first regular] < a\/A < b\/B < c\/C < d\/D < e\/E < f\/F < g\/G < h\/H < i\/I < j\/J < k\/K < l\/L < m\/M < n\/N < o\/O < p\/P < q\/Q < r\/R < s\/S < t\/T < u\/U < v\/V < w\/W < x\/X < y\/Y < z\/Z]]></cr><special xmlns:sil="urn://www.sil.org/ldml/0.1"><sil:simple><![CDATA[a/A
+b/B
+c/C
+d/D
+e/E
+f/F
+g/G
+h/H
+i/I
+j/J
+k/K
+l/L
+m/M
+n/N
+o/O
+p/P
+q/Q
+r/R
+s/S
+t/T
+u/U
+v/V
+w/W
+x/X
+y/Y
+z/Z]]></sil:simple></special></collation></collations>
+  <special xmlns:sil="urn://www.sil.org/ldml/0.1">
+    <sil:external-resources>
+      
+    <sil:font name="Arial" types="default" size="1.2" /><sil:font name="Verdana" types="default" size="1.2" /><sil:font name="Andika Basic Compact" types="default" size="1.2" /><sil:font name="Charis SIL Literacy Compact" types="default" size="1.2" /></sil:external-resources>
+  </special>
+</ldml>

@@ -1,13 +1,84 @@
 
 import re, os
 import regex
-from ptxprint.utils import universalopen
 from usfmtc.reference import RefList
 from functools import reduce
 import logging
 
 logger = logging.getLogger(__name__)
 
+refmtfn = regex.compile(r"(?<!\\)\$([a-z]+)\{((?:(?R)|\\\}|[^}])*)\}|(?<!\\)\\(?:(\d)|([rtn\\\n'\"abfv])|(u[0-9a-fA-F]{4})|(U[0-9a-fA-F]{8}))")
+
+functions = {
+    "upper":    (1, lambda self,s:s.upper()),
+    "lower":    (1, lambda self,s:s.lower()),
+    "title":    (1, lambda self,s:s.title()),
+    "var":      (1, lambda self,s:self.vars.get(s, "")),
+    "set":      (2, lambda self,v,s:self.setvar(v, s))
+}
+
+_escapes = {"n": "\n", "r": "\r", "t": "\t", "\\": "\\", "\n": "", "'": "'",
+            '"': '"', "a": "\a", "b": "\b", "f": "\f", "v": "\v"}
+
+def _procfn(self, m, p):
+    if m.group(3):
+        return p.group(int(m.group(3)))
+    elif m.group(4):
+        return _escapes.get(m.group(4), m.group(4))
+    elif m.group(5):
+        return chr(int(m.group(5)[1:], 16))
+    elif m.group(6):
+        return chr(int(m.group(6)[1:], 16))
+    c = m.group(2)
+    pc = refmtfn.sub(lambda x:_procfn(self, x, p), c)
+    t = m.group(1)
+    n, f = functions.get(t, (1, lambda s:s))
+    if n > 1:
+        b = regex.split(r"\s*,\s*", pc, n-1)
+    else:
+        b = [pc]
+    return f(self, *b)
+
+def complex_format(self, t, m):
+    return refmtfn.sub(lambda x:_procfn(self, x, m), t)
+
+class runChanges:
+    def __init__(self, changes, dat, **kw):
+        self.vars = {"bk": kw.get("bk", "")}
+        self.res = self.run(changes, dat, **kw)
+
+    def run(self, changes, dat, bk=None, errorfn=None):
+        if dat is None:
+            return dat
+        def wrap(t, l):
+            def proc(m):
+                res = m.expand(t) if isinstance(t, str) else t(self, m)
+                logger.log(5, "match({0},{1})={2}->{3} at {4}".format(m.start(), m.end(), m.string[m.start():m.end()], res, l))
+                return res
+            return proc
+        for c in changes:
+            if bk is not None:
+                logger.debug("at {} Change: {}".format(bk, c))
+            try:
+                if c[0] is None:
+                    dat = c[1].sub(wrap(c[2], c[3]), dat)
+                elif isinstance(c[0], str):
+                    if c[0] == bk:
+                        dat = c[1].sub(wrap(c[2], c[3]), dat)
+                else:
+                    def simple(s):
+                        return c[1].sub(wrap(c[2], c[3]), s)
+                    dat = c[0](simple, bk, dat)
+            except TypeError as e:
+                raise TypeError(str(e) + "\n at "+c[3])
+            except regex._regex_core.error as e:
+                if errorfn is not None:
+                    errorfn(str(e) + "\n at " + c[3])
+        return dat
+
+    def setvar(self, v, val):
+        self.vars[v] = val
+        return ""
 
 def make_contextsfn(bk, *changes):
     # functional programmers eat your hearts out
@@ -26,7 +97,70 @@ def make_contextsfn(bk, *changes):
 def printError(msg, **kw):
     print(msg)
 
-def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
+def _makecat_props(grammar):
+    res = {}
+    for m, c in grammar.marker_categories.items():
+        res.setdefault(c, set()).add(m)
+    for c, s in grammar.category_tags.items():
+        res[c] = set().union(*[res[x] for x in s])
+    res['table'] = res['cell'] | set(['tr'])
+    return res
+
+cats = {
+    'para': r'[bdmqprs]|c[ld]|m[irs]|k[12]|l[fhi]|p[12bchim]|q[1234cdmr]|s[1234dpr]|cls|lit|nb|qa|sts|(?:li|lim|mi|ms|mte|ph|pi|qm|sd)[1234]?',
+    'char': r'add|addpn|bd|bdit|bk|dc|efm|em|fm|fv|it|jmp|k|nd|ndx|no|ord|pn|png|pro|qt|rb|rq|sc|sig|sls|sup|tl|w|wg|wh',
+    'header': r'ide|h|(?:h|toc|toca)[123]',
+    'note': 'e?[fx]|fe|efe',
+    'title': 'mt[1234]?',
+    'intro': 'i(?:[bep]|m[iq]|o[rt]|p[iqr]|(?:mt[e]?|[oqs]|li|qis)[1234]?|ex|qt)',
+    'table': 'tr|(?:t[hc][cr]?(?:[1-9]|10|11|12))'
+}
+def _convprop(m, cats):
+    s = m.group(2)
+    if cats is not None and (t := re.match(r"mkr\s*=\s*(.*?)\s*$", s)) is not None:
+        curr = set()
+        bits = re.split(r'([+-])', t.group(1))
+        for i, b in enumerate(bits[::2]):
+            g = cats.get(b.strip(), None)
+            if g is None:
+                continue
+            if i == 0 or b[2*i-1] == '+':
+                curr |= g
+            else:
+                curr -= g
+        if len(curr):
+            cr = "|".join(sorted(curr, key=lambda x:(-len(x), x)))
+            if m.group(1) == "p":
+                r = r"(?:\\(?:{}))".format(cr)
+            else:
+                r = r"(?:[^\\]|\\(?!{}))".format(cr)
+        else:
+            r = m.group(0)
+    else:
+        r = m.group(0)
+    return r
+
+propreg = re.compile(r"\\([pP])\{(.*?)\}")
+
+def _transreg(s, cats):
+    def _c(m):
+        return _convprop(m, cats)
+    s = propreg.sub(_c, s)
+    return s
+
+def _mkfmtfn(s):
+    if not s:
+        return s
+    elif regex.search(r"(?<!\\)\$[a-z]+\{", s):
+        return lambda x,m:complex_format(x, s, m)
+    else:
+        return s
+
+def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, grammar=None):
+    if grammar is not None:
+        cats = _makecat_props(grammar)
+    else:
+        cats = None
     changes = {}
     if passes is None:
         passes = ["default"]
@@ -42,7 +176,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
         if usfm is not None:
             usfm.addorncv()
     qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
-    with universalopen(fname) as inf:
+    with open(fname, encoding="utf-8", errors="replace") as inf:
         alllines = list(inf.readlines())
         i = 0
         while i < len(alllines):
@@ -66,7 +200,8 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
                 continue
             m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
             if m:
-                lchs = readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk, passes=passes, get_usfm=get_usfm)
+                lchs = readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk,
+                                passes=passes, doError=doError, get_usfm=get_usfm, grammar=grammar)
                 for k, v in lchs.items():
                     changes.setdefault(k, []).extend(v)
                 continue
@@ -78,7 +213,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
                 except SyntaxError as e:
                     atref = []
                     atcontexts = [None]
-                    doError("at reference error: {} in changes file at line {}".format(str(e), i+1))
+                    doError("at reference error: {} in changes file at line {}: {}".format(str(e), i+1, l))
                 for r in atref:
                     if getattr(r.first, 'chapter', None) in (None, 0):
                         atcontexts.append((r.book, None))
@@ -111,19 +246,20 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
                 if not m:
                     break
                 try:
-                    contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M))
+                    contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M | regex.S))
                 except re.error as e:
-                    doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1))
+                    doError("Regular expression error: {} in changes file at line {}: {}".format(str(e), i+1, l))
                     break
                 l = l[m.end():].strip()
             # capture the actual change
             m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
             if m:
+                s = _transreg(m.group(1) or m.group(2), cats)
                 try:
-                    r = regex.compile(m.group(1) or m.group(2), flags=regex.M)
+                    r = regex.compile(s, flags=regex.M)
                     # t = regex.template(m.group(3) or m.group(4) or "")
                 except (re.error, regex._regex_core.error) as e:
-                    doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1))
+                    doError("Regular expression error: {} in changes file at line {}: {}".format(str(e), i+1, l))
                     continue
                 for at in atcontexts:
                     if at is None:
@@ -132,7 +268,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError):
                         context = make_contextsfn(at[0], at[1], *contexts)
                     else:
                         context = at[0]
-                    ch = (context, r, m.group(3) or m.group(4) or "", f"{fname} line {i+1}")
+                    ch = (context, r, _mkfmtfn(m.group(3) or m.group(4)) or "", f"{fname} line {i+1}")
                     for p in passes:
                         changes.setdefault(p, []).append(ch)
                     logger.log(7, f"{context=} {r=} {m.groups()=}")

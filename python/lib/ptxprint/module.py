@@ -26,7 +26,7 @@ exclusionmap = {
 
 _abbrevmodes = {
     "Abbreviation": "a",
-    "ShortNames": "s",
+    "ShortName": "s",
     "LongName": "l",
 }
 
@@ -42,7 +42,7 @@ class Module:
 
     #localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+(?::[^)\s]+)?\s*(?:-\s*\d+(?::[^)*\s]+)*)*)\)")
     localise_re = re.compile(r"\$([asl]?)\((.*?)\)")
-    localcodes = {'a': 0, 's': 1, 'l': 2}
+    localcodes = {'a': 2, 's': 1, 'l': 0}
 
     def __init__(self, fname, usfms, model, usfm=None, text=None, changes=[]):
         self.fname = fname
@@ -101,7 +101,7 @@ class Module:
 
     def parse(self, piclist=None):
         logger.log(5, self.doc.xml.outUsx(None))
-        self.doc.xml.book = "MOD"
+        # self.doc.xml.book = "MOD"
         count = 0
         self.removes = set((e for e in exclusionmap.values() if self.testexclude(e)))
         skipme = 0
@@ -162,21 +162,22 @@ class Module:
                     refs = RefList(eloc.text.strip(), booknames=self.usfms.booknames)
                 except SyntaxError as e:
                     raise SyntaxError(f"{e} at {s} at line {eloc.pos.l} char {eloc.pos.c}")
+                currp = None
                 for r in refs:
-                    p = self.get_passage(r, removes=self.removes, strippara= s=="refnp")
+                    p = self.get_passage(r, removes=self.removes, strippara = s=="refnp", context=eloc)
                     if not len(p):
                         continue
                     (curri, currp) = eloc._getindex()
                     for pe in reversed(p):
                         pe.parent = currp
                         currp.insert(curri, pe)
-                    currp.remove(eloc)
                     skipme += 1
                     if len(reps):
                         self.doc.transform_text(*reps, parts=p)
+                if currp is not None:
+                    currp.remove(eloc)
             elif s == 'inc':
                 values = [v for v in eloc.text.split() if v.strip()]
-                # breakpoint()
                 for c in values:
                     einfo = exclusionmap.get(c, (tuple(), None, False, ""))
                     if c == "-":
@@ -193,8 +194,9 @@ class Module:
                 for p in mod.doc.getroot():
                     p.parent = currp
                     currp.insert(curri, p)
+                    curri += 1
 
-    def get_passage(self, ref, removes={}, strippara=False):
+    def get_passage(self, ref, removes={}, strippara=False, context=None):
         if ref.first.book is None:
             return []
         try:
@@ -202,10 +204,11 @@ class Module:
         except SyntaxError:
             book = None
         if book is None:
-            return []
+            raise ValueError(f"Missing book {ref.first.book.upper()} at line {context.pos.l + 1 if context is not None else ''}"
+                             f" char {context.pos.c if context is not None else ''}")
         res = book.xml.getrefs(ref, titles=False, headers=not any(x[0] is not None and 's' in x[0] for x in removes),
                                     chapters= not any('chapter' in x[3] for x in removes))
-        if True:        # this should be a filter test
+        if len(res.getroot()):        # this should be a filter test
             firstp = res.getroot()[0]
             firstp.attrib.pop('vid', None)
         for e, isin in res.iterusx():
@@ -221,4 +224,5 @@ class Module:
                             e.parent[i-1].tail = (e.parent[i-1].tail or "") + e.tail
                     e.parent.remove(e)
                     break
+        logger.debug(f"Getting {ref} resulting\n{res.outUsx(None)}")
         return res.getroot()

@@ -1,0 +1,236 @@
+﻿<ScriptureText>
+  <AdvancedView>True</AdvancedView>
+  <ClosedByParagraph>No</ClosedByParagraph>
+  <ContinueAt>p </ContinueAt>
+  <ContinueInnerQuotes>Yes</ContinueInnerQuotes>
+  <ContinueQuotes>Yes</ContinueQuotes>
+  <DefaultFont>Andika New Basic CompactNonlit</DefaultFont>
+  <DefaultFontSize>12</DefaultFontSize>
+  <Editable>T</Editable>
+  <Encoding>65001</Encoding>
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <FileNameForm>41MAT</FileNameForm>
+  <FileNamePostPart>aArp.SFM</FileNamePostPart>
+  <FullName>Arop-Sissano Translation</FullName>
+  <GuessTranslationsDestinationText>NIV84</GuessTranslationsDestinationText>
+  <Guid>3fafb794d3fbdd277fb6a3006bcedac2ae830100</Guid>
+  <InnerInnerQuotes>&lt;&lt; &gt;&gt;</InnerInnerQuotes>
+  <InnerQuotes>&lt; &gt;</InnerQuotes>
+  <InterlinearExportOnApprove._x0032_ArpBTL>False</InterlinearExportOnApprove._x0032_ArpBTL>
+  <InterlinearExportOnApprove.aArpBT>False</InterlinearExportOnApprove.aArpBT>
+  <InterlinearExportOnApprove.aArpBTL>False</InterlinearExportOnApprove.aArpBTL>
+  <InterlinearExportOnApprove.aMal>True</InterlinearExportOnApprove.aMal>
+  <InterlinearExportOnApprove.aSno>True</InterlinearExportOnApprove.aSno>
+  <InterlinearExportText.aArpBT />
+  <InterlinearExportText.aArpBTL />
+  <InterlinearExportText.aSno>aArp</InterlinearExportText.aSno>
+  <InterlinearModelText />
+  <InterlinearRelatedLanguages._x0032_ArpBTL>False</InterlinearRelatedLanguages._x0032_ArpBTL>
+  <InterlinearRelatedLanguages.aArpBT>False</InterlinearRelatedLanguages.aArpBT>
+  <InterlinearRelatedLanguages.aArpBTL>False</InterlinearRelatedLanguages.aArpBTL>
+  <InterlinearRelatedLanguages.aMal>False</InterlinearRelatedLanguages.aMal>
+  <InterlinearRelatedLanguages.aSno>True</InterlinearRelatedLanguages.aSno>
+  <IntroductionOutlineStyles>io io1 io2 io3 io4</IntroductionOutlineStyles>
+  <InvalidCharacters>+ X … ΰ ύ ή ἵ</InvalidCharacters>
+  <InvalidMixedCapitalization>REberka KingAbimelek REberkaꞌe MahaLot takLotow ꞌEptawa KingFeroꞌe KingFero peneMoses peneGod peneTamam kawaTimoti kawaTaitus 1Sav OlplaTestamen 96Niy owNos oDo ꞌYi ꞌAwkij 13Tem ꞌꞌYi iynNiu-pla ꞌYa ꞌYane ꞌOmo KEꞌES ꞌNanekene TransferPrimer ꞌOm</InvalidMixedCapitalization>
+  <InvalidPunctuation>_` _&gt; _+ &lt;_ . &gt; , -_ _,_ _......... _- _._ _&gt;_ _[_ ]_ _:_ _?_ &lt; ! _)_ _(_ _; _"_ ` —_ — ( /_ !!!!!!!_ ,_` ._&lt;&lt;_ _&gt;&gt; .&gt;&lt;&lt;_ .&gt;&gt; !_&lt;&lt;_ ._,_ ,_&lt;&lt;.........( .&lt;&lt;_ :-_ ,_&lt;&lt;_ _&gt;&gt;_ !._ ._[_ .?_ ._?_ ,&lt;&lt; &gt;&gt;?_ !!&lt;&lt;&gt;&gt; &lt;&lt;&gt;&gt;!!_ _).&gt;&gt;_( ._(_ &gt;&gt;!_ ,_&lt;_ ?,_ .&gt;&gt;_&lt; ?_[_ ?]_ ,_&lt;&lt;` .&gt;_&lt;_ ?&gt;&gt;_&lt;&lt; ?_&lt;_ .?&gt;&gt;_ ,&gt;&gt;_&lt;&lt; ;&gt;&gt;_&lt;&lt; ;&gt;&gt;_ .;_ ,_"_ ,` )_—_ _&lt;&lt;_ ?_—_ ,)_ ._&gt;&gt;_ &gt;&gt;)._ ) ?.&gt;&gt;_ ._--_ ). .._ _)._ ?._ !&gt;&gt;_&lt;&lt; &lt;&lt; ? &gt;&gt;._( …_ ,_……_ …._ &gt;&gt;,_ _&lt;&lt;_&lt;_ ,&gt; ._&lt;&lt;_&lt;_ ._._.&gt;&gt;_ .&gt;_&lt; ,_&lt;&lt;_&lt;&lt; ._` ,&gt;&gt;_[ &gt;&gt;_[ :_&lt;_( ?&gt;&gt;_&lt;&lt;_ ,_&gt;&gt;_ ._&gt;&gt;_[ &gt;_( _=_ ..)_ ._._ ._&gt;&gt;._ _._&gt;&gt;_ _…_ !_&gt;_&gt;_ .&gt;_&gt;_&gt;_ ?&gt;&gt;_&gt;_ ?&gt;&gt;._ &gt;&gt;)_ ?&gt;&gt;_._ _?_&gt;&gt;_ ._. _. _]._ _,_&lt; !&gt;&gt;_(_ !_&gt;&gt;_ .&gt;&gt;_(_&lt; &gt;)_ _.&gt;&gt;_ !_&gt;&gt;_&lt;&lt; ._&gt;_ !,_ _]_ ,&lt;&lt;_ ,&gt;&gt;_[_ .&gt;&gt;._ !_.&gt;&gt;_ .&gt;&gt;_[ _[&lt;&lt; &gt;&gt;.]_ .!_ :_[ &gt;&gt;._._ [_ (_ _= _“ _" ’ "_ / ._[ _' !!_ '_ ?&gt;_&lt;&lt; ?_,_ ?_&gt;&gt;_ !.&gt;&gt;_ ,&lt; _&lt;_ ."_ "._ ,_&gt;_ ._&gt;&gt;&gt;_ ,&lt;_ –_ .,_ &gt;. ,“ ,”_ !. ,_._._._ .. )"_ ”_ ..&gt;&gt;_ ,_“ .”_ _, ,_" "_( ”._ ;_&lt;&lt; .____ ,( )_._ :,_ .[_ : ,._</InvalidPunctuation>
+  <InvalidSentenceFinalPunctCapitalization>. ! ? &lt; :- [ ' ." &lt;&lt; ?&gt;&gt; .&gt;&gt; &gt;&gt;. " ?\0020&lt; * .\0020.\0020. – ,. ," ,\0020&gt;&gt; ,\0020.\0020.\0020. ,” )" ” .[ ). )\0020.</InvalidSentenceFinalPunctCapitalization>
+  <InvalidUncapitalizedStyles>p px&lt;&lt;God s fig io imi nd 9 s1 s2</InvalidUncapitalizedStyles>
+  <Language>Arop</Language>
+  <Name>aArp</Name>
+  <NonRepeatableWords>toko Sodom Livai Selot Sisar awo Jenesis Eksodas okon to tekpiyl oloon kain terem na</NonRepeatableWords>
+  <NoteReferenceSeparator>.</NoteReferenceSeparator>
+  <Pairs>(/) [/] {/}</Pairs>
+  <PoeticStyles>ib iq iq1 iq2 iq3 q q1 q2 q3 q4 qc qr qs qa qac qm qm1 qm2 qm3 b</PoeticStyles>
+  <Quotes>&lt;&lt; &gt;&gt;</Quotes>
+  <RepeatableWords>teweiyn omon welen nokuon wesian kawa woron yare eyiere 1 entin elen prum anen terew olwuan yiꞌe pokon taako o parak ono reꞌe amana tiytiy kutuoiyn awa paijna teken re kokelek iyn eyiat weryin ke ome towuan yi moiyl epin ewen reꞌian paijpaijna niy terpiyl uluiy aij wuak on olon peyian tenien tup prem Tiofilus Aron karwa barit reyin wesen Owuan Abraham lamat Pailat watan elew 4-pla elpiet eyiero tonuoiy tartar eyienom elin tausen elpietiw owuan toksave Aposel Baptais Blesim Hel Lepro Mastet Tempel Lo Josua Rut 2 Esra Nehemiah Esta Jop Sam Solomon Aisaia Jeremaia Esekiel Daniel Hosea Joel Amos Obadia Jona Maika Nahum Habakuk Sefanaia Hagai Sekaraia Malakai Rom Galesia Efesus Filipai Kolosi Taitus Filemon Hibru Eksodus Hetman e wa aweiylꞌiwna ken notaw Paijna uluan ellen senis etenom amaw owuaw raweyin apala ropon taw oluan terestek aampia onon ampia 5-pla oluiy Omon karaꞌiw 6-pla 3-pla eyieket eyielo oroiyn</RepeatableWords>
+  <StyleSheet>usfm.sty</StyleSheet>
+  <UnmatchedPairingCharacters>( [</UnmatchedPairingCharacters>
+  <ValidCharacters>   J e n s i G o d K R O T a r t W p y k j . , l w ! Y m ꞌ S &lt; &gt; u P b f v N A L 6 - 7 I E 4 H g ? M h 1 3 0 8 9 5 2 : D B F U ( ) — ; z Z – © &amp; Q ‌ ‍ 
+ | \ yl yn [ ] * ή ό ה ύ β ί ά έ ἱ ῖ ῦ י Σ _ ו ἅ ώ א Δ ὸ ὐ ט Χ ἶ ‎ ᾶ Π Ἰ פֶּ ן סַ ἡ ח נָ בִ Κ מ ἄ Λ הֵ כֹּ שׁ ᾳ ר ל Ἠ Φ מָ גָּ קָ ד וּ וֹ יְ דָ ρ c " ς ο α ' / τ ν ι ε σ μ ” λ κ η “ π C γ υ δ x ἀ ω θ ζ V χ ἐ ῶ ’ φ ` q ῆ ἔ ἰ ת בָּ שַׁ ὀ ῃ Μ Β אַ בְ רָ הָ ם תְּ Ν ῥ ὼ ע ῇ ב ὴ ἴ יֶ שַׁ Ἁ Ἅ יַ ἁ עֲ קֹ֑ Ῥ ὶ עָ Ἀ ῳ ώ ά ό = έ ὰ ί יִ אֵ שָׂ רְ ק נַ מֹ חַ לְ ϊ עֹ שִׁ רִ שְׁ עַ Ἄ מְ צְ שְׂ מִ רֶ רַ Ἐ טָ קְ יָ ὕ וָּ בֵּ זַ ὡ בִּ אֲ ס סָ דָּ דְּ נֵ Ὦ חָ זְ אָ ϋ סִ ψ בֹ טָּ קִ נָּ סְ דֹ לֹ Ζ שֶׁ ־ וִ גִּ פְ תָּ֑ עֵ עְ Α שֹׁ הַ ז כְּ פַּ דְ בְּ Γ דֶ קֹ טֹ קֶ כַּ מֹּ שָׁ לִ אֱ מַ כִּ Ε צֶ ΐ רֹ צֹ הֲ X 
+</ValidCharacters>
+  <ValidPunctuation>._ ,_ !_ _&lt; &gt;_ - ?_ :_ _( )_ _—_ ;_ ..._ _©_ _–_ _&amp;_ ,_&lt;&lt; .&gt;&gt;_ _&lt;&lt; &gt;&gt;_ ,&gt;_ ?&gt;&gt;_ !&gt;&gt;_ .)_ ,_&lt; ?&gt;_ .&gt;_( .&gt;&gt;&gt;_ )._ ._&lt;&lt; .&gt;_ _&lt;&lt;&lt; _&lt;&lt;&lt;_ :_&lt; .&gt;&gt;_( ._( .]_ &gt;&gt;._ :_&lt;&lt; ?&gt;&gt;&gt;_ ,_&lt;&lt;&lt; ._&lt;&lt;&lt;_ .&gt;&gt;_&lt;&lt; ?_&lt;&lt; ,&gt;&gt;_ ).&gt;&gt;_ .&gt;&gt;&gt;&gt;&gt;_ ?_&lt; ...&gt;&gt;_ ),_ ,_( ._&lt; ?&gt;&gt;_( .&gt;&gt;)_ !&gt;&gt;&gt;_ !&gt;_ &gt;._ !&gt;&gt;_( ,&gt;&gt;_( &gt;&gt;_( )_( ?&gt;&gt;&gt;&gt;&gt;_ .)_( )_–_ ... !_&lt;&lt; .&gt;&gt;_&gt;_ _&lt;&lt;_&lt; .&gt;_&gt;&gt;_ ?&gt;_&gt;&gt;_ ,_&lt;&lt;_&lt; .&gt;&gt;_&gt;_&gt;&gt;_ ?&gt;&gt; !&gt;_&gt;&gt;_ _._._._ ‌ ‍ &gt;&gt;._&lt;&lt; | &gt;,_ &gt;?_ ._+ &gt;?&gt;&gt;_ ' _–_&lt;&lt; _[ _-_ ._“ ,"_ .&gt;&gt;_*_ _*_ =" _..._ _|. _| ־</ValidPunctuation>
+  <ValidSentenceFinalPunctCapitalization>&gt; : ) ; &gt;, ), ,&gt;&gt; — ,&gt; - &gt;&gt; ,\0020&lt; , !&gt;&gt; ,\0020&gt; ] ... ?&gt;</ValidSentenceFinalPunctCapitalization>
+  <ValidUncapitalizedStyles>q2 ft fq r q1 mt2 periph k bd qt q3 io4 fk li w fqa f mt3 sc wj tl add zvar sig pi zgap wg q4 fr nb li3 xo xt bdit pi1 xtSeeAlso io1 zsub zge li2 li1 hp</ValidUncapitalizedStyles>
+  <VerboseQuotes>No</VerboseQuotes>
+  <MinParatextVersion>8.0.100.76</MinParatextVersion>
+  <Versification>4</Versification>
+  <WordPrefixes>ak aw awk awr ar at tak tar ka ke ko ta te to kar ker kor tek tak tok ter tor tar k &lt;&lt; &lt;</WordPrefixes>
+  <WordSuffixes>re k t m n nre mre kre ꞌe mre nre na</WordSuffixes>
+  <InterlinearExportText.aMal>aMal</InterlinearExportText.aMal>
+  <InterlinearRelatedLanguages.aSer>True</InterlinearRelatedLanguages.aSer>
+  <InterlinearExportText.aSer>aSno</InterlinearExportText.aSer>
+  <InterlinearExportOnApprove.aSer>False</InterlinearExportOnApprove.aSer>
+  <NeedsEnglishLanguageFix>No</NeedsEnglishLanguageFix>
+  <NeedsPortugueseLanguageFix>No</NeedsPortugueseLanguageFix>
+  <InterlinearRelatedLanguages.NIV84>False</InterlinearRelatedLanguages.NIV84>
+  <InterlinearExportOnApprove.NIV84>True</InterlinearExportOnApprove.NIV84>
+  <CrossReferenceSettingsHaveBeenReviewed>T</CrossReferenceSettingsHaveBeenReviewed>
+  <RangeIndicator>-</RangeIndicator>
+  <SequenceIndicator>,</SequenceIndicator>
+  <ChapterVerseSeparator>.</ChapterVerseSeparator>
+  <ChapterRangeSeparator>—</ChapterRangeSeparator>
+  <BookSequenceSeparator>, </BookSequenceSeparator>
+  <ChapterNumberSeparator>, </ChapterNumberSeparator>
+  <BookSourceForMarkerXt>Abbreviation</BookSourceForMarkerXt>
+  <BookSourceForMarkerR>ShortName</BookSourceForMarkerR>
+  <AssociatedLexicalProject />
+  <LanguageIsoCode>aps:Latn:PG:</LanguageIsoCode>
+  <BiblicalTermsListSetting>Project:aArp:ProjectBiblicalTerms.xml</BiblicalTermsListSetting>
+  <TranslationInfo>Standard::</TranslationInfo>
+  <MarkersToInclude>NullValue</MarkersToInclude>
+  <IgnoreIntroductions>Yes</IgnoreIntroductions>
+  <IgnoreNotes>Yes</IgnoreNotes>
+  <StandardText>aArpBT</StandardText>
+  <Err_Compare>Compare</Err_Compare>
+  <Err_InvalidPair>Invalid pair:</Err_InvalidPair>
+  <Err_CouldNotFind>Could not find:</Err_CouldNotFind>
+  <Err_None>(none)</Err_None>
+  <InterlinearExportText.NIV84>aArpVEL</InterlinearExportText.NIV84>
+  <RefsMustMatchVerseSegments>False</RefsMustMatchVerseSegments>
+  <SegmentsMustHaveFinalPunctuation>False</SegmentsMustHaveFinalPunctuation>
+  <NumberDecimalPoint>.</NumberDecimalPoint>
+  <NumberThousandsSeparator>,</NumberThousandsSeparator>
+  <NumberOrdinals>-pla</NumberOrdinals>
+  <NumberInitialPunctuation>-+"({&lt;[$</NumberInitialPunctuation>
+  <NumberFinalPunctuation>)}"&gt;.!?:],;</NumberFinalPunctuation>
+  <NumberMedialPunctuation>-</NumberMedialPunctuation>
+  <NumberOrdinalType>suffix</NumberOrdinalType>
+  <NumberSettingsHaveBeenReviewed>T</NumberSettingsHaveBeenReviewed>
+  <NoSpaceBetweenBookAndChapter>False</NoSpaceBetweenBookAndChapter>
+  <TextEntryFontSizeAdjustment>0</TextEntryFontSizeAdjustment>
+  <InterlinearRelatedLanguages.aArp>False</InterlinearRelatedLanguages.aArp>
+  <InterlinearExportText.aArp>aSno</InterlinearExportText.aArp>
+  <InterlinearExportOnApprove.aArp>False</InterlinearExportOnApprove.aArp>
+  <NameAdaptorSourceId>project:tpi2008</NameAdaptorSourceId>
+  <NameAdaptorCharacterMap />
+  <FileNamePrePart />
+  <Copyright />
+  <AllowReadAccess>T</AllowReadAccess>
+  <HindiUrduNumberGrouping>F</HindiUrduNumberGrouping>
+  <SegmentOrder>a b c d e f g h i j k l m n o p q r s t u v w x y z aa bb cc dd ee ff gg hh ii jj kk ll mm nn oo pp qq rr ss tt uu vv ww xx yy zz</SegmentOrder>
+  <Abbreviations>NullValue</Abbreviations>
+  <CharacterAdvancedView>True</CharacterAdvancedView>
+  <MarkerAdvancedView>False</MarkerAdvancedView>
+  <MatchedPairingCharacters />
+  <SentenceFinalAdvancedView>False</SentenceFinalAdvancedView>
+  <SentenceFinalPunctuation>. ! ?</SentenceFinalPunctuation>
+  <MarkersCheckedForFinalPunctuation>io ip im ipi imi ipq imq ipr ib iq iq1 iq2 iq3 iex ie p m pmo pm pmc pmr pi pi1 pi2 pi3 pc mi nb cls q q1 q2 q3 q4 qc qr qa qm qm1 qm2 qm3 b d tr li li1 li2 li3 li4 lit p1 p2 k1 k2 pr ph ph1 ph2 ph3 phi tr1 tr2 ps psi pub toc pref intro conc glo idx maps cov spine</MarkersCheckedForFinalPunctuation>
+  <MarkersStartingNewSentencesForFinalPunctuation>ip p b is is1 is2 ms ms1 ms2 ms3 mr s s1 s2 s3 s4 sr r sp periph</MarkersStartingNewSentencesForFinalPunctuation>
+  <MarkersSkippedForFinalPunctuation>qs</MarkersSkippedForFinalPunctuation>
+  <CheckFinalPunctuationInFootnotes>Yes</CheckFinalPunctuationInFootnotes>
+  <CheckFinalPunctuationInCrossRefs>No</CheckFinalPunctuationInCrossRefs>
+  <CheckFinalPunctuationInFigures>Yes</CheckFinalPunctuationInFigures>
+  <ValidParagraphFinalPunctuationItems>qa imi fig</ValidParagraphFinalPunctuationItems>
+  <InvalidParagraphFinalPunctuationItems>pc tr f p</InvalidParagraphFinalPunctuationItems>
+  <ValidMixedCapitalization>Asterol-Kanaim En-Mispat Hasason-Tema Jega-Sahadutaꞌe El-Betelꞌe Kiriat-Aba Regem-Melek KeTaja Bia-Lahai-Roi Jega-Sahaduta El-Betel Trens-Yufretis El-Elohe-Israel Allon-Bakut Asterot-Kanaim</ValidMixedCapitalization>
+  <ReferenceFinalPunctuation />
+  <ReferenceExtraMaterial>Akniaw </ReferenceExtraMaterial>
+  <OriginRangeOption>NoteInAnyVerse</OriginRangeOption>
+  <AllowSharingWithSLDR>T</AllowSharingWithSLDR>
+  <EncodingConverter />
+  <DefaultCrossRefCaller>+</DefaultCrossRefCaller>
+  <DefaultFootnoteCaller>+</DefaultFootnoteCaller>
+  <InitialImportBooksDirectory>C:\0 Scripture Forge\aArpAI3 Draft 2025-12-17_1158</InitialImportBooksDirectory>
+  <InterlinearRelatedLanguages.GoiBTL>False</InterlinearRelatedLanguages.GoiBTL>
+  <InterlinearExportText.GoiBTL />
+  <InterlinearExportOnApprove.GoiBTL>False</InterlinearExportOnApprove.GoiBTL>
+  <BooksPresent>111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000001111111111000011111000000000000</BooksPresent>
+  <FontFeatures />
+  <HtmlLanguage />
+  <ParatextRegistryId>Ktw3mguBfCLKrM6DG</ParatextRegistryId>
+  <Visibility>Public</Visibility>
+  <InterlinearRelatedLanguages.aArpVEL>False</InterlinearRelatedLanguages.aArpVEL>
+  <InterlinearExportText.aArpVEL />
+  <InterlinearExportOnApprove.aArpVEL>False</InterlinearExportOnApprove.aArpVEL>
+  <MatchBasedOnStems>F</MatchBasedOnStems>
+  <Continuer>&lt;&lt;</Continuer>
+  <InnerContinuer>&lt;</InnerContinuer>
+  <InnerInnerContinuer>&lt;&lt;</InnerInnerContinuer>
+  <QuoteClosesAllQuoteLevels>No</QuoteClosesAllQuoteLevels>
+  <PaOriginalStylesheetName />
+  <InterlinearRelatedLanguages.aArpBTA>False</InterlinearRelatedLanguages.aArpBTA>
+  <InterlinearExportText.aArpBTA />
+  <InterlinearExportOnApprove.aArpBTA>False</InterlinearExportOnApprove.aArpBTA>
+  <InterlinearRelatedLanguages.aMalBTA>False</InterlinearRelatedLanguages.aMalBTA>
+  <InterlinearExportText.aMalBTA>aArpA</InterlinearExportText.aMalBTA>
+  <InterlinearExportOnApprove.aMalBTA>True</InterlinearExportOnApprove.aMalBTA>
+  <InterlinearRelatedLanguages.aSnoBTA>False</InterlinearRelatedLanguages.aSnoBTA>
+  <InterlinearExportText.aSnoBTA />
+  <InterlinearExportOnApprove.aSnoBTA>False</InterlinearExportOnApprove.aSnoBTA>
+  <InterlinearRelatedLanguages.TPB08>False</InterlinearRelatedLanguages.TPB08>
+  <InterlinearExportText.TPB08 />
+  <InterlinearExportOnApprove.TPB08>False</InterlinearExportOnApprove.TPB08>
+  <UsfmVersion>3</UsfmVersion>
+  <InterlinearRelatedLanguages.TPB12>False</InterlinearRelatedLanguages.TPB12>
+  <InterlinearExportText.TPB12 />
+  <InterlinearExportOnApprove.TPB12>False</InterlinearExportOnApprove.TPB12>
+  <InterlinearRelatedLanguages.aMalBT>False</InterlinearRelatedLanguages.aMalBT>
+  <InterlinearExportText.aMalBT />
+  <InterlinearExportOnApprove.aMalBT>False</InterlinearExportOnApprove.aMalBT>
+  <InterlinearModelTextId>f4bdab9e8ccebb90e230634574f121853c2472b1</InterlinearModelTextId>
+  <InterlinearExportTextId.aArpBTA />
+  <InterlinearExportTextId.aMal>f9954807b9843ea79b49bf4fa7fc346b82f8be83</InterlinearExportTextId.aMal>
+  <BibleModuleAssociations>XXD:BackCover.sfm</BibleModuleAssociations>
+  <InterlinearExportTextId.aArpBT />
+  <InterlinearConversionCompletedBy>John Nystrom|Matthew Woods|Benjamin Pehrson|Vianney Pirora|Kenny Aiprum|Bradley Voltmer|Emil Ninkure|Andrew Swar|Petrus Brere|Mack Graham|Leonce Kenai|Papson Kaiwe|Felix Soropo|Jack Boipe</InterlinearConversionCompletedBy>
+  <InterlinearRelatedLanguages.cGoi>False</InterlinearRelatedLanguages.cGoi>
+  <InterlinearExportText.cGoi>cGoi</InterlinearExportText.cGoi>
+  <InterlinearExportOnApprove.cGoi>True</InterlinearExportOnApprove.cGoi>
+  <NumberSpacing>bothRequired</NumberSpacing>
+  <RemoveAllExisting>No</RemoveAllExisting>
+  <CopyALLfigures>No</CopyALLfigures>
+  <CopyFilesOverAsWell>Yes</CopyFilesOverAsWell>
+  <IncludeCaptions>Yes</IncludeCaptions>
+  <WrapTargetCaption>Yes</WrapTargetCaption>
+  <IncludeRef>Yes</IncludeRef>
+  <MatchCase>No</MatchCase>
+  <DotAll>No</DotAll>
+  <ProjectList>aArpBT aArp aMal aSno bBar bPou bRam bSum cGoi cRbr cWol dOpi</ProjectList>
+  <OnlyShowDiffs>No</OnlyShowDiffs>
+  <ShowCaptionList>No</ShowCaptionList>
+  <highlightProjects>aArp aArpBT aMal aSno</highlightProjects>
+  <myFilter>zstat:A,B,C,N</myFilter>
+  <showTable>Yes</showTable>
+  <showDetails>Yes</showDetails>
+  <showFree2use>Yes</showFree2use>
+  <showBestFree2use>Yes</showBestFree2use>
+  <showEntryLength>Yes</showEntryLength>
+  <addComments>Yes</addComments>
+  <gloFilename>A9GLO*.SFM</gloFilename>
+  <QuotationTypesOption>Custom</QuotationTypesOption>
+  <ExpectedQuoteTypes>Quotation,Normal,ImplicitWithPotentialSelfQuote</ExpectedQuoteTypes>
+  <UnexpectedQuoteTypes />
+  <ReportMissingExpectedQuotes>T</ReportMissingExpectedQuotes>
+  <ReportUnexpectedQuotes>T</ReportUnexpectedQuotes>
+  <ShowActualFilename>Yes</ShowActualFilename>
+  <UseParentheses>Yes</UseParentheses>
+  <PunctuationCheckSetSeparately>T</PunctuationCheckSetSeparately>
+  <ValidPunctuation_NonText>- ‌ ‍ ._ ,_ !_ _&lt; &gt;_ ?_ :_ _( )_ _—_ ;_ ..._ _©_ _–_ _&amp;_ ,_&lt;&lt; .&gt;&gt;_ _&lt;&lt; &gt;&gt;_ ,&gt;_ ?&gt;&gt;_ !&gt;&gt;_ .)_ ,_&lt; ?&gt;_ .&gt;_( .&gt;&gt;&gt;_ )._ ._&lt;&lt; .&gt;_ _&lt;&lt;&lt; _&lt;&lt;&lt;_ :_&lt; .&gt;&gt;_( ._( .]_ &gt;&gt;._ :_&lt;&lt; ?&gt;&gt;&gt;_ ,_&lt;&lt;&lt; ._&lt;&lt;&lt;_ .&gt;&gt;_&lt;&lt; ?_&lt;&lt; ,&gt;&gt;_ ).&gt;&gt;_ .&gt;&gt;&gt;&gt;&gt;_ ?_&lt; ...&gt;&gt;_ ),_ ,_( ._&lt; ?&gt;&gt;_( .&gt;&gt;)_ !&gt;&gt;&gt;_ !&gt;_ &gt;._ !&gt;&gt;_( ,&gt;&gt;_( &gt;&gt;_( )_( ?&gt;&gt;&gt;&gt;&gt;_ .)_( )_–_ ... !_&lt;&lt; .&gt;&gt;_&gt;_ _&lt;&lt;_&lt; .&gt;_&gt;&gt;_ ?&gt;_&gt;&gt;_ ,_&lt;&lt;_&lt; .&gt;&gt;_&gt;_&gt;&gt;_ ?&gt;&gt; !&gt;_&gt;&gt;_ _._._._ &gt;&gt;._&lt;&lt; | &gt;,_ &gt;?_ ._+ &gt;?&gt;&gt;_ ' _–_&lt;&lt; _[ _-_ ._“ ,"_ .&gt;&gt;_*_ _*_ =" _..._ _|. _| ־</ValidPunctuation_NonText>
+  <InvalidPunctuation_NonText>_` _&gt; _+ &lt;_ . &gt; , -_ _,_ _......... _- _._ _&gt;_ _[_ ]_ _:_ _?_ &lt; ! _)_ _(_ _; _"_ ` —_ — ( /_ !!!!!!!_ ,_` ._&lt;&lt;_ _&gt;&gt; .&gt;&lt;&lt;_ .&gt;&gt; !_&lt;&lt;_ ._,_ ,_&lt;&lt;.........( .&lt;&lt;_ :-_ ,_&lt;&lt;_ _&gt;&gt;_ !._ ._[_ .?_ ._?_ ,&lt;&lt; &gt;&gt;?_ !!&lt;&lt;&gt;&gt; &lt;&lt;&gt;&gt;!!_ _).&gt;&gt;_( ._(_ &gt;&gt;!_ ,_&lt;_ ?,_ .&gt;&gt;_&lt; ?_[_ ?]_ ,_&lt;&lt;` .&gt;_&lt;_ ?&gt;&gt;_&lt;&lt; ?_&lt;_ .?&gt;&gt;_ ,&gt;&gt;_&lt;&lt; ;&gt;&gt;_&lt;&lt; ;&gt;&gt;_ .;_ ,_"_ ,` )_—_ _&lt;&lt;_ ?_—_ ,)_ ._&gt;&gt;_ &gt;&gt;)._ ) ?.&gt;&gt;_ ._--_ ). .._ _)._ ?._ !&gt;&gt;_&lt;&lt; &lt;&lt; ? &gt;&gt;._( …_ ,_……_ …._ &gt;&gt;,_ _&lt;&lt;_&lt;_ ,&gt; ._&lt;&lt;_&lt;_ ._._.&gt;&gt;_ .&gt;_&lt; ,_&lt;&lt;_&lt;&lt; ._` ,&gt;&gt;_[ &gt;&gt;_[ :_&lt;_( ?&gt;&gt;_&lt;&lt;_ ,_&gt;&gt;_ ._&gt;&gt;_[ &gt;_( _=_ ..)_ ._._ ._&gt;&gt;._ _._&gt;&gt;_ _…_ !_&gt;_&gt;_ .&gt;_&gt;_&gt;_ ?&gt;&gt;_&gt;_ ?&gt;&gt;._ &gt;&gt;)_ ?&gt;&gt;_._ _?_&gt;&gt;_ ._. _. _]._ _,_&lt; !&gt;&gt;_(_ !_&gt;&gt;_ .&gt;&gt;_(_&lt; &gt;)_ _.&gt;&gt;_ !_&gt;&gt;_&lt;&lt; ._&gt;_ !,_ _]_ ,&lt;&lt;_ ,&gt;&gt;_[_ .&gt;&gt;._ !_.&gt;&gt;_ .&gt;&gt;_[ _[&lt;&lt; &gt;&gt;.]_ .!_ :_[ &gt;&gt;._._ [_ (_ _= _“ _" ’ "_ / ._[ _' !!_ '_ ?&gt;_&lt;&lt; ?_,_ ?_&gt;&gt;_ !.&gt;&gt;_ ,&lt; _&lt;_ ."_ "._ ,_&gt;_ ._&gt;&gt;&gt;_ ,&lt;_ –_ .,_ &gt;. ,“ ,”_ !. ,_._._._ .. )"_ ”_ ..&gt;&gt;_ ,_“ .”_ _, ,_" "_( ”._ ;_&lt;&lt; .____ ,( )_._ :,_ .[_ : ,._</InvalidPunctuation_NonText>
+  <FlagDeprecatedMarkers>True</FlagDeprecatedMarkers>
+  <BookChapterSeparator> </BookChapterSeparator>
+  <AlreadyAppliedDefaultChars>T</AlreadyAppliedDefaultChars>
+  <ValidCharacters_NonText>   
+ 
+ 0 1 2 3 4 5 6 7 8 9 a A b B c C d D e E f F g G h H i I j J k K l L yl m M n N yn o O p P q Q r R s S t T u U v V w W x X y Y z Z ꞌ -</ValidCharacters_NonText>
+  <InvalidCharacters_NonText />
+  <ppNamesChapterVerseSeparator>.</ppNamesChapterVerseSeparator>
+  <ppNamesFontName>Andika New Basic CompactNonlit</ppNamesFontName>
+  <ppNamesFontSize>8</ppNamesFontSize>
+  <ppNamesMultiplierPrefix>x</ppNamesMultiplierPrefix>
+  <ppNamesMultiplierSuffix />
+  <ppNamesChapterFormatBold>F</ppNamesChapterFormatBold>
+  <ppNamesRepeatBookNames>F</ppNamesRepeatBookNames>
+  <ppNamesCol1Width>31.8333333333333</ppNamesCol1Width>
+  <ppNamesCol2Width>26.875</ppNamesCol2Width>
+  <ppNamesCol3Width>0</ppNamesCol3Width>
+  <ppNamesDescriptionInclude>F</ppNamesDescriptionInclude>
+  <ppNamesDescriptionNextLine>F</ppNamesDescriptionNextLine>
+  <ppNamesDescriptionIndent>F</ppNamesDescriptionIndent>
+  <ppNamesDescriptionItalic>F</ppNamesDescriptionItalic>
+  <ppNamesSeesInclude>T</ppNamesSeesInclude>
+  <ppNamesSeesNextLine>F</ppNamesSeesNextLine>
+  <AllowInvisibleChars>F</AllowInvisibleChars>
+  <Naming PrePart="" PostPart="aArp.SFM" BookNameForm="41MAT" />
+</ScriptureText>

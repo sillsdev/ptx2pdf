@@ -15,8 +15,15 @@ bgfieldmap = {
     "alpha":    "s_sbiAlpha",
     "low":      "fcb_sbiLayerOrder",
     "scaleto":  "fcb_sbiScaleTo",
-    "oversize": "fcb_sbiOversize"
+    "oversize": "fcb_sbiOversize",
+    "cropofs":  "t_sbiBgCropOfs"
 }
+
+# Keys whose TeX property name doesn't match prefix + k.title()
+bgkeynamemap = {
+    "cropofs": "CropOfs"
+}
+
 
 fgfieldmap = {
     "above":    "fcb_sbi_posn_above",
@@ -34,7 +41,8 @@ def imageStyleFromStyle(tgt, mkr, isbg):
     self.filename = tgt.getval(mkr, prefix)
     if isbg:
         for k in bgfieldmap.keys():
-            val = tgt.getval(mkr, prefix + k.title())
+            suffix = bgkeynamemap.get(k, k.title())
+            val = tgt.getval(mkr, prefix + suffix)
             setattr(self, k, val)
     else:
         self.pos = tgt.getval(mkr, "FgImagePos") or "t"
@@ -121,7 +129,8 @@ class ImageStyle:
             val = getattr(self, k, None)
             if val is None:
                 continue
-            key = prefix + k.title() if prefix is not None else k
+            suffix = bgkeynamemap.get(k, k.title()) if fmap is bgfieldmap else k.title()
+            key = prefix + suffix if prefix is not None else k
             tgt.setval(mkr, key, val)
 
     def toStyle(self, tgt, mkr):
@@ -154,7 +163,8 @@ class ImageStyle:
             tgt.setval(mkr, prefix + k.title(), None)
         if self.isbg:
             for k in bgfieldmap.keys():
-                tgt.setval(mkr, prefix + k.title(), None)
+                suffix = bgkeynamemap.get(k, k.title())
+                tgt.setval(mkr, prefix + suffix, None)
         else:
             tgt.setval(mkr, 'FgImagePos', None)
             

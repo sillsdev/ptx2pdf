@@ -151,7 +151,7 @@ class PDFx1aOutput(Snippet):
 /OutputConditionIdentifier (Custom)
 /Info (Boilerplate null output intent)
 /DestOutputProfile @OBJCVR
-/RegistryName (http://www.color.og)
+/RegistryName (http://www.color.org)
 >> <<
 /Type/OutputIntent
 /S/GTS_PDFA1
@@ -159,7 +159,7 @@ class PDFx1aOutput(Snippet):
 /OutputConditionIdentifier (Custom)
 /Info (Boilerplate null output intent)
 /DestOutputProfile @OBJCVR
-/RegistryName (http://www.color.og)
+/RegistryName (http://www.color.org)
 >> ]
 >>}}
 \egroup
@@ -249,6 +249,8 @@ class Diglot(Snippet):
 \makeatother
 """
 
+        if 'diglots_' not in model.dict:
+            return ""
         layout = model.dict["document/diglotlayout"]
         if not layout:
             layout = "L"+"".join(model.dict["diglots_"].keys())

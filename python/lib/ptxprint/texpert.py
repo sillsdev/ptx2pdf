@@ -1,8 +1,10 @@
 
 from ptxprint.utils import _, strtobool, asfloat, f2s
 from dataclasses import dataclass
+from multiprocessing import cpu_count
 from typing import Optional, Callable, Tuple, Union
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +33,7 @@ texpertOptions = {
     "PageAlign":          O("bookstartpage", "LAY", 
                             {"page": _("Next page"), "multi": _("Same page"), "odd": _("Odd page")}, r"\def{0}{{{1}}}", 
                             _("Where to start a new book"), _("Does a scripture book start on a new page, the same page as the previous book (if <65% of page has been used), or an odd page")),
-    "PageFullFactor":     O("pagefullfactor", "LAY", (0.65,  0.30, 0.9, 0.05, 0.05, 2), r"\def\{0}{{1}}", _("Page full factor"), 
+    "PageFullFactor":     O("pagefullfactor", "LAY", (0.65,  0.30, 0.9, 0.05, 0.05, 2), r"\def{0}{{1}}", _("Page full factor"), 
                             _("This setting is related to how full a page needs to be to force the next book to start on a new page."),
                             valfn=lambda v: f2s(float(v or "0.65"))),
     "IntroPageAlign":     O("intropagealign", "LAY",
@@ -39,6 +41,10 @@ texpertOptions = {
                             _("Where to start a new intro page"), _("Does an intro page start on a new page, the same page as the previous book, an odd page, or group all adjacent intro pages into an odd paged group")),
     "bottomRag":          O("bottomrag", "LAY", (3, 0, 10, 1, 1, 0), "", _("Unbalanced Lines (Max)"),
                             _("Maximum number of unbalanced lines allowed in 2-column layout. Recommended range 1-5.")),
+    "interlinestretch":   O("interlinestretch", "LAY", (2, 0, 10, .1, 1, 1), "", _("Variable line spacing maximum stretch"),
+                            _("Maximum stretch to insert between lines in variable line spacing in pts")),
+    "interlineshrink":    O("interlineshrink", "LAY", (0.3, 0, 3, .1, 1, 2), "", _("Variable line spacing maximum shrink"),
+                            _("Maximum shrink to insert between lines in variable line spacing in pts")),
     "squashgridbox":      O("squashgrid", "LAY", True, None, _("No Top Space"), 
                             _("Don’t insert space above headings at the start of a column")),
     "lastbooknoeject":    O("lastnoeject", "LAY", False, None, _("Suppress pagebreak after bookend-final"), 
@@ -62,8 +68,14 @@ texpertOptions = {
     "DoubleSided":          O("doublesided", "LAY", True, None, _("Double Sided Layout"), 
                             _("This setting can be disabled to turn off inner/outer margins, forcing the inner/outer gutter, and Notelines to always appear on the same side of the printed page.")),
 
-    "versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
-    "versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
+    "MaxProcesses":         O("maxproc", "LAY", (int(cpu_count() * 0.9), 1, cpu_count(), 1, 1, 1), None, _("Maximum parallel processes"),
+                            _("The maximum number of parallel processes to use for example when page filling")),
+    "MaxFillTime":          O("maxfilltime", "LAY", (0, 0, 100, 0.1, 1, 1), None, _("Maximum Filling Time (mins)"),
+                            _("Stop page filling a book after this many minutes")),
+
+    #"versehyphen":        O("vhyphen", "CVS", True, None, _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")),
+    #"versehyphenup":      O("vhyphenup", "CVS", False, None, _("Margin Verse Hyphen on first line"), _("Puts the margin verse range hyphen in bridged verses on the first line not the second")),
+    "vhyphenmode":        O("vhyphenmode", "CVS", {"bottom": _("Always down"), "top": _("Always up"), "left": _("Up on left"), "right": _("Up on right"), "none": _("No hyphens")}, None, _("Position of marginal verse hyphen if any"), _("Insert or not a marginal verse hyphen in verse ranges, whether on the first or second line")),
     "marginalVerseIsMargin": O("mverseismargin", "CVS", False, None, _("Gutter space reduction for marginal verses"), _("If false, the space for marginal verses is taken from the column. If true, some space for marginal verses is taken from the margins or rule gutter")),
     "CalcChapSize":       O("calcchapsize", "CVS", True, None, _("Auto Calc Optimum Chapter Size"),
                             _("Attempt to automatically calculate drop chapter number size")),
@@ -71,10 +83,10 @@ texpertOptions = {
                               _("Hanging verses into a chapter number can result in clashes, depending on the after-chapter space. If so, then turn off hanging verse numbers for the first verse (in poetry only). ")),
     "HangVA":             O("hangva", "CVS", False, None, _("Alternate verse numbers also hang"),
                             _("If there is an alternative verse and the current verse is hanging, does the alternate hang?")),
-    "AfterChapterSpaceFactor":  O("afterchapterspace", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), r"\def\{0}{{{1}}}", _("After chapter space factor"),
+    "AfterChapterSpaceFactor":  O("afterchapterspace", "CVS", (0.25, -0.20, 1.0, 0.01, 0.10, 2), r"\def{0}{{{1}}}", _("After chapter space factor"),
                             _("This sets the gap between the chapter number and the text following. The setting here is a multiple of the main body text size as specified in layout."),
                             valfn=lambda v: f2s(asfloat(v, 0.25) * 12)),
-    "AfterVerseSpaceFactor": O("afterversespace", "CVS", (0.15, -0.20, 1.0, 0.01, 0.10, 2), r"\def\{0}{{{1}}}", _("After verse space factor"),
+    "AfterVerseSpaceFactor": O("afterversespace", "CVS", (0.15, -0.20, 1.0, 0.01, 0.10, 2), r"\def{0}{{{1}}}", _("After verse space factor"),
                             _("This sets the gap between the verse number and the text following. The setting here is a multiple of the main body text size as specified in layout."),
                             valfn=lambda v:f2s(asfloat(v, 0.15) * 12)),
 
@@ -116,6 +128,10 @@ texpertOptions = {
     "UnderlineLower":     O("underlineposition", "FNT", (0.10, -1.0 , 1.0, 0.01, 0.01, 2), r"\def{0}{{{1}em}}", _("Underline vertical position (em)"),
                             _("This sets how far (in ems) the underline is below the text and what it is relative to. If negative, it is the distance below the baseline. If positive (or zero), it is the distance below the bottom of any descenders."),
                             valfn=lambda v: f2s(float(v or "-0.1"))),
+    "UnderlineSpaces":    O("underlnsp", "FNT", True, None, _("Underline Spaces"),
+                            _("Underline spaces in underlined runs")),
+    "LogFonts":           O("logfontusage", "FNT", False, None, _("Log font creation"),
+                            _("Create <jobname>.fontusage in the local/ptxprint/<config>/ directory, which will list the page number and exact font definition when each new style is first used.")),
 
     "MidPageFootnotes":   O("midnotes", "NTS", False, None, _("Mid-Page Footnotes"),
                             _("Should footnotes go before a single-double column transition")),
@@ -151,15 +167,25 @@ texpertOptions = {
                             _("If a footnote is being shaved (split onto next page), what is the minimum number of lines to move?")),
     "NoteShaveStay":      O("nshavestay", "NTS", (2, 0, 100, 1, 1, 0), r"\def{0}{{{1}}}", _("Split notes: note lines to stay"),
                             _("If a footnote is being shaved (split onto next page), how many lines of (all) notes must remain on the page?")),
-    "FootnoteMulS":       O("footnotemuls", "NTS", (100, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Single column"),
+    "FootnoteMulStS":       O("footnotemulsts", "NTS", (400, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Study note factor-Single column"),
+                            _("To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")),
+    "FootnoteMulStT":       O("footnotemulstt", "NTS", (800, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Study note factor-Two column"),
+                            _("To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")),
+    "FootnoteMulStD":       O("footnotemulstd", "NTS", (500, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Study note factor-Diglot"),
+                            _("To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")),
+    "FootnoteMulS":       O("footnotemuls", "NTS", (400, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Single column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")),
-    "FootnoteMulT":       O("footnotemult", "NTS", (100, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Two column"),
+    "FootnoteMulT":       O("footnotemult", "NTS", (800, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Two column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")),
-    "FootnoteMulD":       O("footnotemuld", "NTS", (500, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"),
+    "FootnoteMulD":       O("footnotemuld", "NTS", (10, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")),
-    "FootnoteMulC":       O("footnotemulc", "NTS", (0, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
+    "FootnoteMulC":       O("footnotemulc", "NTS", (1, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
 
+    "diglotBalNotes":         O("diglotbalnotes", "DIG", False, None, _("Balance diglot/polyglot notes"),
+                            _("When there's a note on column R (for example), does that reduce the space from other columns?")),
+    "diglotMergedNotesRTL":         O("mergednotesrtl", "DIG", False, None, _("Diglot/polyglot merged paragraphed notes are RTL"),
+                            _("When merged notes are not shown as individual paragraphs, the result must be arranged as though RTL or LTR (however the induvidual notes are structured). This defines the paragraph alignment.")),
     "ReVersify":          O("reversify", "DIG", True, "", _("Adjust Versification of Projects"),
                             _("If versification differs between projects, adjust diglot/polyglot projects to match the primary (L) project.")),
     "ShowVPvrse":         O("showvpvrse", "DIG", True, "", _("Keep existing verse numbers (as \\vp)"),
@@ -169,12 +195,16 @@ texpertOptions = {
     "VisTrace":           O("vistrace", "DIG", False, None, _("Show Diglot Trace Marks"),
                             _("Insert visible trace marks in diglot output")),
     "VisTraceExtra":      O("vistracex", "DIG", False, None, _("Extra Trace Mark Info"),
-                            _("Add extra information to diglot trace marks")),
+                            _("Add extra information to diglot trace marks. (debugging only - can alter layout)")),
     "DiglotColourPad":    O("diglotcolourpad", "DIG", (3, -20, 20, 1, 1, 0), r"\def{0}{{{1}pt}}", _("Diglot Shading Padding"),
                             _("The amount of side padding (pt) on the shaded background of a diglot")),
     "TextBorderMode":     O("textbordermode", "DIG",
                             {"1": _("Borders start at body text"), "0": _("Borders include book intros"), "2": _("Wide book intros for per-column textborders")}, r"{0}={1}",
                             _("How does text-border behave in diglots?"), _("Historically, diglot text-borders put the border around book introductions. This control allows that (substandard) behaviour to be chosen, and also allows  experimental code to make books with per-column textborders use full-width text for introductory text.")),
+    "GrowUnprintableLimit":           O("growunprintable", "DIG", (2,-1,10,1,1,0), r"{0}={1}",  _("Unprintable page recovery."),
+                            _("If notes / figures make a page unprintable: -1: immediately stop; 0: print failed contents and try to struggle on; >0 grow page height by up to N lines.")),
+    "PageFullTest":       O("pagefulltest", "DIG", {"A":_("1xBiggest baseline"), "B":_("2xSmallest baseline"),"C":_("2xBiggest baseline"), "D":_("3xSmallest baseline")}, r"\let{0}={0}{1}",  _("Page-full test."),
+                            _("When a (non-title) chunk has finished, the amount of unused space below which diglot will immediately output a page,  rather than trying to fit the next chunk. (irrespective of how short it is). Higher values encourage underfilled pages, but can prevent orphaning of the 1st line of poetry.")),
     "figlocleft":         O("figleft", "PIC", True, None, _("Default Figures Top Left"),
                             _("Default figure positions to top left")),
     "CaptionRefFirst":    O("captreffirst", "PIC", False, None, _("Ref Before Caption"),
@@ -200,11 +230,26 @@ texpertOptions = {
                             _("Disable transparency output in PDF")),
     "MarkAdjustPoints":   O("showadjpoints", "PDF", False, None, _("Show adjust points"),
                             _("Show adjust points in the margin of the text.")),
+    "MarkTriggerPoints":  O("mktrigpts", "PDF", False, "", _("Mark Trigger Points"),
+                            _("Display trigger points in output")),
     "ParaLabelling":      O("showusfmcodes", "PDF", False, "", _("Show USFM codes"),
                             _("Show the USFM markers in the margin beside paragraphs.")),
     "ShowHboxErrorBars":  O("showhboxerrorbars", "PDF", False, "", _("Show Error Bars For Overfull Lines"),
                             _("Enable this option to have TeX make overfull lines stand out."),
                             valfn = lambda v:"%" if v else ""),
+ # s_spineOverlapBack
+    "spineOverlapBack":   O("spineoverlapback", "PDF", (0, 0.00, 50.00, 0.50, 1.00, 1), "", _("Spine Overlap onto Back Cover (mm)"),
+                            _("If you want the spine graphic or colour to spill over onto the back cover page, then set the amount of overlap here.")),
+ # s_spineOverlapFront
+    "spineOverlapFront":  O("spineoverlapfront", "PDF", (0, 0.00, 50.00, 0.50, 1.00, 1), "", _("Spine Overlap onto Front Cover (mm)"),
+                            _("If you want the spine graphic or colour to spill over onto the front cover page, then set the amount of overlap here.")),
+ # s_coverBleed
+    "Bleed":              O("bleed", "PDF", (5, 0.00, 25.00, 0.50, 1.00, 1), "", _("Cover Bleed (mm)"),
+                            _("Bleed is the section of artwork that goes beyond where the paper is cut. This ensures that the image goes right to the edge of the cover after it has been trimmed.")),
+ # s_coverArtBleed
+    "ArtBleed":           O("artbleed", "PDF", (0, 0.00, 25.00, 0.50, 1.00, 1), "", _("Hard Cover Art Bleed (mm)"),
+                            _("Art Bleed is specifically for hard cover binding and is the setting which enables images to go beyond the size of the cover in order to wrap around the hard cover and stuck down under the inner backing sheet.")),
+
     # "ProperCase":         O("lowercase", "PDF", False, "", _("Title"),
                             # _("Description in Tooltip")),
 
@@ -222,6 +267,8 @@ texpertOptions = {
                             _("Minimum width for a bad space. 0 says to calculate for the 20 worst spaces in the doc")),
     "BadCharSpaces":      O("charSpaceEms", "PRV", (0.3, 0, 1, 0.01, 0.1, 2), "", _("Bad intercharacter space minimum width (em)"),
                             _("Minimum width for a bad inter character space.")),
+    "CollisionPrecise":   O("collisionPrecise", "PRV", False, "", _("Precise collisions"),
+                            _("Only show precise collisions between glyphs rather than overlapping bounding boxes - slow")),
     "PaddingWidth":       O("paddingwidth", "PRV", (0.5, -1.0, 5.0, 0.1, 0.1, 1), "", _("Collision Detection Padding (pt)"),
                             _("Minimum space between bounding boxes of glyphs before a collision is flagged.")),
     "RiverThreshold":     O("riverthreshold", "PRV", (3.0, 1.0, 1000, 0.1, 1, 1), "", _("River Detection Threshold (em)"),
@@ -235,8 +282,13 @@ texpertOptions = {
     "RiverOverlap":       O("riveroverlap", "PRV", (0.4, -5, 5, 0.1, 0.1, 1), "", _("River Detection minimum overlap (em)"),
                             _("Minimum overlap in ems required for two spaces above each other to be considered part of the same river")),
 
-    "UnderlineSpaces":    O("underlnsp", "OTH", True, None, _("Underline Spaces"),
-                            _("Underline spaces in underlined runs")),
+    "pbtimeout":          O("pbtimeout", "APF", (100, 0, 1000, 1, 10, 0), None, _("Page fill timeout (mins)"), _("Cancel page filler books that take longer than this many minutes")),
+    "pbJustification":    O("pbjustify", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill justified text cost"), _("Factor to multiply stretching a justified paragraph over a non-justified")),
+    "pbSpacingTol":       O("pbspacingtol", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill expansion cost"), _("Weighting of badness caused by expansion")),
+    "pbShrinkPref":       O("pbshrinkpref", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill longer paragraph cost"), _("Extra cost for making paragraphs longer")),
+    "pbHeadings":         O("pbheadings", "APF", (60, 0, 200, 1, 10, 0), None, _("Page fill heading cost"), _("Factor to pay for adjusting a heading")),
+    "pbLastLine":         O("pblastline", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill last line effect weight"), _("Weighting of last line length effect costs")),
+
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),
     # "AttrMilestoneMatchesUnattr": O("attrmsmatchunattr", "OTH", False, "", _("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*.")),
@@ -246,8 +298,6 @@ texpertOptions = {
                             _("USFM 3.2 allows additional reference links to be inserted as part of \\xt ... \\xt* markup. This frequently appear in DBL text bundles, but are unhandled by PTXprint. Allow these to be removed from the USFM prior to typesetting.")),
     "BookEndDecorationSkip":   O("bedskip", "OTH", (16, -100, 100, 1, 1, 0), r"\def{0}{{{1}pt}}", _("End decoration skip"),
                                  _("The gap between the end of the book and the book-end decoration")),
-    "MarkTriggerPoints":  O("mktrigpts", "OTH", False, "", _("Mark Trigger Points"),
-                            _("Display trigger points in output")),
     "vertThumbtabVadj":   O("thumbvvadj", "OTH", (-2, -10, 50, 1, 5, 0), r"\def{0}{{{1}pt}}", _("Thumbtab rotated adjustment"),
                             _("Shift thumbtab text")),
 
@@ -332,7 +382,7 @@ class TeXpert:
                     res.append(self.generateOutput(opt, k, v))
             elif n.startswith("fcb_"):
                 if v is not None and v != list(opt.val.keys())[0]:
-                    res.append(self.generateOutput(opt, k, v))
+                    res.append(self.generateOutput(opt, k, v, default=r"\def{0}{{{1}}}"))
         return "\n".join(line for line in res if line)
 
     @classmethod

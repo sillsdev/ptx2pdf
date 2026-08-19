@@ -1,11 +1,11 @@
 .SUFFIXES: .dvi .pdf
 
-DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+DIR:=$(shell dirname `find ../../..  \( -name test -prune -or -name tmp -prune \) -or -name paratext2.tex -print`)
 .tex.pdf:
 	TEXINPUTS=.:$(DIR)// xetex -no-pdf $<
 	TEXINPUTS=.:$(DIR)// time xetex -no-pdf $<
-	grep '^font<' $(subst .tex,.log,$<) > $(subst .tex,.fonts,$<)
 	dvipdfmx -C16 $(subst .tex,.xdv,$<)
+	grep '^font<' $(subst .tex,.log,$<) > $(subst .tex,.fonts,$<)
 	
 
 test.pdf: test.tex test.usfm.triggers test.usfm test.sty $(DIR)/*.tex 

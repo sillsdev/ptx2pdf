@@ -1,0 +1,27 @@
+% This is the .tex file specific for the aArp project used by PTXprint.
+% Saved Configuration name: Default
+\maxdeadcycles=300
+%\def\RHtitlecenter{\pagenumber}
+%\setbetweenhook{imte1}{c}{\zrule|\*}
+
+% \tracing{per}
+
+%\VisTracetrue
+%\MarkAdjustPointstrue
+
+% Cause only one book to print footnotes in separate columns in a diglot rather than stacking them.
+% diglotSepNotestrue}  (or false)  - notes are merged
+%diglotBalNotestrue} % (or false) - notes on L or R (ought to)  steal space from  the other side.
+\setbookhook{start}{JUD}{\diglotSepNotestrue\diglotBalNotestrue}
+\setbookhook{end}{JUD}{\diglotSepNotesfalse\diglotBalNotesfalse}
+
+%\tracing{g}
+%\tracing{P}
+%\tracing{T}
+
+%\tracing{oh}
+%\tracing{o}
+%\setbookhook{end}{JAS}{\zNeedOddPage}
+\setbookhook{after}{final}{\zNeedOddPage}
+
+\catcode`\(=12

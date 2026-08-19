@@ -172,7 +172,8 @@ This is discussed in detail in the
 
 Options relevant for normal sidebars (see [covers documentation](covers.md) for other options) :
 
-* `text` The rectangle occupied by /reserved for the text 
+* `text` The rectangle occupied by  the text 
+* `inner` The rectangle available to the text
 * `box` The background colour
 * `iborder` Inner edge of the border
 * `border` Outer edge of the border
@@ -232,6 +233,8 @@ In both cases the sequence is Red, Green, Blue.
 
 `\BoxBPadding` measurement
 
+`\BoxPaddingInnerOuter` `[T|F]`
+
 If a coloured background is used, this is how much that box should be larger than the enclosed text.
 Measurement is interpreted as being in points (72.27pt = 1 inch), and should not have a unit attached.
 Left, Right, Top and Bottom padding can be controlled separately, with historic/convenience  
@@ -239,6 +242,7 @@ single commands `\BoxHPadding`  and `\BoxVPadding` setting (respectively) both
 Horizontal and Vertical parameters in a single command. 
 All four dimensions can be set with `\BoxPadding`.
 
+`\BoxPaddingInnerOuter` if `T` means that the box padding reverses left and right on even numbered pages.
 
 Related to box padding, the (global) TeX boolean control `\BoxLikeBordertrue`
 (new default) and `\BoxLikeBorderfalse` (old default) determine how sidebars
@@ -288,12 +292,14 @@ Define the thickness of the border around the box, measured in pt.
 #### `\BorderStyle` 
 `\BorderStyle` option
 
-* Options: `plain`|`double`
-* Options with plugin: `ornaments`
+* Option: `plain`|`double`
+* (or with plugin): `plain` | `double` | `ornaments`
+* (with standardborders.sty): *any named style*
 * Default: `plain`
 
 Normal borders are of style `plain`. The style `double` is also available, which gives a border that has double-line (and a filled region in between). The `ornaments` 
 [plugin](Ornaments.md) plugin provides for more complex ornaments.
+Named styles may also be defined, as in standardborders.sty, in which case border parameters not defined for the given sidebar are inherited from the named style. 
 
 #### `\BorderColour`
 `\BorderColour` value(0-1) value(0-1) value(0.1)
@@ -333,7 +339,10 @@ width of the border will be `\BorderWidth`.
 `\BorderLPadding` measurement
 
 `\BorderRPadding` measurement
+
 * Default: 0
+
+`\BorderPaddingInnerOuter` `[T|F]`
 
 This measurement (in points) specifies how much further out the (inside) edge of
 the border is from from the (outside) of the surrounded item (the nominal
@@ -345,6 +354,19 @@ Left, Right, Top and Bottom can all be controlled separately. For historic / con
 multiple values can be set at once, with  `\BorderHPadding` `\BorderVPadding` each setting two 
 measurements, and `\BorderPadding` setting all four.
 
+`\BoxPaddingInnerOuter` if `T` means that the box padding reverses left and right on even numbered pages.
+
+`\BorderTMargin` measurement
+
+`\BorderBMargin` measurement
+
+`\BorderLMargin` measurement
+
+`\BorderRMargin` measurement
+
+`\BorderMarginInnerOuter`
+
+These measurements (in points) specify the gap from the outside of the border to the edge of the page / column, if the border defines the outer edge.
 
 ## Sidebar layout and constraints
 The TeX code has two opportunites to interact with the content of a sidebar: before the content has been defined and afterwards. Before, the width is calculated and parameters are set up that trigger style changes (e.g. selection of special versions of styles, see [Categories document](Categories.md) ) or trigger important information to be preserved.
@@ -451,8 +473,8 @@ If a value is given, rather than a simple 't', this is the smallest fraction of 
 will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
  a break IS possible. 
 
-*NB:* Breakable in out-of-body positions triggers a bug in the page output
-mechanism and *things go  horribly wrong* if this option is used.
+*NB:* At the last time of testing, `\Breakable` in out-of-body positions 
+triggers a bug in the page output mechanism and *things go  horribly wrong* if this option is used.
 
 ## Ending the category
 

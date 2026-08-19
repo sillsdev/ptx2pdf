@@ -34,9 +34,9 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\underf@ll#1#2#3{%
-  \ifdim#1<\dimexpr #2 - \baselineskip\relax\ifinendbook\else
-    \immediate\write-1{Underfill[#3]: [\the\pageno] \the #1 \the #2}%
-  \fi\fi
+  \ifdim#1<\dimexpr #2 - .5 \baselineskip\relax
+    \immediate\write-1{Underfill[#3]: [\the\pageno] ht=\the #1, space=\the #2, baseline=\the\baselineskip}%
+  \fi
 }
 \newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
 \def\onecol{%
@@ -147,6 +147,7 @@
 
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \traceifset{onecoltrial}%
+  \trace{o}{onecoltrial: hIns=\the\holdinginserts\space partial=\the\ht\partial, lastptxfile\iflastptxfile true \else false \fi inendbook\ifinendbook true \else false \fi endbook\ifendbook true \else false \fi inptxfile\ifinptxfile true\else false \fi}%
   \vfuzz=\PaperHeight
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
@@ -174,6 +175,7 @@
     \setbox\colA=\vsplit255 to \dimexpr \availht + \lastdepth\relax
     \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
     \setbox\colA\vbox \ifNoGrid to \availht\fi {\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
+    \trace{o}{onecoltrial: colA=\the\ht\colA+\the\dp\colA, rem=\the\ht255}%
     \ifvoid255
       \ifinendbook
         \ifnum \outputpenalty=\book@ndpenalty\relax 
@@ -198,7 +200,9 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \advance\und@rfill -\dimen3 % from c@lcboxheights
-    \underf@ll{\ht\colA}{\availht}{A}%
+    \ifinendbook\else   % end of a book has single column left overs. Ignore them
+      \underf@ll{\ht\colA}{\availht}{A}%
+    \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
     \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%
     \onecolp@gects % setup pagecontents
@@ -254,7 +258,8 @@
 \def\clearthenbackup{%Clear any held-over inserts.
   \trace{o}{clearthenbackup \the\outputpenalty, \the\ht255, ip=\the\insertpenalties}% ip counts the whole/partial inserts held over
   %\showbox255
-  \setbox0\vbox{\pagediscards\global\aftergalleyskip=\lastskip\ifdim\aftergalleyskip=0pt \unskip\global\aftergalleyskip=\lastskip\fi}%\showbox0%
+  \setbox0\vbox{%\pagediscards  % causes problems when a figure is anchored as the first thing on a page.
+    \global\aftergalleyskip=\lastskip\ifdim\aftergalleyskip=0pt \unskip\global\aftergalleyskip=\lastskip\fi}%\showbox0%
   \setbox0\box255
   \ifnum\insertpenalties>0
     \box\voidb@x
@@ -415,7 +420,7 @@
 
 \def\@@eject{\trace{o}{@@eject with op=\the\outputpenalty, @p=\@utputpenalty\space \csname d@code:\@utputpenalty\endcsname}\par
   \ifversion{5}{\def\t@mp{-9999 }}{\def\t@mp{-10000 }}%
-  \ifnum\@utputpenalty < \t@mp \trace{o}{<\t@mp, value kept}\penalty\@utputpenalty\else\penalty-11220\trace{o}{>=\t@mp value not kept}\fi}
+  \ifnum\@utputpenalty < \t@mp \trace{o}{\@utputpenalty <\t@mp, value kept}\penalty\@utputpenalty\else\penalty-11220\trace{o}{>=\t@mp value not kept}\fi}
 
 \def\reheightcolnotess#1{%
   \trace{i}{height=\the\dimen3, xr@fbox=\the\ht\xr@fbox, baselineskip=\the\baselineskip}%\tracingassigns=1\tracingmacros=1\tracingifs=1
@@ -492,6 +497,7 @@
   % split the result to the actual size available
   \setbox\colA=\vsplit255 to \availht
   \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\else\setbox\colA\vbox{\unvbox\colA}\fi
+  \trace{o}{savepartialpage: colA=\the\ht\colA+\the\dp\colA , from \the\ht\s@vedpage , at \the\availht, colNotes\ifColNotes true\else false\fi}%
   \edef\t@mp{\splitbotmark}%
   % Does this need readjusting?
   \iftextborder\ifx\t@mp\empty\else
@@ -559,14 +565,14 @@
     \fi
     \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \resetvsize
-    \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
+    \ifdim\ht\colA>0.5 \baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}%
       \setbox0=\box255\deadcycles=0
     \fi % dump empty pages (typically at end)
     \tempfalse%
     \ifinendbook
       \ifdim\dimexpr \availht - \ht\partial \ifendbook -\ht\bookendbox - \dp\bookendbox \fi \relax<0pt \relax
-        \trace{o}{outputting full box, but it would have bene better to resize}%
+        \trace{o}{outputting full box, but it would have been better to resize}%
          \temptrue
       \fi
     \else
@@ -662,10 +668,14 @@
 \def\reduceavailht#1{%
   \checkp@ranotes{#1}%
   %\TRACE{av: \the\availht =>}
-  \ifp@ranotes\let\n@xt=\reduceavailht@para
-    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
-  \else\let\n@xt=\reduceavailht@sep
-    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+  \ifst@dynotes
+    \let\n@xt=\reduceavailht@st@dy
+  \else
+    \ifp@ranotes\let\n@xt=\reduceavailht@para
+      \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
+    \else\let\n@xt=\reduceavailht@sep
+      \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+    \fi
   \fi
   \iff@rstnote\else\global\noteseentrue\fi\n@xt{#1}}
 %-c_reduceavailht
@@ -673,8 +683,8 @@
 %+c_reduceavailht_para
 \def\reduceavailht@para#1{%
   \edef\cl@sss{#1\g@tndstat}%
-  \trace{n}{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
+  \trace{n}{class \cl@sss \the\ht\th@cl@ss}%
   \ifvoid\th@cl@ss\trace{f}{ParaNotes[#1] empty}\else
     \setbox0=\copy\th@cl@ss
     \setbox0=\vbox{\maken@tepara{0}{#1}}%
@@ -692,6 +702,42 @@
     \ifnum\DEBUGnotes=\the\pageno \showbox0 \fi
   \fi}
 %-c_reduceavailht_para
+\def\reduceavailht@st@dy#1{%
+  \edef\cl@sss{#1\g@tndstat}%
+  \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
+  \trace{n}{class \cl@sss \the\ht\th@cl@ss (study) av:\the\availht}%
+  \ifdim\ht\th@cl@ss<0pt \trace{f}{Fixing negative note height}%
+    \global\setbox\th@cl@ss\vbox{\unvbox\th@cl@ss}%
+  \fi
+  \ifvoid\th@cl@ss\trace{f}{studynotes[#1] empty}\else
+    \dimen0=0.5\ht\th@cl@ss
+    \ifdim\dimen0>8\@minb@seline
+      \advance\dimen0 -8\@minb@seline
+    \fi
+    \temptrue
+    \ifdim\dimen0>\availht
+      \dimen0=0.8\availht
+      \tempfalse
+    \fi
+    \@@LOOP
+      \setbox1=\copy\th@cl@ss
+      \setbox11=\vsplit1 to \dimen0
+      \setbox11=\vsplit1 to \dimen0
+      \ifdim\ht1>0pt
+        \advance\dimen0 by 0.5\ht1
+      \else\tempfalse
+      \fi
+      \iftemp\@@REPEAT
+    \global\advance\availht by -\dimen0
+    \iff@rstnote
+      \global\advance\availht by -\AboveNoteSpace
+      \global\f@rstnotefalse
+      \trace{f}{StudyNotes[#1] cost \the\dimen0 + \the\AboveNoteSpace + \BelowFootNoteRuleSpace}%
+    \else
+      \global\advance\availht by -\InterNoteSpace
+      \trace{f}{StudyNotes[#1] cost \the\dimen0 + \the\InterNoteSpace}%
+    \fi
+  \fi}
 
 \def\max@boxpara#1{%paragraph notes of type \v@lpfx#1 and find the max height amongst them
   \trace{n}{max@boxpara \v@lpfx\if #1L\else #1\fi}%
@@ -711,7 +757,7 @@
 }
 
 \def\reduceavailht@para@bal#1{%
-  \TRACE{reduceavailht@para@bal #1}%
+  \trace{f}{reduceavailht@para@bal #1}%
   \bgroup%leave dimen0 etc unchanged
   \dimen0=0pt
   \edef\v@lpfx{note-#1}\edef\v@lsfx{}%
@@ -732,11 +778,13 @@
   \TRACE{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \ifvoid\th@cl@ss\trace{f}{Notes[#1] empty}\else
-    \global\f@rstnotefalse
+    \ifdim\ht\th@cl@ss<0pt \trace{f}{Fixing negative note height}%
+      \global\setbox\th@cl@ss\vbox{\unvbox\th@cl@ss}%
+    \fi
     \global\advance\availht by -\ht\th@cl@ss
     \global\advance\availht by -\dp\th@cl@ss
     \iff@rstnote\advance\availht by -\AboveNoteSpace
-      \global\advance\availht by -\BelowFootNoteSpace
+      %\global\advance\availht by -\BelowFootNoteRuleSpace
       \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
       \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveNoteSpace}%
      \global\advance\availht -\dp\pstr@t \global\f@rstnotefalse % ensure we don't impinge on the depth
@@ -763,6 +811,7 @@
 
 %+c_clearnoteclass
 
+\newif\if@@debugnotes
 \def\cle@rn@tecl@ss#1{%
   \ifdiglot
     \ifdiglotSepNotes
@@ -782,39 +831,76 @@
 
 \def\s@venotes#1#2{\trace{nS}{Saving footnotes #2}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
 \def\s@veallnotes#1{%
+  \let\@@do\s@venotes
+  \do@all@notes{#1}%
+}
+
+\def\do@all@notes#1{%
   \ifdiglot
     \ifdiglotSepNotes
       \let\sncdst@t=\c@rrdstat
-      \def\col@do##1{\edef\c@rrdstat{##1}\s@venotes{\g@tndstat}{#1}}%
+      \def\col@do##1{\edef\c@rrdstat{##1}\@@do{\g@tndstat}{#1}}%
       \x@\each@col\diglot@list\E
       \let\c@rrdstat\sncdst@t
     \else
-      \s@venotes{}{#1}%
+      \@@do{}{#1}%
     \fi
   \else
-    \s@venotes{}{#1}%
+    \@@do{}{#1}%
   \fi
 }
   
 \def\r@storenotes#1#2{\trace{nS}{Restoring footnotes #2}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\r@storen@te \the\n@tecl@sses}
 \def\tw@{2}
-\def\s@ven@te#1{% Level2 save saves to notesave1-X to notesave2-X
-  \ifx\tw@\n@tesavelevel
-    \x@\let\x@\tmp@note\csname notesave1-#1\n@t@sfx\endcsname
-  \else
-    \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
-  \fi
+\def\s@ven@te#1{% saves to notesave1-X (current page) or notesave2-X(follow-on page)
+  \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
   \x@\let\x@\tmp@save\csname notesave\n@tesavelevel-#1\n@t@sfx\endcsname
+  \trace{n}{save: #1\n@t@sfx(\n@tesavelevel):\ifx\relax\tmp@note\else \the\ht\tmp@note+\the\dp\tmp@note\fi}%
+  \if@@debugnotes\ifvoid\tmp@note\else\Showbox\tmp@note\fi\fi
   \global\setbox\tmp@save=\copy\tmp@note
-  \trace{n}{save: #1\n@t@sfx(\n@tesavelevel): \the\ht\tmp@save+\the\dp\tmp@save}%
 }
+
 \def\r@storen@te#1{% either notesavelevel restores to note-X
   \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
   \x@\let\x@\tmp@save\csname notesave\n@tesavelevel-#1\n@t@sfx\endcsname
   \trace{n}{r@store: #1\n@t@sfx(\n@tesavelevel): \the\ht\tmp@note+\the\dp\tmp@note -> \the\ht\tmp@save+\the\dp\tmp@save }%
+  \if@@debugnotes\ifvoid\tmp@save\else\Showbox\tmp@save\fi\fi
   %\tracingassigns=2
   \global\setbox\tmp@note=\copy\tmp@save
   %\tracingassigns=0
+}
+\def\applysavedn@tes#1#2{\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\applys@vedn@tes \the\n@tecl@sses}
+
+\def\applys@vedn@tes#1{%Saved notes should be reinserted as inserts
+  \x@\let\x@\tmp@save\csname notesave\n@tesavelevel-#1\n@t@sfx\endcsname
+  \ifvoid\tmp@save\else
+    \trace{n}{apply:#1\l@gdims{\tmp@save}}%
+    \if@@debugnotes\Showbox\tmp@save\fi
+    \penalty0
+    \x@\insert\csname note-#1\n@t@sfx\x@\endcsname{\unvbox\tmp@save}%
+  \fi
+}
+\def\r@storeallnotes#1{%
+  \let\@@do\r@storenotes
+  \do@all@notes{#1}%
+}
+\def\apply@allnotes#1{%
+  \let\@@do\applysavedn@tes
+  \do@all@notes{#1}%
+}
+\def\cle@rn@tesaves#1#2{\trace{nS}{clearing saved notes #2}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\clearn@tsave \the\n@tecl@sses}
+
+\def\clear@allsaves#1{%
+  \let\@@do\cle@rn@tesaves
+  \do@all@notes{#1}%
+}
+
+\def\clearn@tsave#1{%Saved notes should be reinserted as inserts
+  \x@\let\x@\tmp@save\csname notesave\n@tesavelevel-#1\n@t@sfx\endcsname
+  \ifvoid\tmp@save\else
+    \trace{n}{clear: notesave\n@tesavelevel-#1\n@t@sfx \l@gdims{\tmp@save}}%
+    \global\setbox\tmp@save\box\voidb@x
+  \fi
 }
 %-c_clearnoteclass
 
@@ -838,8 +924,8 @@
 
 %+c_setcolhts
 \def\s@tcolhts#1{%
-    \colhtA=#1 \decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
-    \colhtB=#1 \decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
+    \colhtA=#1\relax\decr{\colhtA}{\topleftins}\decr{\colhtA}{\bottomleftins}%
+    \colhtB=#1\relax\decr{\colhtB}{\toprightins}\decr{\colhtB}{\bottomrightins}%
     \ifColNotes
       \ifx\XrefNotes\empty\relax\else
         \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname
@@ -944,9 +1030,12 @@
 \def\NoteShaveShortest{2} % How long should be note be before it is considered for breaking? (Approximate only, as it is width-based)
 
 \def\findsh@venotes#1#2{%Find the possible shaved lengths of the notes box
-  \trace{fp}{findsh@venotes #2}%
+  \trace{fp}{findsh@venotes #2 \the\ht#1}%
   \ifversion{6}{\skip0=\csname bls-#2\c@rrdstat\endcsname}{\skip0=\l@stnotebls}%
   \dimen0=\skip0
+  \ifdim\ht0=0pt \dimen0=0pt \fi
+  %\ifnum\pageno=-6 \showbox\n@tesbox \fi
+  \bgroup
   \ifdim\dimen0=0pt \else
     \trace{fp}{Finding shaved note lengths (#2) \the\ht#1 s0=\the\skip0, bls=\the\baselineskip}%
     \sh@vedim=\ht#1 % use sh@vedim as a temp. variable.
@@ -957,39 +1046,48 @@
     \dimen1=\dimexpr \skip0 * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
     \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minumum shave amount
     \trace{fp}{Initial note length \the\ht\n@tesbox, first shave to: \the\sh@vedim, stay: \the\dimen1 (\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
-    \@LOOP\ifdim \sh@vedim>\dimen1 
-      %\showbox\n@tesbox
-      \setbox1=\vsplit0 to \sh@vedim
-      %\ifnum\badness<1000000 %Don't continue if the box is overfull 
-        \setbox1=\vbox{\unvbox1}%
-        \ifvoid0\else
-          \setbox0=\vbox{\unvbox0}%
-          \ifdim\ht0<\dimen0
-            \trace{fp}{\the\ht0 < \the\dimen0 : Treating as nothing shaved.}%
-            \setbox0\box\voidb@x
-          \else
-            \advance\dimen0-\ht0
-          \fi
-        \fi
-        \ifvoid0
-          \trace{fp}{nothing shaved from note #2, \the\sh@vedim / - /\the\ht1}%
-          \sh@vedim=0pt 
-        \else % Something trimmed off
-          %\showbox0 \showbox1
-          \trace{fp}{note #2 can be shaved from \the\ht#1 to \the\sh@vedim / \the\ht0/\the\ht1}%
-          {\dimen0=\dimexpr \ht\n@tesbox - \sh@vedim \relax
-          \edef\p@ram{{\the\dimen0}{#2}}%
-          \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\p@ram}}%
-          \setbox0=\box1
-          %\sh@vedim=\the\ht0
-        \fi
-      %\fi
-      \advance\sh@vedim by -\skip0
-      %\trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
-    \@REPEAT
+    \def\@sh@venotebox{#1}\def\@sh@venoteid{#1}%
+    \@findsh@venotes
   \fi
-  \sh@vedim=0pt
+  \egroup
 } 
+
+
+\def\@findsh@venotes{%
+  \ifdim \sh@vedim>\dimen1 
+     \setbox1=\vsplit0 to \sh@vedim
+    %\ifnum\badness<1000000 %Don't continue if the box is overfull 
+      \setbox1=\vbox{\unvbox1}%
+      \ifvoid0\else
+        \setbox0=\vbox{\unvbox0}%
+        \ifdim\ht0<\dimen0
+          \trace{fp}{\the\ht0 < \the\dimen0 : Treating as nothing shaved.}%
+          \setbox0\box\voidb@x
+        \else
+          \advance\dimen0-\ht0
+        \fi
+      \fi
+      \ifvoid0
+        \trace{fp}{nothing shaved from note \@sh@venoteid, \the\sh@vedim / - /\the\ht1}%
+        \sh@vedim=0pt 
+      \else % Something trimmed off
+        %\showbox0 \showbox1
+        \trace{fp}{note \@sh@venoteid can be shaved from \the\ht\@sh@venotebox to \the\sh@vedim / \the\ht0/\the\ht1}%
+        {\dimen0=\dimexpr \ht\n@tesbox - \sh@vedim \relax
+        \edef\p@ram{{\the\dimen0}{\@sh@venoteid}}%
+        \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\p@ram}}%
+        \setbox0=\box1
+        %\sh@vedim=\the\ht0
+      \fi
+    %\fi
+    \advance\sh@vedim by -\skip0
+    %\trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
+    \let\@@findsh@venotes\@findsh@venotes
+  \else\let\@@findsh@venotes\relax
+  \fi
+  \@@findsh@venotes% Loop without using a \loop construct.
+}
+
 \def\bal@shavedn@tes{%Try rebalancing with shaved footnotes
   \sh@vedim=0pt
   \trace{fp}{Shaving candidates: \the\sh@venotes}%
@@ -1238,11 +1336,12 @@
   \trace{i}{s@tpage: Saving inserts}%
   \s@veinserts{chunk}%
   \global\partialfr@medfalse
-  \s@veallnotes{1}%
   \xdef\oldb@tmark{\botmark}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
   %\tracingassigns=1
   \nextshipout
+  \let\\=\clearn@teboxes \the\n@tecl@sses % Some circumstances leads to the note boxes being left as is (so they can be added to by extra text). That's irelevant now we've written the page.
+  \s@veallnotes{1}% Save blanked notes!
   %\tracingassigns=0
   \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
   \ifcsname page-\the\pageno\endcsname
@@ -1317,9 +1416,11 @@
   \ifNoGrid\else
     \bmg@p=\availht
     \dimen0=8 \baselineskip
-    \ifdim\dimen0>0.5pt
-        \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
-        \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
+    \ifdim\availht > -1000pt % Skip calc if we're in silly negative numbers
+      \ifdim\dimen0>0.5pt
+          \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
+          \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
+      \fi
     \fi
     \advance\bmg@p by -\availht
   \fi
@@ -1447,6 +1548,12 @@
       \ifvoid1 \ht\colB=\dimen3\if\XrefNotes\relax\else\ht\xr@fbox=\dimen3\fi\else \dimen3=\ht\colB\fi
     \fi
     %\und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+    \trace{o}{A=\the\ht\colA+\the\dp\colA, B=\the\ht\colB+\the\dp\colB}%
+    \ifdim\ht\colA < \ht\colB
+      \underf@ll{\ht\colA}{\ht\colB}{A}%
+    \else
+      \underf@ll{\ht\colB}{\ht\colA}{B}%
+    \fi
     %\underf@ll{\ht\colA}{\availht}{A}%
     %\underf@ll{\ht\colB}{\availht}{B}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
@@ -1485,9 +1592,9 @@
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
             \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
           \else 
-            \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
+            \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\ifNoGrid\else\vfil\fi}\rshiftc@lumn{0}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-            \vbox to \dimen3{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+            \vbox to \dimen3{\unvbox\colB\ifNoGrid\else\vfil\fi}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
         \kern\lastd@pth}%
       \trace{et}{Apply border from savepartialpaged (writing partial)}%
       \doTextB@rder{\colA}%
@@ -1571,6 +1678,7 @@
 \def\pr@pinserts{%
   \ifdim\ht\topins>0pt
     \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
+    \advance\baselineskip by \ColAdjskip
     \dimen1=\ht\topins\advance\dimen1\dp\topins \dimen0=\baselineskip
     \m@d \ifdim\dimen0<\baselineskip
       \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1 \dp\topins=0pt
@@ -1594,7 +1702,8 @@
   \fitonpagetrue
   \ifdim\availht<0pt
     \MSG{No space! vsize=\the\vsize}%
-    \ifdim\vsize > 2 \baselineskip \divide\vsize 2 \fitonpagefalse% drastic
+    \ifdim\vsize > 2 \baselineskip \global\vsize= 0.8\vsize %2% drastic
+      \fitonpagefalse
     \else\MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi\fi
   \iffitonpage
@@ -1663,19 +1772,20 @@
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, boxA=\the\ht\colA, boxB=\the\ht\colB, colbox=\the\ht\xr@fbox}%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht%\advance\dimen2\bmg@p
+      %\dimen3=\ifdim\ht\colA > \ht\colB \relax\ht\colA \else\ht\colB\fi
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\box\partial}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
-      \trace{p}{Text depth = \the\dimen3}%
+      \trace{p}{Text depth = \the\dimen3, htA=\the\ht\colA+\the\dp\colA, htb=\the\ht\colB+\the\dp\colB, avail=\the\availht \space from \the\dimen3, baselineskip=\the\baselineskip}%
       \setbox\colA\hbox to \dimen1{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB\vfil}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\unvbox\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\unvbox\colB}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \trace{et}{Apply border from twocoltrial (shipout)}%
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 
@@ -1921,6 +2031,11 @@
   \count255=1000
   \global\count\topins=\count255
   \global\count\bottomins=\count255
+  \dimen1=0pt
+  \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
+  \let\col@do=\max@val
+  \x@\each@col\diglot@list\E % Find biggest baseline skip of those bits of text WHICH ARE ACTIVE. I.e. yes it does need to be here.
+  \edef\@maxb@seline{\the\dimen1}%
 } 
 
 
@@ -2186,14 +2301,14 @@
       \fi\fi
       \trace{p}{Text depth = \the\dimen3}%
       \setbox\colA\hbox to \dimen1{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colC\vfil}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colC}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colB}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colC\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\unvbox\colB}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
+          \vbox to \dimen3{\unvbox\colC}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \trace{et}{Apply border from threecoltrial (shipout)}%
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 
@@ -2325,14 +2440,14 @@
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
       \setbox\colA\hbox to \dimen5{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colC\vfil}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colC}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{1}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colB}\rshiftc@lumn{1}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
+          \vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{0}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\box\colC\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\unvbox\colB}\rshiftc@lumn{0}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
+          \vbox to \dimen3{\unvbox\colC}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \kern\lastd@pth%
       \trace{et}{Apply border from savepartialpaget (writing partial)}%
       \doTextB@rder{\colA}%

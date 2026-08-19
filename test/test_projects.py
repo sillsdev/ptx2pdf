@@ -5,6 +5,7 @@ import re
 from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
+from usfmtc.reference import RefList
 from collections import namedtuple
 # from filelock import FileLock
 
@@ -65,7 +66,7 @@ def check_output(*a, **kw):
 
 def make_paths(projectsdir, project, config, logging):
     testsdir = os.path.dirname(__file__)
-    ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"), "-p", projectsdir,
+    ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"), "-p", projectsdir, "-S",
                 "--testsuite", "--nofontcache", "-l", "info", f"--logfile=ptxprint_{project}_{config}.log",
                 "-f", os.path.join(testsdir, "fonts")]
     if config is not None:
@@ -89,9 +90,13 @@ def make_paths(projectsdir, project, config, logging):
     except configparser.NoOptionError:
         ismult = cfg.getboolean("project", "multiplebooks")
     if ismult:
+        bs = RefList(cfg.get('project', 'booklist'))
         bks = []
-        bks = [x for x in cfg.get("project", "booklist").split() \
-            if os.path.exists(os.path.join(projectsdir, project, ptsettings.getBookFilename(x)))]
+        for b in bs:
+            if b.first.book != b.last.book:
+                bks.extend([b.first.book, b.last.book])
+            else:
+                bks.append(b.book)
     else:
         prjmode = cfg.get("project", "bookscope")
         if prjmode == "module":

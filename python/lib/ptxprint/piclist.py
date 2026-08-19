@@ -28,7 +28,7 @@ _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 def newBase(fpath):
     doti = fpath.rfind(".")
     f = os.path.basename(fpath[:doti] if doti >= 0 else fpath)
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", f)
+    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[onk][a-z])..\d{5})[abcABC]?$", f)
     if cl:
         return cl[0].lower()
     else:
@@ -262,7 +262,8 @@ class Picture:
         if usedest:
             p3p = ["destfile"] + pos3parms[1:]
         else:
-            p3p = pos3parms
+            p3p = pos3parms[:]
+        p3p.append("aspect")
         mediaval = self.get('media', None)
         if (mediaval is None or mediaval == '') and picMedia is not None:
             mediaval = picMedia(self.get('src', ""))[0]
@@ -291,26 +292,8 @@ class Picture:
                 val = creditbox[_creditcomps[x]]
             if not val:
                 continue
-            line.append('{}="{}"'.format(pos3parms[i], val))
+            line.append('{}="{}"'.format(pos3parms[i] if i < len(pos3parms) else p3p[i], val))
         return (outk, self.get('caption', ''), " ".join(line))
-
-    def set_destination(self, fn=lambda x,y,z:z, keys=None, cropme=False, srcfkey="srcpath"):
-        if self.get('crop', False) == cropme and 'destfile' in self:
-            return
-        if keys is not None and self['anchor'][:3] not in keys:
-            return
-        if (fpath := self.get(srcfkey, None)) is None:
-            return
-        # print(fpath)
-        origExt = os.path.splitext(fpath)[1]
-        nB = newBase(self.get('src', ""))
-        if not nB:
-            logger.warn(f"src missing: {self.fields}")
-        self.destfile = fn(self, self[srckey], nB+origExt.lower())
-        self.crop = cropme
-        v = self.get('media', "")
-        if len(v) and 'p' not in v:
-            self.disabled = True
 
     def anchor_matches(self, src, bk=None):
         if self.get('src', None) != src:
@@ -400,6 +383,9 @@ class Piclist:
         for p in self.pics.values():
             c = p.copy()
             res.pics[c.key] = c
+        res.keycounter = self.keycounter
+        res.mode = self.mode
+        res.suffix = self.suffix
         return res
         
     def clear(self, model=None):
@@ -417,6 +403,9 @@ class Piclist:
 
     def __setitem__(self, k, v):
         self.pics[k] = v
+
+    def pop(self, k, default=None):
+        return self.pics.pop(k, default)
 
     def remove(self, p):
         if p.key in self.pics:
@@ -631,8 +620,11 @@ class Piclist:
                 for p in d[1:]:
                     self.remove(p)
 
-    def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True):
-        self.srchlist = [figFolder] if figFolder is not None else []
+    def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True, append=False):
+        if not append:
+            self.srchlist = []
+        if figFolder:
+            self.srchlist.append(figFolder)
         chkpaths = []
         for d in ("local", ""):
             if sys.platform.startswith("win"):
@@ -640,13 +632,15 @@ class Piclist:
             else:
                 chkpaths += [os.path.join(self.basedir, x, y+"igures") for x in (d, d.title()) for y in "fF"]
         for p in chkpaths:
-            if os.path.exists(p) and len(os.listdir(p)) > 0:
+            if os.path.exists(p) and len(os.listdir(p)) > 0 and p not in self.srchlist:
                 if exclusive:
                     self.srchlist.append(p)
                 else:
                     for dp, _, fn in os.walk(p): 
                         if len(fn): 
                             self.srchlist.append(dp)
+        if append:
+            return
         uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
         if os.path.isdir(uddir):
             self.srchlist.append(uddir)
@@ -775,6 +769,7 @@ class Piclist:
                             s['caption'+suffix] = v['caption']
                         if v.get('ref', '') != '':
                             s['ref'+suffix] = v['ref']
+                        merged.add(s.key)
                         addme = False
                     break
             if addme:

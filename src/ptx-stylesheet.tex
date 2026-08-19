@@ -275,7 +275,7 @@
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
-\def\sh@wstuff{SHOWSTUFF:[v:\csname ptxversion\endcsname] \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
+\def\sh@wstuff{SHOWSTUFF:[v:\csname ptxversion\endcsname] \c@rref [\c@rrdstat], styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, iflvl:\the\currentiflevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifskipn@testyle\else not\fi skipn@testyle \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, \ifinn@te\else not\fi inn@te, periphdepth:\the\periphdepth, \ifimplicitcl@se\else not\fi implicitcl@se}
 \def\SHOWSTUFF{\message{\sh@wstuff}}%
 
 %returns \@@ut
@@ -337,7 +337,9 @@
         \let\@ut=\empty
         \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
         \trace{sko}{:\@ut (\@@ut) pp:\p@ssParams}%
-        \let\d@\d@c\xdef\@@ut{\ifx\@@ut\empty\else\@@ut,\fi\@ut}}%
+        \let\d@\d@c
+        \ifx\@@ut\empty \xdef\@@ut{\@ut}\else\xdef\@@ut{\@@ut,\@ut}\fi%
+      }%
       \x@\cstackdown \@in,\E
       \ifx\c@tprefix\empty\else %prefix catetgories
         \edef\@lso{\c@tprefix}%
@@ -485,6 +487,7 @@
 
 \newif\ifg@ttingspecificparam
 \def\getp@ram#1#2#3{\trace{s}{getp@ram #2:#1 [#3](\mcstack)}\ifnotracestacks\pushtracing\fi
+ \traceifset{getparam}%
  \let\p@ram\relax
  \def\gp@test{#1}%
  \xdef\tmpstyst@k{#3}%
@@ -519,6 +522,7 @@
  \fi
  \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\c@rrdstat)\fi :#1 is \p@ram}%
  \ifnotracestacks\poptracing\fi
+ \traceifcheck{getparam}%
 }
 
 \def\gettop@param#1{%Check list of acceptable parameters and return the first one found.
@@ -661,7 +665,10 @@
     \trace{sa}{Final feature list:\f@atureset}%
     % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
     \let\r@s\empty % MUST start with empy list!
-    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\x@\st@rtswithsl@sh\t@st\E\edef\r@s{\ifx\r@s\empty\iftemp\t@st\else:\t@st\fi\else\iftemp\t@st\r@s\else\r@s:\t@st\fi\fi}\x@\let\csname ##1\endcsname\relax\fi}%
+    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\x@\st@rtswithsl@sh\t@st\E
+      %\edef\r@s{\ifx\r@s\empty\iftemp\t@st\else:\t@st\fi\else\iftemp\t@st\r@s\else\r@s:\t@st\fi\fi}
+      \ifx\r@s\empty\iftemp\edef\r@s{\t@st}\else\edef\r@s{:\t@st}\fi\else\iftemp\edef\r@s{\t@st\r@s}\else\edef\r@s{\r@s:\t@st}\fi\fi
+      \x@\let\csname ##1\endcsname\relax\fi}%
     \x@\cstackdown\f@atureset,\E
     \let\n@xt\f@aturen@xt
     \let\p@ram\r@s
@@ -1001,7 +1008,8 @@
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
  \def\@v@ ##1 {\let\oldv@rse\v@rse\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\fileh@sverses
-  \ifdiglot\edef\dc@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\else\edef\c@rref{\id@@@\ch@pter\c@rrdstat:\v@rse}\fi
+  \ifdiglot\edef\dc@rref{\id@@@\c@rrdstat\ch@pter:\v@rse}\else\edef\c@rref{\id@@@\c@rrdstat\ch@pter:\v@rse}\fi
+  \fmc@unt=0
   \leavevmode % ensure we are in horizontal mode to build paragraph. This may output a chapter number
   % set c@ncelfirstversetrue if we are immediately following a drop cap chapter number
   % and the user has requested omission of the first verse number in a chapter
@@ -1016,7 +1024,7 @@
   %\message{verse was \meaning\oldv@rse}% Set to empty at chapter number.
   \ifx \oldv@rse\empty
     \everyfirstverse{\id@@@}{\book}{\ch@pter}%
-    \ifOmitVerseNumberOne\c@ncelfirstversetrue\fi
+    \ifMarginalVerses\ifOmitVerseNumberOne\c@ncelfirstversetrue\fi\fi
   \fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
@@ -1032,6 +1040,7 @@
  % If the next token IS vp, then call relevant code to interpret before dropping 
  \def\@V@{%
   \let\nxt\@@V@@
+  \deactiv@tecustomch@rs
   \ifhangingverse\ifHangVA\ifx\mayb@vp\va\let\nxt\@@VA@@\fi\fi\fi
   \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
  \def\@@VP@@\vp ##1\vp*{\xdef\print@bleverse{##1}\futurelet\mayb@vp\@V@}
@@ -1068,6 +1077,7 @@
     \ignorespaces
   \else\ifMarginalVerses \ignorespaces\fi
   \fi
+  \activ@tecustomch@rs
  }
  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
  \let\cat\c@t
@@ -1117,9 +1127,9 @@
      \x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse
    \fi
    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
-   \edef\tmp{cv-all\ifdiglot\c@rrdstat\fi\ch@pter.0}%
+   \ifdiglot\edef\tmp{cv-all\c@rrdstat\ch@pter.0}\else\edef\tmp{cv-all\ch@pter.0}\fi
    \ifcsname \tmp\endcsname \csname\tmp\endcsname\fi
-   \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
+   \uppercase{\ifdiglot\xdef\c@rref{\id@@@\c@rrdstat\ch@pter.0}\else\xdef\c@rref{\id@@@\ch@pter.0}\fi}%
    \ifcsname cv-\c@rref\endcsname\csname cv-\c@rref\endcsname\fi
    \global\let\print@bleverse=\v@rse
    \op@ninghooks{start}{c}{\styst@k}%
@@ -1370,7 +1380,9 @@
 \newtoks\prev@rsehooks
 \def\lastc@rref{}\def\lastc@rradj{1}
 {\catcode`\1=11\xdef\@neletter{1}}
-\def\docvhook{\edef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.\v@rse}\csname cv-\c@rref\endcsname
+\def\docvhook{\ifdiglot\edef\c@rref{\id@@@\c@rrdstat\ch@pter.\v@rse}\else\edef\c@rref{\id@@@\ch@pter.\v@rse}\fi
+  \trace{T}{docvhook \c@rref}%
+  \csname cv-\c@rref\endcsname
   %\trace{v}{verse: \v@rse, catcodes:\x@\getcatcodes\v@rse\E, and of one:\x@\getcatcodes\@neletter\E}%
   \ifnum\ifnum\lastc@rradj>1 1\else\ifx\v@rse\@neletter 1\else 0\fi\fi =1
     \xdef\lastc@rradj{1}\ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\c@rref}\fi\fi
@@ -1462,7 +1474,7 @@
  \let\pb=\pagebreak %pb isn't a paragraph style, 
  \let\fp\@fp
  \let\@H=\h%
- \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
+ \def\h{\ifsk@pping\egroup\fi\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
         %\tracingassigns=1
         \let\aftergr@b\@h\gr@btomacro}% \h gets stored as the book name (for references)
  \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{H}{Defining ifOmitChapterNumberRH@\detokenize{##1}}\x@\let\csname ifOmitChapterNumberRH@\detokenize{##1}\endcsname\ifOmitChapterNumberRH\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
@@ -1473,12 +1485,12 @@
  %
  \let\@CL=\cl%
  \def\do@CL{\x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax\gdef\n@xtparstart{\pdfch@ptermark}\@CL \addtopreeotp{\ifvoid\ch@pternote\else\raise\dimexpr \baselineskip -\onel@neunit\relax\box\ch@pternote\fi}}%
- \def\cl{\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \let\n@xt=\st@recl\else\let\n@xt=\do@CL\fi \n@xt}%
+ \def\cl{\ifsk@pping\egroup\fi\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax \let\n@xt=\st@recl\else\let\n@xt=\do@CL\fi \n@xt}%
  \def\st@recl{\bgroup\obeylines\@cl}% \cl gets stored as chapter label and changes \c format
  \def\@cl ##1^^M{\x@\gdef\csname ch@plabel\g@tdstat\endcsname{##1}\egroup}%
  %
  \let\@ID=\id%
- \def\id{\bgroup\obeylines%\unc@tcodespecials
+ \def\id{\ifsk@pping\egroup\fi\bgroup\obeylines%\unc@tcodespecials
    \m@kedigitsother
    %\tracingassigns=1
    \catcode32=10 \let\aftergr@b\@id\gr@btomacro}% \id gets stored, printed in the margin with cropmarks, and used in lots of places.
@@ -1490,6 +1502,10 @@
         \csname bookstart-\id@@@\endcsname
         \runtrigg@rsother{bookstart}%
         }%
+ % Not sure what this was about, so I'm commenting it out for now.
+ %\def\ide{\bgroup\obeylines
+ %  \let\aftergr@b\@boringheader\gr@btomacro}%
+ %\def\@boringheader##1{\egroup}
  %
  \def\b{\global\dr@ppednumberfalse\endlastp@rstyle{b}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{b}{b+\styst@k}\@@b}
@@ -1582,7 +1598,7 @@
   \d@code{#1}{#2}\ifx\tmp\h@phen % Not evertying appears in the styst@k e.g. cat should not
     \xdef\styst@k{\tmpstyst@k}%
   \else
-    \xdef\styst@k{\tmp\ifx\empty\tmpstyst@k\else+\tmpstyst@k\fi}%
+    \ifx\empty\tmpstyst@k \xdef\styst@k{\tmp}\else\xdef\styst@k{\tmp+\tmpstyst@k}\fi
   \fi
   \mcp@sh{#1+#2+\styst@k}}
 \def\mcpushE#1+#2\E{\trace{sa}{mcpushE '#1'+'#2'}\if #1\relax\relax\else\mcpush{#1}{#2}\fi}
@@ -2020,6 +2036,7 @@
    \fi
    %\gdef\atn@xtptxfile{}% This can't carry over.
    \diglots@tup
+   \global\diglotcolh@scontentfalse
    \global\topskip=2\baselineskip % try to Avoid problems from chars hitting the top.
    \global\splittopskip=0pt
    \message{Setting up column-specific values for columns: \diglot@list}%
@@ -2115,8 +2132,10 @@
  \fi
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
+ \deactiv@tecustomch@rs
  \openpiclist "\the\PicListPath#1.piclist"
  \opentriglist "#1.triggers"
+ \multitriglists "#1"
  \edef\tmp{\the\TrigListPath}\ifx\tmp\empty % Avoid opening same file twice
  \else
    \opentriglist "\the\TrigListPath#1.triggers"
@@ -2260,7 +2279,7 @@
 
 \def\@ctivate{\ifcsname save-cat-\the\count255\endcsname\else \x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}\fi%Only define the old value once
   \catcode\the\count255=\active\relax}
-\def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
+\def\de@ctivate{\ifcsname save-cat-\the\count255\endcsname\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax\fi}
 
 \def\activ@tecustomch@rs{% activate all the chars configured with \DefineActiveChar
  \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
@@ -2400,6 +2419,7 @@
       \global\implicitcl@sefalse%
     \fi%
   \fi%
+  \global\implicitcl@sefalse
   \trace{s}{USFM version code \the\usfm@major.\the\usfm@minor}%
 }
 %-csty_usfm
@@ -2517,23 +2537,25 @@
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
- \getp@r@m{baseline}{p#1}\ifx\p@ram\relax
-   \s@tbaseline@{p}{#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
-   \MSG{Baselineskip for p#1 was undefined, now set to \the\baselineskip (\the\onel@neunit)}%
+ \getp@r@m{baseline}{p}\ifx\p@ram\relax
+   \s@tbaseline@{p}{#1}\setp@ram{baseline}{p}{\the\baselineskip}%
+   \MSG{Baselineskip for p\ds@ffix \space was undefined, now set #1 to \the\baselineskip (\the\onel@neunit)}%
  \else
-   \MSG{Baselineskip for p#1 was \p@ram (orig: \the\origb@selineskip). now defined as \the\baselineskip}%
+   \MSG{Baselineskip for p\ds@ffix \space was \p@ram (orig: \the\origb@selineskip). now defined #1 as \the\baselineskip}%
  \fi
  \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
 }
 \def\onecolwidth#1{%
   \dimen9=\textwidth
-  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
-  \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
+  %\ifb@dy\iftob@dy\else
+    \advance \dimen9 by -\columnshift
+  %\fi\fi
+  \ifx\XrefNotes\empty\relax\else\ifnum\BodyColumns=1%\ifx\ch@pter\empty\else
     \advance \dimen9 by -\XrefNotesWidth
     \advance \dimen9 by -\XrefNotesMargin
     \advance \dimen9 by -0.5\gutter
     \ifColNotesRule \advance \dimen9 by -1pt \fi  % width of rule
-  \fi\fi\fi
+  \fi\fi%\fi
   \global #1=\dimen9
   \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
@@ -2558,7 +2580,7 @@
  \trace{s}{s@tupsizes called from book: \id@@@}%
  \s@tb@dyb@seline{}%
  %\tracingifs=1
- \ifdim\lineskiplimit<0pt\else\lineskiplimit=-9\le@dingunit\fi
+ \ifdim\lineskiplimit<0pt\else\lineskiplimit=-9 \le@dingunit\fi
  \message{lineskiplimit=\the\lineskiplimit}%
  \lineskip=0pt
  \s@tbaseline{p}{p}%

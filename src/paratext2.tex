@@ -41,6 +41,7 @@
 \edef\t@mp{\jobname}%
 \xdef\j@bname{\x@\x@\x@\stripqu@tes\x@\t@mp\x@"\t@mp"\relax}
 
+\showboxdepth=300\showboxbreadth=300
 %There is no equivalent definition to maxdimen for counts
 \def\m@xcount{2147483647}
 \def\m@ncount{-2147483647} % Technically ...8, but TeX moans about athat.
@@ -133,7 +134,12 @@
 \def\zNeedEvenPage{\message{Even page wanted on \the\pageno}\need@evenpage{\tp@lbout}}
 \def\zNeedOddPage{\message{Odd page wanted on \the\pageno}\need@oddpage{\tp@lbout}}
 \def\zNeedQuadPage{\message{Quad page wanted on \the\pageno}\need@quadpage{\tp@lbout}}
+\def\Showbox#1{{\count255=\interactionmode\relax \interactionmode=2\relax \showbox#1\interactionmode=\count255\relax}}
+\def\Showlists{{\count255=\interactionmode\relax \interactionmode=2\relax \showlists\interactionmode=\count255\relax}}
 %-c_evenpage
+\newcount\p@rnum %used by triggers, figures, etc. 
+\let\c@rref\empty
+\let\dc@rref\empty
 \def\ptxversion{0}
 \def\ifversion#1#2#3{\ifnum\ptxversion=0\relax #2\else
     \ifnum\ptxversion < #1\relax #3\else #2\fi\fi}
@@ -201,7 +207,7 @@
   \trace{F}{s@tbaseline@ #1#2}%
   \def\s@urce{no data}%
   \def\f@ntstyle{#1#2}%
-  \@s@tbaseline{#1#2}{#1#2}%
+  \@s@tbaseline{#1}{#2}%
 }
 
 \def\@s@tbaseline#1#2{%
@@ -211,11 +217,11 @@
       \dimen0=\p@ram\le@dingunit
       \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
       \trace{F}{baseline [\f@ntstyle] (#1,#2) = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
-      \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0
+      \setp@ram{baseline}{#1}{\the\dimen0}\baselineskip=\dimen0\advance \baselineskip by \ColAdjskip
       \should@xist{}{\f@ntstyle}%
     \fi
   \else
-    \def\s@urce{store:\f@ntstyle}%
+    \def\s@urce{store:#1,#2}%
     \baselineskip=\p@ram\fi
   \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
 
@@ -242,16 +248,17 @@
   \n@xt}
 \def\incl@depdf{\begingroup
   \m@kedigitsother \catcode`\[=12 \catcode`\]=12
+  \ifnum\whichp@ge<0 \else\whichp@ge=0\fi
   \futurelet\n@xt\t@stincl@de@ptions}
 \def\t@stincl@de@ptions{\ifx\n@xt[\let\n@xt\incl@de@ptions
   \else\let\n@xt\incl@deno@ptions\fi\n@xt}
 \def\incl@deno@ptions#1{\incl@de@ptions[]{#1}}
 \def\incl@de@ptions[#1]#2{%
   \pdfp@ges=\XeTeXpdfpagecount "#2"\relax
-  \whichp@ge=0
-  \msg{includepdf #2 pages=\the\pdfp@ges}
+  \msg{includepdf #2 #1 pages=\the\pdfp@ges, pdfpagewidth=\the\pdfpagewidth, page=\the\whichp@ge}
   \edef\tmp{\string\@pdffile\string{\the\pdfp@ges\string}\string{#2\string}}%
   \x@\immediate\x@\write\x@\p@rlocs\x@{\tmp}%
+  \ifnum\whichp@ge<0 \tempfalse\whichp@ge=-\whichp@ge \advance\whichp@ge -1\else \temptrue\whichp@ge=0\fi
   \loop \ifnum\whichp@ge<\pdfp@ges
     \advance\whichp@ge by 1
     \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{"#2"}{page \whichp@ge #1}}%
@@ -264,7 +271,9 @@
     {\def\c@rrID{#2 #1 page \number\whichp@ge}% for lower crop-mark info, if requested
       \shipcompletep@gewithcr@pmarks{\vbox{\box0}}}%
     \ifholdpageno\else\advancepageno\fi
-    \repeat
+  \else\tempfalse
+  \fi
+  \iftemp\repeat
   \endgroup % begun in \incl@depdf
 }
 \newcount\pdfp@ges %Pages in the pdf
@@ -310,7 +319,7 @@
 \XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
 
 %% various Unicode characters that we handle in TeX... and protect in TOC and PDF bookmarks
-\def\intercharspace{\hskip0pt}
+\def\intercharspace{\nobreak\hskip0pt}
 \def\SFTHYPHEN{\-}
 \def\NBSP{\nobreak\space} % make Unicode NO-BREAK SPACE into a no-break space
 \def\ZWSP{\penalty0\intercharspace\relax} % ZERO WIDTH SPACE is a possible break
@@ -342,7 +351,6 @@
   \let\ZWSP=\relax
   \let\ZWNBSP=\relax
   \let\WJ=\relax
-  \let\NBHYPH=\relax
   \let\NQUAD=\relax
   \let\MQUAD=\relax
   \let\MSPACE=\relax
@@ -400,6 +408,8 @@
   \def\BADBREAK{^^^^2064}%
 }
 
+\addtoendhooks{\edef\@time{\strip@pt{\dimexpr \elapsedtime sp\relax}}\message{Elapsed time: \@time s}}
+
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
 \catcode"AD=\active   \def^^ad{\pr@tect\SFTHYPHEN}
 \catcode"200B=\active \def^^^^200b{\pr@tect\ZWSP}
@@ -436,6 +446,7 @@
 \catcode`\^=12 \def\circumflex{^}\catcode`\^=7
 \catcode`\|=12 \def\pipe{^^7c}
 
+\let\par\standardpar
 \parskip=0pt
 \lineskip=0pt
 % NOTE: The baselineskip is set negative here. Later on it will

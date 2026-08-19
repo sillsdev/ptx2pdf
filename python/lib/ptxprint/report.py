@@ -4,8 +4,9 @@ import xml.etree.ElementTree as et
 from datetime import datetime
 from ptxprint.parlocs import BadSpace
 from ptxprint.xdv.spacing_oddities import Rivers
-from ptxprint.utils import rtlScripts, dediglotref
+from ptxprint.utils import rtlScripts, dediglotref, pycodedir
 from usfmtc.reference import Ref, RefList
+from math import sqrt
 
 # DEBUG is informational
 # INFO is something that could fail, passed
@@ -74,7 +75,7 @@ class Report:
         self.sections.setdefault(section, []).append(ReportEntry(msg, **kw))
 
     def generate_html(self, fname, texmodel):
-        doc = et.fromstring(html_template.format(css=os.path.join(os.path.dirname(__file__), "sakura.css"), **texmodel))
+        doc = et.fromstring(html_template.format(css=os.path.join(pycodedir(), "sakura.css"), **texmodel))
         body = doc.find("body")
         timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         summary_html_str = self._generate_summary_html()
@@ -115,7 +116,7 @@ class Report:
         et.SubElement(body, "hr")
 
         lasts = []
-        for s, t in sorted(self.sections.items()):
+        for s, t in sorted(self.sections.items(), key=lambda x: (int(x[0].split('.')[0]) if x[0].split('.')[0].isdigit() else 999, x[0])):
             if not len(t):
                 continue
             nexts = s.split("/")
@@ -239,15 +240,30 @@ class Report:
         self.add("3. USFM/Markers", "Markers used: "+" ".join(sorted(mrkrset)), txttype="text")
 
     def get_files(self, view):
+        def doadd(fname, recurse=True):
+            jobs = []
+            f = os.path.join(view.project.srcPath(view.cfgid), fname)
+            if not os.path.exists(f):
+                return jobs
+            with open(f, encoding="utf-8") as inf:
+                data = inf.read()
+            if recurse:
+                for m in re.findall(r"(?:^|\n)\s*include\s*(['\"])\s*(.*?)\s*\1", data):
+                    jobs.append(m[1])
+            self.add("9. Files/"+os.path.basename(fname), data, severity=logging.NOTSET, txttype="pretext")
+            return jobs
+
+        jobs = []
         for a in (("changes.txt", "c_usePrintDraftChanges"),
                   ("ptxprint-mods.tex", "c_useModsTex")):
             if view.get(a[1]):
-                f = os.path.join(view.project.srcPath(view.cfgid), a[0])
-                if not os.path.exists(f):
-                    continue
-                with open(f, encoding="utf-8") as inf:
-                    data = inf.read()
-                self.add("9. Files/"+a[0], data, severity=logging.NOTSET, txttype="pretext")
+                jobs.extend(doadd(a[0], a[0] == "changes.txt"))
+        alljobs = jobs[:]
+        while len(alljobs):
+            jobs = []
+            for j in alljobs:
+                jobs.extend(doadd(j))
+            alljobs = jobs[:]
 
     def get_usfms(self, view):
         usfms = view.get_usfms()
@@ -260,15 +276,25 @@ class Report:
                 self.add("3. USFM/Checks", f"No USFM for {bk}", severity=logging.WARN)
                 continue
             
-            if doc.xml.errors is None or not len(doc.xml.errors):
-                passed.append(bk)
-            else:
+            if doc.xml.errors is not None and len(doc.xml.errors):
                 for e in doc.xml.errors:
-                    (msg, pos, ref) = e #pos.l, pos.c = char num
-                    if pos is None:
-                        continue
-                    emsg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
-                    failed.setdefault(bk, []).append(emsg)
+                    if len(e) == 1:     # simple string
+                        msg = e[0]
+                        pos = None
+                        ref = None
+                    else:
+                        (msg, pos, ref) = e #pos.l, pos.c = char num
+                    if pos is not None:
+                        msg = f"{ref} {msg} at line {pos.l + 1}, char {pos.c + 1}"
+                    failed.setdefault(bk, []).append(msg)
+            else:
+                errors = doc.runchecks()
+                if len(errors):
+                    for e in errors:
+                        msg = f"{bk} {e[0]} - {e[1]}"
+                        failed.setdefault(bk, []).append(msg)
+                else:
+                    passed.append(bk)
         if len(passed):
             self.add("3. USFM/Checks", f"Books passed: {' '.join(passed)}", severity=logging.INFO)
         if len(failed):
@@ -296,9 +322,6 @@ class Report:
             self.add("3. USFM/Checks", f'{bk} is missing the following essential markers: {" ".join(missing)}', severity=logging.ERROR)
             return False
         return True
-
-        def myhackylambda(view, widget):
-            return ("", logging.DEBUG)
 
     def get_general_info(self, view):
         widget_map = {
@@ -339,7 +362,6 @@ class Report:
             "Front Matter PDF(s)":        ("7. Peripheral Components", "c_inclFrontMatter", 0, \
                                             lambda v,w: (v.get("lb"+w[1:], "").strip("."), logging.DEBUG)),
             "Table of Contents":          ("7. Peripheral Components", "c_autoToC", 0, None),
-            "Thumb Tabs":                 ("6. Features", "c_thumbtabs", 0, None),
             "Front Matter":               ("7. Peripheral Components", "c_frontmatter", 0, \
                                             lambda v,w: ("", logging.WARN if v.get(w, False) and v.get("c_colophon", False) else logging.DEBUG)),
             "Colophon":                   ("7. Peripheral Components", "c_colophon", 0, \
@@ -403,12 +425,19 @@ class Report:
         currpnum = None
         currivers = []
         curriver = None
+        for p, r in plocs.getRects():
+            r.tspace = 0
+            r.nspace = 0
+            r.lines = 0
         for l, p, r in plocs.allxdvlines():
             count += 1
             if threshold != 0:  
-                if (result := l.has_badspace(threshold)):
-                    for b in result:
-                        badlist.append(BadSpace(r.pagenum, l, *b)) 
+                result, nspaces, tspaces = l.has_badspace(threshold)
+                for b in result:
+                    badlist.append(BadSpace(r.pagenum, l, *b))
+                r.tspace += tspaces
+                r.nspace += nspaces
+                r.lines += 1
             if (collisions := l.has_collisions()):
                 for c in collisions:
                         collisions_list.append(l.ref)
@@ -435,6 +464,16 @@ class Report:
                     elif val > rivers[0]:
                         heapq.heapreplace(rivers, val)
 
+        for p in plocs:
+            tspace = 0
+            nspace = 0
+            nlines = 0
+            for r in p.rects:
+                tspace += r.tspace
+                nspace += r.nspace
+            if nspace > 0:
+                tspace /= nspace
+            p.badness = tspace
         if threshold == 0:
             badlist = plocs.getnbadspaces()
             count = len(badlist)
@@ -450,6 +489,12 @@ class Report:
         if len(rivers):
             riverrefs = RefList([v[1] for v in rivers])
             self.add("2. Layout", f"Rivers ({rivers[0][0]:.2f}): {riverrefs.simplify()}", severity=logging.WARN, txttype="text")
+        badnesses = sorted([(sqrt(p.badness), p.ref) for p in plocs], reverse=True)[:10]
+        averagebad = sum((p.badness for p in plocs)) / len(plocs) if len(plocs) else 0
+        if averagebad > 0.0001:
+            self.add("2. Layout", f"Paragraph Badness (standard deviation around the width of a space): {sqrt(averagebad):.4f}")
+            self.add("2. Layout", f"Pargraphs that are bad: {', '.join('{1}={0:.4f}'.format(*x) for x in badnesses)}")
+        
 
     def renderSinglePage(self, view, page_side, scaled_page_w_px, scaled_page_h_px, scaled_m_top_px, scaled_m_bottom_px,
                          scaled_physical_left_margin_px, scaled_physical_right_margin_px, margin_labels_mm, 
@@ -622,7 +667,7 @@ class Report:
         Calculates the max severity for each main section and generates an HTML summary line
         with clickable blocks.
         """
-        max_severities = {i: logging.NOTSET for i in range(1, 10)}
+        max_severities = {i: logging.NOTSET for i in range(1, 11)}
         for section_key, entries in self.sections.items():
             if not entries:
                 continue
@@ -637,7 +682,7 @@ class Report:
             if current_max_severity > max_severities[main_section_num]:
                 max_severities[main_section_num] = current_max_severity
         summary_blocks = []
-        for i in range(1, 10):
+        for i in range(1, 11):
             severity = max_severities[i]
             color_index = severity // 10
             color = logcolors[color_index]
@@ -705,7 +750,7 @@ class Report:
         return findings
 
     def get_log_analysis(self, view, log_content_string):
-        section_base = "Log File Analysis"
+        section_base = "10. Log File Analysis"
         if not log_content_string or not log_content_string.strip():
             self.add(section_base, "Log file content not available or empty.", severity=logging.WARN); return
         findings = self._analyze_log_file_content(log_content_string)

@@ -91,10 +91,12 @@
   \fi
 }
 
+\let\@@lastc@rref\empty
 \def\runtrigg@rscv{%after the verse number
   \ifversion{4}{%
     \global\p@rnum=\ifhmode 1\else 0\fi
   }{\global\p@rnum=1}%
+  \global\let\@@lastc@rref\c@rref
   {\let\\=\clearn@tecount \the\n@tecl@sses}%
   \settrig@refcv
   \ifMarkTriggerPoints\trigg@rmark{TV}\fi
@@ -103,6 +105,7 @@
 }
 \def\runtrigg@rsprecv{% before the verse number
   \global\p@rnum=0
+  \global\let\@@lastc@rref\c@rref
   \settrig@refprecv
   \trace{T}{running (precv) triggers \c@rref}%
   \the\trigg@rchecks
@@ -115,9 +118,11 @@
 
 
 \def\runtrigg@rspar{%Paragraph trigger
-  \trace{T}{runtrigg@rspar[\m@rker ]}%
-  \global\advance\p@rnum by 1
-  {\let\\=\clearn@tecount \the\n@tecl@sses}%
+  \ifdiglot\let\c@rftmp\dc@rref\else\let\c@rftmp\c@rref\fi
+  \trace{T}{runtrigg@rspar[\m@rker ] \c@rftmp=\@@lastc@rref?}%
+  \ifversion{7}{\ifx\c@rftmp\@@lastc@rref\else\global\p@rnum=0 \fi}{}%If we don't reset it here, then we might carry it over when we should reset
+  \global\let\@@lastc@rref\c@rftmp
+  \global\advance\p@rnum by 1 {\let\\=\clearn@tecount \the\n@tecl@sses}%
   \ifx\v@rse\empty\else
     \settrig@refcv
   \fi
@@ -175,7 +180,7 @@
   \the\trigg@rchecks
   \global\let\dc@rref\oodc@rref
 }
-\def\settrign@me#1{\edef\trign@me{trigger-#1}}
+\def\settrign@me#1{\def\tmp{\detokenize{#1}}\edef\trign@me{trigger-\tmp}}
 
 \def\addtrigger#1#2{%
   \settrign@me{#1}%
@@ -184,6 +189,7 @@
 \def\AddTrigger{\prepusfm\@AddTrigger}
 \def\@AddTrigger#1 {% #1 is space-delimited, input may contain blank lines.
   \settrign@me{#1}%
+  \trace{T}{Defining trigger \trign@me}%
   \catcode"FDEC=0\catcode`\\=12
   \@@AddTrigger}
 
@@ -206,6 +212,7 @@
      \x@\def\x@\tr@gtmp\x@{\tr@gtmp#1}%
    \fi
    \x@\global\x@\let\csname\trign@me\endcsname\tr@gtmp
+   \trace{T}{\trign@me -> \meaning\tr@gtmp}%
 }
 
 \def\r@ntr@g#1\E{\p@sheof\scantokens{#1\noexpand}\p@peof}
@@ -234,20 +241,24 @@
 }
 
 \def\stdtrigger{%Run any triggers if they exist.
-  \settrign@me{\c@rref}\ifcsname \trign@me\endcsname
+  \x@\settrign@me\x@{\c@rref}\ifcsname \trign@me\endcsname
     \x@\let\x@\tmp\csname\trign@me\endcsname
     \ifx\relax\tmp\else
       \trace{T}{Trigger(\trign@me ) present}%
       \c@llr@ntr@g
     \fi%
+  \else
+    \trace{T}{Trigger(\trign@me ) absent}%
   \fi
   \ifdiglot
-    \settrign@me{\dc@rref}\ifcsname \trign@me\endcsname
+    \x@\settrign@me\x@{\dc@rref}\ifcsname \trign@me\endcsname
       \x@\let\x@\tmp\csname\trign@me\endcsname
       \ifx\relax\tmp\else
         \trace{T}{Trigger(\trign@me ) present}%
         \c@llr@ntr@g
       \fi%
+    \else
+      \trace{T}{Trigger(\trign@me ) absent}%
     \fi
   \fi
 }
@@ -263,7 +274,6 @@
   \fi
 }
 
-\newcount\p@rnum
 
 
 \def\settrig@refprecv{%
@@ -272,7 +282,6 @@
     \edef\dc@rref{\id@@@\c@rrdstat\ch@pter.\v@rse-preverse}%
   \fi
 }
-
 \addtopreversehooks{\runtrigg@rsprecv} % e.g. piclists
 \addtoversehooks{\runtrigg@rscv} % e.g. adjustlist
 \addtoeveryparhooks{\runtrigg@rspar} 

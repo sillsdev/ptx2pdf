@@ -39,6 +39,7 @@
 \def\c@tegory{}
 \let\DebugBorderCat\undefined %  Set this to showbox the specified category just after the border is added
 \newif\ifBoxLikeBorder\BoxLikeBordertrue % Set to false for old behaviour: the box does not affect the spacing of boxes.
+\newif\ifearlybgim@ge
 
 \def\S@tCat#1{\trace{sc}{Started Category #1}%
   \edef\c@tegory{#1}%
@@ -159,7 +160,12 @@
     \trace{e}{Feint box dims: \the\dimen0 +\the\dimen1 *\the\dimen2 , \the\dimen3, skip:\fb@tskip}%
     \hskip -\dimen3 % Backup so the expanded box is centred properly
     \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2 }%should be possible to get this working in pdf code, but this works.
-    \f@intthing{#1}{#2}{\c@de}%
+    \ifdim #1 pt >0pt 
+      \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2 }%should be possible to get this working in pdf code, but this works.
+      \f@intthing{#1}{#2}{\c@de}%
+    \else
+      \vrule height \dimen0 depth \dimen1 width 0pt
+    \fi
     \hss
   }%
   \egroup
@@ -311,6 +317,7 @@
   \getwh@chpage % Necessary for accurate border measurements
   \@get@Hborder@style@params
   \@get@Vborder@style@params
+  \prepb@rderdims
   \getsbp@ram{posn}%
   \ifx\cp@ram\relax
     \gdef\sb@rpos{b}%
@@ -324,25 +331,27 @@
   \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
   \global\let\fgfig@cutout\false
   \ifx\cp@ram\relax
+    \trace{e}{Sidbar width not yet set for \c@tegory}%
     \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end% sets up temp[abcd] 
     \@@setsbp@cinswid% sets p@cinswid
     % Now apply scale..
-    \edef\sb@rrefwid{\the\dimen1}%
     \getsbp@ram{scale}%
-    \ifx\cp@ram\relax\else
+    \ifx\cp@ram\relax
+      \def\cp@ram{1}%
+    \else
       \dimen1=\cp@ram\dimen1
-      \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
-      \edef\sb@rrefwid{\the\dimen1}%
     \fi
-    \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-    \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
-    \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
+    \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
+    \edef\sb@rrefwid{\the\dimen1}%
+    %\getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+    %\getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+    %\getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
     \trace{e}{fgfigsp@c=\fgfigsp@c}%
     % And shrink further if s has been specified for the fg picture
     \ifx\fgfigsp@c\relax\else
-      \prepb@rderdims
       \set@ref@dims
       \p@rsefigscale{fg}%
+      \let\crop@fig@pre\empty\let\crop@fig@post\empty\let\crop@fig@after\empty
       \dimen0=\fgfig@dim@wd
       \edef\fgfigsp@c{\fgfigsp@c \fgfig@scale@wd}%
       %\getsbp@ram{fgfigscale}%
@@ -450,23 +459,26 @@
     \fi
     \trace{e}{tempc=\tempc}%
     \@@sb@width@calcs
-    \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
-      \if p\tempc\relax\else
-        \if c\tempc\relax\else
-          \ifx\c@tprefix\empty\else\setsbp@ram{w@dth}{\the\dimen1}\fi%
+    \@@sb@height@calcs
+    \ifx\c@tprefix\empty\else
+      \if h\tempc\relax\else% Don't store width for class h, p, or c sidebars, as they may appear full width or single column
+        \if p\tempc\relax\else
+          \if c\tempc\relax\else
+            \setsbp@ram{w@dth}{\the\dimen1}%
+          \fi
         \fi
       \fi
-    \fi
-    \let\t@mploc\tempc % Will be overwriting tempc soon
-    \ifx\tempd\empty\else
-      \tempfalse
-      \ifx\t@mploc\loc@Full\temptrue\else
-        \ifx\t@mploc\loc@Page\temptrue\fi
-      \fi
-      \iftemp
-        \x@\minip@rs@two\tempd\end
-        \if f\tempd\relax
-          \setsbp@ram{outerh@ight}{\sb@height}%
+      \let\t@mploc\tempc % Will be overwriting tempc soon
+      \ifx\tempd\empty\else
+        \tempfalse
+        \ifx\t@mploc\loc@Full\temptrue\else
+          \ifx\t@mploc\loc@Page\temptrue\fi
+        \fi
+        \iftemp
+          \x@\minip@rs@two\tempd\end
+          \if f\tempd\relax
+            \setsbp@ram{outerh@ight}{\sb@height}%
+          \fi
         \fi
       \fi
     \fi  
@@ -474,20 +486,35 @@
    \dimen1=\cp@ram
   \fi
   \sb@rwidth=\dimen1
-  \trace{e}{text box width is \the\sb@rwidth}%
+  \trace{e}{text box width (\c@tegory) is \the\sb@rwidth}%
   \hsize=\sb@rwidth
 }
 \def\@@sb@width@calcs{%
+    \trace{e}{Border on outside for: \ifb@dr@t@os t\fi\ifb@dr@b@os b\fi\ifb@dr@l@os l\fi\ifb@dr@r@os r\fi}%
     \advance\dimen1 by -\dimexpr \fb@lpadding + \fb@rpadding\relax
-    \ifx\b@drleft\tr@e\ifdim \border@lpadding>-\b@drwidth pt
+    \ifb@dr@l@os
         \advance\dimen1 by -\b@drwidth pt 
         \advance\dimen1 by -\border@lpadding
-    \fi\fi
-    \ifx\b@drright\tr@e\ifdim \border@rpadding>-\b@drwidth pt   
+        \advance\dimen1 by -\border@lmargin
+    \fi
+    \ifb@dr@r@os
         \advance\dimen1 by -\b@drwidth pt 
         \advance\dimen1 by -\border@rpadding
-    \fi\fi
+        \advance\dimen1 by -\border@rmargin
+    \fi
     \trace{e}{calculated with dimen1=\the\dimen1}%
+}
+\def\@@sb@height@calcs{%
+  \dimen0=0pt
+  \ifb@dr@t@os
+    \advance\dimen0 by \border@tmargin
+  \fi
+  \ifb@dr@b@os
+    \advance\dimen0 by \border@bmargin
+  \fi
+  \ifdim\dimen0=0pt\else
+    \edef\sb@height{\the\dimexpr \sb@height -\dimen0\relax}%
+  \fi
 }
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
@@ -587,7 +614,7 @@
     \ifx\cp@ram\relax 
       \x@\edef\csname \v@lpfx @scale@ref\endcsname{text}%
     \else
-      \trace{e}{Figure will be scaled relative to \v@lpfx}%
+      \trace{e}{Figure will be scaled relative to \cp@ram(\v@lpfx)}%
       \lowercase{\x@\edef\csname \v@lpfx @scale@ref\endcsname{\cp@ram}}%
     \fi
     \p@rsef@gsc@le #1xx\E
@@ -639,6 +666,30 @@
 % (set by sb@ins@rtpic) 
 %This p@rsef@gsc@le gets called with dimen1=\wd sidebar , \dimen0=scratch, \dimen2=scratch.
 % f@grefdim should do something more sane
+\def\p@rsef@gcrop#1x#2x#3\E{%
+  \def\cr@pX{#1}\def\cr@pY{#2}%
+}
+\def\ch@ckfigdim@ht{%
+  \trace{e}{Checking image height \the\dimen4 <\scale@height?}\ifdim\dimen4>\scale@height \def\resc@le{ height \scale@height}\temptrue\fi}%
+
+\def\ch@ckfigdim@wd{%
+  \trace{e}{Checking width \the\dimen3 <\scale@width?}\ifdim\dimen3>\scale@width \def\resc@le{ width \scale@width}\temptrue\fi}%
+
+\def\ch@ckfigdim@mincrop{%
+  \trace{e}{Trying to scale image to minimal crop \the\dimen3 x\the\dimen4\space vs \scale@width x\scale@height}%
+  \r@tio{\dimen4}{\scale@height}%
+  \let\v@@r@tio\@@r@tio
+  \r@tio{\dimen3}{\scale@width}%
+  \let\h@@r@tio\@@r@tio
+  \ifdim \v@@r@tio pt > \h@@r@tio pt
+    \def\resc@le{width \scale@width}%
+  \else
+    \def\resc@le{height \scale@height}%
+  \fi
+  \edef\t@mpfigspec{\bgf@gsp@c \resc@le|\scale@width}%
+  \temptrue
+}%
+
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \f@grefdim{\v@lpfx}%
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
@@ -648,8 +699,8 @@
   \fi
   \def\ch@ckfigdim{\tempfalse}%
   \ifx\fig@v@dim\empty
-    \x@\def\csname \v@lpfx fig@scale@ht\endcsname{}%
-    \def\ch@ckfigdim{\trace{e}{Checking image height \the\dimen4 <\scale@height?}\ifdim\dimen4>\scale@height \def\resc@le{ height \scale@height}\temptrue\fi}%
+     \x@\def\csname \v@lpfx fig@scale@ht\endcsname{}%
+     \let\ch@ckfigdim\ch@ckfigdim@ht
   \else
     \dimen0=\fig@v@dim\dimexpr \scale@height \relax
     \x@\edef\csname \v@lpfx fig@scale@ht\endcsname{ height \the\dimen0}%
@@ -658,7 +709,13 @@
   \ifx\fig@h@dim\empty
     \x@\def\csname \v@lpfx fig@scale@wd\endcsname{}%
     \x@\edef\csname \v@lpfx fig@dim@wd\endcsname{\scale@width}%
-    \def\ch@ckfigdim{\trace{e}{Checking width \the\dimen3 <\scale@width?}\ifdim\dimen3>\scale@width \def\resc@le{ width \scale@width}\temptrue\fi}%
+    \ifx\fig@v@dim\empty
+      \ifx\osp@ram\Img@Crop
+        \let\ch@ckfigdim\ch@ckfigdim@mincrop
+      \fi
+    \else
+      \let\ch@ckfigdim\ch@ckfigdim@wd
+    \fi
   \else
     \dimen0=\fig@h@dim\dimexpr \scale@width\relax
     \x@\edef\csname \v@lpfx fig@scale@wd\endcsname{ width \the\dimen0}%
@@ -776,7 +833,7 @@
    \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
    \x@\writefigp@gelog\x@{\l@gstring}%
    \egroup 
-  \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
+  \message{\c@t@gory: \the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
   % ^^^ END OF GROUP! ^^^
   %
   \whichp@ge=\@@whichp@ge
@@ -825,6 +882,11 @@
   %Does the box have a defined size? 
   %
   % Reference dimensions
+  \trace{e}{Border on outside for: \ifb@dr@t@os t\fi\ifb@dr@b@os b\fi\ifb@dr@l@os l\fi\ifb@dr@r@os r\fi}%
+  \ifb@dr@l@os\let\lble@d\z@\fi
+  \ifb@dr@r@os\let\rble@d\z@\fi
+  \ifb@dr@t@os\let\tble@d\z@\fi
+  \ifb@dr@b@os\let\bble@d\z@\fi
   \edef\flble@d{\ifdim \lble@d > \figbleed \figbleed\else\lble@d\fi}% Figure bleeds
   \edef\frble@d{\ifdim \rble@d > \figbleed \figbleed\else\rble@d\fi}%
   \edef\ftble@d{\ifdim \tble@d > \figbleed \figbleed\else\tble@d\fi}%
@@ -862,25 +924,52 @@
     \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
   \fi
   %
-  \earlybgimagefalse
+  \earlybgim@gefalse
   \ifx\bgf@gsp@c\relax
     \let\t@mpfigspec\relax
   \else
     \trace{e}{Sidebar has image}%
+    \getsbp@ram{bgfigoversize}%
+    \let\osp@ram\cp@ram
     \p@rsefigscale{bg}%
+    \let\crop@fig@pre\empty\let\crop@fig@post\empty\let\crop@fig@after\empty
     \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\scale@width}%
+    \ifx\osp@ram\Img@Crop
+      \getsbp@ram{bgfigcropofs}%
+      \ifx\cp@ram\relax
+        \edef\crop@fig@pre{\special{pdf:literal q 0 0 \strip@pt{\dimexpr 0.99626401\dimexpr\scale@width\relax\relax} \strip@pt{\dimexpr 0.99626401\dimexpr\scale@height\relax\relax} re W n}}%
+        \edef\crop@fig@post{\special{pdf:literal Q}}%
+      \else
+        \x@\p@rsef@gcrop\cp@ram xx\E
+        \edef\crop@fig@pre{\setbox0\hbox\bgroup}%
+        \edef\crop@fig@post{\egroup
+          \special{pdf:literal q 0 0 \strip@pt{\dimexpr 0.99626401\dimexpr\scale@width\relax\relax} \strip@pt{\dimexpr 0.99626401\dimexpr\scale@height\relax\relax} re W n}%
+          \hskip-\cr@pX\dimexpr \wd0-\scale@width\relax\vbox{\dimen0=\cr@pY\dimexpr \ht0-\scale@height\relax \vskip \dimen0 \box0\vskip-\dimen0}%
+          \special{pdf:literal Q}}%
+      \fi
+      \edef\crop@fig@after{\wd0=\scale@width \ht0=\scale@height}%
+      \trace{e}{Cropping image:\crop@fig@pre - \crop@fig@post}%
+    \fi
     \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec|\fig@lskip|\fig@rskip\E}%
     \ch@ckfigdim
     \iftemp% It doesn't fit
       \trace{e}{Image oversize}%
-      \getsbp@ram{bgfigoversize}%
-      \ifx\cp@ram\Img@Shrink\edef\t@mpfigspec{\bgf@gsp@c \resc@le|\scale@width}\else
-        \ifx\cp@ram\Img@Distort\edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd \resc@le|\scale@width}\else
-          \ifx\cp@ram\Img@Crop\message{Image crop not supported}\tempfalse\else
+      \ifx\osp@ram\Img@Shrink\edef\t@mpfigspec{\bgf@gsp@c \resc@le|\scale@width}\else
+        \ifx\osp@ram\Img@Distort\edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd \resc@le|\scale@width}\else
+          \ifx\osp@ram\Img@Crop
+            \ifx\fig@h@dim\empty
+              \ifx\fig@v@dim\empty\else
+                \tempfalse
+              \fi
+            \else\tempfalse
+            \fi
+          \else
+            \message{BgImageOversize \osp@ram\space is unrecognised or deprecated. Please select crop, shrink or distort for c}%
             \tempfalse % No action
           \fi
         \fi
       \fi
+      \trace{e}{\iftemp\else Not \fi Reloading image:\t@mpfigspec}%
       \iftemp
         \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec|\fig@lskip|\fig@rskip\E}%
       \fi
@@ -891,10 +980,10 @@
     \def\sb@rchunkheight{\the\maxdimen}% Background images and page-broken chunks are incompatible 
     \tempfalse
     \if\bgf@gl@w F%
-      \earlybgimagetrue
+      \earlybgim@getrue
     \fi
     \if\h@scol F%
-      \earlybgimagetrue
+      \earlybgim@getrue
     \fi
   \fi
   \let\w@tsit\sb@rb@x % Make sure the item is identified properly - used in debugging and .delayed file
@@ -951,7 +1040,7 @@
         \unvbox\extb@x}%
     \fi
   \fi
-  \ifearlybgimage
+  \ifearlybgim@ge
     %modify the esbbox to include the picture
     \trace{e}{Including background image below contents: \t@mpfigspec}%
     \ifx\sb@rheightspec\empty
@@ -1062,7 +1151,7 @@
     \fi
     \ifhasb@rder % any border
       \dob@rder % Actually generate the border
-      \dimen1=\dimexpr -\b@rderbox@depth\relax
+      \dimen1=\dimexpr -\b@rderbox@depth \ifb@dr@b@os -\border@bmargin\fi\relax
       \advance\dimen1 by -\sp@ceafter
       \relax
       \ifdoIntskip
@@ -1091,7 +1180,7 @@
         \vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi
         \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox
         \kern\dimen1
-        \vskip\sp@ceafter
+        \vskip\dimexpr \sp@ceafter \ifb@dr@b@os +\border@bmargin\fi\relax
       }%
     \else
       \ifBoxLikeBorder
@@ -1198,7 +1287,8 @@
         \fi
         \ifx\picl@c\loc@Full
           \trace{e}{Full page box \b@x@lunpad | \b@x@runpad}%
-          \setbox\extchunkb@x\hbox {\penalty-10001\kern\b@x@lunpad\box\extchunkb@x\kern \b@x@runpad}%
+          \setbox\extchunkb@x\hbox {\penalty-10001\kern\b@x@lunpad
+              \box\extchunkb@x\kern \b@x@runpad}%
           \d@figureFull\extchunkb@x
         \fi
         \ifx\picl@c\loc@Cut
@@ -1278,12 +1368,13 @@
 \def\BgImage      #1\relax{\initc@t\stripqu@te{#1}\setsbp@ram{bgfigname}{\@@result}\GenC@tFig{bg}}
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
 \def\BgImageScaleTo   #1\relax{\initc@t\setsbp@ram{bgfigscaleto}{#1}\GenC@tFig{bg}}
-\def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
+\def\BgImagePos   #1\relax{\message{Stylesheet option BgImagePos is not implemented. See documentation on BgImageCropOfs.}\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
 \def\BgImageLow   #1\relax{\initc@t\uppercase{\edef\t@st{#1}}\setsbp@ram{bgfiglow}{\t@st}}% What's the right sequence for colour layer and background image
 \def\BgImageColour       #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{bgfigcolour}{\rgb@out}}
 \let\BgImageColor=\BgImageColour%for Americans
 \def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
 \def\BgImageOversize       #1\relax{\initc@t\setsbp@ram{bgfigoversize}{#1}}
+\def\BgImageCropOfs      #1\relax{\initc@t\setsbp@ram{bgfigcropofs}{#1}}
 
 \def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\x@\checkh@x #1\end\setsbp@ram{bgcolour}{\rgb@out}\fi}%For British/Australian/NZ/etc.
 \def\SpaceBeside #1\relax{\initc@t\setsbp@ram{spacebeside}{#1}}
@@ -1316,7 +1407,7 @@
  \fi
 }
 \def\sb@ins@rtpic#1|#2|#3|#4|#5\E{%
-  \trace{e}{Figure #1|#2|#3|#4|#5}% #1 is filename (without quotes). #4, #5 are l/r skips.
+  \trace{e}{Figure #1|#2|#3|#4|#5}% #1 is filename (without quotes).#2 size spec, #3=hsize,  #4, #5 are l/r skips.
   \dimen0=#3\relax
   \def\@fig@lskip{#4}\def\@fig@rskip{#5}%
   \openin\t@stread="#1"\relax 
@@ -1325,7 +1416,10 @@
    \else\closein\t@stread
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \setbox0\hbox{\picfilecomm@nd "#1" #2}%
+    \setbox0\hbox{\crop@fig@pre
+      \picfilecomm@nd "#1" #2\relax
+      \crop@fig@post}%
+    \crop@fig@after
     \global\dimen3=\wd0
     \global\dimen4=\ht0
     \trace{e}{Image dims: \the\dimen3 x \the\dimen4}%
@@ -1353,6 +1447,7 @@
   \EndCategory\stylesheet{#1}\EndCategory
   \subc@llfalse
 }
+% This lot turns the unordered list from \Border into valid booleans
 \def\B@rderTOP{\setsbp@ram{bordertop}{T}}
 \def\B@rderBOTTOM{\setsbp@ram{borderbottom}{T}}
 \def\B@rderLEFT{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}}

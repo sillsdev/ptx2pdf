@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Which Typesetting Tool? — PubAssist+InDesign vs PTXprint</title>
+<style>
+  :root {
+    --pa-color: #6b46c1;
+    --ptxp-color: #0d9488;
+    --hybrid-color: #b45309;
+    --specialist-color: #b91c1c;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+  }
+  .tagline {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 24px 0;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+  .progress-text {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: -16px;
+    margin-bottom: 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .question-num {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .question-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .question-hint {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0 0 20px;
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .option {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: #fff;
+    text-align: left;
+    font-size: 0.98rem;
+    font-family: inherit;
+    color: var(--text);
+  }
+  .option:hover {
+    border-color: var(--accent);
+    background: #f0f7ff;
+  }
+  .option.selected {
+    border-color: var(--accent);
+    background: #eff6ff;
+    font-weight: 500;
+  }
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+  }
+  button.nav-btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--text);
+  }
+  button.nav-btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  button.nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  button.nav-btn:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  /* Result page */
+  .result-card { padding: 32px; }
+  .result-headline {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .recommendation {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+  .rec-pa { color: var(--pa-color); }
+  .rec-ptxp { color: var(--ptxp-color); }
+  .rec-hybrid { color: var(--hybrid-color); }
+  .rec-specialist { color: var(--specialist-color); }
+  .confidence {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+  .score-display {
+    margin: 28px 0;
+  }
+  .score-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+  .score-label {
+    width: 130px;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .score-bar-wrap {
+    flex: 1;
+    height: 22px;
+    background: var(--border);
+    border-radius: 11px;
+    overflow: hidden;
+    position: relative;
+  }
+  .score-bar-fill {
+    height: 100%;
+    transition: width 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .score-bar-fill.pa { background: var(--pa-color); }
+  .score-bar-fill.ptxp { background: var(--ptxp-color); }
+  .reasoning {
+    margin: 28px 0;
+    padding: 20px;
+    background: #f8fafc;
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+  }
+  .reasoning h3 {
+    margin: 0 0 12px;
+    font-size: 1.05rem;
+  }
+  .reasoning ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .reasoning li {
+    margin-bottom: 6px;
+  }
+  .affirmation {
+    margin: 24px 0;
+    padding: 18px;
+    background: #fef3c7;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #78350f;
+  }
+  .affirmation strong { color: #451a03; }
+  .next-steps {
+    margin-top: 24px;
+  }
+  .next-steps h3 {
+    margin: 0 0 12px;
+    font-size: 1.05rem;
+  }
+  .next-steps ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .next-steps li {
+    margin-bottom: 8px;
+  }
+  .restart-row {
+    text-align: center;
+    margin-top: 32px;
+  }
+  .flag-warning {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 0.92rem;
+  }
+  .intro {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    border: 1px solid var(--border);
+  }
+  .intro h2 {
+    margin-top: 0;
+  }
+  .intro p {
+    color: var(--text);
+  }
+  .tool-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .tool-card {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+  }
+  .tool-card.pa { border-color: var(--pa-color); }
+  .tool-card.ptxp { border-color: var(--ptxp-color); }
+  .tool-card h4 { margin: 0 0 6px; font-size: 1rem; }
+  .tool-card.pa h4 { color: var(--pa-color); }
+  .tool-card.ptxp h4 { color: var(--ptxp-color); }
+  .tool-card p { margin: 0; font-size: 0.88rem; color: var(--muted); }
+  @media (max-width: 600px) {
+    .tool-cards { grid-template-columns: 1fr; }
+    .score-label { width: 90px; font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Which Typesetting Tool?</h1>
+    <p class="tagline">A 2-minute decision guide for scripture publishing teams</p>
+  </header>
+
+  <div id="app"></div>
+</div>
+
+<script>
+// ===== Questions =====
+const questions = [
+  {
+    id: 'purpose',
+    text: 'What is the purpose of this typesetting job?',
+    hint: 'The stage of the publication shapes everything else.',
+    options: [
+      { label: 'Draft for translation checking',         pa: 0,  ptxp: 10 },
+      { label: 'Field-test edition (limited print)',      pa: 2,  ptxp: 9 },
+      { label: 'Final regional publication',              pa: 6,  ptxp: 7 },
+      { label: 'Final national / flagship Bible',         pa: 10, ptxp: 4 },
+    ],
+  },
+  {
+    id: 'scope',
+    text: 'What is the content scope?',
+    options: [
+      { label: 'Single book or short selection',          pa: 1,  ptxp: 9 },
+      { label: 'Portion (Gospels, NT, OT portions)',      pa: 4,  ptxp: 8 },
+      { label: 'Full Bible (text-focused)',               pa: 7,  ptxp: 6 },
+      { label: 'Study Bible or richly-annotated edition', pa: 10, ptxp: 3 },
+    ],
+  },
+  {
+    id: 'printrun',
+    text: 'What is the expected print run?',
+    hint: 'Bigger print runs raise the cost of any flaw — and the value of fine-tuning.',
+    options: [
+      { label: 'Digital / PDF only',                      pa: 1,  ptxp: 10 },
+      { label: 'Under 500 copies',                        pa: 2,  ptxp: 9 },
+      { label: '500 – 2,000 copies',                      pa: 5,  ptxp: 7 },
+      { label: '2,000 – 10,000 copies',                   pa: 8,  ptxp: 5 },
+      { label: 'Over 10,000 copies',                      pa: 10, ptxp: 3 },
+    ],
+  },
+  {
+    id: 'layout',
+    text: 'What does the layout require?',
+    options: [
+      { label: 'Standard scripture text layout',          pa: 3,  ptxp: 10 },
+      { label: 'Text plus illustrations and maps',        pa: 5,  ptxp: 8 },
+      { label: 'Cross-references, footnotes, complex apparatus', pa: 8, ptxp: 6 },
+      { label: 'Fully bespoke artistic design',           pa: 10, ptxp: 2 },
+    ],
+  },
+  {
+    id: 'polyglot',
+    text: 'How many parallel texts on the page?',
+    options: [
+      { label: 'Single text',                             pa: 5,  ptxp: 8 },
+      { label: 'Diglot (two parallel texts)',             pa: 7,  ptxp: 7 },
+      { label: 'Triglot or more',                         pa: 9,  ptxp: 5 },
+    ],
+  },
+  {
+    id: 'script',
+    text: 'What writing system are you typesetting?',
+    options: [
+      { label: 'Standard LTR (Latin, Cyrillic, Greek)',   pa: 8,  ptxp: 8 },
+      { label: 'RTL (Arabic, Hebrew)',                    pa: 7,  ptxp: 7 },
+      { label: 'Complex Indic / Southeast Asian',         pa: 6,  ptxp: 8 },
+      { label: 'Nastaliq (Urdu)',                         pa: 4,  ptxp: 9, flag: 'nastaliq' },
+    ],
+  },
+  {
+    id: 'timeframe',
+    text: 'How much time do you have to produce the final output?',
+    options: [
+      { label: 'Days',                                    pa: 1,  ptxp: 10, flag: 'urgent' },
+      { label: 'Weeks',                                   pa: 4,  ptxp: 9 },
+      { label: 'A few months',                            pa: 8,  ptxp: 7 },
+      { label: 'Six months or more',                      pa: 10, ptxp: 6 },
+    ],
+  },
+  {
+    id: 'iteration',
+    text: 'How many rounds of edits do you expect?',
+    hint: 'A re-typeset after every community-review cycle has very different economics from a one-shot final pass.',
+    options: [
+      { label: 'One-shot, no further changes',            pa: 8,  ptxp: 6 },
+      { label: 'A few edit rounds',                       pa: 6,  ptxp: 8 },
+      { label: 'Many community-feedback cycles',          pa: 3,  ptxp: 10 },
+    ],
+  },
+  {
+    id: 'indesign',
+    text: 'Does your team have access to InDesign + PubAssist?',
+    options: [
+      { label: 'Licensed and someone is skilled with it', pa: 10, ptxp: 5 },
+      { label: 'Licensed, still learning',                pa: 6,  ptxp: 7 },
+      { label: 'Not currently available',                 pa: 0,  ptxp: 10, flag: 'no_indesign' },
+    ],
+  },
+  {
+    id: 'typesetter',
+    text: 'Do you have access to a trained scripture typesetter?',
+    options: [
+      { label: 'Yes — in-house',                          pa: 10, ptxp: 5 },
+      { label: 'Yes — can hire or contract one',          pa: 7,  ptxp: 6 },
+      { label: 'No trained typesetter available',         pa: 1,  ptxp: 10, flag: 'no_typesetter' },
+    ],
+  },
+  {
+    id: 'preference',
+    text: "What is your team's working preference?",
+    hint: 'Both answers are valid — this just records the team value.',
+    options: [
+      { label: 'Craftsmanship and fine control',          pa: 10, ptxp: 4 },
+      { label: 'Automated, repeatable, fast',             pa: 3,  ptxp: 10 },
+      { label: 'No strong preference',                    pa: 6,  ptxp: 7 },
+    ],
+  },
+  {
+    id: 'freedom',
+    text: 'How much design freedom does the job require?',
+    options: [
+      { label: 'Maximum — every page may need tuning',    pa: 10, ptxp: 3 },
+      { label: 'Moderate — section-level adjustments',    pa: 7,  ptxp: 6 },
+      { label: 'Template-driven is fine',                 pa: 3,  ptxp: 10 },
+    ],
+  },
+];
+
+// ===== State =====
+let state = {
+  page: 'intro',  // 'intro' | 'q' | 'result'
+  qIndex: 0,
+  answers: {},    // { questionId: optionIndex }
+};
+
+// ===== Rendering =====
+const app = document.getElementById('app');
+
+function render() {
+  if (state.page === 'intro')   return renderIntro();
+  if (state.page === 'q')       return renderQuestion();
+  if (state.page === 'result')  return renderResult();
+}
+
+function renderIntro() {
+  app.innerHTML = `
+    <div class="intro">
+      <h2>What this is</h2>
+      <p>A 12-question wizard to help your team decide whether to typeset a scripture publication using <strong>PubAssist+InDesign</strong> or <strong>PTXprint</strong> &mdash; or a combination of both.</p>
+
+      <div class="tool-cards">
+        <div class="tool-card pa">
+          <h4>PubAssist+InDesign</h4>
+          <p>20+ years of refinement. The professional craft tool — fine-grained control over every page, the trusted choice for flagship Bibles and high-volume print runs.</p>
+        </div>
+        <div class="tool-card ptxp">
+          <h4>PTXprint</h4>
+          <p>7 years young, automation-first. Fast, repeatable, accessible. Designed for drafts, field tests, short runs, and teams without dedicated typesetter expertise.</p>
+        </div>
+      </div>
+
+      <p style="color: var(--muted); font-size: 0.92rem;">This wizard <strong>does not</strong> ask about cost as it may influence the decision and distort the answer.</p>
+
+      <div style="text-align:center; margin-top: 28px;">
+        <button class="nav-btn primary" onclick="start()">Start the wizard →</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderQuestion() {
+  const q = questions[state.qIndex];
+  const total = questions.length;
+  const pct = ((state.qIndex) / total) * 100;
+  const selected = state.answers[q.id];
+
+  app.innerHTML = `
+    <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
+    <div class="progress-text">Question ${state.qIndex + 1} of ${total}</div>
+
+    <div class="card">
+      <div class="question-num">Question ${state.qIndex + 1}</div>
+      <h2 class="question-text">${q.text}</h2>
+      ${q.hint ? `<p class="question-hint">${q.hint}</p>` : ''}
+
+      <div class="options">
+        ${q.options.map((opt, i) => `
+          <button class="option ${selected === i ? 'selected' : ''}"
+                  onclick="selectOption(${i})">
+            ${opt.label}
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="nav">
+        <button class="nav-btn" onclick="prevQ()" ${state.qIndex === 0 ? 'disabled' : ''}>← Back</button>
+        <button class="nav-btn primary" onclick="nextQ()" ${selected === undefined ? 'disabled' : ''}>
+          ${state.qIndex === total - 1 ? 'See result →' : 'Next →'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function renderResult() {
+  const result = computeResult();
+
+  app.innerHTML = `
+    <div class="card result-card">
+      <div class="result-headline">
+        <p class="confidence">Recommendation &middot; ${result.confidenceLabel} confidence</p>
+        <h2 class="recommendation ${result.recClass}">${result.recommendation}</h2>
+      </div>
+
+      ${result.flagWarning ? `<div class="flag-warning">${result.flagWarning}</div>` : ''}
+
+      <div class="score-display">
+        <div class="score-row">
+          <div class="score-label">PubAssist</div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-fill pa" style="width: ${result.paPct}%">${result.paPct}%</div>
+          </div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">PTXprint</div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-fill ptxp" style="width: ${result.ptxpPct}%">${result.ptxpPct}%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reasoning">
+        <h3>Why this recommendation?</h3>
+        <ul>
+          ${result.reasons.map(r => `<li>${r}</li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="affirmation">
+        ${result.affirmation}
+      </div>
+
+      <div class="next-steps">
+        <h3>Suggested next steps</h3>
+        <ul>
+          ${result.nextSteps.map(s => `<li>${s}</li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="restart-row">
+        <button class="nav-btn" onclick="reviewAnswers()">Review your answers</button>
+        <button class="nav-btn primary" onclick="restart()" style="margin-left: 8px;">Start over</button>
+      </div>
+    </div>
+  `;
+}
+
+// ===== Logic =====
+function start() { state.page = 'q'; state.qIndex = 0; render(); }
+function selectOption(i) {
+  const q = questions[state.qIndex];
+  state.answers[q.id] = i;
+  render();
+}
+function prevQ() { if (state.qIndex > 0) { state.qIndex--; render(); } }
+function nextQ() {
+  if (state.qIndex < questions.length - 1) { state.qIndex++; render(); }
+  else { state.page = 'result'; render(); }
+}
+function restart() {
+  state = { page: 'intro', qIndex: 0, answers: {} };
+  render();
+}
+function reviewAnswers() {
+  state.page = 'q';
+  state.qIndex = 0;
+  render();
+}
+
+function computeResult() {
+  let paScore = 0, ptxpScore = 0;
+  const flags = new Set();
+  const contributions = [];  // for explaining the reasoning
+
+  questions.forEach(q => {
+    const i = state.answers[q.id];
+    if (i === undefined) return;
+    const opt = q.options[i];
+    paScore += opt.pa;
+    ptxpScore += opt.ptxp;
+    if (opt.flag) flags.add(opt.flag);
+    contributions.push({ q, opt, diff: opt.pa - opt.ptxp });
+  });
+
+  const maxScore = questions.length * 10;
+  const paPct = Math.round(paScore / maxScore * 100);
+  const ptxpPct = Math.round(ptxpScore / maxScore * 100);
+
+  // Capture key answers for messaging
+  const ans = (id) => {
+    const i = state.answers[id];
+    return i === undefined ? null : questions.find(q => q.id === id).options[i].label;
+  };
+  const purposeIdx = state.answers.purpose;
+  const printrunIdx = state.answers.printrun;
+  const layoutIdx = state.answers.layout;
+  const timeframeIdx = state.answers.timeframe;
+  const iterIdx = state.answers.iteration;
+
+  // ----- Hard rules -----
+  let recommendation, recClass, confidenceLabel, flagWarning = null;
+  let primary = null;  // 'PA' | 'PTXP' | 'HYBRID' | 'SPECIALIST'
+
+  // Rule: no InDesign AND no typesetter
+  if (flags.has('no_indesign') && flags.has('no_typesetter')) {
+    primary = 'PTXP';
+    confidenceLabel = 'High';
+    flagWarning = "Hard constraint: with neither InDesign access nor a trained typesetter, <strong>PubAssist is not a practical option</strong> right now. If your job demands flagship quality, consider acquiring access or contracting a professional.";
+  }
+
+  // Rule: flagship + high print run + bespoke + no_indesign
+  else if (purposeIdx === 3 && printrunIdx === 4 && layoutIdx === 3 && flags.has('no_indesign')) {
+    primary = 'SPECIALIST';
+    confidenceLabel = 'High';
+    flagWarning = "This is a flagship-quality job (large print run, bespoke layout) but your team currently lacks InDesign access. <strong>A specialist consultation is recommended</strong> before committing to a tool.";
+  }
+
+  // Rule: urgent + early stage
+  else if (flags.has('urgent') && purposeIdx <= 1) {
+    primary = 'PTXP';
+    confidenceLabel = 'High';
+    flagWarning = "Hard constraint: a days-to-deadline draft or field-test edition is what PTXprint was built for.";
+  }
+
+  // Rule: Nastaliq + no typesetter
+  else if (flags.has('nastaliq') && flags.has('no_typesetter')) {
+    primary = 'PTXP';
+    confidenceLabel = 'High';
+    flagWarning = "Nastaliq typesetting in InDesign requires specialist tooling and skill. Without a trained typesetter, <strong>PTXprint is the safer path</strong>.";
+  }
+
+  // ----- Scoring-based -----
+  else {
+    const diff = paScore - ptxpScore;
+    const absDiff = Math.abs(diff);
+    const diffPct = absDiff / maxScore * 100;
+
+    if (diffPct < 10) {
+      primary = 'HYBRID';
+      confidenceLabel = 'High';
+    } else if (diffPct < 25) {
+      primary = diff > 0 ? 'PA' : 'PTXP';
+      confidenceLabel = 'Medium';
+    } else {
+      primary = diff > 0 ? 'PA' : 'PTXP';
+      confidenceLabel = 'High';
+    }
+  }
+
+  // ----- Specialist flag (advisory, not overriding) -----
+  let specialistAdvisory = null;
+  if (primary !== 'SPECIALIST') {
+    if (state.answers.polyglot === 2 && flags.has('no_typesetter')) {
+      specialistAdvisory = "A triglot+ job without a trained typesetter is high-risk &mdash; consider a specialist consultation alongside whichever tool you choose.";
+    } else if (flags.has('nastaliq') && layoutIdx >= 2) {
+      specialistAdvisory = "Nastaliq with complex apparatus (cross-refs, study notes) benefits from specialist review even when using PTXprint.";
+    }
+  }
+
+  // ----- Messages -----
+  if (primary === 'PA') {
+    recommendation = 'PubAssist + InDesign';
+    recClass = 'rec-pa';
+  } else if (primary === 'PTXP') {
+    recommendation = 'PTXprint';
+    recClass = 'rec-ptxp';
+  } else if (primary === 'HYBRID') {
+    recommendation = 'Hybrid: PTXprint first, then PubAssist';
+    recClass = 'rec-hybrid';
+  } else {
+    recommendation = 'Specialist consultation recommended';
+    recClass = 'rec-specialist';
+  }
+
+  // ----- Reasoning: top-3 contributing answers -----
+  // For PA/PTXP recommendation, find the answers that most pushed in that direction
+  let reasons = [];
+  if (primary === 'PA') {
+    contributions.sort((a, b) => b.diff - a.diff);
+    reasons = contributions.slice(0, 4)
+      .filter(c => c.diff > 0)
+      .map(c => `<strong>${c.q.text.replace(/\?$/, '')}</strong> &mdash; you chose "<em>${c.opt.label}</em>", which strongly favours PA.`);
+  } else if (primary === 'PTXP') {
+    contributions.sort((a, b) => a.diff - b.diff);
+    reasons = contributions.slice(0, 4)
+      .filter(c => c.diff < 0)
+      .map(c => `<strong>${c.q.text.replace(/\?$/, '')}</strong> &mdash; you chose "<em>${c.opt.label}</em>", which strongly favours PTXprint.`);
+  } else if (primary === 'HYBRID') {
+    reasons = [
+      `Your answers split close to evenly between the two tools (PA ${paPct}% / PTXprint ${ptxpPct}%).`,
+      `This usually means the project will benefit from <strong>PTXprint during drafting, checking and field-testing</strong> (where speed and iteration matter), then transitioning to <strong>PubAssist for the final flagship edition</strong> (where craft and refinement matter).`,
+      `This is a well-trodden pattern, not a compromise. Many successful scripture publications take exactly this path.`,
+    ];
+  } else {
+    reasons = [
+      `The combination of <strong>flagship quality requirements</strong> and <strong>limited current access to InDesign / PubAssist</strong> suggests this decision is bigger than just picking a tool.`,
+      `Options worth weighing: acquire InDesign + PubAssist and train a team member; contract a professional scripture typesetter for the final pass; or scope down the job to what PTXprint can deliver well.`,
+    ];
+  }
+
+  if (specialistAdvisory) {
+    reasons.push(specialistAdvisory);
+  }
+
+  // ----- Affirmation paragraph -----
+  let affirmation;
+  if (primary === 'PA') {
+    affirmation = "<strong>PTXprint isn't wrong &mdash; it's just not the best fit here.</strong> For this particular job, the craftsmanship and fine control that an experienced PubAssist typesetter brings will produce a result that justifies the time invested. For your next draft or field-test edition, PTXprint may well be the right answer.";
+  } else if (primary === 'PTXP') {
+    affirmation = "<strong>This isn't a vote against PubAssist.</strong> Professional scripture typesetters using PubAssist + InDesign produce the world's finest Bibles &mdash; an irreplaceable craft. For this particular job, PTXprint's automation and accessibility match the requirements better. When you reach a flagship final edition, revisit this decision.";
+  } else if (primary === 'HYBRID') {
+    affirmation = "<strong>Both tools earn their place in this project.</strong> Use each where it shines. PTXprint will save you weeks during drafting and review; PubAssist will make the final publication something the team is proud to put their name on.";
+  } else {
+    affirmation = "<strong>The good news: this is exactly the kind of decision worth pausing on.</strong> A short conversation with a typesetting consultant or your regional publishing coordinator will save weeks of rework later.";
+  }
+
+  // ----- Next steps -----
+  let nextSteps;
+  if (primary === 'PA') {
+    nextSteps = [
+      'Confirm the PubAssist version and InDesign version that match your project requirements.',
+      'Block out a realistic timeline — flagship typesetting work expands to fill available calendar.',
+      'If your typesetter is remote, schedule check-in proofs early to catch layout issues before they cascade.',
+    ];
+  } else if (primary === 'PTXP') {
+    nextSteps = [
+      'Download PTXprint from <code>software.sil.org/ptxprint</code> if you don\'t have it yet.',
+      'Start with the default scripture template and only customise what doesn\'t suit your project.',
+      'Set up a shared output folder so reviewers always see the latest typeset PDF.',
+      flags.has('nastaliq') ? 'For Nastaliq, confirm your Awami Nastaliq font version and PTXprint\'s Nastaliq settings with the SIL NRSI team.' : null,
+    ].filter(Boolean);
+  } else if (primary === 'HYBRID') {
+    nextSteps = [
+      'Identify the cutover point now &mdash; e.g. "after the second community-review cycle, we transition to PubAssist".',
+      'Make sure the USFM source stays clean throughout &mdash; both tools work better when the markup is well-formed.',
+      'Brief the PubAssist typesetter early so they understand the project history and design intent.',
+    ];
+  } else {
+    nextSteps = [
+      'Contact a regional scripture-publishing consultant.',
+      'Document the quality bar and constraints you\'ve discovered through this wizard &mdash; it speeds up any specialist conversation.',
+      'Re-run this wizard once you have additional resources lined up.',
+    ];
+  }
+
+  return {
+    recommendation,
+    recClass,
+    confidenceLabel,
+    flagWarning,
+    paPct,
+    ptxpPct,
+    reasons,
+    affirmation,
+    nextSteps,
+  };
+}
+
+// Init
+render();
+</script>
+</body>
+</html>

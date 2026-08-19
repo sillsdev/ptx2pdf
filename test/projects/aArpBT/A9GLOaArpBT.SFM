@@ -1,0 +1,1465 @@
+\id GLO - Arop Back Translation
+\h Gloseri
+\toc1 Gloseri
+\toc2 Gloseri
+\toc3 Glo
+\rem AWTP Projects with glossaries: aArpBT aArp aMal aSno bBar bG1BT bPou bRam bSum cGoi cOGBT cRbr cWol dOpi dOLBT
+\rem Glossary Priorities: P:P1,P2,P3,P4,P5,P6,P7,P8,P9,NO(=not making this a GLO entry)
+\rem GNTD and GNSBUK has a good wordlist we may want to use as a model for some entries. We also want to add content from How the Jews Lived.
+\rem Other sources: NET Bible Reader's Glossary (Bible.org), https://www.esv.org/resources/esv-global-study-bible/glossary/,
+\rem aArpAux GLO has English glossary entries with verse numbers. we can use that as a model for entries where we curently only have a header and no text.
+\rem To make a cross-reference to another glossary entry, use this form: \w Rom\w*.
+\rem Status:N,A,B,C. N=nogat. A=Drafted. B=Adviser Checked. C=consultant checked, ready to publish.
+\rem 2023-08-14 JN: Categories we should use: Maybe we should just use the categories in Major Biblical Terms. Most of our Biblical Terms already have those categories.
+\rem Categories: ME=Minor Entry, Festival, Name [was Person], Plant [maybe should be "flora"], Deity, Animal, Ritual, misc, [Replace "deity" with "beings" and apply that to things like "eunuch" and "apostle." Then, to "person," make them "name."
+\rem Recording who has checked an entry. We could have a list of consultants at the head of each entry. Consultants would delete their name when they have checked an entry. So they can easily search for entries that still have their name in them.
+\rem Or we could have consultants
+\mt1 Gloseri
+\imt1 Tok i go pas
+\ip Dispela em i lista bilong sampela tok i stap insait long Buk Baibel we i hat long yumi bai save long as tingting bilong ol.
+\b
+\c 1
+\p \k Aba\k*
+\v 33
+\hp \zge Abba\zge*; G:ἀββά; P:P5; CAT:misc; (\xt Mk 14.36, Ro 8.15, Ga 4.6\xt*).
+\zstat C
+\p Long \w Tok Aram\w*, \tl Aba\tl* i gat mining olsem \fqa Papa\fqa*. Na taim Jisas i beten long God, em i save kolim em olsem \tl Aba\tl* (\xt Mk 14.36\xt*).
+\p \k Abel\k*
+\v 4
+\hp \zge Abel\zge*; G:Ἅβελ; P:P7; CAT:name; (\xt Jen 4.2,8, Mt 23.35, Lk 11.51, Hi 11.4, 12.24\xt*).
+\zstat C
+\p Abel em i liklik brata bilong \w Kein\w*.
+\p \k Abraham\k*
+\v 5
+\hp \zge Abraham\zge*; G:Ἀβραάμ; H:אַבְרָהָם; P:P5; CAT:name; (\xt Jen 12.1, Hi 11.8\xt*).
+\zstat C
+\p Dispela man Abraham, em namba wan tumbuna tru bilong olgeta lain God i makim ol pinis olsem ol lain bilong em yet. Ol dispela ol lain em, ol \w Juda\w*. Bipo bipo tru, God i promisim Abraham long em bai i givim em wanpela nupela kantri na ol tumbuna pikinini bilong em bai kamap na stap long dispela kantri. Dispela kantri bai i stap olsem kantri bilong ol stret. God i tokim Abraham long em i mas lusim dispela kantri nau em i stap long en na i go long wanpela kantri we God yet bai soim long em. Abraham i bihainim dispela tok bilong God na God i lidim em i go long dispela kantri nau yumi kolim \w Israel\w*.
+\pi1 God i wokim \w kontrak\w* wantaim Abraham. Em i tok, Abraham wantaim ol lain bilong em bai kamap olsem ol lain bilong God stret na God bai lukautim ol sapos ol bai bihainim God. Lukim \w kontrak\w*.
+\pi1 Abraham i gat dispela wanpela meri, nem bilong \w Sara\w*. Na tupela i nogat pikinini i go inap taim tupela i lapun olgeta. Na God i wokim mirakel na tupela i karim wanpela pikinini man. Nem bilong dispela pikinini man em \w Aisak\w*.
+\pi1 Taim Aisak i kamap bikpela man pinis, em i maritim Rebeka, na Rebeka i karim tupela pikinini. \w Iso\w* na \w Jekop\w*. Bihain, God i givim dispela man, Jekop narapela nem, \w Israel\w*. Na ol tumbuna bilong em, ol \w Juda\w*. Na planti taim ol i kolim ol olsem, <<Ol lain bilong Israel.>>
+\pi1 Jekop i maritim tupela susa, Lea na \w Resel\w*. Na bihain Jekop i maritim tupela wokmeri nating gen. Na ol dispela foapela meri i karim 12-pela pikinini man, Ruben, Simeon, Livai, Juda, Isakar, Sebulun, Gad, Aser, Josep, Benjamin, Dan, na Naptali.
+\pi1 Long sampela hap bilong Nupela Testamen, ol i kolim Abraham <<man bilong bilip,>> na ol lain i save bilip, ol i save kolim <<ol pikinini bilong Abraham>> (\xt Lk 19.9, Ro 4.9-12\xt*).
+\p \k Abraham na Aisak na Jekop\k*
+\v 10
+\hp \zge Abraham, Isaac and Jacob\zge*; G:Ἀβραὰμ καὶ Ἰσαὰκ καὶ Ἰακὼβ; P:P7; CAT:name; (\xt Jen 50.24, Eks 3.16, Mt 8.11, Ap 7.32\xt*).
+\zstat C
+\p Dispela tripela man hia, em ol as tumbuna bilong ol lain \w Israel\w*. Yu ken ritim o harim stori bilong ol dispela tumbuna i stap long buk Jenesis.
+\p \k Adam\k*
+\v 14
+\hp \zge Adam\zge*; G:Ἀδάμ; H:אָדָם; P:P7; CAT:name; (\xt Lk 3.38, Ro 5.12-15, 1Ko 15.22,45-47, 1Ti 2.13-14, Ju 14\xt*).
+\zstat C
+\p Adam em i namba wan man God i bin wokim. God i kisim graun na wokim man i kamap. Na bihain em i wokim Iv tu. Lukim tok i stap long \w Iv\w*.
+\pi1 Adam wantaim meri bilong em Iv hia, tupela i paslain lain long sakim tok bilong God na mekim sin long ai bilong God. Na long dispela taim i kam inap long nau, yumi olgeta i save mekim sin long ai bilong God.
+\pi1 Long buk 1 Korin, ol i save kolim Jisas olsem, <<Las Adam>> (\xt 1Ko 15.45\xt*). Adam bilong pastaim hia, em tumbuna bilong yumi olgeta; long wanem yumi olgeta i kam long blut bilong em. Jisas \w Krais\w*, em namba tu Adam na em man bilong givim laip bilong \w Holi Spirit\w* i go long ol lain i bilip long em.
+\p \k Aisaia\k*
+\v 15
+\hp \zge Isaiah\zge*; G:Ἠσαΐας; H:יְשַׁעְיָהוּ; P:P7; CAT:name; (\xt Mt 3.3, Lk 7.22, Ap 8.30, Ro 9.27-29\xt*).
+\zstat C
+\p Aisaia em i wanpela bikpela profet bilong God. Long taim bipo bipo tru, taim Jisas i no kamap yet long graun, profet Aisaia i bin autim tok long planti tok bilong em.
+\p \k Aisak\k*
+\v 16
+\hp \zge Isaac\zge*; G:Ἰσαάκ; H:יִצְחָק; P:P7; CAT:name; (\xt Ap 7.8, Ro 9.7, Hi 11.9\xt*).
+\zstat C
+\p Aisak em i pikinini man bilong \w Abraham\w* tupela \w Sara\w*. Na dispela nem Aisak hia, mining bilong em olsem, <<em i lap.>> Ol i bin givim dispela nem long Aisak bikos Abram na Sara i bin lap taim em ol i harim dispela promis bilong God, long tupela bai i karim pikinini taim ol i lapun nogut tru (\xt Jen 17.17, 18.12\xt*). Lukim tok i stap long \w Abraham\w*.
+\p \k Alfa\k*
+\v 19
+\hp \zge Alpha\zge*; G:ἄλφα; P:P6; CAT:name; (\xt Rev 1.8, 21.6, 22.13\xt*).
+\zstat C
+\p Alfa em i namba wan leta insait long alfabet bilong tok \w Grik\w* kain olsem leta <<a>> i stap long frant bilong Inglis alfabet. Long wanem, taim ol i raitim olsem \w Bikpela\w* Jisas yet em i Alfa, mining bilong em i olsem, <<man i stap pastaim tru long olgeta samting.>>
+\p I gat narapela nem tu ol i save kolim Jisas, em dispela nem \fqa Omega\fqa* na dispela em i laspela leta long Grik alfabet. Kain olsem tok i stap we i tok olsem, Jisas em i pastaim man long olgeta samting na em i bihain man tru long olgeta samting. Na em i save inapim olgeta samting.
+\p \k alta\k*
+\v 21
+\hp \zge altar\zge*; G:θυσιαστήριον; H:מִזְבֵּחַ; P:P5; CAT:realia; (\xt Mt 5.23, Lk 1.11, Ro 11.3, Je 2.21\xt*).
+\zstat C
+\p Alta em ples ol \w Juda\w* i save mekim ofa i go long God. Ol i save kilim sipsip o meme o bulmakau long ol i save mekim ofa i go long God. Alta ol i wokim long ston, em ples bilong mekim ofa i go long God.
+\p Long taim bilong \w Moses\w* na i kam, ol pris tasol i save go pas long mekim ofa long alta insait long \w haus sel bilong God\w*. Na bihain ol i kisim wanpela kain ain ol i kolim olsem bras na wokim alta insait long tempel. Dispela alta ol i wokim em i bikpela na ol i wokim long bras. Na ol i wokim narapela liklik alta gen insait long tempel long ol pris i save kukim ol pawda i gat gutpela smel i go long God.
+\p \k amen\k*
+\v 22
+\hp \zge amen\zge*; G:ἀμήν; H: אָמֵן; P:P6; CAT:attributes; (\xt Ro 1.25, 9.5, 1Ko 14.16, 2Ko 1.20, Rev 3.14\xt*).
+\zstat C
+\p Tokples bilong ol Juda hia, dispela tok \fq amen\fq* hia, ol i save tok na mining bilong em olsem, <<Em i ken kamap olsem.>> O em i ken i gat narapela mining olsem, <<Dispela i mas kamap tru.>> Na narapela mining em i ken i gat mining olsem, <<Dispela tok em i tru olgeta.>> Taim grup i stap na wanpela i beten na olgeta i wanbel long dispela samting em i beten long en, ol bai tok <<Amen.>> Buk \bk Revelsen\bk* i kolim Jisas olsem \fq Amen\fq* long wanem, em yet i tok tru (\xt Rev 3.14\xt*).
+\p \k aposel\k*
+\v 20
+\hp \zge apostle\zge*; G:ἀπόστολος; P:P1; CAT:beings; (\xt Mt 10.1-4, Mk 3.13-19, Lk 6.12-16\xt*).
+\zstat C
+\p Dispela em ol 12pela lain Jisas yet i bin makim ol long stap wantaim em. Na em i givim wok long ol long autim tok bilong en long olgeta hap long ol manmeri bai i harim na bilip long Jisas.
+\p Long ai bilong ol yet, ol aposel i bin lukim Jisas taim em i dai na kirap gen long matmat. Na Jisas i bin salim ol i go bilong autim gutnius bilong Jisas. Ol dispela lain i bin kamap ol lidaman bilong ol lain i bilip long Jisas
+\p Na bihain, Jisas i bin soim em yet long Pol na makim em olsem \fq aposel\fq* tu. Barnabas na sampela moa i bin kamap \fq aposel\fq* tasol Jisas yet i no makim ol (\xt Ap 14.14\xt*). Lukim \w disaipel\w*.
+\p \k Areopagus\k*
+\v 25
+\hp \zge Areopagus\zge*; G:Ἄρειος Πάγος; P:P7; CAT:place; (\xt Ap 17.19,34\xt*).
+\zstat C
+\p Dispela em i wanpela maunten i stap long biktaun Atens long kantri \w Gris|Grik\w*. Ol bikpela man i gat namba bilong dispela taun i save bung long dispela hap. Na nem bilong dispela grup i save bung long dispela hap tu, ol i save kolim ol \fq Areopagus\fq*.
+\p \k Armagedon\k*
+\v 113
+\hp \zge Armagedon \zge*; P:P9; CAT:misc; (\xt 2Kin 23.29-30, 2Sto 35.20-24, Rev 16.16\xt*).
+\zstat c
+\p Dispela nem Armagedon em i olsem, <<maunten bilong Megido.>> Bipo ol birua i bin pait long ol Israel na kilim i dai King Josaia klostu long taun Megido. Olsem na sampela saveman i ting dispela nem i no tok long Megido stret. Ol i ting em i tok bokis na i makim ples ol ami bai i go long en na ol bai i bagarap na lus olgeta.
+\p \k Aron\k*
+\v 26
+\hp \zge Aaron\zge*; G:Ἀαρών; H:אַהֲרֹן; P:P7; CAT:name; (\xt Lk 1.5, Ap 7.40, Hi 5.4, 7.11, 9.4\xt*).
+\zstat C
+\p Aron em wanpela bilong ol lain blut bilong Livai. Livai em wanpela bilong ol 12-pela pikinini man bilong Jekop. Ol i bin makim em nambawan man long kisim wok pris insait long haus lotu bilong God. God yet i bin tok olsem, sapos ol Israel i makim ol pris, ol i mas makim ol lain blut bilong Aron long holim dispela wok.
+\pi1 Aron em i bikpela brata bilong \w Moses\w*. Na ol i karim tupela long kantri Isip taim ol Israel i stap long kalabus long hap. Aron i bin helpim Moses long kisim ol \w Israel\w* i lusim kantri \w Isip\w* na go autsait.
+\pi1 Wanpela taim sampela bilong ol Israel i tanim na kros wantaim Moses tupela Aron. God i soim ol Israel ples klia tru olsem em yet i makim dispela tupela man long go pas long ol. God i tokim ol long kisim ol stik bilong wokabaut bilong ol go pas man bilong wan wan klen hia na putim insait long \w haus sel bilong God\w*. God i tokim ol tu long kisim stik bilong wokabaut bilong man em yet i makim hia, bai kru i kamap na karim ol plaua na tu bai em i karim kaikai. Na God i tokim ol long kisim stik bilong Aron na ol bai go putim insait long \w bokis kontrak\w* insait long haus sel bilong God long kamap olsem mak bilong em (\xt Nam 17.1-10, Hi 9.4.\xt*). Lukim \w Levi \w* na \w Moses\w*.
+\p \k Artemis\k*
+\v 27
+\hp \zge Artemis\zge*; G:Ἄρτεμις; P:P8; CAT:Deity; (\xt Ap 19.24-35\xt*).
+\zstat C
+\p Artemis em i wanpela god meri ol planti lain bilong provins Esia i save lotu long em na litimapim nem bilong em. Em i wanpela giaman god.
+\p \k Babilon\k*
+\v 30
+\hp \zge Babylon\zge*; G:Βαβυλών; H: בָּבֶל; P:P5; CAT:place; (\xt Mt 1.11, Ap 7.43, Rev 14.8\xt*).
+\zstat C
+\p Long sampela hap insait long Baibel, dispela nem Babilon i makim \w Rom\w* (\xt Rev 16.19, 17.5, 18.2, 1Pi 5.13\xt*). Long \bk Nambawan pas Pita i raitim\bk*, \w Pita\w* i no wok long traim long haitim wanem hap em i stap long en, tasol em i wok long tingting long sios olsem ol nupela manmeri bilong God, em ol trupela \w Israel\w* (\xt 1Pi 2.10\xt*).
+\p Em i kolim dispela biktaun \w Rom\w* olsem \w Babilon\w*, long wanem, long Olpela Testamen, Babilon em i bin stap olsem wanpela strongpela kantri i save mekim nogut long ol manmeri bilong God. Na long Nupela Testamen, Rom hia i stap olsem strongpela kantri i save agensim gutnius.
+\p \k Bal\k*
+\v 35
+\hp \zge Baal\zge*; G:Βάαλ; H:בַּעַל; P:P7; CAT:name; (\xt Het 2.11, 3.7, 6.25, Ro 11.4\xt*).
+\zstat C
+\p Bal em wanpela giaman god ol lain i save lotu long em. Bipo tru, bipo long taim ol manmeri bilong God i go na stap long dispela hap nau ol i kolim Israel hia, ol i bin stap long dispela hap i save lotu long dispela giaman god nem bilong em Bal. Na taim ol \w Israel\w* i go kamap na sindaun long dispela hap, sampela taim ol i no save lotu long God tru tru, ol i save go na lotu long dispela giaman god nem bilong em Bal. Na taim ol i stap na wok long mekim dispela, God i belhat nogut tru long ol.
+\p \k Balam\k*
+\v 37
+\hp \zge Balaam\zge*; G:Βαλαάμ; H:בִּלְעָם; P:P5; CAT:name; (\xt Nam 22, 23.16-18, 2Pi 2.15, Ju 1.11, Rev 2.14\xt*).
+\zstat C
+\p Balam em wanpela profet king Balak bilong Moap i laik baim em long wokim mauswin long ol lain bilong Israel bai taim em i pait wantaim ol, em mas winim ol. Balak em king bilong ples Moap hia, em man bilong pret tru long ol lain bilong \w Israel\w* taim ol i bin go stap long wanpela hap bilong Moap. Pastaim, \w profet\w* Balam i bin les long wokim mauswin long lain bilong God na em i no inap long go long Moap tu.
+\p Tasol bihain, em i senisim tingting na em i go. Taim em i wok long go long Moap, wanpela ensel bilong God i sanap na pasim rot bilong em long em i no inap long go long Moap. Balam yet i no lukim dispela ensel i pasim rot bilong em, tasol donki em i sindaun antap long en hia i lukim ensel i sanap na pasim rot hia na em i les long go. Balam i paitim dispela donki na mekim em long em mas wokabaut na i go. Tasol donki hia, i no laik olgeta long go. Na bihain tru, dispela donki i opim maus na krosim Balam. Na Balam i no wokim mauswin long ol Israel long wanem God i blesim ol pinis.
+\p Long Nupela Testamen ol i raitim tok olsem Balam i laikim tumas mani, olsem na em i laik bihainim tok bilong king Balak, dispela man bilong birua tru long ol lain bilong God.
+\p \k baptais\k*
+\v 40
+\hp \zge baptise, baptism\zge*; G:βαπτίζω, βάπτισμα; P:P1; CAT:rituals; (\xt Mt 3.7, Mk 1.4, Lk 3.16, Ap 2.38,41, Ro 6.3-4, Ga 3.27, 1Pi 3.21\xt*).
+\zstat C
+\p Long Nupela Testamen ol i raitim olsem, \w Jon\w* Baptais i bin baptaisim planti manmeri long wara Jordan. Em i bin tokim ol olsem, ol i mas tanim bel na lusim sin bilong ol na kisim baptais long olgeta lain bai luksave olsem, ol i tanim bel pinis. Long dispela rot, em i bin redim bel bilong ol manmeri long Jisas bai kam.
+\p \w Baptais\w* em wanpela rot ol Kristen i save bihainim long soim olsem ol i stap long lain bilong Jisas.
+\p Baptais i gat mining bilong em. Em i soim olsem, ol lain i kisim baptais i tanim bel na lusim sin bilong ol pinis, na ol i trastim Jisas Krais na ol i laik bihainim em na aninit long em. Jisas i bin promis long em bai fogivim sin bilong ol lain i trastim em, em ol lain i bilip long em.
+\p Na Jisas i bin tok piksa long dai bilong em olsem wanpela baptais em i mas kisim (\xt Mk 10.38-39, Lk 12.50\xt*). \fig Jon i baptaisim Jisas|src="GT00110.tif" size="span" loc="paw" ref="1.0"\fig*
+\p \k Barak\k*
+\v 42
+\hp \zge Barak\zge*; G:Βαράκ; H:בָּרָק; P:P8; CAT:name; (\xt Het 4, Hi 11.32\xt*).
+\zstat C
+\p Barak em man husait i bin stap olsem wanpela bilong ol lidaman bilong ol lain bilong \w Israel\w*. Em man husait i bin go pas long ol Israel long taim ol i bin pait wantaim ol arapela lain.
+\p \k bea\k*
+\v 46
+\hp \zge bear\zge*; G:ἄρκος; P:P8; CAT:animals; (\xt Rev 13.2\xt*).
+\zstat C
+\p Bea em i traipela enimel stret. Em i save stap long ol maunten ples na tu insait long ol bikbus. Bea em i enimel bilong belhat long ol arapela enimel taim em i lukim ol long ai bilong em. Em i save ran i go stret long dispela arapela enimel na kilim em i dai. Na em i ken kilim man tu.
+\p \k Belsebul\k*
+\v 47
+\hp \zge Beelzebul\zge*; G:Βεελζεβούλ; P:P5; CAT:deity; (\xt Mt 10.25, 12.24,27, Mk 3.22, Lk 11.15,18-19\xt*).
+\zstat C
+\p Dispela em i narapela nem bilong nambawan spirit nogut i save go pas long olgeta spirit nogut hia. Na narapela nem bilong em \w Satan\w*. Dispela nem Belsebul hia ol i kisim long nem bilong wanpela spirit ol lain i stap long wanpela hap klostu long ol \w Israel\w* hia, i save lotu long em. Na dispela nem bilong spirit ol i save lotu long en hia, \tl Belsebul\tl*.
+\p \k Benjamin\k*
+\v 48
+\hp \zge Benjamin\zge*; G:Βενιαμίν; H:בִּנְיָמִן; P:P7; CAT:name; (\xt Ap 13.21, Ro 11.1, Fl 3.5, Rev 7.8\xt*).
+\zstat C
+\p Benjamin em i las man bilong ol 12-pela pikinini man bilong \w Jekop\w*. (Jekop i gat narapela nem \w Israel\w*). Jekop em tumbuna bilong ol lain insait long 12-pela clan bilong ol Juda hia. Lukim tok bilong \w Abraham\w*.
+\p \k beten\k*
+\v 55
+\hp \zge pray, prayer\zge*; P:NO; CAT:rituals P:NO;
+\zstat N
+\p
+\rem JN: I do not think we need to make this a glossary entry. It is in the TDX at 5.7 and following. But it's here in case somebody decides to look it up and see why it's not a glossary entry.
+\p \k bikman bilong gavman\k*
+\v 49
+\hp \zge eunuch\zge*; G:εὐνοῦχος; H:סָרִיס; P:P8; CAT:attributes; (\xt Mt 19.12, Ap 8.27-39\xt*).
+\zstat A
+\p Long Tok \w Grik\w*, dispela tok em \tl yunuk\tl*. Long taim bilong Baibel, yunuk i man we ol i bin katim bodi bilong em na planti taim em i wok long haus bilong king olsem man ol inap trastim em long em i ken stap klostu long ol meri bilong king. Sampela yunuk i gat bikpela wok long lukautim mani na wok bilong gavman (\xt Est 2.3\xt*).
+\p Jisas i tok sampela man i kamap yunuk long pasin bilong bodi, sampela ol man i mekim olsem long ol, na sampela i givim laip bilong ol long wok bilong God (\xt Mt 19.12\xt*). Lo bilong \w Moses\w* i tok ol yunuk i no inap go insait long ol lain bilong \nd Bikpela\nd*(\xt Lo 23.1\xt*), tasol God i promis long blesim ol yunuk husait i bihainim em tru (\xt Ais 56.3-5\xt*).
+\p Long Nupela Testamen wanpela yunuk bilong Itiopia i kisim baptais bihain long em i bilip long Jisas (\xt Ap 8.27-39)\xt*.
+\p \k Bikpela\k*
+\v 50
+\hp \zge Lord\zge*; G:κύριος; H:יהוה; P:P1; CAT:beings; (\xt Mk 1.3, 2.28, 12.29\xt*).
+\zstat C
+\p Ol lain i save kolim Jisas \fq Bikpela\fq* na yumi raitim bikpela leta B olsem, long wanem, wok na pasin bilong em i soim ol manmeri ples klia tru olsem em man i gat namba na strong.
+\p Bikpela em nem ol Juda i save kolim God, olsem nem tru tru bilong em. Yu ken lukim long ol trenslesen bilong Olpela Testamen long planti hap ol i raitim wantaim ol bikpela leta olsem \nd Bikpela. \nd* Lukim \w Mi Yet, Mi Yet Mi Stap Olsem\w*.
+\p Na tu, long taim bilong Baibel, sampela i save yusim dispela tok long soim rispek long ol lain i gat namba. Taim ol i mekim olsem, bai i nogat kapital leta long en (\xt Mt 6.24, 10.25, 18.25-34, 21.40, 24.45-50, 25.18-26, Lk 7.2, 12.37-38, 16.5, 8, Jo 2.8-9, 13.16, Ro 6.14, 1Pi 3.6\xt*).
+\p Na tu, sampela taim dispela trenslesen i save tanim dispela kain tok olsem \fqa bos\fqa* (\xt Lk 12.36,44,48\xt*).
+\p \k Bikpela Kaikai Bilong Plaua I Nogat Yis\k*
+\v 60
+\hp \zge Feast of Unleavened Bread\zge*; G:ἄζυμος; P:P2; CAT:Festival; (\xt Mt 26.17, Mk 14.1, 12, Lk 22.1,7\xt*).
+\zstat C
+\p Long dispela taim ol \w Israel\w* i save tingim taim ol i lusim Isip na taim ol i no bin inap long putim yis i go wantaim plaua long ol i ken kukim bret. Lukim \w Pasova\w*.
+\p \k bikpela snek\k*
+\v 75
+\hp \zge dragon\zge*; G:δράκων; P:P7; CAT:animals; (\xt Rev 12.3, 13.4, 16.13, 20.2\xt*).
+\zstat C
+\p Bikpela snek em wanpela tok piksa bilong wanpela traipela enimel i gat bikpela strong tru. Dispela samting i kain olsem wanpela bikpela palai, tasol ol i save kolim dispela samting olsem snek. Buk \bk Revelesen\bk* hia, ol i yusim bikpela snek long makim \w Satan\w*, dispela bikman bilong ol spirit nogut. Ol olpela olpela buk bilong bipo tru hia, i gat ol stori bilong ol dispela bikpela palai. Olsem na ol i kisim dispela nem bikpela snek. Tasol tru tru, ol dispela kain bikpela palai i no bin stap long dispela graun.
+\p \k bikpris\k*
+\v 93
+\hp \zge high priest\zge*; G:ἀρχιερεύς; P:P5; CAT:MI;
+\zstat C
+\p Lukim \w pris\w*.
+\p \k blesim\k*
+\v 80
+\hp \zge bless\zge*; G:εὐλογέω; P:P4; CAT:rituals; (\xt Jen 1.26-28, 27.1-4, Lk 2.34-35\xt*).
+\zstat C
+\p Dispela em wei bilong man i askim God long mekim gut long narapela man. Na dispela samting man i mekim long askim God hia, em i blesim dispela narapela man (\xt Jen 1.26-28, 27.1-4, Lk 2.34-35\xt*).
+\p \k blut bilong Jisas i ken wasim yupela gut tru\k*
+\v 90
+\hp \zge sprinkle\zge*; G:ῥαντισμὸν; P:P1; CAT:rituals; (\xt Eks 24.1-11, Hi 12.24, 1Pi 1.2\xt*).
+\zstat C
+\p Long tok \w Grik\w* dispela tok i sut long aksen bilong \fqa tromoi\fqa* blut i go long samting na em i bihainim stret kain tok i kamap long stori bilong God i bin wokim kontrak wantaim ol Israel long taim bilong \w Moses\w* (\xt Eks 24.1-11\xt*). Taim God i bin wokim dispela kontrak, Moses i tromoim hap blut bilong ol yangpela bulmakau antap long alta. Bihain em i ritim buk bilong dispela kontrak long ol lain i harim, na ol i tok promis olsem ol bai bihainim dispela kontrak bilong Bikpela. Na Moses i tromoim narapela hap blut bilong ofa antap long ol lain bilong Israel, na em i tok, <<Dispela em i blut bilong dispela kontrak \w Bikpela\w* i wokim pinis nau wantaim yupela na em i pasim dispela kontrak i stap long ol dispela tok yupela i bin harim.>> Long Nupela Testamen, blut bilong Jisas em i as bilong nupela kontrak God i wokim wantaim ol manmeri i bilip long Jisas bai ol i kamap klin long ai bilong God na ol bai inap long bihainim tok bilong en (\xt Hi 12.24, 1Pi 1.2\xt*).
+\p \k bokis kontrak\k*
+\v 95
+\hp \zge Ark of the Covenant\zge*; G:κιβωτός; H:אֲרוֹן; P:P8; CAT:realia; (\xt Rev 11.19\xt*).
+\zstat C
+\p Bokis kontrak hia, ol i wokim long palang na putim gol na bilasim antap long ol palang autsait bilong bokis kontrak hia. Insait bilong bokis kontrak hia, ol i putim tupela bikpela ston i gat 10-pela lo God i bin raitim. Ol Israel i save karim dispela bokis kontrak i go wantaim ol long olgeta kain kain hap ol i save go long en. Taim ol i go na malolo stap long wanpela hap, ol i save putim dispela bokis kontrak i stap insait long \w haus sel bilong God\w*. Ol samting i stap insait long bokis kontrak hia, i holi long wanem ol dispela samting i mak bilong \w kontrak\w* God i bin wokim wantaim ol Israel. Taim ol i pinisim wok bilong \w tempel\w* pinis, ol i go putim dispela bokis kontrak i stap long \w Rum Tambu Tru\w* insait long tempel.
+\p \k bokis mani\k*
+\v 323
+\hp \zge offering box\zge*; G:γαζοφυλάκιον; P:P8; CAT:realia; (\xt Mk 12.41,43, Lk 21.1, Jo 8.20\xt*).
+\zstat C
+\p \w Tempel\w* bilong ol \w Juda\w* i gat wanpela bokis i gat hul antap bilong ol lain i save putim mani. Dispela mani ol i save yusim bilong lukautim olgeta samting long tempel.
+\p \k brata\k*
+\v 100
+\hp \zge brother\zge*; G:ἀδελφός; P:P2; CAT:attributes; (\xt Ap 6.2, 9.17, 11.29, Ga 1.2,11,19\xt*).
+\zstat C
+\p Long Nupela Testamen ol i save kolim ol lain i bilip long Jisas hia olsem \fq brata\fq*. Planti taim, dispela tok i sut long ol Kristen man na meri wantaim. Olsem na, planti taim mipela i tanim olsem \fqa \+w Kristen\+w*\fqa* na \fqa Kristen brata susa\fqa*.
+\p \k brukim klos\k*
+\v 688
+\hp \zge tear clothes\zge*; G:διαρρήγνυμι; P:P7; CAT:rituals; (\xt Mt 26.65, Mk 14.63, Ap 14.14\xt*).
+\zstat C
+\p Long pasin bilong ol Juda, taim man i harim narapela man i mekim tok i nogut o pasin i nogut long nem bilong God na dispela man i no amamas long dispela samting, em bai i brukim ol klos bilong em.
+\p \k buk\k*
+\v 110
+\hp \zge book\zge*; G:βιβλίον; P:P3; CAT:realia; (\xt Lk 4.16-21, Jo 20.30, 21.25, 2Ti 4.13, Rev 1.11\xt*).
+\zstat C
+\p Long taim bilong Olpela Testamen na Nupela Testamen, i gat tupela kain rot bilong wokim ol buk. Namba wan rot bilong wokim ol buk hia, ol i kolim olsem \fqa skrol\fqa*. Ol i save katim ol gras ol i kolim \fqa papairus \fqa*na ol i save paitim paitim i go inap long em i malum malum tru na ol i save wokim em i kamap olsem pepa long ol i ken raitim ol toktok i stap long en. Mipela Arop i gat wanpela kain gras olsem i save gro long ol maus bilong ol wara, mipela kolim dispela ol gras olsem <<u'up.>> Nambatu rot em \w buk ol i wokim long skin bilong sipsip\w*.\fig Man i ritim wanpela skrol|src="oi00340.png" size="span" loc="paw" ref="1.0"\fig*
+\p \k Buk bilong God i tok\k*
+\v 365
+\hp \zge it is written\zge*; G:γέγραπται; P:P4; CAT:misc; (\xt Mt 2.5, 4.4, 11.10, 21.13, Mk 1.2, 14.21, Lk 4.4, 24.46, Jo 6.45, 12.14, Ro 1.17, 3.10, Ga 3.10, 1Pi 1.16\xt*).
+\zstat C
+\p Dispela tok i gat mining olsem, sampela tok i kam stret long wanpela ves bilong Olpela Testamen.
+\p \k buk ol i wokim long skin bilong sipsip\k*
+\v 120
+\hp \zge parchment\zge*; G:μεμβράνα; P:P3; CAT:realia; (\xt 2Ti 4.13\xt*).
+\zstat C
+\p Long taim bilong Olpela Testamen na Nupela Testamen, i gat tupela rot bilong wokim buk. Namba wan rot em ol i wokim ol \fqa skrol\fqa*. Lukim \w buk\w*.
+\p Namba tu rot bilong wokim ol buk em, ol i save kisim ol skin bilong sipsip o meme o bulmakau na stretim ol i kamap olsem pepa na ol i save raitim ol toktok antap long en. Ol dispela kain buk i no save bagarap hariap na tu i dia tumas. Olsem na Pol i save laikim tru ol dispela kain buk (\xt 2Ti 4.13\xt*). \fig Man i raitim pas long skin bilong sipsip|src="GT00042.tif" size="span" loc="paw" ref="1.0"\fig*
+\p \k de\k*
+\v 130
+\hp \zge day\zge*; G:ἡμέρα; H:יוֹם; P:P6; CAT:misc; (\xt Mk 14.58, Lk 24.7,21,46\xt*).
+\zstat C
+\p Pasin bilong ol Juda long kauntim ol de i narakain liklik long wei mipela i save kauntim ol de. Ol i save tok olsem, taim san i godaun long apinun na tudak i kamap i go inap long narapela apinun gen, em wanpela de. Long mipela, taim san i kamap long moning i go inap long narapela moning san i kam antap gen, em wanpela de. Bikpela samting em olsem, ol i kauntim ol de bilong ol stat long apinun na mipela i kauntim ol de bilong mipela stat long moning.
+\p \k de bilong Bikpela\k*
+\v 438
+\hp \zge day of the Lord\zge*; G:ἡμέρα κυρίου; P:P2; CAT:event; (\xt Ap 2.20, Fl 1.6, 1Ko 5.5, 2Ko 1.14, 1Te 5.2, 2Te 2.2, 2Pi 3.10\xt*).
+\zstat C
+\p Ol profet bilong Olpela Testamen i save yusim dispela tok \fq de bilong Bikpela\fq* bilong tokaut long taim God bai kotim ol birua bilong em na mekim gut long ol lain bilong em yet. Long Nupela Testamen, dispela tok i sut long taim Jisas bai kam bek long dispela graun.
+\p \k De God i bin makim tempel long stap olsem haus bilong em\k*
+\v 132
+\hp \zge Festival of Dedication\zge*; G:ἐγκαίνια; P:P6; CAT:festivals; (\xt Jo 10.22\xt*).
+\zstat A
+\p Dispela de, ol \w Juda\w* i save tingim gen hau Judas Makabeus i mekim tempel i klin gen bihain long taim ol birua bilong God i bin go insait long tempel na mekim kain kain pasin nogut. Ol Juda i save kolim dispela de \tl Hanuka\tl* o <<Bikpela kaikai bilong ol lait>>.
+\p \k Dekapolis\k*
+\v 225
+\hp \zge Decapolis\zge*; G:Δεκάπολις; P:P5; CAT:name; (Mt 4.25, Mk 5.20, 7.31).
+\zstat C
+\p \fq Dekapolis\fq* i gat mining olsem \fqa 10-pela taun.\fqa* Eria bilong \fq Dekapolis\fq* em i bikpela tru na boda bilong em i go olgeta long bikpela raunwara Galili na wara Jodan. Sampela bilong ol Juda tu i stap insait long dispela eria. Tasol bikpela namba bilong ol lain i save stap long dispela eria em ol \w lain i no Juda\w*.
+\p \k Devit\k*
+\v 135
+\hp \zge David\zge*; G:Δαυίδ; H:דָּוִד; P:P5; CAT:name; (\xt Mk 2.25\xt*).
+\zstat C
+\p King Devit i winim olgeta king bilong \w Israel\w*. Em i yangpela man taim ol i makim em long kamap king.Papa bilong King Devit hia em, Jesi. Em las pikinini man bihainim olgeta arapela brata bilong em hia. Taim ol i no makim em olsem king yet, em i man bilong lukautim ol sipsip bilong papa bilong em. Wanpela taim, taim em i yangpela boi yet, em i bin pait wantaim wanpela traipela man tru na em i kilim dispela traipela man i dai.
+\pi1 Devit em man bilong laikim God. Em i raitim planti song bilong litimapim nem bilong God. Na ol i save kolim ol dispela song olsem ol <<Sam.>>
+\pi1 Jisas em i kam long lain blut bilong King Devit ( \xt Ro 1.3, Rev 22.16 \xt*). Bipo tru long taim ol i no karim Jisas yet, ol profet i bin raitim ol toktok long Krais, man bilong kisim bek yumi hia bai God i salim em i kam hia, bai i kam long lain blut bilong King Devit. Olsem na narapela nem bilong Jisas em \w Pikinini bilong Devit\w*.
+\p \k disaipel\k*
+\v 140
+\hp \zge disciple\zge*; G:μαθητής; P:P3; CAT:misc; (\xt Mt 10.1-4\xt*).
+\zstat C
+\p Ol lain i bihainim Jisas hia, em ol lain i save bilip long em na trastim em na harim tok bilong em. Ol dispela lain hia, ol i save kolim ol \fq disaipel\fq*. Long Buk \bk Aposel\bk*, ol i save kolim ol dispela lain, <<ol lain i bilip long Jisas,>> na <<ol brata.>>
+\p Dispela tok \fq disaipel\fq* i sut long olgeta lain i bihainim Jisas. Na Jisas i bin makim 12-pela man bilong stap wantaim em olgeta taim. Ol disaipel bilong em hia, ol i save kolim ol \w aposel\w* bilong Jisas.
+\p Jon Baptais tu, i gat ol \fq disaipel\fq* bilong em na ol Farisi tu, i gat ol \fq disaipel\fq* bilong ol.
+\p \k diwai kros\k*
+\v 150
+\hp \zge cross, crucify, crucify together\zge*; G:σταυρός, σταυρόω, συσταυρόω, ξύλον; P:P1; CAT:realia; (\xt Mt 27.31, Mk 15.20-37, Lk 9.23\xt*).
+\zstat C
+\p Sapos nambawan kiap (\w Gavena\w*) bilong \w Rom\w* i tok orait long wanpela man i mekim samting nogut i mas i dai, em bai i givim dispela man i go long ol soldia bilong en bilong ol i ken paitim em nogut tru na kilim em i dai.
+\p Wanpela pasin ol \w Rom\w* i save bihainim bilong kilim ol man nogut i olsem, ol i save nilim em long diwai kros. Pastaim ol bai i wipim dispela man nogut tru long wanpela let ol i pasim planti liklik hap ain long arere bilong let hia.
+\p Bihain ol bai mekim dispela man i karim traipela diwai kros i go long ples ol i hangamapim em na bai em i dai long en. Olgeta lain i kamap pinis long ples bilong dai, orait, ol i save rausim olgeta klos bilong em na em bai stap as nating. Ol i mekim olsem bilong mekim man i pilim sem tru.
+\p Na bihain ol bai i slipim em antap long dispela diwai na nilim tupela han bilong en na bihain nilim tupela lek bilong em long dispela diwai em yet i bin karim i kam. Taim ol i mekim dispela pinis, orait ol bai sanapim dispela diwai kros na ol i larim dispela man hia i hangamap i stap.
+\p Taim em i hangamap i stap antap long dispela diwai kros, em bai i no inap dai hariap. Nogat! Em bai i nogat wara na nogat kaikai na tu skin bilong em bai i hat nogut tru wantaim bikpela pen long skin bilong em. Em bai i sotwin nogut tru na bihain tru em bai i dai.
+\p Jisas i bin tok, sapos wanpela man o meri i laik kamap disaipel bilong em, ol i mas lusim tingting long ol yet na kisim diwai kros bilong ol yet na karim i go na bihainim Jisas. Mining bilong dispela em i olsem, ol lain i save bihainim Jisas hia, i mas stap redi long karim hevi long nem bilong Jisas na tu ol i mas stap redi long dai long nem bilong en (\xt Mt 10.38, 16.24, Mk 8.34, Lk 9.23, 14.27\xt*). \fig Ol Rom i save nilim ol man nogut long diwai kros|src="oi00317.png" size="span" loc="paw" ref="74.1"\fig*
+\p \k donki\k*
+\v 155
+\hp \zge donkey\zge* G:ὄνος; H: חֲמוֹר; P:P8; CAT:animals; (\xt Jen 4.20, Mt 21.2, Jo 12.15\xt*).
+\zstat N
+\p Donki em wanpela animal i gat 4-pela lek na i wankain liklik olsem hos, tasol em i liklik moa na i strong long karim kago. Long taim bilong Baibel, ol manmeri i save yusim donki bilong karim ol samting, bilong wok long gaden, na bilong raun i go longwe. Sampela taim ol king na bikman tu i save sindaun long donki taim ol i go long taun, olsem mak bilong bel isi na pasin bilong daunim em yet (\xt 1Kin 1.33, Sek 9.9\xt*). Long Nupela Testamen, Jisas Krais i sindaun long wanpela donki taim em i go insait long Jerusalem, bilong soim olsem em i King bilong bel isi, olsem profet i bin tok pinis (\xt Mt 21.4-5, Jo 12.14-15\xt*).
+\p \k doti long ai bilong God\k*
+\v 160
+\hp \zge unclean\zge*; G:ἀκάθαρτος, κοινός, κοινόω; H:טמא; P:P3; CAT:MI; (\xt Ap 10.28, Ef 5.5\xt*).
+\zstat C
+\p Lukim \w klin\w*.
+\zstat C
+\p \k Elaija\k*
+\v 170
+\hp \zge Elijah\zge*; G:Ἠλίας; H: אֵלִיָּה ,אֵלִיָּהוּ; P:P7; CAT:name; (\xt Mk 9.4, Ro 11.2-5, Je 5.17\xt*).
+\zstat C
+\p Elaija em i wanpela profet bilong Olpela Testamen. Dispela profet i bin tokim ol \w profet\w* bilong god \w Bal\w* olsem, sapos god Bal em i trupela god orait em i ken tok na paia bai lusim heven kam daun na kukim ofa bilong ol. Tasol god Bal em i no god tru. Dispela God we Elaija i lotuim em hia yes, em i God tru. Elaija i beten long en na em i salim paia i lusim heven i kam daun na kukim ofa bilong Elaija (\xt 1Kin 18.20-40\xt*). Na narapela samting gen i olsem, em i sindaun long karis i gat paia na i kisim em i go antap long heven (\xt 2Kin 2.11\xt*).
+\p Jisas i tok, Jon Baptais yet i bin inapim dispela tok profet long Elaija bai kam bek (\xt Mal 4.5-6, Mt 11.14\xt*), na taim Jisas i tok, <<Elaija i kam pinis,>> em i tok bokis long \w Jon\w* Baptais (\xt Mk 9.13\xt*).
+\p \k Elisa\k*
+\v 175
+\hp \zge Elisha\zge*; G:Ἐλισαῖος; H:אֱלִישָׁע; P:P7; CAT:name; (\xt Lk 4.27\xt*).
+\p Lukim \w Naaman\w*.
+\zstat N
+\p \k elo\k*
+\v 18
+\hp \zge aloes\zge*; G:ἀλόη; P:P8; CAT:flora; (\xt Jo 19.39\xt*).
+\zstat C
+\p Dispela em wanpela kain sanda i gat naispela smel tru. Ol i save kisim wara bilong wanpela diwai na draim i go inap em i drai olgeta na bihain ol i save wokim dispela sanda. Ol Juda i save rapim dispela sanda long ol laplap samting bilong karamapim man i dai na redim em long ol bai i go na planim em.
+\p \k emeral\k*
+\v 177
+\hp \zge emerald\zge*; G:σμάραγδος; H:בָּרֶקֶת; P:P9; CAT:realia; (\xt Rev 4.3, 21.19\xt*).
+\zstat C
+\p Emeral em wanpela kain ston we i nais tru na i nogat planti na i hatwok long painim. Lukim tok i stap long \w jewel\w*.
+\p \k Enok\k*
+\v 115
+\hp \zge Enoch\zge*; G:Ἑνὼχ; P:P9; CAT:person; (\xt Jen 5.24, Ju 1.14\xt*).
+\zstat C
+\p Enok em i wanpela bilong ol tumbuna pikinini bilong Adam, tasol em i no bin dai. God i kisim em na nogat wanpela man i bin lukim em gen (\xt Jen 5.24\xt*). Na bipo long taim Jisas i bin kamap long dispela graun, ol Israel i gat buk ol i kolim 1 Enok we ol i bin stori moa long dispela man. I gat tok long \xt Ju 14-15\xt* we i kam long dispela buk.
+\p \k ensel\k*
+\v 180
+\hp \zge angel\zge*; G:ἄγγελος; H:מַלְאָךְ; P:P4; CAT:beings; (\xt Jen 19.1, Mk 1.13, Mt 18.10, Ap 12.7-10\xt*).
+\zstat C
+\p Ol ensel em ol lain bilong karim toktok bilong God na ol i stap wantaim em long ai bilong em. Ol i no kain olsem ol man, ol i spirit. Yu no inap long lukim ol inap taim ol yet i laik mekim ol yet i kamap ples klia long yu ken lukim ol.
+\pi1 God i save salim ol ensel go long mekim ol wok bilong em. Ol ensel i gat bikpela wok bilong lukautim ol manmeri bilong God (\xt Ap 12.6, 27.23, Hi 1.14\xt*). Sampela taim God i save salim ol long karim wanpela tok i go long wanpela man o wanpela meri.
+\pi Nambawan ensel bilong go pas long olgeta ensel bilong God, nem bilong em Maikel (\xt Ju 9\xt*). Narapela bikpela ensel bilong God hia, nem bilong em Gabriel (\xt Dan 8.16, 9.21, Lk 1.19,26\xt*).
+\pi Planti saveman i ting Jut i tingim Jen 6.4 taim em i tok long ol ensel i no stap stret long ples bilong ol (\xt Ju 6\xt*).
+\p \k Epikurian\k*
+\v 185
+\hp \zge Epicureans\zge*; G:Ἐπικούρειος; P:P9; CAT:name; (\xt Ap 17.18\xt*).
+\zstat C
+\p Ol Epikurian hia, ol i wanpela lain saveman na ol i save bihainim ol skul tok wanpela saveman bilong ol, nem bilong em, \fqa Epikurus\fqa*. Em i save skulim ol lain long pasin bilong ol manmeri i mas mekim amamas i kamap nambawan samting insait long laip bilong ol na ol i no ken larim pasin bilong pen na pret i pulap insait long laip bilong ol.
+\p \k Farisi\k*
+\v 190
+\hp \zge Pharisee\zge*; G:Φαρισαῖος; P:P1; CAT:name; (\xt Mk 2.14-17, 5.20, Lk 18.9-14, Mt 23.1-36\xt*).
+\zstat C
+\p Dispela lain i bin stap long taim bilong Jisas. Ol dispela lain man ol i bikpela lain tru insait long lotu bilong ol \w Juda\w*. Ol Farisi em ol lain bilong sanap strong tru long bihainim ol lo bilong \w Moses\w* na ol i save mekim ol pasin bilong i stap gut long ai bilong God. Ol Farisi i ting ol yet tasol i save bihainim tru lo bilong God. Na ol i save tok olsem Jisas na ol lain i save bihainim em hia, i no save bihainim ol lo bilong Moses gut. Bipo, taim Jisas i no singautim em yet, Aposel Pol em tu i bin wanpela bilong ol dispela lain (\xt Fl 3.5\xt*). \fig Ol Farisi i bilip ol yet tasol i save bihainim tru lo bilong God|src="LB000162HTJL.tif" size="span" loc="p" ref="68.1"\fig*
+\p Ol Farisi ting, wanem man i no bihainim ol lo bilong God, em i mekim sin, olsem na em i stap doti tru long ai bilong God. Na sapos ol arapela man i stap wantaim dispela man, ol tu bai i kamap doti long ai bilong God. Ol Farisi i ting, ol \w man bilong kisim takis\w* bilong ol \w Rom\w*, ol i doti long ai bilong God, long wanem, oltaim ol i save pas wantaim ol man i save laikim tru long mekim ol kain kain pasin nogut (\xt Lk 5.30\xt*).
+\p Ol Farisi i helpim ol Juda bai redi long God bai salim Mesaia bai kamap na stap olsem king bilong ol. Tasol, planti bilong ol i tok, Jisas i no dispela king na ol i no laikim Jisas bai i kamap king bilong ol.
+\p Ol Farisi i save apim nem bilong ol yet. Ol i laik olgeta manmeri bai lukim ol olsem ol man bilong bihainim stret lo bilong God. Planti man bilong Juda ol i save bilasim arere bilong saket bilong ol, tasol ol Farisi ol save wokim dispela bilas i go bikpela moa na winim ol arapela man long ol manmeri bai luksave long ol. Ol i save bilas narakain tru bilong olgeta manmeri i mas luksave olsem ol i Farisi.\fig Ol Farisi i save bilasim ol yet|src="LB000163HTJL.tif" size="span" copy="p" ref="69.1"\fig*
+\pi1 \zsub paspas bilong prea na longpela hap string\zsub*
+\p Ol paspas bilong prea, em ol liklik paus ol Juda i save wokim. Ol i save raitim sampela hap tok bilong Buk bilong God long ol liklik pepa na putim long ol dispela paus, na pasim ol dispela paus long han kais bilong ol na long pes bilong ol. Lukim \xt Eks 13.9,16, Lo 6.8, 11.18\xt*.
+\p Na tu, ol Juda i save bihainim tok i stap long buk \xt Nam 15.37-41\xt* na ol i pasim ol sotpela hap string long ol klos bilong ol. Jisas i tok, ol tisa bilong lo na ol Farisi i save pasim ol bikpela paspas bilong prea na ol longpela hap string, bilong ol manmeri i ken lukim na ting ol i strong tru long bihainim tok bilong God. Taim ol i save go beten long moning taim, ol Juda i save putim dispela bilas. Tasol ol Farisi hia, dispela bilas i save stap long ol olgeta taim (\xt Mt 23.5\xt*).
+\p \k Fero\k*
+\v 187
+\hp \zge Pharoah\zge*; P:P6; CAT:MI;
+\p \w king bilong Isip\w*
+\zstat N
+\p \k festival\k*
+\v 955
+\hp \zge festival\zge*; P:P9;
+\zstat N
+\p Ol Juda i save holim sampela \fq festival\fq* long olgeta yia long ol i save tingim ol gutpela samting God i bin mekim long ol. I gat 5-pela bikpela festival bilong ol.
+\rem We could put this in our glossary and link here to the festivals. But maybe we donꞌt need this at all.
+\rem Festival of Dedication
+\rem Festival of the Passover
+\rem Festival of Unleavened Bread
+\rem Festival of Pentecost
+\rem Festival of Shelters
+\p \k fik\k*
+\v 200
+\hp \zge fig\zge*; G:συκῆ; H:תְּאֵנָה; P:P4; CAT:flora; (\xt Mt 21.19-22, Lk 6.44, 21.29-31\xt*).
+\zstat C
+\p Em wanpela diwai i kain olsem diwai fikus. Dispela diwai, sids bilong em i save swit tru. Ol Juda i save kisim ol dispela pikinini diwai na sampela ol i save kaikai nating, na sampela ol i save go na putim i stap long san i draim pastaim na bihain ol i save kaikai. Taim ol Juda i wokabaut i go long ol longwe hap, ol i save karim ol dispela drai fik i go bilong kaikai long rot taim ol i wokabaut i go.
+\p Wanpela taim, Jisas i painim ol fik long diwai fik. Tasol Dispela taim i no taim bilong ol fik long mau. Tasol taim ol diwai fik i tromoi planti lip olsem, em taim bilong ol diwai fik long karim ol nupela pikinini fik. Taim ol pikinini fik i liklik yet olsem, ol i no inap long mau, tasol ol man i ken kaikai ol dispela liklik pikinini fik hia. Tasol long dispela taim, dispela diwai fik i no karim wanpela pikinini fik na i hangamap long han bilong em (\xt Mk 11.13-14, Mt 21.19\xt*). \fig Diwai fik i gat gutpela kaikai|src="LB000116HTJL.tif" size="span" loc="p" ref="1.0"\fig*
+\p \k gavena\k*
+\v 205
+\hp \zge governor\zge* G:ἡγεμών; P:P9; CAT:beings; (\xt Mt 2.6, 10.18, Ap 23.26, 1Pe 2.12-14\xt*).
+\zstat A
+\p \fq Gavena\fq* em i wanpela hetman bilong gavman. Long taim bilong \w Rom\w*, em i stap aninit long bikpela king o \w Sisar\w*, na em i bosim wanpela hap graun o provins na lukautim gutpela sindaun bilong kantri. Em i gat strong bilong mekim kot na daunim ol manmeri i brukim lo.
+\p Baibel i tok tu olsem ol bilipman i mas mekim gutpela pasin namel long ol hetman bilong gavman, olsem ol gavena (\xt 1Pi 2.12-14\xt*).
+\p Long sampela hap bilong Baibel, dispela tok i makim wanpela lida bilong wanpela lain manmeri, i no Rom gavena tasol (\xt Mt 2.6\xt*).
+\p \k giaman god\k*
+\v 210
+\hp \zge idol\zge*; G:εἴδωλον; H:פָּסִיל, פֶּסֶל; P:P2; CAT:realia; (\xt Eks 20.4, 32.1-35, Dan 3.1-18, Ap 7.40, 2Ko 6.16, 1Te 1.9, 1Jo 5.21, Rev 9.20\xt*).
+\zstat C
+\p Planti manmeri ol i no klia gut long Jisas \w Krais\w*. Olsem na ol i ting God em i olsem wanpela bikpela pisin. Sampela ol i ting God i olsem wanpela bulmakau o pik. Olsem na ol i sapim ol diwai o wokim ol ston samting i kamapim ol piksa bilong bulmakau, pik o pisin na ol i save lotu long ol. Ol arapela i ting san em i god bilong ol na ol i save wokim piksa bilong en. Ol i save ting olsem ol dispela samting ol i wokim bai i helpim ol long lukim God.
+\p Ol i save wokim ol piksa bilong san o sampela samting na ol i save tok olsem, <<Dispela san i bin wokim olgeta samting, olsem na mi mas lotu long en.>> Sampela i save ting olsem, sapos ol i wokim wanpela samting na lotu long en, dispela samting bai i helpim ol. Ol i ting olsem i gat planti kain kain god i stap na i ken helpim ol, olsem na ol i save bringim ofa long ol dispela god.
+\p Ol i paol nabaut long dispela samting. God i bin tambuim ol pipel bilong en bai ol i no ken wokim ol samting olsem God bilong ol (\xt Eks 20.4\xt*). \fig Sampela lain i save lotu long ol giaman god|src="LB000175HTJL.tif" size="span" loc="p" ref="63.1"\fig*
+\p \k Gideon\k*
+\v 212
+\hp \zge Gideon\zge*; G:Γεδεών; H:גִּדְעוֹן; P:P7; CAT:name; (\xt Hi 11.32\xt*).
+\zstat C
+\p Gideon em man i bin go pas long ol Israel. Em i man bilong bilip tru long God, olsem na em i save beten long God long soim em long kain kain rot em i mas bihainim. Taim em i save kisim ol ami i go long pait, i gat planti ami o i no planti long sait bilong em, ol i save winim dispela pait bikos God i save stap long sait bilong ol na i save helpim ol.
+\p \k Grik\k*
+\v 213
+\hp \zge Greece, Greek people, Greek-speaking Jew, Greek language\zge*; G:Ἕλλην, Ἑλληνίς, Ἑλληνιστής, Ἑλληνιστί; P:P8; CAT:name; (\xt Jo 7.35, Ap 11.20, 14.1, 21.28, Ro 1.14\xt*).
+\zstat C
+\p Wanpela kantri ol i kolim Grik. Dispela tupela taun Atens na Korin hia, tupela i bikpela taun bilong dispela kantri. Ol lain tumbuna bilong dispela kantri Grik hia, ol lain we i gat bikpela bikpela save tru na ol manmeri i save lukim ol olsem ol bikpela save lain long ol toktok na pasin bilong ol. Ol saveman bilong ol hia, i save tok Grik tasol. Na dispela tok Grik i no stap long kantri bilong ol tasol, dispela tokples i go long planti arapela kantri tu i wok long yusim. Dispela tok i go long kain kain hap long wanem, taim ol ami i go pait, ol i yusim dispela tokples tasol taim ol i pait. Ol lain i bin raitim ol buk bilong Nupela Testamen, ol i bin yusim tok Grik long raitim.
+\p \k gutnius\k*
+\v 215
+\hp \zge gospel, good news\zge*; G:εὐαγγέλιον; P:P4; CAT:misc; (\xt Ro 1.16, 1Ko 15.1-7, Ef 1.13, 3.6, 2Ti 2.8\xt*).
+\zstat C
+\p God i gat wanpela tok we em i laikim olgeta manmeri bai harim na save long en. Dispela tok em i gutnius. Em i olsem. Sapos olgeta manmeri i birua long God na i mekim kain kain pasin nogut, ol dispela lain bilong mekim pasin nogut hia, i mas kisim pe nogut bilong ol. Tasol, God i bin salim Jisas, pikinini bilong em hia, i kam na i dai na kirap gen long matmat long em i ken rausim ol dispela kain kain sin we ol manmeri i mekim hia na em i ken kisim bek ol, sapos ol i bilip long Jisas.
+\p \k gutpela prais\k*
+\v 173
+\hp \zge crown\zge* P:P8; CAT:MI;
+\zstat C
+\p Lukim \w hat bilong king\w*.
+\p \k haleluya\k*
+\v 895
+\hp \zge hallelujah\zge*; G:ἁλληλουϊά; P:P9; CAT:rituals; (\xt Rev 19.1,3-4,6\xt*).
+\zstat C
+\p Taim ol \w Juda\w* i laik litimapim nem bilong God, ol i save tok \fq haleluya\fq*! Long Tok \w Hibru\w*, dispela tok i gat mining olsem <<Litimapim nem bilong Yawe.>>
+\p \k han sut\k*
+\v 636
+\hp \zge right hand\zge*; G:δεξιός; P:P4; CAT:rituals; (\xt Mk 10.37, 12.36, 14.62, Lk 20.42, 22.69, Ap 2.25, 5.31, 7.55, Ef 1.20, Kl 3.1, 1Pi 3.22\xt*).
+\zstat C
+\p Long taim bilong Jisas, ol king i save sindaun long sia king bilong ol. Na namba tu bilong em i save sindaun long narapela sia i stap long \fq han sut\fq* bilong king na nambatri man i save sindaun long sia i stap long han kais bilong king.
+\p \k hanrait bilong mi yet\k*
+\v 333
+\hp \zge in my own handwriting\zge*; G:τῇ ἐμῇ χειρὶ; P:P1; CAT:misc; (\xt Ga 6.11, Kl 4.18, 2Te 3.17, Fl 1.19, 1Ko 16.21\xt*).
+\zstat C
+\p Taim Pol i save raitim ol pas, em i save toktok tasol na narapela man i save raitim toktok bilong em long pepa. Na long arere bilong pas, Pol i save raitim liklik hap long han bilong em yet bilong soim olsem, em i tok tru tru bilong Pol na i no ol arapela lain i raitim na traim giamanim ol lain bilong ol sios.
+\p \k hap we ol man i no save stap\k*
+\v 230
+\hp \zge wilderness, remote place, desolate place\zge*; G:ἔρημος ἐρημία; P:P1; CAT:attributes; (\xt Mk 1.3,12,35, 6.31\xt*).
+\zstat C
+\p Sampela hap bilong graun bilong ol \w Juda\w* i no gutpela tumas olsem na nogat planti manmeri i save go na stap long dispela kain hap. Jon Baptais i bin autim tok long dispela kain hap, tasol planti manmeri i bin go long harim tok bilong em (\xt Mt 3.1\xt*). Na Jisas tu, sampela taim i bin go na stap long dispela kain hap (\xt Mt 4.1\xt*). Na sampela taim planti lain i save go na painim em long ol dispela hap (\xt Mt 14.13, Mk 1.45\xt*). \fig Man i wokabaut long hap we ol man i no save stap|src="CN01650B.TIF" size="span" loc="paw" ref="1.0"\fig*
+\p \k hat king\k*
+\v 235
+\hp \zge crown\zge*; G:διάδημα, στέφανος; H:עֲטָרָה; P:P8; CAT:realia; (\xt 2Ti 4.8, Rev 2.10\xt*).
+\zstat C
+\p Hat bilong king hia i gat tupela kain. Hat king i ken min long hat king i save werim long soim wok king bilong em. Na narapela hat king em i ken min long samting man i kisim long wanpela kain samting em i mekim kain olsem, em i winim resis na ol i givim dispela long em. Sampela taim bai yu lukim \fqa gutpela prais\fqa* long dispela trenslesen.
+\p \k haus\k*
+\v 240
+\hp \zge house\zge*; G:οἰκία, οἶκος; H: בֵּ֣ית; P:P2; CAT:realia; (\xt 2Kin 4.9-10, Mk 13.15, 14.15, Ap 1.13\xt*).
+\zstat C
+\p Long taim bilong Jisas, ol Juda i save wokim ol strongpela haus. Ol i wokim brik long strongpela kain graun, na kukim long san bai ol i strong tumas inap ol i sanapim haus bilong ol. Planti haus i gat 1 stori na i gat wanpela rum tasol. Rup bilong ol haus i stretpela tasol na ol manmeri i ken go antap na malolo (Lk 17.31).
+\p Sampela man husait i gat planti mani i save wokim haus bilong ol long ston tasol. \fig Ol Juda i save wokim ol strongpela haus long ol taun|src="oi00153.png" size="span" loc="p" ref="42.1"\fig*
+\p Ol dispela kain haus i go antap tumas, na i gat tupela o tripela rum antap. Ol man i gat planti mani ol i wokim haus olsem bilong wokim bikpela kaikai long en na bai planti pren ol i ken slip long en sapos ol i kam long longwe ples. Ol i wokim lata long arere bilong haus inap long ol i go stret antap na ol i no brukim rum insait long haus. Planti ol haus bilong ol hia, i save gat wanpela stori tasol na ol i paspas tru. Olsem na ol i save wokim ples bilong wokabaut antap long het bilong ol haus hia.
+\p \k haus lotu\k*
+\v 250
+\hp \zge synagogue\zge*; G:συναγωγή; P:P1; CAT:realia; (\xt Mk 1.21, Lk 4.16, Ap 9.20\xt*).
+\zstat C
+\p Dispela em ol haus we ol Juda i save bung bilong lotu long God. Ol i save bung long dispela haus lotu long olgeta \w Sabat\w* na sampela arapela ol de, tu.
+\p Na long taim bilong Nupela Testamen, olgeta wan wan hap we ol \w Juda\w* i stap, ol i gat haus lotu i stap na ol i save bung bilong ritim Buk bilong God na skulim ol manmeri long tok bilong God. Na sampela taim ol i save harim kot long dispela haus.
+\p Jisas i bin skulim ol manmeri planti taim insait long ol haus lotu bilong ol, na Pol i bin mekim wankain pasin.
+\p Bipo tru, dispela tok \fq haus lotu\fq* i makim dispela haus we ol i save bung, na tu, i save makim ol lain i save bung long dispela haus. \fig Ol Juda i gat haus lotu long olgeta hap|src="LB000170HTJL.tif" size="span" loc="p" ref="76.1"\fig*
+\p \k haus sel bilong God\k*
+\v 260
+\hp \zge tabernacle\zge*; G:σκηνή; H:מִשְׁכָּן; P:P6; CAT:realia; (\xt Eks 26, 40.16-19, Ap 7.44, Hi 8.2,5, 9.2, Rev 15.5\xt*).
+\zstat C
+\p Planti yia, ol \w Juda\w* i lotu long God insait long wanpela haus sel ol i wokim long skin bilong meme. Ol manmeri i save bringim ofa bilong ol i kam long dispela haus sel na ol i save kukim antap long alta i stap long frant bilong dispela haus sel.
+\p Taim ol i go long narapela hap, ol i karim dispela haus sel i go wantaim ol. Ol i save putim dispela haus sel antap long 6-pela karis na ol bulmakau i save pulim dispela karis i go.
+\p Dispela haus sel i soim olsem, God i \fqa stap wantaim\fqa* ol Israel. Olsem na taim Jon i tok long Jisas i kam na \fqa stap wantaim\fqa* yumi, em i yusim wanpela tok Grik we i gat mining olsem, <<em i stap long haus sel wantaim yumi>> (\xt Jo 1.14\xt*). \fig Haus sel we ol Juda i save mekim ofa long God long ples we ol man i no save stap|src="oi00185.png" size="span" loc="paw" ref="37.1"\fig*
+\p \k hel\k*
+\v 280
+\hp \zge hell\zge*; G:ᾅδης, γέεννα; P:P4; CAT:misc; (\xt Mt 5.22,29-30, 10.28, 18.9, Mk 9.43-47, Lk 12.5, Je 3.6\xt*).
+\zstat C
+\p Dispela em nem bilong ples i nogut tru. Na em i ples tru bilong ol lain i save sakim tok bilong God na i save mekim ol pasin i no stret long ai bilong God hia. Ol dispela lain bai i go long dispela hap na lukim nogut bilong ol. Buk Baibel i stori olsem dispela hap em bikpela hul i godaun tru na i gat bikpela paia i no save dai i stap long en.
+\p \k Hermes\k*
+\v 870
+\hp \zge Hermes\zge*; G:Ἑρμῆς; P:P9; CAT:name; (\xt Ap 14.12\xt*).
+\zstat C
+\p Hermes em i nem bilong wanpela god ol \w Grik\w* i save lotu long en. Ol i tok, Hermes em i save karim tok bilong ol god bilong ol.
+\p \k Herot\k*
+\v 283
+\hp \zge Herod\zge*; G:Ἡρῴδης; P:P7; CAT:name; (\xt Mk 6.14, Lk 1.5, 3.19, 23.7\xt*).
+\zstat C
+\p Long taim bilong Nupela Testamen, i gat 4-pela man i gat dispela nem Herot:
+\pi1 1. \zsub King Herot\zsub*, em man ol i save kolim Bikpela Herot. Em i bin stap king bilong provins Judia long taim ol i bin karim Jisas. Em man husait i bin tok long kilim Jisas i dai taim Jisas i bin bebi yet (\xt Mt 2.1-22, Lk 1.5\xt*).
+\pi1 2. \zsub Herot Antipas\zsub*, em man husait i bin go pas long lukautim provins Galili taim Jisas i mekim wok bilong em long autim tok bilong God na wokim ol mirakel. Em man husait i bin maritim Herodias na em i bin tok orait long ol i katim nek bilong Jon Baptais. Em man husait ol Juda i bin holimpas Jisas na kisim em i go long en long harim kot bilong Jisas na bihain ol i bin hangamapim Jisas long diwai kros (\xt Mk 6.14-29, Lk 23.6-12\xt*).
+\pi1 3. \zsub King Herot Agripa\zsub* hia, em man bipo i bin wok long kilim ol Kristen we i bilip long Jisas \w Krais\w* insait long ol sios taim ol sios i stat nupela yet. Na tu em man husait i bin kilim brata bilong Jon nem bilong em Jems (\xt Ap 12.1\xt*).
+\pi1 4. Narapela king Herot Agripa hia, em king \zsub Herot Agripa namba tu\zsub*, na em i man husait i bin harim kot bilong Pol na bihain i salim Pol i go long Rom long \w Sisar\w* yet i harim kot bilong em (\xt Ap 25.13, 26.2, 26.19, 27\xt*).
+\p \k hetman\k*
+\v 285
+\hp \zge elder\zge*; G:πρεσβύτερος, πρεσβυτέριον; P:P5; CAT:beings; (\xt Ap 14.23, 1Ti 3.1-12, 4.14, 5.17-22, Ta 1.5-9, Je 5.14, 1Pi 5.1-4\xt*).
+\zstat C
+\p Long Nupela Testamen, dispela tok \fq hetman\fq*hia, i toktok long 3-pela kain ol hetman.
+\pi1 1. Ol buk bilong \w Gutnius\w* hia, i toktok long ol lain \w Juda\w* husait i holim wok bilong God long haus lotu hia.
+\pi1 2. Insait long \bk Buk Aposel\bk* na ol Pas i go long ol sios hia, tok bilong ol \fq hetman\fq* i toktok long ol lain ol i makim insait long wan wan Kristen sios long ol ples bilong ol hia.
+\pi1 3. Long Revelesen 4-5 24-pela bilong ol \fq hetman\fq* ol i lukim o i lotu long God long \w heven\w*. Dispela samting i mak bilong mipela long save olsem dispela samting i makim ol sios o ol manmeri i bilip long God hia.
+\p \k hetpris\k*
+\v 53
+\hp \zge high priest\zge*; G:ἀρχιερεύς; P:P5; CAT:MI;
+\zstat C
+\p Lukim \w pris\w*.
+\p \k heven\k*
+\v 286
+\hp \zge heaven\zge*; G:οὐρανός, οὐράνιος; H:שָׁמַיִם; P:P6; CAT:place; (\xt Mt 5.12, 5.48, 6.14,26, Mk 1.10, Lk 2.13, 15, 24.51, Jo 14.2\xt*).
+\zstat N
+\p \fq Heven\fq* em ples God i stap long en. Em i antap tru na i holi, na em i ples bilong glori na strong bilong God. Sampela taim tok <<heven>> i makim skai antap (\xt Mk 1.10\xt*), tasol planti taim em i makim ples God Papa i stap (\xt Mt 6.9\xt*). Baibel i tok olsem heven em ples bilong amamas na pe bilong ol manmeri i bilip (\xt Mt 5.12\xt*). Jisas \w Krais\w* i go bek long heven bihain long em i kirap long matmat (\xt Lk 24.51\xt*), na em i tok em bai redim ples bilong ol manmeri bilong em long haus bilong Papa (\xt Jo 14.2\xt*).
+\p \k Hibru\k*
+\v 343
+\hp \zge Hebrew, Aramaic\zge*; G:Ἑβραϊστί, Ἑβραῖος; H: עִבְרִ֑י; P:P9; (\xt Jo 5.2, 19.13, 20.16, Rev 9.11, 16.16, Ap 6.1, 2Ko 11.22, Fl 3.5\xt*).
+\zstat C
+\p Dispela tok i gat tripela mining.
+\pi1 1. Tok Hibru em tokples bilong ol tumbuna bilong ol Juda na ol i raitim Olpela Testamen long dispela tok. Long taim bilong Jisas, sampela bilong ol Juda i save toktok yet long dispela tokples, tasol i no planti tumas. Planti bilong ol i save toktok long narapela tokples i klostu wankain, nem bilong en em \w Tok Aram\w*. Long NT, tupela tokples wantaim i gat dispela nem \fq Hibru\fq*.
+\pi1 2. Na tu, <<ol Hibru>> i sut long ol lain i save toktok long tok Hibru (\xt Ap 6.1\xt*).
+\pi1 3. Na <<ol Hibru>> i ken sut long ol Juda yet, maski ol i save long tok Hibru o nogat.
+\p \k hisop\k*
+\v 287
+\hp \zge hyssop\zge*; G:ὕσσωπος; H:אֵזוֹב; P:P8; CAT:flora; (\xt Jo 19.29, Hi 9.19\xt*).
+\zstat C
+\p Hisop em wanpela kain diwai. Ol pris i save kisim lip bilong em na tipim insait long blut na i save tromoi dispela blut antap long ol manmeri o ol arapela samting long mekim ol i holi long ai bilong God.
+\p \k holi\k*
+\v 290
+\hp \zge Holy\zge*; G:ἅγιος; H:קָדוֹשׁ; P:P2; CAT:attributes; (\xt Mt 4.5, Mk 6.20, Jo 17.11, Ef 2.21, 2Ti 1.9\xt*).
+\zstat C
+\p Olgeta pasin bilong God i gutpela na i stret tru. Em i gat strong na em inap wokim kain kain ol strongpela wok. Tingting na pasin bilong em i antap tru na i winim ol tingting na pasin bilong ol man bilong dispela graun na i narakain tru. Olsem na, sapos man o samting hia i bilong God yet, yumi inap kolim ol dispela samting, \fq holi\fq*. Bikos ol i stap bilong mekim wok bilong God tasol, ol i no inap long mekim narapela ol wok.
+\p \k Holi Spirit\k*
+\v 295
+\hp \zge Holy Spirit\zge*; G:πνεῦμα ἅγιον; P:P3; CAT:beings; (\xt Mt 1.18, Mk 3.29, 13.11, Lk 1.35,41,67, 2.25-26, Ap 1.8, 2.4,33,38\xt*).
+\zstat C
+\p Dispela em nem bilong Spirit bilong God. Em i God, wankain olsem Papa em i God na Jisas Krais tu em i God. Ol dispela tripela i wanpela God (\xt Mt 28.19\xt*). Spirit bilong God i save go insait long ol lain i bilip long Jisas Krais na em i save stap insait long ol.
+\p Em i save mekim ol lain i save long tok tru (\xt Jo 16.13, 1Ko 2.10-13\xt*) Em i save beten long God long ol lain i bilip long Jisas (\xt Ro 8.26-27\xt*). Em i save givim stia long ol manmeri long ol bai luksave long pasin bilong God (\xt Ap 13.2, 16.6-7\xt*). Em i save givim strong long inapim ol long ol i ken autim tok bilong God na mekim wok bilong God. Em i save givim presen long ol manmeri long ol inap long mekim sampela wok bilong strongim sios (\xt 1Ko 12.4-11\xt*).
+\p Taim yu lukim dispela tok \fq Spirit\fq* i gat bikpela leta S, yu ken save, em spirit bilong God, na narapela nem bilong en em Holi Spirit. Lukim \w spirit\w*.
+\p \k Isip\k*
+\v 297
+\hp \zge Egypt\zge*; G:Αἴγυπτος, Αἰγύπτιος; H:מִצְרַיִם; P:P9; CAT:place; (\xt Mt 2.13, Ap 7.9, Ju 1.5\xt*).
+\zstat C
+\p Isip em wanpela kantri i stap klostu long kantri Israel. Ol manmeri bilong kantri Israel hia, bipo i bin go na stap kalabus long kantri Isip hia inap long 400-pela yia. Lukim tok i stap long (\xt Ap 7.34-38\xt*).
+\p \k Iso\k*
+\v 298
+\hp \zge Esau\zge*; G:Ἠσαῦ; H:עֵשָׂו ; P:P7; CAT:name; (\xt Jen 25.25, Ro 9.10-13, Hi 11.20, 12.16-17\xt*).
+\zstat C
+\p Pikinini man bilong Abraham nem bilong em \w Aisak\w* hia, i gat tupela twin pikinini man. Nem bilong tupela em: Iso na \w Jekop\w*. Namba wan pikinini man em Iso na liklik em Jekop. Wanpela taim, Iso i belhat nogut tru na askim Jekop long em bai i lusim dispela rait bilong em olsem nambawan pikinini man i go long Jekop na Jekop i ken givim sampela kaikai long em long kaikai (\xt Jen 25.25\xt*). God i makim ol tumbuna lain blut bilong Jekop long i stap olsem ol lain bilong God yet na i no ol lain blut bilong Iso.
+\p Lukim \w Abraham\w*.
+\p \k Israel\k*
+\v 296
+\hp \zge Israel\zge*; G:Ἰσραήλ; H:יִשְׂרָאֵל; P:P2; CAT:name; (\xt Mt 2.6,20, 10.6,23, 15.31, 19.28, Mk 1.29, 15.32, Lk 24.21, Ap 1.6, 7.23, Ga 6.16, Ef 2.12\xt*).
+\zstat C
+\p Israel em i spesal nem God i bin givim long \w Jekop\w*, wanpela bilong tupela pikinini man bilong Aisak na Rebeka. Israel i bin karim 12-pela pikinini man. Ol dispela lain i kamap ol tumbuna bilong 12-pela klen bilong ol Israel.
+\p Ol tumbuna bilong Israel i gat ol arapela nem tu, kain olsem \fqa ol lain bilong Israel\fqa*. Na bihain ol i kolim ol olsem \fqa ol Juda\fqa* (Tok Inglis ol i save kolim \tl the Jews\tl* na \tl the Hebrews\tl*). Lukim \w Juda\w*.
+\p Dispela kantri we ol \w Israel\w* i stap i gat dispela nem \fq Israel\fq* tu. Bipo, ol i kolim olsem \fqa Kenan\fqa*. Narapela nem bilong dispela hap em \fqa Palestain\fqa*.
+\p \k Iv\k*
+\v 301
+\hp \zge Eve\zge*; G:Εὕα; H:חַוָּה; P:P7; CAT:name; (\xt 2Ko 11.3, 1Ti 2.13-14\xt*).
+\zstat N
+\p \k Jaspa\k*
+\v 299
+\hp \zge jasper\zge*; G:ἴασπις; P:P9; CAT:realia; (\xt Rev 4.3, 21.11,18-19\xt*).
+\p Dispela em i wanpela kain ston i nais tru na i dia tumas.
+\zstat C
+\p \k Jekop\k*
+\v 300
+\hp \zge Jacob\zge*; G:Ἰακώβ; H:יַעֲקֹ֑ב; P:P7; CAT:name; (\xt Jen 25.26\xt*).
+\zstat C
+\p Dispela man Jekop hia, em pikinini man bilong Rebeka. Na twin brata bilong en, em \w Iso\w*. Mama i bin karim Iso pas long Jekop, olsem na Iso i mas go pas long ol samting bilong papa bilong tupela. Tasol, God i tanim dispela na i makim Jekop long go pas long olgeta samting bilong papa bilong tupela.
+\p \fq Jekop\fq* long Tok Hibru i gat mining olsem <<holim lek,>> na dispela em i tok bokis long <<man bilong giaman>> (\xt Jen 27.36\xt*).
+\p God i bin givim Jekop narapela nem, \w Israel\w*. Na Jekop i gat 12-pela pikinini man, na ol dispela 12-pela lain i stap olsem ol 12-pela tumbuna bilong ol Israel. Lukim \w Israel\w*, \w Abraham \w*, na \w Iso\w*.
+\p \k Jepta\k*
+\v 302
+\hp \zge Jephthah\zge*; G:Ἰεφθάε; H:יִפְתָּ֑ח; P:P9; CAT:name; (\xt Het 11.11, Hi 11.32\xt*).
+\zstat C
+\p Jepta em i wanpela strongpela man na bikman insait long ami. Sampela taim i go pinis em i bin stap olsem man bilong i go pas long ol \w Israel\w*.
+\p \k Jeremaia\k*
+\v 304
+\hp \zge Jeremiah\zge*; G:Ἰερεμίας; H:יִרְמְיָהוּ; P:P7; CAT:name; (\xt Mt 2.17, 16.14, 27.9\xt*).
+\zstat C
+\p Jeremaia em i wanpela profet bilong God. Taim planti \w Israel\w* i bin lusim tok bilong God na ol i no bihainim, em man husait i bin toktok strong long ol long ol i mas tanim na lusim ol pasin nogut ol i mekim long ai bilong God na bihainim God. Narapela samting em i bin mekim em long em i bin tokaut long ol samting bai kamap long taim Jisas i kam kamap long dispela graun.
+\p \k Jesi\k*
+\v 306
+\hp \zge Jesse\zge*; G:Ἰεσσαί; H:יִשַׁי; P:P9 CAT:name; (\xt Mt 1.5-6, Lk 3.32, Ap 13.22, Ro 15.12\xt*).
+\zstat C
+\p Jesi em papa bilong King \w Devit\w* na em i as tumbuna bilong Jisas Krais. Long taim bilong Olpela Testamen, profet Aisaia i raitim tok olsem Krais bai i kamap long lain blut bilong Jesi tupela King Devit. Lukim tok i stap long \w David\w*.
+\p \k Jisas\k*
+\v 317
+\hp \zge Jesus\zge*; G:Ἰησοῦς; P:P3; CAT:name; (\xt Mt 1.21\xt*).
+\zstat C
+\p Dispela nem i gat mining olsem, \fqa man bilong kisim bek\fqa* o \fqa God bai kisim bek yumi\fqa*. God i givim dispela nem long pikinini man bilong Maria. Em man bilong rausim olgeta sin ol manmeri i mekim long ai bilong God hia. Na sapos ol i bilip long em, em bai man bilong kisim ol i kam bek long God. Em i gat planti arapela nem, tu, kain olsem \w Krais\w*, \w Pikinini bilong God\w*, \w Pikinini Bilong Man\w*, na \w Pikinini bilong Devit\w*.
+\p \k Jon\k*
+\v 310
+\hp \zge John\zge*; G:Ἰωάννης; P:P7; CAT:name;
+\zstat C
+\p I gat planti man i gat nem Jon long Nupela Testamen. Tupela i save kamap planti taim em Jon Baptais na Jon, wanpela bilong ol \w aposel\w*.
+\pi1 1. \zsub Jon Baptais\zsub* em i wanpela profet i bin kam bilong stretim rot bilong Jisas bai kam. Wankain olsem dispela profet Elaija i bin i stap long taim bilong Olpela Testamen, Jon Baptais i bin tokim ol manmeri long ol i mas tanim bel na kam bek long God.
+\pi1 Jon Baptais i save werim klos i wankain olsem Elaija i save werim. Ol i wokim long gras bilong kamel na em i pasim let ol i wokim long skin bilong bulmakau (\xt Mt 3.1-15, 11.2-19, 14.1-12, 17.13, 21.25-32, Mk 1.4-11, 6.14-29, 11.29-33, Lk 1.13-25,57-63,76-80, 3.2-20, 7.18-33, 11.1, Jo 1.6-36, 3.22-30\xt*).
+\pi1 2. \zsub Aposel Jon\zsub* em i pikinini bilong Sebedi na brata bilong Jems. Em i wanpela bilong ol 12-pela aposel bilong Jisas. Em i bin raitim \bk Gutnius Jon i raitim\bk* na ol pas bilong Jon na buk \bk Revelesen\bk* tu (\xt Mt 4.21-22, 10.2, 17.1-13, Mk 1.29, 3.17, 5.37, 9.1-13,38, 10.35-41, 13.3, Lk 8.51, 9.28-36,49,54, 22.8, Ap 3.1-11, 4.13,19-20, 8.14-17, Ga 2.9, Rev 1.1,4,9, 22.2,8\xt*).
+\pi1 3. \zsub Jon Mak\zsub* em i narapela brata bilong Barnabas na wanwok bilong Pol. Na em i bin raitim \bk Gutnius Mak i Raitim\bk* (\xt Ap 12.12, 13.4-13, 15.37-39, Kl 4.10, 2Ti 4.11, Fm 1.24, 1Pi 5.13\xt*).
+\pi1 4. \zsub Jon\zsub* em i nem bilong papa bilong Saimon Pita na Andru (\xt Mt 16.17, Jo 1.42, 21.15-17\xt*).
+\pi1 5. \zsub Jon\zsub* em i nem bilong wanpela bilong famili bilong Hetpris Anas, (\xt Ap 4.6\xt*).
+\p \k Jona\k*
+\v 315
+\hp \zge Jonah\zge*; G:Ἰωνᾶς; H:יוֹנָה; P:P7; CAT:name; (\xt Jna 1.1, Mt 12.39-41, 16.4, Lk 11.29-32\xt*).
+\zstat C
+\p Jona em wanpela profet bilong God. Wanpela taim, God i salim Jona long go long taun Ninive long autim tok bilong God long dispela hap. Tasol Jona i les na i no laik bihainim tok God i bin tokim em hia. Em i kalap long wanpela sip na i no go long hap we God i tokim em long en, em i laik ranawe na i go long narapela hap olgeta.
+\p Taim em i stap antap long sip hia, God i mekim bikpela win i kirap na si i go rap olgeta. Long dispela taim, ol lain i stap antap long sip hia, i luksave olsem God i belhat long Jona olsem na dispela taim nogut i kamap long ol. Olsem na wanpela bikpela pis i kam na daunim Jona i go insait long bel bilong em na em i stap 3-pela de insait long bel bilong dispela bikpela pis.
+\p Bihain tru, dispela bikpela pis i go na trautim Jona long nambis. Na bihain long dispela, Jona i bihainim laik bilong God na em i go long taun Ninive na autim tok bilong God.
+\p \k Josep\k*
+\v 318
+\hp \zge Joseph\zge*; G:Ἰωσήφ; H:יוֹסֵף; P:P7; CAT:name;
+\zstat C
+\p 1. I gat planti lain liklik insait long Nupela Testamen we i gat dispela nem Josep.
+\pi1 \zsub Wanpela bilong ol 12-pela pikinini bilong Jekop\zsub*. Na ol i tumbuna bilong ol lain Israel. Dispela Josep i go pas long Benjamin (\xt Ap 7.9-14, Jo 4.5, Hi 11.21-22, Rev 7.8\xt*).
+\pi1 2. \zsub Man bilong Maria\zsub*, husait i mama bilong Jisas \w Krais\w*. (\xt Mt 1.16,18-20,24, 2.13,19, Lk 1.27, 2.4,16,33,43, 3.23, 4.22, Jo 1.45, 6.42\xt*).
+\pi1 3. \zsub Wanpela bilong ol brata bilong Jisas\zsub* (\xt Mt 13.55, Mk 6.3\xt*).
+\pi1 4. \zsub Liklik brata bilong Jems\zsub*. (\xt Mt 27.56, Mk 15.40,47\xt*).
+\pi1 5. \zsub Josep bilong Arimatea\zsub*. Em wanpela man we i gat planti samting na em i memba bilong kaunsil bilong ol \w Juda\w*. Em i gutpela man na em i man bilong bihainim Jisas Krais (\xt Mt 27.57-60, Mk 15.42-46, Lk 23.50-53, Jo 19.38-42\xt*).
+\pi 6. Narapela bilong ol lain i gat nem Josep hia, em \zsub Josep Barsabas\zsub*. Em i wanpela bilong ol lain i bin bihainim Jisas long nambawan taim tru. Na taim ol i laik makim man long kisim ples bilong Judas, ol i bin lukluk namel long Josep Barsabas tupela Matias. Na taim ol i tromoi satu long painim husait, satu i makim Matias na em i kisim ples bilong Judas (\xt Ap 1.23\xt*).
+\pi1 7. Dispela man narapela nem bilong em \zsub Barnabas\zsub*. (\xt Ap 4.36\xt*).
+\p \k Josua\k*
+\v 319
+\hp \zge Joshua\zge*; G:Ἰησοῦς; H:יְהוֹשׁוּעַ; P:P7; CAT:name; (\xt Eks 17.9, 24.13, Nam 14.30, 26.65, 27.18, Jos 1.1, 24.15, Ap 7.45, Hi 4.8\xt*).
+\zstat C
+\p Taim \w Moses\w* i dai pinis, Josua i kisim ples long stap olsem lida bilong ol Israel. Em i kisim ol \w Israel\w* na ol i go long graun bilong Kenan. Dispela graun em God i bin promis long putim long han bilong ol na bai i stap olsem graun bilong ol. Ol i pait i go na ol i winim ol lain i bin stap long dispela hap. Na bihain Josua i putim ol mak long graun na givim hap hap graun long ol klen bilong Israel. Tasol long klen bilong ol Livai em i no givim hap graun long ol bikos ol i stap long lain bilong pris. Josua em bin strongpela lida na em i kirapim tingting bilong ol manmeri long holim wanpela tingting tasol na bihainim God. Em i tok olsem, <<Mi yet wantaim ol famili bilong mi bai i lotu long \nd Bikpela\nd* wanpela tasol>> (\xt Jos 24.15\xt*).
+\p \k Juda\k*
+\v 320
+\hp \zge Judah\zge*; G:Ἰούδας; H:יְהוּדָה; P:P3; CAT:name;
+\zstat C
+\p Wanpela pikinini bilong Jekop i gat dispela nem, \fq Juda\fq* na em i tumbuna bilong wanpela lain ol i kolim olsem \fq Juda\fq*. Na bihain, taim King Solomon i dai pinis, ol Israel i lusim ol lain Juda na i go kamap wanpela kantri bilong ol yet. Na Juda wantaim Israel i bin stap olsem tupela kantri bilong tupela yet. Olgeta lain i stap long ol graun i go olsem long Saut sait, ol i stap insait long kantri bilong ol \fq Juda\fq*. Olsem na ol i save kolim dispela kantri olsem \fq Juda\fq* tu. Bihain ol Babilon i bin kam na bagarapim kantri \fq Juda\fq* na ol i kisim olgeta manmeri i go na putim ol long kalabus long Babilon.
+\p Na taim ol manmeri hia i pinis long kalabus, ol i kam bek long asples bilong ol, dispela taim nem \fq Juda\fq* i senis na ol i kolim olgeta manmeri hia olsem ol i bilong Israel.
+\p Long \bk Gutnius Jon i Raitim\bk*, dispela tok \fq ol Juda\fq* i sut long ol lidaman bilong ol Juda i bin agensim Jisas.
+\p Lukim \w Israel\w*.
+\p \k kamda\k*
+\v 98
+\hp \zge carpenter, builder\zge*; G:τέκτων; P:P5; CAT:attributes; (\xt Mt 13.55, Mk 6.3\xt*).
+\zstat C
+\p Jisas tu em wanpela \fq kamda\fq*. Long taim bilong Jisas, ol dispela kain man i gat save long wokim haus long ston na diwai tu.
+\p \k kamel\k*
+\v 330
+\hp \zge camel\zge*; G:κάμηλος; H:גָּמָל; P:P4; CAT:animals; (\xt Mt 3.4, 19.24, 23.24, Mk 1.6, 10.25, Lk 18.25\xt*).
+\zstat C
+\p Kamel em wanpela bikpela enimel ol man i save lukautim bilong helpim ol long karim ol kago bilong ol taim ol i laik go long narapela hap.
+\p Bipo long taim bilong go, ol i save givim planti wara long kamel i dring bipo long ol i go. Na taim ol i go, dispela kamel i ken wokabaut inap long 3-pela de olgeta na i no wari long dring wara.
+\p Ol kamel i no \w klin\w* long ai bilong God.
+\pi1 \zsub gras bilong kamel\zsub* Lukim \w Jon\w* Baptais. \fig Kamel em i bikpela enimel stret|src="LB000121HTJL.tif" size="span" loc="p" ref="1.0"\fig* \fig Kamel em i bikpela enimel stret|src="co01501b.TIF" size="span" loc="aw" ref="1.0"\fig*
+\p \k kap\k*
+\v 455
+\hp \zge cup\zge* G:ποτήριον; P:P3; CAT:misc; (\xt Mt 20.22, 26.39, Mk 10.38, Lk 22.42, Jo 18.11, Rev 14.10, 16.19, 18.6\xt*).
+\zstat C
+\p Sampela taim, \fq kap\fq* em i kap tasol (Mk 14.23). Na sampela taim, \fq kap\fq* em i tok piksa bilong hevi i kam long man, na <<dringim kap>> em tok piksa bilong man i karim dispela hevi (Mk 10.38, Mt 26.39).
+\p \k karis\k*
+\v 348
+\hp \zge Chariot\zge*; G:ἅρμα; P:P9; CAT:realia; (\xt Ap 8.28, Rev 9.9\xt*).
+\zstat C
+\p Bipo bipo tru, ol i bin wokim dispela samting ol i kolim karis. Dispela samting i gat tupela wil i stap long sait sait bilong traila. Ol i bin wokim dispela samting bilong karim ol man na kago i go long kain kain hap na bilong karim ol man i go long pait tu. Dispela samting i kain olsem wanpela kar bilong helpim ol lain long ol iken mekim kain kain wok.
+\p \k katim skin\k*
+\v 340
+\hp \zge circumcise, circumcision\zge*; G:περιτέμνω, περιτομή; H:מול; P:P3; CAT:rituals; (\xt Jen 17.10-14, Eks 12.48, Lk 2.21\xt*).
+\zstat C
+\p Long taim bilong Olpela Testamen, God i bin wokim \w kontrak\w* wantaim ol lain bilong Israel. Na pasin bilong katim skin em i bin kamap olsem mak bilong dispela kontrak. Na ol lain husait i kisim dispela mak, ol i stap insait long ol lain bilong God. Na husait i no kisim dispela mak, ol i stap autsait long lain bilong God. Sapos wanpela meri em i karim pikinini man, orait em bai stap 8-pela de pinis na ol bikman long lotu bai i katim skin bilong dispela pikinini. Taim ol i katim skin pinis, papa na mama bai i givim nem long dispela pikinini.
+\p Tasol taim Jisas i kam na i dai bilong kisim bek yumi, i gat wanpela samting i kamap olsem mak bilong husait bai i stap insait long lain bilong God, em pasin bilong bilip long Jisas \w Krais\w* tasol.
+\p Sampela bilong ol lain bilong \w Juda\w* hia, i save tok olsem, sapos man i kamap \w Kristen\w*, em i mas bihainim pasin bilong ol Juda yet long em mas katim skin bilong em. Ol i save sanap strong tru long dispela tok, tasol Aposel Pol em i agensim tru dispela na em i save tok pait wantaim ol. Bikpela samting em, dispela tok bilong ol hia, i no trupela tok (\xt Ap 15.6-29, Ga 5.6,11, 6.15, Kl 2.11, 3.2, 3.11\xt*).
+\p \k Kein\k*
+\v 345
+\hp \zge Cain\zge*; G:Κάϊν; H: קַ֔יִן; P:P7; CAT:name; (\xt Jen 4, Hi 11.4, 1Jo 3.12, Ju 11\xt*).
+\zstat C
+\p Kein em i namba wan pikinini man bilong \w Adam\w* tupela Iv. Em i mangal long ol samting bilong liklik bilong em Abel taim God i kisim ofa bilong em taim em i mekim ofa long pikinini sipsip. God i bin les long ofa bilong Kein taim em i bin mekim ofa long ol kaikai bilong gaden bilong em hia. Olsem na bikpela bilong em Kein hia, i belhat na kilim liklik bilong em Abel i dai. Taim dispela pasin i kamap, God i mekim Kein i raun raun nating long dispela graun na olgeta lain i no laikim em tru. Lukim\w Abel\w*
+\p \k Kenan\k*
+\v 335
+\hp \zge Canaan\zge*; G:Χανάαν; H:כְּנַעַן; P:P7; CAT:place; (\xt Mt 15.22, Ap 7.11, 13.19\xt*).
+\zstat C
+\p Dispela nem \fq Kenan\fq*, em i nem bilong graun God i bin promis long em bai givim long ol lain bilong Israel na dispela graun bai stap olsem graun bilong ol. Dispela hap graun Kenan nau i gat dispela nem \w Israel\w* na sampela taim ol i save kolim \fqa Palestain\fqa*.
+\p Na tu, \fq Kenan\fq* em i nem bilong wanpela pikinini bilong Ham, pikinini bilong Noa (\xt Jen 9.18\xt*).
+\p \k king\k*
+\v 346
+\hp \zge king\zge* G:βασιλεύς; H:מֶלֶךְ; P:P9; CAT: name;
+\zstat A
+\p King em i man i save bosim wanpela kantri o lain pipol. Em i gat namba na strong long mekim lo na stiaim ol manmeri, na ol pipol i mas bihainim tok bilong em. Long Baibel, planti taim God i yusim king long lukautim na stiaim ol pipol bilong em. Sampela king i gutpela na sampela i nogut.
+\p God yet i save larim ol king i kamap long strong bilong em (\xt 1Sml 2.7-8\xt*). Wanpela gutpela king i mas stret, i pret long God, na lukautim gut ol pipol (\xt Pro 16.12\xt*). God i antap long olgeta king, na em i save senisim ol gavman long laik bilong em (\xt Dan 2.21\xt*).
+\p Jisas em i <<King bilong ol king na \w Bikpela\w* bilong ol bikpela>> (\xt Rev 19.16\xt*). Dispela i soim olsem strong na namba bilong Jisas i winim olgeta arapela king long graun na long heven.
+\p \k king bilong Isip\k*
+\v 352
+\hp \zge Pharoah\zge*; G:Φαραώ; H:פַּרְעֹה; P:P7; CAT:name; (\xt Ap 7.10,13,21, Ro 9.17, Hi 11.24.\xt*).
+\zstat C
+\p \fqa Fero\fqa* em i nem ol i givim long strongpela king bilong ol manmeri bilong kantri Isip. Olgeta dispela ol strongpela king bilong kantri Isip em ol i save kolim ol \fqa Fero\fqa*.
+\p \k kingdom\k*
+\v 350
+\hp \zge kingdom, kingdom of God, kingdom of heaven\zge*; G:βασιλεία, βασιλεία τοῦ θεοῦ, βασιλείᾳ τῶν οὐρανῶν; P:P1; CAT:name; (\xt Mt 6.33, 12.28, Mk 1.15, 4.11,26,30, Jo 3.5, Ap 1.3, 8.12, Ro 14.17\xt*).
+\zstat C
+\p \fq Kingdom\fq* bilong wanpela king em olgeta samting na olgeta ples na olgeta manmeri i stap aninit long em na em i lukautim na bosim.
+\pi1 \zsub kingdom bilong God\zsub* Dispela tok i stori long God na ol lain bilong em. Ol king i save lukautim ol lain bilong ol. God em i olsem king long wanem, em i save banisim ol na lukautim ol long ol samting ol i nidim. Ol lain i stap insait long kingdom bilong God em ol lain i save trastim God na bihainim tok bilong em. Taim Jisas Krais i kam long dispela graun, \fq kingdom bilong God \fq*i bin kamap long nupela wei, long wanem, Jisas Krais i bin mekim rot i stap long ol manmeri i ken stap wantaim God olsem pren bilong em.
+\pi1 God em man husait i save go pas long olgeta samting. Tasol, olgeta dispela samting i no laik stap aninit long em. Dispela nem \fq kingdom bilong God\fq* o \fqa kingdom bilong heven\fqa* i stori long taim na ol ples na wanem ol samting i stap aninit long God. Sampela taim dispela tok i save stori long pasin bilong ol manmeri i stap insait long lain bilong God. Sampela taim dispela tok i save stori long ol taim bai kamap bihain taim olgeta samting i stap aninit long God na olgeta dispela samting bai i kamap gutpela tru.
+\p \k kisim bek\k*
+\v 360
+\hp \zge save, salvation\zge*; G:σῳζω, σωτηρία; H:שׁוּעָה יֶשַׁע תְּשׁוּעָה; P:P3; CAT:misc;
+\zstat C
+\p Dispela em i tok long man i laik i dai na wanpela man i helpim em na em i stap laip. Em i ken tok long man bilong graun em i helpim em, tasol dispela laip em samting bilong bodi o em i ken tok olsem \w Krais\w* i helpim em, na em i kisim laip bilong i stap oltaim oltaim.
+\p God i bin kisim bek ol manmeri bilong em taim ol i bin stap olsem wokman nating long kantri \w Isip\w*.
+\p Sapos Krais i helpim man, i gat tripela samting i save kamap:
+\pi1 1. Krais i baim pinis sin bilong man, na bikpela kot bai i kam hia na asua bilong sin na rot bilong i go long bikpela paia (hel) hia, i pinis olgeta.
+\pi1 2. Nau Krais i krungutim strong bilong sin i stap long laip bilong man.
+\pi1 3. Na bihain long taim bilong stap long heven hia, bai man i no inap lukim pasin bilong sin long heven.
+\p Pasin bilong Jisas bai i kisim bek yumi hia, taim yumi:
+\pi1 1. Tokaut long sin bilong yumi i go long God.
+\pi1 2. Yumi mas lus tingting olgeta long pasin bilong mekim samting long laik bilong yumi yet na yumi tanim bel na bihainim Jisas.
+\pi1 Yumi mas tok <<yes>> long Jisas i go pas na bosim laip bilong yumi na larim Jisas i stap God na \w Bikpela\w* bilong yumi.
+\pi1 \zsub man bilong kisim bek yumi\zsub*
+\hp \zge Saviour\zge*; G:σωτήρ; P:P2; CAT:misc; (\xt Lk 2.11, Jo 4.42, Ap 5.31, Ef 5.23, 1Ti 1.1\xt*).
+\pi1 Sampela taim ol i save kolim Jisas long dispela nem \fq man bilong kisim bek\fq* long wanem em i wokim rot i stap long ol manmeri long ranawe long nogut ol bai i lukim bikos long ol sin ol i bin mekim. Sapos ol manmeri i sakim tok bilong God na mekim sin long laip bilong ol, ol i mas lukim nogut bilong ol. Sin i mekim ol i stap longwe long God olsem na pe bilong sin em dai tasol.
+\pi1 Taim Jisas i hangamap antap long diwai kros na em i dai, em i karim pen bilong dispela sin bilong yumi manmeri antap long em yet nating tru bikos em yet i nogat sin long laip bilong em. Em i dai olsem sin man bikos em i kisim ples bilong yumi manmeri long sin bilong yumi.
+\pi1 Olsem na God i save fogivim sin bilong ol manmeri husait i save i bilip long Jisas na i bihainim em. Em i save kisim ol manmeri na lukim ol stretpela long ai bilong em bikos long wok Jisas i mekim long dai long diwai kros.
+\pi1 Dai bilong Jisas hia, i mekim bikpela wok tru long banisim ol manmeri long Satan i no inap daunim ol long strong bilong em.
+\p \k klin\k*
+\v 370
+\hp \zge clean\zge*; G:καθαρός, καθαρίζω, καθαρισμός; H:טהר; P:P4; CAT:attributes;
+\zstat C
+\p \fq Klin\fq* em i sotpela tok long <<klin long ai bilong God.>
+\p Taim God i mekim \w kontrak\w* wantaim ol Juda em i tok ol i mas stap \w holi\w*.
+\p Ol i mas i stap lain bilong God yet na ol i mas bihainim \w stretpela pasin\w* tasol. Ol Juda i mas tambuim olgeta manmeri long ol samting i no klin long ai bilong God. Ol man i mekim pasin nogut ol i no klin long ai bilong God.
+\p Sapos wanpela man i holim samting i no klin long ai bilong God, orait, em i no klin long ai bilong God tu, em i kamap doti long ai bilong God. Olgeta samting i nogut tru na olgeta samting i dai pinis ol i doti long ai bilong God. Olgeta samting bilong lotuim giaman god o tambaran samting i doti long ai bilong God tu.
+\p Sapos wanpela man o meri i gat sik lepro o kain sik olsem, o sapos man i no wasim han pastaim na em i tatsim ol plet na kap samting long han bilong em, ol dispela samting i mekim em i kamap doti long ai bilong God (\xt Mt 8.2\xt*).
+\p Sapos wanpela man i doti olsem, em i mas stap longwe long ol arapela lain. Nogut em bai kamap klostu long ol na mekim ol tu i doti long ai bilong God.
+\p Sapos man i laik kamap klin gen long ai bilong God, em i mas waswas gut pastaim na wet liklik taim. Sampela taim ol i mas mekim \w ofa\w* long God tu. Taim em i mekim sampela samting o narapela man i helpim em na em i luksave olsem em i klin nau, em i mas go lukim pris bilong \w tempel\w* na em i mas tokaut olsem em i klin pinis nau ol inap long tok olsem em i klin long ai bilong God (\xt Wkp 13, 14\xt*).
+\p God i wokim dispela long ol \w Juda\w* bilong makim ol na bilong mekim ol i narakain long ol haiden manmeri nabaut ol i stap long tudak. God i laik ol Juda i mas save long as tingting bilong dispela tok \w holi\w*.
+\p God i no laikim pasin nogut na ol samting i no klin long ai bilong em. Sapos wanpela samting i no klin long ai bilong God, em i mas kamap klin. Sapos nogat, ol i mas rausim.
+\p Ol \w Farisi\w* tu i gat ol kain kain lo long ol man i mas mekim long ol i no inap stap doti long ai bilong God (\xt Mk 7.14-23\xt*).
+\p Taim Jisas i kamap, em i senisim ol dispela lo na em i tok, i no olgeta samting i save mekim man i doti long ai bilong God. Nogat. Ol pasin nogut i save kamap long bel bilong man yet i save mekim ol i no klin long ai bilong God. Sapos man i laik kamap nupela na kisim nupela laip, em i mas bilip tru long Jisas (\xt Wkp 12, 15, Mk 7.20-23, Jo 15.3, Rev 21.27\xt*).
+\p Long taim bilong Olpela Testamen, God i makim sampela samting i klin long ai bilong em na sampela samting i doti long ai bilong em. Ol dispela samting God i tok, i klin hia, ol manmeri i ken kaikai na em ol gutpela samting bilong mekim ofa long God. Na ol samting God i tok ol i doti, ol i no ken kaikai na ol i no ken yusim long mekim ofa long God.
+\p Ol kain animal olsem snek na palai ol i doti long ai bilong God. Sampela kain animal na pisin ol i save kaikai narapela kain animal na pisin, dispela kain em i no klin long ai bilong God. Na planti binatang na sampela kain pis ol tu ol i no klin. Sapos ol Juda i kaikaim ol dispela animal i no klin long ai bilong God, orait, long ai bilong God ol i wokim pasin nogut na ol tu i no klin.
+\p Long ai bilong God, pik i no klin na ol Juda ol i save abrusim ol pik na ol i no kaikai. Sapos wanpela Juda i lukautim banis pik, orait, dispela man i rabisman tru na ol i no laikim dispela man. Ol tisa bilong lo i tok sapos man i holim pik, dispela man bai no klin long ai bilong God.
+\p Taim Jisas i kamap, em i senisim ol dispela tingting na ol dispela lo na em i tok, olgeta samting i klin long ai bilong God, ol man i ken kaikai na ol i no inap kamap doti long ai bilong God. (\xt Jen 7.2, Wkp 11, Mk 7.18-19, Ap 10.10-16\xt*).
+\p Na tu, taim ol man i save tatsim samting we i no klin, orait dispela man tu i no klin nau. Tasol long Jisas, taim em i tatsim wanpela man o meri i no klin, ol dispela man o meri i kamap klin gen. \fig Long Olpela Testamen, ol pik na sampela arapela abus i no klin long ai bilong God|src="LB000173HTJL.tif" size="span" loc="p" ref="85.1"\fig*
+\p \k konilian\k*
+\v 325
+\hp \zge carnelian\zge*; G:σάρδιον; H:שֹׁהַם; P:P9; CAT:realia; (\xt Rev 4.3, 21.20\xt*).
+\zstat C
+\p Dispela em i wanpela kain ston. Em i naispela tru na ol man i save laikim tumas. Tasol em i gat bikpela pe tru long en. Lukim \w ston i gat bikpela pe.\w*
+\p \k kontrak\k*
+\v 377
+\hp \zge covenant\zge*; G:διαθήκη; H:בְּרִית; P:P6; CAT:rituals; Olpela Kontrak: (\xt Jen 17.10-11, Lk 1.72, Ap 3.25, 7.8, Ga 3.17, Hi 9\xt*) Nupela Kontrak: (\xt Mt 26.28, Mk 14.24, Lk 22.20, Ro 11.27, 1Ko 11.25, 2Ko 3.14, Hi 7.22, 8.6-13, 9.15, 10.16, 29, 12.24, 13.20\xt*)
+\zstat B
+\p \fq Kontrak\fq* em tok promis God i mekim wantaim ol manmeri bilong em. Dispela kontrak i makim olsem em bai stap God bilong ol, na ol bai stap lain bilong em (\xt Ap 3.25\xt*). Em i no save lusim kontrak bilong em, tasol em i tingim na i soim sori long ol manmeri bilong em (\xt Lk 1.72\xt*).
+\p Long \fqa Olpela Kontrak\fqa* o \fqa Olpela Testamen\fqa*, God i mekim kontrak wantaim Abraham na ol lain bilong em, na bihain em i givim lo long ol bilong soim pasin ol i mas bihainim (\xt Ap 7.8\xt*; \xt Ga 3.17\xt*). Mak bilong dispela kontrak em olsem: God i tok long ol i mas \w katim skin\w* bilong ol man bilong soim olsem ol i stap lain bilong em (\xt Jen 17.10-11\xt*). Buk Hibru i tok planti long dispela kontrak na wok bilong \w ofa\w* insait long en (\xt Hi 9\xt*).
+\p Long \fqa Nupela Kontrak\fqa* o \fqa Nupela Testamen\fqa*, Jisas Krais i tok long nupela kontrak long blut bilong em (\xt Mt 26.28\xt*; \xt Lk 22.20\xt*). Dispela nupela kontrak i gutpela moa na i winim olpela kontrak (\xt Hi 8.6-13\xt*), long wanem, God i fogivim sin bilong ol manmeri na i raitim lo bilong God insait long bel bilong manmeri (\xt Hi 10.16\xt*). Jisas yet em i namelman bilong dispela nupela kontrak (\xt Hi 9.15\xt*; \xt 12.24\xt*), na long blut bilong em dispela kontrak i stap strong oltaim oltaim (\xt Hi 13.20\xt*).
+\p \k Kora\k*
+\v 374
+\hp \zge Korah\zge*; G:Κόρε; H:קֹרַח; P:P8; CAT:name; (\xt Nam 16.1-35, Ju 11\xt*).
+\zstat C
+\p Kora em man we i bin pulim ol lain long bihainim em na ol i agensim Moses tupela Aron. God i belhat nogut tru long dispela na em i mekim graun i op na Kora i pundaun insait long dispela hul na graun i karamapim em wantaim ol lain i bihainim em.
+\p \k korban\k*
+\v 375
+\hp \zge corban\zge*; G:κορβᾶν; P:P9; CAT:attributes; (\xt Mk 7.11-12\xt*).
+\zstat B
+\p \fq Korban\fq* em i wanpela kain pasin we ol manmeri i save mekim long tokim papamama bilong ol olsem mani bilong ol hia, ol i putim i stap long mekim ofa long wok bilong God. Dispela i save mekim ol i pilim fri long larim mani bilong ol i stap na ol i no hatwok long lukautim papamama. Tasol tru tru, ol i no givim i go long wok bilong God, ol i holim mani i stap bai ol i yusim long laik bilong ol yet.
+\p \k kot\k*
+\v 70
+\hp \zge Sanhedrin\zge*; G:συνέδριον; P:P5; CAT:name; (\xt Mt 26.59, Mk 14.55, 15.1, Lk 22.66, Jo 11.47, Ap 4.15, 5.21, 6.12, 22.30, 23.1, 24.20\xt*).
+\zstat C
+\p Ol \w tisa bilong lo\w* i gat tupela wok. Ol i mas skulim ol manmeri long lo, na ol i mas harim kot long ol lain husait i brukim lo. Long olgeta taun, i gat kot bilong lo ol i kolim \tl Sanedrin\tl* o \fqa Kaunsil\fqa*. Insait long dispela Sanedrin o Kaunsil em ol bikpela man insait long lotu, ol lapun, na ol saveman bilong Baibel tasol inap long stap insait long dispela kaunsil. Dispela Kaunsil i gat mak inap long 23-pela man long stap insait long kaunsil. Ol Rom i bin larim ol Juda i bosim ol yet long lo bilong ol Juda long dispela kain kot.
+\p Long Jerusalem, namba bilong ol lain i stap insait long kaunsil em i bikpela namba. Em i gat 70-pela memba, na ol i stap bilong harim olgeta bikpela kot. Ol i save kolim \fq Bikpela Sanedrin\fq*.
+\p Ol pris, tisa bilong lo, na ol hetman i save stap long dispela kaunsil. Hetpris long Jerusalem em i go pas long dispela Kaunsil bilong ol.
+\p Dispela kaunsil i save painim ol man husait i tok bilas long God long kotim ol. Tasol gavman bilong Rom i tambuim dispela kot long kilim ol man i dai (\xt Mt 5.22, 10.17, Mk 13.9, 14.55, Ap 4.5,15 \xt*). \fig Ol Juda i gat bikpela kot long Jerusalem|src="LB000166HTJL.tif" size="span" loc="p" ref="72.1"\fig*
+\p Sapos dispela Kaunsil i kotim wanpela man na ol i tok bai em i mas dai long bikpela rong bilong en, orait, bai ol i bringim dispela man long nambawan gavman long bikpela haus ol i save kolim \tl Praetorium.\tl* Em ples bilong nambawan kiap bilong Rom na ol soldia bilong Rom i save stap long en.
+\p Ol i save kibung long haus gavman na kiap bilong \w Rom\w* i save skelim ol toktok bilong ol na bihain em i save tokaut long dispela man ol i kotim i olsem wanem. Sampela taim em bai tok long man i mas i dai na sampela taim em bai kalabusim ol tasol (\xt Mt 27.27, Mk 15.16, Jo 18.28,33\xt*).
+\p Long biktaun Rom, ol soldia i save lukautim empera, ol tu i gat dispela nem \tl Praetorium\tl* na ol i no save yusim dispela tok \tl Praetorium\tl* bilong makim wanpela haus. (\xt Fl 1.13\xt*). \fig Praetorium em i bikpela haus gavman long Jerusalem, em i ples bilong harim kot na tu, ol soldia bilong Rom ol i save sindaun long en|src="LB000167HTJL.tif" size="span" loc="p" ref="73.1"\fig*
+\p \k Krais\k*
+\v 380
+\hp \zge Christ\zge*; G:Χριστός; P:P1; CAT:name; (\xt Mt 1.18, 16.16, 22.42, 26.63, Mk 8.29, Lk 2.11, 4.41, 23.35, 24.46, Jo 1.17\xt*).
+\zstat C
+\p Dispela tok \fq Krais\fq* i kam long tok Grik na mining bilong en em i olsem, <<man ol i bin kapsaitim wel long em long makim em long mekim wanpela wok.>> Long tokples \w Hibru\w* na tokples Aram, em ol tokples bilong ol Israel hia, \tl Mesaia\tl* i gat dispela wankain mining.
+\p Bipo tru, sapos God bai makim wanpela man long em bai kamap king bilong ol \w Israel\w*, wanpela pris bai kapsaitim wel long dispela man olsem wanpela piksa o sain olsem, God i bin makim em long kamap king (\xt Lk 23.2\xt*).
+\p Olsem na, taim God i bin promis long em bai salim wanpela man bilong kisim bek ol manmeri bilong God na mekim \w kingdom bilong God\w* i kamap, God i bin kolim dispela man \tl Mesaia\tl* o \tl Krais\tl*. Na dispela i soim olsem God yet i makim em na salim em i kam.
+\p Ol Kristen i save olsem Jisas tasol em dispela man. Olsem na ol i save i kolim Jisas olsem, Jisas Krais (\xt Jo 1.41, 4.25\xt*).
+\p \k krep\k*
+\v 885
+\hp \zge grapes\zge*; P:P9; CAT:flora;
+\zstat C
+\p Dispela em wanpela kain prut ol i kolim \fq krep\fq*. Dispela prut em ol Juda i save memeim na kisim wara bilong em bilong wokim \w wain\w*.
+\p \k Kristen\k*
+\v 390
+\hp \zge Christian\zge*; G:Χριστιανός; P:P1; CAT:attributes; (\xt Ap 11.26, 26.28, 1Pi 4.16\xt*).
+\zstat C
+\p Mining bilong dispela tok em <<man o meri bilong bihainim Jisas Krais.>> Long taim Jisas i bin i stap na ol disaipel i bihainim em, ol lain i no bin kolim ol long dispela nem \fq Kristen\fq*. Bihain, taim ol disaipel bilong Jisas i bin go stap long Antiok, dispela ol i bin namba wan lain long ol arapela lain i kolim ol olsem \fq Kristen\fq* (\xt Ap 11.26\xt*).
+\p \k kumin\k*
+\v 395
+\hp \zge cummin\zge*; G:κύμινον; H:כַּמֹּן; P:P9; CAT:flora; (\xt Mt 23.23\xt*).
+\zstat C
+\p Dispela kumin hia, em pikinini bilong wanpela kain diwai. Ol Juda i save yusim antap long ol kaikai bilong ol na tu ol i save yusim olsem marasin. Ol i save yusim planti bikos long teist bilong em. Em i wok kain olsem lombo.
+\p \k lain i no Juda\k*
+\v 400
+\hp \zge gentiles\zge*; G:ἔθνος; P:P4; CAT:beings; (\xt Mt 12.18,21, 20.19,25, Mk 13.10, Lk 2.32, Ap 4.25,27, Ro 1.5,13, 2.24, Ga 2.2,8-15, Ef 3.6, 4.17\xt*).
+\zstat C
+\p Dispela \tl gentiles\tl* em nem ol \w Juda\w* i save kolim olgeta lain i no kam long lain blut bilong ol Juda. Ol Juda i amamas long God i bin makim ol olsem ol lain bilong em na dispela i mekim planti bilong ol Juda i ting ol i winim tru ol arapela lain hia. Long dispela as, ol Juda i no save laikim ol lain i no Juda. Na dispela pasin i mekim na dispela tok \tl gentiles\tl* i gat mining olsem "ol lain i no save long God," na sotpela tok bilong dispela em, "ol haiden."
+\p \k laion\k*
+\v 410
+\hp \zge lion\zge*; G:λέων; P:P5; CAT:animals; (\xt Sam 7.2, 22.21, 35.7\xt*).
+\zstat C
+\p Laion, em i kain olsem wanpela traipela wel pusi. Em i traipela na strongpela animal tru. Em i save raun raun long olgeta kain kain hap na painim kain kain samting long em i ken kilim na kaikai. Em i ken kilim wanem kain abus i kamap long ai bilong en na em inap long kilim man tu. \fig Laion i traipela na strongpela wel pusi|src="lion.png" size="span" loc="paw" ref="1.0"\fig*
+\p \k las de\k*
+\v 420
+\hp \zge last day\zge*; G:τῇ ἐσχάτῃ ἡμέρᾳ; P:P2; CAT:misc;
+\zstat C
+\p Dispela tok i gat tripela mining bilong en.
+\pi1 1. Em wanpela de we Jisas bai kam bek na olgeta manmeri bai lukim em. Em \fq las de\fq* long dispela trenslesen (\xt Jo 6.39\xt*).
+\pi1 2. Nambatu mining bilong dispela tok, em taim bai God i mekim dispela graun na olgeta samting bai i pinis olgeta. Insait long trenslesen, bai yu lukim dispela tok, \fq taim dispela graun i laik pinis\fq* (\xt 1Jo 2.18\xt*).
+\pi1 3. Na nambatri mining bilong dispela tok, em taim yumi ritim long Baibel we i gat dispela tok \fq ol las de\fq*, em i sut long dispela taim we: stat long taim Jisas i kamap long graun i go inap long taim Jisas Krais bai kam bek gen long dispela graun (\xt Ap 2.17, 2Ti 3.1, 2Pi 3.3\xt*).
+\p \k lepro\k*
+\v 430
+\hp \zge leprosy\zge*; G:λέπρα; P:P4; CAT:attributes; (\xt Mt 8.3, Mk 1.42, Lk 5.12-13, 7.22\xt*).
+\zstat C
+\p Dispela sik lepro hia, em wanpela kain sik we i save katim katim skin bilong man kain olsem ol sua. Tasol dispela sik em ol Juda i save lukim ol samting nogut na i save mekim ol man i doti long ai bilong God. Olsem na sapos man i gat dispela sik, em bai i no inap long bung wantaim ol arapela lain hia na mekim ol samting ol gutpela lain i save mekim. Olgeta lain i save lukim em olsem em i doti tru long ai bilong God.
+\p Sapos i gat rot na em i mekim em yet i kamap \w klin\w* gen, em i mas go na lukim pris bilong tempel long givim tok orait olsem em i klin pinis na em inap long stap wantaim olgeta arapela lain na mekim samting olgeta arapela lain i mekim. Taim Jisas i bin stap long graun na i mekim wok bilong en, em i oraitim planti ol manmeri husait bin gat dispela sik leprosi.\fig Jisas i mekim orait man i gat sik lepro.|src="oi00029.png" size="span" loc="paw" ref="86.1"\fig*
+\p \k Livai\k*
+\v 440 n
+\hp \zge Levi, levite\zge*; G:Λευί, Λευίτης; H:לֵוִי; P:P1; CAT:name;
+\zstat C
+\p Dispela em nem bilong wanpela bilong ol 12-pela pikinini man bilong Jekop (\xt Jen 29.34, Hi 7.9, Rev 7.7\xt*). God i bin makim ol pikinini tumbuna bilong dispela man \fq Livai\fq* long mekim wok long lukautim \w tempel\w* na wok insait long en (\xt Eks 28.1-4, 32.26-29\xt*).
+\p Na tu em nem bilong wanpela bilong ol 12-pela disaipel bilong Jisas (\xt Lk 5.27\xt*). Narapela nem bilong en em Matyu (\xt Mt 9.9\xt*). Pastaim em i bin mekim wok bilong ol \w Rom\w* long kisim takis bilong ol manmeri. Narapela tupela man \fq Livai\fq* i stap olsem tumbuna papa bilong Jisas (\xt Lk 3.24,29\xt*). \fig Ol Livai i save mekim wok insait long tempel|src="HK00275B.TIF" size="span" loc="p" ref="1.0"\fig*
+\p \k Lo\k*
+\v 445
+\hp \zge law\zge*; G:νόμος; P:P4; CAT:misc; (\xt Lk 2.22, Jo 1.17,45, 7.19\xt*).
+\zstat C
+\p Lo bilong God i stap long ol nambawan buk bilong Baibel. Em Jenesis, Eksodas, Wok Pris, Namba, na Lo. Ol dispela buk i gat ol lo God i givim Moses long em bai givim long ol lain bilong God, na tu i gat ol stori bilong ol histori bilong Israel na long sampela arapela lain tu.
+\p \k Lot\k*
+\v 447
+\hp \zge Lot\zge*; G:Λώτ; H:לוֹט; P:P7; CAT:name; (\xt Jen 11.31, 12.4, 13.8, 19.1-36, Lk 17.28-32, 2Pi 2.7\xt*).
+\zstat C
+\p Lot em pikinini man bilong Haran. Haran em liklik brata bilong Abraham na Lot em i liklik kandre man bilong Abraham. Lukim tok i stap long \w Abraham\w*.
+\p Taim Abraham i go long painim nupela kantri God i bin promis long givim long em hia, liklik kandre man bilong em Lot hia, i bin go wantaim em. Na taim ol i go kamap pinis long dispela kantri, Lot em i go na stap long taun \w Sodom\w*. Ol lain bilong taun Sodom hia, i wok long mekim planti kain pasin i nogut tru long ai bilong God. Long dispela pasin nogut tru hia, God i tok long bagarapim dispela taun. God i salim \w ensel\w* bilong em i go long ensel long toksave long Lot long lusim dispela taun. Olsem na Lot na famili bilong em i lusim dispela hap na bihain God i bagarapim dispela taun na kukim long paia. Ensel i bin toktok gut long Lot long em i no ken lukluk i go bek taim ol i lusim dispela taun. Tasol meri bilong Lot i bin lukluk i go bek na wantu tasol, em i kamap traipela hip sol i stap long dispela hap (\xt Jen 19.26\xt*).
+\p \k mak bilong soim namba na strong bilong God\k*
+\v 450
+\hp \zge sign\zge*; G:σημεῖον; P:P6; CAT:rituals; (\xt Mt 12.38-39, Mk 8.11-12, Lk 2.12, 21.11,15, Jo 2.23, 3.2, 4.48,54, 6.14,30, 7.31, 9.16, Ap 5.12\xt*).
+\zstat C
+\p Jisas i wokim planti samting olsem mak bilong soim namba na strong bilong God. Planti taim em i mekim orait ol sikman na tu, em i bin kirapim ol daiman long matmat. Lukim tu \w mirakel \w*.
+\p \k Man Bilong Karim Toktok\k*
+\v 460
+\hp \zge helper, encourager, advocate\zge*; G:παράκλητος; P:P1; CAT:beings; (\xt Jo 14.16,26, 16.7, 1Jo 2.1\xt*).
+\zstat C
+\p Dispela tok long tok \w Grik\w* i gat tupela mining bilong em. Wanpela mining bilong em i kamap long (\xt 1Jo 2.1\xt*). Mining bilong em i olsem, \fq man bilong karim toktok\fq*. Em i kain olsem, ol lain i kotim wanpela man, na dispela man i gat narapela man bilong karim tok bilong em long taim bilong kot. Dispela i sut stret long Jisas yet i karim tok bilong yumi long Papa God.
+\p Narapela mining bilong em i kamap long \bk Gutnius Jon i raitim\bk*, we Jisas i kolim \w Holi Spirit\w* olsem \fqa Man Bilong Helpim\fqa* (\xt Jo 14.16\xt*).
+\p \k man bilong kisim bek yumi\k*
+\v 465
+\hp \zge Saviour\zge*; G:σωτήρ; P:P2; CAT:MI; (\xt Lk 2.11, Jo 4.42, Ap 5.31, Ef 5.23, 1Ti 1.1\xt*).
+\zstat C
+\p Lukim \w kisim bek\w*.
+\p \k man bilong kisim olgeta samting bilong papa\k*
+\v 468
+\hp \zge heir, inherit, inheritance, fellow-heir\zge*; G:κληρονόμος, κληρονομέω, κληρονομία, συγκληρονόμος; P:P2; CAT:beings; (\xt Mk 12.7, Ro 8.17, Ga 3.29, 4.1,7,30, 5.21, 1Pi 1.4, 3.7,9, Hi 1.2, Je 2.5\xt*).
+\zstat C
+\p Dispela tok i sut long taim we olgeta samting bilong ol papa bai ol papa bai makim wanem samting bai i bilong wanem pikinini. Na bihain taim papa i dai, ol pikinini i ken kamap papa bilong wanem samting we papa yet i bin makim bilong ol long papa long en. Ol pikinini nau bai papa long ol samting we ol papa bilong ol i bin makim long ol bai i papa long en.
+\p Na taim papa i givim ol samting long ol pikinini man bilong em, em bai givim dabel long nambawan pikinini man bilong em (\xt Lo 21.17\xt*). Dispela namba bilong ol nambawan pikinini man, \w Iso\w* i bin givim long liklik brata bilong em \w Jekop\w* (\xt Jen 25.31\xt*).
+\p Kain olsem tok bilong God i skulim yumi ol manmeri bilong em long dispela kain samting i bin kamap long laip na pasin bilong \w Abraham\w*.
+\p God i bin wokim \w kontrak\w* wantaim Abraham na ol lain bilong em olsem, ol i mas bihainim em olsem God bilong ol. Na namba tu em i mekim promis long Abraham olsem em bai givim bikpela hap graun bilong Kenan long ol pikinini tumbuna bilong \w Abraham\w*. Dispela graun i bikpela na i gutpela tru long ol tumbuna bilong Abraham long kisim. Ol tumbuna bilong Abraham hia, em ol lain God i bin makim ol long stap olsem ol lain bilong em yet (\xt Jen 12.7, 50.24, Lo 34.4, Jos 1.2,6, Jer 7.1-7\xt*).
+\p Na long Nupela Testamen, dispela kain promis i kamap gen long ol lain i bilip long Jisas hia bai i kamap pikinini bilong God stret. God i no promis long givim hap graun long ol long dispela graun, tasol em i bungim planti gutpela gutpela samting i stap long heven we em i makim bilong ol pinis (\xt Ga 4.1-7\xt*).
+\p \k man bilong kisim takis\k*
+\v 470
+\hp \zge tax collector\zge*; G:τελώνης, ἀρχιτελώνης; P:P4; CAT:beings; (\xt Mt 17.24-27, Mk 2.14, Lk 2.1-5, 18.10-13\xt*).
+\zstat C
+\p Taim Jisas i stap long graun, ol \w Juda\w* i stap aninit long \w Rom\w* na ol i save givim takis i go long gavman bilong Rom. Long wan wan taun, i gat man bilong kisim takis i save sindaun long dua bilong banis bilong taun long kisim takis long ol manmeri.
+\p Mani ol i save baim takis hia, i gat wok long en, long wokim rot na tu givim pe long ol soldia bilong Rom.
+\p Man bilong kisim takis hia, ol Juda i tok olsem ol i man bilong giaman tru na man bilong stilim mani bilong ol lain. Taim Gavman i tok long kisim takis long K10.00 ol bai i giaman na tok olsem gavman i tok long K20.00. Ol i save mekim olsem long wanem, narapela K10.00 bai i stap olsem mani bilong poket bilong ol yet.
+\p Matyu, dispela wanpela disaipel bilong Jisas hia, bipo em i bin stap olsem hetman bilong ol man bilong kisim takis (\xt Mt 9.9\xt*). \fig Jisas na ol disaipel i lusim haus takis na wokabaut i kam|src="oi00031.png" size="span" loc="paw" ref="33.1"\fig*
+\p \k mana\k*
+\v 475
+\hp \zge manna\zge*; G:μάννα; H:מָן; P:P6; CAT:flora; (\xt Eks 16.13-36, Jo 6.31,49, Hi 9.4, Rev 2.17\xt*).
+\zstat C
+\p Taim ol \w Israel\w* i lusim pinis kantri Isip na stap raun raun long hap we ol man i no save stap long en hia, ol i bin raun raun i go inap 40-pela yia. Dispela longpela taim ol i wok long raun raun hia, God i bin mekim gut tru long ol na i lukautim ol na givim kaikai long ol. Dispela kaikai em i givim long ol, ol i kolim \fq mana\fq*. Long wan wan de em i save salim dispela mana long heven i kamdaun long graun na ol i save kisim na kaikai.
+\p \k mani silva\k*
+\v 480
+\hp \zge money, denarius\zge*; G:δηνάριον; P:P5; CAT:realia; (\xt Mt 18.28, 20.9, 22.19, Mk 12.15, Jo 2.13\xt*).
+\zstat C
+\p Long taim bilong Jisas, i gat tripela kain mani.
+\pi1 1. \fq Denarius\fq* em i mani bilong \w Rom\w*. Sapos wanpela man i stat wok long moning tru i go inap long apinun tru, long dispela wanpela de, em bai i kisim wanpela \fq denarius\fq*. Sapos man i laik baim wanpela sipsip, em i inap baim long dispela kain mani. Ol Juda i save baim takis i go long gavman bilong Rom long dispela \fq denarius\fq*.
+\pi1 2. Ol \w Juda\w* i save baim na em dispela takis bilong \w tempel\w*. Tasol ol i no save baim dispela takis bilong bikpela haus lotu long dispela mani bilong Rom. Ol i save baim long mani bilong \w Grik\w*.
+\pi1 3. Taim ol Juda i laik baim sampela animal samting long ofa i go long God insait long tempel, pastaim ol i mas senisim mani bilong Rom i go long mani bilong tempel. Ol man i bilong senisim mani olsem i save sasim bikpela mani moa yet long mekim olsem (\xt Jo 2.14\xt*). \fig Mani silva bilong ol Rom|src="oi00417.png" size="span" loc="p" ref="92.1"\fig*
+\p \k manmeri bilong God\k*
+\v 570
+\hp \zge saints, holy ones\zge*; G:ἅγιοι; P:P3; CAT:beings; (\xt Ap 9.13,32,41, 26.10, Ef 1.1,4,15,18, Kl 1.4,12,22,26\xt*).
+\zstat C
+\p Dispela tok ol \fq manmeri bilong God\fq* i kam long dispela tok ol i save tok long tok Inglis olsem \fqa holy ones\fqa* o \fqa saints\fqa*. Mining bilong dispela tok em, ol lain i save laikim tru God na i save bihainim tok bilong em.
+\p \k Maria\k*
+\v 485
+\hp \zge Mary\zge*; G:Μαρία; P:P4; CAT:name;
+\zstat C
+\p I gat planti meri liklik Nupela Testamen i gat stori bilong ol:
+\pi1 1. Wanpela bilong ol em: Maria, \zsub mama bilong Jisas\zsub*
+\pi1 2. Narapela bilong ol em: \zsub Maria bilong Magdala\zsub*. Dispela meri bipo Jisas i bin rausim 7-pela spirit nogut long em. Na bihain long dispela, em i kamap wanpela bilong ol lain i save bihainim Jisas (\xt Mt 27.55-56, Mk 16.9, Lk 8.2, Jo 20.1-2,11-18\xt*) .
+\pi1 3. Narapela bilong ol dispela meri em: \zsub Maria bilong Betani\zsub*. Na dispela meri em susa bilong Marta tupela Lasarus. Dispela Maria i bin sindaun long lek bilong Jisas na harim ol skul tok bilong em (\xt Lk 10.38-42, Jo 11.1-5, 12.1-7\xt*).
+\pi1 4. Narapela meri gen em: \zsub Maria, mama bilong Jems tupela Josep\zsub*. Dispela Maria, em i mas sem meri husait i meri bilong Kliopas hia. Tasol dispela i no klia tumas (\xt Mt 27.56, Mk 15.40, 16.1, Lk 24.10\xt*).
+\pi1 5. Narapela meri gen em: \zsub Maria mama bilong Jon Mak\zsub*. Dispela meri i bin gat wanpela haus i stap long Jerusalem we ol disaipel bilong Jisas i save go na bung long en (\xt Ap 12.12\xt*).
+\p \k marimari\k*
+\v 486
+\hp \zge grace\zge* G:χάρις; P:P5;
+\zstat N
+\p
+\p \k mastet\k*
+\v 490
+\hp \zge mustard\zge*; G:σίναπι; P:P2; CAT:flora; (\xt Mt 13.31-32, Mk 4.30-32, Lk 13.19, 17.6\xt*).
+\zstat C
+\p Mastet em wanpela liklik diwai kain olsem lompo. Ol sid bilong em i liklik tru. Tasol dispela ol diwai i save gro na bikpela bilong em i winim olgeta diwai kaikai long gaden.\fig Mastet em i bikpela diwai liklik|src="GT00048.tif" size="span" loc="paw" ref="1.0"\fig*
+\p Dispela diwai hia, ol Israel i save planim bilong kisim ol sid bilong en bilong wokim sanda. \fig Sid bilong em i liklik tumas|src="GT00047.tif" size="span" loc="paw" ref="1.0"\fig*
+\p \k matmat\k*
+\v 500
+\hp \zge tomb, grave\zge*; G:μνημεῖον, τάφος; P:P4; CAT:realia; (\xt Mt 27.60, Mk 6.29, Jo 19.41-42\xt*).
+\zstat C
+\p Ol Juda i save planim ol daiman long hul ol i bin katim long sait bilong ol maunten. Ol i no save wokim bokis bilong putim ol daiman insait. Ol i save pasim bodi long longpela laplap tasol na ol i putim bodi insait long hul na ol i no save karamapim dispela hul long graun, ol i save pasim maus bilong dispela hul long wanpela bikpela ston. \fig Ol Juda i save planim ol daiman long hul insait long maunten|src="LB000140HTJL.tif" size="span" loc="p" ref="40.1"\fig*
+\p \k mekim yumi i kamap pikinini bilong God\k*
+\v 503
+\hp \zge adoption, sonship\zge*; G:υἱοθεσία; P:P7; CAT:misc; (\xt Ro 8.15,23, 9.4, Ga 4.5, Ef 1.5\xt*).
+\zstat N
+\p Dispela em pasin God i mekim long kisim ol manmeri i bilip long Krais na makim ol olsem pikinini bilong em stret. Dispela i no tok long pikinini bilong blut o bodi. Nogat. Em i tok long nupela pasin God i mekim long yumi. Em i givim yumi nem, ples, na rait bilong stap olsem pikinini bilong em (\xt Ga 4.5\xt*; \xt Ef 1.5\xt*).
+\p Long taim bilong \w Rom\w*, sapos wanpela man i mekim wanpela i kamap pikinini bilong em, dispela pikinini i kisim nem bilong papa na olgeta rait we ol arapela pikinini bilong em i gat. Wankain tasol, taim God i mekim yumi kamap pikinini bilong em, yumi kisim rait bilong stap lain bilong em tru. \w Holi Spirit\w* i stap insait long yumi bilong soim olsem yumi stap pikinini bilong God, na Holi Spirit i helpim yumi long singaut long em olsem Papa bilong yumi (\xt Ro 8.15\xt*).
+\p Dispela pasin bilong kamap pikinini bilong God bai kamap ples klia tru bihain, taim God i mekim bodi bilong yumi i kamap nupela olgeta (\xt Ro 8.23\xt*).
+\p Long taim bilong Israel bipo, ol i bin kisim wanpela kain nem olsem pikinini bilong God (\xt Ro 9.4\xt*), tasol long \w Krais\w* God i opim rot bilong olgeta manmeri i bilip long kamap pikinini bilong em tru tru.
+\p \k Melkisedek\k*
+\v 505
+\hp \zge Melchizedek\zge*; G:Μελχισέδεκ; H:מַלְכִּי־צֶדֶק; P:P5; CAT:name; (\xt Hi 5.6-10, 6.20, 7.1-17\xt*).
+\zstat C
+\p Olgeta samting mipela i save long toktok bilong Melkisedek em ol tok ol i raitim i stap long buk \w Hibru\w* na long (\xt Jen 14.17-20\xt*). Long dispela hap, ol i raitim tok bilong em olsem em i wanpela \w pris\w* we God yet i bin makim.
+\p Wanpela taim ol birua i kam na holimpas liklik kandre man bilong \w Abraham\w*, nem bilong em Lot, wantaim meri na ol pikinini bilong em wantaim olgeta samting bilong em. Bikpela kandre man bilong em Abraham hia i go na pait wantaim ol birua na em i winim ol. Em i kisim bek Lot wantaim famili na olgeta samting bilong ol. Na taim Abraham i wok long kam bek hia, Melkisedek i bungim em long rot na em i givim bret na wain long Abraham na em i beten wantaim em long God i ken wok yet long blesim Abraham. Na Abraham i givim wanpela hap bilong 10-pela hap bilong olgeta samting em i kisim i kam bek wantaim em bihain long pait hia. Planti yia bihain, ol \w Israel\w* i wok long mekim olsem, ol i save givim wanpela hap bilong 10-pela hap bilong olgeta gaden kaikai na mani tu.
+\pi1 Olgeta pris bilong ol Israel hia, ol i save makim ol i kam aut long lain grup bilong \w Livai\w*. Tasol taim Melkisedek i bungim Abraham hia, ol i no karim Livai yet. Pikinini man bilong Abraham nem bilong em Aisak hia, bai i stap olsem tumbuna man bilong Livai. Tasol Aisak tu ol i no bin karim em yet. Olsem na taim Abraham i bin givim wanpela hap bilong olgeta 10-pela hap bilong olgeta samting i go long Melkisedek hia, em i kain olsem olgeta pris bilong lain Livai i givim dispela samting long em. Dispela em long wanem, bihain taim ol i karim ol, olgeta bai i stap tumbuna bilong Abraham.
+\pi \xt Hi 7.3\xt* i tok Melkisedek i no gat papamama. As bilong en i olsem. Buk Baibel i no gat wanpela tok long papa na mama bilong en, na long wanem taim mama i bin karim em, na long wanem taim em i bin i dai. Olsem na man i raitim \bk Buk Hibru\bk*, em i tok olsem, Melkisedek em i olsem piksa bilong Jisas i stap pris oltaim oltaim.
+\p \k Mesaia\k*
+\v 510
+\hp \zge Messiah\zge*; G:Μεσσίαs; P:P1; CAT:MI;
+\zstat C
+\p Lukim \w Krais\w*.
+\p \k Mi Yet\k*
+\v 520
+\hp \zge I Am\zge*; G:ἐγώ‎ εἰμί‎; P:P5; CAT:misc;
+\zstat C
+\p Long Olpela Testamen, God i tokim Moses long nem bilong en long (\xt Eks 3.14\xt*), na ol i raitim nem bilong God long fopela leta long ABC bilong ol long tok \w Hibru\w* olsem \wh יהוה\wh* na ol dispela leta i kain olsem \nd YHWH\nd*.
+\p Na sapos ol i kolim stret nem bilong em, ol bai kolim olsem \tl Yawe\tl* Tasol ol i no laik kolim nem bilong God. Olsem na taim ol i ritim dispela nem, ol i no tok \tl Yawe\tl*, ol i tok \tl Adonai\tl*. Na \tl Adonai\tl* i gat mining olsem \fqa Bikpela\fqa*. Em pasin bilong ol Juda long mekim olsem long dispela nem. Ol i no laik kolim nem bilong God long wanem, Buk bilong God i tok, <<Yupela i no ken kolim nating nem bilong God, Bikpela bilong yupela>> (\xt Eks 20.7\xt*). Ol i ting, sapos ol i no kolim nem bilong God, ol bai i no inap kolim <<nating>> nem bilong God. Em i olsem lo i stap, na ol i wokim banis raunim dispela lo long ol i no inap brukim dispela lo (\xt Eks 20.7\xt*).
+\p Yumi no save mekim dispela kain pasin, tasol long sampela English Baibel ol i raitim olsem \nd Lord\nd* long kain bikpela leta olsem. Long dispela translesen ol i raitim olsem, \nd Bikpela\nd* long planti hap long Olpela Testamen.
+\p Dispela nem bilong God, \nd YHWH\nd*, i gat mining olsem <<Mi Yet Mi Stap Olsem.>> Na long taim bilong Nupela Testamen, Jisas i laik tok olsem em yet i God, sampela taim em i save yusim dispela tok long em yet. Na long dispela trenslesen i save kamap olsem \fq Mi Yet\fq* o \fq Mi Yet Mi Stap Olsem\fq* na i gat kapital leta olsem.
+\p \k mir\k*
+\v 525
+\hp \zge myrrh\zge*; G:σμύρνα; H:מֹר; P:P9; CAT:realia; (\xt Mt 2.11, Mk 15.23, Jo 19.39, Rev 18.13\xt*).
+\zstat C
+\p Mir em wanpela samting we i gat naispela smel bilong em na prais bilong em tu i antap tru. Ol i save rausim skin bilong wanpela kain diwai na mekim dispela samting. Ol \w Juda\w* i save yusim olsem marasin long taim ol i smelim, ol i save slip i dai olgeta na i no inap long pilim pen long skin bilong ol. Dispela samting hia, ol i save yusim tu long welim long skin bilong ol daiman na redim ol long ol bai i planim ol.
+\p \k mirakel\k*
+\v 530
+\hp \zge miracle\zge*; G:δύναμις, τέρας; P:P9; CAT:Attributes; (\xt Mk 6.2, Lk 19.37, Ap 6.8, Ga 3.5\xt*).
+\zstat C
+\p Dispela em narapela kain samting tru na ol manmeri nating i no inap long mekim dispela samting long strong na pawa bilong ol yet. Lukim tu \w mak bilong soim namba na strong bilong God\w*.
+\p \k Moses\k*
+\v 532
+\hp \zge Moses\zge*; G:Μωϋσῆς; H:מֹשֶׁה; P:P7; CAT:name;
+\zstat C
+\p Moses em i wanpela gutpela lida bilong ol \w Israel\w*. Long taim ol Israel i stap long kalabus long kantri Isip, God i makim Moses long kisim ol Israel na lusim kantri Isip na go bek long graun God yet i bin givim long ol hia. God i bung wantaim Moses wanpela narapela kain rot. Moses i lukim paia i lait long liklik bus, tasol paia i no i no kukim na bagarapim dispela liklik bus. Em i bin save olsem God i stap long dispela hap. Na bihain God i toktok long em na tokim em long kisim ol Israel i go bek long kantri bilong ol yet (\xt Eks 3.3—4.14\xt*).
+\pi1 God i yusim Moses long wokim planti gutpela gutpela samting. Taim ol soldia bilong kantri \w Isip\w* i wok long bihainim ol Israel taim ol i kamap long Retsi, God i mekim strongpela win i sakim si i go bek long tupela sait na kamap olsem wol long sait sait na rot i stap namel long ol Israel i wokabaut i go long hapsait. Na taim ol soldia bilong kantri Isip i kam na traim long i go, dispela wara i bruk i kam bek na karamapim ol na ol i dring wara na i dai nabaut (\xt Eks 14.1-31\xt*).
+\pi1 Moses em man God i bin givim lo bilong em long ol Israel i ken bihainim. Wanpela de taim ol i brukim Retsi na i go long hapsait pinis na ol i wok long wokabaut i go, ol i kamap long wanpela maunten ol i kolim Sainai na Moses wanpela i go antap long dispela maunten long beten long God. God i toktok long Moses na tokim em long ol 10-pela lo bilong em hia (\xt Eks 20.1-17\xt*). God i raitim dispela 10-pela strongpela lo bilong em hia antap long tupela hap ston; na taim Moses i kamdaun na em i lukim ol manmeri i lotu long wanpela giaman god, em i belhat nogut tru na em i tromoi dispela tupela hap ston na brukbruk olgeta. Bihain God i tokim em long kisim tupela nupela hap ston na God i raitim wankain 10-pela lo hia gen. Planti planti yia i go pinis nau, ol i bin putim ol dispela ston insait long wanpela bokis insait long rum holi insait long haus sel bilong God. Lukim \w bokis kontrak\w*.
+\pi1 Bihain long taim Moses i kamdaun gen long maunten Sainai, em i raitim olgeta lo God i bin givim em. Em i raitim dispela lo insait long ol 5-pela buk i stap pas tru long ol buk insait long Olpela Testamen. Ol i kolim dispela 5-pela buk olsem <<ol buk bilong Moses.>> Nem bilong ol dispela buk em: Buk stat o Jenesis, Kisim Bek, Wok Pris, Namba na Lo. Lukim tok i stap tu long \w lo\w*.
+\pi1 God i bin tokim Moses long em bai salim wanpela profet olsem Moses long kam na autim tok bilong God. Dispela <<\w profet\w* olsem Moses>> em Jisas yet (\xt Jo 5.46\xt*).
+\pi1 Ol Juda i save kolim Olpela Testamen olsem \fqa Moses na ol Profet (Lk 16.29).\fqa*
+\p \k nad\k*
+\v 533
+\hp \zge nard\zge*; G:νάρδος; H:נֵרְדְּ; P:P9; CAT:realia; (\xt Mk 14.3, Jo 12.3\xt*).
+\zstat C
+\p Wanpela taim, wanpela meri i karim wanpela sanda i gat naispela smel tru i kam na welim lek bilong Jisas. Dispela naispela smel sanda ol i kolim nad. Dispela sanda ol i save wokim long wanpela kain diwai ol i save kolim olsem spaiknad.
+\p \k naispela botol ol i wokim long ston\k*
+\v 17
+\hp \zge alabaster\zge*; G:ἀλάβαστρον; P:P6; CAT:realia; (\xt Lk 7.37\xt*).
+\zstat C
+\p Wanpela taim, wanpela meri i kisim naispela wel i gat naispela smel i kam long wasim lek bilong Jisas. Dispela botol ol i kisim ol ston ol i save kolim olsem alabasta na ol i wokim ol dispela kain botol.
+\p \k Naman\k*
+\v 537
+\hp \zge Naaman\zge*; G:Ναιμάν; H:נַעֲמָן; P:P8; CAT:name; (\xt 2Kin 5.1-14, Lk 4.27\xt*).
+\zstat C
+\p Dispela man Naman hia, i save stap long kantri \w Siria\w*. Em i save go pas long ol ami. Em i no man Juda. Em bikpela man na em i gat namba, tasol em i gat sik \w lepro\w* long skin bilong em. Taim em i harim tok long profet Elisa, em i go kamap long em na askim em long oraitim skin bilong em. Na \w profet\w* Elisa i tokim em long go na waswas 7-pela taim insait long wara Jodan. Naman i bihainim tok bilong profet Elisa na i mekim samting olsem em i bin tokim em na em i orait.
+\p \k nambawan ston bilong strongim banis bilong haus\k*
+\v 220
+\hp \zge cornerstone\zge*; G:ἀκρογωνιαῖος, κεφαλή γωνίας; H:אֶבֶן לְפִנָּה ,אֶבֶן פִּנָּה ,רֹ֣אשׁ פִּנָּֽה; P:P1; CAT:realia; (\xt Mt 21.42, Mk 12.10, Lk 20.17, Ap 4.11, 1Pi 2.7\xt*).
+\zstat C
+\p Dispela em i wanpela bikpela ston ol i save putim na lainim em gut long kona bilong haus, na ol arapela ston bilong haus bai pas long sait bilong en na sampela bai i sanap antap long en. Na ol dispela ston bai stap stret na haus bai stap strong. Dispela ston i mekim wok kain olsem kona pos i save mekim long ol haus bilong yumi long PNG. \fig Gutpela ston tru i mekim haus i stret na i strong tru|src="SIL-jw_corner- stone.jpg" size="span" loc="paw" ref="1.0"\fig*
+\p \k Nasaret\k*
+\v 775
+\hp \zge Nazareth\zge*; G:Ναζαρά, Ναζαρηνός, Ναζωραῖος; P:P9; CAT:place; (\xt Mt 2.23, 4.13, 21.11, Mk 1.9, Lk 1.26, 2.4,39,51, 4.16, Jo 1.45, Ap 10.38\xt*).
+\zstat C
+\p Jisas i kamap bikpela long taun Nasaret, olsem na ol Juda i save kolim ol lain i bihainim em olsem, \fq ol lain bilong Nasaret\fq* (\xt Ap 24.5\xt*). Papa na mama bilong em i bin stap long dispela hap olsem ples bilong ol inap Jisas i bikpela na krismas bilong em 30-pela.
+\p \k Noa, taim bilong Noa\k*
+\v 540
+\hp \zge Noah, the time of Noa\zge*; G:ἐν ἡμέραις Νῶε; P:P5; CAT:misc; (\xt Jen 6.5-8, 7.1-24, Lk 17.26, Hi 11.7, 1Pi 3.20, 2Pi 2.5\xt*).
+\zstat C
+\p Dispela i stori long taim bilong Noa. Bipo taim wara i no solap na karamapim dispela graun olgeta, ol manmeri i bikhet tru na i no harim Tok Bilong God na i mekim planti ol pasin nogut tru. Long dispela taim ol man na meri i marit i go kam long ol yet na wokim ol bikpela bikpela pati we ol i kaikai na dringim ol strongpela dring na ol i stap wantaim bikpela amamas.
+\p God i no amamas long dispela pasin ol i wok long mekim na em i mekim bikpela ren i pundaun inap long wara i solap na karamapim olgeta hap bilong dispela graun olgeta. Na ol manmeri na ol animal i dai nabaut insait long dispela bikpela haiwara. Tasol Noa wantaim famili bilong em na ol animal we i bin stap insait long sip hia, i bin stap laip.
+\p Long taim bilong Jisas bai kam bek long dispela graun, planti ol lain bai i les tru na i givim baksait tru long harim tok bilong God na bai ol i mekim planti pasin i nogut tru kain olsem long taim bilong Noa.
+\p \k nupela wain\k*
+\v 550
+\hp \zge new wine\zge*; G:οἶνος νέος; P:P4; CAT:realia; (\xt Mk 2.22, Lk 5.37\xt*).
+\zstat C
+\p Nupela wain i no strongpela dring olsem wain tru. Sapos ol i larim dispela nupela wain i stap longpela taim na spet i kamap pastaim orait, em i kamap strongpela dring olsem wain tru tru long ol man i ken dring. Lukim \w wain\w*. \fig Man i karim nupela wain long wainskin.|src="LB000111HTJL.tif" size="span" loc="p" ref="11.1"\fig*
+\p \k ofa\k*
+\v 555
+\hp \zge sacrifice, offering\zge*; G:προσφέρω, προσφορά; P:P5; CAT:rituals; (\xt Wkp 1.3-5, 4.27-30, 7.11-15, 22.19-21, Hi 9.26\xt*).
+\zstat A
+\p Long taim bilong Olpela Testamen, God i soim ol manmeri bilong em olsem ol i mas mekim ofa long em. I gat planti kain kain ofa. Wanpela kain ofa em bilong God i fogivim sin bilong man. Man husait i mekim sin em i mas kisim kot na lus long ai bilong God, na pe bilong sin em dai (\xt Rom 6.23\xt*).
+\p Bipo, taim Jesus Krais i no kam yet long graun, ol manmeri bilong God i save bringim wanpela animal i go long Tempel (\xt Wkp 1.3-5\xt*). Ol manmeri yet i no save kilim dispela animal taim ol i bringim i go long Tempel na ol i givim long ol pris(\xt Wkp 4.27-30\xt*). Ol animal bilong ofa em olsem bulmakau man, sipsip, o meme, na ol i mas stap gut olgeta, nogat sik na nogat mak nogut long bodi bilong ol (\xt Wkp 22.19-21\xt*).
+\p Planti taim tu ol manmeri i save mekim narapela ofa bilong tok tenkyu long God long gutpela pasin na blesing bilong em (\xt Wkp 7.11-15\xt*).
+\p Long taim bilong Nupela Testamen, God i salim Jesus i kam olsem wanpela ofa bilong rausim sin bilong yumi olgeta taim em i dai long kros. God em i mekim dispela ofa wanpela taim tasol bilong fogivim sin bilong yumi (\xt Hi 9.26\xt*).
+\rem JN 2023-03-01: this will link to multiple Biblical Terms. I could add more Greek terms or not.
+\rem needs references.
+\p \k ofa minor entry\k*
+\v 558
+\hp \zge sacrifice, offering\zge*; G:προσφέρω, προσφορά; P:P5; CAT:rituals;
+\p \w Main entry keyword\w*
+\zstat N
+\rem Minory entry to point to the main entry for "ofa." This remains at status N until it is needed in a GLO.
+\p \k Ol Bikpela De Bilong i Stap Long Ol Haus Sel\k*
+\v 560
+\hp \zge festival of the tabernacles\zge*; G:σκηνοπηγία; P:P5; CAT:festivals; (\xt Jo 7.2\xt*).
+\zstat C
+\p Dispela em i bikpela de bilong ol \w Juda\w* i save lotu na tingim taim ol i bin lusim kantri Isip na go stap long ples wesan nating na ol man i no save stap. Ol i bin raun raun long ples wesan nating hia inap long 40-pela yia pastaim na bihain ol i go insait long graun God i bin promis long givim ol.
+\p \k ol strongpela samting bilong skai\k*
+\v 208
+\hp \zge the heavenly bodies, the powers in the heavens\zge*; G:αἱ δυνάμεις τῶν οὐρανῶν; P:P7; CAT:misc; (\xt Mk 13.25, Mt 24.29, Lk 21.26\xt*).
+\zstat C
+\p Dispela tok em i sut long ol sta na kain kain lait i stap long skai, tasol em i tu long ol spirit nogut. Long dispela taim planti lain i bin ting olsem ol spirit nogut i wok long kontrolim ol sta. Toktok bilong Jisas i sut long ol tok i stap pinis long buk bilong ol profet. Lukim \xt Ais 13.10, 34.4, Jol 2.10, Amo 8.9\xt*.
+\p \k oliv\k*
+\v 575
+\hp \zge olive\zge*; G:ἐλαία, ἔλαιον; H:זַיִת; P:P5; CAT:flora; (\xt Ro 11.17,24, \xt*).
+\zstat A
+\p \fq Oliv\fq* em wanpela kain diwai i save stap planti yia na i karim liklik raunpela kaikai. Ol manmeri long hap bilong \w Israel\w* i save brukim na presim dispela kaikai bilong kisim wel. Dispela wel i bin bikpela samting tru long laip bilong ol \w Juda\w*. Ol i yusim dispela wel long kukim kaikai, long putim long skin na gras bilong het, na long planti arapela wok tu. I gat wanpela maunten klostu long Jerusalem we planti diwai oliv i stap, na nem bilong en Maunten bilong Oliv (\xt Lk 22.39\xt*).
+\p Baibel i yusim diwai oliv olsem piksa bilong lain bilong God. Aposel \w Pol\w* i tok olsem sampela han bilong dispela diwai i bin bruk lus, na God i sutim ol han bilong narapela wel diwai i go insait long en (\xt Ro 11.17\xt*). Dispela i makim olsem sampela bilong ol Juda i no bilip, tasol God i kisim ol \w ol lain i no Juda\w* na bungim ol wantaim lain bilong em. Ol i kamap wanpela wantaim dispela diwai.
+\p Pol i tok tu olsem sapos God inap sutim han bilong wel diwai i go insait long gutpela diwai, em inap moa yet long bringim bek ol han bilong dispela diwai yet long ples bilong ol (\xt Ro 11.24\xt*). Dispela piksa i soim olsem God i gat strong na sori long kisim gen ol manmeri na bungim ol insait long lain bilong em.
+\p \k Omega\k*
+\v 578
+\hp \zge Omega\zge*; G:Ὦ; P:P9; CAT:MI; (\xt Rev 1.8, 21.6, 22.13\xt*).
+\p Lukim \w Alfa\w*.
+\zstat N
+\p \k Pailat\k*
+\v 590
+\hp \zge Pilate\zge*; G:Πιλᾶτος; P:P4; CAT:name; (\xt Mk 15.1, Lk 3.1, 23.1, Jo 18.29\xt*).
+\zstat C
+\p Pailat, em man husait i bin stap olsem gavena bilong provins Judia long taim Jisas i bin stap long dispela graun. Na taim ol lidaman bilong ol \w Juda\w* i laik hangamapim Jisas long diwai kros, dispela man Pailat i bin larim ol i mekim olsem long Jisas (\xt Mk 15.15\xt*).
+\p \k paitim bros\k*
+\v 600
+\hp \zge beat his breast\zge*; G:κόπτω; P:P5; CAT:misc; (\xt Lk 18.13, 23.27\xt*).
+\zstat C
+\p Taim man i mekim wanpela samting i no stret o i no gutpela, na taim em i luksave long rong bilong em, em bai i paitim bros bilong em long soim olsem em i sori long dispela rong em i mekim.
+\p \k palang\k*
+\v 138
+\hp \zge yoke\zge*; G:ζυγός; P:P7; CAT:realia; (\xt Mt 11.29,30, Ap 15.10, Ga 5.1, 1Ti 6.1\xt*).
+\zstat C
+\p Ol i save putim bikpela palang long sol bilong tupela bulmakau long tupela bai mekim gutpela na strongpela wok bung long gaden. \fig Ol bulmakau igat plan long sol bilong ol i ken mekim gutpela na strongpela wok|src="GT00015.tif" size="span" loc="paw" ref="1.138"\fig*
+\p \k Pasova\k*
+\v 610
+\hp \zge Passover\zge*; G:πάσχα; H:פֶּסַח; P:P1; CAT:festivals; (\xt Mk 14.1,12, Lk 22.1, Jo 2.13, 6.4, 11.55, 12.1, 13.1, 18.28\xt*).
+\zstat C
+\p \fq Pasova\fq* em i nambawan taim bilong lotu bilong ol \w Israel\w*. Ol i save mekim dispela lotu wanpela taim long wan wan yia na dispela i no long wanpela de tasol. Nogat. Em i 8-pela de olgeta. Em i taim we ol Juda i save tingim bek na amamas long taim ol i bin stap kalabus long kantri \w Isip\w* na God i bin mekim gut long ol. Long dispela taim, God i bin tok long ol bai i lusim kantri Isip na go kisim nupela graun bilong ol yet. Tasol long dispela taim, king bilong Isip i strong tru na i no laik larim ol i go. Olsem na God i kilim olgeta first born pikinini man bilong ol lain bilong kantri Isip i dai.
+\p Long dispela taim, ol Israel i kilim ol yangpela sipsip na putim blut bilong ol sipsip long pos bilong olgeta dua bilong haus bilong ol. Taim ensel bilong God i kam long kilim ol first born pikinini man em i lukim blut na em i abrusim ol na go na i no kilim ol first born bilong ol Israel.\fig Ol Israel i putim blut bilong sipsip long pos bilong dua bilong haus.|src="cn02096b.tif" size="span" loc="paw" ref="1.610"\fig*
+\p Taim dispela samting i wok long go het, \w Fero\w* i tok orait long ol Israel long lusim kantri Isip na go. Long dispela as, ol Israel i kolim dispela taim Ensel bilong God i abrusim ol hia olsem, \fq Pasova\fq*.
+\p Stat long dispela taim na i kam inap nau, ol Juda i save makim dispela taim. Ol i save kilim wanpela pikinini sipsip na kukim na ol i save kaikai wantaim (\xt Eks 12.11, Mk 14.12, 1Ko 5.7\xt*). Lukim \w Bikpela Kaikai Bilong Plaua I Nogat Yis\w*. \fig Ol Israel i kilim ol yangpela sipsip na putim blut bilong ol sipsip hia long olgeta dua bilong ol|src="cn02096b.tif" size="span" loc="paw" ref="1.610"\fig*
+\p Wanpela bilong ol kaikai bilong Pasova hia, bai i kamap long taim bikpela kaikai bilong heven i kamap. Na Jisas i tok, dispela bai inapim mining bilong Pasova (\xt Lk 13.29, 14.15, Ais 25.6, Rev 19.9).
+\p \k pel\k*
+\v 534
+\hp \zge pearl\zge*; G:μαργαρίτης; P:P8; CAT:realia; (\xt Mt 7.6, 13.45-46, 1Ti 2.9, Rev 17.4, 18.12, 16, 21.21\xt*).
+\zstat C
+\p Pel hia, em i narapela kain ston na ol i save baim long bikpela mani tru. Dispela naispela bis hia, i gat naispela kala bilong em. Em waitpela bis na em i save lait taim narapela lait i sut long em. Ol i save kisim dispela naispela bis na wokim ol kain kain bilas bilong putim long nek na bilong mekim ol arapela kain kain samting tu.
+\p \k Pentikos\k*
+\v 620
+\hp \zge Pentecost\zge*; G:πεντηκοστή; P:P5; CAT:festivals; (\xt Ap 2.1, 20.16\xt*).
+\zstat C
+\p Pentikos i gat mining olsem \fqa fifti\fqa*. Ol \w Juda\w* i makim 50-pela de bihain long Pasova bilong makim taim bilong katim ol wit long gaden. Na long wankain taim, Holi Spirit tu i bin kamdaun long taim bilong Pentekos.
+\p \k Pikinini bilong Devit\k*
+\v 630
+\hp \zge Son of David\zge*; G:υἱὸς Δαυίδ; P:P1; CAT:beings; (\xt Mt 1.1,20, Mk 10.47, Lk 20.41\xt*).
+\zstat C
+\p Dispela tok em narapela wei bilong toktok long \w Krais\w*. Ol i mekim dispela tok long soim olsem Krais hia em i kamap long lain blut bilong King Devit (\xt 2Sml 7.12-16, Ais 11.1, Jer 23.5\xt*). Na sampela hap insait long dispela trenslesen ol i raitim \fq lain blut bilong King Devit\fq*.
+\p Ol Israel ol i bin wet long bikpela king, God i bin tok bai i salim i kam bilong helpim ol Juda. God i bin toktok, dispela king bai i pikinini tru bilong lain bilong Devit. God i bin givim dispela tok baimbai dispela king em bai i mekim ol Juda i kamap lain i pulim manmeri i kam long dispela king long olgeta lain bilong graun. Em i tok olsem, ol Juda bai i go pas long olgeta man long graun na dispela king bai i helpim ol rabisman na ol man i nogat planti samting.
+\p \k Pikinini bilong God\k*
+\v 125
+\hp \zge Son of God\zge*; G:υἱὸς τοῦ θεοῦ; P:P3; CAT:beings; (\xt Eks 4.22-23, Sam 2.7, Jop 38.7, Hos 11.1, Mt 2.15, 4.3, 11.27, Mk 1.1, Jo 1.34, 3.18, Ro 1.4, 1Ko 15.28, Hi 7.28\xt*).
+\zstat A
+\p Dispela em wanpela nem Baibel i yusim long sampela kain manmeri. Long Olpela Testamen, dispela nem i ken sut long \w Israel\w* (\xt Hos 11.1\xt*; \xt Eks 4.22-23\xt*). Em i tok tu long ol king bilong Israel taim ol i kisim nupela wok king (\xt Sam 2.7\xt*). Sampela taim Baibel i kolim ol ensel olsem pikinini bilong God tu (\xt Jop 38.7\xt*).
+\p Long Nupela Testamen, dispela nem i tok moa long Jisas Krais (\xt Mk 1.1\xt*; \xt Jo 1.34\xt*; \xt Ro 1.4\xt*). Jisas yet i kolim em yet olsem <<Pikinini>> tasol long wankain mining (\xt Mt 11.27\xt*; \xt Jo 3.18\xt*; \xt 1Ko 15.28\xt*; \xt Hi 7.28\xt*).
+\p Long \xt Hos 11.1\xt* Baibel i tok long Israel olsem pikinini bilong God na dispela tok i kamap gen long Jisas tu (\xt Mt 2.15\xt*).
+\p \k Pikinini bilong Man\k*
+\v 640
+\hp \zge Son of Man\zge*; G:υἱὸς τοῦ ἀνθρώπου; P:P1; CAT:beings; (\xt Dan 7.13-14, 8.17, Mk 2.10, Mt 25.31, Jo 5.25-27, Rev 7.9\xt*).
+\zstat C
+\p Wanpela profet bilong Olpela Testamen nem bilong en Daniel i bin lukim wanpela driman we God i kisim wanpela man olsem yumi na God i mekim em i kamap king na i givim em strong na biknem (\xt Dan 7.13\xt*). Na em bai i stap king i gat strong oltaim oltaim, na wok king bilong en bai i no inap pinis. Na olgeta manmeri bilong olgeta kantri na olgeta lain na olgeta tok ples bai i stap aninit long en (\xt Dan 7.14, Rev 7.9\xt*).
+\p Daniel i bin givim dispela nem, \fq Pikinini Bilong Man\fq*, long dispela man em i bin lukim long driman bilong em. Na long taim bilong Nupela Testamen, Jisas yet i givim dispela nem \fq Pikinini Bilong Man\fq*, long em yet. C
+\p \k Pikinini Sipsip bilong God\k*
+\v 645
+\hp P:P5; CAT:MI;
+\zstat C
+\p Lukim \w sipsip\w*.
+\rem Sampela tokples bai i nogat nid long dispela, sapos dispela samting i stat long dispela tok "sipsip." Long dispela kain tokples, larim status i stap long "N." Long Tok Pisin yumi nidim, long wanem, "pikinini sipsip" i stat long leta "p."
+\p \k Pita\k*
+\v 650
+\hp \zge Peter\zge*; G:Πέτρος; P:P5 CAT:name; (\xt Mt 4.18\xt*).
+\zstat C
+\p Pita em i wanpela bilong ol disaipel bilong Jisas. Na narapela nem bilong em \w Sifas\w*. \ft Long tok Grik, \fq Pita \fq* i gat mining olsem \fq ston\fq*. Na narapela nem bilong em \fqa Saimon\fqa*.
+\p \k ples bilong amamas oltaim\k*
+\v 655
+\hp \zge Paradise\zge*; G:παράδεισος; P:P6; CAT:misc; (\xt Lk 23.43, 2Ko 12.3, Rev 2.7\xt*).
+\zstat N
+\p \k pris\k*
+\v 660
+\hp \zge priest\zge*; G:ἱερεύς; H:כֹּהֵן; P:P1; CAT:beings; (\xt Jen 14.18, 41.45, Eks 2.16, 28.1, Mt 8.4, 12.4, Lk 1.5, Hi 7, 10.21, Rev 1.6\xt*).
+\zstat C
+\p Ol pris bilong tempel hia, em ol lain i gat wok bilong lukautim lotu na mekim ofa long God. Ol lain bilong mekim dispela wok i kam aut long grup bilong ol lain \w Livai\w*. Ol pris tasol inap long go insait long \w Rum Tambu\w* insait long tempel bilong God na mekim wok bilong ol.
+\p King \w Devit\w* i tokim ol pris bai brukim ol yet long 24-pela lain. Na Abiya i go pas long wanpela lain pris. Na olgeta lain blut bilong em i bin wok pris i kam inap long Sekaraia (\xt Lk 1.8\xt*).
+\pi1 \zsub bikpris\zsub*;
+\hp \zge high priest\zge*; G:ἀρχιερεύς; P:P5;
+\p Dispela lain i ol lida lain bilong ol pris.
+\pi1 \zsub hetpris bilong tempel\zsub*;
+\hp \zge chief priest\zge*; G:ἀρχιερεύς; P:P5;
+\p Dispela man em i hetman bilong ol Pris, na em wanpela tasol i gat rait long go insait long Rum Tambu Tru long Tempel na mekim ofa i go long God long ol sin bilong em yet na sin bilong ol pipol tu.
+\p Dispela hetpris, na olgeta man i bin kamap hetpris bipo, na sampela arapela lain i gat namba insait long ol famili lain bilong ol pris, ol i kolim ol \fqa ol hetpris bilong tempel\fqa* long taim bilong Nupela Testamen.
+\p Taim bilong Olpela Testamen \w Aron\w* i stap olsem hetpris.
+\p \k pris\k*
+\v 665
+\hp \zge priest\zge*; P:P5; CAT:MI;
+\zstat N
+\p Akniaw \w niy remien\w*.
+\rem This minor entry is only for vernacular glossaries for translations that donꞌt borrow the word "pris." It is here to help people find the vernacular word for "pris." It will not be printed in a glossary for aArpBT, so status will remain "N." But if we have another word for priest in tokples, then we will have a cross-reference to it in the GLO anyway, so I think we should just take this out. Or we can just leave it marked with an N in the zstat field so it remains in the aArpBT as the template for the rest.
+\p \k profet\k*
+\v 670
+\hp \zge prophet\zge*; G:προφήτης; H:נָבִיא; P:P4; CAT:beings; (\xt Jen 20.7, Mt 1.22, Mk 1.2, Ap 21.10\xt*).
+\zstat C
+\p Ol lain God i makim ol bilong autim tok bilong em long ol manmeri, ol i kolim \fq profet\fq*. Ol profet i wok long harim tok bilong God na autim tok long ol pipel. Sapos ol \w Juda\w* i lusim tok bilong God na lotuim ol giaman god, o tambaran samting, ol profet i mas autim strongpela tok na krosim ol. Ol profet i tok bai God i bagarapim ol sapos ol i no tanim bel na planti taim God i bin bagarapim Israel long wanem, Israel i no bin tanim bel. Sampela taim God i tok save long ol profet long ol samting i no kamap yet.
+\p Long Olpela Testamen ol i stori long Pikinini bilong God bai i kamap na bai i kamap king long ol Israel. Ol profet i bin wetim Jisas tasol ol i no lukim em. God i gat kain kain pasin bilong tokim ol profet. Tasol planti taim em i tokim ol long driman. \fig Ol profet i save autim tok bilong God|src="LB000161HTJL.tif" size="span" loc="p" ref="67.1"\fig*
+\p \k Rahap\k*
+\v 672
+\hp \zge Rahab\zge*; G:Ῥαχάβ; P:P5; CAT:name; (\xt Hi 11.31, Je 2.25\xt*).
+\zstat C
+\p Long taim i go pinis long bipo tru taim ol manmeri bilong \w Israel\w* wok long redim ol yet long i go insait long kantri we God i bin promis long givim long ol hia. Ol i salim sampela man long hait i go na luk stil long dispela kantri bai taim ol i go kamap na pait, ol i ken winim pait.
+\p Wanpela pamukmeri nem bilong em Rahap husait i stap long dispela kantri i bin helpim long haitim ol luk stil lain hia. Rahap i mekim olsem long wanem em i stat long bilip long God na em i bilip olsem long laik bilong God yet ol lain bilong Israel bai i papa long dispela kantri.
+\p Ol Israel i kilim olgeta lain bilong dispela taun. Rahap wantaim ol famili bilong em tasol ol i no bin kilim ol long wanem long pasin em i bin mekim long ol lain bilong God hia. Em meri we \xt Mt 1.5\xt* i toktok long en olsem em i wanpela bilong ol lain tumbuna bilong Jisas.
+\p \k rais bali\k*
+\v 44
+\hp \zge barley\zge*; G:κρίθινος; H:שְׂעֹרָה; P:P6; CAT:flora; (\xt Jo 6.9,13, Rev 6.6\xt*).
+\zstat C
+\p Sid bilong Bali hia i kain olsem sid bilong wit. Ol i save yusim sid bilong bali hia, long wokim bret. Na bret ol i save wokim long sid bilong bali hia, i no gutpela tumas olsem bret ol i save wokim long sid bilong wit. Long taim bilong Nupela Testamen, prais bilong sid bilong bali i no bikpela tumas, prais bilong sid bilong wit i antap moa.
+\p \k rausim pipia i pas long lek\k*
+\v 605
+\hp \zge shake the dust off your feet\zge*; G:ἐκτινάσσω, ἀποτινάσσω; P:P1; CAT:rituals; (\xt Mt 10.14, Mk 6.11, Lk 9.5, 10.11, Ap 13.51\xt*).
+\zstat A
+\p Jisas i bin tokim ol disaipel bilong em olsem, sapos sampela ol lain bilong wanpela ples i no laik harim tok bilong God ol disaipel i autim, orait ol disaipel i mas rausim ol hap graun i stap long lek bilong ol. Dispela bai soim olsem, ol dispela lain i no lain bilong God. Na sapos God i mekim nogut long ol, em wari bilong ol, i no wari bilong ol disaipel bilong Jisas. Olsem na ol disaipel i mas mekim dispela pasin long ol dispela kain taun.
+\p \k Rebeka\k*
+\v 673
+\hp \zge Rebecca\zge*; G:Ῥεβέκκα; P:P7; CAT:MI; (\xt Ro 9.10-13\xt*).
+\zstat C
+\p Rebeka em i meri bilong Aisak. Na Aisak em pikinini man bilong Abraham. Rebeka i bin karim tupela twin brata, Isau na Jekop. Lukim tok bilong \w Abraham \w*, \w Esau\w* na \w Jacob\w*.
+\p \k Resel\k*
+\v 675
+\hp \zge Rachel\zge*; G:Ῥαχήλ; P:P7; CAT:MI; (\xt Mt 2.18\xt*).
+\zstat C
+\p Resel em i wanpela bilong ol meri bilong \w Jekop\w*. Jekop i save laikim em tumas. Na em i meri we i bin karim \w Josep\w* tupela \w Benjamin\w*. Matyu i bin yusim nem bilong em long makim ol mama bilong ol lain Juda ((\xt Mt 2.18\xt*)). Lukim \w Jacob\w*.
+\p \k Retsi\k*
+\v 676
+\hp \zge Red Sea\zge*; G:Ἐρυθρὰ Θάλασσα; H:יַם־סוּף; P:P7; CAT:name; (\xt Eks 10.19, 13.18, 15.4, Jos 2.10, 4.23, Sam 106.9, Ap 7.36, Hi 11.29\xt*).
+\zstat C
+\p Solwara Retsi hia, \w Bikpela\w* i soim strong bilong em long kisim bek ol Israel long han bilong king bilong Isip. Bikpela i mekim Retsi i bruk long tupela hap na i mekim rot long namel. Na em i lidim ol manmeri i wokabaut namel long solwara olsem ol i wokabaut long ples drai i go kamap long hapsait.
+\p \k Rom\k*
+\v 680
+\hp \zge Rome\zge*; G:Ῥώμη, Ῥωμαῖος; P:P4; CAT:place; (\xt Ap 19.21\xt*).
+\zstat C
+\p Rom em i nambawan biktaun bilong kantri Itali. Long taim bilong Jisas, ol lain bilong Rom i bin bosim planti hap long dispela graun. Ol i bin bosim graun bilong ol lain bilong Jisas, em ol Juda hia tu. Ol Juda i no bin laikim tru ol Rom. Na sapos ol Juda i bin gat strong, ol bai inap long rausim ol Rom. \w Sisar\w* em \w king\w* bilong ol Rom, na em i bin stap nambawan king bilong olgeta hap graun long dispela taim.
+\pi1 \zsub sitisen bilong Rom\zsub* Sapos wanpela man em i man bilong Rom tru tru, ol i kolim ol olsem \fqa sitisen\fqa* bilong Rom. Ol sitisen i gat kain kain rait we ol man nating i nogat. I gat strongpela tambu long ol i no ken wipim wanpela sitisen bilong Rom. Nogat tru. Pol em i sitisen bilong Rom, na ol lain i brukim lo taim ol i wipim em (\xt Ap 16.37, 22.22-29\xt*).
+\pi1 Lo bilong ol Rom i tok, sapos wanpela man bilong kantri Rom i pilim olsem kot i no harim gut tok bilong en, orait em i ken askim kot long larim Sisar yet i harim kot bilong en (\xt Ap 25.11\xt*).
+\p \k Rot\k*
+\v 685
+\hp \zge road\zge*; G:ὁδός; P:P5; CAT:misc; (\xt Jo 1.23, Ap 9.2, 18.25,26, 19.9,23, 22.4, 24.14,22, 2Pi 2.2,21\xt*).
+\zstat C
+\p Long taim bilong Nupela Testamen, sampela lain i kolim pasin bilong bihainim Jisas olsem, \fq Rot.\fq*
+\p \k Rum Tambu Tru na Rum Holi\k*
+\v 690
+\hp \zge Most Holy Place, holy of Holies\zge*; G:Ἅγια Ἁγίων; P:P2; CAT:realia; (\xt Eks 26.33, Hi 9.3\xt*).
+\zstat C
+\p Insait long \w tempel\w* bilong God hia, i gat tupela rum i narakain tru long ol narapela ol rum. Wanpela bilong dispela tupela rum, ol i kolim \fq Rum Holi \fq* na narapela rum gen hia, ol i kolim \fq Rum Tambu Tru\fq*. Dispela rum, em het pris tasol inap long go insait na mekim wok bilong ol.
+\p \k Sabat\k*
+\v 700
+\hp \zge Sabbath\zge*; G:σάββατον; H:שַׁבָּת; P:P1; CAT:rituals; (\xt Jen 2.1-3, Eks 16.23, Mt 12.8, Mk 2.24, Lk 6.5, Jo 5.9\xt*).
+\zstat C
+\p As bilong dispela tok Sabat i olsem <<malolo>> o <<lusim wok i stap.>> De Sabat em i de namba 7 God i malolo taim em i pinisim olgeta samting em i wokim long dispela graun. Na em i makim dispela de long ol Juda i mas malolo na lotu long em. Long dispela de long olgeta wik ol Juda ol i lusim wok na ol i go long haus lotu bilong litimapim nem bilong God.
+\p Sabat em i de bilong God. Em i bin wokim strongpela lo i tok long olgeta manmeri bilong Juda i no ken wok long dispela de. Bihain, ol \w Juda\w* i no laik brukim dispela lo. Olsem na ol yet i wokim planti kain kain liklik lo long Sabat bilong banisim de Sabat long ol i no ken mekim pasin nogut long wok long de Sabat. Tasol ol i wokim planti liklik lo tumas na ol i no inap bihainim olgeta dispela liklik lo. Wanpela bilong ol dispela lo i tok, ol Juda i no inap go longwe long taim bilong Sabat. Ol i ken wokabaut i go inap long wanpela kilomita tasol (\xt Ap 1.12\xt*).
+\p Taim Jisas i mekim orait sampela man long de Sabat, ol Farisi i tok Jisas i brukim lo bilong Sabat ol Farisi i save bihainim hia na dispela i mekim ol i kros tru long em. Tasol Jisas i bin tok olsem, God i bin givim dispela lo bilong Sabat bilong helpim man, em i no wokim man bilong helpim Sabat, na em yet em i \w Bikpela\w* bilong Sabat (\xt Mt 12.8\xt*). God i laikim lo bilong Sabat bai mekim ol manmeri i malolo na i stap bel isi long Sabat. Tasol ol Juda in no stap bel isi long wanem, i gat planti wari tumas long bihainim ol liklik lo bilong ol Farisi long Sabat.
+\p \k Sadyusi\k*
+\v 710
+\hp \zge Sadducee\zge*; G:Σαδδουκαῖος; P:P2; CAT:beings; (\xt Mk 12.18,26-27, Ap 23.6-8\xt*).
+\zstat C
+\p Long taim bilong Jisas, ol Sadyusi em wanpela lain insait long lain bilong Juda. Ol manmeri i no givim biknem long ol Sadyusi olsem ol i mekim long ol \w Farisi\w*. \fig Bilip bilong ol Sadyusi i narakain long ol Farisi|src="LB000164HTJL.tif" size="span" loc="p" ref="70.1"\fig*
+\p Bilip bilong ol Sadyusi na bilip bilong ol Farisi i no wankain. Ol Sadyusi i bilip long ol manmeri i mas bihainim gut lo bilong Moses tasol. Na ol Farisi ol i bilip olsem manmeri i mas bihainim gut ol lo bilong Moses na ol lo bilong ol tumbuna tu.
+\p Ol Sadyusi i bilip olsem, taim man i dai, em i no inap kirap gen, em i dai na i go olgeta. Na tu, ol i save tok olsem i nogat ol ensel na ol spirit. God wanpela tasol em i spirit na i nogat narapela spirit moa i stap. Na tu, ol i no bilip olsem God bai salim Mesaia (\w Krais\w*) i kam. Olsem na planti taim ol Farisi na ol Sadyusi i no save wanbel long ol yet.
+\p \k Sainai\k*
+\v 713
+\hp \zge Sinai\zge*; G:Σινᾶ; H:סִינַי; P:P8; CAT:place;
+\zstat C
+\p Sainai em wanpela liklik maunten \w Moses\w* i bin go antap long stap wantaim God taim God i bin givim em 10-pela lo.
+\p \k Saion\k*
+\v 714
+\hp \zge Zion\zge*; G:Σιών; P:P6; CAT:place; (\xt Mt 21.5, Jo 12.15, Ro 9.33, 11.26, 1Pi 2.6\xt*).
+\zstat C
+\p \fq Saion\fq* em i nem bilong dispela maunten we Jerusalem i stap antap long en. Olsem na, \fq Saion\fq* i kamap olsem narapela nem bilong Jerusalem.
+\p \k salfa\k*
+\v 716
+\hp \zge sulfur\zge*; G:θεῖον; P:P8; CAT:realia; (\xt Lk 17.29, Rev 9.17-18, 14.10, 19.20, 20.10, 21.8\xt*).
+\zstat C
+\p Salfa em dispela yelopela samting we paia i save lait long en na i save mekim dispela braitpela lait na tu i save givim strongpela smel taim yu laitim paia long en. Ol i save yusim dispela yelopela samting long mekim ol pawda long ol katres bilong yusim long ol sotgan. Sampela taim ol i save kolim olsem \fqa brimston\fqa*.
+\p \k Samaria\k*
+\v 720
+\hp \zge Samaria, Samaritan\zge*; G:Σαμάρεια, Σαμαρίτης; P:P2; CAT:place; (\xt Jo 4.7, Lk 10.33\xt*).
+\zstat C
+\p Samaria em wanpela distrik i stap long not sait bilong Judia na i stap long saut sait bilong Galili. Bipo tru, sampela lain bilong ol arapela kantri i bin kam na wok long dispela hap na ol man na meri bilong \w Juda\w* i stap long dispela hap i maritim ol dispela arapela lain na i wok long lotuim ol giaman god bilong ol.
+\p Na dispela i mekim ol Juda i tok, ol Samaria i hapkas lain na ol i no Juda tru tru. Taim Jisas i bin stap long graun, ol Juda i no save laikim ol Samaria na ol i save stap olsem ol birua bilong ol.
+\p Ol Samaria i save bung long maunten Gerisim bilong mekim ol ofa na holim bikpela lotu bilong ol. Tasol ol Juda i save go long Jerusalem bilong mekim bikpela lotu bilong ol (\xt Jo 4.20\xt*). Olsem na ol Samaria i ting ol Juda i no bihainim stretpela pasin bilong lotu, olsem na ol i no laik helpim Jisas long taim em i laik go long Jerusalem (\xt Lk 9.53\xt*).
+\p \k Samson\k*
+\v 722
+\hp \zge Samson\zge*; G:Σαμψών; H:שִׁמְשׁוֹן; P:P7; CAT:name; (\xt Het 13.24, Het 15.1-16, 16.1-30, Hi 11.32\xt*).
+\zstat C
+\p \fq Samson\fq* em wanpela bilong ol lida bilong ol Juda planti planti yia i go pinis. Em man i gat bikpela strong long ol masel na dispela em wanpela kain spesal presen God i bin givim long em.
+\p \k samting nogut tru\k*
+\v 625
+\hp \zge the abomination of desolation\zge*; G:βδέλυγμα τῆς ἐρημώσεως; P:P7; CAT:misc; (\xt Mk 13.14, Mt 24.15\xt*).
+\zstat C
+\p Long \xt Mk 13.14\xt* na \xt Mt 24.15\xt*, Jisas i yusim toktok bilong profet Daniel long toktok long wanem samting bai kamap long tempel. Lukim \xt Dan 9.27, 11.31, 12.11\xt*. Daniel i bin tokaut olsem wanpela samting kain olsem wanpela giaman god bai ol lain i putim i sanap insait long tempel bilong God yet long Jerusalem. Na dispela bai mekim tempel yet i doti na mekim ol lain i lusim tempel i stap nating na ol i no moa yusim.
+\p Dispela samting i bin kamap pastaim long 167 BC, tasol Jisas i tok olsem em bai kamap gen. Bihain, dispela toktok bilong Jisas i kamap tru long AD 70 taim ol \w Rom\w* i mekim samting long tempel na bihain ol i bagarapim tempel. Na Pol i toktok tu long dispela samting bai kamap bihain tru long taim birua bilong \w Krais\w* bai kamap ples klia \xt 2Te 2.3-10\xt*.
+\p \k Samuel\k*
+\v 723
+\hp \zge Samuel\zge*; G:Σαμουήλ; H:שְׁמוּאֵל; P:P7; CAT:name; (\xt 1Sml 1.20, 2.26, 3.3,20, Ap 3.24, 13.20, Hi 11.32\xt*).
+\zstat C
+\p Samuel em wanpela bikpela \w profet\w*. Em i dispela profet husait i bin kapsaitim wel antap long \w Devit\w* taim em i kamap king bilong ol \w Israel\w*. Em i bin bikpela lida namel long ol manmeri.
+\p \k sanda i gat gutpela smel\k*
+\v 725
+\hp \zge frankincense\zge*; G:λίβανος; H:לְבֹנָה; P:P6; CAT:realia; (\xt Mt 2.11, Rev 18.13\xt*).
+\zstat C
+\p Dispela em i wanpela kain diwai i save gro long kantri Arebia na ol i save sikarapim skin bilong em na wokim em i kamap sanda i gat gutpela smel. Taim ol i kukim long paia, smel bilong em i nais na gutpela tru. Dispela sanda hia, ol i wokim long narapela hap na ol Juda i save go na baim, olsem na prais bilong em i antap tru.
+\p \k Sara\k*
+\v 745
+\hp \zge Sarah\zge*; G:Σάρρα; H:שָׂרָה; P:P7; CAT:MI; (\xt Ro 4.19, 9.9, Hi 11.11, 1Pi 3.6\xt*).
+\zstat C
+\p \fq Sara\fq* em meri bilong \w Abraham\w*. Em i bin stap nating na i no karim pikinini inap em i lapun olgeta. Tasol bihain tru, em i karim \w Aisak\w*.
+\p \k Satan\k*
+\v 727
+\hp \zge Satan\zge*; G:διάβολος, πειράζω, Σατανᾶς, ὁ ἄρχων τοῦ κόσμου; H:שָׂטָן; P:P3; CAT:beings; (\xt Mt 4.10, 12.26, Mk 4.15, Lk 10.18, 13.16, 22.3, Ap 5.3, 26.18, Ro 16.20, 2Te 2.9, Rev 12.9\xt*).
+\zstat C
+\p Dispela em nem bilong wanpela ensel. Dispela ensel hia, em man nogut na em man i save birua tru long God. Em het spirit bilong olgeta spirit nogut. Em i save tru long pasin bilong pulim ol manmeri long mekim sin na em i man bilong laikim tru long mekim pasin nogut. Em i save paolim tru ol lain i bilip long Jisas na tokim ol olsem, ol i bin mekim planti pasin nogut tru na God i no bin fogivim ol yet. Dispela tok em i giaman tok bilong em.
+\p Em hia ol arapela nem bilong em:
+\pi1 \zsub man nogut\zsub* (\xt Mt 6.13\xt*).
+\pi1 \zsub man bilong traim\zsub* (\xt Mt 4.3\xt*).
+\pi1 \zsub Belsebul\zsub*, (\xt Lk 11.15\xt*). Lukim \w Belsebul\w*.
+\pi1 \zsub hetman nogut bilong bosim dispela graun\zsub* (\xt Jo 12.31, 14.30, 16.11\xt*).
+\pi1 \zsub Man I Save Sutim Tok Nating \zsub* (\xt Rev 12.10, 20.2\xt*).
+\p \k satu\k*
+\v 888
+\hp \zge lot\zge*; G:κλῆρος; P:P7; CAT:rituals; (\xt Mt 27.35, Mk 15.24, Lk 23.34, Jo 19.24, Ap 1.26\xt*).
+\zstat C
+\p Ol aposel i laik bai God yet i makim wanem man i mas kisim ples bilong Judas(\xt Ap 1.26\xt*). Olsem na ol i kisim tupela ston i gat nem bilong Barsabas na Matias na putim insait long wanpela samting, na ol i sakim. Ol i tok, ston bilong wanem man i kalap i kam autsait pastaim, orait dispela man em man God i makim.
+\p Ol soldia bilong \w Rom\w* i mekim wankain pasin. Ol i tromoi satu long painim husait bai i kisim wanem hap bilong ol dispela laplap samting bilong Jisas (\xt Mk 15.24\xt*).
+\p \k sekan long ol arapela Kristen\k*
+\v 730
+\hp \zge with a holy kiss, with a kiss of love\zge*; G:ἐν φιλήματι ἁγίῳ, ἐν φιλήματι ἀγάπης; P:P3; CAT:rituals; (\xt Ro 16.16, 1Ko 16.20, 2Ko 13.12, 1Te 5.26, 1Pi 5.14\xt*).
+\zstat C
+\p Long tok \w Grik\w* ol i tok olsem \fqa givim holi kis long olgeta Kristen brata na susa.\fqa* Dispela pasin i bin stap long ol tumbuna bilong ol na i kam. Tasol planti taim yumi ol \w Kristen\w* brata na susa i stap long narapela kalsa i save sekan long soim dispela wanbel pasin na pasin bilong laikim tru ol arapela long bel bilong yumi.
+\p \k Selot\k*
+\v 740
+\hp \zge zealot\zge*; G:ζηλωτής; P:P1; CAT:beings; (\xt Lk 6.15, Ap 1.13, 21.20, 22.3. \xt*).
+\zstat C
+\p Ol dispela lain i save laikim tru long rausim ol \w Rom\w* na ol i laikim ol \w Juda\w* yet bai i lukautim hap graun bilong ol. Planti bilong ol i save laik pait wantaim ol Rom na rausim ol. Lukim (\xt Mk 3.18\xt*).
+\p \k sendel\k*
+\v 615
+\hp \zge sandal\zge*; G:ὑπόδημα; P:P5; CAT:misc; (\xt Mt 3.11, Mk 1.7, Lk 3.16, Jo 1.27, Ap 13.25\xt*).
+\zstat C
+\p Long taim bilong Jisas, wok bilong rausim \fq sendel\fq* bilong narapela o bilong karim sendel bilong en, em wok nogut tru bilong ol wokman nating i mas mekim long helpim ol bosman bilong ol. Long tingting bilong \w Jon\w* Baptais, namba bilong Jisas i antap tru na Jon yet i daunbilo tru, olsem na em i pilim olsem em i no gutpela man inap long em i ken mekim dispela kain wok nogut long rausim \fq sendel\fq* bilong Jisas.
+\p \k Septuagint\k*
+\v 905
+\hp \zge Septuagint\zge*; P:P9; CAT:MI
+\zstat C
+\p Taim ol i raitim Olpela Testamen, ol i raitim long Tok \w Hibru\w*, tokples bilong ol Juda. Ol birua bilong ol i bin rausim ol Juda long graun bilong ol yet na bihain ol i go nabaut long planti kantri. Na ol tumbuna bilong ol i save tok long tok \w Grik\w* na ol i no save long Tok Hibru moa.
+\p Ol i stap na karim pikinini i go i go. Long dispela as, ol i tanim Olpela Testamen i stap long Tok \w Hibru\w* i go long Tok \w Grik\w*. Nem bilong dispela trenslesen em \fq Septuagint\fq*. Sampela taim ol lain i raitim ol buk bilong Nupela Testamen i save kisim hap tok bilong dispela trenslesen bilong Olpela Testamen. Na long dispela as, sampela hap tok bilong Olpela Testamen i stap long Nupela Testamen i narakain liklik long ol dispela sem tok i stap long Olpela Testamen.
+\p \k Sifas\k*
+\v 750
+\hp \zge Cephas\zge*; G:Κηφᾶς; P:P1; CAT:name; (\xt Jo 1.42, 1Ko 1.12, 3.22, 9.5, 15.5, Ga 1.18, 2.9,11,14\xt*).
+\zstat C
+\p Jisas i bin singautim wanpela man, nem bilong en Saimon na givim nem, \fq Sifas\fq* long em. Long tok Aramaik, ol i save kolim ston \tl sifas\tl*, na long tok Grik, ol i save kolim ston \tl pita\tl*. Olsem na, planti taim ol i save kolim dispela man Saimon hia Sifas o \w Pita\w*.
+\p \k sikamo\k*
+\v 752
+\hp \zge sycamore\zge*; G:συκομορέα; H:שִׁקְמָה; P:P7; CAT:flora; (\xt Lk 19.4\xt*).
+\zstat C
+\p Dispela diwai sikamo hia, em wanpela kain diwai fik. Dispela diwai i save tromoi planti han bilong en na i isi tru long go antap na sindaun long ol han bilong en. Ol i save planim long sait bilong ol rot. Bipo i gat planti bilong ol dispela diwai sikamo long graun bilong ol \w Israel\w* na ol i save yusim olsem paiawut na tu yusim ol timba long wokim ol samting olsem sia, tebol na ol arapela kain kain samting long yusim.
+\p \k sin\k*
+\v 754
+\hp \zge sin\zge*; G:ἁμαρτάνω, ἁμαρτία, ἁμάρτημα; H:חַטָּאת; P:P3; CAT:attributes;
+\zstat C
+\p Taim wanpela man o meri i brukim lo bilong God, em i mekim \fq sin\fq*. Maski em i bikpela samting o em i samting nating long ol ai bilong ol manmeri. Stil em i sin long ai bilong God (\xt Ro 3.9-20, 6.23\xt*).
+\p \k sinamon\k*
+\v 755
+\hp \zge cinnamon\zge*; G:κιννάμωμον; H:קִנָּמוֹן; P:P9; CAT:realia; (\xt Rev 18.13\xt*).
+\zstat N
+\p \k sios\k*
+\v 760
+\hp \zge church\zge*; G:ἐκκλησία; P:P1; CAT:rituals;
+\zstat C
+\p Dispela tok i gat tupela mining:
+\pi1 (1) Wanpela em lokol sios (\xt Ap 11.22, 11.26, 13.1\xt*).
+\pi1 (2) Narapela em olgeta \w Kristen\w* manmeri bilong olgeta hap (\xt Mt 16.18, Ap 8.3, 9.31\xt*).
+\p \k sipsip\k*
+\v 770
+\hp \zge sheep\zge*; G:πρόβατον, ἀρνίον; H:צֹאן; P:P1; CAT:animals; (\xt Jo 1.29,36, Ap 8.32\xt*).
+\zstat C
+\p Ol Juda i stap long naispela hap tru na ol i save lukautim planti sipsip na meme. Dispela hap bilong ol i gat gutpela gras tru na ol sipsip na meme i save kaikai. Taim ol \w Juda\w* i save kilim ol sipsip na meme, skin gras bilong sipsip na meme hia, ol i save samapim ol klos samting bilong ol long werim. Skin bilong ol meme hia, ol i save samapim ol beg bilong pulimapim wara na wain long en. Lukim \w wain skin\w*. \fig Man i wokabaut i go pas long ol sipsip|src="oi00170.png" size="span" loc="paw" ref="19.1"\fig*
+\p Ol sipsip i gat gutpela mit bilong kaikai na susu bilong meme tu em gutpela samting bilong dring. Ol Juda i save kaikai mit bilong sipsip na dring susu bilong meme.
+\p Planti taim long Buk Baibel, \fq sipsip\fq* i save kamap olsem piksa bilong ol lain bilong God. Long Nupela Testamen, Jisas Krais em i wasman bilong ol lain bilong em, na Jisas i save kolim ol lain i bilip long em, ol sipsip bilong em (\xt Jo 21.15-17\xt*).
+\pi1 \zsub pikinini sipsip\zsub*
+\hp \zge lamb\zge*; G:ἀμνός; H:כֶּבֶשׂ ,כַבְשָׂה ,כִּבְשָׂה; P:P5; (\xt 1Pi 1.19\xt*).
+\p Long Olpela Testamen, ol Juda i save kilim ol pikinini sipsip na mekim ofa long God (\xt Eks 29.38\xt*).
+\pi1 \zsub Pikinini Sipsip Bilong God\zsub*
+\hp \zge Lamb of God\zge*; G:ἀμνὸς τοῦ θεοῦ (\xt Jo 1.29,36\xt*). (\xt Jo 1.29,36\xt*).
+\p Jisas i bin dai bilong rausim sin bilong yumi kain olsem ol Juda i save kilim ol sipsip bilong mekim ofa bilong rausim sin, olsem na Buk Baibel i save kolim Jisas, \fq Pikinini Sipsip Bilong God\fq*.
+\p Lukim \w wasman bilong sipsip\w*.
+\p \k Siria\k*
+\v 718
+\hp \zge Syria\zge*; G:Συρία; P:P9; CAT:place; (\xt Mt 4.24, Lk 2.2, Ap 15.23\xt*).
+\zstat C
+\p Long taim bilong Jisas, ol Rom i lukautim \w Israel\w* na Israel i bin stap insait long provins ol Rom i save kolim \fq Siria\fq*.
+\p \k Sisar\k*
+\v 780
+\hp \zge Caesar\zge*; G:Καῖσαρ; P:P1; CAT:name; (\xt Mk 12.14-17.\xt*).
+\zstat C
+\p Ol \w Rom\w* i save kolim ol king bilong ol olsem \tl Sisar\tl*. Long taim Jisas wantaim ol 12-pela lain i save bihainim em i bin mekim wok i stap long dispela graun, king bilong Rom i lukautim planti taun i stap klostu long si ol i kolim Mediterenian. Olgeta king bilong \w Rom\w* i gat dispela nem, \fq Sisar\fq*.
+\p Na long dispela taim, sapos wanpela king i lukautim planti kantri, ol i save kolim em \fqa empera\fqa* olsem na sampela taim ol i save kolim dispela man \fqa Empera Sisar\fqa*.
+\p \k smok i gat gutpela smel\k*
+\v 785
+\hp \zge incense\zge*; G:θυμίαμα, θυμιάω; H:קְטֹרֶת; P:P8; CAT:realia; (\xt Lk 1.9-11, Rev 5.8, 8.3-4, 18.13\xt*).
+\zstat C
+\p Dispela smok i gat gutpela smel hia, smel bilong em i gutpela tru. Dispela pawda hia, ol i save kisim blut bilong diwai o ol lip bilong dispela diwai o ol i save digim ol rut bilong em na wokim dispela pawda. Ol i save kukim dispela pawda bilong mekim gutpela smel hia, taim ol i save beten long God.
+\p \k Sodom\k*
+\v 787
+\hp \zge Sodom\zge*; G:Σόδομα; H:סְדֹם; P:P6; CAT:place; (\xt Jen 19.24-28, Mt 10.15, 11.23-24, Lk 17.29, Rev 11.8\xt*).
+\zstat C
+\p \fq Sodom\fq* hia, em nem bilong wanpela taun we \w Lot\w* wantaim famili bilong em i go na stap long en hia. Dispela taun Sodom hia, i stap klostu long taun Gomora. Ol lain bilong taun Sodom na Gomora hia, i stap insait tru long mekim ol pasin i nogut tru long ai bilong God. Olsem na, God i bin bagarapim tru dispela tupela taun long paia.
+\p \k Solomon\k*
+\v 788
+\hp \zge Solomon\zge*; G:Σολομών; H:שְׁלֹמֹה; P:P7; CAT:name; (\xt Mt 1.6-7, 6.29, 12.42, Lk 11.31, 12.27, Ap 7.47\xt*).
+\zstat C
+\p Dispela man Solomon hia, em i wanpela bilong ol pikinini bilong King \w Devit\w*. Em i gutpela king tru long ol manmeri bilong \w Israel\w*. Wanpela taim God i km long Solomon long driman na askim em long wanem kain presen tru em i laikim bai God i givim long em. Olsem na Solomon i askim God long givim em gutpela save long em i ken lukautim gut ol pipel bilong em. Solomon i bin kamap king i gat gutpela save i winim save bilong ol arapela king. God i givim em tu planti samting na em i kamap man i gat planti samting. Solomon em i bin man husait i bin wokim nambawan tempel bilong God long kisim ples bilong dispela Haus Sel bilong God bipo ol Juda i save lotu long God hia. Dispela tempel Solomon i mekim hia ,ol i kisim ol gutpela ston, mabel na planti arapela ol samting i gat bikpela prais mani long mekim dispela tempel hia. Na dispela tempel i nais tru.
+\p \k spans\k*
+\v 790
+\hp \zge sponge\zge*; G:σπόγγος; P:P4; CAT:realia; (\xt Mk 15.29, Jo 19.29\xt*).
+\zstat C
+\p Dispela em wanpela samting kain olsem wanpela samting i save raun raun long solwara. Na taim em i pas long skin, mosong bilong em i save givim pen long skin bilong man. Ol man i save kisim dispela samting na wasim ol samting bilong ol long en. Taim yu putim insait long wara, em i save pulim na dring planti wara (\xt Mk 15.36.\xt*)
+\p \k spirit\k*
+\v 800
+\hp \zge spirit\zge*; G:πνεῦμα; P:P3; CAT:misc; (\xt Mt 10.28, Ro 2.28-29, 1Ko 5.3, 7.34, 2Ko 3.3, 7.1, Ga 6.18, Ef 1.17, Kl 2.5, Hi 10.22, 12.9, Je 2.26, 1Pi 3.4\xt*).
+\zstat B
+\p Dispela tok i ken sut long kain kain samting. Taim dispela tok i gat bikpela leta S olsem <<Spirit,>> em i sut long Holi Spirit bilong God yet. Taim em i gat liklik leta s olsem <<spirit,>> em i ken sut long win bilong God i givim laip long man, o em i ken sut long ensel, o spirit nogut, o spirit bilong daiman, o spirit bilong man. Lukim \w Holi Spirit\w*.
+\p \k spirit nogut\k*
+\v 810
+\hp \zge demon, evil spirit, unclean spirit\zge*; G:δαίμων, δαιμόνιον, πνεῦμα πονηρόν, πνευμα ἀκαθαρτος; P:P3; CAT:beings; (\xt Mk 1.23-26, 1Ko 10.20, 1Ti 4.1\xt*).
+\zstat C
+\p Jisas na ol \w disaipel\w* bilong en i tok olsem, masalai o tambaran hia, ol i spirit i doti tru long ai bilong God. Na ol i grup tru bilong \w Satan\w*. Ol i gat strong na ol i gat planti save tasol ol i birua bilong God. Ol i ken go insait long man na tanim em i kamap man nogut tru na ol i ken pasim em long lotu tru long God. Ol i save mekim man i lotuim \w giaman god\w* na pulim man long mekim pasin nogut na mekim ol i kisim kranki tingting long God. Ol dispela spirit i ken givim ol kain kain sik long man. Tasol Jisas i winim olgeta tambaran na masalai na spirit nogut. Em i bin rausim ol long planti kain kain man na em i bin mekim orait ol dispela man.
+\p \k Stoik\k*
+\v 815
+\hp \zge Stoics\zge*; G:Στοϊκός; P:P9; CAT:beings; (\xt Ap 17.18\xt*).
+\zstat C
+\p Ol Stoik i save bihainim wanpela saveman, nem bilong en Zeno. Em i bin skulim ol long tingting bilong ol i mas bosim laip bilong ol, na ol i no ken larim amamas o bel hevi i bosim laip bilong ol.
+\p \k ston i gat bikpela pe\k*
+\v 535
+\hp \zge jewels\zge*; P:P9; CAT:realia; (\xt Rev 21.18-20\xt*).
+\zstat N
+\p \k stretpela pasin\k*
+\v 820
+\hp \zge righteous\zge*; G:δίκαιος, δικαιοσύνη; P:P3; CAT:attributes; (\xt Mk 6.20, Lk 1.6, 2.25, 23.47, Ap 10.22, 1Pi 3.12, 1Jo 2.29\xt*).
+\zstat C
+\p Yumi manmeri i no save mekim stretpela pasin God i laikim long ai bilong em. Dispela wok Jisas i mekim long dai hia, i opim rot long yumi ken kamap ol stretpela manmeri long ai bilong God (\xt Ga 3.11, Ro 1.17, 3.26, 1Pi 3.18\xt*).
+\pi1 \zsub Stretpela Man\zsub* - dispela em i wanpela nem bilong Jisas (\xt Ap 7.52, 22.14, 1Jo 2.10\xt*).
+\p \k Sus\k*
+\v 822
+\hp \zge Zeus\zge*; G:Ζεύς; P:P9; CAT:beings; (\xt Ap 14.12\xt*).
+\zstat N
+\p \k taim bai God i mekim dispela graun na olgeta samting bai i pinis olgeta\k*
+\v 425
+\hp \zge last day\zge*; G:τῇ ἐσχάτῃ ἡμέρᾳ; P:P2; CAT:misc;
+\zstat N
+\p Lukim \w las de\w*.
+\p \k Tair na Saidon\k*
+\v 773
+\hp \zge Tyre and Sidon\zge*; G:Τύρos καὶ Σιδών; P:P9; CAT: places; (\xt Mt 11.21, 15.21, Mk 3.8, 7.31, Lk 6.17, 10.13, Ap 12.20\xt*).
+\zstat C
+\p Dispela tupela taun hia, i gat nem nogut long ol manmeri i mekim ol planti pasin nogut long ai bilong God.
+\p \k tambuim kaikai\k*
+\v 825
+\hp \zge fast\zge*; G:νηστεία, νηστεύω; P:P8; CAT:rituals; (\xt Mt 4.2, 6.16-18, 9.14-15, Lk 2.37, Ap 13.2-3, 14.23\xt*).
+\zstat C
+\p Em wanpela kain pasin ol Juda i save mekim long tambuim kaikai i go longpela taim liklik. Ol i mekim olsem bilong soim pasin sori o krai o pasin bilong daunim ol yet long ai bilong God.
+\p \k tanim bel\k*
+\v 827
+\hp \zge repent\zge*; G:μετανοέω, μετάνοια; P:P2; CAT:attributes; (\xt Mk 1.4, Lk 3.8, 5.32, Ap 5.31, 20.21, 2Pi 3.9\xt*).
+\zstat C
+\p Dispela tok i gat mining olsem, wanpela man o meri i luksave pinis olsem, em i bin mekim sin long ai bilong God. Na em yet i wokim disisen pinis olsem, em i no inap mekim rong gen long ai bilong God. Em i bin askim God long fogivim em long ol sin em i bin mekim hia na em i laik stap stretpela na mekim ol samting God i laik long yumi mas mekim.
+\p \k tempel\k*
+\v 830
+\hp \zge temple\zge*; G:ἱερόν; H:בֵּ֖ית יְהוָ֣ה; P:P1; CAT:realia; (\xt Mt 12.6, Mk 13.1, 15.38, Jo 2.15\xt*).
+\zstat C
+\p \fq Tempel\fq* em nem bilong haus bilong God i stap long biktaun Jerusalem. Ol \w pris\w* na sampela bilong ol \w Livai\w* i save go pas long wok bilong tempel. Na olgeta manmeri i save go long dispela haus bilong God long ol taim we ol i save tingim ol bikpela de bilong ol (\xt Mk 13.1\xt*). \fig Tempel bilong God i bikpela moa yet|src="oi00375.png" size="span" loc="paw" ref="1.0"\fig*
+\p King Solomon i bin wokim nambawan haus ston bilong lotu long God. Bihain, ol birua bilong ol Juda i kam na ol i bagarapim dispela tempel Solomon i bin wokim. Na bihain gen, narapela king i wokim narapela tempel. Nem bilong dispela king em Herot. Ol Juda i winim 80 yia long wokim dispela tempel.
+\p Lo i tok long olgeta man bilong Juda i mas i kam lotu long tempel long wanpela taim long olgeta yia. Ol man i stap klostu long tempel, ol i kam. Ol man bilong longwe, ol tu i save kam.
+\p Ol Juda i gat wanpela tempel tasol, na i gat planti \w haus lotu \w*i stap long olgeta hap we ol Juda i stap.
+\p \k Tisa\k*
+\v 835
+\hp \zge Rabbi\zge*; G:ῥαββί; P:P4; CAT:beings;
+\zstat C
+\p Sapos wanpela man i gat save na namba, ol \w Juda\w* bai kolim em \tl rabbi\tl*, na mining bilong dispela tok em \fqa tisa\fqa* (\xt Jo 1.38\xt*). Taim ol i save yusim dispela tok long wanpela man, ol i mekim em i pilim olsem em i gat biknem (\xt Jo 3.2\xt*). \tl Rabboni\tl* i gat wankain mining (\xt Jo 20.16\xt*).
+\p \k tisa bilong lo\k*
+\v 840
+\hp \zge scribe\zge*; G:γραμματεύς; P:P4; CAT:beings; (\xt Mt 5.20, 23.1-36, Mk 12.38-40, Lk 11.43-54\xt*).
+\zstat C
+\p Ol dispela lain i gat bikpela save tru long lo bilong God. Ol i save skulim ol manmeri long lo na tok bilong God. Planti bilong ol dispela lain i stap insait long grup bilong ol Farisi. Ol i no save laikim tru ol manmeri bai brukim lo bilong God, olsem na ol i wokim ol arapela lo gen bilong banisim dispela lo bilong God.
+\p Tasol Jisas i tok olsem, ol i save giaman tru long bihainim dispela lo bilong ol hia. Ol yet i save bagarapim tru na i no bihainim tru lo bilong God.
+\p Ol dispela saveman i laikim tru olsem ol yet i mas go pas long olgeta manmeri na ol manmeri i mas litimapim nem bilong ol olgeta taim. \fig Ol tisa bilong lo i save gut long lo bilong God|src="LB000165HTJL.tif" size="span" loc="p" ref="71.1"\fig*
+\p \k Tok Aram\k*
+\v 58 Lukim \w Hibru\w*.
+\hp \zge Hebrew, Aramaic\zge*; G:Ἑβραϊστί, Ἑβραῖος; H: עִבְרִ֑י; P:P9;
+\zstat C
+\p \k tok hait\k*
+\v 850
+\hp \zge mystery\zge*; G:μυστήριον; P:P3; CAT:misc; (\xt Ef 1.9, 3.4,9, 6.19, Kl 1.26, 2.2, 4.3, 1Ti 3.16\xt*).
+\zstat C
+\p I gat sampela samting we God i bin tingim long taim pinis long bipo tru, tasol i nogat wanpela man i bin save long dispela samting God i bin wok long tingting long en hia. Tasol nau, God i mekim ol dispela samting i kamap ples klia pinis long olgeta manmeri i ken save long ol.
+\p \k tok tru antap\k*
+\v 705
+\hp \zge swear, vow, promise\zge* G:ὀμνύω; P:P5; CAT:rituals; (\xt Mt 5.34, 23.16-22, Mk 6.23, Mk 14.71, Lk 1.73, Ap 2.30, Hi 6.13-16, Je 5.12, Rev 10.6\xt*).
+\zstat C
+\p Pas i go long ol Hibru i tok olsem, <<Pasin bilong tok tru antap em i olsem. Sapos ol man i tok tru antap long nem bilong wanpela man, dispela i soim olsem dispela man em i bikman tru na i winim ol. Na sapos wanpela man i tok tru antap, dispela i strongim tok bilong em na i pasim maus bilong ol arapela man i laik daunim tok bilong em>> ( \xt Hi 6.16\xt*). Na tu em i tok olsem, <<Bipo God i laik givim promis long Abraham. Na i nogat wanpela man. em i bikpela na i winim God, inap long God i ken tok tru antap long nem bilong em. Olsem na God i tok tru antap long nem bilong em yet olsem...>> (\xt Hi 6.13\xt*).
+\p Ol lain i save yusim dispela pasin bilong mekim promis we ol i nogat tingting long inapim. Dispela kain pasin i nogut tru. Olsem na Jisas i tokim ol Farisi na ol tisa bilong lo olsem, ol i no ken mekim dispela kain pasin bilong haitim giaman toktok bilong ol (\xt Mt 23.16-22\xt*) Na Jems tu i tok ol Kristen i no ken mekim dispela pasin (\xt Je 5.12\xt*).
+\p \k wain\k*
+\v 860
+\hp \zge wine\zge*; G:οἶνος; P:P5; CAT:realia;
+\zstat C
+\p Wain i kain olsem wanpela rop i save gro na i save karim ol liklik raunpela sid. Ol sid bilong em i save swit tru na i gat planti wara taim yu kaikai.
+\p Ol \w Israel\w* i save kisim ol dispela sid na kaikai nating. Na sampela ol i save go na putim i stap long san na draim bilong kaikai. Tasol planti bilong ol sid hia, ol i save putim insait long wanpela tenk ol i wokim long ston na ol i save memeim ol bilong kisim wara bilong ol bilong mekim strongpela dring (wain) bilong dring.\fig Wain em i wanpela rop i save karim sid|src="oi00223.png" size="span" loc="paw" ref="1.0"\fig*
+\p Ol \w Israel\w* i save yusim ol ston bilong wokim banis bilong gaden wain long ol wel abus i no inap long go insait long gaden na bagarapim ol kaikai insait long gaden. Na ol i save wokim wanpela longpela bun haus i stap long sait bilong gaden bilong ol man i save stap na was long ol stilman i no ken kam insait. \fig Ol i save wokim banis na haus bilong lukautim gaden wain|src="LB000109HTJL.tif" size="span" loc="p" ref="9.1"\fig*
+\p Taim ol dispela prut i mau long ol bai i kisim, papa bilong gaden o wanpela bilong ol lain insait long famili bai i go na slip long dispela haus na was long dispela gaden (\xt Mt 20.1, Mk 12.1\xt*). \fig Wanpela meri i kisim ol krep, em ol prut bilong diwai wain|src="LB000108HTJL.tif" size="span" loc="p" ref="8.1"\fig*
+\p Taim ol i pinis long wok bilong kisim ol prut hia, ol i save tilim ol prut hia long ol liklik liklik grup na sampela ol i save putim i stap long san long draim ol. Na bihain ol i save putim ol prut san i bin draim hia, i stap long ol i ken kaikai taim ol prut long gaden i pinis. Na ol narapela prut hia, ol i memeim bilong wokim strongpela dring ol i kolim wain. Ol i save putim insait long wanpela bikpela sospen graun na ol man i save krungutim long lek. \fig Ol i memeim ol krep bilong kisim wara bilong ol|src="LB000110HTJL.tif" size="span" ref="10.1"\fig*
+\p Wara bilong dispela prut i bikpela tru na i wok long ran i go aut long hul i stap long dispela sospen graun na i ran i go. Na narapela man i wok long pulimapim na kapsaitim insait long ol pot (\xt Mt 26.29, Mk 12.1, Ef 5.18\xt*).
+\p Taim ol prut i pinis olgeta long ol han bilong diwai wain, ol i save katim ol olpela han na ol han i drai pinis, na larim as bilong diwai i stap long ol nupela han bai i kamap. Taim ol i katim ol drai han na ol olpela han bilong diwai wain hia, ol i save kukim ol long paia. \fig Ol i katim han i drai pinis long diwai wain bai karim planti prut bihain|src="LB000112HTJL.tif" size="span" loc="p" ref="12.1"\fig*
+\p Ol i mekim olsem bai ol dispela diwai bai i tromoi ol nupela han na long yia bihain, ol inap long karim planti kaikai. Na dispela diwai wain em inap karim planti prut moa na ol dispela prut bai i bikpela long yia bihain (\xt Jo 15.1-9\xt*). Lukim \w nupela wain\w*.
+\pi1 \zsub wain skin\zsub*
+\hp \zge wineskin\zge*; G:ἀσκός; P:P5; CAT:realia;
+\p Wain skin em samting ol Juda i save mekim bilong kapsaitim wain insait long en. Taim ol i save kilim ol meme, ol i save rausim skin bilong ol na samapim olsem jak o ol bikpela botol long ol i save pulimapim wain insait na larim i stap. Dispela samting ol i kolim \fq wain skin\fq*. \fig Ol i wokim wain skin long skin bilong sipsip|src="oi00180.png" size="span" ref="11.1"\fig*
+\p Rot bilong holim ol wain em ol i save kapsaitim nupela wain long ol nupela wain skin long holim ol wain i stap inap ol i orait long man i dring. Sapos ol i krangi na putim nupela wain long olpela wain skin, wain bai i solap na bai i brukim dispela olpela wain skin. Olsem na nupela wain i mas go stret long nupela wain skin (\xt Mk 2.22\xt*). \fig Dispela man i karim wanpela wainskin|src="GT00026.tif" size="span" loc="paw" ref="1.0"\fig*
+\p \k wasman bilong sipsip\k*
+\v 880
+\hp \zge shepherd\zge*; G:ποιμήν; H:רעה; P:P1; CAT:beings; (\xt Sam 23, Jo 10.1-6, 1Pi 2.25\xt*).
+\zstat C
+\p Ol sipsip i save bihainim wasman bilong ol i go. Wasman bilong sipsip em i save wokabaut i go paslain long ol sipsip, na em i save long nem bilong ol wan wan.
+\p Wasman i save lukautim sipsip bilong em long san na long nait tu. Long san em i save bringim ol i go long gutpela gras bilong kaikai. Em i save bringim ol i go tu long gutpela wara bilong dring. Sapos wanpela sipsip em i gat sua, orait wasman i save rapim wel oliv long sua bilong en. \fig Wasman bilong sipsip i save lukautim ol gut na ol i save bihainim em|src="LB000120HTJL.tif" size="span" loc="p" ref="20.1"\fig*
+\p Long nait, wasman i save putim ol sipsip insait long banis. Wasman i save slip long dua bilong banis. Olsem na ol sipsip ol i no pret long ol weldok samting na long ol stilman. Ol i save slip gut tru. Lukim \w sipsip\w*.
+\p Na tu, long Nupela Testamen dispela tok i sut long ol pasto tu (\xt Ef 4.11\xt*), na long Jisas yet (\xt 1Pi 2.25\xt*) .
+\p \k wip\k*
+\v 405
+\hp \zge whip, flog\zge*; G:μάστιξ, μαστίζω, μαστιγόω, παιδεύω, φραγέλλιον, φραγελλόω; P:P5; (\xt Mt 10.17, 20.19, 23.34, 27.26, Mk 10.34, 15.15, Lk 18.33, 23.16, Jo 2.15, 19.1, Ap 22.24, Hi 11.36\xt*).
+\zstat C
+\p Wip em i kain samting olsem wanpela hap kanda ol man i pasim ol haphap bun bilong ol samting na ol hangamapim ol haphap ston i stap long arere bilong en. Taim ol i wipim wanpela man, dispela ol samting i stap long wip hia, bai i paitim na katim katim skin bilong man na bikpela blut bai i kapsait.
+\p \k wit\k*
+\v 890
+\hp \zge wheat\zge*; G:σῖτος, στάχυς; P:P3; CAT:flora; (\xt Mk 4.28, Lk 3.17.\xt*).
+\zstat C
+\p Dispela em narapela kain rais ol i save wokim plaua long en. Ol \w Israel\w* i save kisim sids bilong wit na memeim olgeta na mekim em i kamap plaua bilong wokim bret. Ol i luksave olsem plaua bilong wit i winim tru plaua ol i save wokim long rais bali hia. \fig Ol Juda i save kisim sids bilong wit na wokim bret|src="oi00227.png" size="span" loc="paw" ref="1.0"\fig*
+\p Ol lain i save rausim ol skin bilong wit na rausim pipia i go na pikinini wit tasol i stap (Lk 22.31). \fig Ol lain i save rausim ol skin bilong wit na rausim pipia i go na pikinini wit tasol i stap|src="cn02082b.tif" size="span" loc="paw" ref="1.890"\fig*
+\p \k wokim ol haus sel\k*
+\v 270
+\hp \zge tent maker\zge*; G:σκηνοποιός; P:P8; CAT:attributes; (\xt Ap 18.3, 20.34, 1Ko 4.12, 9.12, 2Ko 11.7, 1Te 2.9\xt*).
+\zstat C
+\p Long taim bilong Jisas sampela man i save samapim haus sel. I no wankain olsem \w haus sel bilong God\w*. Ol meri i wokim haus sel bilong God long gras bilong meme o skin bilong sampela animal. Dispela em i narapela kain haus sel. Ol man i save wokim ol dispela kain haus sel long ol strongpela laplap.
+\p Ol lain bilong lukautim sipsip i save slip long haus sel (\xt Jen 4.20, 12.7-8).
+\p Aposel Pol i bin kisim save long dispela wok taim em i yangpela man yet. Na sampela taim em i mekim dispela wok long taim em i bringim gutnius long ol arapela hap. Em i save mekim dispela kain wok long em i ken lukautim em yet long kaikai samting na ol nupela \w sios\w* i no inap hatwok long lukautim em. Na tu, ol arapela lain i no inap tok Pol i mekim wok bilong autim tok long kisim pe. \fig Pol i save samapim ol haus sel olsem wok mani bilong em|src="LB000160HTJL.tif" size="span" loc="p" ref="66.1"\fig*
+\p \k wokman nating\k*
+\v 900
+\hp \zge slave, servant\zge*; G:δοῦλος, ὀικέτης; P:P5; CAT:beings; (\xt Jen 12.16, 15.13, Wkp 25.47-55, Mt 8.9, Ro 1.1, 8.23, 1Ko 6.20, 1Pi 1.18\xt*).
+\zstat C
+\p Dispela em ol lain i save wok nating long ol arapela lain tasol ol i no save kisim pei o kisim wanpela gutpela samting long wok ol i mekim. Ol i save kolim ol dispela lain i wok nating long ol arapela \fq wokman nating\fq*. Sapos wanpela man i wok nating long narapela man, em i mas bihainim olgeta tok bilong bosman bilong em na tu em i mas mekim kain kain wok long dispela bosman. Bosman i no inap tru long givim pei long ol long olgeta kain kain wok ol i save mekim hia. Nogat tru! Samting dispela bosman inap long mekim em, em inap long givim spes bilong slip, na tu em i ken lukautim ol long kaikai na arapela ol liklik samting tasol.
+\p Dispela wokman nating em i stap olsem bulmakau o hos bilong mekim kain kain wok bilong dispela bosman. Dispela wokman nating em bai stap na mekim kain kain wok na bihainim olgeta tok bilong bosman inap long taim dispela bosman i painim narapela man husait inap long baim dispela wokman nating na em bai kisim mani. Na taim narapela man i baim aut dispela wokman nating, dispela mani em bosman bilong em yet bai holim pastaim na bihain em bai lusim dispela wokman i go long dispela narapela man husait i bin baim em.
+\p Sampela taim, sapos wanpela man i gat bikpela dinau na em i no inap baim, em i bai kamap wokman nating bilong dispela man we em i gat dinau long em.
+\p Sapos wanpela wokman nating i laik bai i lusim dispela kain sindaun, orait, wanpela man i mas sori long em na baim bosman bilong em long mani na dispela bosman inap lusim dispela wokman nating long dispela kain sindaun.
+\p Sapos wanpela wokman nating yet i kisim mani long sampela wanblut bilong en na em i holim inap em i gat planti mani inap long mak bilong dinau bilong em, orait, em yet i ken givim dispela mani long bosman bilong em na i ken go fri gen.
+\p Planti taim long Nupela Testamen bai yu lukim Aposel Pol i tok, <<Mi wokman nating bilong Jisas Krais.>> Em i tok olsem long wanem, em i tingim ol pasin nogut bilong em bipo we i bin bosim em na mekim em i stap olsem wokman nating bilong ol dispela pasin nogut. Tasol taim Jisas i bin dai long diwai kros bilong rausim olgeta pasin nogut, dispela i kain olsem Jisas i baim bek Pol. Olsem na, nau em i stap olsem wokman nating bilong Jisas.
+\p \fig Man i laik salim wokmeri nating bilong em|src="LB000156HTJL.tif" size="span" loc="p" ref="60.1"\fig*
+\p \k yis\k*
+\v 910
+\hp \zge yeast\zge*; G:ζύμη; P:P2; CAT:realia; (\xt Mt 13.33, 16.12, 1Ko 5.6-8, Ga 5.9\xt*).
+\zstat C
+\p Plawa, yis na wara hia, em ol samting yu mas i gat long yu ken kukim bret. Yu mas putim yis inap long mak bilong plaua orait, yu bai putim liklik wara tu i go antap long plaua wantaim yis hia. Dispela i pinis orait, yu mas tanim tanim yis wantaim plaua na putim i stap na wet long yis hia bai mekim plaua i solap. Na bihain yu ken kisim na kukim bret. Sapos yu tanim plaua wantaim wara nating, na yu no putim yis, bai yu luksave olsem plaua hia, i no nap solap, nogat tru. Bret i nogat yis bai mekim plaua hia i kamap olsem bisket nating. Lukim (\xt 1Ti 4.13\xt*).
+\p Yis i ken kamap piksa bilong gutpela samting. Jisas i bin yusim yis olsem wanpela kain tok piksa long tok bilong God (\xt Mt 13.33\xt*).
+\p Na tu, yis i ken kamap piksa bilong samting nogut. Jisas i yusim yis olsem wanpela tok piksa long kain skul ol \w Farisi\w* i save givim long ol manmeri (\xt Mt 16.6,11,12\xt*).
+\p \k yumi litimapim God\k*
+\v 435
+\hp \zge Hosanna\zge*; G:ὡσαννά; P:P2; CAT:misc; (\xt Mt 21.9, 15, Mk 11.9-10, Jo 12.13\xt*).
+\zstat C
+\p Long taim bilong Jisas, ol manmeri i bin litimapim nem bilong God na ol i bin singaut na mekim dispela tok \fqa Hosana\fqa*. Mining bilong en i olsem, <<God i ken mekim gut long em,>> o <<Yumi litimapim nem bilong em.>>

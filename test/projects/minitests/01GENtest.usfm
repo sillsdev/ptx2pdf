@@ -4,7 +4,7 @@
 \s This is a title
 \p
 \v 1 This is normal text.  There should probably be some\f + \ft Needless, but nevertheless quite long (so that they are can demonstrate that even the first one correctly wrap)\f* footnotes, since this is a test of footnotes.
-Distinctio ut quis et optio. Natus nobis quas aperiam et. Accusantium consequatur occaecati optio est eum.
+Distinctio ut quis et optio. \sls Natus nobis \+add quas\+add* aperiam et.\sls* Accusantium consequatur occaecati optio est eum.
 
 Enim quam perspiciatis eveniet. Est ut ratione nesciunt quo excepturi cum nemo quia. \| Ut ut repellendus officiis. Et voluptas temporibus rerum omnis commodi consequatur reprehenderit.
 
@@ -20,7 +20,9 @@ In eius iste blanditiis impedit qui rem repellendus eos. Mollitia delectus qui a
 \zplacenotes-x
 \zpostendnoterule
 \p
-The first end-note\x + \xt But not the last\x* was placed above here.
+The first end-note\x + \xt But not the last\x* was placed above here.\f + \fr 1:2 \ft A footnote about \fk footnotes \ft Which may be called
+\fv 3\fv*\fq notes \ft in \fl other translations \ft or \fqa footies \ft very very rarely.\f*
+
 \v 3 This is verse three. with a link to \xt verse 4|GEN 1:4\xt* and one to \xt vv4-5|GEN 1:4-5\xt*
 \v 4-5 This is a target for the link
 \c 11 

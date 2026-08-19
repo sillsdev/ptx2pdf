@@ -1,9 +1,9 @@
 
-import configparser, os, re, regex, random, collections
+import configparser, os, re, regex, random, collections, sys, glob, copy
 from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
-from ptxprint.project import ProjectList
+from ptxprint.project import Project, ProjectList
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
@@ -20,11 +20,12 @@ from ptxprint.hyphen import Hyphenation
 from ptxprint.xdv.getfiles import procxdv
 from ptxprint.adjlist import AdjList
 from ptxprint.polyglot import PolyglotConfig
+from ptxprint.version import VersionStr, GitVersionStr, ConfigVersion
 from ptxprint.report import Report
 import ptxprint.pdfrw.errors
-import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
-from tempfile import NamedTemporaryFile
+import pathlib
+import tempfile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
 from shutil import rmtree
@@ -37,9 +38,6 @@ from typing import Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "3.0.4"
-GitVersionStr = "3.0.4"
-ConfigVersion = "2.24"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -65,7 +63,7 @@ def doError(txt, secondary=None, **kw):
     logger.error(txt)
     if secondary is not None:
         print(secondary)
-        logger.error(txt)
+        logger.error(secondary)
 
 class ViewModel:
     _attributes = {
@@ -105,7 +103,7 @@ class ViewModel:
         "Copyright": ('copy', ),
     }
 
-    def __init__(self, prjtree, userconfig, scriptsdir, args=None):
+    def __init__(self, prjtree, userconfig, scriptsdir, args=None, odir=None):
         self.prjTree = prjtree
         self.project = None
         self.cfgid = None
@@ -133,6 +131,7 @@ class ViewModel:
         self.triggervcs = False
         self.copyrightInfo = None
         self.pubvars = {}
+        self.pubvars_publishable = {}
         self.strongsvars = {}
         self.font2baselineRatio = 1.
         self.docreatediff = False
@@ -142,9 +141,18 @@ class ViewModel:
         self.periphs = {}
         self.hyphenation = None
         self.report = Report()
+        self.zf = None
 
         # private to this implementation
         self.dict = {}
+
+
+    def __eq__(self, other):
+        if self.project is None or other.project is None:
+            return False
+        if self.cfgid != other.cfgid:
+            return False
+        return self.project == other.project
 
     def setup_ini(self):
         self.setDate()
@@ -213,8 +221,13 @@ class ViewModel:
             wid += "[" + str(sub) + "]"
         if wid.startswith("s_"):
             self.dict[wid] = f2s(float(value))
-        else:
-            self.dict[wid] = value
+            return
+        elif wid.startswith("r_"):
+            bits = wid.split("_")[1:]
+            if len(bits) > 1 and value:
+                value = bits[1]
+                wid = "r_"+bits[0]
+        self.dict[wid] = value
 
     def getvar(self, k, default="", dest=None):
         if dest is None:
@@ -278,7 +291,7 @@ class ViewModel:
         return res
         
     def _bookrefsBooks(self, bl, local):
-        res = RefList()
+        res = []
         if not local:
             self.bookrefs = bl
         for r in bl:
@@ -286,9 +299,9 @@ class ViewModel:
                 res.append(r.first.book)
         return res
 
-    def getBooks(self, scope=None, files=False, local=False):
+    def getBooks(self, scope=None, files=False, local=False, errors=False):
         if self.project is None:
-            return
+            return []
         if scope is None:
             scope = self.get("r_book")
         if scope == "module":
@@ -299,13 +312,20 @@ class ViewModel:
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
-        bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False)
+        try:
+            bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
+        except SyntaxError as e:
+            if errors:
+                self.doError(str(e),
+                             secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
+            return []
+        bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
         if scope == "single" or not len(bl):
             bk = self.get("ecb_book")
             if bk:
-                bname = self.getBookFilename(bk, self.project.prjid)
-                if bname is not None and os.path.exists(os.path.join(self.project.path, bname)):
+                bname = self.getBookSrcPath(bk, self.project.prjid)
+                if bname is not None and os.path.exists(bname):
                     fromchap = round(float(self.get("t_chapfrom") or "0"))
                     tochap = round(float(self.get("t_chapto") or "200"))
                     try:
@@ -321,16 +341,16 @@ class ViewModel:
             res = RefList()
             self.bookrefs = RefList()
             for b in bl:
-                bname = self.getBookFilename(b.first.book, self.project.prjid)
-                if bname is None:
-                    continue
-                if os.path.exists(os.path.join(self.project.path, bname)):
-                    if b.first.book == "FRT":
-                        self.switchFRTsettings()
-                    elif b.first.book == "INT" and self.get("c_useSectIntros"):
-                        pass
-                    else:
-                        res.append(b)
+                bname = self.getBookSrcPath(b.first.book, self.project.prjid)
+                # if bname is None:
+                    # continue
+                # if os.path.exists(bname):
+                if b.first.book == "FRT":
+                    self.switchFRTsettings()
+                elif b.first.book == "INT" and self.get("c_useSectIntros"):
+                    pass
+                else:
+                    res.append(b)
             res.simplify(sort=False)
             return self._bookrefsBooks(res, local)
         else:
@@ -364,12 +384,30 @@ class ViewModel:
             return {}
         res = {}
         for bk in allbooks:
-            f = self.getBookFilename(bk)
-            fp = os.path.join(self.project.path, f)
-            if os.path.exists(fp):
+            fp = self.getBookSrcPath(bk)
+            if fp is not None:
                 res[bk] = fp
-        if self.moduleFile is not None:
+        if self.moduleFile is not None and os.path.isfile(self.moduleFile):
             res["MOD"] = self.moduleFile
+        return res
+
+    def getNewBooks(self):
+        res = set()
+        for r in self.getBooks():
+            if "." not in r:
+                srcname = self.getBookFilename(r)
+                srcpath = self.getBookSrcPath(r)
+                destname = self.getDraftFilename(r, ext="")
+            else:
+                srcpath = str(r)
+                destname = os.path.basename(r)
+            if srcpath is None or not os.path.exists(srcpath):
+                continue
+            destpath = os.path.join(self.project.printPath(self.cfgid), destname)
+            srct = os.lstat(srcpath).st_mtime if os.path.exists(srcpath) else 0
+            destt = os.lstat(destpath).st_mtime if os.path.exists(destpath) else 0
+            if srct > destt:
+                res.add(r)
         return res
 
     def _getPtSettings(self, prjid=None):
@@ -396,6 +434,21 @@ class ViewModel:
             return None
         return ptsettings.getBookFilename(bk)
 
+    def getBookSrcPath(self, bk, prjid=None, project=None):
+        if project is None:
+            project = self.project
+        fname = self.getBookFilename(bk, prjid=prjid)
+        if fname is None:
+            return None
+        for a in (project.srcPath(cfgid=self.cfgid), project.path):
+            if a is None:
+                continue
+            fpath = os.path.join(a, fname)
+            logger.log(5, f"Trying {bk} -> {fpath} {'success' if os.path.exists(fpath) else 'failed'}")
+            if os.path.exists(fpath):
+                return fpath
+        return None
+
     def getScriptSnippet(self):
         import ptxprint.scriptsnippets as scriptsnippets
         script = self.get("fcb_script")
@@ -409,6 +462,8 @@ class ViewModel:
         self.dict[btn+"/style"] = style
 
     def onFontChanged(self, fbtn):
+        if self.loadingConfig:
+            return
         font_info = self.get("bl_fontR")
         if font_info is None:
             return
@@ -447,7 +502,7 @@ class ViewModel:
 
     def calcPageSize(self):
         unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize"))
+        m = re.match(r"^([\d.]+)\s*(\S+)\s*[,xX]\s*([\d.]+)\s*(\S+)\s*(?:.*|$)", self.get("ecb_pagesize") or "")
         if m:
             pagewidth  = float(m.group(1)) * unitConv.get(m.group(2), 1)
             pageheight = float(m.group(3)) * unitConv.get(m.group(4), 1)
@@ -522,8 +577,8 @@ class ViewModel:
         self.project = None
         self.cfgid = None
 
-    def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True):
-        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=True)
+    def setPrjid(self, prjid, guid, saveCurrConfig=False, loadConfig=True, readConfig=True, startup=False):
+        return self.updateProjectSettings(prjid, guid, configName="Default", saveCurrConfig=saveCurrConfig, readConfig=loadConfig, quickload=not startup)
 
     def setConfigId(self, configid, saveCurrConfig=False, force=True, loadConfig=True):
         return self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
@@ -602,8 +657,8 @@ class ViewModel:
             if new.has_section(sect):
                 allopts.update(new.options(sect))
             for opt in allopts:
-                if config.has_option(sect, opt) and (not base.has_option(sect, opt)
-                        or config.get(sect, opt) != base.get(sect, opt)):
+                if this.has_option(sect, opt) and (not base.has_option(sect, opt)
+                        or this.get(sect, opt) != base.get(sect, opt)):
                     continue
                 if new.has_option(sect, opt):
                     this.set(sect, opt, new.get(sect, opt))
@@ -693,6 +748,9 @@ class ViewModel:
                 self.resetToInitValues(updatebklist=False)
             logger.debug(f"Reading config {configName} in the config context of {self.cfgid}")
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
+            if float(oldVersion) >= 0 or forceConfig:
+                logger.debug(f"Switching config from {self.cfgid} to {configName}")
+                self.cfgid = configName
             if float(oldVersion) < 0:
                 return False
             self.styleEditor.reset(os.path.join(self.scriptsdir, "usfm_sb.sty"))
@@ -700,9 +758,6 @@ class ViewModel:
             self.updateStyles(oldVersion)
             if newconfig:
                 self.set("t_invisiblePassword", "", mod=False)
-            if float(oldVersion) >= 0 or forceConfig:
-                logger.debug(f"Switching config from {self.cfgid} to {configName}")
-                self.cfgid = configName
             if quickload:
                 return
             if readConfig:  # project changed
@@ -733,7 +788,7 @@ class ViewModel:
     def get_usfms(self):
         if self.usfms is None:
             cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
-            self.usfms = UsfmCollection(self.getBookFilename, self.project.path,
+            self.usfms = UsfmCollection(self.getBookSrcPath, self.project.path,
                             Sheets(self.getStyleSheets()), changes=cfile)
         return self.usfms
 
@@ -763,7 +818,11 @@ class ViewModel:
         bk = None
         while res is None:
             bk = pts.getABook(bk)
+            if bk is None:
+                break
             abook = self.get_usfm(bk)
+            if abook is None:
+                continue
             res = abook.findScript()
         return res
 
@@ -809,13 +868,13 @@ class ViewModel:
             return self.copyrightInfo
         with open(os.path.join(pycodedir(), "picCopyrights.json"), encoding="utf-8", errors="ignore") as inf:
             self.copyrightInfo = json.load(inf)
-        fname = os.path.join(self.project.path, "shard", "ptxprint", "picCopyrights.json")
+        fname = os.path.join(self.project.path, "shared", "ptxprint", "picCopyrights.json")
         if os.path.exists(fname):
             with open(fname, encoding="utf-8", errors="ignore") as inf:
                 try:
                     cupdates = json.load(inf)
                     self.copyrightInfo.update(cupdates)
-                except json.decode.JSONDecodeError as e:
+                except json.decoder.JSONDecodeError as e:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
         return self.copyrightInfo
@@ -891,7 +950,7 @@ class ViewModel:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
             font = FontRef(fname, "")
             self.set("bl_fontR", font)
-        self.onFontChanged(None)
+            self.onFontChanged(None)
         # clear generated pictures # Not sure why we need to do this. Commented out 16-1-2025
         # for f in ("tmpPics", "tmpPicLists"):
             # path2del = os.path.join(self.project.printPath(cfgname), f)
@@ -902,7 +961,7 @@ class ViewModel:
                 # except (OSError, PermissionError):
                     # pass
         if forcerewrite:
-            self.writeConfig(cfgname=cfgname, force=forcerewrite, diff=None)
+            self.writeConfig(cfgname=cfgname, force=forcerewrite)
         return oldversion
 
     def writeConfig(self, cfgname=None, force=False, diff=None):
@@ -963,7 +1022,10 @@ class ViewModel:
                 if val is None:
                     continue
                 if v[1]:
-                    val = "\n".join(x.withvars(self, relto=self.project.path) for x in val)
+                    if isinstance(val, list):
+                        val = "\n".join(x.withvars(self, relto=self.project.path) for x in val)
+                    else:
+                        val = re.sub(r"\s*,\s*", "\n", val)
                 else:
                     val = val.withvars(self, relto=self.project.path)
             elif v.widget.startswith("bl_"):
@@ -982,6 +1044,8 @@ class ViewModel:
                 self._configset(config, k, str(val) if val is not None else "", update=False, diff=diff)
         for k in self.allvars():
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
+            if self.pubvars_publishable.get(k, False):
+                self._configset(config, f"vars.publishable/{k}", True, update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
         # for attribute, value in vars(self.polyglots).items():
@@ -1010,19 +1074,28 @@ class ViewModel:
             return fallback
         return conv(v)
 
+    def _config_bool(self, section, option, config, fallback=_UNSET, **kw):
+        try:
+            v = config.getboolean(section, option, **kw)
+        except (NoOptionError, NoSectionError, ValueError):
+            if fallback is _UNSET:
+                raise
+            return fallback
+        return v
+
     def versionFwdConfig(self, config, cfgpath):
         version = self._config_get(config, "config", "version", conv=float, fallback=ConfigVersion)
         forcerewrite = False
         v = float(version)
         if v < 0.9:
             try:
-                self._configset(config, "document/ifshowchapternums", not config.getboolean("document", "ifomitchapternum", fallback=False))
-                self._configset(config, "document/ifshowversenums", not config.getboolean("document", "ifomitallverses", fallback=False))
-                self._configset(config, "document/bookintro", not config.getboolean("document", "supressbookintro", fallback=False))
-                self._configset(config, "document/introoutline", not config.getboolean("document", "supressintrooutline", fallback=False))
-                self._configset(config, "document/firstparaindent", not config.getboolean("document", "supressindent", fallback=False))
-                self._configset(config, "document/sectionheads", not config.getboolean("document", "supresssectheads", fallback=False))
-                self._configset(config, "document/parallelrefs", not config.getboolean("document", "supressparallels", fallback=False))
+                self._configset(config, "document/ifshowchapternums", not self._config_bool("document", "ifomitchapternum", config, fallback=False))
+                self._configset(config, "document/ifshowversenums", not self._config_bool("document", "ifomitallverses", config, fallback=False))
+                self._configset(config, "document/bookintro", not self._config_bool("document", "supressbookintro", config, fallback=False))
+                self._configset(config, "document/introoutline", not self._config_bool("document", "supressintrooutline", config, fallback=False))
+                self._configset(config, "document/firstparaindent", not self._config_bool("document", "supressindent", config, fallback=False))
+                self._configset(config, "document/sectionheads", not self._config_bool("document", "supresssectheads", config, fallback=False))
+                self._configset(config, "document/parallelrefs", not self._config_bool("document", "supressparallels", config, fallback=False))
             except:
                 pass
         if v < 1.2:
@@ -1049,7 +1122,7 @@ class ViewModel:
                         pass
         if v < 1.400:
             indent = config.getfloat("document", "indentunit", fallback="2.000")
-            if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
+            if indent == 2.0 and self._config_bool("paper", "columns", config, fallback=True):
                     self._configset(config, "document/indentunit", "1.000")
         if v < 1.403 and cfgpath is not None:   # no need to bump version for this and merge this with a later version test
             f = os.path.join(cfgpath, "NestedStyles.sty")
@@ -1071,8 +1144,8 @@ class ViewModel:
             self._configset(config, "paper/rulegap", f2s(config.getfloat("header", "ruleposition", fallback=0.)))
         if v < 1.504:
             try:
-                self._configset(config, "notes/fneachnewline", not config.getboolean("notes", "fnparagraphednotes", fallback=False))
-                self._configset(config, "notes/xreachnewline", not config.getboolean("notes", "xrparagraphednotes", fallback=False))
+                self._configset(config, "notes/fneachnewline", not self._config_bool("notes", "fnparagraphednotes", config, fallback=False))
+                self._configset(config, "notes/xreachnewline", not self._config_bool("notes", "xrparagraphednotes", config, fallback=False))
             except:
                 pass
         if v < 1.601:
@@ -1082,23 +1155,23 @@ class ViewModel:
             self._configset(config, "notes/belownoterulespace", "3.0")
             self._configset(config, "notes/abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
         if v < 1.7:
-            if config.getboolean("document", "pdfx1aoutput", fallback=False):
+            if self._config_bool("document", "pdfx1aoutput", config, fallback=False):
                 self._configset(config, "document/pdfoutput", "PDF/X-1A")
         if v < 1.9:
             val = self._config_get(config, "scrmymr", "syllables", fallback="")
-            self._configset(config, "scripts/mymr/syllables", config.getboolean("scrmymr", "syllables", fallback=False) if val else False)
+            self._configset(config, "scripts/mymr/syllables", self._config_bool("scrmymr", "syllables", config, fallback=False) if val else False)
         if v < 1.93:
             self._configset(config, "notes/xrcolside", "3")
         if v < 1.94:
-            self._configset(config, "document/ifshow1chbooknum", not config.getboolean("document", "ifomitsinglechnum", fallback=False))
-            self._configset(config, "header/ifshowchapter", not config.getboolean("header", "ifomitrhchapnum", fallback=False))
-            self._configset(config, "header/ifshowverse", config.getboolean("header", "ifverses", fallback=False))
+            self._configset(config, "document/ifshow1chbooknum", not self._config_bool("document", "ifomitsinglechnum", config, fallback=False))
+            self._configset(config, "header/ifshowchapter", not self._config_bool("header", "ifomitrhchapnum", config, fallback=False))
+            self._configset(config, "header/ifshowverse", self._config_bool("header", "ifverses", config, fallback=False))
             self._configset(config, "header/ifshowbook", True)
         if v < 1.95:
             self._configset(config, "texpert/bottomrag", "0")
         if v < 1.96:
             self._configset(config, "notes/r_fnpos", "normal")
-            self._configset(config, "project/uilevel", "4" if config.getboolean("project", "hideadvsettings", fallback=True) else "6")
+            self._configset(config, "project/uilevel", "4" if self._config_bool("project", "hideadvsettings", config, fallback=True) else "6")
             digmap = config.get("document", "digitmapping", fallback="Default")
             if digmap != "Default":
                 for a in ('regular', 'bold', 'bolditalic', 'italic'):
@@ -1118,10 +1191,10 @@ class ViewModel:
         if v < 1.97:
             ls = ''
             gm = ''
-            if config.getboolean("paragraph", "linespacebase", fallback=False):
+            if self._config_bool("paragraph", "linespacebase", config, fallback=False):
                 self._configset(config, "paragraph/linespacebase", False)
                 ls = "   * Legacy 1/14 LineSpacing\n"
-            if config.getboolean("paragraph", "useglyphmetrics", fallback=False):
+            if self._config_bool("paragraph", "useglyphmetrics", config, fallback=False):
                 self._configset(config, "paragraph/useglyphmetrics", False)
                 gm = "   * Use glyph metrics\n"
             if len(ls+gm) > 0:
@@ -1134,11 +1207,11 @@ class ViewModel:
                 forcerewrite = True
 
         if v < 2.06:
-            self._configset(config, "document/diffcolayout", not config.getboolean("document", "clsinglecol", fallback=False))
+            self._configset(config, "document/diffcolayout", not self._config_bool("document", "clsinglecol", config, fallback=False))
             diffcolbooks = config.get("document", "clsinglecolbooks", fallback="FRT INT PSA PRO BAK GLO")
             self._configset(config, "document/diffcolayoutbooks", diffcolbooks)
         if v < 2.07:
-            if cfgpath is not None and config.getboolean("project", "usechangesfile", fallback=False):
+            if cfgpath is not None and self._config_bool("project", "usechangesfile", config, fallback=False):
                 cfile = os.path.join(cfgpath, "changes.txt")
                 if not os.path.exists(cfile):
                     with open(cfile, "w", encoding="utf-8") as outf:
@@ -1151,7 +1224,7 @@ class ViewModel:
             if config.get("finish", "pgsperspread", fallback="None") == "None":
                 self._configset(config, "finishing/pgsperspread", "1")
             if config.get("paper", "cropmarks", fallback="None") == "None":
-                self._configset(config, "paper/cropmarks", config.getboolean("paper", "ifcropmarks", fallback=False))
+                self._configset(config, "paper/cropmarks", self._config_bool("paper", "ifcropmarks", config, fallback=False))
         if v < 2.10:
             fpos = config.getfloat("paper", "footerpos", fallback=10) * 72.27 / 25.4
             bmargin = config.getfloat("paper", "bottommargin", fallback=10) * 72.27 / 25.4
@@ -1159,7 +1232,7 @@ class ViewModel:
             self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos))))
             self._configset(config, "document/marginalposn", "left")
             try:
-                noinkinmargin = config.getboolean("footer", "noinkinmargin", fallback=False)
+                noinkinmargin = self._config_bool("footer", "noinkinmargin", config, fallback=False)
             except ValueError:
                 noinkinmargin = False  # Default value if the value is not a valid boolean
             self._configset(config, "footer/noinkinmargin", not noinkinmargin)            
@@ -1168,7 +1241,7 @@ class ViewModel:
                 self._configset(config, "document/odiffcolor", x)
                 y = coltoonemax(x)
                 self._configset(config, "document/ndiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
-        if v < 2.13 and cfgpath is not None and config.getboolean("project", "usechangesfile", fallback=False):
+        if v < 2.13 and cfgpath is not None and self._config_bool("project", "usechangesfile", config, fallback=False):
             path = os.path.join(cfgpath, "changes.txt")
             if os.path.exists(path):
                 with open(path, encoding="utf-8") as inf:
@@ -1191,14 +1264,16 @@ class ViewModel:
                 self._configset(config, "project/plugins", plg.replace("ornaments","").strip(" ,"))
 
         if v < 2.17: # tidying up ornaments and borders
-            if config.getboolean("fancy", "pageborder", fallback=False):
+            if self._config_bool("fancy", "pageborder", config, fallback=False):
                 self._configset(config, "fancy/pageborders", True)
                 self._configset(config, "fancy/pagebordertype", "pdf")
-            if config.getboolean("fancy", "enableborders", fallback=False):
+            if self._config_bool("fancy", "enableborders", config, fallback=False):
                 self._configset(config, "fancy/enableornaments", True)
+            if self._config_bool("fancy", "sectionheader", config, fallback=False):
+                self._configset(config, "fancy/sectionborder", "legacy")
 
         if v < 2.18: # transfer this value from body tab to texpert tab
-            if config.getboolean("project", "ifstarthalfpage", fallback=False):
+            if self._config_bool("project", "ifstarthalfpage", config, fallback=False):
                 self._configset(config, "texpert/bookstartpage", "multi")
 
         if v < 2.19: # transfer some settings to texpert
@@ -1219,25 +1294,25 @@ class ViewModel:
                 self.clean_adj_files(adjpath)
 
         if v < 2.22: # transfer Show/Hide settings to Advanced > texpert
-            self._configset(config, 'texpert/showadjpoints', config.getboolean('snippets', 'adjlabelling', fallback=False))
-            self._configset(config, 'texpert/showusfmcodes', config.getboolean('snippets', 'paralabelling', fallback=False))
-            self._configset(config, 'texpert/showhboxerrorbars', config.getboolean('document', 'ifhidehboxerrors', fallback=False))
+            self._configset(config, 'texpert/showadjpoints', self._config_bool('snippets', 'adjlabelling', config, fallback=False))
+            self._configset(config, 'texpert/showusfmcodes', self._config_bool('snippets', 'paralabelling', config, fallback=False))
+            self._configset(config, 'texpert/showhboxerrorbars', self._config_bool('document', 'ifhidehboxerrors', config, fallback=False))
 
         if v < 2.23:
-            if not config.getboolean('paper', 'ifgrid', fallback=False):
+            if not self._config_bool('paper', 'ifgrid', config, fallback=False):
                 self._configset(config, 'grid/gridgraph', False)
                 self._configset(config, 'grid/gridlines', False)
                 
         if v < 2.24: # change from simple pri/sec diglot to polyglot
-            if config.getboolean("snippets", "diglot"):
+            if self._config_bool("snippets", "diglot", config, fallback=False):
                 for k, a in {"projectid": "secprj", "projectguid": "secprjguid",
                              "config": "secconfig", "color": "colour"}.items():
                     val = config.get("document", f"diglot{a}", fallback=None)
                     if val is not None:
                         self._configset(config, f"diglot_R/{k}", val)
-                for k,v in {"page": "1", "weight": "50"}.items():
-                    self._configset(config, f"diglot_L/{k}", v)
-                    self._configset(config, f"diglot_R/{k}", v)
+                for k, a in {"page": "1", "weight": "50"}.items():
+                    self._configset(config, f"diglot_L/{k}", a)
+                    self._configset(config, f"diglot_R/{k}", a)
                 val = config.get("document", "diglotprifraction", fallback=50)
                 self._configset(config, f"poly/fraction", val)
                 self._configset(config, f"diglot_L/fraction", val)
@@ -1256,6 +1331,15 @@ class ViewModel:
                 self._configset(config, f"diglot_L/fontsize", fsz)
                 lsp = config.get("paragraph", "linespacing", fallback=15)
                 self._configset(config, f"diglot_L/baseline", lsp)
+
+        if v < 2.25:
+            if not self._config_bool("project", "iffrontmatter", config, fallback=False):
+                self._configset(config, 'cover/makecoverpage', False)
+
+        if v < 3.01:
+            if self._config_bool("texpert", "vhyphen", config, fallback=False):
+                val = "top" if self._config_bool("texpert", "vhyphenup", config, fallback=False) else "bottom"
+                self._configset(config, "texpert/vhyphenmode", val)
 
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
@@ -1327,7 +1411,18 @@ class ViewModel:
             if clearvars:
                 self.clearvars()
         varcolour = "#FFDAB9" if not clearvars else None
-        # breakpoint()
+        # set publishable category first so when we read the var we can also set the publishable
+        if categories is None or 'variables' in categories:
+            sect = "vars.publishable"
+            onlist = ("maintitle", "subtitle")
+            if config.has_section(sect):
+                for opt in config.options(sect):
+                    default = opt in onlist
+                    val = config.getboolean(sect, opt, fallback=default)
+                    self.pubvars_publishable[opt] = val
+            else:
+                for k in onlist:
+                    self.pubvars_publishable[k] = True
         for sect in config.sections():
             for opt in config.options(sect):
                 editableOverride = len(opt) != len(opt.strip("*"))
@@ -1366,6 +1461,8 @@ class ViewModel:
                                 self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
+                        except ValueError as e:
+                            self.doError(f"{v.widget}: {e}")
                 elif sect in ("vars", "strongsvar") and (categories is None or 'variables' in categories):
                     if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
@@ -1465,6 +1562,7 @@ class ViewModel:
             changed = True
         else:
             cfgt = os.stat(cfgpath).st_mtime
+        vcsnoted = self.triggervcs  # capture before writeConfig() resets it
         self.writeConfig(force=force)
         if not changed:
             os.utime(cfgpath, (cfgt, cfgt))
@@ -1474,11 +1572,20 @@ class ViewModel:
             if v is not None and v.isChanged:
                 v.saveConfig()
                 v.changed(False)
+            elif v is not None and vcsnoted:
+                # Primary adjlists changed (e.g. via PDF viewer context menu) —
+                # the diglot output has changed so signal the secondary project too.
+                v.triggervcs = True
+                v.writeConfig()
         self.isChanged = False
 
     def saveAdjlists(self, force=False):
-        for bk, adj in self.adjlists.items():
-            adj.save()
+        changed = False
+        for bk in self.getBooks():
+            adj = self.get_adjlist(bk, save=False)
+            changed |= adj.save()
+        if changed:
+            self.triggervcs = True
 
     def saveStyles(self, force=False):
         if not force and self.configLocked():
@@ -1579,16 +1686,30 @@ class ViewModel:
         res = fname[:doti] + cname + fname[doti:] + ext if doti > 0 else fname + cname + ext
         return res
 
+    def getLocalTriggerFilename(self, bk, ext="-1.triggers"):
+        fname = self.getDraftFilename(bk, ext=ext)
+        if len(self.diglotViews):
+            fname = re.sub(r"^([^.]*).(.*?)$", r"\1-diglot.\2", fname)
+        return fname
+
     def get_adjlist(self, bk, save=True, gtk=None):
         if bk in self.adjlists:
-            return self.adjlists[bk]
+            adj = self.adjlists[bk]
+        #    if adj.adjfile is not None and os.path.exists(adj.adjfile):
+        #        adjt = os.lstat(adj.adjfile).st_ctime
+        #        if adjt <= adj.ftime:
+        #            return adj
+        #    else:
+            return adj
         fname = self.getAdjListFilename(bk)
         if fname is None:
             return None
         fpath = os.path.join(self.project.srcPath(self.cfgid), "AdjLists", fname)
+        tname = self.getLocalTriggerFilename(bk)
+        tpath = os.path.join(self.project.printPath(self.cfgid), tname)
         # get expansion of regular font
         centre = 100
-        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath)
+        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath, tname=tpath)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj
@@ -1600,11 +1721,12 @@ class ViewModel:
             srcp = os.path.join(pycodedir(), "FRTtemplateBasic.txt")
         elif frtype == "advanced":
             srcp = os.path.join(pycodedir(), "FRTtemplateAdvanced.txt")
+        elif frtype == "diglot":
+            srcp = os.path.join(pycodedir(), "FRTtemplateDiglot.txt")
         elif frtype == "paratext":
-            fname = self.getBookFilename("FRT", self.project.prjid)
-            if fname is None:
+            srcp = self.getBookSrcPath("FRT", self.project.prjid)
+            if srcp is None:
                 return False
-            srcp = os.path.join(self.project.path, fname)
             
         copyfile(srcp, destp)
         return True
@@ -1660,9 +1782,8 @@ class ViewModel:
         prjid = self.get("fcb_project")
         bks = self.getBooks()
         for bk in bks:
-            fname = self.getBookFilename(bk, prjid)
-            fpath = os.path.join(self.project.path, fname)
-            if os.path.exists(fpath):
+            fpath = self.getBookSrcPath(bk, prjid)
+            if fpath is not None:
                 with open(fpath, "r", encoding="utf-8") as inf:
                     # Strip out all markers themselves, and English content fields
                     sfmtxt = inf.read()
@@ -1829,6 +1950,19 @@ class ViewModel:
             digView.picinfos.load_files(digView)
         self.picinfos.merge(digView.picinfos, new, mergeCaptions=self.mergeCaptions)
 
+    def setupPicinfos(self, picinfos=None, diglots=True):
+        if picinfos is None:
+            picinfos = self.picinfos
+        vlist = [self]
+        if diglots:
+            vlist = vlist + list(self.diglotViews.values())
+        for i, v in enumerate(vlist):
+            exclusive = v.get("c_exclusiveFiguresFolder")
+            fldr      = v.get("lb_selectFigureFolder", "") if v.get("c_useCustomFolder") else ""
+            imgorder  = v.get("t_imageTypeOrder")
+            lowres    = v.get("r_pictureRes") == "Low"
+            picinfos.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres, append=i!=0)
+
     def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
@@ -1849,39 +1983,52 @@ class ViewModel:
         basecfpath = baseprjid + "/shared/ptxprint/" + self.cfgid
         interlang = self.get("t_interlinearLang") if self.get("c_interlinear") else None
 
+        def bname(s, prefix=''):
+            res = os.path.basename(s)
+            if res == ".":
+                return prefix
+            if prefix:
+                res = prefix + "/" + res
+            if os.path.sep == "/":
+                return res.replace("\\", "/")
+            else:
+                return res.replace("/", "\\")
+
         # pictures and texts
         fpath = baseprj.path
         scope = self.get("r_book")
         if scope == "module":
             bk = books[0]
-            res[os.path.join(fpath, bk)] = baseprjid + "/" + os.path.basename(bk)
-            cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+os.path.basename(bk)), "moduleFile")
-            cfgchanges['lb_bibleModule'] = os.path.basename(bk)
+            bkname = bname(bk)
+            res[os.path.join(fpath, bk)] = baseprjid + "/" + bkname
+            cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+bkname), "moduleFile")
+            cfgchanges['lb_bibleModule'] = bkname
             usfms = self.get_usfms()
             mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
         for bk in books + ['INT']:
-            fname = self.getBookFilename(bk, baseprjid)
+            fname = self.getBookSrcPath(bk, baseprjid, project=baseprj)
             if fname is not None:
-                res[os.path.join(fpath, fname)] = baseprjid + "/" + os.path.basename(fname)
+                res[fname] = bname(fname, baseprjid)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(baseprjid, intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
-            self.picinfos.getFigureSources(exclusive=exclFigsFolder)
+            self.setupPicinfos()
+            self.picinfos.getFigureSources()
         if self.get("c_useCustomFolder"): # What is happening here? and why? (shouldn't it happen above before we getFigureSources?)
-            cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
+            cfgchanges["btn_selectFigureFolder"] = (Path("figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'src path'
         if self.picinfos is not None:
             for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
-                    res[f] = prjid + "/local/figures/"+os.path.basename(f)
+                    res[f] = bname(f, prjid+"/local/figures")
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
-            res[xrfile] = baseprjid + "/" + os.path.basename(xrfile)
-            cfgchanges["btn_selectXrFile"] = res[xrfile]
+            res[xrfile] = bname(xrfile, baseprjid)
+            cfgchanges["btn_selectXrFile"] = Path(bname(xrfile, "${prjdir}"))
 
         # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
@@ -1899,9 +2046,8 @@ class ViewModel:
         if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
             for p in extrapics:
-                b = os.path.basename(p)
                 if p not in res:
-                    res[p] = prjid + "/local/figures/" + b
+                    res[p] = bname(p, prjid+"/local/figures")
         else:
             allfonts = set()
 
@@ -1917,6 +2063,7 @@ class ViewModel:
                     fname = [fname]
                 for f in fname:
                     res[f.as_posix()] = baseprjid + "/shared/ptxprint/" + f.name
+                    cfgchanges[v[3]] = (Path("${prjdir}/shared/ptxprint/" + f.name), v[0])
 
         # fonts
         allfonts.update(self.getallfonts())
@@ -1924,8 +2071,8 @@ class ViewModel:
             cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
-            k = os.path.basename(v)
-            res[v] = prjid + "/local/ptxprint/" + cfgid + "/fonts/" + k
+            # res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
+            res[v] = bname(v, prjid + "/shared/fonts")
 
         if baseprjid:
             mdir = os.path.join(self.project.path, "shared", "fonts", "mappings")
@@ -1941,16 +2088,15 @@ class ViewModel:
             for a in ('BgImage', 'FgImage'):
                 val = v.get(a, mystyles.basesheet.get(k, {}).get(a, None))
                 if val is not None:
-                    fname = os.path.basename(val)
-                    res[val] = baseprjid + "/figures/"+fname
-                    mystyles.setval(k, a, "../../../figures/" + fname)
+                    res[val] = bname(val, baseprjid + "/figures")
+                    mystyles.setval(k, a, bname(val, "../../../figures"))
 
 
-        tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
-        mystyles.output_diffile(tempfile, inArchive=True)
-        tempfile.close()
-        res[tempfile.name] = basecfpath + "/ptxprint.sty"
-        tmpfiles.append(tempfile.name)
+        tmpfile = tempfile.NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
+        mystyles.output_diffile(tmpfile, inArchive=True)
+        tmpfile.close()
+        res[tmpfile.name] = basecfpath + "/ptxprint.sty"
+        tmpfiles.append(tmpfile.name)
 
         # config files - take the whole tree even if not needed
         ppath = self.project.srcPath(self.cfgid)
@@ -1979,8 +2125,8 @@ class ViewModel:
 
         script = self.customScript
         if script: # is not None and len(script):
-            res[script] = baseprjid + "/" + os.path.basename(script)
-            cfgchanges["btn_selectScript"] = os.path.join(self.project.path, os.path.basename(script))
+            res[script] = bname(script, baseprjid)
+            cfgchanges["btn_selectScript"] = bname(script, "${prjdir}")
 
         pts = self._getPtSettings(prjid=baseprjid)
         ptres = pts.getArchiveFiles()
@@ -1988,64 +2134,91 @@ class ViewModel:
             res[k] = baseprjid + "/" + v
         return (res, cfgchanges, tmpfiles)
 
-    def createArchive(self, filename=None):
-        if filename is None:
-            filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
-        if not filename.lower().endswith(".zip"):
-            filename += ".zip"
+    def createArchive(self, filename=None, nobuild=False, for_test=False, in_memory=False):
+        if in_memory:
+            filename = BytesIO()
+        else:
+            if filename is None:
+                filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
+            if not filename.lower().endswith(".zip"):
+                filename += ".zip"
         try:
-            zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
+            self.zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
         except OSError:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
         temps = []
-        from ptxprint.runjob import RunJob
-        runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
-        runjob.doit(noview=True)
-        res = runjob.wait()
+        if not nobuild:
+            from ptxprint.runjob import RunJob
+            runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
+            runjob.doit(noview=True)
+            res = runjob.wait()
+        else:
+            runjob = None
+            res = 0
         found = False
         # TODO: include burst pdfs
         xdvfile = None
         for a in (".pdf", ".html"):
             for d in ('', '..'):
                 for x in self.tempFiles:
-                    if x.endswith(".xdv"):
+                    if x and x.endswith(".xdv"):
                         xdvfile = x
                         f = os.path.join(os.path.dirname(x), d, os.path.basename(x).replace(".xdv", a))
                         if not found and os.path.exists(f):
                             temps.append(f)
                             break
-        self._archiveAdd(zf, self.getBooks(files=True), xdv=xdvfile)
+        self._archiveAdd(self.zf, self.getBooks(files=True), xdv=xdvfile)
         working_dir = self.project.printPath(self.cfgid)
         if len(self.diglotViews):
             for k, v in self.diglotViews.items():
                 if v is None:
                     v = self.createDiglotView(k)
                 if v is not None:
-                    v._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
+                    v._archiveAdd(self.zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
-                    self._writearchive(zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"))
-        for f in set(self.tempFiles + runjob.picfiles + temps):
+                    self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"), for_test=True)
+        for f in set(self.tempFiles + ([] if runjob is None else runjob.picfiles) + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.project.path)
-                self._writearchive(zf, pf, os.path.join(self.project.prjid, outfname))
+                self._writearchive(self.zf, pf, os.path.join(self.project.prjid, outfname), for_test=True)
             else:
                 print(pf)
-        ptxmacrospath = self.scriptsdir
-        for dp, d, fs in os.walk(ptxmacrospath):
-            for f in fs:
-                if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    self._writearchive(zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
-        self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
-        zf.close()
+        if not for_test:
+            ptxmacrospath = self.scriptsdir
+            for dp, d, fs in os.walk(ptxmacrospath):
+                for f in fs:
+                    if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
+                        self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f), for_test=True)
+        self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
+
+        test_userconfig = copy.deepcopy(self.userconfig)
+        test_userconfig.remove_section('projectdirs')
+
+        with StringIO() as ss:
+            test_userconfig.write(ss)
+            ss.seek(0)
+            userconfig_str = ss.read()
+        self.zf.writestr(f'{self.project.prjid}/ptxprint_user.cfg', userconfig_str)
+
+        if not for_test:
+            self.zf.close()
         if res:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()
 
-    def _writearchive(self, zf, ifile, fname):
-        if fname not in zf.NameToInfo:      # do what zipfile should do
+        if in_memory:
+            return filename
+
+    def _writearchive(self, zf, ifile, fname, for_test=False):
+        if for_test:
+            if pathlib.Path(fname).parts[1] == 'local':
+                return  # we can exclude the local subdirectory from the test archive
+        try:
+            zinfo = zf.getinfo(fname)
+        except KeyError:
             zf.write(ifile, fname)
 
     def _archiveAdd(self, zf, books, parent=None, parentcfg=None, xdv=None):
@@ -2053,16 +2226,17 @@ class ViewModel:
         logger.debug(f"{entries=}, {cfgchanges=}, {tmpfiles=}")
         for k, v in entries.items():
             if os.path.exists(k):
-                self._writearchive(zf, k, v)
+                self._writearchive(zf, k, v, for_test=True)
         tmpcfg = {}
         for k,v in cfgchanges.items():
-            if len(v) == 2 and v[1] is not None:
+            if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
                 tv = getattr(self, v[1])
                 setattr(self, v[1], v[0])
+                self.set(k, str(v[0]))
             else:
                 tv = None
+                self.set(k, str(v))
             tmpcfg[k] = (self.get(k), tv)
-            self.set(k, str(v if len(v) != 2 else v[0]))
         config = self.createConfig()
         configstr = StringIO()
         config.write(configstr)
@@ -2082,7 +2256,7 @@ class ViewModel:
             fpath = getfontcache().get('Source Code Pro')
             if fpath is None:
                 continue
-            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.project.prjid, os.path.basename(fpath)))
+            self._writearchive(zf, fpath, "{}/shared/fonts/{}".format(self.project.prjid, os.path.basename(fpath)), for_test=True)
 
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.project.prjid), writefontsconf(None, archivedir=True))
@@ -2115,8 +2289,7 @@ set stack_size=32768""".format(self.cfgid)
 
     _includeexts = (".cfg", ".txt", ".adj", ".sfm", ".tex", ".sty", ".piclist")
 
-    def createSettingsZip(self, outf):
-        res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
+    def createSettingsZip(self, zfile, prefices=None):
         sdir = self.project.srcPath(self.cfgid)
         for d in (None, 'AdjLists', 'Triggers'):
             ind = sdir if d is None else os.path.join(sdir, d)
@@ -2127,8 +2300,17 @@ set stack_size=32768""".format(self.cfgid)
                     continue
                 fpath = os.path.realpath(os.path.join(ind, f))
                 if os.path.isfile(fpath):
-                    res.write(fpath, f if d is None else os.path.join(d, f))
-        return res
+                    opath = []
+                    if prefices is not None:
+                        opath.extend(prefices)
+                    if d is not None:
+                        opath.append(d)
+                    opath.append(f)
+                    zfile.write(fpath, os.path.join(*opath))
+        if len(self.diglotViews):
+            for k, v in self.diglotViews.items():
+                v.createSettingsZip(zfile, prefices=["_diglot", k])
+        return zfile
 
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):
         inf = BytesIO(zipdata)
@@ -2391,7 +2573,7 @@ set stack_size=32768""".format(self.cfgid)
         self.strongs = None
         self.getStrongs()
         onlylocal = self.get("fcb_xRefExtListSource") == "strongs_proj"
-        outfile = os.path.join(self.project.path, self.getBookFilename(bkid))
+        outfile = self.getBookSrcPath(bkid)
         self.strongs.generateStrongsIndex(bkid, cols, outfile, onlylocal, self)
 
     def getStrongs(self):
@@ -2425,3 +2607,9 @@ set stack_size=32768""".format(self.cfgid)
         self.report.generate_html(fpath, tm)
         return fpath
 
+    def createPrinterZip(self, fname):
+        with zipfile.ZipFile(fname, "w") as ozip:
+            for k, v in self.pdfFiles.items():
+                with open(v, "rb") as inf:
+                    d = inf.read()
+                ozip.write(f"{k}.pdf", d)

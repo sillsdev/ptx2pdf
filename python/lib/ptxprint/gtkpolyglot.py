@@ -84,7 +84,7 @@ class PolyglotSetup(Gtk.Box):
         self.update_context_menu()
                 
     def load_polyglots_into_treeview(self):
-        row_index = self.find_or_create_row("L")
+        l_row_index = self.find_or_create_row("L")
         row_index = self.find_or_create_row("R")
         for sfx in self.codes:
             if sfx not in self.view.polyglots:  # Only process existing polyglots
@@ -96,7 +96,7 @@ class PolyglotSetup(Gtk.Box):
             plyglot.code = sfx
             self.ls_config[row_index].clear()
             for c in available_configs:
-                self.ls_config[row_index].append([c])                
+                self.ls_config[row_index].append([c])
             for idx, field in enumerate(_modelfields[1:11], start=1):
                 val = getattr(plyglot, field)
                 if sfx == "L" and idx in (m.fontsize, m.baseline):
@@ -120,11 +120,12 @@ class PolyglotSetup(Gtk.Box):
                     c = polyview.get('_dibackcol', "#FFFFFE")
                     if c is not None and c.startswith("rgb("):
                         rgb = coltoonemax(c)
-                        c = "#{0:02x}{1:02x}{2:02x}".format(*[int(x * 255) for x in rgb])      
+                        c = "#{0:02x}{1:02x}{2:02x}".format(*[int(x * 255) for x in rgb])
                     self.ls_treeview[row_index][m.color] = c
-            if sfx == "L":
-                self.updateRow(row_index)
-                    
+        # Always sync the L row to polyglots (creates polyglots["L"] if missing,
+        # and ensures polyfraction_ is set in the view's _dict for config saving).
+        self.updateRow(l_row_index)
+
         self.update_layout_string()
         self.ensure_right_click_handler()
         self.view.update_diglot_polyglot_UI()
@@ -808,7 +809,8 @@ class PolyglotSetup(Gtk.Box):
         # Rule 2: Ensure there are no spaces and don't allow complex layouts (yet)
         if " " in t_layout:
             return False, _("Spaces not allowed")
-        if "/" in t_layout or "\\" in t_layout:
+        allow_complex = hasattr(self, 'view') and hasattr(self.view, 'args') and self.view.args.experimental & 1 != 0
+        if not allow_complex and ("/" in t_layout or "\\" in t_layout):
             return False, _("Complex layouts are not yet supported")
             
         # Extract used codes and their '1|2' values from the ListStore
@@ -860,6 +862,22 @@ class PolyglotSetup(Gtk.Box):
 
         return True, _("Valid layout")
 
+    def updatePluginsForLayout(self, layout):
+        plugins_widget = self.builder.get_object('t_plugins')
+        if plugins_widget is None:
+            return
+        current = plugins_widget.get_text()
+        plugins = [p.strip() for p in current.split(',') if p.strip()]
+        if "/" in layout:
+            if "polyglot-complexpages" not in plugins:
+                plugins = [p for p in plugins if p != "polyglot-simplepages"]
+                plugins.append("polyglot-complexpages")
+                plugins_widget.set_text(",".join(plugins))
+        elif "," in layout:
+            if "polyglot-simplepages" not in plugins and "polyglot-complexpages" not in plugins:
+                plugins.append("polyglot-simplepages")
+                plugins_widget.set_text(",".join(plugins))
+
     def update_layout_preview(self):
         widget = self.builder.get_object('bx_layoutPreview')
         layout = self.builder.get_object('t_layout').get_text()
@@ -881,6 +899,8 @@ class PolyglotSetup(Gtk.Box):
             widget.add(error_frame)
             widget.show_all()
             return
+
+        self.updatePluginsForLayout(layout)
 
         # Step 3: Parse t_layout into left and right pages
         if "," in layout:

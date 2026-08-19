@@ -182,8 +182,44 @@ file and replace BAK,XXA,XXE with whichever books you want the intro material st
 at BAK,XXA,XXE '\\i[so]\d?\s.+\r?\n' > ''
 ```
 
+## Add a toc2 for each chapter
+
+We want a TOC entry for each chapter rather than just the book. To make it even
+better, don't include an extra entry for chapter 1
+
+```
+'(\\h\s*)(.*?)(\r?\n)' > '\1\2\3$set{bk,\2}'
+'(\\c\s*)(\d\d+|[2-9])(\s+)' > '\1\2\3\\toc2 $var{bk} \2\n'
+```
+
+This uses two change functions, which are identified by \$ and then the function
+name. Parameters are a comma separated list within { }. The first line collects the \\h value which is
+the book name used in the header. This will be inserted before each chapter
+number as part of the TOC. The second line matches a chapter with number > 1 and
+outputs the same chapter and then a toc2 line involving the book and chapter.
+
 # TeX Snippets
 The snippets in this section go into the ptxprint-mods.tex file.
+
+## Allow orphans at end of pages not after headings
+
+Some typesetting styles allow a final single line on a page if the line does not
+follow a heading. For those who like this style, we can do this by marker:
+
+```tex
+\sethook{before}{p}{\iffirst@fterheading\else\clubpenalty=0}
+\sethook[after}{p}{\clubpenalty=10000}
+```
+
+### Implementation
+
+TeX introduces a penalty after the first line of a paragraph. This is called
+\\clubpenalty. If that value is 10000 it will not allow a page break at that
+point. We set it to 0 except following a heading (indicated by
+\\iffirst@fterheading being true). After the paragraph the clubpenalty is reset
+to not allowing breaks. If this behaviour is also needed for other paragraph
+styles, e.g. \\m then a corresponding sethook pair will be needed.
+
 
 ## Paragraph Initial Verses
 
@@ -233,20 +269,28 @@ To do this we create some magic characters that will insert the negative kerns:
 \def^^^^e123{\nobreak\kern-0.2em\relax}
 \catcode"E124=\active
 \def^^^^e124{\nobreak\kern-0.4em\relax}
+\catcode"E125=\active
+\def^^^^e125{\beginL}
+\catcode"E126=\active
+\def^^^^e126{\endL}
 ```
 
 In effect we are making two negative spaces. Now in the changes file we want to
 insert those special spaces around the digits 0 and 1 for chapter numbers.
 
 ```perl
-at PSA "\\c\s(\d*[10]\d*)" > "\\c \1\n\\cp \\beginL \1 \\endL\n"
-in "\\cp\s+\\beginL \d+ \\endL": "([01])" > "\uE123\1\uE123"
+at PSA "\\c\s(\d*[10]\d*)" > "\\c \1\n\\cp \uE125\1\uE126\n"
+in "\\cp\s+\uE125\d+\uE126": "([01])" > "\uE123\1\uE123"
 "\uE123\uE123" > "\uE124"
 ```
 
 The first rule copies the chapter number to a published chapter string if it
 contains a 0 or a 1. It also marks it as being output left to right, since
-Arabic digits are output left to right in right to left text. The second rule
+Arabic digits are output left to right in right to left text. But because the
+USFM will be converted to USX during processing, and back, we have to remember
+that a \\cp ends up a simple attribute string in USX. Thus we cannot use what
+look like markers inside a \\cp. To make this happen, we turn the \\beginL and
+\\endL into special characters that expand to those instructions. The second rule
 takes that publishable chapter and inserts a negative space before and after
 ever 0 or 1 in the string. The last rule merges adjacent pairs of negative widths
 into a single doubly narrow width.
@@ -574,6 +618,49 @@ page. The second line puts the normal colophon including code after any included
 \sethook{final}{afterincludes}{\layoutstylebreak\singlecolumn\zcolophon}
 ```
 
+## Side Aligned Notes
+
+It is possible with the PTXprint macros to have notes side aligned in the side
+margins. Until we have a button for that, here is how you can achieve it. We
+will put the cross references in the margin while keeping the footnotes as notes
+in the text.
+
+First set up the margins to be wide enough for the notes. Getting this right
+takes some thought because too much and your columns get too narrow and too
+narrow and the notes all wrap and look bad. To be honest A5 is probably too
+narrow a page to get 2 columns and side notes in. Something like 9" x 6" is
+probably better. But for single column, it should be fine. For single column
+layout we add extra space typically to the outer margin. For double column, the
+inner and outer margins are typically the same, and true gutters can be used to
+account for binding. For single column, to set up the
+margins, set the margin width to be the inner margin including its binding gutter. Then
+set the gutter to be the extra space you want on the outer page and enable the
+"Outer Gutter". For example, a margin of 15mm, a binding gutter of 36mm.
+
+The TeX magic is relatively simple:
+
+```tex
+\catcode`\@=11
+\marginaln@te{x}
+\marginnotesgap = 6pt
+\marginnoteswidth = \dimexpr 1.5in + \marginnotesgap
+\def\MarginNoteSide{outer}
+```
+We need to allow @ in names so we catcode @ to be a letter. Then we say that we
+want `x` to be treated as a marginal note. The marginnotesgap is the space
+between the edge of the note at the text. How far from the text should the notes
+be. The marginnoteswidth is the width of the marginnote including its gap. Here
+I have said I want a 1.5in note and then added the gap on. We can say where we
+want the margin notes: inner, outer, left, right
+
+Enabling decorations isn't essential (and we hope to remove the need) but it
+does quieten some errors.
+
+If you use quick print, that only runs the job once, you may find that side
+notes crash into each other. A quick reprint doesn't fix this. To get the notes
+correctly positioned you need to run a full non quick print.
+
+
 ## Fancy headers
 
 There is a style of headers in which each page has the page number on the outer
@@ -807,6 +894,29 @@ is identical to that found in the Fancy Headers snippet above with just GLO
 changed to CNC.
 
 
+## Diglot page length
+Is your diglot strangely trying to put too much text on page 112?
+```
+\makeatletter
+\sethook{page}{112}{\global\adjustp@ge=-10pt}
+\makeatother
+```
+
+Would it make life so much better if page 96 was just a five points longer?
+```
+\makeatletter
+\sethook{page}{96}{\global\adjustp@ge=5pt}
+\makeatother
+```
+Do you want the diglot to be slightly or much pickier about the bottom of the page?
+You can adjust the definition of \DiglotOverfill. The default is `0.3\@bls` (0.3 of the 
+line spacing), but at various times in the past it has been `0.1\@bls`, 
+and can also be set to `\z@` (zero).
+```
+\makeatletter
+\def\DiglotOverfill{\z@}% Entirely picky.
+\makeatother
+```
 ## Coloured diacritics
 
 PTXprint includes code to process the generated xdv file between its creation by

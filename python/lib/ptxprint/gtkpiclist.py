@@ -1,12 +1,18 @@
 
+import gi
+gi.require_version('Gtk', '3.0')
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase, Picture
-from ptxprint.utils import refSort, getlang, _, f2s, pycodedir
+from ptxprint.utils import refSort, getlang, _, f2s, pycodedir, \
+    cleanParatextRef, sendRefToParatext
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
 from typing import Dict
 from shutil import rmtree
-import os, re
+import os, re, sys, subprocess
 import logging
+if sys.platform.startswith("win"):
+    import winreg, ctypes
+    from ctypes import wintypes
 
 logger = logging.getLogger(__name__)
 
@@ -26,13 +32,14 @@ _form_structure = {
     'medP':     'c_plMediaP',
     'medA':     'c_plMediaA',
     'medW':     'c_plMediaW',
-    'x-xetex':  't_picXetex'
+    'x-xetex':  't_picXetex',
+    'scale_colour': None
 }
 
 _singlefields = ("anchor", "caption", "src", "ref", "alt", "x-xetex")
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "captionR",
-                  "disabled", "cleardest", "key", "media", "x-xetex"]
+                  "disabled", "cleardest", "key", "media", "x-xetex", "scale_colour"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _sizekeys = {"P": "page", "F": "full", "c": "col", "s": "span"}
@@ -42,6 +49,36 @@ _comblistcr = ['crVpos', 'crHpos']
 
 newrowcounter = 1
 previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
+
+_PEACH = (1.0, 0.855, 0.725)   # peach puff #FFDAB9
+_LIGHT_GRAY = (0.88, 0.88, 0.88)  # very light gray for "picture not found" rows #E0E0E0
+
+
+class PeachCellRenderer(Gtk.CellRendererText):
+    """CellRendererText that paints a custom selection bar for flagged rows.
+
+    GTK ignores cell-background when SELECTED, so we draw the rectangle
+    ourselves then strip the SELECTED flag before chaining up, which keeps
+    the stored foreground colour instead of the theme's white-on-blue.
+    Red rows (scale too large) get a peach bar; gray rows (picture not found)
+    get a very light gray bar.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.isRedFlag = False   # set per-row by _applyRedFlag cell-data func
+        self.isGrayFlag = False  # set per-row by _applyRedFlag cell-data func
+
+    def do_render(self, cr, widget, backgroundArea, cellArea, flags):
+        if (self.isRedFlag or self.isGrayFlag) and (flags & Gtk.CellRendererState.SELECTED):
+            cr.save()
+            cr.rectangle(backgroundArea.x, backgroundArea.y,
+                         backgroundArea.width, backgroundArea.height)
+            cr.set_source_rgb(*(_PEACH if self.isRedFlag else _LIGHT_GRAY))
+            cr.fill()
+            cr.restore()
+            flags = Gtk.CellRendererState(flags & ~Gtk.CellRendererState.SELECTED)
+        Gtk.CellRendererText.do_render(self, cr, widget, backgroundArea, cellArea, flags)
 
 _locGrid = {
 "1"   :    (0,0),"1-b":     (1,0),"1-cl":    (2,0),"1-cr":   (3,0),"1-hc":    (4,0),"1-hl":    (5,0),"1-hr":    (6,0),"1-p":     (7,0),
@@ -91,11 +128,16 @@ class PicList:
         self.picrect = None
         self.currows = []
         self.curriter = None
+        self.curFpath = None
         self.bookfilters = None
         sel = self.view.get_selection()
         sel.set_mode=Gtk.SelectionMode.SINGLE
         sel.connect("changed", self.row_select)
+        self.view.connect("button-press-event", self._onRightClick)
+        self.view.connect("drag-data-received", lambda *a: self.view.stop_emission_by_name("drag-data-received"))
         for k, v in _form_structure.items():
+            if v is None:
+                continue
             w = builder.get_object(v)
             sig = "changed"
             if v.startswith("s_"):
@@ -105,6 +147,40 @@ class PicList:
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
         # self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
+        # Replace all column renderers with PeachCellRenderer so that selecting
+        # a red-scale row shows a peach bar across every column, not a mix of
+        # peach and blue.  The three scale-coloured columns also get the
+        # foreground attribute bound to the scale_colour model column.
+        _col_spec = [
+            ("col_anchor",   _pickeys['anchor'],   True),
+            ("col_caption",  _pickeys['caption'],  False),
+            ("col_file",     _pickeys['src'],       False),
+            ("col_frame",    _pickeys['size'],      True),
+            ("col_scale",    _pickeys['scale'],     True),
+            ("col_posn",     _pickeys['pgpos'],     False),
+            ("col_ref",      _pickeys['ref'],       False),
+            ("col_desc",     _pickeys['alt'],       False),
+            ("col_copy",     _pickeys['copy'],      False),
+            ("col_mirror",   _pickeys['mirror'],    False),
+            ("col_caption2", _pickeys['captionR'],  False),
+            ("col_media",    _pickeys['media'],     False),
+        ]
+        for col_id, text_col, needs_fg in _col_spec:
+            col = builder.get_object(col_id)
+            col.clear()
+            cr = PeachCellRenderer()
+            col.pack_start(cr, True)
+            col.add_attribute(cr, "text", text_col)
+            if needs_fg:
+                col.add_attribute(cr, "foreground", _pickeys['scale_colour'])
+            col.set_cell_data_func(cr, self._applyRedFlag)
+            if col_id == "col_caption":
+                self.cr_caption = cr
+            elif col_id == "col_caption2":
+                self.cr_caption2 = cr
+        self.view.get_selection().connect("changed", lambda s: self.view.queue_draw())
+        self.view.set_has_tooltip(True)
+        self.view.connect("query-tooltip", self._onQueryTooltip)
         self.clear()
         self.loading = False
 
@@ -129,9 +205,8 @@ class PicList:
         self.model.refilter()
 
     def modify_font(self, p):
-        for a in ["cr_caption", "cr_caption2"]:
-            w = self.builder.get_object(a)
-            w.set_property("font-desc", p)
+        for cr in [self.cr_caption, self.cr_caption2]:
+            cr.set_property("font-desc", p)
 
     def isEmpty(self):
         return len(self.model) == 0
@@ -173,6 +248,8 @@ class PicList:
                 else:
                     limit = self.parent.picMedia(pic.get('src',''))[1]
                     val = "".join(x for x in val if x in limit)
+            elif e == "scale_colour":
+                val = self.calc_scale_colour(row)
             else:
                 val = pic.get(e, "")
             row.append(val)
@@ -198,6 +275,8 @@ class PicList:
 
     def get(self, wid, default=None):
         wid = _form_structure.get(wid, wid)
+        if wid is None:
+            return None
         w = self.builder.get_object(wid)
         res = getWidgetVal(wid, w, default=default)
         if wid.startswith("s_"):
@@ -221,15 +300,11 @@ class PicList:
                     if row[i] and 'destfile' in p:
                         del p['destfile']
                     continue
+                elif e == "scale_colour":
+                    continue
                 else:
                     val = row[i]
                 p[e] = val
-#        breakpoint()
-#        for k,v in list(picinfos.items()):
-#            if k not in allkeys and (self.bookfilters is None or v['anchor'][:3] in self.bookfilters):
-#                if k.startswith("row"):
-#                    print(f"{k} removed")
-#                picinfos.remove(v)
         return picinfos
 
     def clearPicSources(self, picinfos):
@@ -255,13 +330,14 @@ class PicList:
                 w.get_style_context().add_class("highlighted")
                 self.parent.doError(_("Missing: 'Anchor Ref'"), secondary=_("You must provide a Book Ch.Vs reference as an anchor for the picture. For example: GEN 14.19"))
                 return
-            for k, s in ((k, x) for k,x in _form_structure.items() if x.startswith("s_")):
+            for k, s in ((k, x) for k,x in _form_structure.items() if x is not None and x.startswith("s_")):
                 w = self.builder.get_object(s)
                 if w.has_focus():
                     e = Gdk.Event(Gdk.EventType.FOCUS_CHANGE)
                     e.window = w
                     e.send_event = True
                     w.emit("focus-out-event", e)
+#            self.currows[-1][_pickeys['scale_colour']] = self.calc_scale_colour(self.currows[-1])
         model, paths = selection.get_selected_rows()
         self.currows = []
         for i, path in enumerate(paths):
@@ -274,14 +350,20 @@ class PicList:
                 self.curriter = cit
             self.currows.append(self.model[cit][:])    # copy it so that any edits don't mess with the model if the iterator moves
             self.currows[-1].append(cit)
+            new_colour = self.calc_scale_colour(self.currows[-1])
+            self.currows[-1][_pickeys['scale_colour']] = new_colour
+            self.model.set_value(cit, _pickeys['scale_colour'], new_colour)
+
         currow = self.currows[0]
         if not currow[_pickeys['pgpos']]:
             pgpos = ""
         else:
             pgpos = re.sub(r'^([PF])([lcrio])([tfb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
-        # self.loading = True
+        self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
+            if v is None:
+                continue
             # print(j, k, v)
             if k == 'pgpos':
                 val = pgpos[1:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
@@ -309,8 +391,7 @@ class PicList:
                 self.builder.get_object('l_autoCopyAttrib').set_visible(status)
                 self.builder.get_object(v).set_visible(not status)
             elif k == 'size':
-                val = pgpos[0:1] if pgpos[0:1] in "PF" else ("c" if any(x in pgpos for x in "rl") else "s")
-                val = _sizekeys.get(val, "span")
+                val = currow[_pickeys['size']]
             else:
                 try:
                     val = currow[j]
@@ -327,6 +408,11 @@ class PicList:
         self.mask_media(currow)
         self.parent.unpause_logging()
         self.loading = False
+        self._updatePreview(currow)
+        self._updateScaleSpinnerColour(currow[_pickeys['scale_colour']])
+        src = currow[_pickeys['src']]
+        if src:
+            self.parent.updatePicChecks(src)
 
     def select_row(self, i):
         if isinstance(i, Gtk.TreeIter):
@@ -398,6 +484,58 @@ class PicList:
         res = "".join(self.get(k, default="") for k in _comblistcr)
         return res
 
+    def _applyRedFlag(self, col, cell, model, it, data=None):
+        colour = model.get_value(it, _pickeys['scale_colour'])
+        cell.isRedFlag = (colour == "#FF0000")
+        cell.isGrayFlag = (colour == "#808080")
+
+    def _updateScaleSpinnerColour(self, colour):
+        ctx = self.builder.get_object("s_plScale").get_style_context()
+        if colour == "#FF0000":
+            ctx.add_class("highlighted")
+        else:
+            ctx.remove_class("highlighted")
+
+    def _onQueryTooltip(self, widget, x, y, keyboard_mode, tooltip):
+        ok, x, y, model, path, it = widget.get_tooltip_context(x, y, keyboard_mode)
+        if not ok:
+            return False
+        colour = model.get_value(it, _pickeys['scale_colour'])
+        if colour == "#FF0000":
+            tooltip.set_text(_("Warning! It appears that the size/scale of this picture is too large"
+                               " to fit in the allocated space. Consider reducing the scale to make"
+                               " sure it fits."))
+        elif colour == "#808080":
+            tooltip.set_text(_("Warning! The picture file could not be found."
+                               " Try setting the Picture Folder on the Global Options section."))
+        else:
+            return False
+        widget.set_tooltip_row(tooltip, path)
+        return True
+
+    def calc_scale_colour(self, row, force=False):
+        k = row[_pickeys['key']]
+        p = self.picinfo.get(k, {})
+        pwidth, pheight = self.parent.calcPageSize()
+        ffactor = float(self.parent.get("s_pagefullfactor", 1.0))
+        mheight = ffactor * pheight
+        wfactor = 0.5 if row[_pickeys['size']] == 'col' and self.parent.get("c_doublecolumn") else 1
+        scale = row[_pickeys['scale']] / 100.
+        if not force and 'aspect' in p:
+            aspect = float(p['aspect']) / 100.
+        else:
+            a = row[_pickeys['anchor']]
+            fpath = self._getpixbuf_file(row[_pickeys['src']], a)
+            if fpath is None or not os.path.exists(fpath):
+                return "#808080"
+            logger.debug(f"{fpath} measuring")
+            iformat, imwidth, imheight = GdkPixbuf.Pixbuf.get_file_info(fpath)
+            aspect = imheight / imwidth
+            p['aspect'] = str(int(aspect * 100))
+            logger.debug(f"{fpath}: {aspect}")
+        height = scale * pwidth * wfactor * aspect
+        return "#FF0000" if height > mheight else "#000000"
+
     def onPicframeSize(self, widget, allocation):
         if allocation.width <= 1 or allocation.height <= 1:
             return
@@ -411,7 +549,7 @@ class PicList:
             val = self.get_pgpos()
             key = "pgpos"
         elif key.startswith("med"):
-            val = "".join(v[-1].lower() for k, v in _form_structure.items() if k.startswith("med") and self.get(v))
+            val = "".join(v[-1].lower() for k, v in _form_structure.items() if v is not None and k.startswith("med") and self.get(v))
             if val == "":
                 val = "x"
             key = "media"
@@ -423,47 +561,11 @@ class PicList:
             currow[fieldi] = val
             r_image = self.parent.get("r_image", default="preview")
             if i == 0 and r_image == "location":
-                if self.get("c_doublecolumn"):
-                    cols = 2
-                else:
-                    cols = 1
-                if not self.get("c_plMediaP"):
-                    locKey = "1" if cols == 1 else "2"
-                else:
-                    frSize = self.currows[0][_pickeys['size']]
-                    pgposLocn = self.currows[0][_pickeys['pgpos']]
-                    locKey = getLocnKey(cols, frSize, pgposLocn)
-                pic = dispLocPreview(locKey)
-                self.setPreview(pic)
+                self._updatePreview(currow)
             if key == "src":
-                if r_image == "preview":
-                    fpath = None
-                    if self.picinfo is not None:
-                        exclusive = self.parent.get("c_exclusiveFiguresFolder")
-                        fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
-                        imgorder  = self.parent.get("t_imageTypeOrder")
-                        lowres    = self.parent.get("r_pictureRes") == "Low"
-                        a = currow[_pickeys['anchor']]
-                        for p in self.picinfo.find(anchor=a):
-                            p.clear_src_paths()
-                        dat = self.picinfo.getFigureSources(data=[{'src': val}], key='path', exclusive=exclusive,
-                                    mode=self.picinfo.mode, figFolder=fldr, imgorder=imgorder, lowres=lowres)
-                        fpath = dat[0].get('path', None)
-                        logger.debug(f"Figure Path={fpath}, {dat[0]}")
-                    if fpath is not None and os.path.exists(fpath):
-                        if not self.parent._picframe_connected:
-                            self.parent.picframe.connect("size-allocate", self.onPicframeSize)
-                            self.parent._picframe_connected = True
-                        if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
-                            try:
-                                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
-                            except GLib.GError:
-                                pixbuf = None
-                            self.setPreview(pixbuf, tooltip=fpath)
-                        else:
-                            self.setPreview(None)
-                    else:
-                        self.setPreview(None)
+                if i == 0:
+                    self._updatePreview(currow)
+                self.calc_scale_colour(currow, force=True)
                 self.parent.updatePicChecks(val)       # only update checks if src exists
                 self.mask_media(currow)
                 if True: # val != oldval: # New source implies new destination file
@@ -474,6 +576,10 @@ class PicList:
                 currow[fieldi] = ""
             if not self.loading:
                 self.model.set_value(currow[-1], fieldi, currow[fieldi])
+            if key == "scale" or key == "size":
+                self.model.set_value(currow[-1], _pickeys['scale_colour'], self.calc_scale_colour(currow))
+        if key in ("scale", "size") and self.currows:
+            self._updateScaleSpinnerColour(self.calc_scale_colour(self.currows[0]))
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")
@@ -485,6 +591,57 @@ class PicList:
         if tooltip is not None:
             pic.set_tooltip_text(tooltip)
             self.builder.get_object("t_plFilename").set_tooltip_text(tooltip)
+
+    def _getpixbuf_file(self, src, anchor):
+        fpath = None
+        if self.picinfo is None:
+            return None, None
+        self.parent.setupPicinfos(self.picinfo)
+        for p in self.picinfo.find(anchor=anchor):
+            p.clear_src_paths()
+        dat = self.picinfo.getFigureSources(data=[{'src': src}], key='path', mode=self.picinfo.mode, lowres=True)
+        fpath = dat[0].get('path', None)
+        return fpath
+
+    def _getpixbuf(self, src, anchor, nolimit=False):
+        fpath = self._getpixbuf_file(src, anchor)
+        if fpath is not None and os.path.exists(fpath):
+            if nolimit:
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file(fpath)
+                except GLib.GError:
+                    pixbuf = None
+            else:
+                if not self.parent._picframe_connected:
+                    self.parent.picframe.connect("size-allocate", self.onPicframeSize)
+                    self.parent._picframe_connected = True
+                if self.picrect and self.picrect.width > 10 and self.picrect.height > 10:
+                    try:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                    except GLib.GError:
+                        pixbuf = None
+                else:
+                    pixbuf = None
+            res = (pixbuf, fpath)
+        logger.debug(f"Figure Path={fpath}, {res=}")
+        return res
+
+    def _updatePreview(self, currow):
+        r_image = self.parent.get("r_image", default="preview")
+        if r_image == "location":
+            cols = 2 if self.get("c_doublecolumn") else 1
+            if not self.get("c_plMediaP"):
+                locKey = "1" if cols == 1 else "2"
+            else:
+                locKey = getLocnKey(cols, currow[_pickeys['size']], currow[_pickeys['pgpos']])
+            self.setPreview(dispLocPreview(locKey))
+        else:
+            val = currow[_pickeys['src']]
+            fpath = None
+            a = currow[_pickeys['anchor']]
+            pixbuf, fpath = self._getpixbuf(val, a)
+            self.curFpath = fpath
+            self.setPreview(pixbuf, tooltip=fpath)
 
     def drawPreview(self, wid, cr):
         if self.previewScales:
@@ -504,13 +661,14 @@ class PicList:
         fldr      = self.parent.get("lb_selectFigureFolder", "") if self.parent.get("c_useCustomFolder") else ""
         imgorder  = self.parent.get("t_imageTypeOrder")
         lowres    = self.parent.get("r_pictureRes") == "Low"
-        self.picinfo.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
-        self.item_changed(None, "src")
+        if self.picinfo is not None:
+            self.picinfo.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
+            self.item_changed(None, "src")
 
     def onResized(self):
         picframe = self.builder.get_object("fr_picPreview")
         self.picrect = picframe.get_allocation()
-        print(f"{self.picrect.width=} {self.picrect.height=}")
+        # print(f"{self.picrect.width=} {self.picrect.height=}")
         self.item_changed(None, "src")
 
     def get_row_from_items(self):
@@ -564,7 +722,6 @@ class PicList:
     def clearPreview(self):
         pic = self.builder.get_object("img_picPreview")
         pic.clear()
-        tooltip = ""
         
     def set_src(self, src):
         wid = _form_structure.get('src', 'src')
@@ -577,3 +734,134 @@ class PicList:
 
     def multiSelected(self, ismulti=False):
         pass
+
+    def _onRightClick(self, treeview, event):
+        if event.button != 3:
+            return False
+        path_info = treeview.get_path_at_pos(int(event.x), int(event.y))
+        if path_info is None:
+            return False
+        path, col, cell_x, cell_y = path_info
+        if not self.selection.path_is_selected(path):
+            if self.selection.count_selected_rows() <= 1:
+                # Single (or no) selection: replace it with the right-clicked row
+                self.selection.unselect_all()
+                self.selection.select_path(path)
+            # else: multi-selection already in place — leave it for bulk action
+        menu = Gtk.Menu()
+
+        item = Gtk.MenuItem(label=_('Copy \\fig String to Clipboard'))
+        item.connect('activate', self._copyFigToClipboard, True)
+        menu.append(item)
+
+        if sys.platform.startswith("win"):
+            item = Gtk.MenuItem(label=_('Jump to Ref in Paratext'))
+            item.connect('activate', self._jumpToAnchorInParatext)
+            menu.append(item)
+
+        menu.append(Gtk.SeparatorMenuItem())
+
+        item = Gtk.MenuItem(label=_('Reveal in File Manager'))
+        item.connect('activate', self._revealInFileManager)
+        menu.append(item)
+
+        item = Gtk.MenuItem(label=_('Copy Image Filepath to Clipboard'))
+        item.connect('activate', self._copyImagePath)
+        menu.append(item)
+
+        menu.append(Gtk.SeparatorMenuItem())
+
+        count = len(self.currows)
+        label = _('Delete Picture') if count <= 1 else _('Delete {} Pictures').format(count)
+        item = Gtk.MenuItem(label=label)
+        item.connect('activate', self._deletePictures)
+        menu.append(item)
+
+        menu.show_all()
+        menu.popup_at_pointer(event)
+        return True
+
+    def _deletePictures(self, menuitem):
+        self.del_row()
+
+    def _revealInFileManager(self, menuitem):
+        fpath = self.curFpath
+        if not fpath or not os.path.exists(fpath):
+            return
+        if sys.platform.startswith("win"):
+            shell32 = ctypes.windll.shell32
+            shell32.ILCreateFromPathW.restype = ctypes.c_void_p
+            shell32.ILCreateFromPathW.argtypes = [wintypes.LPCWSTR]
+            pidl = shell32.ILCreateFromPathW(os.path.normpath(fpath))
+            if pidl:
+                shell32.SHOpenFolderAndSelectItems(ctypes.c_void_p(pidl), 0, None, 0)
+                shell32.ILFree(ctypes.c_void_p(pidl))
+            else:
+                os.startfile(os.path.dirname(fpath))
+        elif sys.platform == 'darwin':
+            subprocess.Popen(['open', '-R', fpath])
+        else:
+            subprocess.Popen(['xdg-open', os.path.dirname(fpath)])
+
+    def _copyImagePath(self, menuitem):
+        fpath = self.curFpath
+        if fpath:
+            Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).set_text(fpath, -1)
+
+    def _jumpToAnchorInParatext(self, menuitem):
+        if not self.currows:
+            return
+        anchor = self.currows[0][_pickeys['anchor']] or ''
+        if not anchor:
+            return
+        sendRefToParatext(cleanParatextRef(anchor))
+
+    def _buildFigString(self, row, usfm3=True):
+        caption = row[_pickeys['caption']] or ''
+        alt     = row[_pickeys['alt']] or ''
+        src     = row[_pickeys['src']] or ''
+        size    = row[_pickeys['size']] or 'col'
+        pgpos   = row[_pickeys['pgpos']] or ''
+        loc     = row[_pickeys['media']] or ''
+        copy_   = row[_pickeys['copy']] or ''
+        ref     = row[_pickeys['ref']] or ''
+        scale   = row[_pickeys['scale']]   # stored as percentage (100.0 = default)
+        mirror  = row[_pickeys['mirror']] or ''
+        # Normalise ref: USFM requires dot separator; derive from anchor when empty
+        if not ref:
+            anchor = row[_pickeys['anchor']] or ''
+            parts = anchor.split()
+            if len(parts) >= 2:
+                ref = parts[1]           # anchor already uses dot separator
+        else:
+            ref = ref.replace(':', '.')  # normalise colon → dot
+        if usfm3:
+            # Canonical order: alt src size loc copy ref, then non-standard extensions
+            attrs = []
+            if alt:
+                attrs.append(f'alt="{alt}"')
+            attrs.append(f'src="{src}"')
+            attrs.append(f'size="{size}"')
+            if loc:
+                attrs.append(f'loc="{loc}"')
+            if copy_:
+                attrs.append(f'copy="{copy_}"')
+            if ref:
+                attrs.append(f'ref="{ref}"')
+            if pgpos:
+                attrs.append(f'pgpos="{pgpos}"')
+            if isinstance(scale, (int, float)) and abs(scale - 100.0) > 0.01:
+                attrs.append(f'scale="{scale / 100:.4g}"')
+            if mirror and mirror.lower() not in ('', 'none'):
+                attrs.append(f'mirror="{mirror}"')
+            return f'\\fig {caption}|{" ".join(attrs)}\\fig*'
+        else:
+            # USFM2: seven fixed fields — DESC|FILE|SIZE|LOC|COPY|CAP|REF
+            # pgpos/scale/mirror have no slot in USFM2 and are dropped
+            return f'\\fig {alt}|{src}|{size}|{loc}|{copy_}|{caption}|{ref}\\fig*'
+
+    def _copyFigToClipboard(self, menuitem, usfm3):
+        if not self.currows:
+            return
+        lines = [self._buildFigString(row, usfm3=usfm3) for row in self.currows]
+        Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).set_text('\n'.join(lines), -1)

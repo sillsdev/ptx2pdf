@@ -1,9 +1,11 @@
 import os, re, ctypes, math, heapq
 import logging
 from dataclasses import dataclass, InitVar, field
-from ptxprint.utils import refSort
+from ptxprint.utils import refSort, _
 from ptxprint.xdv.spacing_oddities import Line, Rivers
-from typing import Tuple
+from typing import Tuple, Optional
+from ptxprint.gtkutils import background_msg, pump_gtk
+from gi.repository import Gtk
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +23,11 @@ def readpts(s):
         except ValueError:
             return 0
 
+
 @dataclass
 class ParRect:
     pagenum:    int
+    col:        int
     xstart:     float
     ystart:     float       # top of paragraph, 0 is bottom of page. Usually > yend
     xend:       float = 0.
@@ -32,6 +36,9 @@ class ParRect:
     lastdest:   InitVar[None] = None
     firstdest:  InitVar[None] = None
     xdvlines:   InitVar[None] = None
+    tspace:     float = 0.
+    nspace:     int = 0
+    lines:      int = 0
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
@@ -71,14 +78,18 @@ class ParDest:
     def __lt__(self, other):
         return self.y > other.y or self.y == other.y and self.x < other.x
 
+
 @dataclass
 class ParInfo:
     ref:        str
     partype:    str
     mrk:        str
     baseline:   float
+    glot:       Optional[str]
     rects:      InitVar[None] = None
     lines:      int = 0
+    lastwidth:  float = 0.
+    badness:    int = 0
 
     def __str__(self):
         return f"{self.ref}[{getattr(self, 'parnum', '')}] {self.lines} @ {self.baseline} {self.rects}"
@@ -86,17 +97,28 @@ class ParInfo:
     def __repr__(self):
         return self.__str__()
 
+    def pid(self):
+        return f"{self.ref}[{getattr(self, 'parnum', '')}]"
+
     def sortKey(self):
-        return (self.rects[-1].pagenum, refSort(self.ref), getattr(self, 'parnum', 0))
+        return (self.rects[-1].pagenum if self.rects is not None and len(self.rects) else 10000,
+                refSort(self.ref), getattr(self, 'parnum', 0))
+
+    def book(self):
+        res = re.sub(r"^(.*?\D)\s*\d.*$", r"\1", self.ref)
+        return res
+
 
 @dataclass
 class FigInfo:
-    ref:    str
-    src:    str
-    size:   (int, int)
-    limit:  bool
-    wide:   bool
-    rects:  InitVar[None] = None
+    ref:        str
+    pagenum:    int
+    src:        str
+    size:       (int, int)
+    limit:      bool
+    wide:       bool
+    rects:      InitVar[None] = None
+    pid:        Optional[str] = None
 
     def __str__(self):
         return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
@@ -106,6 +128,16 @@ class FigInfo:
 
     def sortKey(self):
         return (self.rects[-1].pagenum, refSort(self.ref), 0)       # must sort with ParInfo
+
+
+@dataclass
+class ColInfo:
+    height: float
+    depth:  float
+    width:  float
+    topx:   float
+    topy:   float
+
 
 @dataclass
 class BadSpace:
@@ -117,6 +149,7 @@ class BadSpace:
 
     def __lt__(self, other):
         return self.width < other.width
+
 
 class ParlocLinesIterator:
     def __init__(self, fname):
@@ -156,6 +189,14 @@ class ParlocLinesIterator:
             logger.log(7, "Starting replay of {len(self.collection)} lines")
 
 
+@dataclass
+class Rect:
+    pnum: int
+    xmin: float
+    ymin: float
+    xmax: float
+    ymax: float
+
 
 class PopplerDest(ctypes.Structure):
     _fields_ = [
@@ -176,10 +217,10 @@ class PopplerDest(ctypes.Structure):
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
 
-    def readParlocs(self, fname, rtl=False):
-        self.pindex = []
-        self.pnums = {}
-        self.pnumorder = []
+    def readParlocs(self, fname, rtl=False, gui=False, parent=None):
+        self.pindex = []        # first paragraph on a page
+        self.pnums = {}         # from pagenumber to first page index
+        self.pnumorder = []     # from pageindex to pagenumber
         self.pheights = []
         self.dests = {}
         if fname is None:
@@ -193,15 +234,28 @@ class Paragraphs(list):
         lastyend = 0
         polycol = "L"
         currps = {polycol: None}
+        colcount = {polycol: -1}
         colinfos = {}
         innote = False
         pwidth = 0.
+        keepgoing = True
+        self._parloc_dlg = None
+        if gui:
+            def dlgresponse(rid):
+                nonlocal keepgoing
+                keepgoing = rid != Gtk.ResponseType.CANCEL
+            self._parloc_dlg = background_msg(_("Reading paragraph info. Press Cancel to stop"), dlgresponse, parent=parent)
+            dlg = self._parloc_dlg
         lines = ParlocLinesIterator(fname)
         for l in lines:
             m = self.parlinere.match(l)
             if not m:
                 continue
             logger.log(5, l[:-1])
+            if gui:
+                pump_gtk()
+                if not keepgoing:
+                    return False
             c = m.group(1)
             p = m.group(2).split("}{")
             if c == "pgstart":          # pageno, available height, pagewidth, pageheight
@@ -221,53 +275,58 @@ class Paragraphs(list):
                 inpage = True
                 #cinfo = [readpts(x) for x in p[1:4]]
                 #if len(cinfo) > 2:
-                #    colinfos[polycol] = [cinfo[0], 0, cinfo[1], 0, cinfo[2]]
+                #    colinfos[polycol] = [cinfo.height, 0, cinfo.depth, 0, cinfo.width]
                 lastyend = 0
+                for k in colcount.keys():
+                    colcount[k] = -1
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
                 inpage = False
             elif c == "colstart":       # col height, col depth, col width, topx, topy
-                cinfo = [readpts(x) for x in p]
-                logger.log(5, f"Test replay: {lines.replay} {pwidth=} width={cinfo[2]} left={cinfo[3]}")
-                if rtl and not lines.replay and ((pwidth == 0. and cinfo[3] > cinfo[2]) or (cinfo[3] + cinfo[2]) * 2 < pwidth):
+                cinfo = ColInfo(*[readpts(x) for x in p])
+                logger.log(5, f"Test replay: {lines.replay} {pwidth=} width={cinfo.width} left={cinfo.topx}")
+                if rtl and not lines.replay and ((pwidth == 0. and cinfo.topx > cinfo.width) or (cinfo.topx + cinfo.width) * 2 < pwidth):
                     # right column. So swap it
                     logger.debug(f"Start column swap at {cinfo}")
                     lines.collectuntil("\\@colstop", [l])
                     continue
                 colinfos[polycol] = cinfo
+                colcount[polycol] = colcount.get(polycol, 0) + 1
                 if currps.get(polycol, None) is not None:
-                    if currr is not None and currr.yend == 0:
+                    if currr is not None and currr.yend == 0 and currps[polycol].rects:
                         currps[polycol].rects.pop()
-                    currr = ParRect(pnum, cinfo[3], cinfo[4])
+                    currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
                 lastyend = 0
             elif c == "colstop" or c == "Poly@colstop":     # bottomx, bottomy [, polycode]
                 if currr is not None:
                     cinfo = colinfos.get(polycol, None)
-                    currr.xend = cinfo[3] + cinfo[2] if cinfo is not None else readpts(p[0])
+                    currr.xend = cinfo.topx + cinfo.width if cinfo is not None else readpts(p[0])
                     currr.yend = readpts(p[1])
+                    ps = currps.get(polycol, None)
+                    if ps is not None:
+                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
                     currr = None
                 colinfos[polycol] = None
                 lines.startreplay()
                 lastyend = 0
-            elif c == "parstart":       # mkr, baselineskip, partype=section etc., startx, starty
+            elif c == "parstart":       # ref, type, mrk, baselineskip, x, y
                 if len(p) == 5:
                     p.insert(0, "")
                 logger.log(5, f"Starting para {p[0]}")
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or len(cinfo) < 4:
-                    continue
-                if currr is not None:
-                    currr.xend = cinfo[3]
+                if currr is not None and cinfo is not None:
+                    currr.xend = cinfo.topx
                     currr.yend = readpts(p[5])
-                currp = ParInfo(p[0], p[1], p[2], readpts(p[3]))
+                currp = ParInfo(p[0], p[1], p[2], readpts(p[3]), polycol)
                 currp.rects = []
-                ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
-                currr = ParRect(pnum, cinfo[3], ystart)
-                currp.rects.append(currr)
+                if cinfo is not None:
+                    ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
+                    currr = ParRect(pnum, colcount[polycol], cinfo.topx, ystart)
+                    currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
-            elif c == "parend":         # badness, bottomx, bottomy
+            elif c == "parend":         # badness, bottomx, bottomy, lastdepth
                 cinfo = colinfos.get(polycol, None)
                 ps = currps.get(polycol, None)
                 if ps is None or not len(ps.rects):
@@ -276,15 +335,19 @@ class Paragraphs(list):
                     currr = ps.rects[-1]
                 if cinfo is None or currr is None:
                     continue
-                currr.xend = cinfo[3] + cinfo[2]    # p[1] is xpos of last char in par
+                currr.xend = cinfo.topx + cinfo.width    # p[1] is xpos of last char in par
                 if len(p) > 2:
-                    ps.lines = int(p[0])
                     currr.yend = readpts(p[2])
+                    endx = readpts(p[1])
+                    ps.badness = int(p[0])
                 else:
                     currr.yend = readpts(p[1])
+                    endx = readpts(p[0])
+                ps.lastwidth = (endx - cinfo.topx) / cinfo.width if cinfo.width else 0
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
+                currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
                 endpar = True
             elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
                 if not endpar or not inpage:
@@ -297,6 +360,12 @@ class Paragraphs(list):
                 if "k." in p[0]:
                     currp.ref = p[0]
                 currp.parnum = int(p[1])
+                i = self.index(currp)
+                for ps in reversed(self[:i]):
+                    if isinstance(ps, ParInfo) and ps.glot == polycol:
+                        if ps.ref == currp.ref:
+                            currp.parnum = getattr(ps, 'parnum', 0) + 1
+                        break
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
                 logger.log(5, f"Stopping para {p[0]}")
@@ -304,24 +373,23 @@ class Paragraphs(list):
                 currr = None
             elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
                 polycol = p[5]
-                colinfos[polycol] = [readpts(x) for x in p[:-1]]
+                colinfos[polycol] = ColInfo(*[readpts(x) for x in p[:-1]])
                 cinfo = colinfos[polycol]
+                colcount[polycol] = colcount.get(polycol, 0) + 1
                 if polycol not in currps:
                     currps[polycol] = None
                 if currps[polycol] is not None:
-                    currr = ParRect(pnum, cinfo[3], cinfo[4])
+                    currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
                 cinfo = colinfos.get(polycol, None)
-                if cinfo is None or len(cinfo) < 4:
-                    cinfo = None
-                xstart = readpts(p[2]) if cinfo is None else cinfo[3]
+                xstart = readpts(p[2]) if cinfo is None else cinfo.topx
                 if currr is not None:
                     currr.yend = readpts(p[3])
                     currr.xend = xstart
-                currpic = FigInfo(p[0], p[1], (0, 0), False, False)
+                currpic = FigInfo(p[0], pnum, p[1], (0, 0), False, False)
                 currpic.rects = []
-                currr = ParRect(pnum, xstart, readpts(p[3]))
+                currr = ParRect(pnum, colcount[polycol], xstart, readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
                 lastyend = 0
@@ -335,7 +403,7 @@ class Paragraphs(list):
                 if currp is not None:
                     currpr = currr
                     if not len(currp.rects) or currp.rects[-1].xend > 0:
-                        currr = ParRect(pnum, currpr.xstart, currpr.yend)
+                        currr = ParRect(pnum, colcount[polycol], currpr.xstart, currpr.yend)
                         currp.rects.append(currr)
                     else:
                         currr = currp.rects[-1]
@@ -344,7 +412,7 @@ class Paragraphs(list):
                 else:
                     currr = None
                 lastyend = 0
-            elif c == "parpicsize":
+            elif c == "parpicsize":     # "width"/"height", "heightlimit", width, height
                 if len(p) < 4:
                     (w, h) = readpts(p[0]), readpts(p[1])
                 else:
@@ -358,17 +426,22 @@ class Paragraphs(list):
                         if p[1] == "heightlimit":
                             currpic.limit = True
                 
-            # "parnote":        # type, callerx, callery
+            # "parnote":        # type, caller, ref, index, callerx, callery
             # "notebox":        # type, width, height
             # "parlines":       # numlines in previous paragraph (occurs after @parlen)
             # "nontextstart":   # x, y
             # "nontextstop":    # x, y
+            # "parpicanchor":   # ref, picid, x, y
         self.sort(key=lambda x:x.sortKey())
+        if gui and keepgoing:
+            dlg.response(Gtk.ResponseType.OK)
+        self._parloc_dlg = None
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
-        
-    def isEmpty(self):
-        return not len(self.pindex)
+        return True
+
+    def numPages(self):
+        return len(self.pindex)
         
     def _iterRectsPage(self, pnum):
         if pnum > len(self.pindex): # need some other test here 
@@ -402,18 +475,22 @@ class Paragraphs(list):
         y = (self.pheights[pnum-1] if pnum > 0 and pnum <= len(self.pheights) else self.pheights[-1]) - y
         return [r for p, r in self._iterRectsPage(pnum) if r.ystart >= y and r.yend <= y]
 
-    def getParas(self, pnum, inclast=False):
+    def getParas(self, pnum, inclast=False, inclafter=False):
         ''' Iterates all ParDest, ParRect on page with given index '''
         if pnum > len(self.pindex):
             return
-        e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
+        e = self.pindex[pnum] if not inclafter and pnum < len(self.pindex) else len(self)
 
         start = max(self.pindex[pnum-1], 0)
+        #logger.info(f"{pnum=}, {start=}, {e=}, max={len(self)}, {self.pindex=}")
         if inclast and pnum > 1:        # pnum is 1 based
             done = False
             for p in self[start:-1:-1]:
+                if not isinstance(p, ParInfo):
+                    continue
                 for r in reversed(p.rects):
-                    if r.pagenum == pnum - 1:
+                    if (not inclafter and r.pagenum == pnum - 1) \
+                            or (inclafter and r.pagenum >= pnum - 1):
                         yield (p, r)
                         done = True
                         break
@@ -421,9 +498,18 @@ class Paragraphs(list):
                     break
         start = max(start - 2, 0)
         for p in self[start:e+2]:
+            if not isinstance(p, ParInfo):
+                continue
             for r in p.rects:
-                if r.pagenum == pnum:
+                if (not inclafter and r.pagenum == pnum) \
+                        or (inclafter and r.pagenum >= pnum):
                     yield (p, r)
+
+    def getRects(self):
+        for p in self:
+            if not isinstance(p, ParInfo): continue
+            for r in p.rects:
+                yield (p, r)
 
     def getParasByColumnOrParref(self, pnum=None, parref=None, column=None):
         """Returns paragraphs from a specific column on a page OR all paragraphs 
@@ -455,6 +541,19 @@ class Paragraphs(list):
         else:
             return self.pnumorder[pindex - 1]
 
+    def setFigPids(self):
+        pindex = 0
+        for i, p in self:
+            while i >= self.pindex[pnum]:
+                pnum += 1
+            if isinstance(p, FigInfo):
+                lastpa = None
+                for pa in self.getParas(pnum, inclast=True):
+                    if pa.ref > p.ref:
+                        p.pid = lastpa.pid()
+                        break
+                    lastpa = pa
+
     def load_dests(self, doc):
         dests_tree = doc.create_dests_tree()
         n = dests_tree.node_first()
@@ -466,6 +565,7 @@ class Paragraphs(list):
             n = n.next()
         dests_tree.destroy()
         logger.debug(f"{len(self.dests)=}")
+        return True
 
     def load_page(self, doc, page, pindex):
         currlast = None
@@ -517,7 +617,12 @@ class Paragraphs(list):
         res = []
         for l, p, r in self.allxdvlines():
             # [[pnum, pos(x,y), width]]
-            spaces = sorted([BadSpace(r.pagenum, l, *b) for b in l.has_badspace(curr)], key=lambda s:s.width, reverse=True)
+            spaces = []
+            for b, nspaces, tspaces in l.has_badspace(curr):
+                spaces.append(BadSpace(r.pagenum, l, *b))
+                r.tspace += tspaces
+                r.nspace += nspace
+            spaces.sort(key=lambda s:s.width, reverse=True)
             for s in spaces:
                 if not len(res):
                     res.append(s)
@@ -536,9 +641,15 @@ class Paragraphs(list):
 
     def getbadspaces(self, pnum, threshold, char_threshold):
         for l in self._getlines(pnum):
-            spaces = l.has_badspace(threshold, char_threshold)
+            spaces, tspaces, nspaces = l.has_badspace(threshold, char_threshold)
             for s in spaces:
                 yield BadSpace(pnum, l, *s)
+
+    def getbadglyphs(self, pnum):
+        for l in self._getlines(pnum):
+            glyphs = l.bad_glyphs(minheight=4.)
+            for g in glyphs:
+                yield Rect(pnum, *g)
             
     def getcollisions(self, pnum):
         for l in self._getlines(pnum):
@@ -559,16 +670,21 @@ class Paragraphs(list):
         collisions = set()
         spaces = set()
         rivers = set()
+        badglyphs = set()
         for pnum in range(len(self.pindex)):
             for l in self._getlines(pnum):
                 if (wanted & 1) == 1 and pnum not in spaces:
-                    s = l.has_badspace(threshold, char_threshold)
+                    s, t, n = l.has_badspace(threshold, char_threshold)
                     if len(s):
                         spaces.add(pnum)
                 if (wanted & 2) == 2 and pnum not in collisions:
                     c = l.has_collisions()
                     if len(c):
                         collisions.add(pnum)
+                if (wanted & 2) == 2 and pnum not in badglyphs:
+                    g = l.bad_glyphs()
+                    if len(g):
+                        badglyphs.add(pnum)
                 if ((wanted & 2) == 0 or pnum in collisions) \
                         and ((wanted & 1) == 0 or pnum in spaces):
                     break
@@ -576,6 +692,6 @@ class Paragraphs(list):
                 r = self.getrivers(pnum)
                 if len(r):
                     rivers.add(pnum)
-        return (sorted(spaces), sorted(collisions), sorted(rivers))
+        return (sorted(spaces), sorted(collisions), sorted(rivers), sorted(badglyphs))
             
             

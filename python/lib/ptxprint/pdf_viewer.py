@@ -2,12 +2,14 @@ import gi, os, datetime, ctypes, math, gc
 gi.require_version("Gtk", "3.0")
 gi.require_version("Poppler", "0.18")
 from gi.repository import Gtk, Poppler, GdkPixbuf, Gdk, GLib, Pango
-import cairo, re, time, sys
+import cairo, re, time, sys, json
 import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
-from ptxprint.view import VersionStr
-from ptxprint.utils import _, f2s, coltoonemax, getcaller
+from ptxprint.version import VersionStr
+from ptxprint.utils import _, f2s, coltoonemax, getcaller, \
+    cleanParatextRef, sendRefToParatext
+from ptxprint.gtkutils import background_msg, pump_gtk
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
 from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
@@ -26,7 +28,7 @@ if sys.platform.startswith("win"):
     
 logger = logging.getLogger(__name__)
 
-reset  = {'para': _("Paragraph"), 'col': _("Column"), 'page': _("Page"), 'sprd': _("Spread")}
+reset  = {'para': _("Paragraph"), 'col': _("Column"), 'page': _("Page"), 'sprd': _("Spread"), 'doc': _("End of Book")}
 frame  = {'col': _("Column"), 'span': _("Span"), 'page': _("Page"), 'full': _("Full")}  # 'cut': _("Cutout"), 
 mirror = {'': _("Never"), 'both': _("Always"), 'odd': _("If on odd page"), 'even': _("If on even page")}
 vpos   = {'t': _("Top"), '-': _("Center"), 'b': _("Bottom"), 'h': _("Before Verse"), 'p': _("After Paragraph"), 'c': _("Cutout"), 'B': _("Below Notes")}
@@ -49,14 +51,14 @@ mstr = {
     'tryminus':   _("Try Shrink -1 line"),
     'plusline':   _("Expand +1 line"),
     'rp':         _("Reset Adjustments"),
-    'shrnkboth':  _("Shrink -1 line and Text"),
+    'shrnkboth':  _("Shrink Both"),
+    'expandboth': _("Expand Both"),
     'st':         _("Shrink Text"),
     'et':         _("Expand Text"),
     'es':         _("Edit Style"),
     'ecs':        _("Edit Caption Style"),
-    'j2pt':       _("Send Ref to Paratext"),
+    'j2pt':       _("Jump to Ref in Paratext"),
     'z2f':        _("Zoom to Fit"),
-    'z100':       _("Zoom 100%"),
     'ancrdat':    _("Anchored at:"),
     'ianf':       _("Image Anchor Not Found"),
     'cnganc':     _("Change Anchor Ref"),
@@ -67,6 +69,7 @@ mstr = {
     'shrinkpic':  _("Shrink by 1 line"),
     'growpic':    _("Grow by 1 line"),
     'shwdtl':     _("Show Details..."),
+    'custom':     _("Custom"),
 }
 
 def mm_pts(n):
@@ -168,6 +171,7 @@ class PDFViewer:
         z = self.viewers[p].zoomLevel
         self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
+        self.viewers[p].updatePageNavigation()
 
     def onmaximized(self):
         c = self.nbook.get_current_page()
@@ -188,6 +192,8 @@ class PDFViewer:
                 else:
                     v.hide()
             for k, v in sorted(extras.items()):
+                if k == ' Original':
+                    continue
                 n = k.strip()
                 if n not in self.boxcodes:
                     i = len(self.boxcodes)
@@ -220,6 +226,9 @@ class PDFViewer:
             v.show()
             self.nbook.set_current_page(i)
         self.hide_unused()
+        p = self.nbook.get_current_page()
+        if p < len(self.viewers) and self.viewers[p] is not None:
+            self.viewers[p].updatePageNavigation()
 
     def hide_unused(self):
         for i in range(1, self.nbook.get_n_pages()):
@@ -252,10 +261,17 @@ class PDFFileViewer:
         self.hbox = widget
         self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
+        self.sw.add_events(Gdk.EventMask.SCROLL_MASK)
         self.sw.connect("button-press-event", self.on_button_press)
         self.sw.connect("button-release-event", self.on_button_release)
         self.sw.connect("motion-notify-event", self.on_mouse_motion)
-        self.sw.connect("scroll-event", self.on_scroll_parent_event) # outer box (not the pages)
+        self.sw.connect("scroll-event", self.on_scroll_parent_event)
+        # Also connect to the GtkScrolledWindow itself — the gray border area can belong
+        # to its GdkWindow rather than the Viewport's, so the Viewport handler may never fire.
+        real_sw = self.sw.get_parent()
+        if isinstance(real_sw, Gtk.ScrolledWindow):
+            real_sw.add_events(Gdk.EventMask.SCROLL_MASK)
+            real_sw.connect("scroll-event", self.on_scroll_parent_event)
         
         self.swh = self.sw.get_hadjustment()
         self.swv = self.sw.get_vadjustment()
@@ -376,7 +392,8 @@ class PDFFileViewer:
         if not self.load_pdf(fname, **kw):
             return False
         if hook is not None:
-            hook(self)
+            if not hook(self):
+                return False
         self.show_pdf(rtl=rtl)
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
@@ -386,7 +403,8 @@ class PDFFileViewer:
         self.widget = widget
         # if widget is not None:
         #    widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
-        self.model.set_preview_pages(self.numpages, _("Pages:"))
+        if iscurrent:
+            self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.widget.show_all()
         self.set_zoom_fit_to_screen(iscurrent)
         self.updatePageNavigation()
@@ -448,10 +466,27 @@ class PDFFileViewer:
         else:
             self.show_pdf()
 
+    def _scroll_zoom_direction(self, event):
+        """Return (zoom_in, zoom_out) booleans from a scroll event, handling both
+        discrete (UP/DOWN) and smooth (trackpad/precise wheel) directions."""
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, dx, dy = event.get_scroll_deltas()
+            return dy < 0, dy > 0
+        return (event.direction == Gdk.ScrollDirection.UP,
+                event.direction == Gdk.ScrollDirection.DOWN)
+
     def on_scroll_parent_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         if ctrl_pressed:
-            return False 
+            zoom_in, zoom_out = self._scroll_zoom_direction(event)
+            if zoom_in or zoom_out:
+                hbox_width = self.hbox.get_allocated_width()
+                posn = 1 if (self.spread_mode and event.x > hbox_width / 2) else 0
+                self.zoom_at_point(event.x, event.y, posn, zoom_in)
+            return True
+        fit_zoom = self.get_fit_zoom()
+        if fit_zoom is not None and self.zoomLevel >= fit_zoom * 1.1:
+            return False  # zoomed in enough — let ScrolledWindow pan naturally
         if event.direction == Gdk.ScrollDirection.SMOOTH:
             _, _, z = event.get_scroll_deltas()
             if z < 0:
@@ -467,35 +502,30 @@ class PDFFileViewer:
     def on_scroll_event(self, widget, event):
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
 
-        if ctrl_pressed:  # Zooming with Ctrl + Scroll
-            zoom_in = event.direction == Gdk.ScrollDirection.UP
-            zoom_out = event.direction == Gdk.ScrollDirection.DOWN
-
-            # Get mouse position relative to the widget
+        if ctrl_pressed:
+            zoom_in, zoom_out = self._scroll_zoom_direction(event)
             mouse_x, mouse_y = event.x, event.y
-            posn = self.widgetPosition(widget) # 0=left page; 1=right page
-
-            if zoom_in:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=True)
-            elif zoom_out:
-                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in=False)
-
-            return True  # Prevent further handling of the scroll event
-
-        # Get the parent scrolled window and its adjustments
-        scrolled_window = self.hbox.get_parent()
-        v_adjustment = scrolled_window.get_vadjustment()
-        if v_adjustment.get_upper() > v_adjustment.get_page_size():
-            return False # v_adjustment is active
-        else:
-            # Default behavior: Scroll for navigation
-            if event.direction == Gdk.ScrollDirection.UP:
-                self.set_page(self.swap4rtl("previous"))
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                self.set_page(self.swap4rtl("next"))
+            posn = self.widgetPosition(widget)
+            if posn < 0:
+                posn = 1 if (self.spread_mode and mouse_x > self.hbox.get_allocated_width() / 2) else 0
+            if zoom_in or zoom_out:
+                self.zoom_at_point(mouse_x, mouse_y, posn, zoom_in)
             return True
 
-        return False
+        fit_zoom = self.get_fit_zoom()
+        if fit_zoom is not None and self.zoomLevel >= fit_zoom * 1.1:
+            return False  # zoomed in enough — let ScrolledWindow scroll naturally
+        if event.direction == Gdk.ScrollDirection.SMOOTH:
+            _, _, z = event.get_scroll_deltas()
+            if z < 0:
+                self.set_page(self.swap4rtl("previous"))
+            elif z > 0:
+                self.set_page(self.swap4rtl("next"))
+        elif event.direction == Gdk.ScrollDirection.UP:
+            self.set_page(self.swap4rtl("previous"))
+        elif event.direction == Gdk.ScrollDirection.DOWN:
+            self.set_page(self.swap4rtl("next"))
+        return True
 
     def widgetPosition(self, widget):
         children = self.hbox.get_children()
@@ -554,21 +584,18 @@ class PDFFileViewer:
         elif ctrl and keyval in {Gdk.KEY_minus, Gdk.KEY_underscore}:  # Ctrl+Minus (Zoom Out)
             self.on_zoom_out(widget)
             return True
-        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Reset Zoom)
-            self.on_reset_zoom(widget)
-            return True
-        elif ctrl and keyval == Gdk.KEY_1:  # Ctrl+1 (Actual size, 100%)
-            self.set_zoom(1.0)
+        elif ctrl and keyval == Gdk.KEY_0:  # Ctrl+Zero (Fit to screen)
+            self.set_zoom_fit_to_screen(True)
             return True
         elif ctrl and keyval in {Gdk.KEY_F, Gdk.KEY_f}:  # Ctrl+F (Fit to screen)
             self.set_zoom_fit_to_screen(True)
             self.show_pdf()  # Redraw the current page
             return True
-        elif keyval == Gdk.KEY_Right:  # Right arrow → Next page
-            self.set_page(self.swap4rtl("next"))
+        elif keyval == Gdk.KEY_Right:  # Right arrow (RTL-aware: decreases page in RTL layouts)
+            self.set_page("next")
             return True
-        elif keyval == Gdk.KEY_Left:  # Left arrow → Previous page
-            self.set_page(self.swap4rtl("previous"))
+        elif keyval == Gdk.KEY_Left:  # Left arrow (RTL-aware: increases page in RTL layouts)
+            self.set_page("previous")
             return True
             
     def updatePageNavigation(self):
@@ -595,14 +622,12 @@ class PDFFileViewer:
         seekNextBtn.set_sensitive(False)
 
     def on_button_press(self, widget, event):
-        if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 2:  # Button 2 = Middle Mouse Button
-            self.on_update_pdf(None)
-            return
         if event.button == 2:
             self.is_dragging = True
             self.mouse_start_x = event.x_root
             self.mouse_start_y = event.y_root
             return True
+        return False
 
     def on_mouse_motion(self, widget, event):
         if self.is_dragging:
@@ -615,11 +640,11 @@ class PDFFileViewer:
             return True
 
     def on_button_release(self, widget, event):
-        if event.button == 2:   # middle click
+        # This handles the release of the middle-mouse button for panning
+        if event.button == 2: # middle click
             self.is_dragging = False
-        if event.button == 3:  # Right-click (for context menu)
-            self.show_context_menu(widget, event)
-        return True
+            return True
+        return False
 
     def show_context_menu(self, widget, event):
         pass
@@ -658,22 +683,28 @@ class PDFFileViewer:
             return
         self.set_zoom_fit_to_screen(False)
 
-    def set_zoom_fit_to_screen(self, iscurrent):
+    def get_fit_zoom(self):
         if not hasattr(self, "document") or self.document is None or self.current_page is None:
-            return
-        page = self.document.get_page(self.current_page - 1)
+            return None
         try:
+            page = self.document.get_page(self.current_page - 1)
             page_width, page_height = page.get_size()
-        except AttributeError:
-            return
+        except (AttributeError, Exception):
+            return None
         if page_width < 10 or page_height < 10:
-            return
-        parent_widget = self.hbox.get_parent() # .get_parent()
+            return None
+        parent_widget = self.hbox.get_parent()
         if parent_widget is not None:
             alloc = parent_widget.get_allocation()
-            scale_x = (alloc.width + 0) / (page_width * (2 if self.spread_mode else 1))
-            scale_y = (alloc.height + 0) / page_height
-            self.set_zoom(min(scale_x, scale_y), setz=iscurrent)
+            scale_x = alloc.width / (page_width * (2 if self.spread_mode else 1))
+            scale_y = alloc.height / page_height
+            return min(scale_x, scale_y)
+        return None
+
+    def set_zoom_fit_to_screen(self, iscurrent):
+        fit = self.get_fit_zoom()
+        if fit is not None:
+            self.set_zoom(fit, setz=iscurrent)
 
     def set_page(self, action):
         if self.current_index is None:
@@ -803,8 +834,11 @@ class PDFContentViewer(PDFFileViewer):
         self.collisionpages = []
         self.spacepages = []
         self.riverpages = []
-        
-        # This may end up in page rendering code. Just collect data for now
+        self.badglyphpages = []
+        # UI extensions loaded from <config>/UIExtensions.json
+        self.uiExtensions = []
+        self.uiExtensionsLoaded = False
+        self.uiExtensionsCfgDir = None
         display = Gdk.Display.get_default()
         screen = display.get_default_screen()
         window = screen.get_root_window()
@@ -841,9 +875,52 @@ class PDFContentViewer(PDFFileViewer):
         self.spacethreshold = float(self.model.get("s_spaceEms", 3.0))
         self.charthreshold = float(self.model.get("s_charSpaceEms", 0))
 
+    def loadUIExtensions(self, force=False):
+        cfgDir = self.model.project.srcPath(self.model.cfgid)
+        if not cfgDir:
+            return
+        if not force and self.uiExtensionsLoaded and self.uiExtensionsCfgDir == cfgDir:
+            return
+
+        self.uiExtensionsCfgDir, self.uiExtensionsLoaded, self.uiExtensions = cfgDir, True, []
+        extFile = os.path.join(cfgDir, "UIExtensions.json")
+        if not os.path.exists(extFile):
+            return
+        try:
+            data = json.load(open(extFile, "r", encoding="utf-8", errors="ignore"))
+            if not isinstance(data, list):
+                return
+            seen = set()
+            for e in data:
+                if not isinstance(e, dict):
+                    continue
+                entryId, entryType, menuEntry = e.get("id"), e.get("type"), e.get("menuEntry")
+                if not entryId or not entryType or not menuEntry or entryId in seen:
+                    continue
+                seen.add(entryId)
+                self.uiExtensions.append({
+                    "id": entryId,
+                    "type": entryType,
+                    "menuEntry": menuEntry,
+                    "tooltip": e.get("tooltip"),
+                    "content": e.get("content")
+                })
+        except Exception as ex:
+            logger.warning(f"UIExtensions.json read failed: {extFile}: {ex}")
+            self.uiExtensions = []
+
+    def onUITriggerToggled(self, widget, triggerContent, entryId, info, parref, pgindx):
+        if self.adjlist is None:
+            return
+        adjRef = self.parInfoToAdjRef(parref)
+        self.adjlist.addTrigger(adjRef, triggerContent, enabled=widget.get_active(), insert=True)
+        self.show_pdf()
+        self.hitPrint()
+
     def load_pdf(self, pdf_path, adjlist=None, isdiglot=False, **kw):
         self.settingsChanged()
-        
+        self.loadUIExtensions()
+        self.adjlist = adjlist
         self.isdiglot = isdiglot
         if pdf_path is None or not os.path.exists(pdf_path):
             self.document = None
@@ -866,9 +943,6 @@ class PDFContentViewer(PDFFileViewer):
             font_desc = Pango.FontDescription(fontR + " 12")  # Font name and size
             self.cr.set_property("font-desc", font_desc)
         
-        self.adjlist = adjlist
-        # print(f"In load_pdf. No longer calling: updatePgCtrlButtons")
-        # self.model.updatePgCtrlButtons(None)
         return True
 
     def _add_toctree(self, tocts, toci, parent):
@@ -938,6 +1012,8 @@ class PDFContentViewer(PDFFileViewer):
             return
         if cpage is None:
             cpage = self.current_index or self.parlocs.pnums.get(1, 1) if self.parlocs is not None else 1
+        if self.numpages:
+            cpage = max(1, min(cpage, self.numpages))
         self.spread_mode = self.model.get("c_bkView", False)
         # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
         if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
@@ -959,6 +1035,7 @@ class PDFContentViewer(PDFFileViewer):
             layerfns.append(self._draw_spaces)
             layerfns.append(self._draw_collisions)
             layerfns.append(self._draw_whitespace_rivers)
+            layerfns.append(self._draw_badglyphs)
         
         images = []
         if self.spread_mode:
@@ -1000,6 +1077,11 @@ class PDFContentViewer(PDFFileViewer):
                 left += gutter
         return (left, right)
 
+    def parInfoToAdjRef(self, parInfo):
+        ref = getattr(parInfo, "ref", "") or ""
+        parnum = getattr(parInfo, "parnum", 1) or 1
+        return f"{ref}[{parnum}]" if parnum > 1 else ref
+    
     def _draw_guides(self, page, pindex, context, zoomlevel):
         def drawline(x, y, width, height, col):
             context.set_source_rgba(col[0], col[1], col[2], 1)
@@ -1154,7 +1236,6 @@ class PDFContentViewer(PDFFileViewer):
             context.set_source_rgba(*col)
             context.rectangle(*r)
             context.fill()
-
         for c in self.parlocs.getcollisions(pnum):
             make_rect(c)
             
@@ -1167,6 +1248,14 @@ class PDFContentViewer(PDFFileViewer):
         for r in self.parlocs.getrivers(pnum, **self.riverparms):
             for s in r.spaces:
                 make_rect(s)
+
+    def _draw_badglyphs(self, page, pnum, context, zoomlevel):
+        def make_rect(r, col=(0.7, 0.25, 0.85, 0.6)):
+            context.set_source_rgba(*col)
+            context.rectangle(*r)
+            context.fill()
+        for r in self.parlocs.getbadglyphs(pnum):
+            make_rect([r.xmin, r.ymin, r.xmax-r.xmin, r.ymax-r.ymin])
 
     # incomplete code calling for major refactor for cairo drawing
     def add_hints(self, pdfpage, page, context, zoomlevel):
@@ -1245,21 +1334,27 @@ class PDFContentViewer(PDFFileViewer):
     def loadnshow(self, fname, iscurrent, rtl=False, adjlist=None, parlocs=None, widget=None, page=None, isdiglot=False, **kw):
         def plocs(self):
             self.load_parlocs(self.parlocfile, rtl=rtl)
-            if page is not None and page in self.parlocs.pnums:
+            if page is not None and self.parlocs is not None and page in self.parlocs.pnums:
                 self.current_page = page
                 self.current_index = self.parlocs.pnums[page]
+            return True
         if parlocs is None:
             parlocs = self.parlocfile
         if parlocs is not None:
             self.parlocfile = parlocs
         if not super().loadnshow(fname, iscurrent, rtl=rtl, page=page, parlocs=parlocs, widget=widget, isdiglot=isdiglot, hook=plocs, **kw):
             return False
+        if fname is None:
+            fname = self.fname
+        if fname is None:
+            return False
         pdft = os.stat(fname).st_mtime
         mod_time = datetime.datetime.fromtimestamp(pdft)
         formatted_time = mod_time.strftime("   %d-%b %H:%M")
         if widget is not None:
             widget.set_title(_("PDF Preview {}").format(VersionStr) + "   " + os.path.basename(self.fname) + formatted_time)
-        self.model.set_preview_pages(self.numpages, _("Pages:"))
+        if iscurrent:
+            self.model.set_preview_pages(self.numpages, _("Pages:"))
         return True
 
     def clear(self, widget=None):
@@ -1271,27 +1366,53 @@ class PDFContentViewer(PDFFileViewer):
 
     def load_parlocs(self, fname, rtl=False):
         self.parlocs = Paragraphs()
-        self.parlocs.readParlocs(fname, rtl=rtl)
-        self.parlocs.load_dests(self.document)
-        if self.showanalysis:
-            self.load_analysis(fname)
+        res = None
+        try:
+            large_pdf = self.fname is not None and os.path.getsize(self.fname) > 2 * 1024 * 1024
+            res = self.parlocs.readParlocs(fname, rtl=rtl, gui=large_pdf, parent=self.hbox)
+            if res:
+                res = self.parlocs.load_dests(self.document)
+        except (IndexError,):
+            pass
+        finally:
+            dlg = getattr(self.parlocs, '_parloc_dlg', None)
+            if dlg is not None:
+                dlg.response(Gtk.ResponseType.OK)
+                self.parlocs._parloc_dlg = None
+        if res and self.showanalysis:
+            res = self.load_analysis(fname)
+        return res
 
     def load_analysis(self, fname):
         xdvname = fname.replace(".parlocs", ".xdv")
-        print(f"Reading {xdvname}")
+        keepgoing = True
+        def dlgresponse(rid):
+            nonlocal keepgoing
+            if rid == Gtk.ResponseType.CANCEL:
+                keepgoing = False
+        dlg = background_msg(_("Analysing text. Press Cancel to stop"), dlgresponse, parent=self.hbox)
         cthreshold = float(self.model.get("s_paddingwidth", 0.5))
         xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
-                                    fontsize=float(self.model.get("s_fontsize", 1)))
+                                    fontsize=float(self.model.get("s_fontsize", 1)),
+                                    outlines=self.model.get("c_collisionPrecise", False))
+        i = 0
         for (opcode, data) in xdvreader.parse():
-            pass
+            i += 1
+            if not i % 100:
+                pump_gtk()
+                if not keepgoing:
+                    return False
+
         if self.spacethreshold == 0:
             self.badspaces = self.parlocs.getnbadspaces()
             if len(self.badspaces):
                 self.model.set("s_spaceEms", self.badspaces[0].widthem)
         wanted = 7
-        self.spacepages, self.collisionpages, self.riverpages = \
+        self.spacepages, self.collisionpages, self.riverpages, self.badglyphpages = \
             self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
                     float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
+        dlg.response(Gtk.ResponseType.OK)
+        return True
 
     def get_spread(self, page, rtl=False):
         """ page is a page index not folio """
@@ -1353,14 +1474,16 @@ class PDFContentViewer(PDFFileViewer):
             collisionPages  = []
             horizWhitespace = []
             vertRivers      = []
+            badGlyphs       = []
         else:
             ufPages         = self.model.ufPages or [] if self.model.get('c_findUnbalanced', False) else []
             collisionPages  = self.collisionpages      if self.model.get('c_findCollisions', False) else []
             horizWhitespace = self.spacepages          if self.model.get('c_findWhitespace', False) else []
             vertRivers      = self.riverpages          if self.model.get('c_findRivers',     False) else []
+            badGlyphs       = self.badglyphpages       if self.model.get('c_findBadGlyphs',  False) else []
 
         # Merge lists in order with uniqueness
-        for lst in [ufPages, collisionPages, horizWhitespace, vertRivers]:
+        for lst in [ufPages, collisionPages, horizWhitespace, vertRivers, badGlyphs]:
             for p in lst:
                 if p not in self.all_pages:
                     self.all_pages.append(p)
@@ -1433,6 +1556,8 @@ class PDFContentViewer(PDFFileViewer):
                         text = f"<span foreground='lightblue'><b>{p}</b></span>"
                     elif p in vertRivers:
                         text = f"<span foreground='yellow'><b>{p}</b></span>"
+                    elif p in badGlyphs:
+                        text = f"<span foreground='#A05080'><b>{p}</b></span>"
                     else: # if p in ufPages:
                         text = f"<b>{p}</b>"
 
@@ -1489,20 +1614,30 @@ class PDFContentViewer(PDFFileViewer):
             p, r, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
         return p, pnum, a
 
-    def addMenuItem(self, menu, label, fn, *args, sensitivity=None):
+    def addMenuItem(self, menu, label, fn, *args, sensitivity=None, tooltip=None):
         if label is None:
             res = Gtk.SeparatorMenuItem.new()
         else:
-            res = Gtk.MenuItem(label=label)
+            # We must use a Gtk.Label to support Pango markup (colors)
+            res = Gtk.MenuItem()
+            lbl = Gtk.Label(label=label) 
+            lbl.set_use_markup(True) 
+            lbl.set_xalign(0.0) 
+            res.add(lbl)
+
             if sensitivity is not None:
                 res.set_sensitive(sensitivity)
+            if tooltip is not None:
+                res.set_tooltip_text(tooltip)
             if fn is not None:
                 res.connect("activate", fn, *args)
-        res.show()
+        
+        res.show_all() # Important to show the child label
         menu.append(res)
         return res
 
     def hitPrint(self):
+        self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         """ Delayed execution of print with a N-second debounce timer. """
         if self.model.get("c_updatePDF"):
             now = time.time()
@@ -1538,10 +1673,89 @@ class PDFContentViewer(PDFFileViewer):
             
     def menuFitToScreen(self, x):
         self.set_zoom_fit_to_screen(True)
+
+    def on_button_release(self, widget, event):
+        # Check the state of the modifier keys
+        ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
+        shift_pressed = event.state & Gdk.ModifierType.SHIFT_MASK
+
+        # This handles the release of the middle-mouse button for panning or resetting
+        if event.button == 2: # middle click
+            self.is_dragging = False
+            if (ctrl_pressed or shift_pressed):
+                parref, pgindx, _ = self.get_parloc(widget, event)
+                if isinstance(parref, ParInfo):
+                    parnum = getattr(parref, 'parnum', 0) or 0
+                    parnum = f"[{parnum}]" if parnum > 1 else ""
+                    ref = parref.ref
+                    self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
+                    if self.adjlist:
+                        info = self.adjlist.getinfo(ref + parnum, insert=True)
+                        self.on_reset_adjustments(widget, 'para', pgindx, info, parref)
+            return True
+
+        # Check if we are in the main content viewer and if any modifier key was pressed
+        if (ctrl_pressed or shift_pressed):
+            # Get the paragraph information at the click location
+            parref, _, _ = self.get_parloc(widget, event)
+            
+            # Proceed only if we clicked on a valid paragraph
+            if isinstance(parref, ParInfo):
+                parnum = getattr(parref, 'parnum', 0) or 0
+                parnum = f"[{parnum}]" if parnum > 1 else ""
+                ref = parref.ref
+                self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
+
+                if self.adjlist:
+                    info = self.adjlist.getinfo(ref + parnum, insert=True)
+
+                    # Case 1: Ctrl + Shift are both held down
+                    if ctrl_pressed and shift_pressed:
+                        if event.button == 1:  # Ctrl+Shift+Left-Click
+                            self.on_shrink_both(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Ctrl+Shift+Right-Click
+                            self.on_expand_both(widget, info, parref)
+                            return True
+
+                    # Case 2: Only Shift is held down
+                    elif shift_pressed:
+                        if event.button == 1:  # Shift+Left-Click
+                            self.on_shrink_paragraph(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Shift+Right-Click
+                            self.on_expand_paragraph(widget, info, parref)
+                            return True
+
+                    # Case 3: Only Ctrl is held down
+                    elif ctrl_pressed:
+                        if event.button == 1:  # Ctrl+Left-Click
+                            self.on_shrink_text(widget, info, parref)
+                            return True
+                        elif event.button == 3:  # Ctrl+Right-Click
+                            self.on_expand_text(widget, info, parref)
+                            return True
+
+        # Fallback to the default context menu if only the right-click is used
+        if event.button == 3:
+            self.show_context_menu(widget, event)
+            return True
+            
+        return False
+
+    def hasActiveUIExtensions(self, adjRef):
+        return
+        # to be implemented when there are OTHER kinds of UI Extensions (apart from Triggers)
         
     def show_context_menu(self, widget, event):
         self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         self.last_click_time = time.time()
+        
+        # Color-coded bars using a vertical block character
+        bar = "\u258C"
+        # Blue for Line operations, Pinkish-Red for Text operations
+        b_bar = f'<span foreground="#A099FF">{bar}</span>'
+        r_bar = f'<span foreground="#FF9999">{bar}</span>'
 
         menu = Gtk.Menu()
         self.clear_menu(menu)
@@ -1556,68 +1770,141 @@ class PDFContentViewer(PDFFileViewer):
             self.adjlist = self.model.get_adjlist(ref[:3].upper(), gtk=Gtk)
             if self.adjlist is not None:
                 info = self.adjlist.getinfo(ref + parnum, insert=True)
-        logger.debug(f"{event.x=},{event.y=}")
+            logger.debug(f"{event.x=},{event.y=}")
 
-        if len(info) and re.search(r'[.:]', parref.ref):
-            if ref[3:4] in "LRABCDEFG":
-                pref = ref[3:4]
-                o = 4
-            else:
-                pref = "L"
-                o = 3
-            l = info[0]
-            if l[0] not in '+-':
-                l = '+' + l
-            hdr = f"{ref[:o]} {ref[o:]}{parnum}   \\{parref.mrk}  {l}  {info[1]}%"
-            self.addMenuItem(menu, hdr, None, info, sensitivity=False)
-            self.addMenuItem(menu, None, None)
+            if len(info) and re.search(r'[.:]', parref.ref):
+                if ref[3:4] in "LRABCDEFG":
+                    pref = ref[3:4]
+                    o = 4
+                else:
+                    pref = "L"
+                    o = 3
+                l = info[0]
+                if l[0] not in '+-':
+                    l = '+' + l
+                hdr = f"{ref[:o]} {ref[o:]}{parnum} \\{parref.mrk} {l} {info[1]}%"
+                self.addMenuItem(menu, hdr, None, info, sensitivity=False)
+                self.addMenuItem(menu, None, None)
 
-            shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
-            shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
-            self.addMenuItem(menu, f"{mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", self.on_shrink_both, info, parref, sensitivity=not info[1] <= shrLim)
-            self.addMenuItem(menu, f"{shrinkText} ({parref.lines - 1})", self.on_shrink_paragraph, info, parref)
-            self.addMenuItem(menu, f"{mstr['st']} ({shrLim}%)", self.on_shrink_text, info, parref, sensitivity=not info[1] <= shrLim)
-            self.addMenuItem(menu, None, None)
-            
-            self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})", self.on_expand_paragraph, info, parref)
-            expLim = min(self.expandLimit, info[1]+self.expandStep)
-            self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)", self.on_expand_text, info, parref, sensitivity=not info[1] >= expLim)
+                shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
+                shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
+                
+                # Shrink Line: Blue bar
+                self.addMenuItem(menu, f"{b_bar}    {shrinkText} ({parref.lines - 1})", 
+                                 self.on_shrink_paragraph, info, parref,
+                                 tooltip="Shift + Left-Click")
+                
+                # Shrink Text: Red bar
+                self.addMenuItem(menu, f"{r_bar}    {mstr['st']} ({shrLim}%)", 
+                                 self.on_shrink_text, info, parref, 
+                                 sensitivity=not info[1] <= shrLim,
+                                 tooltip="Ctrl + Left-Click")
+                                 
+                # Shrink Both: Uses Blue and Red bar
+                self.addMenuItem(menu, f"{b_bar}{r_bar} {mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", 
+                                 self.on_shrink_both, info, parref, 
+                                 sensitivity=not info[1] <= shrLim,
+                                 tooltip="Ctrl + Shift + Left-Click")
+                
+                self.addMenuItem(menu, None, None)
+                
+                # Expand Line: Blue bar
+                self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})       {b_bar}", 
+                                 self.on_expand_paragraph, info, parref,
+                                 tooltip="Shift + Right-Click")
+                
+                # Expand Text: Red bar
+                expLim = min(self.expandLimit, info[1]+self.expandStep)
+                self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)       {r_bar}", 
+                                 self.on_expand_text, info, parref, 
+                                 sensitivity=not info[1] >= expLim,
+                                 tooltip="Ctrl + Right-Click")
 
-            reset_menu = Gtk.Menu()
-            self.clear_menu(reset_menu)
-            for k, v in reset.items():
-                if k == "sprd" and not self.spread_mode or \
-                   k == "sprd" and len(self.get_spread(pgindx)) < 2 or \
-                   k == "col"  and not self.model.get('c_doublecolumn', True):
-                    continue
-                menu_item = Gtk.MenuItem(label=f"{v}")
-                menu_item.connect("activate", self.on_reset_adjustments, k, pgindx, info, parref)
-                menu_item.set_sensitive((k == "para" and not (info[1] == 100 and int(l.replace("+","")) == 0)) \
-                                     or (k == "col" ) or (k == "page") \
-                                     or (k == "sprd" and self.spread_mode and len(self.get_spread(pgindx))))
-                menu_item.show()
-                reset_menu.append(menu_item)
-            self.addSubMenuItem(menu, mstr['rp'], reset_menu)            
-            self.addMenuItem(menu, None, None)
-            
-            if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
-                self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
+                # Expand Both: Uses Blue and Red bar
+                self.addMenuItem(menu, f"{mstr['expandboth']} ({int(info[1])+self.expandBothAmt(info)}%)   {r_bar}{b_bar}", 
+                                 self.on_expand_both, info, parref, 
+                                 sensitivity=not info[1] >= expLim,
+                                 tooltip="Ctrl + Shift + Right-Click")
+                
+                self.addMenuItem(menu, None, None)
 
-            if parref and parref.mrk is not None:
-                # self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None))
+                # Custom submenu (only show if UIExtensions.json has entries)
+                self.loadUIExtensions()
+                if self.uiExtensions:
+                    customMenu = Gtk.Menu()
+                    self.clear_menu(customMenu)
+                    adjRef = self.parInfoToAdjRef(parref)
+                    enabled = set(self.adjlist.getTriggers(adjRef)) if self.adjlist is not None else set()
+                    activeContents = {
+                        entry.get("content")
+                        for entry in self.uiExtensions
+                        if entry.get("type") == "trigger" and entry.get("content")
+                    }
+                    hasActiveCustom = bool(enabled & activeContents)
 
-            if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
-                # self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
+                    for entry in self.uiExtensions:
+                        entryType = entry["type"]
+                        menuText = entry["menuEntry"]
+                        content = entry.get("content")
+                        entryId = entry["id"]
+                        tooltip = entry.get("tooltip")
 
-            # self.addMenuItem(menu, None, None)
-            self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen)
-            if not self.model.get("c_updatePDF"):
-                # self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
+                        if entryType == "trigger" and content:
+                            item = Gtk.CheckMenuItem.new_with_label(menuText)
+                            item.set_active(content in enabled)
+                            item.connect("toggled", self.onUITriggerToggled, content, entryId, info, parref, pgindx)
+                        else:
+                            item = Gtk.MenuItem.new_with_label(menuText)
+                            item.connect("activate", self.onUIExtensionSelected, entryType, content, entryId, info, parref, pgindx)
+                        if tooltip:
+                            item.set_tooltip_text(tooltip)
+                        customMenu.append(item)
+                        item.show()
+                    customItem = Gtk.MenuItem()
+                    customLabel = Gtk.Label()
+                    customLabel.set_use_markup(True)
+                    customLabel.set_xalign(0)
+                    labelText = GLib.markup_escape_text(mstr["custom"])
+                    customLabel.set_markup(f"<b>{labelText}</b>" if hasActiveCustom else labelText)
+                    customItem.add(customLabel)
+                    customItem.set_submenu(customMenu)
+                    menu.append(customItem)
+                    customItem.show_all()
+                    self.addMenuItem(menu, None, None)
+    
+                reset_menu = Gtk.Menu()
+                self.clear_menu(reset_menu)
+                for k, v in reset.items():
+                    if k == "sprd" and not self.spread_mode or \
+                            k == "sprd" and len(self.get_spread(pgindx)) < 2 or \
+                            k == "col" and not self.model.get('c_doublecolumn', True):
+                        continue
+                    menu_item = Gtk.MenuItem(label=f"{v}")
+                    if k == 'para':
+                        menu_item.set_tooltip_text("Ctrl/Shift + Middle-Click")
+                    menu_item.connect("activate", self.on_reset_adjustments, k, pgindx, info, parref)
+                    menu_item.set_sensitive((k == "para" and not (info[1] == 100 and int(l.replace("+","")) == 0)) \
+                                            or (k == "col" ) or (k == "page") \
+                                            or (k == "sprd" and self.spread_mode and len(self.get_spread(pgindx))) \
+                                            or k == 'doc')
+                    menu_item.show()
+                    reset_menu.append(menu_item)
+                self.addSubMenuItem(menu, mstr['rp'], reset_menu)
+                self.addMenuItem(menu, None, None)
 
-        # New section for image context menu which is a lot more complicated
+                if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
+                    self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
+
+                if parref and parref.mrk is not None:
+                    self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None))
+
+                if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
+                    self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
+
+                self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen)
+                if not self.model.get("c_updatePDF"):
+                    self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
+
         elif parref is not None and isinstance(parref, FigInfo):
             showmenu = True
             imgref = parref.ref.strip('-preverse')
@@ -1652,62 +1939,62 @@ class PDFContentViewer(PDFFileViewer):
                 if showmenu:
                     self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, (pic, parref))
 
-                    frame_menu = Gtk.Menu()
-                    self.clear_menu(frame_menu)
-                    for frame_opt in frame.values():
-                        menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f"   {frame_opt}")
-                        if frame_opt == frame[curr_frame]:
+                frame_menu = Gtk.Menu()
+                self.clear_menu(frame_menu)
+                for frame_opt in frame.values():
+                    menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f" {frame_opt}")
+                    if frame_opt == frame[curr_frame]:
+                        menu_item.set_sensitive(False)
+                    menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
+                    menu_item.show()
+                    frame_menu.append(menu_item)
+                self.addSubMenuItem(menu, mstr['frmsz'], frame_menu)
+
+                vpos_menu = Gtk.Menu()
+                self.clear_menu(vpos_menu)
+                for k, vpos_opt in vpos.items():
+                    if k in dsplyOpts[pic['size']][0]:
+                        menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f" {vpos_opt}")
+                        if vpos_opt == vpos[curr_vpos]:
                             menu_item.set_sensitive(False)
-                        menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
+                        menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
                         menu_item.show()
-                        frame_menu.append(menu_item)
-                    self.addSubMenuItem(menu, mstr['frmsz'], frame_menu)
+                        vpos_menu.append(menu_item)
+                self.addSubMenuItem(menu, mstr['vpos'], vpos_menu)
 
-                    vpos_menu = Gtk.Menu()
-                    self.clear_menu(vpos_menu)
-                    for k, vpos_opt in vpos.items():
-                        if k in dsplyOpts[pic['size']][0]:
-                            menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f"   {vpos_opt}")
-                            if vpos_opt == vpos[curr_vpos]:
+                if curr_frame != 'span':
+                    hpos_menu = Gtk.Menu()
+                    self.clear_menu(hpos_menu)
+                    p = pic.get('pgpos', 'o')
+                    for k, hpos_opt in hpos.items():
+                        if k in dsplyOpts[pic['size']][1]:
+                            menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f" {hpos_opt}")
+                            if hpos_opt == hpos[curr_hpos]:
                                 menu_item.set_sensitive(False)
-                            menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
+                            menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
                             menu_item.show()
-                            vpos_menu.append(menu_item)
-                    self.addSubMenuItem(menu, mstr['vpos'], vpos_menu)
+                            hpos_menu.append(menu_item)
+                    self.addSubMenuItem(menu, mstr['hpos'], hpos_menu)
 
-                    if curr_frame != 'span':
-                        hpos_menu = Gtk.Menu()
-                        self.clear_menu(hpos_menu)
-                        p = pic.get('pgpos', 'o')
-                        for k, hpos_opt in hpos.items():
-                            if k in dsplyOpts[pic['size']][1]:
-                                menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f"   {hpos_opt}")
-                                if hpos_opt == hpos[curr_hpos]:
-                                    menu_item.set_sensitive(False)
-                                menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
-                                menu_item.show()
-                                hpos_menu.append(menu_item)
-                        self.addSubMenuItem(menu, mstr['hpos'], hpos_menu)
+                mirror_menu = Gtk.Menu()
+                self.clear_menu(mirror_menu)
+                curr_mirror = pic.get('mirror', '')
+                for mirror_opt in mirror.values():
+                    menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f" {mirror_opt}")
+                    if mirror_opt == mirror[curr_mirror]:
+                        menu_item.set_sensitive(False) 
+                    menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
+                    menu_item.show()
+                    mirror_menu.append(menu_item)
+                self.addSubMenuItem(menu, mstr['mirror'], mirror_menu)
 
-                    mirror_menu = Gtk.Menu()
-                    self.clear_menu(mirror_menu)
-                    curr_mirror = pic.get('mirror', '')
-                    for mirror_opt in mirror.values():
-                        menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f"   {mirror_opt}")
-                        if mirror_opt == mirror[curr_mirror]:
-                            menu_item.set_sensitive(False)                    
-                        menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
-                        menu_item.show()
-                        mirror_menu.append(menu_item)
-                    self.addSubMenuItem(menu, mstr['mirror'], mirror_menu)
+                self.addMenuItem(menu, None, None)
+                self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref))
+                self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref))
+                self.addMenuItem(menu, None, None)
 
-                    self.addMenuItem(menu, None, None)
-                    self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref))
-                    self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref))
-                    self.addMenuItem(menu, None, None)
-
-                    self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
-                    self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
+                self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
+                self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
             if showmenu:
                 if sys.platform.startswith("win"):
                     self.addMenuItem(menu, None, None)
@@ -1835,7 +2122,14 @@ class PDFContentViewer(PDFFileViewer):
             treeview.scroll_to_cell(path, None, True, 0.5, 0.0)  # Ask MH: How to do this for the StyleEditor jumps?
             self.model.picListView.select_row(piciter)
 
+    def disableLayoutOnly(self):
+        return
+        if self.model.get("c_noupdate", False):
+            self.model.set("c_noupdate", False, mod=False)
+            self.model.doStatus(_("'Layout Only' mode disabled"))
+
     def speed_slice(self, widget, info, parref):
+        self.disableLayoutOnly()
         if parref.ref is not None and parref.ref != self.model.get("t_sliceRef", ""):
             self.model.set("t_sliceWord", "", mod=False)
         if parref.ref is not None:
@@ -1851,6 +2145,7 @@ class PDFContentViewer(PDFFileViewer):
         dialog.hide()
         if response != Gtk.ResponseType.OK:
             self.model.set("t_sliceRef", "", mod=False)
+        self.model.pauseNoUpdate()
         self.hitPrint()
 
     def shrinkBothAmt(self, info):
@@ -1869,6 +2164,25 @@ class PDFContentViewer(PDFFileViewer):
         self.show_pdf()
         self.hitPrint()
 
+    def expandBothAmt(self, info):
+        # Half of the remaining room up to expandLimit (integer step), but
+        # when we’re close to the limit, just go straight to the limit.
+        offset = int(0.5 * (self.expandLimit - info[1]) + 0.1)
+        if offset < self.expandStep:
+            offset = self.expandLimit - info[1]
+        return offset
+
+    def on_expand_both(self, widget, info, parref):
+        if self.adjlist is not None:
+            if info[1] + self.expandStep > self.expandLimit:
+                self.adjlist.expand(info[2], self.expandLimit - info[1], mrk=parref.mrk)
+            else:
+                self.adjlist.expand(info[2], self.expandStep, mrk=parref.mrk)
+            offset = 1 - int(info[0])
+            self.adjlist.increment(info[2], offset)
+        self.show_pdf()
+        self.hitPrint()
+
     def on_shrink_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], -1)
@@ -1882,6 +2196,7 @@ class PDFContentViewer(PDFFileViewer):
         self.hitPrint()
 
     def on_reset_adjustments(self, widget, scope, pgindx, info, parref):
+        self.disableLayoutOnly()
         if self.adjlist is None:
             return
         refs2del = []
@@ -1890,9 +2205,10 @@ class PDFContentViewer(PDFFileViewer):
         elif scope == 'col':
             for p, r in self.parlocs.getParasByColumnOrParref(parref=parref):
                 refs2del.append((p.ref, getattr(p, 'parnum', '')))
-        elif scope == 'page':
-            for p, r in self.parlocs.getParas(pgindx):
-                refs2del.append((p.ref, getattr(p, 'parnum', '')))
+        elif scope in ('page', 'doc'):
+            for p, r in self.parlocs.getParas(pgindx, inclafter = scope=='doc'):
+                if scope != "doc" or (p.book() == parref.book() and p.ref >= parref.ref):
+                    refs2del.append((p.ref, getattr(p, 'parnum', '')))
         elif scope == 'sprd':
             for pg in self.get_spread(pgindx):
                 for p, r in self.parlocs.getParas(pg):
@@ -1908,7 +2224,8 @@ class PDFContentViewer(PDFFileViewer):
         for row in model:
             row_ref = (row[0] + str(row[1]), int(row[2]))
             if row_ref in refs2del:
-                model.remove(row.iter)
+                row[3] = "0"    # stretch
+                row[5] = 100    # expand
             
         self.show_pdf()
         self.hitPrint()
@@ -1931,14 +2248,17 @@ class PDFContentViewer(PDFFileViewer):
         self.show_pdf()
         self.hitPrint()
 
+    def onUIExtensionSelected(self, widget, entryType, content, entryId, info, parref, pgindx):
+        # Next stage: send (entryType, content) to the adjustment mechanism
+        logger.debug(
+            f"UI extension selected: id={entryId} type={entryType} content={content} "
+            f"ref={getattr(parref, 'ref', '?')} page={pgindx}"
+        )
+        self.model.doStatus(_("Custom action selected: {0}").format(entryId))
+        
     def edit_style(self, widget, a):
         (mkr, pref) = a
-        if pref != self.currpref:
-            if self.currpref is not None:
-                self.model.onOK(None)
-            if pref is not None:
-                self.model.switchToDiglot(pref)
-            self.currpref = pref
+        self.model.switchToDiglot(pref)
         if mkr is not None:
             self.model.styleEditor.selectMarker(mkr)
             mpgnum = self.model.notebooks['Main'].index("tb_StyleEditor")
@@ -1953,59 +2273,6 @@ class PDFContentViewer(PDFFileViewer):
         self.model.mainapp.win.present()
         self.model.wiggleCurrentTabLabel()
         
-    def cleanRef(self, reference):
-        ''' JHN1.4 --> JHN 1:4, MRKL12.14 --> MRK 12:14 '''
-        pattern = r"([123A-Z]{3})\s?(?:[LRA-G]?)(\d+)\.(\d+)"
-        match = re.match(pattern, reference)
-        if not match:
-            return reference
-        book, chapter, verse = match.groups()
-        return f"{book} {chapter}:{verse}"
-    
     def on_broadcast_ref(self, widget, ref):
-        if not sys.platform.startswith("win"):
-            return
-
-        key_path = r"Software\SantaFe\Focus\ScriptureReference"
-        try:
-            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)
-        except FileNotFoundError:
-            logger.debug(f"Error: Registry Key not found: {path}")
-            return
-
-        try:
-            if key is not None:
-                vref = self.cleanRef(ref)
-                winreg.SetValueEx(key, "", 0, winreg.REG_SZ, vref)
-                winreg.CloseKey(key)
-                logger.debug(f"Set Scr Ref in registry to: {vref}")
-        except WindowsError as e:
-            logger.debug(f"Error: {e} while trying to set ref in registry")
-            return
-
-        # Load user32.dll
-        user32 = ctypes.windll.user32
-
-        # Define argument and return types for RegisterWindowMessage and PostMessage
-        user32.RegisterWindowMessageW.argtypes = [wintypes.LPCWSTR]  # Wide string
-        user32.RegisterWindowMessageW.restype = wintypes.UINT        # Unsigned int
-
-        user32.PostMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
-        user32.PostMessageW.restype = wintypes.BOOL                  # Boolean return
-
-        # Step 1: Register the custom Windows message
-        santa_fe_focus_msg = user32.RegisterWindowMessageW("SantaFeFocus")
-        if not santa_fe_focus_msg:
-            raise ctypes.WinError(ctypes.get_last_error())
-
-        # Step 2: Post the message to all top-level windows (-1 or HWND_BROADCAST)
-        HWND_BROADCAST = 0xFFFF  # -1 in the Windows API means broadcasting to all top-level windows
-        WPARAM = 1               # Parameter for the message
-        LPARAM = 0               # Additional parameter for the message
-
-        # Post the message
-        success = user32.PostMessageW(HWND_BROADCAST, santa_fe_focus_msg, WPARAM, LPARAM)
-        if not success:
-            raise ctypes.WinError(ctypes.get_last_error())
-        logger.debug(f"Message 'SantaFeFocus' ({santa_fe_focus_msg}) posted successfully!")
+        sendRefToParatext(cleanParatextRef(ref))
 
