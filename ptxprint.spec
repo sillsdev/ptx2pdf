@@ -4,6 +4,7 @@ block_cipher = None
 import sys, os, platform, logging, shutil, datetime, json
 from glob import glob
 from subprocess import call, run
+from pathlib import Path
 import xml.etree.ElementTree as et
 
 print("sys.executable: ", sys.executable)
@@ -308,20 +309,17 @@ icons = set("""applications-system-symbolic changes-allow changes-prevent docume
 icons.update([icon_mappings["gtk-"+i] for i in \
         ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
 icons.update(parseglade("python/lib/ptxprint/ptxprint.glade"))
-
-# Run this every time until a sysadmin adds it to the agent
-# call([r'echo "y" | C:\msys64\usr\bin\pacman.exe -S mingw-w64-x86_64-python-numpy'], shell=True)
-
+MSYS2 = Path(os.environ.get("MSYS2_DIR", r'C:\msys64\mingw64'))
 # add all the library dependency dlls (not python ones, but the dlls they typically call)
 # including GTK, etc.
 if sys.platform in ("win32", "cygwin"):
-    mingwb = r'C:\msys64\mingw64\bin'
+    mingwb = MSYS2 / 'bin'
     binaries = [(f'{mingwb}\\{x}', 'ptxprint') for x in ('gspawn-win64-helper.exe', 'broadwayd.exe')] \
               + [(f'{mingwb}\\{x}.dll', '.') for x in
                     (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', anyver('libpoppler-cpp-', mingwb), 'libcurl-4',
                      'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
                      'libpsl-5', 'libssh2-1', 'libplds4', anyver('libunistring-', mingwb)) if x is not None] 
-#             + [(x,'.') for x in glob('C:\\msys64\\mingw64\\bin\\*.dll')]
+            #   + [(x,'.') for x in mingwb.glob('*.dll')]
 elif sys.platform == "darwin":
     hbpath = os.getenv('HOMEBREW_PREFIX')
     print("Homebrew path:", hbpath)
@@ -473,13 +471,13 @@ coll = COLLECT(*allcolls,
                name=app_name)
 
 if sys.platform in ("win32", "cygwin"):
-    srcdir = "C:/msys64/mingw64/share"
+    srcdir = MSYS2 / "share"
     for a in ('locale', 'fontconfig', 'glib-2.0', 'gtksourceview-3.0', 'themes'):
         shutil.copytree(f"{srcdir}/{a}", f"dist/ptxprint/share/{a}", dirs_exist_ok=True)
     process_icons(icons, f"{srcdir}/icons", "dist/PTXprint/share/icons")
     shutil.copy(f"{srcdir}/icons/Adwaita/index.theme", "dist/PTXprint/share/icons/Adwaita/index.theme")
-    innosetup_path = os.getenv("INNOSETUP_PATH", "C:/Program Files (x86)/Inno Setup 6")
-    run([f"{innosetup_path}/ISCC.exe", "InnoSetupPTXprint.iss"])
+    innosetup_path = Path(os.getenv("INNOSETUP_PATH", "C:/Program Files (x86)/Inno Setup 6"))
+    run([innosetup_path / "ISCC.exe", "InnoSetupPTXprint.iss"])
 
 elif sys.platform == "darwin":
     app = BUNDLE(coll,
