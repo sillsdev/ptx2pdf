@@ -671,10 +671,13 @@
   \ifst@dynotes
     \let\n@xt=\reduceavailht@st@dy
   \else
+    \ifdiglot
+      \@testSep{#1}% Test whether diglot notes are in separate columns
+    \fi
     \ifp@ranotes\let\n@xt=\reduceavailht@para
-      \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
+      \ifdiglot\if@sep@notes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
     \else\let\n@xt=\reduceavailht@sep
-      \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+      \ifdiglot\if@sep@notes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
     \fi
   \fi
   \iff@rstnote\else\global\noteseentrue\fi\n@xt{#1}}
@@ -682,6 +685,7 @@
 
 %+c_reduceavailht_para
 \def\reduceavailht@para#1{%
+  \@testSep{#1}%
   \edef\cl@sss{#1\g@tndstat}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \trace{n}{class \cl@sss \the\ht\th@cl@ss}%
@@ -703,6 +707,7 @@
   \fi}
 %-c_reduceavailht_para
 \def\reduceavailht@st@dy#1{%
+  \@testSep{#1}%
   \edef\cl@sss{#1\g@tndstat}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
   \trace{n}{class \cl@sss \the\ht\th@cl@ss (study) av:\the\availht}%
@@ -774,6 +779,7 @@
 
 %+c_reduceavailhtsep
 \def\reduceavailht@sep#1{%
+  \@testSep{#1}%
   \edef\cl@sss{#1\g@tndstat}%
   \TRACE{class \cl@sss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
@@ -829,28 +835,47 @@
 }
 \def\clearn@tes{\trace{o}{clearn@tes}\let\\=\cle@rn@tecl@ss \the\n@tecl@sses}
 
-\def\s@venotes#1#2{\trace{nS}{Saving footnotes #2}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\s@ven@te \the\n@tecl@sses}
-\def\s@veallnotes#1{%
-  \let\@@do\s@venotes
-  \do@all@notes{#1}%
+\def\s@venotes#1#2{\trace{nS}{Saving footnotes #2}\edef\n@tesavelevel{#2}\edef\n@t@sfx{}%
+  \let\\=\s@ven@te 
+  \@@all@note@cl@sses{#1}{#2}%
 }
 
-\def\do@all@notes#1{%
+\def\r@storenotes#1#2{\trace{nS}{Restoring footnotes #2}\edef\n@tesavelevel{#2}\edef\n@t@sfx{}%
+  \let\\=\r@storen@te
+  \@@all@note@cl@sses{#1}{#2}%
+}
+
+\def\applysavedn@tes#1#2{\trace{nS}{applying saved notes #2}%
+  \let\\=\applys@vedn@tes 
+  \@@all@note@cl@sses{#1}{#2}%
+}
+
+\def\@@all@note@cl@sses#1#2{% Assumes \\ has already been set.
+  \edef\n@tesavelevel{#2}\edef\n@t@sfx{}%
+  \ifdiglot \the\combn@tecl@sses
+    \ifdiglotSepNotes\ifnum\sepn@tecl@sscount>0
+      \@sep@notestrue
+      \edef\n@t@sfx{\@g@tndstat{#1}}%
+      \the\sepn@tecl@sses
+    \fi\fi
+  \else \the\n@tecl@sses\fi
+}
+
+
+\def\do@all@notes#1{%every note class for every column
+  \@@do{}{#1}%
   \ifdiglot
     \ifdiglotSepNotes
-      \let\sncdst@t=\c@rrdstat
-      \def\col@do##1{\edef\c@rrdstat{##1}\@@do{\g@tndstat}{#1}}%
-      \x@\each@col\diglot@list\E
-      \let\c@rrdstat\sncdst@t
-    \else
-      \@@do{}{#1}%
+      %Rely on \@@do to setting \\, \n@tesavelevel, etc
+      \ifnum \sepn@tecl@sscount>0
+        % Only process for non-L columns, so we don't process shared boxes twice
+        \def\col@do##1{\if L##1\else \edef\n@t@sfx{##1}\the\sepn@tecl@sses \fi}%
+        \x@\each@col\diglot@list\E
+      \fi
     \fi
-  \else
-    \@@do{}{#1}%
   \fi
 }
   
-\def\r@storenotes#1#2{\trace{nS}{Restoring footnotes #2}\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\r@storen@te \the\n@tecl@sses}
 \def\tw@{2}
 \def\s@ven@te#1{% saves to notesave1-X (current page) or notesave2-X(follow-on page)
   \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
@@ -869,8 +894,6 @@
   \global\setbox\tmp@note=\copy\tmp@save
   %\tracingassigns=0
 }
-\def\applysavedn@tes#1#2{\edef\n@tesavelevel{#2}\edef\n@t@sfx{#1}\let\\=\applys@vedn@tes \the\n@tecl@sses}
-
 \def\applys@vedn@tes#1{%Saved notes should be reinserted as inserts
   \x@\let\x@\tmp@save\csname notesave\n@tesavelevel-#1\n@t@sfx\endcsname
   \ifvoid\tmp@save\else
@@ -879,6 +902,10 @@
     \penalty0
     \x@\insert\csname note-#1\n@t@sfx\x@\endcsname{\unvbox\tmp@save}%
   \fi
+}
+\def\s@veallnotes#1{%
+  \let\@@do\s@venotes
+  \do@all@notes{#1}%
 }
 \def\r@storeallnotes#1{%
   \let\@@do\r@storenotes

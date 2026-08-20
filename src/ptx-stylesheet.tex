@@ -2019,6 +2019,7 @@
     \ifvoid\partial\else
       \trace{d}{Saving partial contents as top insert}%
       \insert\topins{\box\partial}\fi
+    \@update@note@lists
     \setLRspecific% \@netimesetup needs actual values, in a diglot there might not be any use of generic FontSizeUnit, etc.
  \fi
  \ifcsname KeepMyBrokenAdjList\endcsname

@@ -156,6 +156,7 @@
 \def\ParallelNoteNumbering#1{\x@\let\csname parallelcounts#1\endcsname\tru@}
 \def\DistinctNoteNumbering#1{\x@\let\csname parallelcounts#1\endcsname\empty}
 
+
 \def\set@notesavetype#1{\edef\@notesavetype{#1}\ifdiglot\ifdiglotSepNotes\ifcsname parallelcounts#1\endcsname
     \x@\ifx\csname parallelcounts#1\endcsname\tru@
       \edef\@notesavetype{#1\c@rrdstat}%
