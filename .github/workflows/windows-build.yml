@@ -66,6 +66,7 @@ jobs:
     
     - name: Generate download info
       shell: pwsh
+      if: ${{ vars.SKIP_CODESIGN != '1' }}
       run: |
         $exe_obj = Get-Item -Path "Setup*.exe"
         $ver_inf = $exe_obj.VersionInfo
@@ -89,7 +90,7 @@ jobs:
         name: PTXPrint bundle
         path: |
           Output/Setup*.exe
-          latest.win.json
+          latest.*.json
           *.download_info
         if-no-files-found: error
         retention-days: 7
@@ -102,7 +103,7 @@ jobs:
 
     - name: Setup ptxprint and it's dependencies.
       run: >- 
-        pip install --user --only-binary=:all: .[gui]
+        pip install --user --only-binary=:all: .
 
     - name: Install the Apple certificate and provisioning profile
       env:
@@ -141,7 +142,7 @@ jobs:
         name: PTXPrint bundle
         path: |
           Output/Setup*.exe
-          latest.win.json
+          latest.*.json
           *.download_info
         if-no-files-found: error
         retention-days: 7
@@ -165,4 +166,4 @@ jobs:
         ssh-known-hosts: ${{secrets.PUBLISH_HK}}
     
     - name: Upload deliverables to distribution server
-      run: scp *.dmg *.exe *.download_info ${{secrets.PUBLISH_REMOTE_AREA}}
+      run: scp *.dmg *.exe *.download_info latest.*.json ${{secrets.PUBLISH_REMOTE_AREA}}
