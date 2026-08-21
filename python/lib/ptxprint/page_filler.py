@@ -787,6 +787,7 @@ class PTXFiller:
         self.hooks = Hooks(self, None)
         self.job = None
         self.hascash = False
+        #print(f"Filling {bk}")
         if restart:
             adjlist = self.view.get_adjlist(bk, save=False)
             parms = adjlist.get_params()
@@ -810,6 +811,7 @@ class PTXFiller:
         if init_layout is None:
             printbk(bk, "!")
             return (False, f"Failed: {bk}")
+        #print(f"Init laid out {bk}")
         if restart and init_layout.first_failing_page is None:
             np = self.parlocs.numPages()
             if np > 0:
@@ -825,6 +827,7 @@ class PTXFiller:
         state = EngineState(parms if restart else {p: (self.expand, 0) for p in pids}, [], init_layout, self.parlocs, 0)
         self.hooks.basestate = state
         starttime = time()
+        #print(f"Solving {bk}")
         solver = TypesetterSolver(self.hooks, pids, expand=self.expand, minexp=self.minexp, maxexp=self.maxexp)
         if restart:
             solver.shape_cache, solver.probe_cache = adjlist.get_cache()

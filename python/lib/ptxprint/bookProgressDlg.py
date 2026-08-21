@@ -5,7 +5,7 @@ Displays a per-book progress grid updated in real time from ProgressEvent object
 delivered via the existing multiprocessing.Queue / GLib.io_add_watch infrastructure.
 """
 
-import math, logging
+import math, logging, time
 from gi.repository import Gtk
 from ptxprint.utils import _
 
@@ -169,6 +169,7 @@ class BookProgressDialog:
     def __init__(self, parentWindow, view):
         self._cells = {}   # bookCode -> BookProgressCell
         self.view = view
+        self.start_time = 0
 
         self.window = Gtk.Window(title=_("PTXprint: Page Filler"))
         self.window.set_transient_for(parentWindow)
@@ -267,6 +268,7 @@ class BookProgressDialog:
         self.stop_button.set_sensitive(stop_sensitive)
         self.stop_button.set_label(stoplabel)
         self.grid.show_all()
+        self.start_time = time.time()
 
         # Compute natural size before showing so we can position without a flash.
         min_w, nat_w = self.window.get_preferred_width()

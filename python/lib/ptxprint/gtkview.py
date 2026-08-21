@@ -2235,6 +2235,9 @@ class GtkViewModel(ViewModel):
     def onDestroy(self, btn, *a):
         if self.testing is not None:
             self.testing.finalise()
+        mprint = getattr(self, 'mprint', None)
+        if mprint is not None:
+            mprint.teardown()
         logger.debug(f"Main width={self.mainapp.win.get_size().width}")
         self.builder.get_object("mainapp_win").destroy()
         self.mainapp.quit()

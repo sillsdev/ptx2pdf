@@ -108,16 +108,18 @@ class XDViReader:
 
     def readval(self, size, uint=False):
         d = self.readbytes(size)
-        if size == 3:
-            if uint:
-                s = unpack(">"+packings[1][1]+packings[1][0], d)
-                res = s[0] * 256 + s[1]
-            else:
-                s = unpack(">"+packings[0][1]+packings[1][0], d)
-                res = s[0] * 256 + (s[1] if s[0] > 0 else -s[1])
+        if size != 3:
+            return int.from_bytes(d, byteorder='big', signed=not uint)
+        
+        # Special handling for 3-byte (24-bit) TeX DVI integers
+        if uint:
+            return int.from_bytes(d, byteorder='big', signed=False)
         else:
-            res = unpack(">"+packings[1 if uint else 0][size-1], d)[0]
-        return res
+            # Sign-extend a 3-byte big-endian signed integer manually
+            val = int.from_bytes(d, byteorder='big', signed=False)
+            if val & 0x800000:  # Check if sign bit (24th bit) is set
+                val -= 0x1000000  # Convert to negative complement
+            return val
 
     def parse(self):
         selfopen = False
