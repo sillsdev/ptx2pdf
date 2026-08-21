@@ -8433,3 +8433,13 @@ Thank you,
         self.testing.finalise()
         self.testing = None
         self.builder.get_object("c_testrecording").set_active(False)
+
+    def onPublicationsClicked(self):
+        pass
+
+    def onAddPub(self):
+        pass
+
+    def onRmPub(self):
+        pass
+    

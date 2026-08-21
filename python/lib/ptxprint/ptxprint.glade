@@ -37532,6 +37532,188 @@ main scripture pages.</property>
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkBox" id="tb_Publications">
+                        <property name="can-focus">False</property>
+                        <property name="valign">start</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="orientation">vertical</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkFrame" id="fr_publications">
+                            <property name="width-request">700</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">start</property>
+                            <property name="margin-left">6</property>
+                            <property name="margin-right">6</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">40</property>
+                            <property name="hexpand">True</property>
+                            <property name="label-xalign">0.019999999552965164</property>
+                            <child>
+                              <object class="GtkBox" id="bx_publications">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-left">6</property>
+                                <property name="margin-right">6</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="margin-top">3</property>
+                                <property name="margin-bottom">3</property>
+                                <property name="hexpand">True</property>
+                                <property name="orientation">vertical</property>
+                                <property name="spacing">12</property>
+                                <child>
+                                  <object class="GtkBox" id="bx_table_pubs">
+                                    <property name="width-request">7</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="margin-left">6</property>
+                                    <property name="margin-right">6</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">3</property>
+                                    <property name="margin-bottom">3</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="spacing">12</property>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox" id="bx_pub_options">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="margin-left">6</property>
+                                    <property name="margin-right">6</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">3</property>
+                                    <property name="margin-bottom">3</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="spacing">12</property>
+                                    <child>
+                                      <object class="GtkButton" id="btn_addPub">
+                                        <property name="label">Add publication...</property>
+                                        <property name="name">Save configuration</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Add publication and associated settings to table</property>
+                                        <property name="opacity">0.9019607843137255</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">start</property>
+                                        <property name="margin-left">3</property>
+                                        <property name="margin-right">3</property>
+                                        <property name="margin-start">3</property>
+                                        <property name="margin-end">3</property>
+                                        <property name="margin-top">3</property>
+                                        <property name="margin-bottom">3</property>
+                                        <property name="xalign">1</property>
+                                        <property name="always-show-image">True</property>
+                                        <signal name="clicked" handler="onAddPub" swapped="no"/>
+                                        <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_rmPub">
+                                        <property name="label">Remove selected publications</property>
+                                        <property name="name">Save configuration</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Add publication and associated settings to table</property>
+                                        <property name="opacity">0.9019607843137255</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">start</property>
+                                        <property name="margin-left">3</property>
+                                        <property name="margin-right">3</property>
+                                        <property name="margin-start">3</property>
+                                        <property name="margin-end">3</property>
+                                        <property name="margin-top">3</property>
+                                        <property name="margin-bottom">3</property>
+                                        <property name="xalign">1</property>
+                                        <property name="always-show-image">True</property>
+                                        <signal name="clicked" handler="onRmPub" swapped="no"/>
+                                        <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkCheckButton" id="c_print_pubs">
+                                <property name="label" translatable="yes">Print publications</property>
+                                <property name="name">Print publications</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">Print multiple publications with one click of the print button</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-left">3</property>
+                                <property name="margin-right">3</property>
+                                <property name="margin-start">3</property>
+                                <property name="margin-end">3</property>
+                                <property name="draw-indicator">True</property>
+                                <signal name="toggled" handler="onPublicationsClicked" swapped="no"/>
+                                <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">13</property>
+                      </packing>
+                    </child>
+                    <child type="tab">
+                      <object class="GtkLabel" id="lb_Publications">
+                        <property name="sensitive">False</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">...</property>
+                        <property name="halign">start</property>
+                        <property name="label" translatable="yes">Publications</property>
+                      </object>
+                      <packing>
+                        <property name="position">13</property>
+                        <property name="tab-fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkBox" id="tb_Cover">
                         <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
@@ -37561,7 +37743,7 @@ main scripture pages.</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="position">13</property>
+                        <property name="position">14</property>
                       </packing>
                     </child>
                     <child type="tab">
@@ -37575,7 +37757,7 @@ of the publication.</property>
                         <property name="label" translatable="yes">Cover</property>
                       </object>
                       <packing>
-                        <property name="position">13</property>
+                        <property name="position">14</property>
                         <property name="tab-fill">False</property>
                       </packing>
                     </child>
@@ -38627,7 +38809,7 @@ the publication being printed.</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="position">14</property>
+                        <property name="position">15</property>
                       </packing>
                     </child>
                     <child type="tab">
@@ -38642,7 +38824,7 @@ output with a previous PDF.</property>
                       </object>
                       <packing>
                         <property name="menu-label">Finishing</property>
-                        <property name="position">14</property>
+                        <property name="position">15</property>
                         <property name="tab-fill">False</property>
                       </packing>
                     </child>
@@ -39028,7 +39210,7 @@ output with a previous PDF.</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="position">15</property>
+                        <property name="position">16</property>
                       </packing>
                     </child>
                     <child type="tab">
@@ -39040,7 +39222,7 @@ output with a previous PDF.</property>
                         <property name="label" translatable="yes">Printers</property>
                       </object>
                       <packing>
-                        <property name="position">15</property>
+                        <property name="position">16</property>
                         <property name="tab-fill">False</property>
                       </packing>
                     </child>
@@ -39884,7 +40066,7 @@ a reference for training.</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="position">16</property>
+                        <property name="position">17</property>
                       </packing>
                     </child>
                     <child type="tab">
@@ -39898,7 +40080,7 @@ obtain help from others.</property>
                         <property name="label" translatable="yes">Help</property>
                       </object>
                       <packing>
-                        <property name="position">16</property>
+                        <property name="position">17</property>
                         <property name="tab-fill">False</property>
                       </packing>
                     </child>
@@ -39940,7 +40122,7 @@ obtain help from others.</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="position">17</property>
+                        <property name="position">18</property>
                       </packing>
                     </child>
                     <child type="tab">
@@ -39953,7 +40135,7 @@ from XeTeX processing.</property>
                         <property name="label" translatable="yes">Log</property>
                       </object>
                       <packing>
-                        <property name="position">17</property>
+                        <property name="position">18</property>
                         <property name="tab-fill">False</property>
                       </packing>
                     </child>
