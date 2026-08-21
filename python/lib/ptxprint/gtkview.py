@@ -2211,6 +2211,9 @@ class GtkViewModel(ViewModel):
     def on_zvarPubToggled(self, cr, path):
         self.pubvarlist[path][4] = not self.pubvarlist[path][4]
         self.pubvars_publishable[self.pubvarlist[path][0]] = self.pubvarlist[path][4]
+        for child in self.builder.get_object("bx_table_pubs").get_children():
+            self.builder.get_object("bx_table_pubs").remove(child)
+        self.render_publication_tab()
 
     def allvars(self, dest=None):
         if dest is None:
@@ -2393,7 +2396,44 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("t_find").set_placeholder_text(_("Processing..."))
         self.builder.get_object("t_find").set_text("")
         try:
-            job = self.callback(self, noaction=self.get("c_noupdate"))
+            if self.get("c_print_pubs"):
+                pubs_to_print = [pub for pub in self.publications.values() if pub['select'] == 'True']
+                if not pubs_to_print:
+                    error_msg = "You must select at least one publication when printing multiple publications."
+                    dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
+                            buttons=Gtk.ButtonsType.OK, text=error_msg)
+                    response = dialog.run()
+                    dialog.destroy()
+                    return
+                self.print_scheduler = MultiPrint(progress=True)
+                self.print_scheduler.start()
+                args = argparse.Namespace(**vars(self.args))
+                timeout = float(self.get("s_pbtimeout")) * 60
+                build_params = BuildParams(
+                        prjtree = self.prjTree,
+                        config = self.userconfig,
+                        macrosdir = self.scriptsdir,
+                        scriptsdir = self.scriptsdir,
+                        args = args,
+                        restart = False,
+                        pid = self.project.prjid,
+                        guid = self.project.guid,
+                        cfgid = self.cfgid,
+                        timeout = timeout,
+                        loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
+
+                for pub in pubs_to_print:
+                    self.print_scheduler.submit_print_job(
+                        books=[pub['books']],
+                        build_params=build_params,
+                        cfgid=self.cfgid,
+                        log_config=None,
+                    )
+
+                GLib.timeout_add(200, self._poll_print_jobs)
+            else:
+                job = self.callback(self, noaction=self.get("c_noupdate"))
+
         except Exception as e:
             if "SyntaxError" in str(type(e)):
             # if "SyntaxError" in type(e):
@@ -2407,12 +2447,61 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("t_find").set_placeholder_text("Search for settings")
             self.builder.get_object("t_find").set_text("")
             self.pauseNoUpdate()
+            scheduler = getattr(self, "print_scheduler", None)
+            if scheduler is not None:
+                scheduler.teardown()
+                self.print_scheduler = None
         else:
-            if job is None or getattr(job, "res", 0) == 0:
-                self.unpauseNoUpdate()
+            if not self.get("c_print_pubs"):
+                if job is None or getattr(job, "res", 0) == 0:
+                    self.unpauseNoUpdate()
+                else:
+                    self.pauseNoUpdate()
+
+    def _poll_print_jobs(self):
+        scheduler = self.print_scheduler
+        if scheduler is None:
+            return False
+        if scheduler.progress_q is not None:
+            while True:
+                try:
+                    item = scheduler.progress_q.get_nowait()
+                    if item is None:
+                        break
+                    if item.mode == "failed":
+                        logger.debug(f"{item.book} failed: {item.msg}")
+                except queue.Empty:
+                    break
+
+        if not scheduler.is_finished():
+            return True
+        results = scheduler.get_results()
+        scheduler.teardown()
+        self.print_scheduler = None
+        self._on_print_jobs_done(results)
+        return False
+
+    def _on_print_jobs_done(self, results):
+        succeeded, failed = [], []
+        for target_id, nid, *rest in results:
+            if len(rest) == 1:
+                code = rest[0]
+                if code == 0:
+                    succeeded.append((target_id, nid, code))
+                else:
+                    failed.append((target_id, nid, f"exit code {code}"))
             else:
-                self.pauseNoUpdate()
-                
+                _, err = rest
+                failed.append((target_id, nid, err))
+
+        for target_id, nid, err in failed:
+            logger.debug(f"{target_id} (worker {nid}) failed: {err}")
+        for target_id, nid, code in succeeded:
+            logger.debug(f"{target_id} (worker {nid}) finished with code {code}")
+
+        self.unpauseNoUpdate()
+
+
     def onMainAppWinDeleted(self, widget, event): # Main App dialog (X button)
         self.saveWindowGeometry()
         self.onDestroy(widget)
@@ -3224,6 +3313,9 @@ class GtkViewModel(ViewModel):
                 self.picListView.row_select(sel)
         elif pgid == "tb_Printers":
             self.ensurePrinterTab().refresh()
+        elif pgid == "tb_Publications":
+            if not hasattr(self, "publications_table"):
+                self.render_publication_tab()
 
     def onRefreshViewerTextClicked(self, btn):
         pg = self.get("nbk_Viewer")
@@ -8276,6 +8368,9 @@ Thank you,
                 self.doStatus(_("Removed _diff file"))
             self.pdf_viewer.selectTab("content")
 
+    def onPublicationsClicked(self, w):
+        self.builder.get_object("bx_publications").set_sensitive(self.get("c_print_pubs"))
+
     def pauseNoUpdate(self):
         w = self.builder.get_object("c_noupdate")
         if w.get_inconsistent():
@@ -8422,6 +8517,61 @@ Thank you,
         else:  # testing has just been turned off
             self.finalise_testing()
 
+    def onAddPub(self, btn):
+        def responseToDialog(entry, dialog, response):
+            dialog.response(response)
+        self.publications = self._get_publications_from_table()
+
+        dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.QUESTION,
+                 buttons=Gtk.ButtonsType.OK_CANCEL, text=_("Enter a publication ID"))
+        entry = Gtk.Entry()
+        entry.connect("activate", responseToDialog, dialog, Gtk.ResponseType.OK)
+        dbox = dialog.get_content_area()
+        dbox.pack_end(entry, False, False, 0)
+        dialog.show_all()
+        response = dialog.run()
+        pub_id = entry.get_text().strip() if response == Gtk.ResponseType.OK else None
+        dialog.destroy()
+
+        if pub_id is None or not pub_id or pub_id in self.publications:
+            return
+
+        selected_peripheral_vars = {
+                        row[0]: row[1]
+                        for row in self.builder.get_object("tv_zvarEdit").get_model()
+                        if row[4]
+                    }
+
+        self.publications[pub_id] = {'title': pub_id.capitalize()}
+        for col in self.publications_table.columns:
+            if col not in self.publications[pub_id]:
+                self.publications[pub_id][col] = selected_peripheral_vars.get(col, "")
+
+        for child in self.builder.get_object("bx_table_pubs").get_children():
+            self.builder.get_object("bx_table_pubs").remove(child)
+        self.render_publication_tab()
+
+    def onRmPub(self, btn):
+        publications_to_delete = [pub_id for pub_id, pub in self._get_publications_from_table().items() if pub['select'] == 'True']
+        publications_to_delete_string = ', '.join(publications_to_delete)
+        message = f"The following publications will be permanently deleted: {publications_to_delete_string}. Are you sure you want to continue?"
+        dialog = Gtk.MessageDialog(
+            transient_for=self.mainapp.win,
+            flags=0,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.OK_CANCEL,
+            text="Remove selected publications?",
+        )
+
+        dialog.format_secondary_text(message)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self.publications = {k: v for k, v in self._get_publications_from_table().items() if k not in publications_to_delete}
+            for child in self.builder.get_object("bx_table_pubs").get_children():
+                self.builder.get_object("bx_table_pubs").remove(child)
+            self.render_publication_tab()
+        dialog.destroy()
+
     def finalise_testing(self):
         if self.testing is None:
             return
@@ -8434,12 +8584,122 @@ Thank you,
         self.testing = None
         self.builder.get_object("c_testrecording").set_active(False)
 
-    def onPublicationsClicked(self):
-        pass
+    def render_publication_tab(self):  # rewritten by claude
 
-    def onAddPub(self):
-        pass
+        def build_table(data: dict) -> Gtk.Widget:
+            """Returns a ScrolledWindow containing a TreeView with each row of `data`
+            as a top-level node (with a Select checkbox) and its remaining fields
+            as indented child rows."""
 
-    def onRmPub(self):
-        pass
-    
+            selected_peripheral_vars = {
+                row[0]: row[1]
+                for row in self.builder.get_object("tv_zvarEdit").get_model()
+                if row[4]
+            }
+            # 'select' is handled as its own column, not a field row
+            columns = ['books', 'title', 'subtitle'] + list(selected_peripheral_vars.keys())
+
+            # TreeStore layout:
+            # 0: label (str)       -> "Field" column text (blank-ish on parent rows)
+            # 1: value_text (str)  -> "Value" column text (blank on parent rows)
+            # 2: select (bool)     -> "Select" column, meaningful only on parent rows
+            # 3: is_parent (bool)  -> controls visibility of Select toggle / editability
+            # 4: editable (bool)   -> whether the Value text renderer can be edited
+            # 5: col_key (str)     -> underlying data column name (child rows only)
+            # 6: row_key (str)     -> key into `data` for the publication (set on both)
+            treestore = Gtk.TreeStore(str, str, bool, bool, bool, str, str)
+
+            for row_key, row in data.items():
+                select_val = row.get('select', "")
+                select_bool = str(select_val).strip().lower() == "true"
+
+                parent_label = row.get('title') or str(row_key)
+                parent_iter = treestore.append(
+                    None, [parent_label, "", select_bool, True, False, "", str(row_key)]
+                )
+
+                for col in columns:
+                    val = row.get(col, "")
+                    if not val:
+                        val = selected_peripheral_vars.get(col, "")
+                    treestore.append(
+                        parent_iter,
+                        [col.capitalize(), str(val), False, False, True, col, str(row_key)]
+                    )
+
+            treeview = Gtk.TreeView(model=treestore)
+
+            def on_select_toggle(widget, path):
+                titer = treestore.get_iter(path)
+                new_val = not treestore[titer][2]
+                treestore[titer][2] = new_val
+
+                row_key = treestore[titer][6]
+                data[row_key]['select'] = str(new_val)
+
+                # check at least one publication is selected; if not, grey out remove button
+                min_one_selected = False
+                top_iter = treestore.get_iter_first()
+                while top_iter:
+                    if treestore[top_iter][2]:
+                        min_one_selected = True
+                        break
+                    top_iter = treestore.iter_next(top_iter)
+                self.builder.get_object("btn_rmPub").set_sensitive(min_one_selected)
+
+            def on_edited(widget, path, new_text):
+                titer = treestore.get_iter(path)
+                treestore[titer][1] = new_text
+
+                col_key = treestore[titer][5]
+                row_key = treestore[titer][6]
+                data[row_key][col_key] = new_text
+
+            # "Select" column - only visible/active on top-level (parent) rows
+            select_renderer = Gtk.CellRendererToggle()
+            select_renderer.set_activatable(True)
+            select_renderer.connect("toggled", on_select_toggle)
+            select_col = Gtk.TreeViewColumn("Select")
+            select_col.pack_start(select_renderer, False)
+            select_col.add_attribute(select_renderer, "active", 2)
+            select_col.add_attribute(select_renderer, "visible", 3)
+            treeview.append_column(select_col)
+
+            # "Field" column - the label (e.g. "Title", "Subtitle")
+            field_renderer = Gtk.CellRendererText()
+            field_col = Gtk.TreeViewColumn("Field", field_renderer, text=0)
+            field_col.set_resizable(True)
+            treeview.append_column(field_col)
+
+            # "Value" column - editable text, only meaningful/editable on child rows
+            value_renderer = Gtk.CellRendererText()
+            value_renderer.connect("edited", on_edited)
+            value_col = Gtk.TreeViewColumn("Value")
+            value_col.pack_start(value_renderer, True)
+            value_col.add_attribute(value_renderer, "text", 1)
+            value_col.add_attribute(value_renderer, "editable", 4)
+            value_col.set_resizable(True)
+            treeview.append_column(value_col)
+
+            treeview.expand_all()
+
+            scrolled = Gtk.ScrolledWindow()
+            scrolled.set_vexpand(True)
+            scrolled.set_hexpand(True)
+            scrolled.set_min_content_height(300)
+            scrolled.add(treeview)
+            scrolled.treeview = treeview
+            scrolled.model = treestore
+            scrolled.columns = columns
+            return scrolled
+
+        outer_box = self.builder.get_object("bx_publications")
+        inner_box = self.builder.get_object("bx_table_pubs")
+        self.publications_table = build_table(self.publications)
+        inner_box.add(self.publications_table)
+        outer_box.set_sensitive(self.get("c_print_pubs"))
+
+        self.publications_table.show_all()
+        win = self.builder.get_object("mainapp_win")
+        win.connect("destroy", Gtk.main_quit)
+        win.show_all()
