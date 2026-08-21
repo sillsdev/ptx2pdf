@@ -105,7 +105,7 @@ jobs:
 
     - name: Setup ptxprint and it's dependencies.
       run: >- 
-        pip install --user --only-binary=:all: .
+        pip install --user --only-binary=:all: . pyinstaller
 
     - name: Install the Apple certificate and provisioning profile
       env:
