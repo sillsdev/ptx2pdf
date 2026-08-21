@@ -83,16 +83,17 @@ class XDViReader:
         self.fname = fname
         self.diffable = diffable
         self.pageno = 0
-        self.file = None
+        self.buffer = None
+        self.fpos = 0
 
     def __enter__(self):
-        self.file = open(self.fname, "rb")
+        with open(self.fname, "rb") as inf:
+            self.buffer = memoryview(inf.read())
+        self.fpos = 0
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        if self.file is not None:
-            self.file.close()
-            self.file = None
+        self.buffer = None
 
     def __iter__(self):
         return self
@@ -104,7 +105,9 @@ class XDViReader:
         return (op, opc, data)
 
     def readbytes(self, num):
-        return self.file.read(num)
+        res = self.buffer[self.fpos:self.fpos+num]
+        self.fpos += num
+        return res
 
     def readval(self, size, uint=False):
         d = self.readbytes(size)
@@ -112,25 +115,20 @@ class XDViReader:
             return int.from_bytes(d, byteorder='big', signed=not uint)
         
         # Special handling for 3-byte (24-bit) TeX DVI integers
-        if uint:
-            return int.from_bytes(d, byteorder='big', signed=False)
-        else:
-            # Sign-extend a 3-byte big-endian signed integer manually
-            val = int.from_bytes(d, byteorder='big', signed=False)
-            if val & 0x800000:  # Check if sign bit (24th bit) is set
-                val -= 0x1000000  # Convert to negative complement
-            return val
+        val = int.from_bytes(d, byteorder='big', signed=False)
+        if not uint and (val & 0x800000):
+            val -= 0x1000000  # Convert to negative complement
+        return val
 
     def parse(self):
         selfopen = False
-        if self.file is None:
+        if self.buffer is None:
             selfopen = True
             self.__enter__()
         self.readpost()
         yield from self._parse()
         if selfopen:
             self.__exit__(None, None, None)
-            self.file = None
 
     def _parse(self):
         for (op, opc, data) in self:
@@ -140,20 +138,19 @@ class XDViReader:
                 break
 
     def readpost(self):
-        self.file.seek(-16, 2)
-        dat = self.file.read(16)
+        dat = self.buffer[-16:]
         postpos = 0
         for i in range(16):
             if dat[-1-i] != 0xDF:
-                postpos = unpack(">L", dat[-5-i:-1-i])[0]
+                postpos = int.from_bytes(dat[-5-i:-1-i], byteorder='big', signed=False)
                 break
         else:
             self.seek(0)
             return
-        self.file.seek(postpos)
+        self.fpos = postpos
         for (op, res) in self._parse():
             pass
-        self.file.seek(0)
+        self.fpos = 0
 
     def out(self, txt):
         # print(("pg[{}] ".format(self.pageno) + txt).encode("utf-8"))
@@ -191,12 +188,12 @@ class XDViReader:
         return (data[0],)
 
     def xxx(self, opcode, parm, data):
-        txt = self.readbytes(data[0])
+        txt = bytes(self.readbytes(data[0]))
         return (txt.decode("utf-8"),)
 
     def fontdef(self, opcode, parm, data):
         (k, c, s, d, a, l) = data
-        n = self.readbytes(a+l).decode("utf-8")
+        n = bytes(self.readbytes(a+l)).decode("utf-8")
         font = Font(n)
         font.size = self.mag * s / 1000. / d if d != 0 else 0
         font.checksum = c
@@ -216,7 +213,7 @@ class XDViReader:
     def xfontdef(self, opcode, parm, data):
         (k, points, flags) = data
         plen = self.readval(1, uint=True)
-        font_name = self.readbytes(plen).decode("utf-8")
+        font_name = bytes(self.readbytes(plen)).decode("utf-8")
         if self.diffable:
             font_name = os.path.basename(font_name)
         font = Font(font_name)
@@ -239,7 +236,7 @@ class XDViReader:
     def xglyphs(self, opcode, parm, data):
         if parm == 0:
             tlen = self.readval(2)
-            txt = self.readbytes(2*tlen).decode("utf-16be")
+            txt = bytes(self.readbytes(2*tlen)).decode("utf-16be")
         else:
             txt = b""
         width = self.readval(4)
