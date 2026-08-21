@@ -236,6 +236,9 @@ class MultiPrint:
 
     def start(self):
         """Start the worker pool."""
+        if self.numproc == 1:
+            _init_worker(self.progress_q, self.cancel_event)
+            return
         self.cancel_event.value = False
         self.executor = ProcessPoolExecutor(
             mp_context=self.ctx,
@@ -243,6 +246,19 @@ class MultiPrint:
             initializer=_init_worker,
             initargs=(self.progress_q, self.cancel_event)
         )
+
+    def _dispatch_job(self, job: Job):
+        if self.numproc == 1:
+            res = _worker_dispatch(job)
+            fut = Future()
+            fut.set_result(res)
+            self.pending_futures[fut] = job
+        else:
+            if not self.executor:
+                self.start()
+            fut = self.executor.submit(_worker_dispatch, job)
+            self.pending_futures[fut] = job
+        return fut
 
     def submit_fill_jobs(self, books: list[str], build_params: BuildParams, log_config: Optional[dict] = None, stop: bool = False):
         """Enqueues fill jobs (sorted longest-first) in non-blocking fashion."""
@@ -253,8 +269,7 @@ class MultiPrint:
 
         for bk in sorted_books:
             job = Job(action='fill', books=[bk], build_params=build_params, log_config=log_config, stop=stop)
-            fut = self.executor.submit(_worker_dispatch, job)
-            self.pending_futures[fut] = job
+            self._dispatch_job(job)
 
     def submit_print_job(self, books: list[str], build_params: BuildParams, cfgid: Optional[str] = None, log_config: Optional[dict] = None) -> Future:
         """Enqueues a print job and returns the Future handle immediately."""
@@ -262,8 +277,7 @@ class MultiPrint:
             self.start()
 
         job = Job(action='print', books=books, build_params=build_params, cfgid=cfgid, log_config=log_config)
-        fut = self.executor.submit(_worker_dispatch, job)
-        self.pending_futures[fut] = job
+        self._dispatch_job(job)
         return fut
 
     def is_finished(self) -> bool:
@@ -298,6 +312,9 @@ class MultiPrint:
             self.cancel_event.value = True
 
     def teardown(self):
+        if self.pending_futures:
+            for fut in self.pending_futures.keys():
+                fut.cancel()
         if self.executor:
             self.executor.shutdown(wait=False, cancel_futures=True)
             self.executor = None

@@ -46,6 +46,11 @@ class ParRect:
     def __repr__(self):
         return self.__str__()
 
+    def __contains__(self, p):
+        if self.ystart >= p[1] >= self.yend:
+            return self.xstart <= p[0] <= self.xend
+        return False
+
     def get_dest(self, x, y, baseline):
         if self.dests is None or baseline is None:
             return None
@@ -223,6 +228,7 @@ class Paragraphs(list):
         self.pnumorder = []     # from pageindex to pagenumber
         self.pheights = []
         self.dests = {}
+        self.rect_cache = (None, None)
         if fname is None:
             return
         currp = None
@@ -240,6 +246,8 @@ class Paragraphs(list):
         pwidth = 0.
         keepgoing = True
         self._parloc_dlg = None
+        self_append = self.append       # fast access to method
+        par_ref_map = {}                # (polycol, ref) -> ParInfo (saves searching)
         if gui:
             def dlgresponse(rid):
                 nonlocal keepgoing
@@ -248,16 +256,20 @@ class Paragraphs(list):
             dlg = self._parloc_dlg
         lines = ParlocLinesIterator(fname)
         for l in lines:
-            m = self.parlinere.match(l)
-            if not m:
+            if not l.startswith(r"\@"):
                 continue
+            b_open = l.find("{")
+            b_close = l.rfind("}")
+            if b_open == -1 or b_close == -1:
+                continue
+            c = l[2:b_open].strip()
+            p = l[b_open+1:b_close].split("}{")
+
             logger.log(5, l[:-1])
             if gui:
                 pump_gtk()
                 if not keepgoing:
                     return False
-            c = m.group(1)
-            p = m.group(2).split("}{")
             if c == "pgstart":          # pageno, available height, pagewidth, pageheight
                 pnum += 1
                 npnum = int(p[0])
@@ -326,6 +338,7 @@ class Paragraphs(list):
                     currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
+                par_ref_map[(polycol, currp.ref)] = currp
             elif c == "parend":         # badness, bottomx, bottomy, lastdepth
                 cinfo = colinfos.get(polycol, None)
                 ps = currps.get(polycol, None)
@@ -360,12 +373,9 @@ class Paragraphs(list):
                 if "k." in p[0]:
                     currp.ref = p[0]
                 currp.parnum = int(p[1])
-                i = self.index(currp)
-                for ps in reversed(self[:i]):
-                    if isinstance(ps, ParInfo) and ps.glot == polycol:
-                        if ps.ref == currp.ref:
-                            currp.parnum = getattr(ps, 'parnum', 0) + 1
-                        break
+                prev_p = par_ref_map.get((polycol, currp.ref), None)
+                if prev_p and prev_p is not currp:
+                    currp.parnum = getattr(prev_p, 'parnum', 0) + 1
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
                 logger.log(5, f"Stopping para {p[0]}")
@@ -443,37 +453,51 @@ class Paragraphs(list):
     def numPages(self):
         return len(self.pindex)
         
-    def _iterRectsPage(self, pnum):
+    def _getRectsPage(self, pnum):
+        if self.rect_cache[0] == pnum:
+            return self.rect_cache[1]
         if pnum > len(self.pindex): # need some other test here 
-            return
+            return None
+        self._last_state = None
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
+        res = []
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
             for i,r in enumerate(p.rects):
                 if r.pagenum != pnum:
                     continue
-                yield p, r
+                res.append((p, r))
+        self.rect_cache = (pnum, res)
+        return res
 
     def findPos(self, pnum, x, y, rtl=False, endx = None):
         """ Given page index (not folio) returns (ParDest, ParRect) covering the given x, y """
-        # just iterate over paragraphs on this page
-        for p, r in self._iterRectsPage(pnum):
-            logger.log(7, f"Testing {r} against ({x},{y})")
-            if r.ystart >=y and r.yend <= y:
-                if r.xstart <= x and x <= r.xend:
+        rects = self._getRectsPage(pnum)
+        if not rects:
+            return (None, None, None)
+        if self._last_state is not None:
+            last_p, last_i = self._last_state
+            if last_p == pnum:
+                p, r = rects[last_i]
+                if (x, y) in r:
                     return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
-                if endx != None:
-                    if r.xstart <= endx and endx <= r.xend:
+                next_i = last_i + 1
+                if next_i < len(rects):
+                    p, r = rects[next_i]
+                    if (x, y) in r:
+                        self._last_state = (pnum, next_i)
                         return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
-                    if x <= r.xstart and r.xend <= endx:
-                        return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
-        return (None, None, None)
+        for i, (p, r) in enumerate(rects):
+            if (x, y) in r:
+                self._last_state = (pnum, i)
+                return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
+        return (None, None)
 
     def getyrects(self, pnum, y):
         res = []
         if not len(self.pheights):
             return []
         y = (self.pheights[pnum-1] if pnum > 0 and pnum <= len(self.pheights) else self.pheights[-1]) - y
-        return [r for p, r in self._iterRectsPage(pnum) if r.ystart >= y and r.yend <= y]
+        return [r for p, r in self._getRectsPage(pnum) if r.ystart >= y and r.yend <= y]
 
     def getParas(self, pnum, inclast=False, inclafter=False):
         ''' Iterates all ParDest, ParRect on page with given index '''
