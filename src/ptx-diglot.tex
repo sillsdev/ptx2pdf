@@ -243,7 +243,8 @@
   \ifx\l@stLRspecifictr\c@rrdstat\else
     \edef\sfx{\ifdiglot\c@rrdstat\else \@rig\fi}%
     \trace{D}{setLRspecifictrial:\l@stLRspecific -> \sfx}%
-    \let\l@stLRspecific\c@rrdstat
+    \let\l@stLRspecific\empty % a trial state is not to be confused with the full version 
+    \let\l@stLRspecifictr\c@rrdstat
     \let\wh@t\sp@cificSideDef\pr@cessSpecificTrialDef
     \let\wh@t\sp@cificSideDim\pr@cessSpecificTrialDim
     \let\wh@t\sp@cificSideCount\pr@cessSpecificTrialCount
