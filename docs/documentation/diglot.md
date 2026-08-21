@@ -145,6 +145,13 @@ If the command `\ParallelNoteNumbering{f}` is given, then `\f` footnotes will
 have two parallel counts, so that left and right texts will be numbered (or picked from the callers list) 
 separately. The default keeps a single count, so each footnote/cross-reference is numbered  distinctly. This setting is ignored if merged footnotes are active, to avoid confusion.
 
+- `\MergedNoteType{ef}`  In diglots with separate notes (`\diglotSepNotestrue`), note style
+`\ef` should be treated as an exception, using a combined/merged, full-width note area. 
+This should solves issues for editions that normally use separated footnotes but which has study notes
+ or cross-references coming from just one source, or if notes are absent from the source for some books. Note that as with `\diglotSepNotesfalse`, notes are added to the combined note paragraph in the sequence in which they are met, i.e. the exact order depends on how the diglot has been chunked.
+
+- `\SepNoteType{x}` Explicitly revert to separated notes (undo `\MergedNoteType`) for note style `\x`. Note that this should have no effect unless `\diglotSepNotestrue` has been declared **and** an earlier, corresponding, `\MergedNoteType{x}` has been used. The command is mainly provided for use in hooks, for rare circumstances where switching between separate and  merged (combined) notes makes sense.
+
 The writers of hooks or control files that reset note numbering at chapters,
 sections etc,  might want to use one of these options as appropriate:
 - `\resetautonum{f}` Reset numbering for note `f`, in the present column

@@ -269,20 +269,28 @@ To do this we create some magic characters that will insert the negative kerns:
 \def^^^^e123{\nobreak\kern-0.2em\relax}
 \catcode"E124=\active
 \def^^^^e124{\nobreak\kern-0.4em\relax}
+\catcode"E125=\active
+\def^^^^e125{\beginL}
+\catcode"E126=\active
+\def^^^^e126{\endL}
 ```
 
 In effect we are making two negative spaces. Now in the changes file we want to
 insert those special spaces around the digits 0 and 1 for chapter numbers.
 
 ```perl
-at PSA "\\c\s(\d*[10]\d*)" > "\\c \1\n\\cp \\beginL \1 \\endL\n"
-in "\\cp\s+\\beginL \d+ \\endL": "([01])" > "\uE123\1\uE123"
+at PSA "\\c\s(\d*[10]\d*)" > "\\c \1\n\\cp \uE125\1\uE126\n"
+in "\\cp\s+\uE125\d+\uE126": "([01])" > "\uE123\1\uE123"
 "\uE123\uE123" > "\uE124"
 ```
 
 The first rule copies the chapter number to a published chapter string if it
 contains a 0 or a 1. It also marks it as being output left to right, since
-Arabic digits are output left to right in right to left text. The second rule
+Arabic digits are output left to right in right to left text. But because the
+USFM will be converted to USX during processing, and back, we have to remember
+that a \\cp ends up a simple attribute string in USX. Thus we cannot use what
+look like markers inside a \\cp. To make this happen, we turn the \\beginL and
+\\endL into special characters that expand to those instructions. The second rule
 takes that publishable chapter and inserts a negative space before and after
 ever 0 or 1 in the string. The last rule merges adjacent pairs of negative widths
 into a single doubly narrow width.

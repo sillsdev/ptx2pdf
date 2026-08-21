@@ -1077,7 +1077,7 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     logger.debug(f"Reading config file {mergeconfigfile} for ({column if column is not None else ''}, {variety}, {confname})")
     if type(fallbackweight) == dict:
         startvals=fallbackweight
-        fallbackweight=startvals[ChunkType.DEFSCORE]
+        fallbackweight=startvals.get(ChunkType.DEFSCORE, 51)
     else:
         startvals={}
     config = configparser.ConfigParser()

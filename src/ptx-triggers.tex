@@ -180,7 +180,7 @@
   \the\trigg@rchecks
   \global\let\dc@rref\oodc@rref
 }
-\def\settrign@me#1{\edef\trign@me{trigger-#1}}
+\def\settrign@me#1{\def\tmp{\detokenize{#1}}\edef\trign@me{trigger-\tmp}}
 
 \def\addtrigger#1#2{%
   \settrign@me{#1}%
@@ -189,6 +189,7 @@
 \def\AddTrigger{\prepusfm\@AddTrigger}
 \def\@AddTrigger#1 {% #1 is space-delimited, input may contain blank lines.
   \settrign@me{#1}%
+  \trace{T}{Defining trigger \trign@me}%
   \catcode"FDEC=0\catcode`\\=12
   \@@AddTrigger}
 
@@ -211,6 +212,7 @@
      \x@\def\x@\tr@gtmp\x@{\tr@gtmp#1}%
    \fi
    \x@\global\x@\let\csname\trign@me\endcsname\tr@gtmp
+   \trace{T}{\trign@me -> \meaning\tr@gtmp}%
 }
 
 \def\r@ntr@g#1\E{\p@sheof\scantokens{#1\noexpand}\p@peof}
@@ -239,20 +241,24 @@
 }
 
 \def\stdtrigger{%Run any triggers if they exist.
-  \settrign@me{\c@rref}\ifcsname \trign@me\endcsname
+  \x@\settrign@me\x@{\c@rref}\ifcsname \trign@me\endcsname
     \x@\let\x@\tmp\csname\trign@me\endcsname
     \ifx\relax\tmp\else
       \trace{T}{Trigger(\trign@me ) present}%
       \c@llr@ntr@g
     \fi%
+  \else
+    \trace{T}{Trigger(\trign@me ) absent}%
   \fi
   \ifdiglot
-    \settrign@me{\dc@rref}\ifcsname \trign@me\endcsname
+    \x@\settrign@me\x@{\dc@rref}\ifcsname \trign@me\endcsname
       \x@\let\x@\tmp\csname\trign@me\endcsname
       \ifx\relax\tmp\else
         \trace{T}{Trigger(\trign@me ) present}%
         \c@llr@ntr@g
       \fi%
+    \else
+      \trace{T}{Trigger(\trign@me ) absent}%
     \fi
   \fi
 }
