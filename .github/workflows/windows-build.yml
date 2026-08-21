@@ -6,6 +6,7 @@ on:
 
 jobs:
   build-windows:
+    environment: ${{ startsWith(github.ref_name, 'refs/tags/v') && 'release' || 'prerelease' }}
     runs-on: windows-latest
     defaults:
       run:
@@ -97,6 +98,7 @@ jobs:
 
   build-macos:
     runs-on: macos-latest
+    environment: ${{ startsWith(github.ref_name, 'refs/tags/v') && 'release' || 'prerelease' }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
