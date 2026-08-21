@@ -8,11 +8,15 @@ from concurrent.futures import ProcessPoolExecutor, Future, as_completed
 from concurrent.futures import wait as wait_futures
 import multiprocessing as mp
 import threading
-from ptxprint.page_filler import PTXFiller
+from ptxprint.page_filler import PTXFiller, ProgressEvent
 from ptxprint.project import ProjectList
-from ptxprint.utils import BuildParams
+from ptxprint.runjob import RunJob
+from ptxprint.utils import BuildParams, f_
+from ptxprint.view import ViewModel
 from usfmtc.reference import chaps, RefList
 
+
+logger = logging.getLogger(__name__)
 
 class ViewPrinter:
     """Printer wrapper for view-based rendering jobs, mirroring PTXFiller's interface."""
@@ -190,7 +194,7 @@ class WorkerContext:
                     restart=job.build_params.args.restart
                 )
             else:
-                res = printer.solve(job.books, cfgid_override=job.cfgid)
+                res = printer.solve(' '.join(job.books), cfgid_override=job.cfgid)
         except Exception as e:
             print(f"Exception {job.books[0]}: {e}")
             logger.debug(f"Unhandled error during {job.action} for {target_id}: {e}\n{f_('Traceback: ')}")
