@@ -130,7 +130,7 @@ jobs:
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
     
     - name: Build installer
-      run: mac-build.sh
+      run: ./mac-build.sh
 
     - name: Upload signed exe
       uses: actions/upload-artifact@v7
