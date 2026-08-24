@@ -130,6 +130,8 @@ jobs:
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
     
     - name: Build installer
+      env:
+        SKIP_CODESIGN: ${{ vars.SKIP_CODESIGN }}
       run: ./mac-build.sh
 
     - name: Upload signed exe
