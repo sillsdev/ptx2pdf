@@ -103,10 +103,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Setup ptxprint and it's dependencies.
-      run: >- 
-        pip install --user --only-binary=:all: . pyinstaller
-
     - name: Install the Apple certificate and provisioning profile
       env:
         BUILD_CERTIFICATE_BASE64: ${{ secrets.MACOS_BUILD_CERTIFICATE_BASE64 }}
@@ -134,10 +130,8 @@ jobs:
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
     
     - name: Build installer
-      env:
-        LOG_LEVEL: ${{ runner.debug == '1' && 'DEBUG' || 'INFO' }}
-      run: pyinstaller --log-level $LOG_LEVEL ptxprint.spec
-    
+      run: mac-build.sh
+
     - name: Upload signed exe
       uses: actions/upload-artifact@v7
       with:
