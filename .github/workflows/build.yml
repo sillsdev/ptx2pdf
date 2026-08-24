@@ -43,7 +43,7 @@ jobs:
           python-regex:p
 
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
 
     - name: Setup ptxprint and it's dependencies.
       run: >- 
@@ -86,7 +86,7 @@ jobs:
         } | ConvertTo-Json | Tee-Object -FilePath "latest.win.json" | Out-File -Encoding "UTF8" -FilePath "$exe_obj.download_info"
 
     - name: Upload signed exe
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: PTXPrint bundle
         path: |
@@ -101,7 +101,7 @@ jobs:
     environment: ${{ startsWith(github.ref_name, 'refs/tags/v') && 'release' || 'prerelease' }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
 
     - name: Install the Apple certificate and provisioning profile
       env:
