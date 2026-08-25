@@ -5,25 +5,25 @@ The column arrangement can (for polyglots) be defined as a series of letters (`L
 There have been some requests for up/down diglots, where one translation 
 is displayed below another.
 
-Up/down diglots are a special case of multi-row polyglots which in turn are a
+Two-text up/down diglots are a restricted case of multi-row polyglots which in turn are a
 special case of two potential layouts: columns-of-columns polytglots or of rows-of- columns polyglots. 
 
 Columns-of-columns polyglots would provide a 
-side-by-side arrangement of several quasi-independent columns polyglots.
-This does not allow for any columns to be full width,  and the questoin of vertical alignment between chunks in different columns becomes somewhat confused. 
+side-by-side arrangement of several quasi-independent columns.
+This does not allow for any columns to be full width (unless all are),  and the question of vertical alignment between chunks in different columns becomes somewhat confused. 
 
 As such, it is assumed that  the more desirable abstraction is that of the rows-of-columns polyglots, 
  such as the `LR/A`layout  (with `/` indicating a new row)  that below (showing a 
 double-page spread, with mirroring).  L<sub>1</sub> etc are intended to show  vertical  alignment between the L and R chunks on a given row.
 
-As a further extension, bracketing is desired, e.g. NET uses an `N(L/NN)N`
-Parsing this will be 'simplified' by using a `|` within the brackets. 
-
 ![ ](mirrored.svg  "Mirrored triglot (LR/A)")
 
-Sub-dividing a column vertically (I.e. making the layout to be rows-of-columns-of-columns) is considered to be an unreasonable request at present.
+As a further extension, bracketing is desired, e.g. apparently NET uses an `N(L/NN)N` layout.
+Parsing this could be 'simplified' by using a `|` within the brackets. Alternatively a (potentially fully-nesting) parser can be written, taking one character at a time, and indeed it is felt this approach is likely to be more stable against malformed input.
 
-However, taking the concept of abstraction a step further, rows-of-columns polyglots are, in-turn,  a special case of multipage rows-of-columns. 
+Assuming multiple-brackets are in use, then even a single depth of nested-parsing will provide for rows-of-columns-of-rows-of-columns, which allows for the earlier-dismissed option of columns-of-columns, (e.g. `(L/R)(A/B)`) if someone actually wants that.
+
+Taking the concept of abstraction a step further, rows-of-columns polyglots are, in-turn,  a special case of multipage rows-of-columns. 
 Experience gained while developing the polyglot-simplepages layout was
  that the coding effort needed for an N-page layout compared to a 2-page 
  layout is trivial, as long as the design goals are thought-through well. Thus it 
@@ -32,12 +32,12 @@ Experience gained while developing the polyglot-simplepages layout was
 
 Here is an overkill example of that (un-mirrored), showing the layout `LR/A,BC/DEF,G/H`:
 
-![ ](complex.svg  "(LR/A,BC/DEF),G/H")
+![ ](complex.svg  "(LR/A,BC/DEF,G/H")
 
 While it is expected that single-page layouts will be more popular than 2-page
 layouts, and further, such a multi-page layout as shown will never be used in a
 formally printed edition, there would still be use-cases for a translation consultant
-or pastor who wanted to have, say, greek/hebrew, and several national and
+or pastor who wanted to have, say, greek/hebrew as an interlinear and several national and
 international translations available as well as the vernacular text.
 
 ## The question of repeated columns
@@ -46,12 +46,13 @@ There are 2 potential varieties of multi-page,rows-of-columns layouts:
 **(a)** those in
 which a particular text *only* occurs in a single column, *vs*  **(b)** those
 where one text is split between several different 'windows' or 'displays'. This
-second variety includes where a double-column layout is desired for one or more of the  texts, or,  equally, when it is desired to have an interlinear text across both pages of a 2 page layout, with other translations above/below it. 
+second variety includes where a double-column layout is desired for one or more of the  texts, or,  equally, when it is desired to have an interlinear text across both pages of a 2 page layout, with other translations above/below it.  The NET study-bible layout mentioned above is another example.  
 
 Algorithms for both of these layouts will be considered below. One user has already asked if it would be possible to have one translation being in a 2 column layout at the top of the page, with another 2 translations below it.
 
 That seems possible, but  there are some arrangements that, while seeming plausible, need to be  rapidly rejected out of hand.  It is simply not possible for XeTeX to produce a layout in which 
-a single flow of text changes its column width without a *rigid* page layout,  or simulating one with multiple additional runs, as are required for  figures in cutouts.  If each page needed only a single re-run (probably unlikely) the number of job re-runs needed would scale as  O(2<sup>N</sup>) (N being the page count).
+a single flow of text changes its column width without a *rigid* page layout,  or simulating one with multiple additional runs, as are required for  figures in cutouts.  If each page needed only a single re-run (probably unlikely) the number of job re-runs needed would scale as  O(2<sup>N</sup>) (N being the page count). 
+Theoretically it might be possible for a chunk to be captured as a token list, however this is equally fraught, especially given that macros perform cat-code switching - unwrapping a token list where all cat-codes have already been assigned will never be the same as reading from a file. 
 
 ### "Accounting" issues.
 The boxes and variables for each displayed column will be needed as at present, and  these will need a 'display identifier' to identify them.
@@ -61,7 +62,7 @@ Too much of the existing code assumes that the display identifier is a
 * Use column identifiers as display identifiers for the first column,
 encountered (Note this depends on LTR or RTL reading direction). Follow-on columns are 
 mapped to otherwise unused upper case letters. E.g. second A (mnemonically A2)  which maps to e.g. U). The mnemonic mapping is
-defined as the column definition is read, and to aid debugging, it is 
+defined as the column definition is read, and to aid debugging, it is unclear if this 
 should be a permanent assignment. (e.g. no matter if other layouts are used, A2 is always  U, once defined that way.) 
 
 * If a new page-layout description is given, there are 2 options:
@@ -99,8 +100,7 @@ once in a  npage-set, except (possibly) the end-verse.
 2. Consideration on positioning of footnotes may alter how the algorithm behaves. 
 3.  The full galley (or processed galley, see efficiency possibilities **E<sub>1</sub>**, and **E<sub>2</sub>** below) 
 for all split columns must be preserved between chunks, in case a following chunk is added. 
-4. The processed column(s) / (page state) must be preserved between chunks and *still be
- available* after the new chunk is processed, in case the new chunk does not 
+4. The processed column(s) / (page state) must be preserved between chunks and *still be  available* after the new chunk is processed, in case the new chunk does not 
  fit. This is potentially more significant than the current state-reset on a chunk being pulled onto the next page.
 5. **E<sub>3</sub>**  and  **E<sub>4</sub>** below suggest that *potential* solutions for all columns might need to be saved to reduce the page-rebuilding time.
 6. Probably other things I've not thought of yet.
@@ -109,7 +109,7 @@ There are certain  parts of the algorithms that the processing that stand unchan
 
 ### Common algorithm for pre-layout portions:
 
-* Read a set of chunks, saving  any discardable spacing after the chunk
+* Read a set of chunks, saving  any discardable spacing after the chunk.
 * Determine (based on penalty before end-of-chunk contents) if this chunk is **conditional**  or **unconditional**. (An unconditional chunk can be last item on the page, a *conditional* one must migrate to the next page if it is not followed by other content). Any conditional chunk appended to another conditional chunk will make a combined conditional chunk.
 
 ### Common algorithm for dealing with full page / rejected chunk 
@@ -140,7 +140,7 @@ Use source  identifiers as display identifiers, as at present.
 
 If the processed box is accepted, then at pageout, the remainder becomes the original galley until there is no more material to check in a given chunk.
 
-### Layout Algorithm
+### An early attempt at a layout algorithm (no repeated columns):
 
 * Until chunks empty:
   * For each page of output:
@@ -157,7 +157,7 @@ If the processed box is accepted, then at pageout, the remainder becomes the ori
   * loop end
   * add to row-boxes or (if full) output page
     
-## Algorithm 2. Repeated columns may exist 
+## Implemented algorithm (Repeated columns may exist)
 ### Notes
 Use source  identifiers as display identifiers, as at present. 
 
@@ -166,24 +166,29 @@ Use source  identifiers as display identifiers, as at present.
    * per output box: Cut text (sub-galley) and remainder
    * per output box: processed text
    * per row: box: page content, accepted content.
+   * per source: tables of cut-length options:
+        * body length;
+        * insert heights;
+        * final verse.
 
 ### Layout Algorithm
 
-* For each repeated  column, merge old chunk contents with new.
+* Measure all possible cut-options for each of the sources.
+* For each repeated  column, merge old chunk contents with new, putting limits on the relevant chunk (If adding to the page, the final result cannot shrink any previous dimensions).
+* Define optimised custom measurement and scoring functions for the page-height of the based on the column heights, layouts, used inserts etc.
 * Until chunks are empty:
-    * determine max column lengths for each row (maybe without inserts), and hence calculate size for combined page-set. Compare with current space.
-    *  if overshoot is long, determine good ratio to initially split all galleys by.
-    *  Until all pages in the page-set fit or galley rejected:
-        * split multi-location columns in halves (or thirds, etc as appropriate)
-        * build or calculate (revised) pages 
-        * determine overshoot of longest column per row or page 
-        * (if there are verses and this isn't the last display of a repeated column, check end-verses are *similar*)
-        * adjust split-point or galley length appropriately, build list of chunks to reprocess.o(*decision depends on presence of notes and how they are being handled*)
+    *  Determine the optimal layout:
+    	* assign a test-height to the next row being considered.
+        * For each row on a page, use the cut-tables to consider the column-heights within the row. Accumulate a running cost  based on mismatched space, reject trial if current cost exceeds lowest cost attained so-far. 
+        * For each page, add a cost based on unfilled space, and reject trial if appropriate.
+        * When the final page has been reached, assign a cost based on verse differences.
+        * If the final cost is the best so-far, record the relevant cut positions.
         * repeat
+    * Perform actual splits and save state.
     * Respond appropriately to full  page / rejected chunk (see below)
-    * determine spacing needed for alignment (and preserving baseline).
+    * determine any spacing needed for alignment (and preserving baseline).
     * loop end
- * repeat
+ * read next chunk and repeat entire process.
 
 
 ### Processing of the intermediate mapping and Mirrored polyglots 
@@ -198,15 +203,17 @@ not be chosen from the first unused letter at the start of the alphabet, but fro
 The existence or not of `\f@llow@nL` is then used to populate the 'original
 galley' for Z and then in turn Y as the respective remainder box is emptied.  
 When all is acceptable, \f@llowingZ is used to fill L.
-\f@llow@nL (etc) can also be used to identify columns that must be re-worked in the case a column needs shortening.
+\f@llow@nL (etc) can also be used to identify columns that must be re-worked in
+the case a column needs shortening.
 
 For a mirrored diglot, the display-reversal code must use the  mapping
 appropriately. i.e. a book bound for LTR readers (e.g. English-speaking
 audience) might have
 `\polyglotpages{LLA/R}`, with L2->Z
-The forward and back display sequence is then: LZA/R and ALZ/R. For RTL readers,
-the forward and back display sequence will be: ZLA/R and AZL/R.
-kj
+The forward and back display sequence is then: LZA/R and ALZ/R respectively.
+For RTL readers,
+the forward and back display sequence will be: ZLA/R and AZL/R respectively. Thus reversal must happen at the row level.
+
 ## Footnotes and repeated columns
 It is worth considering what to do with footnotes. If the repeated
 columns are on  separate pages, then it would make sense for the note to be 
@@ -285,18 +292,17 @@ a partial list of line-no/insert measurements. [NEEDLESS - recursive split funct
 
 # Summary of necessary routines
 * Process layout string and reversal string [DONE]  [TESTED]
-     *  add/remove follow-on connections and create relevant boxes / dims
-     * self-check routine
+     *  add/remove follow-on connections and create relevant boxes / dims [DONE]
+     * self-check routine [DONE] 
 * Identify which inputs end up in repeated columns, especially cross-page. [DONE]
-* Something to determine possible split heights [DONE][TESTED]
-* Analyse how inserts affect layout [DONE?][TESTED]
-* Determine initial split lengths based on ratios. **COMPLEX**
-* Determine total galley lengths [DONE] [TESTED]
-* Split into sub-galleys, with chaining through follow-ons [DONE] [TESTED]
-* Eventually add a 'top-here', 'bottom-here' pseudo-column inserts, to supplement tL, etc.
+* Something to determine possible split heights [DONE]  [TESTED]
+* Analyse how inserts affect layout [DONE?]  [TESTED]
+* ~~Determine initial split lengths based on ratios. **COMPLEX** ~~ [not needed]
+* Determine total galley lengths [DONE]   [TESTED]
+* Split into sub-galleys, with chaining through follow-ons [DONE]   [TESTED]
+* Eventually add 'top-here', 'bottom-here' pseudo-column inserts, to supplement tL, etc.
 *  These can apply in monoglot dual columns too. Will go top/bottom exactly in the triggering column (measuring code is almost in place - see 'Could not identify column ...' message in code. To implement, may need to apply a pseudo-name to the insert dimensions).
-
-
+* Method to merge notes.
 
 ## Special considerations for study notes
 There will be a special flag `e` for extended notes. `e` may occur in a multiple columns, but only one project can use `e`.
@@ -308,15 +314,71 @@ There will be a special flag `e` for extended notes. `e` may occur in a multiple
     * The last note column compares its verse number with the `\marks` from the calling column. Explicit assumption (and requirement) is that the last note-generating  column is processed before the first note column. 
  * If study notes are not flowing onto the next page, there is no problem.
  
- Study notes may contain figures.
-
-* Therefore the study note paragraph (full content) needs to be decoded and a full measurement table be created.
+* Study notes may contain figures...
+    * So there's no guarantee that clean breaks are possible.
+    * Therefore the study note paragraph (full content) needs to be decoded and a full measurement table be created.
 
 ## Rows of columns of rows of columns.
 
-This is needed for various real-world layouts. E.g. NET / historic layouts may use `e(L/ee)e`. Non-Christian comparison scriptures may use `(L/ee)/e`.
-* Parse `#1,#2` for pages
-* Parse page `#1/#2` for rows
-* Parse row `#1(#2)#3` for groups. Groups DO NOT nest.
-* Parse group for `#1|#2` for sub-rows.
-* Identifiers are thus: page-row (present code) or page-row-rowgroup-subrow
+This is needed for various real-world layouts. E.g. NET-study / historic layouts may use `e(L/ee)e`. In some areas, majority-religion scriptures may use `(L/ee)e`, possibly mirrored.
+An individual row has a identifier of `{page}-{row}`. This identifier is used to specify the split height for the contents, the functions needed to determine the page contributions, etc. 
+For a sub-column, this is extended to: `{page}-{row}-{group}-{subrow}`.
+The natural reading order of the NET-study example makes it clear that  e<sub>2</sub> and e<sub>3</sub> must be *split* and thus *scored* after the sub-row content e<sub>1</sub> , and before e<sub>4</sub>. However, `e` is footnote text, and thus before e<sub>1</sub> has any content, `L` must have been split.
+
+* The current code (Feb-Jun 2026) uses  `cplx@trycosts#1,#2\E` to process the list of   individual rows, on a page with #1 being an identifier, ultimately resolving to a simple list of columns to process. 
+To cope with subgroups one option is for the code to parse complex arrangements, in a portion that must be ultra-efficient as it is run multiple times.
+
+* For the NET-study display, the main row contains a column before and after. One option, then to avoid complex parsing, would be to split the list to be e.g. `0-0a,  0-0-0-0, 0-0-0-1, 0-0b.` However this is deficient as it  does not process `L` first (though reordering could, in part, do that) and also the current code applies column costs at each row, but in this example the revised code must only apply costs after `0-0b`.
+ 
+* An alternative is that much like the page calculations, the *processing script* is also defined in such a way that sub-group processing relies upon generated macros.  The script would have to be something along the lines of:
+
+    * assign /modify heights to row.
+    * assign / modify heights to subrows
+    * Process L (pushed before e<sub>1</sub> due to dependency) at  `0-0-0-0ht`
+    * Process e<sub>1</sub> at  `\0-0ht`
+    * Process e<sub>2</sub> at `\0-0-0-1ht`
+    * Process e<sub>3</sub> at `\0-0-0-1ht`
+    * Process e<sub>4</sub> at `\0-0ht`
+    * Consider row cost
+
+It is also clear that the `{page}-{row}` cut heights must set hard limits on any sub-row content, and the final heights of the sub-row content are necessary to determine the row-height. In this respect, it is possibly necessary to define a *group-height* function for each `{page}-{row}-{group}`. This will then make a contribution to the row-height, much as any individual column does, for scoring.
+
+* Generating the code for (efficient) decisions about  subrow heights  is probably going to be a pain.
+
+##  Multi-row layouts
+Consider the layout  `L/R/AB/ee`, with the contents of `e` coming from `A`. If `0-0ht + 0-1ht` remains constant, then the height of `0-0` has no direct effect on the content of `A` or `e`; it would be entirely wasteful to re-calculate `A` for every change to `0-0ht`.
+
+The result  should be cached on the basis of what it depends upon. i.e. scores for `0-2` depend  for `A-start`, `B-start`,  `Aht` and `Bht`, scores for `0-3` depend on  `A-start` and `Aht`.
+
+There are continuation columns, and there are dependent (pseudo) columns. Continuation columns depend on their start point and height, pseudo-columns depend on the start point and length of the column(s) that contribute(s) to them, as well as their own height. There are, of course, also continuations of dependent columns. A dependent column may be displayed before the column it depends on (as in the NET example), but a follow-on column never appears before its primary column. Thus we *might* be tempted to think we need to build 4 lists to obtain a valid processing order: Primary, follow-on, dependent, and dependent-follow-on, the implicit sequencing of follow-on *following* the input means that 2 lists should be sufficient. Normal columns should be processed before dependent columns are considered.
+This is of course a deviation from the initial approach of the processing order following the display order.
+
+1. On configuration:
+    1. Read the layout list and distinguish between the 4 column types.
+    2. Determine the mirrored layout:
+        1. groups and subgroups get replaced by a token e.g. `:` which indicates '(sub)group here'.
+        2. In RtoL order, invert the individual row sequences.
+    3. Generate pseudo-columns for the follow-on columns.
+    4. Build a processing-order list of  and follow-on columns, and (demoted) secondary columns.
+    5. Build processing steps for the different columns, and basic row-height calcs.
+    
+2. On reading and measuring the input:
+    1. Determine exact processing steps and, sequence.
+    2 Develop row-height definitions.
+    2. Pull together exact functions, etc. to apply scores, etc.
+
+
+-----
+
+
+## Merge/reflow steps
+### Constraints:
+* There is a maximum number of slots available in the processing list. (Currently 1000 lines = 3.2m at 9pt).  A single (merged) section this long, set in 4 columns across each of 2 pages would take 35.5cm of column height.  
+This is potentially possible, particularly for narrow columns with chapter-chunked text. 
+* Can  split-heights can only increase? Coding implications:
+    * If no, then in a multi-page layout with space on page 2, a picture called from a new chunk of text on page 2 text might impact page1 layout.
+    * If yes, then processing data before the initial split could be discarded. 
+      But as the likelihood of reaching the limit gets higher with increasingly narrow columns, the potential savings reduce: only the first column can be fixed, leading to at most 12.5% of the text in the above example. 
+A long column that fills multiple pages should in any case be trimmed. 
+### Algorithm:
+* 

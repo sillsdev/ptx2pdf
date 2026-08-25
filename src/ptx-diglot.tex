@@ -307,7 +307,7 @@
 \newcount\dropped@ther@linesR % Used for cutouts
 
 \def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
-\def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
+\def\def@cseq#1{\x@\def\csname #1\endcsname}% Helper function #2 provided from context
 \def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
 \def\newsideSpecificIf#1{% 'Tristate' if - true / false / default for configuration-file booleans (where default means the side-specific logic ought to let the global value take precedence
   \x@\def\csname #1true\endcsname{\x@\let\csname if#1\endcsname\iftrue}%
@@ -573,7 +573,6 @@
   \setbox1=\vbox{\unvbox1}%
   \ifnum 1=\ifdim \ht1<1sp \ifdim\dp1<1sp 1 \else 0\fi \else 0\fi
     \trace{D}{Nothing positive wants to split from top of box: trial failed}% Rejecting negative heights saves us from at least some EEKs! Yey!
-    %\ifdiglotDebugFollowContents\Showbox\galleyexc@ss \fi
     \trialfailedtrue
     \global\trialheight=-\@bls
     \global\setbox\galley\box\voidb@x
@@ -658,7 +657,6 @@
     \global\trialheight=\csname availht\c@rrdstat\endcsname %Non-notes version
     \global\let\whichtrial=\after@a@trial
     \global\setbox\trialbox=\box\voidb@x
-    %\global\setbox\galleyexc@ss=\box\voidb@x
     \global\trialfailedfalse
     \global\intrialtrue
     \global\deadcycles=0
@@ -872,12 +870,10 @@
       \else
         \trace{D}{xs:\l@gdims{\@xcs} \c@rrdstat boxpenalty changed from \the\csname \c@rrdstat boxpenalty\endcsname\space to galley value \the\galleypenalty}%
         \x@\global\csname\c@rrdstat boxpenalty\endcsname =\galleypenalty
-        %\x@\global\x@\setbox\csname excess\c@rrdstat\endcsname\vbox{\joinboxes{\galleyexc@ss}{\csname excess\c@rrdstat\endcsname}{4}{\x@\the\csname partial\c@rrdstat penalty\endcsname}}%
         %%FIXME: TEMPORARILY(?) nogut
          %\global\setbox\csname excess\c@rrdstat\x@\endcsname\x@\copy\csname whole\c@rrdstat\endcsname
         \x@\xdef\csname digl@txcs\c@rrdstat\endcsname{\c@rrdstat}%
       \fi
-      %\global\setbox\galleyexc@ss=\box\voidb@x
       \ifdiglotDebugFollowContents
         \trace{D}{Showing galley locn 2}%
         \Showbox\galley
@@ -1489,6 +1485,7 @@
   \global\allNeedEmptyingfalse
   \csname aftereverychunkhook\endcsname% A potentially useful hook
   \ifcsname afterthischunkhook\endcsname % One-shot hook.
+    \message{afterthischunkhook was set}%
     \afterthischunkhook
     \global\let\afterthischunkhook\undefined
   \fi
@@ -3801,7 +3798,7 @@
   \ifx\tri@llist\empty\errmessage{Caught internal error - cannot run an empty trial list}\fi%
   \traceifset{diglot@run@nxt@trial}%
   \x@\n@xttrial\tri@llist\E % cuts 1st column off tri@lalist and makes it current.
-  \setLRspecific
+  \setLRspecifictrial
   \ifx\c@rrdstat\empty %End of the loop.
   \else
     \dimen0=\dimexpr \ht\csname whole\c@rrdstat\endcsname + \dp\csname whole\c@rrdstat\endcsname\relax\relax

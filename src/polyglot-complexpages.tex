@@ -86,8 +86,10 @@
     \x@\let\x@\tmpb\csname f@llowing\x@fch@r\endcsname
     \ifx\tmp\tmpb %Chains don't go backwards, so this must be from an uncleared old chain. Reuse it
     \else
-      \trace{dmc}{\x@fch@r\space is following \tmpb}% 
-      \tempfalse
+      \ifx\tmpb\x@fch@r\else
+        \trace{dmc}{\x@fch@r\space is following \tmpb -rejected}% 
+        \tempfalse
+      \fi
     \fi
   \fi
   \iftemp
@@ -142,8 +144,7 @@
   \ifx\relax\tmp\else \ifx\empty\tmp\else
     \x@\cle@rf@llow@ns\x@{\tmp}%
   \fi\fi
-  \global\let\all@list\empty
-  \trace{dmcr}{cle@rf@llow@ns #1 end}%
+  \trace{dmc}{cle@rf@llow@ns #1 end}%
 }
 
 \def\cle@rtmpnum#1{%
@@ -223,20 +224,27 @@
   \trace{dmc}{Recording @n-\tmpn@te @typ as \tmp@n@tetyp}%
   \let\col@do\@@clsfynotes \x@\each@col\all@list\E
 }
-\def\t@rgetcols{}
+\def\t@rgetcols{}%List of insert-col-X. etc that should be undefined on reset.
+%  TODO:similarly clear page score calcs and dependencies.
+\let\r@wstrings\empty
 \def\polyglot@eachtime@setup@complexpages{%Called each time polyglotpages changed.
   \trace{dmc}{polyglot@eachtime@setup@complexpages}%
   \ifx\t@rgetcols\empty\else
-    \trace{dmcr}{@rgetcols: \t@rgetcols}%
+    \trace{dmcl}{clearing t@rgetcols: \t@rgetcols}%
     \let\d@\und@fit %undefine 
     \x@\cstackdown\t@rgetcols,\E
   \fi
+  \ifx\r@wstrings\empty\else
+    \trace{dmcl}{clearing r@wstrings: \r@wstrings}%
+    \let\d@\und@fit
+    \x@\cstackdown\r@wstrings,\E
+  \fi
   \ifx\diglot@list\empty\else
     \global\f@llow@n=0
-    \trace{dmcr}{cle@rf@llow@ns}%
+    \trace{dmc}{cle@rf@llow@ns}%
     \let\col@do\cle@rf@llow@ns\x@\each@col\diglot@list\E% Stop all chains.
+    \global\let\all@list\empty
     %\let\col@do\local@split@defs\x@\each@col\diglot@list\E % Ensure that all columms have a block of dimensions.
-    
     \complex@onetime@setup
   \fi
   \global\let\x@flist\empty
@@ -262,50 +270,143 @@
 }
 
 \globcount\p@lyr@wno
-\newcount\p@lylastp@ge
-\def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e}% Various 'column codes' are not directly connected to any input. Use ifcsname to check for them
+\globcount\p@lylastp@ge
+\globcount\p@lygr@upno
+\globcount\p@lygr@updp
+\newif\ifcplx@deps 
+\def\@cplx@vrfygrpzero{\ifnum\p@lygr@updp=0 \else
+    \errmessage{Invalid page layout while ending \p@lyr@wstring: cannot start new page when group depth (\the\p@lygr@updp) not 0}%
+  \fi
+}
+\let\cplx@deps\empty
+\def\@cplx@chk@dependency{%Per-page(line?) dependencies check.
+  \ifx\cplx@deps\empty\else
+    \trace{dmcl}{Dependency for \p@lyr@wstring:\cplx@deps}%
+  \fi
+  \let\cplx@deps\empty% Assumption is this should be emptied after checking.
+}
+\def\@cplx@p@rsebgroup{%
+  \ifcsname\p@lyr@wstring\endcsname
+    \x@\let\x@\tmp\csname\p@lyr@wstring\endcsname
+  \else
+    \let\tmp\empty
+  \fi
+  \x@\xdef\csname \p@lyr@wstring\endcsname{\tmp:}%
+  \advance\p@lygr@upno by 1
+  \bgroup
+    \advance\p@lygr@updp by 1
+    \edef\p@lypr@fix{\p@lyr@wstring}%
+    \p@lyp@geno=\p@lygr@upno % page-pagerow-group-grouprow[-subgroup-subgrouprow]
+    \p@lygr@upno=0 % In case of nesting
+}
+\def\@cplx@p@rseegroup{%
+    \ifnum\p@lygr@updp<1 \errmessage{Cannot close an unopened group}\fi 
+    \@cplx@chk@dependency
+  \egroup
+}
+\def\@cplx@p@rsenline{%
+  %\@cplx@chk@dependency
+  \p@lygr@upno=0
+  \advance \p@lyr@wno by 1
+  \trace{dmcl}{new row: \the\p@lyr@wno -> \p@lyr@wstring}%
+}
+\def\@cplx@p@rsenpage{%
+  \@cplx@vrfygrpzero
+  \@cplx@chk@dependency
+  \p@lygr@upno=0
+  \p@lyr@wno=0
+  \let\cplx@deps\empty
+  \advance \p@lyp@geno by 1
+  \trace{dmcl}{new page: \the\p@lyp@geno}%
+  \@@setup@new@page
+}
+\x@\let\csname @@p@rse(\endcsname\@cplx@p@rsebgroup
+\x@\let\csname @@p@rse)\endcsname\@cplx@p@rseegroup
+\x@\let\csname @@p@rse/\endcsname\@cplx@p@rsenline
+\x@\let\csname @@p@rse,\endcsname\@cplx@p@rsenpage
+\x@\let\csname @@p@rse:\endcsname\@cplx@pr@cessgroup % A group
+%\x@\let\csname @@p@rse=\endcsname\relax
+%\x@\let\csname @@p@rse-\endcsname\relax
+\def\cplx@endp@rse #1\E{}
+\def\@cplx@p@rse #1#2\E{%
+  \trace{dmcr}{p@rse #1 #2}%
+  \cplx@depsfalse
+  \ifcsname @@p@rse#1\endcsname
+    \csname @@p@rse#1\endcsname
+  \else
+    \let\tmp\empty
+    \x@\ifcsname\p@lyr@wstring\endcsname
+      \x@\let\x@\tmp\csname\p@lyr@wstring\endcsname
+    \else
+      \xdef\r@wstrings{\ifx\r@wstrings\empty\else\r@wstrings,\fi\p@lyr@wstring}%
+      \trace{dmcl}{New row \p@lyr@wstring. Known: \r@wstrings}%
+    \fi 
+    \x@\xdef\csname \p@lyr@wstring\endcsname{\tmp#1}%
+    \x@\ifx\csname special@col@#1\endcsname% Possibly a dependant column
+      \csname @@p@rse-special-#1\endcsname%
+    \fi
+  \fi
+  \let\n@xt\@cplx@p@rse
+  \def\tmp{#2}\ifx\tmp\empty
+    \let\n@xt\cplx@endp@rse
+  \fi
+  \n@xt#2\E
+}
+
+\def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e\x@\let\csname @@p@rse#1\endcsname\relax}% Various 'column codes' are not directly connected to any input. Use ifcsname to check for them
 \inactive@col@code{-} % A blank column or page e.g. for marginal notes. If multiple, then they split the empty space.
 \inactive@col@code{=} % Lines
 
-\def\special@col@code#1#2#3{\x@\let\csname special@col@#1}\n@wbox\\endcsname\tr@e\new@followon{#1}\csname sp@cialhandler-#1\endcsname}% for automagic note/insert columns.
-\special@col@code{f} % Footnote slot(s) (for notes that aren't column-end
-\special@col@code{x} % Xref slot(s):  centre column/side column/etc.
-\special@col@code{e} % extended footnote slot(s).
-\special@col@code{@} % Image / sidebar slot?? (Images / sidebars can target) 
-
+\def\special@col@code#1#2{\x@\let\csname special@col@#1\endcsname\tr@e
+  \edef\tmpn@m{@@p@rse-special-#1}%
+  \def\tmp{#2}\ifx\tmp\empty
+    \x@\def\csname \tmpn@m\endcsname{\cplx@depstrue}%
+  \else
+    \x@\let\csname \tmpnam\endcsname\tmp
+  \fi
+}%
+\special@col@code{f}{} % Footnote slot(s) (for notes that aren't column-end
+\special@col@code{x}{} % Xref slot(s):  centre column/side column/etc.
+\special@col@code{e}{} % extended footnote slot(s).
+\special@col@code{@}{} % Image / sidebar slot?? (Images / sidebars can target) 
 
 \def\col@active@count#1{\ifcsname in@ctive@col@#1\endcsname\else\advance\count255 by 1 \fi}% 
 \def\@@complexr@vpolyp@ges#1{%
-  %\trace{dmc}{  @@complexr@vpolyp@ges #1}%
+  \trace{dmcl}{  @@complexr@vpolyp@ges #1}%
   \count255=\csname @tmpnum@#1\endcsname
   \advance\count255 by 1
   \edef\@tmpnam{decode@#1\the\count255}%
   \x@\let\x@\x@fch@r\csname \@tmpnam\endcsname
-  \trace{dmc}{... #1\the\count255 \space is \x@fch@r}%
+  \trace{dmc}{... #1\the\count255 \space is \x@fch@r (\rev@r@wstring)}%
   \xdef@cseq{@tmpnum@#1}{\the\count255}%
-  \ifBookOpenLeft
-    \xdef@cseq{p@lyp@gecols\p@lyr@wstring}{\x@fch@r\csname p@lyp@gecols\p@lyr@wstring\endcsname}%
-  \else
-    \xdef@cseq{revp@lyp@gecols\p@lyr@wstring}{\csname revp@lyp@gecols\p@lyr@wstring\endcsname\x@fch@r}%
+  \let\tmp\empty
+  \ifcsname\rev@r@wstring\endcsname
+    \x@\let\x@\tmp\csname \rev@r@wstring\endcsname
   \fi
+  \ifBookOpenLeft
+    \xdef@cseq{\rev@r@wstring}{\x@fch@r\tmp}%
+  \else
+    \xdef@cseq{\rev@r@wstring}{\tmp\x@fch@r}%
+  \fi
+  \trace{dmc}{done}%
 }
 
-\def\@complexr@vpolyp@ges#1\E{%Row-of-columns processing
+\def\@complexr@vpolyrow#1\E{%Row-of-columns processing #1=row list.
   \trace{dmc}{@complexr@vpolyp@ges #1, row=\the\p@lyr@wno}%
-  \trace{dmc}{blank \ifBookOpenLeft rev\fi p@lyp@gecols\p@lyr@wstring}%
-  \xdef@cseq{\ifBookOpenLeft \else rev\fi p@lyp@gecols\p@lyr@wstring}{}%
+  \trace{dmc}{blank \ifBookOpenLeft rev\fi p@lyp@gecols\p@lyr@wstringrev}%
+  \xdef@cseq{\ifBookOpenLeft \else rev\fi p@lyp@gecols\p@lyr@wstringrev}{}%
   \def\rev@tmp@list{}\def\list@type{tmp}%
   \let\col@do=\mkrev@list
   \edef\tmporder{#1}%
   \x@\each@col\tmporder\E
   \let\tmporder\rev@tmp@list
   \let\col@do\@@complexr@vpolyp@ges
-  \trace{dmc}{@@complexr@vpolyp@ges \p@lyr@wstring {\tmporder}}%
+  \trace{dmc}{@complexr@vpolyp@ges \p@lyr@wstring -> \p@lyr@wstringrev {\tmporder}}%
   \x@\each@col\tmporder\E
   \ifBookOpenLeft
-    \trace{dmc}{p@lyp@gecols\p@lyr@wstring\space is \csname p@lyp@gecols\p@lyr@wstring\endcsname}%
+    \trace{dmc}{p@lyp@gecols\p@lyr@wstringrev\space is \csname p@lyp@gecols\p@lyr@wstringrev\endcsname}%
   \else
-    \trace{dmc}{revp@lyp@gecols\p@lyr@wstring\space is \csname revp@lyp@gecols\p@lyr@wstring\endcsname}%
+    \trace{dmc}{revp@lyp@gecols\p@lyr@wstringrev\space is \csname revp@lyp@gecols\p@lyr@wstringrev\endcsname}%
   \fi
   \advance\p@lyr@wno by 1 
 }
@@ -358,7 +459,8 @@
     \x@\mkn@wct\csname \this@p@lyr@wstring @cut\endcsname\E % number of minb@selines  to cut this row at (loop variable)
     \x@\mkn@wct\csname \this@p@lyr@wstring @cmax\endcsname\E % max number to cut row at (loop endstop)
   \fi 
-  \x@\x@\x@\def\x@\x@\x@\pg@hts\x@\x@\x@{\x@\pg@hts\x@+\x@\csname \this@p@lyr@wstring @ht\endcsname}%
+  \x@\let\x@\pg@hts\csname p@lypght-\the\p@lyp@geno\endcsname
+  \x@\def\csname p@lypght-\the\p@lyp@geno\x@\x@\x@\endcsname\x@\x@\x@{\x@\pg@hts\x@+\x@\csname \this@p@lyr@wstring @ht\endcsname}%
   \edef\tmporder{#1}%
   \ifBookOpenLeft % In a book-open-left scenario, we need to process the page contents right-to-left. Easiest way to do that is reorder it from the start.
     \def\rev@tmp@list{}\def\list@type{tmp}%
@@ -406,15 +508,67 @@
   \fi
   \global\advance\p@lyr@wno by 1
 }
-\def\p@lyr@wstring{\the\p@lyp@geno-\the\p@lyr@wno}
+\def\p@lypr@fix{}%
+\def\p@lyr@wstring{\ifx\p@lypr@fix\empty\else\p@lypr@fix-\fi\the\p@lyp@geno-\the\p@lyr@wno}
+\def\p@lyr@wstringrev{}
 \def\p@lyp@gestring{\the\p@lyp@geno}
 \def\p@lyp@gesuffx{@poly@\p@lyp@gestring}
 \def\p@lyr@wsuffx{@poly@\p@lyr@wstring}
-\def\p@rser@wstring#1-#2\E{\trace{dmc}{p@rstr:#1-#2}\p@lyp@geno=#1 \p@lyr@wno=#2\relax}
+\def\p@rser@wstring#1-#2-#3\E{%Assumes a trailing -, a correctly formed rowstring, and that p@lypr@fix has been correctly emptied before initial call.
+  \def\tmp{#3}%
+  \ifx\tmp\empty
+    \trace{dmc}{p@rstr:\p@lypr@fix#1-#2}\p@lyp@geno=#1 \p@lyr@wno=#2\relax
+  \else
+    \edef\p@lypr@fix{\ifx\p@lypr@fix\empty\else\p@lypr@fix-\fi#1-#2}%
+    \p@rser@wstring#3\E
+  \fi}
+
+\def\revp@rser@wstring#1-#2-#3\E{%Like p@rser@wstring, but also generate p@lyr@wstringrev
+  \ifx\p@lyr@wstringrev\empty
+    \edef\p@lyr@wstringrev{\the\numexpr \p@lylastp@ge-#1\relax-#2}%
+  \else
+    \edef\p@lyr@wstringrev{\p@lyr@wstringrev-#1\relax-#2}%
+  \fi
+  \def\tmp{#3}%
+  \ifx\tmp\empty
+    \p@lyp@geno=#1 \p@lyr@wno=#2\relax
+    \trace{dmc}{p@rstr:\p@lypr@fix#1-#2, \the\p@lylastp@ge pgs,  rev: \p@lyr@wstringrev}
+  \else
+    \edef\p@lypr@fix{\ifx\p@lypr@fix\empty\else\p@lypr@fix-\fi#1-#2}%
+    \revp@rser@wstring#3\E
+  \fi}
+
+\def\complexfwd@polyrows#1\E{%
+  \ifcsname #1\endcsname
+    \def\r@wstring{#1}%
+    \let\p@lypr@fix\empty
+    \x@\p@rser@wstring#1-\E
+    \x@\let\x@\tmp\csname #1\endcsname
+    \x@\@complexs@tpolyp@ges\tmp\E
+  \else
+    \trace{dmc}{complexfwd@polyrows didn't find #1}%
+  \fi
+}
+\def\complexr@vpolyrow#1\E{%
+  \ifcsname #1\endcsname
+    \def\r@wstring{#1}%
+    \let\p@lypr@fix\empty \let\p@lyr@wstringrev\empty
+    \x@\revp@rser@wstring#1-\E
+    \x@\let\x@\tmp\csname #1\endcsname
+    \ifBookOpenLeft
+      \edef\rev@r@wstring{p@lyp@gecols\p@lyr@wstringrev}%
+    \else
+      \edef\rev@r@wstring{revp@lyp@gecols\p@lyr@wstringrev}%
+    \fi
+    \x@\@complexr@vpolyrow\tmp\E
+  \else
+    \trace{dmc}{complexfwd@polyrows didn't find #1}%
+  \fi
+}
 
 \def\@@complexs@tpolyp@ges#1{%column processing
-  \traceifset{@@cspp}%
   \trace{dmc}{@@cspp #1}%
+  \traceifset{@@cspp}%
   \ifcsname #1isDiglotColumn\endcsname
     \edef\x@fch@r{#1}% The expanded field char.
     \x@\let\x@\@@cspptmp\csname @max@cols@#1\endcsname
@@ -438,10 +592,14 @@
     \ifnum\@@cspptmp <\@cspptotcols
       \x@\xdef\csname @max@cols@#1\endcsname{\@cspptotcols}%Used in determining the column width: Actual column widths get reduced by inter-column gaps, and so chunk that co-occurs in a tripple pane will be smaller than if it occured only in a double-pane. This is a pain.
     \fi
-    %Needless? \x@\let\x@\@@cspptmp\csname @max@cols@#1\endcsname
     % Columns by processing-order
-    \xdef@cseq{cplx@proc\p@lyr@wstring}{\csname cplx@proc\p@lyr@wstring\endcsname\x@fch@r}%
-    \xdef\cplx@proc@all{\cplx@proc@all\x@fch@r}%
+    \ifcplx@deps % Dependant columns go into a secondary list.
+      \xdef@cseq{cplx@procII\p@lyr@wstring}{\csname cplx@proc\p@lyr@wstring\endcsname\x@fch@r}%
+      \xdef\cplx@proc@allII{\cplx@proc@allII\x@fch@r}%
+    \else
+      \xdef@cseq{cplx@proc\p@lyr@wstring}{\csname cplx@proc\p@lyr@wstring\endcsname\x@fch@r}%
+      \xdef\cplx@proc@all{\cplx@proc@all\x@fch@r}%
+    \fi  
     \ifBookOpenLeft
       \xdef@cseq{revp@lyp@gecols\p@lyr@wstring}{\x@fch@r\csname revp@lyp@gecols\p@lyr@wstring\endcsname}%
     \else
@@ -465,7 +623,7 @@
     \xdef@cseq{@tmpnum@#1}{\the\count255}%
   \else 
     \ifcsname inactive@col@code#1\endcsname\else
-      \errmessage{!!! #1 is neither an inactive column code nor a diglot(polyglot) column. Define it first.}%
+      \errmessage{!!! #1 is neither an inactive column code nor a diglot(polyglot) column. Define it before asking that it go in the layout!}%
       \error%Force stop
     \fi
   \fi
@@ -491,25 +649,39 @@
     \errmessage{\checkreport}%
   \fi
   \catcode47=\sl@shcode\relax
+  \trace{dmcl}{No errors after checking {#1}{#2}}
 }
 
+\def\@@setup@new@page{%Anything that needs to be defined once per page as a new layout is set-up
+   \x@\let\csname ins@rts-\the\p@lyp@geno\endcsname\relax
+   \x@\edef\csname p@lypght-\the\p@lyp@geno\endcsname{\csname ins@rts-\the\p@lyp@geno\endcsname}%
+}
 
 \def\polyglotpages@complexpages#1{%comma separated list of concatenated columns to put on different pages and rows (e.g. AR/A,B/C) specifies 2 pages, pg1 shows L, R and A, pg2 B and C.
   \trace{dmc}{polyglotpages #1}%
   \polyglot@onetime@setup
   \polyglot@eachtime@setup@complexpages
-  \p@lyp@geno=0 
+  \p@lyp@geno=0 \p@lyr@wno=0 \p@lygr@upno=0
+  \p@lygr@upno=0 \p@lygr@updp=0
+  \@@setup@new@page
   \edef\tmp{#1}%
   \ifx\tmp\empty\errmessage{polyglotpages called with empty argument. That's an error}\fi
-  \E\E
-  \def\r@wstrings{}%
   \def\cplx@proc@all{}%
-  \let\d@=\complexs@tpolyp@ges
-  \cstackdown#1,\E
+  \def\cplx@proc@allII{}%dependent columns (footnotes, etc)
+  \let\r@wstrings\empty %r@wstrings will be a comma-separated list of all row-content ids.
   \reset@colindexes
-  \p@lyp@geno=0
-  \let\d@=\complexr@vpolyp@ges
-  \cstackup#1,\E
+  \@cplx@p@rse#1\E
+  \global\p@lylastp@ge=\p@lyp@geno% This serves as an endstop. 
+  \xdef\p@lyp@ges{\the\p@lyp@geno}% Another (historic) endstop.
+  \@cplx@vrfygrpzero
+  \message{Parsed:\r@wstrings}%
+  \let\d@=\complexfwd@polyrows
+  %\tracingmacros=1
+  \x@\cstackdown\r@wstrings,\E
+  \reset@colindexes
+  % Now turn column contents into unique columns,
+  \let\d@=\complexr@vpolyrow
+  \x@\cstackdown\r@wstrings,\E
   \trace{dmc}{Row string list is:\r@wstrings}%
   \def\tmp{0-0}%Just one column? surely that's a job for simplecols!
   \ifx\r@wstrings\tmp
@@ -521,7 +693,7 @@
   \catcode47=\sl@shcode\relax 
   \catcode`\-=\d@shcode\relax
   \let\col@do\@t@gcolinsertnames \x@\each@col\all@list\E
-  \trace{dmc}{polyglotpages end (tc:\t@rgetcols, xl:\x@flist)}%
+  \trace{dmc}{polyglotpages end (all:\all@list, tc:\t@rgetcols, xl:\x@flist)}%
 }
 
 \def\polyglotpages{% Just in case, switch some catcodes.
@@ -904,7 +1076,7 @@
       \global\diglotfirstb@dyfalse\global\diglotb@dytrue
     \else\ifdiglotb@dy
         \let\col@do\complex@textborder
-        \x@\each@col\cplx@proc@all\E
+        \x@\each@col\cplx@proc@all\cplx@proc@allII\E
     \fi\fi
   \fi\fi
   \let\\\complex@realnotehts\the\n@tecl@sses
@@ -1155,7 +1327,7 @@
     \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\empty
     \csname p@gehtloss-\the\p@lyp@geno\endcsname=0pt
     \x@\let\csname perpg@inserts-\the\p@lyp@geno\endcsname\empty
-    \advance\p@lyp@geno by 1 \ifnum\p@lyp@geno<\p@lyp@ges \repeat
+    \advance\p@lyp@geno by 1 \ifnum\p@lyp@geno<\p@lylastp@ge \repeat
   \ifx\inserts@npage\tr@e
     % As some users will probably be confused if they can't put figures into wherever column, triggered in whatever column they feel like
     % so there needs to to be a 3 step process: (a) allocate figure heights, etc, to whatever column.
@@ -1213,7 +1385,7 @@
     \cplx@trypage
     \tracetimcheck{costs}{Best path: \cplx@bestpath/\cplx@verses: \the\cplx@bestcost}%
     \let\col@do\apply@splits
-    \x@\each@col\cplx@proc@all\E
+    \x@\each@col\cplx@proc@all\cplx@proc@allII\E
   \else
     \trace{dmc}{No detailed measure for this chunk.}%
   \fi
@@ -1228,7 +1400,7 @@
   \trace{dmc}{check@galley}%
   \let\g@lleylist\empty
   \let\col@do\check@galley
-  \x@\each@col\cplx@proc@all\E
+  \x@\each@col\cplx@proc@all\cplx@proc@allII\E
   \ifpagefull
     \traceifset{drt@complexpages}%
     \trace{dmc}{Go for final layout (\g@lleylist)}%
@@ -1273,7 +1445,7 @@
   }%
   \complex@@p@geout
   \advance\p@lyp@geno by 1
-  \ifnum \p@lyp@geno<\p@lyp@ges
+  \ifnum \p@lyp@geno<\p@lylastp@ge
     \let\nxt\@complex@layout
   \else
     \let\nxt\relax
@@ -1362,7 +1534,9 @@
   \@@simplecols{#1}%
 }
 
-\def\complex@notfull{%TODO
+\def\complex@notfull{%TODO remember current settings and everything else needed to both reflow the columns and revert to the current state.
+  \trace{dmc}{complex@notfull}%
+  %TODO 1.
 }
 
 \def\cplx@ins@rtn@tecl@ss#1{%Only insert footnotes in the correct column
@@ -1376,7 +1550,8 @@
 }
 
 \def\initspl@thts#1\E{%Per-row id
-  \x@\p@rser@wstring #1\E
+  \let\p@lypr@fix\empty
+  \x@\p@rser@wstring #1-\E
   \ifcsname min@#1@cut\endcsname % A reflowed chunk cannot end up *shorter* than it was.
     \csname #1@cut\endcsname=\csname min@#1@cut\endcsname
   \else
@@ -1407,6 +1582,7 @@
       \trace{dmc}{No need to reprocess #1}%
       \setbox\csname #1box\endcsname\copy\csname partial#1\endcsname
     \else
+      \trace{dmc}{Need to reprocess #1}%
       \edef\g@lleylist{\g@lleylist#1}%
     \fi
   \else
@@ -1539,7 +1715,7 @@
   \def\v@lpfx{}\def\v@lsfx{@cut}%
   \let\col@do\s@vecuts
   %\tracingassigns=1
-  \x@\each@col\cplx@proc@all\E
+  \x@\each@col\cplx@proc@all\cplx@proc@allII\E
   %\tracingassigns=0
   \trace{dmc}{best path (\cplx@path/\cplx@verses/\cplx@trydeet: \the\cplx@trycost}%
 }
@@ -1574,7 +1750,6 @@
   \global\trialheight=\availht
   \global\let\whichtrial=\after@a@trial % FIXME?
   \global\setbox\trialbox=\box\voidb@x
-  \global\setbox\galleyexc@ss=\box\voidb@x
   \global\trialfailedfalse
   \global\intrialtrue
   \global\deadcycles=0
@@ -1832,7 +2007,7 @@
   \complex@me@surepage
   \relax
   \advance\p@lyp@geno by 1\relax
-  \ifnum \p@lyp@geno<\p@lyp@ges
+  \ifnum \p@lyp@geno<\p@lylastp@ge
     \let\nxt\complex@me@surepages
   \else
     \let\nxt\relax
@@ -1910,12 +2085,14 @@
 %Generic 'do everything to everyrow function
 
 \def\polyp@gestackec#1\E{%Gets an element of the page-strings list (page-row) and run each@col on it.
-  \x@\p@rser@wstring #1\E
+  \let\p@lypr@fix\empty
+  \x@\p@rser@wstring #1-\E
   \x@\x@\x@\each@col\csname p@lyp@gecols#1\endcsname\E
 }%
 
 \def\polyr@wstack#1\E{%Gets an element of the page-strings list (page-row) and run each@col on it.
-  \x@\p@rser@wstring #1\E
+  \let\p@lypr@fix\empty
+  \x@\p@rser@wstring #1-\E
   \x@\x@\x@\pd@\csname p@lyp@gecols#1\endcsname\E
 }%
 
@@ -1930,41 +2107,41 @@
   \def\sstackdown#1/#2\E{\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackdown\fi\n@x #2\E}
   \def\sstackrelax#1\E{}
     
-  \def\complexs@tpolyp@ges#1\E{%page processing (#1 is a page contents
-    \p@lyr@wno=0
-    \edef\r@wstring{}%
-    \x@\let\csname ins@rts-\the\p@lyp@geno\endcsname\relax
-    \edef\pg@hts{\csname ins@rts-\the\p@lyp@geno\endcsname}%
-    \fntoks{}%
-    \let\d@@\@complexs@tpolyp@ges
-    \x@\sstackdown#1/\E
-    \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
-    \x@\xdef\csname p@lypgcts-\the\p@lyp@geno\endcsname{\r@wstring}% Contents of this page (in terms of page-row)
-    \x@\gdef\csname p@lypght-\the\p@lyp@geno\x@\endcsname\x@{\x@\dimexpr\pg@hts\relax}%
-    \ifcsname p@gehtloss-\the\p@lyp@geno\endcsname\else
-      \x@\mkn@wht\csname p@gehtloss-\the\p@lyp@geno\endcsname\E % Height for this bit of page.
-    \fi
-    %\def\tmp
-    %\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp
-    \x@\gdef\csname sc@re-\the\p@lyp@geno\x@\endcsname\x@{\x@\dimexpr \the\fntoks\relax}%
-    \x@\xdef\x@\r@wstrings\x@{\ifx\r@wstrings\empty\else \r@wstrings,\fi\r@wstring}% % What is the complete list of sections (in terms of page-row)?
-    \trace{dmc}{page \the\p@lyp@geno \space height is \x@\meaning\csname p@lypght-\the\p@lyp@geno\endcsname. Score is \csname sc@re-\the\p@lyp@geno\endcsname}%
-    \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the standard boxes
-      \edef\tmpname{partial\p@lyr@wsuffx }
-      \ifcsname \tmpname\endcsname\else
-        \new@poly@page % side effect: trashes \d@
-      \fi
-    \fi
-    \global\p@lylastp@ge=\p@lyp@geno% This and p@lyp@ages  both serve as endstops (p@lypages for if < ... continue, this for possibly deeply nested recursion, where every cycle counts)
-    \global\advance\p@lyp@geno by 1\relax
-    \xdef\p@lyp@ges{\the\p@lyp@geno}%
-  }
-  \def\complexr@vpolyp@ges#1\E{%reverse processing. There may be repeated columns, and 'reversed column order' doesn't affect reading order. Thus it does not equate to an inversion (LLR becomes LZR forward and  RLZ when reversed.)
-    \p@lyr@wno=0
-    \let\d@@=\@complexr@vpolyp@ges % Do the mirrored-version
-    \x@\sstackdown#1/\E
-    \global\advance\p@lyp@geno by 1
-  }
+%  \def\complexs@tpolyp@ges#1\E{%page processing (#1 is a page contents
+%    \p@lyr@wno=0
+%    \edef\r@wstring{}%
+%    \x@\let\csname ins@rts-\the\p@lyp@geno\endcsname\relax
+%    \edef\pg@hts{\csname ins@rts-\the\p@lyp@geno\endcsname}%
+%    \fntoks{}%
+%    \let\d@@\@complexs@tpolyp@ges
+%    \x@\sstackdown#1/\E
+%    \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
+%    \x@\xdef\csname p@lypgcts-\the\p@lyp@geno\endcsname{\r@wstring}% Contents of this page (in terms of page-row)
+%    \x@\gdef\csname p@lypght-\the\p@lyp@geno\x@\endcsname\x@{\x@\dimexpr\pg@hts\relax}%
+%    \ifcsname p@gehtloss-\the\p@lyp@geno\endcsname\else
+%      \x@\mkn@wht\csname p@gehtloss-\the\p@lyp@geno\endcsname\E % Height for this bit of page.
+%    \fi
+%    %\def\tmp
+%    %\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp
+%    \x@\gdef\csname sc@re-\the\p@lyp@geno\x@\endcsname\x@{\x@\dimexpr \the\fntoks\relax}%
+%    \x@\xdef\x@\r@wstrings\x@{\ifx\r@wstrings\empty\else \r@wstrings,\fi\r@wstring}% % What is the complete list of sections (in terms of page-row)?
+%    \trace{dmc}{page \the\p@lyp@geno \space height is \x@\meaning\csname p@lypght-\the\p@lyp@geno\endcsname. Score is \csname sc@re-\the\p@lyp@geno\endcsname}%
+%    \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the standard boxes
+%      \edef\tmpname{partial\p@lyr@wsuffx }
+%      \ifcsname \tmpname\endcsname\else
+%        \new@poly@page % side effect: trashes \d@
+%      \fi
+%    \fi
+%    \xdef\p@lyp@ges{\the\p@lyp@geno}%
+%    \global\p@lylastp@ge=\p@lyp@geno% This and p@lyp@ages  both serve as endstops (p@lypages for if < ... continue, this for possibly deeply nested recursion, where every cycle counts)
+%    \global\advance\p@lyp@geno by 1\relax
+%  }
+%  \def\complexr@vpolyp@ges#1\E{%reverse processing. There may be repeated columns, and 'reversed column order' doesn't affect reading order. Thus it does not equate to an inversion (LLR becomes LZR forward and  RLZ when reversed.)
+%    \p@lyr@wno=0
+%    \let\d@@=\@complexr@vpolyp@ges % Do the mirrored-version
+%    \x@\sstackdown#1/\E
+%    \global\advance\p@lyp@geno by 1
+%  }
   \def\complexcheck@polyp@ges#1\E{%
     \p@lyr@wno=0
     \let\d@@\@complexcheck@polyp@ges

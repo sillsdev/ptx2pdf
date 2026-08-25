@@ -2812,3 +2812,3061 @@ tim> [local@split@defs] L 21 6
 tim> [local@split@defs] R 38 11
 tim> [local@split@defs] A 1 1
 tim> [options]  33
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 5
+tim> [local@split@defs] A 15 4
+tim> [options]  224
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 908
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 4
+tim> [options]  248
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 900
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 4
+tim> [options]  229
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 807
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 7
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 15 5
+tim> [options]  239
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 966
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 10
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 15 9
+tim> [options]  408
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1064
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 10
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 15 9
+tim> [options]  406
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 985
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 11
+tim> [local@split@defs] R 9 5
+tim> [local@split@defs] A 15 9
+tim> [options]  452
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1260
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 11
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 15 9
+tim> [options]  398
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1027
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  220
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 875
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 7
+tim> [local@split@defs] A 15 10
+tim> [options]  418
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1180
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  226
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 863
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 8
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  289
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 971
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  227
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 931
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  236
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 977
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  228
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 992
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 4
+tim> [options]  233
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 863
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  224
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1107
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  228
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1113
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 15 5
+tim> [options]  238
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 862
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 22
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  232
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 538
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 15
+tim> [a@a@trial] end 13
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 4
+tim> [options]  235
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 795
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 22
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  231
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 840
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 22
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  223
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 834
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 22
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  238
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 903
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 25
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  253
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 892
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 23
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  222
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 851
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 22
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  243
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 561
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 14
+tim> [a@a@trial] end 13
+tim> [local@split@defs] L 17 10
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 15 9
+tim> [options]  417
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1027
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 23
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 4
+tim> [options]  229
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 798
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 22
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 17 6
+tim> [local@split@defs] R 1 0
+tim> [local@split@defs] A 6 2
+tim> [options]  49
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:14/L-1R0A1: v0-v1: 657.99399pt 43
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 16 10
+tim> [local@split@defs] R 7 5
+tim> [local@split@defs] A 14 5
+tim> [options]  245
+tim> [costs] Best path: ,0-0:13,0-1:14,0-2:18/L0R0A5: v0-v5: 1160.3881pt 511
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 14x12.0pt
+d> Splitting R(0-2)) to 18x12.0pt
+tim> [local@split@defs] L 16 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  38
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:15/L-1R0A6: v0-v6: 1230.70876pt 21
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 15x12.0pt
+tim> [local@split@defs] L 44 14
+tim> [local@split@defs] R 21 7
+tim> [local@split@defs] A 38 12
+tim> [options]  692
+tim> [costs] Best path: ,0-0:13,0-1:25,0-2:0/L0R0A0: v0-v0: 19.86662pt 6177
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 25x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 32
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 18 6
+tim> [local@split@defs] R 18 6
+tim> [local@split@defs] A 13 5
+tim> [options]  268
+tim> [costs] Best path: ,0-0:3,0-1:4,0-2:13/L23R12A19: v12-v23: 19.88571pt 1035
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 13x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 25
+tim> [a@a@trial] end 23
+tim> [any@trial] output 5
+tim> [any@trial] - 26
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 15 6
+tim> [local@split@defs] R 5 1
+tim> [local@split@defs] A 13 4
+tim> [options]  131
+tim> [costs] Best path: ,0-0:14,0-1:1,0-2:9/L17R16A20: v16-v20: 293.86285pt 212
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 9x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 24
+tim> [a@a@trial] end 5
+tim> [any@trial] output 4
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 21
+tim> [any@trial] output 22
+tim> [any@trial] - 38
+tim> [any@trial] output 3
+tim> [any@trial] - 27
+tim> [any@trial] output 4
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 20
+tim> [any@trial] output 21
+tim> [any@trial] - 37
+tim> [any@trial] output 3
+tim> [any@trial] - 26
+tim> [any@trial] output 3
+tim> [any@trial] - 11
+tim> [any@trial] output 12
+tim> [any@trial] - 27
+tim> [any@trial] output 3
+tim> [any@trial] - 18
+tim> [a@a@trial] end 18
+tim> [any@trial] output 2
+tim> [any@trial] - 16
+tim> [a@a@trial] end 17
+tim> [any@trial] output 2
+tim> [any@trial] - 7
+tim> [any@trial] output 8
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 22
+tim> [any@trial] output 1
+tim> [any@trial] - 15
+tim> [any@trial] output 1
+tim> [any@trial] - 9
+tim> [a@a@trial] end 11
+tim> [local@split@defs] L 42 15
+tim> [local@split@defs] R 19 7
+tim> [local@split@defs] A 10 4
+tim> [options]  445
+tim> [costs] Best path: ,0-0:20,0-1:10,0-2:0/L0R12A-1: v0-v12: 40.55186pt 4303
+d> Splitting L(0-0)) to 20x12.0pt
+d> Splitting Z(0-0)) to 20x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [local@split@defs] L 42 15
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 39 14
+tim> [options]  352
+tim> [costs] Best path: ,0-0:1,0-1:25,0-2:1/L24R13A7: v7-v24: 4382.308pt 121
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 25x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 28
+tim> [a@a@trial] end 25
+tim> [any@trial] output 4
+tim> [any@trial] - 18
+tim> [a@a@trial] end 17
+tim> [local@split@defs] L 42 13
+tim> [local@split@defs] R 32 10
+tim> [local@split@defs] A 15 5
+tim> [options]  487
+tim> [costs] Best path: ,0-0:14,0-1:5,0-2:0/L1R-1A-1: v1-v1: 5.51051pt 2142
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 13
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 42 17
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 3
+tim> [options]  139
+tim> [costs] Best path: ,0-0:1,0-1:5,0-2:35/L-1R0A-1: v0-v0: 1405.87326pt 19
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 35x12.0pt
+tim> [any@trial] output 8
+tim> [any@trial] - 25
+tim> [a@a@trial] end 19
+tim> [any@trial] output 14
+tim> [any@trial] - 43
+tim> [a@a@trial] end 27
+tim> [local@split@defs] L 51 16
+tim> [local@split@defs] R 15 9
+tim> [local@split@defs] A 51 17
+tim> [options]  969
+tim> [costs] Best path: ,0-0:4,0-1:10,0-2:1/L13R-1A9: v9-v13: 60.07837pt 880
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 16
+tim> [a@a@trial] end 14
+tim> [any@trial] output 2
+tim> [any@trial] - 11
+tim> [a@a@trial] end 13
+tim> [local@split@defs] L 51 17
+tim> [local@split@defs] R 13 5
+tim> [local@split@defs] A 51 18
+tim> [options]  370
+tim> [costs] Best path: ,0-0:6,0-1:1,0-2:29/L1R0A12: v0-v12: 303.37354pt 588
+d> Splitting L(0-0)) to 6x12.0pt
+d> Splitting Z(0-0)) to 6x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 15
+tim> [a@a@trial] end 13
+tim> [any@trial] output 3
+tim> [any@trial] - 14
+tim> [a@a@trial] end 14
+tim> [local@split@defs] L 33 22
+tim> [local@split@defs] R 13 5
+tim> [local@split@defs] A 39 14
+tim> [options]  547
+tim> [costs] Best path: ,0-0:15,0-1:4,0-2:1/L1R-1A13: v1-v13: 26.61836pt 5437
+d> Splitting L(0-0)) to 15x12.0pt
+d> Splitting Z(0-0)) to 15x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 19
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 33 27
+tim> [local@split@defs] R 11 9
+tim> [local@split@defs] A 39 26
+tim> [options]  249
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:32/L-1R0A13: v0-v13: 3847.97845pt 34
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 32x12.0pt
+tim> [any@trial] output 11
+tim> [any@trial] - 36
+tim> [a@a@trial] end 27
+tim> [any@trial] output 6
+tim> [any@trial] - 29
+tim> [a@a@trial] end 32
+tim> [local@split@defs] L 24 14
+tim> [local@split@defs] R 11 11
+tim> [local@split@defs] A 64 48
+tim> [options]  2025
+tim> [costs] Best path: ,0-0:13,0-1:32,0-2:0/L2R-1A3: v2-v3: 12.0936pt 5648
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 32x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 9
+tim> [any@trial] - 44
+tim> [a@a@trial] end 28
+tim> [local@split@defs] L 20 17
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 64 40
+tim> [options]  524
+tim> [costs] Best path: ,0-0:5,0-1:1,0-2:6/L12R11A-1: v11-v12: 58.31694pt 237
+d> Splitting L(0-0)) to 5x12.0pt
+d> Splitting Z(0-0)) to 5x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 6x12.0pt
+tim> [any@trial] output 7
+tim> [any@trial] - 27
+tim> [a@a@trial] end 22
+tim> [any@trial] output 4
+tim> [any@trial] - 24
+tim> [a@a@trial] end 25
+tim> [local@split@defs] L 11 7
+tim> [local@split@defs] R 3 2
+tim> [local@split@defs] A 50 33
+tim> [options]  1170
+tim> [costs] Best path: ,0-0:4,0-1:40,0-2:1/L8R14A8: v8-v14: 37.13603pt 1551
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 40x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 18
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 11 9
+tim> [local@split@defs] R 8 5
+tim> [local@split@defs] A 50 39
+tim> [options]  237
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:4/L14R17A13: v13-v17: 235.93932pt 48
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 4x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 23
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 4 2
+tim> [local@split@defs] A 18 7
+tim> [options]  276
+tim> [costs] Best path: ,0-0:16,0-1:18,0-2:29/L20R18A-1: v18-v20: 156.01312pt 1
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 18x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 7 3
+tim> [local@split@defs] A 13 5
+tim> [options]  176
+tim> [costs] Best path: ,0-0:6,0-1:10,0-2:1/L21R20A21: v20-v21: -15.55637pt 518
+d> Splitting L(0-0)) to 6x12.0pt
+d> Splitting Z(0-0)) to 6x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 27
+tim> [a@a@trial] end 39
+tim> [any@trial] output 8
+tim> [any@trial] - 29
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 4 2
+tim> [local@split@defs] A 3 1
+tim> [options]  64
+tim> [costs] Best path: ,0-0:4,0-1:3,0-2:31/L-1R0A19: v0-v19: 1719.42867pt 146
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 31x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 9 5
+tim> [local@split@defs] A 20 10
+tim> [options]  462
+tim> [costs] Best path: ,0-0:11,0-1:20,0-2:26/L19R-1A-1: v19-v19: 219.67053pt 1
+d> Splitting L(0-0)) to 11x12.0pt
+d> Splitting Z(0-0)) to 11x12.0pt
+d> Splitting A(0-1)) to 20x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 2
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:14/L-1R21A23: v21-v23: 222.03273pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 2
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A23: v0-v23: 2080.07886pt 34
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A-1: v0-v0: 2080.07886pt 21
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 17 6
+tim> [options]  253
+tim> [costs] Best path: ,0-0:9,0-1:16,0-2:24/L20R2A27: v2-v27: 167.96169pt 1431
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 16x12.0pt
+d> Splitting R(0-2)) to 24x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 27
+tim> [a@a@trial] end 23
+tim> [any@trial] output 6
+tim> [any@trial] - 24
+tim> [a@a@trial] end 21
+tim> [local@split@defs] L 21 18
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 2 1
+tim> [options]  78
+tim> [costs] Best path: ,0-0:3,0-1:1,0-2:22/L-1R4A1: v1-v4: 198.04376pt 71
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 22x12.0pt
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 6 2
+tim> [local@split@defs] A 14 5
+tim> [options]  154
+tim> [costs] Best path: ,0-0:12,0-1:4,0-2:29/L-1R0A5: v0-v5: 179.07486pt 568
+d> Splitting L(0-0)) to 12x12.0pt
+d> Splitting Z(0-0)) to 12x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 18
+tim> [a@a@trial] end 14
+tim> [any@trial] output 3
+tim> [any@trial] - 16
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 11 4
+tim> [options]  76
+tim> [costs] Best path: ,0-0:1,0-1:7,0-2:30/L-1R8A10: v8-v10: 195.10588pt 54
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 7x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 23
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 11 3
+tim> [local@split@defs] A 11 5
+tim> [options]  196
+tim> [costs] Best path: ,0-0:16,0-1:1,0-2:30/L2R0A11: v0-v11: 241.7387pt 328
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 21
+tim> [a@a@trial] end 18
+tim> [any@trial] output 4
+tim> [any@trial] - 21
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 24 7
+tim> [options]  167
+tim> [costs] Best path: ,0-0:1,0-1:24,0-2:26/L-1R7A-1: v7-v7: 173.08438pt 88
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 24x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 25 9
+tim> [local@split@defs] R 10 3
+tim> [local@split@defs] A 20 8
+tim> [options]  317
+tim> [costs] Best path: ,0-0:9,0-1:14,0-2:7/L26R26A26: v26-v26: -1.51323pt 1061
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 14x12.0pt
+d> Splitting R(0-2)) to 7x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 24
+tim> [a@a@trial] end 24
+tim> [any@trial] output 5
+tim> [any@trial] - 21
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 8 3
+tim> [local@split@defs] R 3 2
+tim> [local@split@defs] A 5 2
+tim> [options]  74
+tim> [costs] Best path: ,0-0:4,0-1:5,0-2:14/L25R26A22: v22-v26: 224.75583pt 124
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 6 2
+tim> [local@split@defs] A 11 4
+tim> [options]  154
+tim> [costs] Best path: ,0-0:10,0-1:11,0-2:15/L27R20A24: v20-v27: 302.896pt 425
+d> Splitting L(0-0)) to 10x12.0pt
+d> Splitting Z(0-0)) to 10x12.0pt
+d> Splitting A(0-1)) to 11x12.0pt
+d> Splitting R(0-2)) to 15x12.0pt
+tim> [local@split@defs] L 13 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:4,0-2:30/L-1R9A28: v9-v28: 5589.89438pt 19
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 1
+tim> [options]  26
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A28: v0-v28: 2080.07886pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  25
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A-1: v0-v0: 2080.07886pt 14
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 8 2
+tim> [local@split@defs] A 17 6
+tim> [options]  219
+tim> [costs] Best path: ,0-0:10,0-1:13,0-2:27/L18R26A27: v18-v27: 302.96169pt 7
+d> Splitting L(0-0)) to 10x12.0pt
+d> Splitting Z(0-0)) to 10x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 27x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 25
+tim> [a@a@trial] end 20
+tim> [any@trial] output 5
+tim> [any@trial] - 20
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 4 2
+tim> [options]  37
+tim> [costs] Best path: ,0-0:1,0-1:3,0-2:23/L-1R6A1: v1-v6: 137.24318pt 28
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 23x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 7 3
+tim> [local@split@defs] A 16 5
+tim> [options]  191
+tim> [costs] Best path: ,0-0:16,0-1:9,0-2:29/L-1R6A5: v5-v6: 155.61604pt 654
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 20
+tim> [a@a@trial] end 19
+tim> [any@trial] output 4
+tim> [any@trial] - 20
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 8 3
+tim> [options]  60
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:23/L-1R4A9: v4-v9: 512.94887pt 42
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 23x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 19
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 41 13
+tim> [local@split@defs] R 17 6
+tim> [local@split@defs] A 8 3
+tim> [options]  385
+tim> [costs] Best path: ,0-0:9,0-1:1,0-2:31/L1R22A12: v1-v22: 1444.68365pt 663
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 31x12.0pt
+tim> [any@trial] output 7
+tim> [any@trial] - 25
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 24 9
+tim> [local@split@defs] R 17 10
+tim> [local@split@defs] A 38 19
+tim> [options]  523
+tim> [costs] Best path: ,0-0:2,0-1:21,0-2:1/L1R-1A13: v1-v13: 47.30864pt 1251
+d> Splitting L(0-0)) to 2x12.0pt
+d> Splitting Z(0-0)) to 2x12.0pt
+d> Splitting A(0-1)) to 21x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 34
+tim> [a@a@trial] end 22
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 17 5
+tim> [local@split@defs] A 1 1
+tim> [options]  135
+tim> [costs] Best path: ,0-0:14,0-1:5,0-2:1/L21R-1A13: v13-v21: 1089.17711pt 19
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 15
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 13 4
+tim> [options]  84
+tim> [costs] Best path: ,0-0:1,0-1:13,0-2:24/L-1R6A16: v6-v16: 1702.01578pt 70
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 24x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 14 5
+tim> [options]  159
+tim> [costs] Best path: ,0-0:9,0-1:12,0-2:21/L21R1A17: v1-v21: 159.01645pt 1128
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 12x12.0pt
+d> Splitting R(0-2)) to 21x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 25
+tim> [a@a@trial] end 19
+tim> [any@trial] output 4
+tim> [any@trial] - 19
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 19 12
+tim> [local@split@defs] R 1 2
+tim> [local@split@defs] A 2 1
+tim> [options]  51
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:27/L-1R7A1: v1-v7: 313.4474pt 32
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 27x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 8 2
+tim> [local@split@defs] A 13 4
+tim> [options]  171
+tim> [costs] Best path: ,0-0:8,0-1:12,0-2:30/L21R-1A5: v5-v21: 196.81796pt 640
+d> Splitting L(0-0)) to 8x12.0pt
+d> Splitting Z(0-0)) to 8x12.0pt
+d> Splitting A(0-1)) to 12x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 1 0
+tim> [local@split@defs] A 1 1
+tim> [options]  26
+tim> [costs] Best path: ,0-0:1,0-1:4,0-2:26/L-1R7A6: v6-v7: 203.92776pt 14
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 16 6
+tim> [options]  232
+tim> [costs] Best path: ,0-0:7,0-1:13,0-2:29/L26R14A17: v14-v26: 707.96169pt 11
+d> Splitting L(0-0)) to 7x12.0pt
+d> Splitting Z(0-0)) to 7x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 25
+tim> [a@a@trial] end 20
+tim> [any@trial] output 5
+tim> [any@trial] - 21
+tim> [a@a@trial] end 13
+tim> [local@split@defs] L 19 12
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 3 1
+tim> [options]  71
+tim> [costs] Best path: ,0-0:5,0-1:3,0-2:26/L-1R7A11: v7-v11: 402.63199pt 111
+d> Splitting L(0-0)) to 5x12.0pt
+d> Splitting Z(0-0)) to 5x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 3 1
+tim> [local@split@defs] A 4 2
+tim> [options]  54
+tim> [costs] Best path: ,0-0:3,0-1:4,0-2:44/L-1R0A11: v0-v11: 3550.4886pt 70
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 44x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:3,0-2:43/L-1R0A17: v0-v17: 6011.97977pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 43x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 2 1
+tim> [local@split@defs] A 2 1
+tim> [options]  34
+tim> [costs] Best path: ,0-0:2,0-1:2,0-2:49/L-1R0A17: v0-v17: 6252.60815pt 73
+d> Splitting L(0-0)) to 2x12.0pt
+d> Splitting Z(0-0)) to 2x12.0pt
+d> Splitting A(0-1)) to 2x12.0pt
+d> Splitting R(0-2)) to 49x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:51/L-1R0A18: v0-v18: 6825.92184pt 23
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 51x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 2
+tim> [local@split@defs] A 1 1
+tim> [options]  38
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:55/L-1R0A18: v0-v18: 6976.07886pt 18
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 55x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:55/L-1R0A18: v0-v18: 6976.07886pt 21
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 55x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  230
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1143
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 21
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 17 12
+tim> [local@split@defs] R 1 2
+tim> [local@split@defs] A 6 4
+tim> [options]  84
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:14/L-1R0A1: v0-v1: 657.99399pt 50
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 16 5
+tim> [local@split@defs] R 7 3
+tim> [local@split@defs] A 14 5
+tim> [options]  169
+tim> [costs] Best path: ,0-0:13,0-1:14,0-2:18/L0R0A5: v0-v5: 1160.3881pt 675
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 14x12.0pt
+d> Splitting R(0-2)) to 18x12.0pt
+tim> [local@split@defs] L 16 6
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  26
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:15/L-1R0A6: v0-v6: 1230.70876pt 24
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 15x12.0pt
+tim> [local@split@defs] L 44 14
+tim> [local@split@defs] R 21 7
+tim> [local@split@defs] A 38 12
+tim> [options]  718
+tim> [costs] Best path: ,0-0:13,0-1:25,0-2:0/L0R0A0: v0-v0: 19.86662pt 11418
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 25x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 32
+tim> [a@a@trial] end 24
+tim> [local@split@defs] L 18 15
+tim> [local@split@defs] R 18 12
+tim> [local@split@defs] A 13 8
+tim> [options]  474
+tim> [costs] Best path: ,0-0:3,0-1:4,0-2:13/L23R12A19: v12-v23: 19.88571pt 1510
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 13x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 21
+tim> [a@a@trial] end 19
+tim> [any@trial] output 5
+tim> [any@trial] - 22
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 15 8
+tim> [local@split@defs] R 5 3
+tim> [local@split@defs] A 13 5
+tim> [options]  177
+tim> [costs] Best path: ,0-0:14,0-1:1,0-2:9/L17R16A20: v16-v20: 293.86285pt 264
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 9x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 26
+tim> [a@a@trial] end 5
+tim> [any@trial] output 4
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 22
+tim> [any@trial] output 23
+tim> [any@trial] - 39
+tim> [any@trial] output 4
+tim> [any@trial] - 27
+tim> [any@trial] output 4
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 20
+tim> [any@trial] output 21
+tim> [any@trial] - 40
+tim> [any@trial] output 3
+tim> [any@trial] - 26
+tim> [any@trial] output 3
+tim> [any@trial] - 11
+tim> [any@trial] output 12
+tim> [any@trial] - 28
+tim> [any@trial] output 2
+tim> [any@trial] - 21
+tim> [a@a@trial] end 23
+tim> [any@trial] output 2
+tim> [any@trial] - 12
+tim> [a@a@trial] end 12
+tim> [any@trial] output 2
+tim> [any@trial] - 11
+tim> [any@trial] output 12
+tim> [any@trial] - 21
+tim> [any@trial] output 22
+tim> [any@trial] - 38
+tim> [any@trial] output 1
+tim> [any@trial] - 17
+tim> [any@trial] output 2
+tim> [any@trial] - 18
+tim> [a@a@trial] end 14
+tim> [local@split@defs] L 42 18
+tim> [local@split@defs] R 19 7
+tim> [local@split@defs] A 10 3
+tim> [options]  483
+tim> [costs] Best path: ,0-0:20,0-1:10,0-2:0/L0R12A-1: v0-v12: 40.55186pt 4254
+d> Splitting L(0-0)) to 20x12.0pt
+d> Splitting Z(0-0)) to 20x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [local@split@defs] L 42 17
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 39 13
+tim> [options]  518
+tim> [costs] Best path: ,0-0:1,0-1:25,0-2:1/L24R13A7: v7-v24: 4382.308pt 159
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 25x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 7
+tim> [any@trial] - 25
+tim> [a@a@trial] end 17
+tim> [any@trial] output 2
+tim> [any@trial] - 11
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 42 25
+tim> [local@split@defs] R 32 22
+tim> [local@split@defs] A 15 5
+tim> [options]  815
+tim> [costs] Best path: ,0-0:14,0-1:5,0-2:0/L1R-1A-1: v1-v1: 5.51051pt 2844
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 24
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 42 14
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  85
+tim> [costs] Best path: ,0-0:1,0-1:5,0-2:35/L-1R0A-1: v0-v0: 1405.87326pt 16
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 35x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 14
+tim> [a@a@trial] end 12
+tim> [any@trial] output 6
+tim> [any@trial] - 28
+tim> [a@a@trial] end 17
+tim> [local@split@defs] L 51 27
+tim> [local@split@defs] R 15 5
+tim> [local@split@defs] A 51 33
+tim> [options]  1309
+tim> [costs] Best path: ,0-0:4,0-1:10,0-2:1/L13R-1A9: v9-v13: 60.07837pt 1311
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 17
+tim> [a@a@trial] end 13
+tim> [any@trial] output 2
+tim> [any@trial] - 11
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 51 19
+tim> [local@split@defs] R 13 5
+tim> [local@split@defs] A 51 18
+tim> [options]  504
+tim> [costs] Best path: ,0-0:6,0-1:1,0-2:29/L1R0A12: v0-v12: 303.37354pt 1044
+d> Splitting L(0-0)) to 6x12.0pt
+d> Splitting Z(0-0)) to 6x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 25
+tim> [a@a@trial] end 18
+tim> [any@trial] output 5
+tim> [any@trial] - 23
+tim> [a@a@trial] end 21
+tim> [local@split@defs] L 33 22
+tim> [local@split@defs] R 13 5
+tim> [local@split@defs] A 39 16
+tim> [options]  656
+tim> [costs] Best path: ,0-0:15,0-1:4,0-2:1/L1R-1A13: v1-v13: 26.61836pt 5395
+d> Splitting L(0-0)) to 15x12.0pt
+d> Splitting Z(0-0)) to 15x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 20
+tim> [a@a@trial] end 22
+tim> [local@split@defs] L 33 13
+tim> [local@split@defs] R 11 3
+tim> [local@split@defs] A 39 13
+tim> [options]  128
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:32/L-1R0A13: v0-v13: 3847.97845pt 19
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 32x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 16
+tim> [a@a@trial] end 12
+tim> [any@trial] output 2
+tim> [any@trial] - 13
+tim> [a@a@trial] end 14
+tim> [local@split@defs] L 24 8
+tim> [local@split@defs] R 11 4
+tim> [local@split@defs] A 64 20
+tim> [options]  1026
+tim> [costs] Best path: ,0-0:13,0-1:32,0-2:0/L2R-1A3: v2-v3: 12.0936pt 5154
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 32x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 11
+tim> [any@trial] - 66
+tim> [a@a@trial] end 43
+tim> [local@split@defs] L 20 8
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 64 22
+tim> [options]  306
+tim> [costs] Best path: ,0-0:5,0-1:1,0-2:6/L12R11A-1: v11-v12: 58.31694pt 224
+d> Splitting L(0-0)) to 5x12.0pt
+d> Splitting Z(0-0)) to 5x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 6x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 28
+tim> [a@a@trial] end 25
+tim> [any@trial] output 6
+tim> [any@trial] - 28
+tim> [a@a@trial] end 27
+tim> [local@split@defs] L 11 5
+tim> [local@split@defs] R 3 2
+tim> [local@split@defs] A 50 17
+tim> [options]  1133
+tim> [costs] Best path: ,0-0:4,0-1:40,0-2:1/L8R14A8: v8-v14: 37.13603pt 1558
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 40x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 21
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 11 8
+tim> [local@split@defs] R 8 5
+tim> [local@split@defs] A 50 32
+tim> [options]  188
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:4/L14R17A13: v13-v17: 235.93932pt 140
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 4x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 25
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 19 12
+tim> [local@split@defs] R 4 6
+tim> [local@split@defs] A 18 11
+tim> [options]  565
+tim> [costs] Best path: ,0-0:16,0-1:18,0-2:29/L20R18A-1: v18-v20: 156.01312pt 1
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 18x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 7 2
+tim> [local@split@defs] A 13 5
+tim> [options]  184
+tim> [costs] Best path: ,0-0:6,0-1:10,0-2:1/L21R20A21: v20-v21: -15.55637pt 503
+d> Splitting L(0-0)) to 6x12.0pt
+d> Splitting Z(0-0)) to 6x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 41
+tim> [a@a@trial] end 28
+tim> [any@trial] output 7
+tim> [any@trial] - 26
+tim> [a@a@trial] end 21
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 4 2
+tim> [local@split@defs] A 3 2
+tim> [options]  68
+tim> [costs] Best path: ,0-0:4,0-1:3,0-2:31/L-1R0A19: v0-v19: 1719.42867pt 143
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 31x12.0pt
+tim> [local@split@defs] L 19 8
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 20 7
+tim> [options]  333
+tim> [costs] Best path: ,0-0:11,0-1:20,0-2:26/L19R-1A-1: v19-v19: 219.67053pt 1
+d> Splitting L(0-0)) to 11x12.0pt
+d> Splitting Z(0-0)) to 11x12.0pt
+d> Splitting A(0-1)) to 20x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:14/L-1R21A23: v21-v23: 222.03273pt 21
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 1
+tim> [options]  37
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A23: v0-v23: 2080.07886pt 30
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A-1: v0-v0: 2080.07886pt 21
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 17 6
+tim> [options]  252
+tim> [costs] Best path: ,0-0:9,0-1:16,0-2:24/L20R2A27: v2-v27: 167.96169pt 1698
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 16x12.0pt
+d> Splitting R(0-2)) to 24x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 27
+tim> [a@a@trial] end 21
+tim> [any@trial] output 6
+tim> [any@trial] - 22
+tim> [a@a@trial] end 21
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 2 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:3,0-1:1,0-2:22/L-1R4A1: v1-v4: 198.04376pt 70
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 22x12.0pt
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 6 2
+tim> [local@split@defs] A 14 5
+tim> [options]  146
+tim> [costs] Best path: ,0-0:12,0-1:4,0-2:29/L-1R0A5: v0-v5: 179.07486pt 581
+d> Splitting L(0-0)) to 12x12.0pt
+d> Splitting Z(0-0)) to 12x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 18
+tim> [a@a@trial] end 17
+tim> [any@trial] output 3
+tim> [any@trial] - 18
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 11 4
+tim> [options]  75
+tim> [costs] Best path: ,0-0:1,0-1:7,0-2:30/L-1R8A10: v8-v10: 195.10588pt 58
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 7x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 24
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 11 4
+tim> [local@split@defs] A 11 4
+tim> [options]  196
+tim> [costs] Best path: ,0-0:16,0-1:1,0-2:30/L2R0A11: v0-v11: 241.7387pt 325
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 22
+tim> [a@a@trial] end 18
+tim> [any@trial] output 5
+tim> [any@trial] - 21
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 21 8
+tim> [local@split@defs] R 1 2
+tim> [local@split@defs] A 24 8
+tim> [options]  163
+tim> [costs] Best path: ,0-0:1,0-1:24,0-2:26/L-1R7A-1: v7-v7: 173.08438pt 100
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 24x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 25 8
+tim> [local@split@defs] R 10 3
+tim> [local@split@defs] A 20 7
+tim> [options]  304
+tim> [costs] Best path: ,0-0:9,0-1:14,0-2:7/L26R26A26: v26-v26: -1.51323pt 1210
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 14x12.0pt
+d> Splitting R(0-2)) to 7x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 25
+tim> [a@a@trial] end 25
+tim> [any@trial] output 5
+tim> [any@trial] - 21
+tim> [a@a@trial] end 21
+tim> [local@split@defs] L 8 3
+tim> [local@split@defs] R 3 2
+tim> [local@split@defs] A 5 2
+tim> [options]  71
+tim> [costs] Best path: ,0-0:4,0-1:5,0-2:14/L25R26A22: v22-v26: 224.75583pt 140
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 6 3
+tim> [local@split@defs] A 11 3
+tim> [options]  160
+tim> [costs] Best path: ,0-0:10,0-1:11,0-2:15/L27R20A24: v20-v27: 302.896pt 527
+d> Splitting L(0-0)) to 10x12.0pt
+d> Splitting Z(0-0)) to 10x12.0pt
+d> Splitting A(0-1)) to 11x12.0pt
+d> Splitting R(0-2)) to 15x12.0pt
+tim> [local@split@defs] L 13 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  37
+tim> [costs] Best path: ,0-0:1,0-1:4,0-2:30/L-1R9A28: v9-v28: 5589.89438pt 23
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 1
+tim> [options]  25
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A28: v0-v28: 2080.07886pt 50
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 13 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  36
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A-1: v0-v0: 2080.07886pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 8 4
+tim> [local@split@defs] A 17 7
+tim> [options]  290
+tim> [costs] Best path: ,0-0:10,0-1:13,0-2:27/L18R26A27: v18-v27: 302.96169pt 1
+d> Splitting L(0-0)) to 10x12.0pt
+d> Splitting Z(0-0)) to 10x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 27x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 25
+tim> [a@a@trial] end 21
+tim> [any@trial] output 5
+tim> [any@trial] - 21
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 1 0
+tim> [local@split@defs] A 4 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:3,0-2:23/L-1R6A1: v1-v6: 137.24318pt 38
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 23x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 7 2
+tim> [local@split@defs] A 16 5
+tim> [options]  201
+tim> [costs] Best path: ,0-0:16,0-1:9,0-2:29/L-1R6A5: v5-v6: 155.61604pt 821
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 20
+tim> [a@a@trial] end 20
+tim> [any@trial] output 4
+tim> [any@trial] - 20
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 1 0
+tim> [local@split@defs] A 8 3
+tim> [options]  65
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:23/L-1R4A9: v4-v9: 512.94887pt 51
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 23x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 19
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 41 13
+tim> [local@split@defs] R 17 6
+tim> [local@split@defs] A 8 3
+tim> [options]  400
+tim> [costs] Best path: ,0-0:9,0-1:1,0-2:31/L1R22A12: v1-v22: 1444.68365pt 795
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 31x12.0pt
+tim> [any@trial] output 7
+tim> [any@trial] - 27
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 24 8
+tim> [local@split@defs] R 17 6
+tim> [local@split@defs] A 38 12
+tim> [options]  414
+tim> [costs] Best path: ,0-0:2,0-1:21,0-2:1/L1R-1A13: v1-v13: 47.30864pt 1321
+d> Splitting L(0-0)) to 2x12.0pt
+d> Splitting Z(0-0)) to 2x12.0pt
+d> Splitting A(0-1)) to 21x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 7
+tim> [any@trial] - 38
+tim> [a@a@trial] end 22
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 17 5
+tim> [local@split@defs] A 1 1
+tim> [options]  139
+tim> [costs] Best path: ,0-0:14,0-1:5,0-2:1/L21R-1A13: v13-v21: 1089.17711pt 19
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 24
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 19 11
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 13 7
+tim> [options]  137
+tim> [costs] Best path: ,0-0:1,0-1:13,0-2:24/L-1R6A16: v6-v16: 1702.01578pt 72
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 24x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 14 5
+tim> [options]  196
+tim> [costs] Best path: ,0-0:9,0-1:12,0-2:21/L21R1A17: v1-v21: 159.01645pt 1032
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 12x12.0pt
+d> Splitting R(0-2)) to 21x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 26
+tim> [a@a@trial] end 19
+tim> [any@trial] output 4
+tim> [any@trial] - 19
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 1 0
+tim> [local@split@defs] A 2 1
+tim> [options]  31
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:27/L-1R7A1: v1-v7: 313.4474pt 29
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 27x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 8 4
+tim> [local@split@defs] A 13 4
+tim> [options]  178
+tim> [costs] Best path: ,0-0:8,0-1:12,0-2:30/L21R-1A5: v5-v21: 196.81796pt 720
+d> Splitting L(0-0)) to 8x12.0pt
+d> Splitting Z(0-0)) to 8x12.0pt
+d> Splitting A(0-1)) to 12x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [local@split@defs] L 19 11
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:4,0-2:26/L-1R7A6: v6-v7: 203.92776pt 20
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 16 5
+tim> [options]  243
+tim> [costs] Best path: ,0-0:7,0-1:13,0-2:29/L26R14A17: v14-v26: 707.96169pt 10
+d> Splitting L(0-0)) to 7x12.0pt
+d> Splitting Z(0-0)) to 7x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 23
+tim> [a@a@trial] end 21
+tim> [any@trial] output 5
+tim> [any@trial] - 22
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 3 2
+tim> [options]  48
+tim> [costs] Best path: ,0-0:5,0-1:3,0-2:26/L-1R7A11: v7-v11: 402.63199pt 92
+d> Splitting L(0-0)) to 5x12.0pt
+d> Splitting Z(0-0)) to 5x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 3 1
+tim> [local@split@defs] A 4 1
+tim> [options]  53
+tim> [costs] Best path: ,0-0:3,0-1:4,0-2:44/L-1R0A11: v0-v11: 3550.4886pt 43
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 44x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:3,0-2:43/L-1R0A17: v0-v17: 6011.97977pt 21
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 43x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 2 1
+tim> [local@split@defs] A 2 1
+tim> [options]  34
+tim> [costs] Best path: ,0-0:2,0-1:2,0-2:49/L-1R0A17: v0-v17: 6252.60815pt 47
+d> Splitting L(0-0)) to 2x12.0pt
+d> Splitting Z(0-0)) to 2x12.0pt
+d> Splitting A(0-1)) to 2x12.0pt
+d> Splitting R(0-2)) to 49x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:51/L-1R0A18: v0-v18: 6825.92184pt 24
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 51x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:55/L-1R0A18: v0-v18: 6976.07886pt 21
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 55x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  38
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:55/L-1R0A18: v0-v18: 6976.07886pt 19
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 55x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 15 5
+tim> [options]  251
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1062
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 23
+tim> [a@a@trial] end 22
+tim> [local@split@defs] L 17 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 6 4
+tim> [options]  106
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:14/L-1R0A1: v0-v1: 657.99399pt 57
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 16 5
+tim> [local@split@defs] R 7 3
+tim> [local@split@defs] A 14 5
+tim> [options]  169
+tim> [costs] Best path: ,0-0:13,0-1:14,0-2:18/L0R0A5: v0-v5: 1160.3881pt 846
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 14x12.0pt
+d> Splitting R(0-2)) to 18x12.0pt
+tim> [local@split@defs] L 16 8
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  38
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:15/L-1R0A6: v0-v6: 1230.70876pt 25
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 15x12.0pt
+tim> [local@split@defs] L 44 15
+tim> [local@split@defs] R 21 7
+tim> [local@split@defs] A 38 12
+tim> [options]  723
+tim> [costs] Best path: ,0-0:13,0-1:25,0-2:0/L0R0A0: v0-v0: 19.86662pt 11568
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 25x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 10
+tim> [any@trial] - 36
+tim> [a@a@trial] end 24
+tim> [local@split@defs] L 18 14
+tim> [local@split@defs] R 18 12
+tim> [local@split@defs] A 13 10
+tim> [options]  526
+tim> [costs] Best path: ,0-0:3,0-1:4,0-2:13/L23R12A19: v12-v23: 19.88571pt 1320
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 13x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 28
+tim> [a@a@trial] end 25
+tim> [any@trial] output 5
+tim> [any@trial] - 24
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 15 8
+tim> [local@split@defs] R 5 2
+tim> [local@split@defs] A 13 5
+tim> [options]  149
+tim> [costs] Best path: ,0-0:14,0-1:1,0-2:9/L17R16A20: v16-v20: 293.86285pt 281
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 9x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 25
+tim> [a@a@trial] end 6
+tim> [any@trial] output 4
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 22
+tim> [any@trial] output 23
+tim> [any@trial] - 38
+tim> [any@trial] output 3
+tim> [any@trial] - 29
+tim> [any@trial] output 1
+tim> [any@trial] - 6
+tim> [any@trial] output 7
+tim> [any@trial] - 11
+tim> [any@trial] output 12
+tim> [any@trial] - 22
+tim> [any@trial] output 1
+tim> [any@trial] - 16
+tim> [any@trial] output 1
+tim> [any@trial] - 6
+tim> [any@trial] output 7
+tim> [any@trial] - 16
+tim> [any@trial] output 1
+tim> [any@trial] - 10
+tim> [a@a@trial] end 12
+tim> [any@trial] output 2
+tim> [any@trial] - 11
+tim> [a@a@trial] end 11
+tim> [any@trial] output 2
+tim> [any@trial] - 7
+tim> [any@trial] output 8
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 22
+tim> [any@trial] output 2
+tim> [any@trial] - 16
+tim> [any@trial] output 2
+tim> [any@trial] - 17
+tim> [a@a@trial] end 22
+tim> [local@split@defs] L 42 16
+tim> [local@split@defs] R 19 10
+tim> [local@split@defs] A 10 4
+tim> [options]  484
+tim> [costs] Best path: ,0-0:20,0-1:10,0-2:0/L0R12A-1: v0-v12: 40.55186pt 4532
+d> Splitting L(0-0)) to 20x12.0pt
+d> Splitting Z(0-0)) to 20x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [local@split@defs] L 42 31
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 39 20
+tim> [options]  527
+tim> [costs] Best path: ,0-0:1,0-1:25,0-2:1/L24R13A7: v7-v24: 4382.308pt 169
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 25x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 7
+tim> [any@trial] - 30
+tim> [a@a@trial] end 26
+tim> [any@trial] output 5
+tim> [any@trial] - 19
+tim> [a@a@trial] end 17
+tim> [local@split@defs] L 42 25
+tim> [local@split@defs] R 32 13
+tim> [local@split@defs] A 15 7
+tim> [options]  789
+tim> [costs] Best path: ,0-0:14,0-1:5,0-2:0/L1R-1A-1: v1-v1: 5.51051pt 3470
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 20
+tim> [a@a@trial] end 17
+tim> [local@split@defs] L 42 14
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  86
+tim> [costs] Best path: ,0-0:1,0-1:5,0-2:35/L-1R0A-1: v0-v0: 1405.87326pt 18
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 35x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 15
+tim> [a@a@trial] end 12
+tim> [any@trial] output 8
+tim> [any@trial] - 27
+tim> [a@a@trial] end 29
+tim> [local@split@defs] L 51 16
+tim> [local@split@defs] R 15 5
+tim> [local@split@defs] A 51 17
+tim> [options]  1021
+tim> [costs] Best path: ,0-0:4,0-1:10,0-2:1/L13R-1A9: v9-v13: 60.07837pt 1332
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 25
+tim> [a@a@trial] end 21
+tim> [any@trial] output 3
+tim> [any@trial] - 17
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 51 30
+tim> [local@split@defs] R 13 5
+tim> [local@split@defs] A 51 17
+tim> [options]  539
+tim> [costs] Best path: ,0-0:6,0-1:1,0-2:29/L1R0A12: v0-v12: 303.37354pt 1092
+d> Splitting L(0-0)) to 6x12.0pt
+d> Splitting Z(0-0)) to 6x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 7
+tim> [any@trial] - 26
+tim> [a@a@trial] end 25
+tim> [any@trial] output 7
+tim> [any@trial] - 25
+tim> [a@a@trial] end 22
+tim> [local@split@defs] L 33 23
+tim> [local@split@defs] R 13 9
+tim> [local@split@defs] A 39 24
+tim> [options]  876
+tim> [costs] Best path: ,0-0:15,0-1:4,0-2:1/L1R-1A13: v1-v13: 26.61836pt 6306
+d> Splitting L(0-0)) to 15x12.0pt
+d> Splitting Z(0-0)) to 15x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 15
+tim> [a@a@trial] end 16
+tim> [local@split@defs] L 33 28
+tim> [local@split@defs] R 11 9
+tim> [local@split@defs] A 39 32
+tim> [options]  279
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:32/L-1R0A13: v0-v13: 3847.97845pt 32
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 32x12.0pt
+tim> [any@trial] output 14
+tim> [any@trial] - 42
+tim> [a@a@trial] end 29
+tim> [any@trial] output 8
+tim> [any@trial] - 37
+tim> [a@a@trial] end 39
+tim> [local@split@defs] L 24 19
+tim> [local@split@defs] R 11 7
+tim> [local@split@defs] A 64 43
+tim> [options]  1755
+tim> [costs] Best path: ,0-0:13,0-1:32,0-2:0/L2R-1A3: v2-v3: 12.0936pt 6076
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 32x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 31
+tim> [any@trial] - 73
+tim> [a@a@trial] end 33
+tim> [local@split@defs] L 20 14
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 64 44
+tim> [options]  518
+tim> [costs] Best path: ,0-0:5,0-1:1,0-2:6/L12R11A-1: v11-v12: 58.31694pt 307
+d> Splitting L(0-0)) to 5x12.0pt
+d> Splitting Z(0-0)) to 5x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 6x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 26
+tim> [a@a@trial] end 19
+tim> [any@trial] output 4
+tim> [any@trial] - 22
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 11 8
+tim> [local@split@defs] R 3 2
+tim> [local@split@defs] A 50 31
+tim> [options]  1285
+tim> [costs] Best path: ,0-0:4,0-1:40,0-2:1/L8R14A8: v8-v14: 37.13603pt 1470
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 40x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 23
+tim> [a@a@trial] end 22
+tim> [local@split@defs] L 11 5
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 50 18
+tim> [options]  106
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:4/L14R17A13: v13-v17: 235.93932pt 42
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 4x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 20
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 19 12
+tim> [local@split@defs] R 4 1
+tim> [local@split@defs] A 18 6
+tim> [options]  304
+tim> [costs] Best path: ,0-0:16,0-1:18,0-2:29/L20R18A-1: v18-v20: 156.01312pt 1
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 18x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [local@split@defs] L 19 8
+tim> [local@split@defs] R 7 3
+tim> [local@split@defs] A 13 5
+tim> [options]  172
+tim> [costs] Best path: ,0-0:6,0-1:10,0-2:1/L21R20A21: v20-v21: -15.55637pt 508
+d> Splitting L(0-0)) to 6x12.0pt
+d> Splitting Z(0-0)) to 6x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 25
+tim> [a@a@trial] end 22
+tim> [any@trial] output 5
+tim> [any@trial] - 23
+tim> [a@a@trial] end 24
+tim> [local@split@defs] L 19 12
+tim> [local@split@defs] R 4 2
+tim> [local@split@defs] A 3 3
+tim> [options]  107
+tim> [costs] Best path: ,0-0:4,0-1:3,0-2:31/L-1R0A19: v0-v19: 1719.42867pt 175
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 31x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 20 7
+tim> [options]  230
+tim> [costs] Best path: ,0-0:11,0-1:20,0-2:26/L19R-1A-1: v19-v19: 219.67053pt 1
+d> Splitting L(0-0)) to 11x12.0pt
+d> Splitting Z(0-0)) to 11x12.0pt
+d> Splitting A(0-1)) to 20x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 12
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  41
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:14/L-1R21A23: v21-v23: 222.03273pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 2
+tim> [options]  41
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A23: v0-v23: 2080.07886pt 32
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 19 11
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A-1: v0-v0: 2080.07886pt 23
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 17 6
+tim> [options]  254
+tim> [costs] Best path: ,0-0:9,0-1:16,0-2:24/L20R2A27: v2-v27: 167.96169pt 1593
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 16x12.0pt
+d> Splitting R(0-2)) to 24x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 27
+tim> [a@a@trial] end 21
+tim> [any@trial] output 5
+tim> [any@trial] - 22
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 21 15
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 2 0
+tim> [options]  64
+tim> [costs] Best path: ,0-0:3,0-1:1,0-2:22/L-1R4A1: v1-v4: 198.04376pt 70
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 22x12.0pt
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 6 6
+tim> [local@split@defs] A 14 5
+tim> [options]  159
+tim> [costs] Best path: ,0-0:12,0-1:4,0-2:29/L-1R0A5: v0-v5: 179.07486pt 676
+d> Splitting L(0-0)) to 12x12.0pt
+d> Splitting Z(0-0)) to 12x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 24
+tim> [a@a@trial] end 19
+tim> [any@trial] output 4
+tim> [any@trial] - 20
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 11 4
+tim> [options]  76
+tim> [costs] Best path: ,0-0:1,0-1:7,0-2:30/L-1R8A10: v8-v10: 195.10588pt 80
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 7x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 24
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 11 4
+tim> [local@split@defs] A 11 4
+tim> [options]  202
+tim> [costs] Best path: ,0-0:16,0-1:1,0-2:30/L2R0A11: v0-v11: 241.7387pt 391
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 23
+tim> [a@a@trial] end 18
+tim> [any@trial] output 5
+tim> [any@trial] - 21
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 24 7
+tim> [options]  169
+tim> [costs] Best path: ,0-0:1,0-1:24,0-2:26/L-1R7A-1: v7-v7: 173.08438pt 132
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 24x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 25 8
+tim> [local@split@defs] R 10 3
+tim> [local@split@defs] A 20 7
+tim> [options]  305
+tim> [costs] Best path: ,0-0:9,0-1:14,0-2:7/L26R26A26: v26-v26: -1.51323pt 1091
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 14x12.0pt
+d> Splitting R(0-2)) to 7x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 25
+tim> [a@a@trial] end 26
+tim> [any@trial] output 6
+tim> [any@trial] - 21
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 8 3
+tim> [local@split@defs] R 3 2
+tim> [local@split@defs] A 5 2
+tim> [options]  72
+tim> [costs] Best path: ,0-0:4,0-1:5,0-2:14/L25R26A22: v22-v26: 224.75583pt 122
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 6 2
+tim> [local@split@defs] A 11 4
+tim> [options]  151
+tim> [costs] Best path: ,0-0:10,0-1:11,0-2:15/L27R20A24: v20-v27: 302.896pt 415
+d> Splitting L(0-0)) to 10x12.0pt
+d> Splitting Z(0-0)) to 10x12.0pt
+d> Splitting A(0-1)) to 11x12.0pt
+d> Splitting R(0-2)) to 15x12.0pt
+tim> [local@split@defs] L 13 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  37
+tim> [costs] Best path: ,0-0:1,0-1:4,0-2:30/L-1R9A28: v9-v28: 5589.89438pt 19
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 1
+tim> [options]  26
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A28: v0-v28: 2080.07886pt 26
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 13 6
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  37
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A-1: v0-v0: 2080.07886pt 20
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 17 6
+tim> [options]  217
+tim> [costs] Best path: ,0-0:10,0-1:13,0-2:27/L18R26A27: v18-v27: 302.96169pt 8
+d> Splitting L(0-0)) to 10x12.0pt
+d> Splitting Z(0-0)) to 10x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 27x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 25
+tim> [a@a@trial] end 20
+tim> [any@trial] output 5
+tim> [any@trial] - 21
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 4 2
+tim> [options]  37
+tim> [costs] Best path: ,0-0:1,0-1:3,0-2:23/L-1R6A1: v1-v6: 137.24318pt 29
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 23x12.0pt
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 7 3
+tim> [local@split@defs] A 16 12
+tim> [options]  331
+tim> [costs] Best path: ,0-0:16,0-1:9,0-2:29/L-1R6A5: v5-v6: 155.61604pt 818
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 21
+tim> [a@a@trial] end 19
+tim> [any@trial] output 4
+tim> [any@trial] - 20
+tim> [a@a@trial] end 14
+tim> [local@split@defs] L 13 7
+tim> [local@split@defs] R 1 2
+tim> [local@split@defs] A 8 4
+tim> [options]  80
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:23/L-1R4A9: v4-v9: 512.94887pt 29
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 23x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 12
+tim> [a@a@trial] end 13
+tim> [local@split@defs] L 41 13
+tim> [local@split@defs] R 17 6
+tim> [local@split@defs] A 8 3
+tim> [options]  383
+tim> [costs] Best path: ,0-0:9,0-1:1,0-2:31/L1R22A12: v1-v22: 1444.68365pt 749
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 31x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 24
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 24 17
+tim> [local@split@defs] R 17 5
+tim> [local@split@defs] A 38 18
+tim> [options]  568
+tim> [costs] Best path: ,0-0:2,0-1:21,0-2:1/L1R-1A13: v1-v13: 47.30864pt 1408
+d> Splitting L(0-0)) to 2x12.0pt
+d> Splitting Z(0-0)) to 2x12.0pt
+d> Splitting A(0-1)) to 21x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 36
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 19 14
+tim> [local@split@defs] R 17 10
+tim> [local@split@defs] A 1 4
+tim> [options]  311
+tim> [costs] Best path: ,0-0:14,0-1:5,0-2:1/L21R-1A13: v13-v21: 1089.17711pt 23
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 25
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 13 7
+tim> [options]  146
+tim> [costs] Best path: ,0-0:1,0-1:13,0-2:24/L-1R6A16: v6-v16: 1702.01578pt 95
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 24x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 14 5
+tim> [options]  171
+tim> [costs] Best path: ,0-0:9,0-1:12,0-2:21/L21R1A17: v1-v21: 159.01645pt 1194
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 12x12.0pt
+d> Splitting R(0-2)) to 21x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 26
+tim> [a@a@trial] end 20
+tim> [any@trial] output 4
+tim> [any@trial] - 20
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 1
+tim> [options]  30
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:27/L-1R7A1: v1-v7: 313.4474pt 30
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 27x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 13 4
+tim> [options]  165
+tim> [costs] Best path: ,0-0:8,0-1:12,0-2:30/L21R-1A5: v5-v21: 196.81796pt 757
+d> Splitting L(0-0)) to 8x12.0pt
+d> Splitting Z(0-0)) to 8x12.0pt
+d> Splitting A(0-1)) to 12x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:4,0-2:26/L-1R7A6: v6-v7: 203.92776pt 19
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 16 6
+tim> [options]  229
+tim> [costs] Best path: ,0-0:7,0-1:13,0-2:29/L26R14A17: v14-v26: 707.96169pt 10
+d> Splitting L(0-0)) to 7x12.0pt
+d> Splitting Z(0-0)) to 7x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 24
+tim> [a@a@trial] end 20
+tim> [any@trial] output 4
+tim> [any@trial] - 22
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 3 1
+tim> [options]  48
+tim> [costs] Best path: ,0-0:5,0-1:3,0-2:26/L-1R7A11: v7-v11: 402.63199pt 91
+d> Splitting L(0-0)) to 5x12.0pt
+d> Splitting Z(0-0)) to 5x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 3 1
+tim> [local@split@defs] A 4 1
+tim> [options]  52
+tim> [costs] Best path: ,0-0:3,0-1:4,0-2:44/L-1R0A11: v0-v11: 3550.4886pt 63
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 44x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  41
+tim> [costs] Best path: ,0-0:1,0-1:3,0-2:43/L-1R0A17: v0-v17: 6011.97977pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 43x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 2 1
+tim> [local@split@defs] A 2 1
+tim> [options]  38
+tim> [costs] Best path: ,0-0:2,0-1:2,0-2:49/L-1R0A17: v0-v17: 6252.60815pt 42
+d> Splitting L(0-0)) to 2x12.0pt
+d> Splitting Z(0-0)) to 2x12.0pt
+d> Splitting A(0-1)) to 2x12.0pt
+d> Splitting R(0-2)) to 49x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  26
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:51/L-1R0A18: v0-v18: 6825.92184pt 18
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 51x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 0
+tim> [local@split@defs] A 1 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:55/L-1R0A18: v0-v18: 6976.07886pt 20
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 55x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  38
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:55/L-1R0A18: v0-v18: 6976.07886pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 55x12.0pt
+tim> [local@split@defs] L 17 5
+tim> [local@split@defs] R 9 6
+tim> [local@split@defs] A 15 7
+tim> [options]  253
+tim> [costs] Best path: ,0-0:14,0-1:9,0-2:33/L0R0A0: v0-v0: 1387.41159pt 1042
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 33x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 22
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 17 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 6 2
+tim> [options]  50
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:14/L-1R0A1: v0-v1: 657.99399pt 49
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 16 6
+tim> [local@split@defs] R 7 3
+tim> [local@split@defs] A 14 5
+tim> [options]  169
+tim> [costs] Best path: ,0-0:13,0-1:14,0-2:18/L0R0A5: v0-v5: 1160.3881pt 772
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 14x12.0pt
+d> Splitting R(0-2)) to 18x12.0pt
+tim> [local@split@defs] L 16 8
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:15/L-1R0A6: v0-v6: 1230.70876pt 24
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 15x12.0pt
+tim> [local@split@defs] L 44 13
+tim> [local@split@defs] R 21 7
+tim> [local@split@defs] A 38 13
+tim> [options]  727
+tim> [costs] Best path: ,0-0:13,0-1:25,0-2:0/L0R0A0: v0-v0: 19.86662pt 10127
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 25x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 32
+tim> [a@a@trial] end 24
+tim> [local@split@defs] L 18 10
+tim> [local@split@defs] R 18 9
+tim> [local@split@defs] A 13 4
+tim> [options]  315
+tim> [costs] Best path: ,0-0:3,0-1:4,0-2:13/L23R12A19: v12-v23: 19.88571pt 1212
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 13x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 21
+tim> [a@a@trial] end 20
+tim> [any@trial] output 5
+tim> [any@trial] - 23
+tim> [a@a@trial] end 20
+tim> [local@split@defs] L 15 5
+tim> [local@split@defs] R 5 2
+tim> [local@split@defs] A 13 4
+tim> [options]  132
+tim> [costs] Best path: ,0-0:14,0-1:1,0-2:9/L17R16A20: v16-v20: 293.86285pt 229
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 9x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 26
+tim> [a@a@trial] end 5
+tim> [any@trial] output 4
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 22
+tim> [any@trial] output 23
+tim> [any@trial] - 39
+tim> [any@trial] output 3
+tim> [any@trial] - 26
+tim> [any@trial] output 4
+tim> [any@trial] - 12
+tim> [any@trial] output 13
+tim> [any@trial] - 20
+tim> [any@trial] output 21
+tim> [any@trial] - 36
+tim> [any@trial] output 1
+tim> [any@trial] - 16
+tim> [any@trial] output 1
+tim> [any@trial] - 6
+tim> [any@trial] output 7
+tim> [any@trial] - 16
+tim> [any@trial] output 1
+tim> [any@trial] - 11
+tim> [a@a@trial] end 12
+tim> [any@trial] output 2
+tim> [any@trial] - 10
+tim> [a@a@trial] end 11
+tim> [any@trial] output 2
+tim> [any@trial] - 7
+tim> [any@trial] output 7
+tim> [any@trial] - 12
+tim> [any@trial] output 12
+tim> [any@trial] - 22
+tim> [any@trial] output 1
+tim> [any@trial] - 14
+tim> [any@trial] output 1
+tim> [any@trial] - 10
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 42 14
+tim> [local@split@defs] R 19 7
+tim> [local@split@defs] A 10 7
+tim> [options]  527
+tim> [costs] Best path: ,0-0:20,0-1:10,0-2:0/L0R12A-1: v0-v12: 40.55186pt 4161
+d> Splitting L(0-0)) to 20x12.0pt
+d> Splitting Z(0-0)) to 20x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [local@split@defs] L 42 15
+tim> [local@split@defs] R 1 0
+tim> [local@split@defs] A 39 14
+tim> [options]  357
+tim> [costs] Best path: ,0-0:1,0-1:25,0-2:1/L24R13A7: v7-v24: 4382.308pt 94
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 25x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 20
+tim> [a@a@trial] end 17
+tim> [any@trial] output 2
+tim> [any@trial] - 11
+tim> [a@a@trial] end 11
+tim> [local@split@defs] L 42 18
+tim> [local@split@defs] R 32 10
+tim> [local@split@defs] A 15 5
+tim> [options]  493
+tim> [costs] Best path: ,0-0:14,0-1:5,0-2:0/L1R-1A-1: v1-v1: 5.51051pt 3343
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 20
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 42 15
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  88
+tim> [costs] Best path: ,0-0:1,0-1:5,0-2:35/L-1R0A-1: v0-v0: 1405.87326pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 35x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 14
+tim> [a@a@trial] end 12
+tim> [any@trial] output 5
+tim> [any@trial] - 20
+tim> [a@a@trial] end 16
+tim> [local@split@defs] L 51 16
+tim> [local@split@defs] R 15 6
+tim> [local@split@defs] A 51 17
+tim> [options]  888
+tim> [costs] Best path: ,0-0:4,0-1:10,0-2:1/L13R-1A9: v9-v13: 60.07837pt 1230
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 26
+tim> [a@a@trial] end 20
+tim> [any@trial] output 4
+tim> [any@trial] - 18
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 51 34
+tim> [local@split@defs] R 13 5
+tim> [local@split@defs] A 51 18
+tim> [options]  519
+tim> [costs] Best path: ,0-0:6,0-1:1,0-2:29/L1R0A12: v0-v12: 303.37354pt 1026
+d> Splitting L(0-0)) to 6x12.0pt
+d> Splitting Z(0-0)) to 6x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 23
+tim> [a@a@trial] end 18
+tim> [any@trial] output 5
+tim> [any@trial] - 22
+tim> [a@a@trial] end 21
+tim> [local@split@defs] L 33 18
+tim> [local@split@defs] R 13 4
+tim> [local@split@defs] A 39 12
+tim> [options]  610
+tim> [costs] Best path: ,0-0:15,0-1:4,0-2:1/L1R-1A13: v1-v13: 26.61836pt 5451
+d> Splitting L(0-0)) to 15x12.0pt
+d> Splitting Z(0-0)) to 15x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 20
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 33 25
+tim> [local@split@defs] R 11 7
+tim> [local@split@defs] A 39 25
+tim> [options]  211
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:32/L-1R0A13: v0-v13: 3847.97845pt 24
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 32x12.0pt
+tim> [any@trial] output 8
+tim> [any@trial] - 26
+tim> [a@a@trial] end 20
+tim> [any@trial] output 4
+tim> [any@trial] - 22
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 24 12
+tim> [local@split@defs] R 11 8
+tim> [local@split@defs] A 64 40
+tim> [options]  1329
+tim> [costs] Best path: ,0-0:13,0-1:32,0-2:0/L2R-1A3: v2-v3: 12.0936pt 4916
+d> Splitting L(0-0)) to 13x12.0pt
+d> Splitting Z(0-0)) to 13x12.0pt
+d> Splitting A(0-1)) to 32x12.0pt
+d> Splitting R(0-2)) to 0x12.0pt
+tim> [any@trial] output 9
+tim> [any@trial] - 44
+tim> [a@a@trial] end 29
+tim> [local@split@defs] L 20 13
+tim> [local@split@defs] R 9 5
+tim> [local@split@defs] A 64 22
+tim> [options]  435
+tim> [costs] Best path: ,0-0:5,0-1:1,0-2:6/L12R11A-1: v11-v12: 58.31694pt 203
+d> Splitting L(0-0)) to 5x12.0pt
+d> Splitting Z(0-0)) to 5x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 6x12.0pt
+tim> [any@trial] output 7
+tim> [any@trial] - 25
+tim> [a@a@trial] end 17
+tim> [any@trial] output 4
+tim> [any@trial] - 20
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 11 4
+tim> [local@split@defs] R 3 1
+tim> [local@split@defs] A 50 16
+tim> [options]  572
+tim> [costs] Best path: ,0-0:4,0-1:40,0-2:1/L8R14A8: v8-v14: 37.13603pt 1202
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 40x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 18
+tim> [a@a@trial] end 17
+tim> [local@split@defs] L 11 4
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 50 18
+tim> [options]  93
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:4/L14R17A13: v13-v17: 235.93932pt 37
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 4x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 19
+tim> [a@a@trial] end 16
+tim> [local@split@defs] L 19 14
+tim> [local@split@defs] R 4 3
+tim> [local@split@defs] A 18 13
+tim> [options]  548
+tim> [costs] Best path: ,0-0:16,0-1:18,0-2:29/L20R18A-1: v18-v20: 156.01312pt 9
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 18x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 7 3
+tim> [local@split@defs] A 13 5
+tim> [options]  185
+tim> [costs] Best path: ,0-0:6,0-1:10,0-2:1/L21R20A21: v20-v21: -15.55637pt 300
+d> Splitting L(0-0)) to 6x12.0pt
+d> Splitting Z(0-0)) to 6x12.0pt
+d> Splitting A(0-1)) to 10x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 17
+tim> [a@a@trial] end 13
+tim> [any@trial] output 2
+tim> [any@trial] - 12
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 19 11
+tim> [local@split@defs] R 4 2
+tim> [local@split@defs] A 3 1
+tim> [options]  70
+tim> [costs] Best path: ,0-0:4,0-1:3,0-2:31/L-1R0A19: v0-v19: 1719.42867pt 155
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 31x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 20 7
+tim> [options]  237
+tim> [costs] Best path: ,0-0:11,0-1:20,0-2:26/L19R-1A-1: v19-v19: 219.67053pt 1
+d> Splitting L(0-0)) to 11x12.0pt
+d> Splitting Z(0-0)) to 11x12.0pt
+d> Splitting A(0-1)) to 20x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  43
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:14/L-1R21A23: v21-v23: 222.03273pt 34
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 0
+tim> [options]  27
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A23: v0-v23: 2080.07886pt 41
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A-1: v0-v0: 2080.07886pt 22
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 21 6
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 17 6
+tim> [options]  260
+tim> [costs] Best path: ,0-0:9,0-1:16,0-2:24/L20R2A27: v2-v27: 167.96169pt 1536
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 16x12.0pt
+d> Splitting R(0-2)) to 24x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 27
+tim> [a@a@trial] end 23
+tim> [any@trial] output 5
+tim> [any@trial] - 22
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 21 8
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 2 0
+tim> [options]  39
+tim> [costs] Best path: ,0-0:3,0-1:1,0-2:22/L-1R4A1: v1-v4: 198.04376pt 71
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 22x12.0pt
+tim> [local@split@defs] L 21 6
+tim> [local@split@defs] R 6 2
+tim> [local@split@defs] A 14 4
+tim> [options]  155
+tim> [costs] Best path: ,0-0:12,0-1:4,0-2:29/L-1R0A5: v0-v5: 179.07486pt 672
+d> Splitting L(0-0)) to 12x12.0pt
+d> Splitting Z(0-0)) to 12x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 1
+tim> [any@trial] - 20
+tim> [a@a@trial] end 18
+tim> [any@trial] output 5
+tim> [any@trial] - 15
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 21 8
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 11 4
+tim> [options]  81
+tim> [costs] Best path: ,0-0:1,0-1:7,0-2:30/L-1R8A10: v8-v10: 195.10588pt 55
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 7x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [any@trial] output 2
+tim> [any@trial] - 23
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 21 6
+tim> [local@split@defs] R 11 3
+tim> [local@split@defs] A 11 4
+tim> [options]  194
+tim> [costs] Best path: ,0-0:16,0-1:1,0-2:30/L2R0A11: v0-v11: 241.7387pt 320
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 21
+tim> [a@a@trial] end 19
+tim> [any@trial] output 5
+tim> [any@trial] - 22
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 21 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 24 14
+tim> [options]  303
+tim> [costs] Best path: ,0-0:1,0-1:24,0-2:26/L-1R7A-1: v7-v7: 173.08438pt 117
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 24x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 25 8
+tim> [local@split@defs] R 10 4
+tim> [local@split@defs] A 20 7
+tim> [options]  305
+tim> [costs] Best path: ,0-0:9,0-1:14,0-2:7/L26R26A26: v26-v26: -1.51323pt 1046
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 14x12.0pt
+d> Splitting R(0-2)) to 7x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 25
+tim> [a@a@trial] end 26
+tim> [any@trial] output 6
+tim> [any@trial] - 21
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 8 6
+tim> [local@split@defs] R 3 2
+tim> [local@split@defs] A 5 2
+tim> [options]  104
+tim> [costs] Best path: ,0-0:4,0-1:5,0-2:14/L25R26A22: v22-v26: 224.75583pt 131
+d> Splitting L(0-0)) to 4x12.0pt
+d> Splitting Z(0-0)) to 4x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 14x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 6 2
+tim> [local@split@defs] A 11 4
+tim> [options]  155
+tim> [costs] Best path: ,0-0:10,0-1:11,0-2:15/L27R20A24: v20-v27: 302.896pt 377
+d> Splitting L(0-0)) to 10x12.0pt
+d> Splitting Z(0-0)) to 10x12.0pt
+d> Splitting A(0-1)) to 11x12.0pt
+d> Splitting R(0-2)) to 15x12.0pt
+tim> [local@split@defs] L 13 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  37
+tim> [costs] Best path: ,0-0:1,0-1:4,0-2:30/L-1R9A28: v9-v28: 5589.89438pt 20
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 0
+tim> [options]  26
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A28: v0-v28: 2080.07886pt 27
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 13 5
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 3
+tim> [options]  37
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:54/L-1R0A-1: v0-v0: 2080.07886pt 19
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 54x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 17 6
+tim> [options]  227
+tim> [costs] Best path: ,0-0:10,0-1:13,0-2:27/L18R26A27: v18-v27: 302.96169pt 8
+d> Splitting L(0-0)) to 10x12.0pt
+d> Splitting Z(0-0)) to 10x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 27x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 25
+tim> [a@a@trial] end 16
+tim> [any@trial] output 3
+tim> [any@trial] - 13
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 13 9
+tim> [local@split@defs] R 1 2
+tim> [local@split@defs] A 4 2
+tim> [options]  67
+tim> [costs] Best path: ,0-0:1,0-1:3,0-2:23/L-1R6A1: v1-v6: 137.24318pt 34
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 23x12.0pt
+tim> [local@split@defs] L 13 4
+tim> [local@split@defs] R 7 2
+tim> [local@split@defs] A 16 5
+tim> [options]  194
+tim> [costs] Best path: ,0-0:16,0-1:9,0-2:29/L-1R6A5: v5-v6: 155.61604pt 632
+d> Splitting L(0-0)) to 16x12.0pt
+d> Splitting Z(0-0)) to 16x12.0pt
+d> Splitting A(0-1)) to 9x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 3
+tim> [any@trial] - 21
+tim> [a@a@trial] end 20
+tim> [any@trial] output 5
+tim> [any@trial] - 24
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 13 8
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 8 7
+tim> [options]  106
+tim> [costs] Best path: ,0-0:1,0-1:6,0-2:23/L-1R4A9: v4-v9: 512.94887pt 39
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 6x12.0pt
+d> Splitting R(0-2)) to 23x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 20
+tim> [a@a@trial] end 12
+tim> [local@split@defs] L 41 13
+tim> [local@split@defs] R 17 6
+tim> [local@split@defs] A 8 3
+tim> [options]  386
+tim> [costs] Best path: ,0-0:9,0-1:1,0-2:31/L1R22A12: v1-v22: 1444.68365pt 661
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 31x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 24
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 24 9
+tim> [local@split@defs] R 17 5
+tim> [local@split@defs] A 38 11
+tim> [options]  406
+tim> [costs] Best path: ,0-0:2,0-1:21,0-2:1/L1R-1A13: v1-v13: 47.30864pt 1398
+d> Splitting L(0-0)) to 2x12.0pt
+d> Splitting Z(0-0)) to 2x12.0pt
+d> Splitting A(0-1)) to 21x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 6
+tim> [any@trial] - 35
+tim> [a@a@trial] end 23
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 17 10
+tim> [local@split@defs] A 1 2
+tim> [options]  150
+tim> [costs] Best path: ,0-0:14,0-1:5,0-2:1/L21R-1A13: v13-v21: 1089.17711pt 19
+d> Splitting L(0-0)) to 14x12.0pt
+d> Splitting Z(0-0)) to 14x12.0pt
+d> Splitting A(0-1)) to 5x12.0pt
+d> Splitting R(0-2)) to 1x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 25
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 13 4
+tim> [options]  89
+tim> [costs] Best path: ,0-0:1,0-1:13,0-2:24/L-1R6A16: v6-v16: 1702.01578pt 68
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 24x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 14 5
+tim> [options]  165
+tim> [costs] Best path: ,0-0:9,0-1:12,0-2:21/L21R1A17: v1-v21: 159.01645pt 1165
+d> Splitting L(0-0)) to 9x12.0pt
+d> Splitting Z(0-0)) to 9x12.0pt
+d> Splitting A(0-1)) to 12x12.0pt
+d> Splitting R(0-2)) to 21x12.0pt
+tim> [any@trial] output 4
+tim> [any@trial] - 26
+tim> [a@a@trial] end 19
+tim> [any@trial] output 4
+tim> [any@trial] - 21
+tim> [a@a@trial] end 19
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 2 1
+tim> [options]  29
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:27/L-1R7A1: v1-v7: 313.4474pt 30
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 27x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 8 3
+tim> [local@split@defs] A 13 4
+tim> [options]  173
+tim> [costs] Best path: ,0-0:8,0-1:12,0-2:30/L21R-1A5: v5-v21: 196.81796pt 843
+d> Splitting L(0-0)) to 8x12.0pt
+d> Splitting Z(0-0)) to 8x12.0pt
+d> Splitting A(0-1)) to 12x12.0pt
+d> Splitting R(0-2)) to 30x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:4,0-2:26/L-1R7A6: v6-v7: 203.92776pt 25
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 9 4
+tim> [local@split@defs] A 16 6
+tim> [options]  227
+tim> [costs] Best path: ,0-0:7,0-1:13,0-2:29/L26R14A17: v14-v26: 707.96169pt 12
+d> Splitting L(0-0)) to 7x12.0pt
+d> Splitting Z(0-0)) to 7x12.0pt
+d> Splitting A(0-1)) to 13x12.0pt
+d> Splitting R(0-2)) to 29x12.0pt
+tim> [any@trial] output 5
+tim> [any@trial] - 24
+tim> [a@a@trial] end 20
+tim> [any@trial] output 5
+tim> [any@trial] - 22
+tim> [a@a@trial] end 18
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 9 3
+tim> [local@split@defs] A 3 1
+tim> [options]  49
+tim> [costs] Best path: ,0-0:5,0-1:3,0-2:26/L-1R7A11: v7-v11: 402.63199pt 110
+d> Splitting L(0-0)) to 5x12.0pt
+d> Splitting Z(0-0)) to 5x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 26x12.0pt
+tim> [local@split@defs] L 19 7
+tim> [local@split@defs] R 3 2
+tim> [local@split@defs] A 4 2
+tim> [options]  52
+tim> [costs] Best path: ,0-0:3,0-1:4,0-2:44/L-1R0A11: v0-v11: 3550.4886pt 72
+d> Splitting L(0-0)) to 3x12.0pt
+d> Splitting Z(0-0)) to 3x12.0pt
+d> Splitting A(0-1)) to 4x12.0pt
+d> Splitting R(0-2)) to 44x12.0pt
+tim> [local@split@defs] L 19 11
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  41
+tim> [costs] Best path: ,0-0:1,0-1:3,0-2:43/L-1R0A17: v0-v17: 6011.97977pt 32
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 3x12.0pt
+d> Splitting R(0-2)) to 43x12.0pt
+tim> [local@split@defs] L 19 6
+tim> [local@split@defs] R 2 1
+tim> [local@split@defs] A 2 1
+tim> [options]  35
+tim> [costs] Best path: ,0-0:2,0-1:2,0-2:49/L-1R0A17: v0-v17: 6252.60815pt 76
+d> Splitting L(0-0)) to 2x12.0pt
+d> Splitting Z(0-0)) to 2x12.0pt
+d> Splitting A(0-1)) to 2x12.0pt
+d> Splitting R(0-2)) to 49x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  39
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:51/L-1R0A18: v0-v18: 6825.92184pt 24
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 51x12.0pt
+tim> [local@split@defs] L 19 10
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 2
+tim> [options]  45
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:55/L-1R0A18: v0-v18: 6976.07886pt 27
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 55x12.0pt
+tim> [local@split@defs] L 19 9
+tim> [local@split@defs] R 1 1
+tim> [local@split@defs] A 1 1
+tim> [options]  40
+tim> [costs] Best path: ,0-0:1,0-1:1,0-2:55/L-1R0A18: v0-v18: 6976.07886pt 20
+d> Splitting L(0-0)) to 1x12.0pt
+d> Splitting Z(0-0)) to 1x12.0pt
+d> Splitting A(0-1)) to 1x12.0pt
+d> Splitting R(0-2)) to 55x12.0pt
