@@ -116,7 +116,7 @@
 
 \def\stylesheetL{\gdef\ds@ffix{L}\stylesh@@t}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
 \def\stylesheetR{\gdef\ds@ffix{R}\stylesh@@t}
-\def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}
+\def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}% ds@ffix must be empty in normal operations, or we can't save values / swap diglot sides properly.
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitVerseNumberOne,MakeChapterLabel,ColAdjskip,intercharspace}
@@ -1540,7 +1540,6 @@
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\xdef\c@rrdstat{#1}%
- \xdef\ds@ffix{#1}%
  \ifx\c@rrdstat\empty
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
@@ -1550,7 +1549,7 @@
 }
 \def\usediglot#1{\xdef\c@rrdstat{#1}}
 
-\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}\xdef\ds@ffix{\f@lwgdstat}}% Restore to correct value for new text. Mainly for use in Collect
+\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}\let\ds@ffix\empty}% Restore to correct value for new text. Mainly for use in Collect
 
 \def\diglotLtrue{%
   \oldboole@n{L}{diglotLtrue}%

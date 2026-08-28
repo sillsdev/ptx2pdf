@@ -860,11 +860,13 @@
     \fi
   \fi
   \xdef\f@ntlist{\f@ntlist,\f@ntstyle}%
-  \x@\ifcsname \typef@ce _spacefactor\endcsname
-    \dimen0=\x@\csname \typef@ce _spacefactor\endcsname \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
-    \trace{F}{\typef@ce _spacefactor = \the\dimen0}%
-    \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname=\dimen0
-  \fi
+  \x@\ifcsname \typef@ce _defined\endcsname\else
+    \x@\gdef\csname \typef@ce _defined\endcsname{1}%
+    \x@\ifcsname \typef@ce _spacefactor\endcsname
+      \dimen0=\x@\csname \typef@ce _spacefactor\endcsname \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
+      \trace{F}{\typef@ce _spacefactor = \the\dimen0}%
+      \x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname=\dimen0
+  \fi\fi
   \ifx\SpaceStretchFactor\empty\else
     \dimen0=\SpaceStretchFactor\x@\x@\fontdimen2\csname font<\f@ntstyle>\endcsname
     \x@\x@\fontdimen3\csname font<\f@ntstyle>\endcsname=\dimen0

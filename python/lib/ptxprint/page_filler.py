@@ -5,16 +5,19 @@ from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union
 from collections import deque, defaultdict
 from configparser import ConfigParser
 import heapq, re, os, logging, random, itertools, argparse, threading, queue as _queue
+import statistics, math
+from bisect import bisect
 import multiprocessing as mp
 from math import sqrt, log10
 from time import time, asctime, sleep
 from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob, unlockme
-from ptxprint.utils import refSort, bookcodes, f_
+from ptxprint.utils import refSort, bookcodes, f_, ProgressEvent, _
 from ptxprint.view import ViewModel
 from ptxprint.project import ProjectList
 from ptxprint.utils import BuildParams
+from ptxprint.xdv.xdvspaces import XdvSpaceMeasure
 from usfmtc.usfmparser import Grammar
 from usfmtc.reference import chaps, RefList
 
@@ -35,6 +38,10 @@ LineKey = Tuple[ParagraphRef, Expansion, Stretch]
 BadKey  = Tuple[ParagraphRef, Expansion, Stretch]
 
 def cmp(x, y):
+    if x is None:
+        return -1
+    elif y is None:
+        return 1
     return -1 if x < y else 0 if x == y else 1
 
 bkltrs = "".join([chr(x) for (a, b) in [(65, 91), (97, 123), (33, 65)] for x in range(a, b)])
@@ -106,6 +113,7 @@ class LayoutRunResult:
             res = None
         self.first_failing_page = res
         return res
+
 # -----------------------------
 # ENGINE STATE
 # -----------------------------
@@ -119,6 +127,7 @@ class EngineState:
     page: int
     passed: bool = False
     failures: Optional[list] = None
+    complete: bool = False
 
     def _cmp(self, other):
         res = cmp(self.layout, other.layout)
@@ -131,6 +140,9 @@ class EngineState:
 
     def __eq__(self, other):
         return self._cmp(other) == 0
+
+    def numPages(self):
+        return self.parlocs.numPages()
 
 # -----------------------------
 # SOLVE RESULT
@@ -146,14 +158,6 @@ class HumanFixRequest:
 class SolveResult:
     state: Optional[EngineState] = None
     human_fix: Optional[HumanFixRequest] = None
-
-@dataclass
-class ProgressEvent:
-    book:   str
-    page:   int
-    mode:   Literal["complete", "failed", "badpage", "goodpage", "already_filled"]
-    msg:    Optional[str] = None
-    total:  Optional[int] = None
 
 # -----------------------------
 # HOOKS YOU IMPLEMENT
@@ -175,9 +179,9 @@ class Hooks:
         self.printer = printer
         self.basestate = state
         for a in (("spacing_tolerance", "pbspacingtol"),
-                  ("shrink_preference", "pbshrinkpref"),
-                  ("header_aversion", "pbheadings"),
-                  ("lastline_weight", "pblastline")):
+                  ("expansion_factor", "pbexpbad"),
+                  ("expansion_cost", "pbexpcost"),
+                  ("contrast_factor", "pbcontrast")):
             val = float(printer.view.get("s_"+a[1]))
             logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
@@ -189,12 +193,13 @@ class Hooks:
                    paragraph_params: Dict[ParagraphRef, ParamSig],
                    float_anchors: Dict[Any, VerseRef],
                    base_page: int,
+                   last_page: int,
                    prompt: str = ".",
                    genfiles: bool = False) -> LayoutRunResult:
         try:
-            runres = self.printer.run_layout(solver, paragraph_params, float_anchors, prompt=prompt, genfiles=genfiles)
+            runres = self.printer.run_layout(solver, paragraph_params, float_anchors, last_page, prompt=prompt, genfiles=genfiles)
         except FileNotFoundError as e:
-            logger.debug(f"run_layout failed {e}")
+            logger.warn(f"run_layout failed {e}")
             return None
         pages = []
         firstbad = None
@@ -230,6 +235,14 @@ class Hooks:
     def get_first_page_for_para(self, para):
         return self.printer.get_paragraph_start_page(para)
 
+    def chap_from_page(self, pnum):
+        i = bisect(self.chapters, pnum)
+        logging.log(15, f"page={pnum}, chapter={i}")
+        return i
+
+    def get_previous(self, pid, page=None):
+        return self.printer.get_previous(pid, page=page)
+
     @property
     def cancelled(self):
         return self.printer.cancelled
@@ -243,79 +256,14 @@ class Hooks:
     def is_header(self, paragraph: ParagraphRef):
         return self.printer.pid_isheader(paragraph)
 
-    def design_badness(self,
-                       paragraph: ParagraphRef,
-                       expansion: float,
-                       stretch: int,
-                       delta: int,
-                       result: bool = False) -> float:
+    def analyse_bw(self, testfn, page):
+        self.printer.analyse_bw(testfn, page)
 
-        isshrink = delta < 0
-        bigdelta = abs(delta) > 1
-        distortion = abs(expansion - 1.0)
-        p = self.printer.get_para(paragraph)
-        rtl = self.printer.rtl
-        pwidth = p.lastwidth if p is not None else 0.
-        if rtl:
-            pwidth = 1.0 - pwidth
-        tex_badness = self.printer.badnesses.get(paragraph, 0)
-        lines = self.basestate.layout.paragraph_total_lines.get(paragraph, 0)
-        is_header = self.printer.pid_isheader(paragraph)
-        is_just = self.printer.pid_isjustified(paragraph)
+    def get_para(self, pid):
+        return self.printer.get_para(pid)
 
-        res = 0.0
-
-        # --- 1. Base cost per line change (asymmetric) ---
-        # Prefer removing lines slightly over adding, especially for short paragraphs
-        short_factor = (20 / min(lines + 1, 20)) ** 0.5
-        if delta > 0:
-            res += self.badness_shrink_preference * delta * short_factor \
-                    * (self.badness_justification / 10. if is_just else 1.)
-        elif delta < 0:
-            res -= delta * short_factor  # removing lines less visible
-
-        # --- 2. Concentration penalty (multiple line changes in same paragraph) ---
-        if abs(delta) >= 2:
-            res += 25 * (abs(delta) - 1) * short_factor
-
-        # --- 3. Spacing distortion (expansion/compression across paragraph) ---
-        res += self.badness_spacing_tolerance / 20 * (distortion * 100) ** 2
-
-        # --- 4. Effort to cause line change (pwidth-driven, your correct model) ---
-        if delta != 0:
-            effort = (1. - pwidth) if delta > 0 else pwidth
-            res += self.badness_lastline_weight / 10 * (effort ** 4) * short_factor * abs(stretch)
-
-        # --- 5. Wrong-direction penalty (soft guidance, not dominant) ---
-        PIVOT = 0.7
-        if delta > 0:
-            wrongness = max(0.0, PIVOT - pwidth)
-        elif delta < 0:
-            wrongness = max(0.0, pwidth - (1.0 - PIVOT))
-        else:
-            wrongness = 0.0
-        res += 0.5 * self.badness_spacing_tolerance / 20 * (wrongness ** 2) * short_factor * abs(stretch)
-
-        # --- 6. Short paragraph sensitivity ---
-        #line_penalty = self.badness_line_weight * ((20 / min(lines + 1, 20)) ** 0.5 - 1)
-        #res += line_penalty
-
-        # --- 7. TeX paragraph badness (log-compressed) ---
-        # Only apply if modifying paragraph
-        #if delta != 0 and tex_badness > 0:
-        #    res += 10 * math.log10(1 + tex_badness)
-
-        # --- 8. Header penalty ---
-        if is_header:
-            res += self.badness_header_aversion * ((1.0 - pwidth) if pwidth >= 0.9 else 1.0)
-
-        if not result:
-            logger.log(
-                15,
-                f"{paragraph=}, {expansion=}, {stretch=}, {delta=}, "
-                f"{lines=}, {pwidth=:.3f}, {tex_badness=}, {res=:.2f}"
-            )
-        return res
+    def append_stats(self, w):
+        self.printer.stats.append(w)
 
     def progress(self, pevent):
         self.printer.progress(pevent)
@@ -327,7 +275,6 @@ class Hooks:
 UNKNOWN = object()
 IMPOSSIBLE = object()
 
-ParamSig = Tuple[float, int]
 ParagraphRef = Any
 Combo = Tuple[Tuple[ParagraphRef, int], ...]
 
@@ -365,14 +312,17 @@ class ShapeCache:
 
 class TypesetterSolver:
 
+    lookahead = 10
+
     def __init__(self, hooks, pids, expand=1., minexp=0.95, maxexp=1.05):
         self.hooks = hooks
         self.paragraph_order = pids
         self.expand = expand
         self.minexp = minexp
         self.maxexp = maxexp
-        self.probe_cache: Dict[Tuple[Any, float, int], int] = {}
-        self.shape_cache: Dict[Tuple[Any, int], ParamSig] = {}
+        self.probe_cache: Dict[[Any], Dict[Tuple[float, int], int]] = {}
+        self.shape_cache: Dict[Tuple[Any, int], Tuple(float, int, float)] = {}
+        self.probe_params = {}
         self.baseline_lines: Dict[Any, int] = {}
         self.base_params = {p: (expand, 0) for p in self.paragraph_order}
         self.tried = set()
@@ -381,11 +331,12 @@ class TypesetterSolver:
         self.noprobe = False
         self.bk = None
         self.all_probes = [(expand, -1), (minexp, -1), ((minexp + expand) / 2, -1),
-                (maxexp, 1), ((maxexp + expand) / 2, 1), (expand, 0)]
+                (maxexp, 1), (maxexp, 0), (expand, 0)]
 
     def solve(self, state, start_page:int=-1, stop:bool=True, restart:bool=False, book=None):
         self.bk = book
         self.init_state = state
+        logger.log(15, f"{state.layout.paragraph_pages=}")
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
         if state.layout.first_failing_page is None:
@@ -399,65 +350,76 @@ class TypesetterSolver:
             state.paragraph_params = dict(self.base_params)
         else:
             self.base_params = dict(state.paragraph_params)
+        self.collect_probes(state.layout, self.paragraph_order, self.base_params, isbase=True, page=start_page)
         page = start_page + 1
+        self.numpages = state.numPages()
+        if self.numpages <= 2 * self.lookahead:
+            npages = self.numpages - page + 1
+        else:
+            npages = self.lookahead
         try:
-            layout = self.initial_probes(state, page, restart=restart)
+            layout = self.initial_probes(state, page, npages, restart=restart)
         except TimeoutError:
             return HumanFixRequest(state, page, "Stopped" if self.hooks.cancelled else "Timed out")
-        state.layout = layout
-        wantprobe = False
+        state = EngineState(self.init_state.paragraph_params, state.float_anchors, layout, self.hooks.printer.parlocs, 0)
         testloop = 10000
         failed_pages = []
         while True:
             layout = state.layout
             # if layout.first_failing_page < page:
             #     return None
-            page = layout.first_failing_page
-            if page is None:
-                logger.log(15, f"solve_complete pages=%s, underfills=%s", len(layout.pages),
-                        str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None}))
-                self.noprobe = True
-                # state = self.run_layout(self.base_params, state, {}, page, start_page)
-                state.failures = failed_pages
-                self.hooks.progress(ProgressEvent(book, (page or 0) + 1, "complete", f"Failed pages: {' '.join(str(p) for p in failed_pages)}" if failed_pages else None))
-                return state
-            oldstate = state
+            nextpage = layout.first_failing_page
+            logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
+            if nextpage is None or nextpage == page:
+                if state.complete:
+                    logger.log(15, f"solve_complete pages=%s, underfills=%s", len(layout.pages),
+                            str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None}))
+                    # state = self.run_layout(self.base_params, state, {}, page, start_page)
+                    state.failures = failed_pages
+                    self.hooks.progress(ProgressEvent(book, (page or 0) + 1, "complete", f"Failed: {' '.join(str(p) for p in failed_pages)}" if failed_pages else None, self.numpages))
+                    return state
+                else:
+                    nextpage = state.numPages() - 1
+                    if state.numPages() - page >= 9 and self.numpages > 2 * self.lookahead:
+                        layout = self.initial_probes(state, page, 10)
+                        state = EngineState(self.init_state.paragraph_params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
+            page = nextpage
             try:
                 state = self.solve_page(state, page, start_page)
             except TimeoutError:
                 return HumanFixRequest(state, page + 1, "Stopped" if self.hooks.cancelled else "Timed out")
             if not state.passed:
-                if state.layout.first_failing_page is not None and state.layout.first_failing_page < page:
+                if state.layout.first_failing_page is not None and state.complete and state.layout.first_failing_page < page:
                     if page < testloop:
                         logger.log(15, f"{getattr(self, 'bk', 'UNK')}: {testloop=} page {state.layout.first_failing_page}")
                         testloop = min(page, testloop)
-                        wantprobe = not self.noprobe
-                        self.noprobe = True
                         continue
                     else:
-                        logger.log(15, f"{self.book}: {page=} >= {testloop=} and bail")
-                        return HumanFixRequest(state, page + 1, "Caught in page loop")
+                        logger.log(15, f"{self.bk}: {page=} >= {testloop=} and bail")
+                        return HumanFixRequest(state, page + 1, f"Caught in loop {testloop}..{page}")
                 if stop:
                     return HumanFixRequest(state, page + 1, f"Couldn't solve page {page}")
                 else:
                     while state.layout.first_failing_page is not None and state.layout.first_failing_page == page:
                         state.layout.next_bad()
-                    if state.layout.first_failing_page is None:
-                        return HumanFixRequest(state, page + 1, "Couldn't solve all the pages")
                     failed_pages.append(page)
-                    self.hooks.progress(ProgressEvent(book, page + 1, "badpage"))
+                    if state.layout.first_failing_page is None and state.complete:
+                        return HumanFixRequest(state, page + 1, f"Failed: {' '.join(str(p) for p in failed_pages)}")
+                    self.hooks.progress(ProgressEvent(book, page + 1, "badpage", "", self.numpages))
                     paras = self.get_candidate_paragraphs(state, page)
-                    logger.warning(f"Could not solve page {page+1} after {paras[0] if len(paras) else 'UNK'} trying {state.layout.first_failing_page+1}")
-                    start_page = state.layout.first_failing_page
+                    logger.warning(f"Could not solve page {page+1} after {paras[0] if len(paras) else 'UNK'} trying {(state.layout.first_failing_page or 0)+1}")
+                    start_page = state.layout.first_failing_page or state.numPages() + 1
                     continue
             elif state.layout.first_failing_page is not None:
-                self.hooks.progress(ProgressEvent(book, state.layout.first_failing_page, "goodpage"))
+                self.hooks.progress(ProgressEvent(book, state.layout.first_failing_page, "goodpage", "", self.numpages))
             solved = self.hooks.get_paragraphs_for_pages(page, page)
             #self.frozen_paragraphs.update(solved)
             self.init_state = state
 
     def solve_page(self, state, page, start):
         self.tried.clear()
+        if page >= state.numPages():
+            state = self.run_layout(self.base_params, state, {}, page, start)
         paragraphs = self.get_candidate_paragraphs(state, page)
         page_base_params = dict(self.base_params)
         # logger.log(15, f"shape_cache={','.join('+'.join((str(k), str(v))) for k, v in self.shape_cache.items() if k[1] != 0)}")
@@ -491,11 +453,14 @@ class TypesetterSolver:
                 state.layout.first_failing_page = new_state.layout.first_failing_page
                 continue
             if not self.noprobe and (free is None or all(x == 0 for x in free)):
-                self.noprobe = True
-                new_state = self.run_layout(page_base_params, state, combo, page, start)
-                logger.log(12, f"Test run for good page, without probes {new_state.layout.first_failing_page=}")
-                self.noprobe = False
-                free = new_state.layout.pages[page].column_free_lines
+                lpars = state.layout.get_pars(page)
+                pps = state.layout.paragraph_pages[lpars[-1]]
+                if len(pps) > 1 and lpars[-1] in self.probe_params:
+                    self.noprobe = True
+                    new_state = self.run_layout(page_base_params, state, combo, page, start)
+                    logger.log(15, f"Test run for good page, without probes {new_state.layout.first_failing_page=}")
+                    self.noprobe = False
+                    free = new_state.layout.pages[page].column_free_lines
             if new_state.layout.first_failing_page is None or new_state.layout.first_failing_page > page or free is None or not len(free) or all(x == 0 for x in free):
                 logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
                 logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
@@ -508,72 +473,223 @@ class TypesetterSolver:
         state.passed = False
         return state
 
-    def initial_probes(self, state, page, restart=False):
-        paragraphs = self.paragraph_order
-        unity = (self.expand, 0)
-        probes = self.all_probes[:6]
-        newstate = state
-        layout = state.layout
-        for i, (e, s) in enumerate(probes):
-            params = dict(state.paragraph_params)
-            for p in paragraphs:
-                if (e, s) == unity or (p, e, s) in self.probe_cache or (restart and p in params):
-                    continue
-                params[p] = (e, s)
-            layout = self.hooks.run_layout(self, params, state.float_anchors, -1, prompt=",")
-            self.itercount += 1
-            logger.log(15, "probe_run iter=%s e=%s s=%s", self.itercount, e, s)
-            self.collect_probes(layout, paragraphs, params)
-            p = ProgressEvent(self.bk, i, "probe")
-            p.total = len(probes) - 1
+    def evaluate_paragraph_probe(self, pid):
+        """
+        Evaluates candidate expansion probes for a paragraph.
+        p_probes values represent relative line deltas (e.g., -2, -1, 0, +1, +2).
+        """
+        p_probes = self.probe_cache.get(pid, {})
+        max_pos_delta = p_probes.get((self.maxexp, 1)) or 0
+        max_neg_delta = p_probes.get((self.minexp, -1)) or 0
+        pos_low, pos_high = self.expand, self.maxexp
+        pos_delta_achieved = 0
+        for (exp, strch), delta in p_probes.items():
+            if exp <= self.expand or delta is None:
+                continue
+            if delta > 0:
+                pos_high = min(pos_high, exp)
+                pos_delta_achieved = max(pos_delta_achieved, delta)
+            else:
+                pos_low = min(pos_low, exp)
+
+        pos_span = pos_high - pos_low
+        pos_done = (pos_span <= 0.01)
+        neg_low, neg_high = self.minexp, self.expand
+        neg_delta_achieved = 0
+        for (exp, strch), delta in p_probes.items():
+            if exp >= self.expand or delta is None:
+                continue
+            if delta < 0:
+                neg_low = max(neg_low, exp)
+                neg_delta_achieved = min(neg_delta_achieved, delta)
+            else:
+                neg_low = min(neg_high, exp)
+
+        neg_span = neg_high - neg_low
+        neg_done = (neg_span <= 0.01)
+
+        if not pos_done and (neg_done or pos_span >= neg_span):
+            low, high = pos_low, pos_high
+            dir_sign = 1
+            achieved_delta = pos_delta_achieved
+            get_target_delta = max
+            max_bound_delta = max_pos_delta
+        elif not neg_done:
+            low, high = neg_low, neg_high
+            dir_sign = -1
+            achieved_delta = neg_delta_achieved
+            get_target_delta = min
+            max_bound_delta = max_neg_delta
+        else:
+            return (self.expand, 0, 0)
+
+        stretch_sequence = [0, dir_sign]
+        delta_in_shape_cache = (pid, achieved_delta) in self.shape_cache if achieved_delta != 0 else False
+        if dir_sign == -1:
+            if achieved_delta < 0 or delta_in_shape_cache:
+                stretch_sequence.append(-2)
+        elif dir_sign == 1:
+            if delta_in_shape_cache and abs(max_bound_delta) >= 2:
+                stretch_sequence.append(2)
+
+        while True:
+            if high - low <= 0.01:
+                return (self.expand, 0, 0)
+            mid = (low + high) / 2.0
+            for strch in stretch_sequence:
+                if (mid, strch) not in p_probes:
+                    g_low = p_probes.get((low, 0), p_probes.get((low, dir_sign)))
+                    g_high = p_probes.get((high, 0), p_probes.get((high, dir_sign)))
+
+                    target_delta = None
+                    if g_low is not None and g_high is not None:
+                        target_delta = get_target_delta(g_low, g_high)
+
+                    is_target_in_cache = (pid, target_delta) in self.shape_cache if target_delta is not None else False
+                    pri = 1 if (is_target_in_cache or (high - low) < 0.02) else 2
+                    return (mid, strch, pri)
+
+            cached_vals = [p_probes[mid, s] for s in stretch_sequence if p_probes.get((mid, s)) is not None]
+            if not cached_vals:
+                best_delta = 0
+            else:
+                best_delta = max(cached_vals) if dir_sign == 1 else min(cached_vals)
+            if (dir_sign == 1 and best_delta > 0) or (dir_sign == -1 and best_delta < 0):
+                low = mid
+            else:
+                high = mid
+
+    def initial_probes(self, state, page, npages, restart=False):
+        """
+        Executes vectorized full-document layout sweeps.
+        Calls evaluate_paragraph_probe(pid) as a completely stateless helper.
+        """
+        all_pids = self.hooks.get_paragraphs_for_pages(page, page + npages)
+        last_page = page + npages
+        for a in ((self.minexp, -1), (self.maxexp, 1)):
+            sweep_params = {pid: a for pid in all_pids}
+            layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
+            self.collect_probes(layout, all_pids, sweep_params, page=page)
+
+        logging.log(15, f"{self.probe_cache=}, {self.shape_cache=}")
+        sweep_count = 0
+        while True:
+            sweep_count += 1
+            sweep_params = {pid: (self.expand, 0) for pid in all_pids}
+            requests = {}
+            global_max_pri = 0
+            pri_counts = {0: 0, 1: 0, 2: 0}
+            pri2_pids = []
+            for pid in all_pids:
+                exp, strch, pri = self.evaluate_paragraph_probe(pid)
+                pri_counts[pri] += 1
+                if pri > 0:
+                    requests[pid] = (exp, strch, pri)
+                    if pri > global_max_pri:
+                        global_max_pri = pri
+                if pri == 2:
+                    pri2_pids.append(pid)
+            logging.log(15, 
+                f"[Sweep #{sweep_count}] Priorities -> Pri2: {pri_counts[2]}, Pri1: {pri_counts[1]}, Pri0: {pri_counts[0]}, {requests=}"
+            )
+            if global_max_pri != 2:
+                logging.log(15, f"[Sweep #{sweep_count}] No Priority 2 probes remaining. Exiting sweep loop.")
+                break
+            if len(pri2_pids) <= 5:
+                logging.log(15, f"[Sweep #{sweep_count}] Active Pri2 Stragglers: {pri2_pids}")
+            for pid, (exp, strch, pri) in requests.items():
+                sweep_params[pid] = (exp, strch)
+            layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
+            logging.log(15, f"run_layout result = {layout.result}")
+            self.collect_probes(layout, all_pids, sweep_params, page=page)
+            p = ProgressEvent(self.bk, sweep_count, "probe", "", self.numpages)
+            p.total = 10
             self.hooks.progress(p)
+
+        sweep_params = {pid: (self.expand, 0) for pid in all_pids}
+        layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
         return layout
 
-    def run_layout(self, page_base_params, state, combo, page, start):
-        params = dict(page_base_params)
+    def run_layout(self, page_base_params, state, combo, page, start, allpages=False):
         #params = dict(self.base_params)
-        for p, d in combo.items():
-            params[p] = self.shape_cache[(p, d)]
-        probe_params = dict(params)
-        ps = state.layout.get_pars(page)
-        last_para = ps[-1] if ps is not None and len(ps) else None
-        if not self.noprobe and last_para is not None:
-            found_any = False
-            for p in self.paragraph_order[self._para_order(last_para) + 2:]:
-                if probe_params.get(p, (10, 10)) != (self.expand, 0):
-                    continue
-                found = False
-                for s in range(0, 3):
-                    if found:
-                        break
-                    for e in range(int(self.expand * 100 + 1.1), int(self.minexp * 100 - 0.9), -1):
-                        if (p, e/100, -s) not in self.probe_cache:
-                            probe_params[p] = (e/100, -s)
-                            found = True
-                            break
-                    if not found:
-                        for e in range(int(self.expand * 100 + 1.1), int(self.maxexp * 100 + 1.1)):
-                            if (p, e/100, s) not in self.probe_cache:
-                                probe_params[p] = (e/100, s)
-                                found = True
-                                break
-                found_any |= found
-            if not found_any:
-                self.noprobe = True
-        # logger.log(15, "BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
-        layout = self.hooks.run_layout(self, probe_params, state.float_anchors, start)
-        if layout is None:
-            return None
+        mpri = 3
+        while mpri == 3:
+            params = dict(page_base_params)
+            for p, d in combo.items():
+                (e, s, bad) = self.shape_cache[(p, d)]
+                params[p] = (e, s)
+            self.probe_params = dict(params)
+            if allpages or self.numpages <= 2 * self.lookahead or self.numpages - page < 1.5 * self.lookahead:
+                npages = self.numpages - page + 1
+            else:
+                npages = self.lookahead
+            probe_pids = self.hooks.get_paragraphs_for_pages(page+1, page + npages)
+            mpri = 0
+            logmodpids = []
+            if not self.noprobe:
+                for pid in probe_pids:
+                    if pid in combo:
+                        continue
+                    exp, strch, pri = self.evaluate_paragraph_probe(pid)
+                    if exp != self.expand or strch != 0:
+                        self.probe_params[pid] = (exp, strch)
+                        logmodpids.append(pid)
+                    if pri == 2 and self.hooks.get_first_page_for_para(pid) == page+1:
+                        pri = 3
+                    if pri > mpri:
+                        mpri = pri
+            if mpri == 0:
+                if self.numpages <= 2 * self.lookahead or page + npages >= self.numpages:
+                    self.noprobe = True
+                npages = 2      # need to look ahead ready for the next page to process
+            logger.log(15, f"{page}+{npages}, probing={not self.noprobe}, {logmodpids=}, {mpri=}")
+            # logger.log(15, "BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
+            layout = self.hooks.run_layout(self, self.probe_params, state.float_anchors, start, page+npages)
+            self.collect_probes(layout, probe_pids, self.probe_params, page=page)
+            if layout is None:
+                return None
         self.itercount += 1
         logger.log(15, "layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
                 page, self.itercount, not self.noprobe,
                 str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
                 combo)
-        self.collect_probes(layout, layout.paragraph_total_lines.keys(), probe_params)
-        return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
+        self.collect_probes(layout, probe_pids, self.probe_params, page=page)
+        res = EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
+        if page + npages >= self.numpages:
+            res.complete = True
+        return res
 
-    def collect_probes(self, layout, paragraphs, params):
+    def collect_probes(self, layout, paragraphs, params, isbase=False, page=0):
+        def test_para(p, r):
+            pid = p.pid()
+            e, s = params[pid]
+            d = self.probe_cache.get(pid, {}).get((e, s), None)
+            if d is None:
+                return True
+            (eo, so, b) = self.shape_cache.get((p, d), (None, None, None))
+            if eo == e and so == s and b is None:
+                return True
+            return False
+        self.hooks.analyse_bw(test_para, page)
+        changes = []
         for p in paragraphs:
+            e, s = params.get(p, (self.expand, 0))
+            par = self.hooks.get_para(p)
+            if par is None:
+                if p not in self.probe_cache or (e, s) not in self.probe_cache[p]:
+                    self.probe_cache.setdefault(p, {})[(e, s)] = None
+                continue
+            if par.rects is not None:
+                blacks = sum(r.black for r in par.rects)
+                whites = sum(r.white for r in par.rects)
+            else:
+                (blacks, whites) = (0, 0)
+            whiteness = whites / (blacks + whites + .01)
+            badness = self.badness_modify(p, e, s, whiteness, isbase=isbase)
+            logging.log(15, f"{p}: ({e}, {s}) {whiteness=:.5f} {badness=:.5f} {whites=} {blacks=}")
+            if (p, 0) not in self.shape_cache:
+                self.shape_cache[(p,0)] = (self.expand, 0, whiteness)
+                self.probe_cache.setdefault(p, {})[(self.expand, 0)] = 0
             base = self.baseline_lines.get(p)
             if base is None:
                 logger.log(15, f"{p} missing from base_lines")
@@ -582,14 +698,22 @@ class TypesetterSolver:
             if new is None or p not in params:
                 continue
             delta = new - base
-            e, s = params[p]
-            #logger.log(15, f"{p} {base=}, {delta=}, ({e=}, {s=})")
-            self.probe_cache[(p, e, s)] = delta
+            self.probe_cache.setdefault(p, {})[(e, s)] = delta
+            if delta == 0:
+                continue
             key = (p, delta)
             sc = self.shape_cache.get(key, None)
-            if sc is None or self.hooks.design_badness(p, e, s, delta, result=True) \
-                           < self.hooks.design_badness(p, sc[0], sc[1], delta, result=True):
-                self.shape_cache[key] = (e, s)
+            if not isbase:
+                base_whiteness = self.shape_cache[(p, 0)][2]
+                threshold = base_whiteness + (self.hooks.badness_spacing_tolerance * base_whiteness) ** 4
+                if whiteness > threshold:
+                    logging.log(15, f"{p} ({e}, {s}) {whiteness=} {threshold=} {base_whiteness=}")
+                    continue
+            d = self.badness_cmp((e, s, badness), sc)
+            if d < 0:
+                self.shape_cache[key] = (e, s, badness)
+                changes.append((key, e, s, badness))
+        logging.log(15, f"{changes=}") 
 
     def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
         yield {}
@@ -609,10 +733,9 @@ class TypesetterSolver:
             elif l < 4:
                 first_para_adj = (1 - l)
         last_para = lpars[-1] if len(lpars) else None
-        for (p, d), (e, s) in self.shape_cache.items():
+        for (p, d), (e, s, score) in self.shape_cache.items():
             if p not in pset or d == 0:
                 continue
-            score = self.hooks.design_badness(p, e/self.expand, s, d)
             moves.append((score, p, d))
         moves.sort()
         by_para = {}
@@ -623,7 +746,7 @@ class TypesetterSolver:
         all_combos = []
         seen_col_sigs = {}
         colfree = state.layout.pages[page].column_free_lines
-        logger.log(15, f"{first_para=} {last_para=}, {max_r=}, {colfree=}, {moves=}")
+        logger.log(15, f"{first_para=} {last_para=}, {max_r=}, {colfree=}, {moves=}, {lpars=}")
         if colfree is None:
             collengths = [0, 0]
         elif len(colfree) == 2:
@@ -640,7 +763,7 @@ class TypesetterSolver:
                 count += 1
                 delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
-                    score = sum(s for s, _ in choice) + 5 * len(choice)
+                    score = sum(s for s, _d in choice) + 0.1 * len(choice)
                     combo = {p: d for p, (s, d) in zip(pars, choice)}
                     # have we done the same net col line change before?
                     col_deltas = [0, 0, 0, 0, 0, 0]
@@ -666,6 +789,10 @@ class TypesetterSolver:
                         else:
                             logger.log(12, "Can't find mask for {p}")
                             col_deltas[5] += d
+                        prev = self.hooks.get_previous(p)
+                        preve = self.shape_cache.get((p, combo.get(p, 0)), (self.expand, 0))[0]
+                        pe = self.shape_cache[(p, d)][0]
+                        score += self.hooks.badness_contrast_factor * abs(pe - preve)
                     else:
                         if collengths[0] > 0 and 0 <= col_deltas[0] + col_deltas[1] + col_deltas[3] < collengths[0]:
                             logger.log(12, f"Rejecting against col 1 {col_deltas} {combo}")
@@ -705,12 +832,41 @@ class TypesetterSolver:
         score = 0
         boundary = False
         for p, d in combo.items():
-            (e, s) = self.shape_cache.get((p, d), (None, None))
+            (e, s, bad) = self.shape_cache.get((p, d), (None, None, None))
             if e is None:
                 score += 1000
             else:
-                score += self.hooks.design_badness(p, e, s, d)
+                score += bad
         return score
+
+    def badness_modify(self, p, e, s, badness, isbase=False):
+        exp = math.sqrt(abs(self.expand - e))
+        badness += self.hooks.badness_expansion_factor * exp * (badness ** 4)
+        expxtra = exp * self.hooks.badness_expansion_cost
+        if expxtra > 0.:
+            badness += expxtra
+        is_header = self.hooks.is_header(p)
+        if not isbase and is_header:
+            badness += 10
+        return badness
+
+    def badness_cmp(self, a, b):
+        ''' returns -1 if a is better than b, returns 1 if b better than a.
+            a, b= (e, s, badness) '''
+        if b is None:
+            return -1
+        if a is None:
+            return 1
+        ea = abs(a[0] - 1)
+        eb = abs(b[0] - 1)
+        r = cmp(ea, eb)
+        if r != 0:
+            return r
+        r = cmp(a[2], b[2])
+        if r != 0:
+            return r
+        r = cmp(a[1], b[1])
+        return r
 
 
 # -------------
@@ -746,6 +902,7 @@ class PTXFiller:
         self.rtl = self.view.get("fcb_textDirection", "") == "rtl"
         self.macrosdir = build_params.scriptsdir
         self.view.project.ext = None
+        self.stats = []
         if nid is not None:
             self.view.project.ext = f"pbuild{nid}"
             d = self.view.project.printPath(self.view.cfgid)
@@ -807,7 +964,8 @@ class PTXFiller:
             self.maxexp = float(self.view.get("s_maxtextlimit", "105")) / 100
         except ValueError:
             self.maxexp = 1.05 * self.expand
-        init_layout = self.hooks.run_layout(None, parms, {}, -1, genfiles=True)
+        init_layout = self.hooks.run_layout(None, parms, {}, -1, -1, genfiles=True)
+        self.init_adjs = self.adjs
         if init_layout is None:
             printbk(bk, "!")
             return (False, f"Failed: {bk}")
@@ -826,6 +984,7 @@ class PTXFiller:
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
         state = EngineState(parms if restart else {p: (self.expand, 0) for p in pids}, [], init_layout, self.parlocs, 0)
         self.hooks.basestate = state
+        self.hooks.chapters = self.parlocs.chapters
         starttime = time()
         #print(f"Solving {bk}")
         solver = TypesetterSolver(self.hooks, pids, expand=self.expand, minexp=self.minexp, maxexp=self.maxexp)
@@ -845,50 +1004,77 @@ class PTXFiller:
         self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
                 os.path.basename(self.job.pdffile))
         self.job.xdvtopdf(self.job.outfname, self.job.pdffile)
+        logger.log(15, f"shape_cache={solver.shape_cache}")
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
             self.progress(ProgressEvent(bk, res.page, 'failed', res.message, -1))
             printbk(bk, "T")
         else:
             retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
+            msg = f"Failed: {' '.join(str(x) for x in res.failures)}" if res.failures else _("All done")
+            self.progress(ProgressEvent(bk, 0, "complete", msg, -1))
             printbk(bk, "Y")
+        if len(self.stats):
+            print(f"\n{bk}: mean={statistics.mean(self.stats)}, median={statistics.median(self.stats)}, sd={statistics.stdev(self.stats)}, quantiles={statistics.quantiles(self.stats)}")
         return retval
         
-    def createAdjs(self, parparms, solver):
+    def createAdjs(self, parparms, solver, lastchap=0):
         def mkkey(s):
             (r, para) = self.pidkey(s)
             key = f"{r[5]}" if r[1] == 0 and r[5] else f"{r[1]}.{r[2]}{r[5]}"
             return key, para
+        def getchap(key):
+            c, _d = key.split('.', 1) if '.' in key else (key, None)
+            try:
+                c = int(c)
+            except ValueError:
+                c = 0
+            return c
         tname = self.view.getLocalTriggerFilename(self.bk)
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
-        self.adjs = AdjList(int(self.expand*100), int(self.minexp*100), int(self.maxexp*100), fname=adjfname)
+        if not hasattr(self, 'init_adjs'):
+            self.adjs = AdjList(int(self.expand*100), int(self.minexp*100), int(self.maxexp*100), fname=adjfname, gtk=None)
+        else:
+            self.adjs = self.init_adjs.copy()
         logger.log(12, f"{self.bk}: {parparms=}")
         for s, p in parparms.items():
             key, para = mkkey(s)
-            self.adjs.setval(s[:3], key, para, p[1], None, expand=int(p[0]*100), append=True)
+            c = getchap(key)
+            if lastchap == 0 or lastchap > int(c):
+                self.adjs.setval(self.bk, key, para, p[1], None, expand=int(p[0]*100), append=True)
         if solver is not None:
             for s in solver.paragraph_order:
                 key, para = mkkey(s)
+                c = getchap(key)
+                if lastchap != 0 and lastchap <= int(c):
+                    break
                 for a in range(-2, 3):
                     if a == 0:
                         continue
                     keyv = f"{'p' if a > 0 else 'm'}{abs(a)}"
                     if (s, a) in solver.shape_cache:
-                        e, t = solver.shape_cache[(s, a)]
+                        e, t, badness = solver.shape_cache[(s, a)]
                         v = f"{int(e*100)}" if t == 0 else f"{int(e*100)}{t:+1d}"
+                        # print(f"{s}@{a}={e},{t} into {key},{keyv}={v}")
                     else:
                         v = None
-                    self.adjs.setdb(key, keyv, v)
+                    self.adjs.setdb(self.bk + " " + key, keyv, v)
         self.adjs.createAdjlist()
         tname = self.view.getLocalTriggerFilename(self.bk)
         tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
         self.adjs.createTriggerlist(fname=tpath)
 
-    def run_layout(self, solver, parparms, floats, genfiles=False, prompt="."):
+    def run_layout(self, solver, parparms, floats, lastpage, genfiles=False, prompt="."):
         if self.timedout:
             raise TimeoutError()
-        self.createAdjs(parparms, solver)
+        if lastpage <= 0 or getattr(self, 'parlocs', None) is None:
+            stopchap = 0
+        else:
+            stopchap = self.hooks.chap_from_page(lastpage) + 1
+        self.view.set("s_stopat", stopchap)
+        logging.log(15, f"{stopchap=}")
+        self.createAdjs(parparms, solver, lastchap=stopchap)
         if self.job is None:
             self.job = RunJob(self.view, self.view.scriptsdir, self.macrosdir, self.view.args)
             self.job.norun = True
@@ -967,7 +1153,11 @@ class PTXFiller:
         s = m.group(1)
         if s.startswith("k."):
             s = "k." + re.sub(r"[^a-zA-Z0-9]", "", s[2:])
-        return (refSort(s), int(m.group(2) or 0))
+        try:
+            c = int(m.group(2) or 0)
+        except ValueError:
+            c = 0
+        return (refSort(s), c)
 
     def get_plines(self):
         plines = {p.pid(): p.lines for p in self.parlocs if isinstance(p, ParInfo)}
@@ -980,6 +1170,22 @@ class PTXFiller:
         pindex = self.pidmap.get(pid, None)
         if pindex is not None and pindex < len(self.parlocs):
             return self.parlocs[pindex]
+        return None
+
+    def get_previous(self, pid, page=None):
+        pindex = self.pidmap.get(pid)
+        if pindex is None:
+            return None
+        while pindex > 0:
+            pindex -= 1
+            p = self.parlocs[pindex]
+            if isinstance(p, ParInfo):
+                if page is None:
+                    return p.pid()
+                elif page in self.pidmap[p.pid()]:
+                    return p.pid()
+                else:
+                    return None
         return None
 
     def get_paragraph_start_page(self, pid):
@@ -998,10 +1204,11 @@ class PTXFiller:
         p = self.get_para(pid)
         if p is None:
             return 0
+        res = 0
         for r in p.rects:
             if r.pagenum == page + 1:
-                return r.lines
-        return 0
+                res += r.lines
+        return res
 
     def isheader_column_start(self, pid):
         pi = self.get_para_ind(pid)
@@ -1034,7 +1241,7 @@ class PTXFiller:
     def parselog(self, fname):
         self.underfills = GrowList()
         with open(fname, encoding="utf-8") as inf:
-            for l in inf.readlines():
+            for i, l in enumerate(inf.readlines()):
                 m = self.reunderfill.match(l)
                 if m:
                     pnum = int(m.group(2))
@@ -1056,6 +1263,8 @@ class PTXFiller:
                     else:
                             v = [lines]
                     self.underfills[pnum] = v
+                elif l.startswith("Underfill"):
+                    logger.warn(f"Unparsed underfill {l} at line {i+1}")
 
     def read_badnesses(self):
         xdvname = self.job.outfname.replace(".tex", ".xdv")
@@ -1075,13 +1284,14 @@ class PTXFiller:
             lastp = p
             if p <= page:
                 continue
-            #print(f"Deleting {pid}")
             params[pid] = (self.expand, 0)
             res = True
-            # delta = solver.probe_cache[(pid, e, s)]
-            # beste, bests = solver.shape_cache[(pid, delta)]
-            # if beste != e or bests != s:
-            #     res = True
-            #     params[pid] = (beste, bests)
         return res
+
+    def analyse_bw(self, testfn, page):
+        xdvname = self.job.outfname.replace(".tex", ".xdv")
+        xdv = XdvSpaceMeasure(xdvname, self.parlocs, testfn=testfn, page=max(page, 0))
+        for (opcode, data) in xdv.parse():
+            pass
+        
 

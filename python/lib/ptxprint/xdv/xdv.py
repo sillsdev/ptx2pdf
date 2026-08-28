@@ -2,6 +2,8 @@
 
 # Parses xdv
 from struct import unpack, pack
+import logging
+
 class Font:
     def __init__(self, fname):
         self.name = fname
@@ -78,13 +80,14 @@ opcodes += [
 packings = ("bhxi", "BHxI")
 
 class XDViReader:
-    def __init__(self, fname, diffable=False):
+    def __init__(self, fname, diffable=False, page=0):
         self.fonts = {}
         self.fname = fname
         self.diffable = diffable
         self.pageno = 0
         self.buffer = None
         self.fpos = 0
+        self.startpage = max(page, 0)
 
     def __enter__(self):
         with open(self.fname, "rb") as inf:
@@ -148,9 +151,23 @@ class XDViReader:
             self.seek(0)
             return
         self.fpos = postpos
+        spage = 0
+        lastbop = 0
         for (op, res) in self._parse():
-            pass
+            if self.startpage != 0:
+                if op == "multiparm":       # post
+                    spage = res[6] - self.startpage  # t, numpages
+                    lastbop = res[0]
         self.fpos = 0
+        while spage > 0:
+            self.fpos = lastbop
+            (op, opc, data) = next(self)
+            if op != "bop":     # error!
+                self.fpos = 0
+                break
+            spage -= 1
+            lastbop = data[10]
+        logging.log(15, f"{self.fname}: {self.fpos=}")
 
     def out(self, txt):
         # print(("pg[{}] ".format(self.pageno) + txt).encode("utf-8"))
@@ -249,8 +266,8 @@ class XDViReader:
 
 class XDViPositionedReader(XDViReader):
     """ Keeps track of where we are. Positions are in pt """
-    def __init__(self, fname, diffable=False):
-        super().__init__(fname, diffable=diffable)
+    def __init__(self, fname, diffable=False, page=0):
+        super().__init__(fname, diffable=diffable, page=page)
         self.stack = []
         self.dviratio = 1.
         self.h = 0

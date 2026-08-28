@@ -12,7 +12,7 @@ from shutil import copy2
 from inspect import currentframe
 from struct import unpack
 from dataclasses import dataclass, field
-from typing import Any, Optional, Callable
+from typing import Any, Optional, Callable, Literal
 import contextlib, pickle, gzip
 import regex
 import threading
@@ -156,6 +156,14 @@ class BuildParams:
     setupargs: Optional[Any] = field(default=None, compare=False)
     resultfn: Optional[Callable] = None
 
+@dataclass
+class ProgressEvent:
+    book:   str
+    page:   int
+    mode:   Literal["complete", "failed", "badpage", "goodpage", "already_filled"]
+    msg:    Optional[str] = None
+    total:  Optional[int] = None
+
 
 _ = gettext.gettext
 __file__ = os.path.abspath(__file__)
@@ -215,7 +223,7 @@ _outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Trans
 
 def f_(s):
     frame = currentframe().f_back
-    return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
+    return eval("f'{}'".format(_(s)), dict(frame.f_locals), dict(frame.f_globals))
 
 def calledme(s=0):
     res = traceback.format_stack(limit=s+2)[-s-2].strip()

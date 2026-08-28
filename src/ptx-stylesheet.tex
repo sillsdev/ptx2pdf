@@ -37,7 +37,7 @@
 % either ignoring it or saving the parameter as appropriate
 %
 %+csty_definition_setup
-\def\ds@ffix{} % diglot suffix (L/R)
+\def\ds@ffix{} % diglot suffix (L/R) used when reading stylesheet (not to be confused with \c@rrdstat, which is the diglot side of text we're currently processing)l
 \def\m@rker{} % The currently being defined \Marker
 \let\prev@rsemode\empty
 \def\remember@xists#1{\x@\xdef\csname m@rkerexists-#1\endcsname{t}}
@@ -1002,7 +1002,16 @@
 \newif\ifrotateVerse \rotateVersefalse
 \newif\ifversehyphen \versehyphentrue
 \newif\ifversehyphenup \versehyphenupfalse
+\ifcsname fastendchapter\endcsname\else\gdef\fastendchapter{0}\fi
 \def\everyfirstverse#1#2#3{}% Arguments are book ID (e.g. GEN), Book name (e.g. Genesis) and chapter
+
+\def\STOPHERE{
+  \ifdiglot
+    \x@\global\x@\let\x@\afterthischunkhook\csname endinput\endcsname
+  \else
+    \csname endinput\endcsname
+  \fi
+}
 \def\@ddcvhooks{
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
@@ -1114,6 +1123,15 @@
    \fi
    \gdef\ch@pter{##1}% remember chapter number
    \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
+   \trace{c}{fastendchapter=\fastendchapter}%
+   \ifnum \fastendchapter=0 \else 
+     \ifx\ch@pter\fastendchapter
+       \message{fastendchapter matched: ##1}%
+       \STOPHERE
+     \else
+       %\message{##1 != \the\fastendchapter}
+     \fi
+   \fi
    \global\let\ch@pteraltt@xt\empty
    \gdef\v@rse{}% clear verse number
    \m@kedigitsletters %Must reset this before futurelet grabs anything
@@ -2522,7 +2540,7 @@
 \def\debugBL{\MSG{\f@ntstyle, Baseline: \the\baselineskip}} % for scattering in usfm as desired.
 % calculate various dimensions based on the factors, units, etc that have been defined
 %+csty_setupsizewas s
-\def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R for diglot.
+\def\s@tb@dyb@seline#1{%Parameter is {} for monoglot, L / R / etc. for diglot.
  \baselineskip=\origb@selineskip
  \global\le@dingunit=\LineSpacingFactor\FontSizeUnit
  \onel@neunit=\LineSpaceBase\le@dingunit
@@ -2538,11 +2556,11 @@
                                                            % set it will remain. Otherwise, the default
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
- \getp@r@m{baseline}{p}\ifx\p@ram\relax
-   \s@tbaseline@{p}{#1}\setp@ram{baseline}{p}{\the\baselineskip}%
-   \MSG{Baselineskip for p\ds@ffix \space was undefined, now set #1 to \the\baselineskip (\the\onel@neunit)}%
+ \getp@r@m{baseline}{p#1}\ifx\p@ram\relax
+   \s@tbaseline@{p}{#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
+   \MSG{Baselineskip for p#1 \space was undefined, now set #1 to \the\baselineskip (\the\onel@neunit)}%
  \else
-   \MSG{Baselineskip for p\ds@ffix \space was \p@ram (orig: \the\origb@selineskip). now defined #1 as \the\baselineskip}%
+   \MSG{Baselineskip for p#1 \space was \p@ram (orig: \the\origb@selineskip). now defined #1 as \the\baselineskip}%
  \fi
  \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
 }
