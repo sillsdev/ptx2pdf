@@ -734,7 +734,7 @@ class TypesetterSolver:
                 first_para_adj = (1 - l)
         last_para = lpars[-1] if len(lpars) else None
         for (p, d), (e, s, score) in self.shape_cache.items():
-            if p not in pset or d == 0:
+            if p not in pset or d == 0 or d is None or p is None or score is None:
                 continue
             moves.append((score, p, d))
         moves.sort()
