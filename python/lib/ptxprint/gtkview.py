@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, subprocess, traceback, ssl, queue
+import sys, os, re, regex, subprocess, traceback, ssl, queue, copy
 try:
     import gi
 except ModuleNotFoundError:
@@ -2409,23 +2409,30 @@ class GtkViewModel(ViewModel):
                 self.print_scheduler.start()
                 args = argparse.Namespace(**vars(self.args))
                 timeout = float(self.get("s_pbtimeout")) * 60
-                build_params = BuildParams(
-                        prjtree = self.prjTree,
-                        config = self.userconfig,
-                        macrosdir = self.scriptsdir,
-                        scriptsdir = self.scriptsdir,
-                        args = args,
-                        restart = False,
-                        pid = self.project.prjid,
-                        guid = self.project.guid,
-                        cfgid = self.cfgid,
-                        timeout = timeout,
-                        loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
 
                 for pub in pubs_to_print:
+                    job_config = copy.deepcopy(self.userconfig)
+                    for var_name, val in pub.items():
+                        if var_name in ("select", "books"):
+                            continue
+                        self._configset(job_config, var_name, val)
+
+                    job_build_params = BuildParams(
+                            prjtree = self.prjTree,
+                            config = job_config,
+                            macrosdir = self.scriptsdir,
+                            scriptsdir = self.scriptsdir,
+                            args = args,
+                            restart = False,
+                            pid = self.project.prjid,
+                            guid = self.project.guid,
+                            cfgid = self.cfgid,
+                            timeout = timeout,
+                            loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
+
                     self.print_scheduler.submit_print_job(
                         books=[pub['books']],
-                        build_params=build_params,
+                        build_params=job_build_params,
                         cfgid=self.cfgid,
                         log_config=None,
                     )

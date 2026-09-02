@@ -8,8 +8,10 @@ from concurrent.futures import ProcessPoolExecutor, Future, as_completed
 from concurrent.futures import wait as wait_futures
 import multiprocessing as mp
 import threading, queue, psutil
+from ptxprint.modelmap import ModelMap
 from ptxprint.page_filler import PTXFiller
 from ptxprint.project import ProjectList
+from ptxprint.runjob import RunJob
 from ptxprint.utils import BuildParams, ProgressEvent, f_
 from ptxprint.view import ViewModel
 from usfmtc.reference import chaps, RefList
@@ -300,7 +302,7 @@ class MultiPrint:
             self.start()
 
         job = Job(action='print', books=books, build_params=build_params, cfgid=cfgid, log_config=log_config)
-        self._dispatch_job(job)
+        fut = self._dispatch_job(job)
         return fut
 
     def is_finished(self) -> bool:
