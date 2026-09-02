@@ -37,11 +37,18 @@ class ViewPrinter:
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
 
-    def solve(self, books: list[str], cfgid_override: Optional[str] = None):
+    def solve(self, books: list[str], cfgid_override: Optional[str] = None, override_config: Optional[dict] = None):
         cfgid = cfgid_override or self.build_params.cfgid
         self.view.setConfigId(cfgid)
         self.view.set("ecb_booklist", books)
         self.view.set("r_book", "multiple")
+
+        if override_config:
+            for var_name, val in override_config.items():
+                if var_name in ModelMap:
+                    if val in ['False', 'false']:  # surely there's a better way to do this? is it possible to get the type of var_name?
+                        val = False
+                    self.view.set(ModelMap[var_name].widget, val)
 
         runjob = RunJob(
             self.view,
@@ -65,6 +72,7 @@ class Job:
     log_config: Optional[dict] = None
     stop: bool = False
     cfgid: Optional[str] = None
+    override_config: Optional[dict] = None
 
 
 class GLibCompatQueue:
@@ -209,7 +217,7 @@ class WorkerContext:
                     restart=job.build_params.args.restart
                 )
             else:
-                res = printer.solve(' '.join(job.books), cfgid_override=job.cfgid)
+                res = printer.solve(' '.join(job.books), cfgid_override=job.cfgid, override_config=job.override_config)
         except Exception as e:
             print(f"Exception {job.books[0]}: {e}")
             logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n{f_('Traceback: ')}")
@@ -296,12 +304,12 @@ class MultiPrint:
             job = Job(action='fill', books=[bk], build_params=build_params, log_config=log_config, stop=stop)
             self._dispatch_job(job)
 
-    def submit_print_job(self, books: list[str], build_params: BuildParams, cfgid: Optional[str] = None, log_config: Optional[dict] = None) -> Future:
+    def submit_print_job(self, books: list[str], build_params: BuildParams, cfgid: Optional[str] = None, log_config: Optional[dict] = None, override_config: Optional[dict] = None) -> Future:
         """Enqueues a print job and returns the Future handle immediately."""
         if not self.executor:
             self.start()
 
-        job = Job(action='print', books=books, build_params=build_params, cfgid=cfgid, log_config=log_config)
+        job = Job(action='print', books=books, build_params=build_params, cfgid=cfgid, log_config=log_config, override_config=override_config)
         fut = self._dispatch_job(job)
         return fut
 

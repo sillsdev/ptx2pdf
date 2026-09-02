@@ -2410,31 +2410,29 @@ class GtkViewModel(ViewModel):
                 args = argparse.Namespace(**vars(self.args))
                 timeout = float(self.get("s_pbtimeout")) * 60
 
-                for pub in pubs_to_print:
-                    job_config = copy.deepcopy(self.userconfig)
-                    for var_name, val in pub.items():
-                        if var_name in ("select", "books"):
-                            continue
-                        self._configset(job_config, var_name, val)
+                job_build_params = BuildParams(
+                        prjtree = self.prjTree,
+                        config = self.userconfig,
+                        macrosdir = self.scriptsdir,
+                        scriptsdir = self.scriptsdir,
+                        args = args,
+                        restart = False,
+                        pid = self.project.prjid,
+                        guid = self.project.guid,
+                        cfgid = self.cfgid,
+                        timeout = timeout,
+                        loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
 
-                    job_build_params = BuildParams(
-                            prjtree = self.prjTree,
-                            config = job_config,
-                            macrosdir = self.scriptsdir,
-                            scriptsdir = self.scriptsdir,
-                            args = args,
-                            restart = False,
-                            pid = self.project.prjid,
-                            guid = self.project.guid,
-                            cfgid = self.cfgid,
-                            timeout = timeout,
-                            loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
+                for pub in pubs_to_print:
+                    override_config = {k: v for k, v in pub.items() if k not in ['select', 'books', 'title', 'subtitle']}
+                    # TODO: set title, subtitle
 
                     self.print_scheduler.submit_print_job(
                         books=[pub['books']],
                         build_params=job_build_params,
                         cfgid=self.cfgid,
                         log_config=None,
+                        override_config=override_config
                     )
 
                 GLib.timeout_add(200, self._poll_print_jobs)
