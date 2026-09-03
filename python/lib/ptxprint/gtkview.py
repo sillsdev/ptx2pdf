@@ -8436,12 +8436,12 @@ Thank you,
         self.testing = None
         self.builder.get_object("c_testrecording").set_active(False)
 
-    def onPublicationsClicked(self):
+    def onPublicationsClicked(self, *a):
         pass
 
-    def onAddPub(self):
+    def onAddPub(self, *a):
         pass
 
-    def onRmPub(self):
+    def onRmPub(self, *a):
         pass
     

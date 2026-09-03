@@ -763,7 +763,7 @@ class TypesetterSolver:
                 count += 1
                 delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
-                    score = sum(s for s, _d in choice) + 0.1 * len(choice)
+                    score = sum(s for s, d in choice) + 0.1 * len(choice)
                     combo = {p: d for p, (s, d) in zip(pars, choice)}
                     # have we done the same net col line change before?
                     col_deltas = [0, 0, 0, 0, 0, 0]
