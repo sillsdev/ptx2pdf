@@ -21,17 +21,19 @@ class WordForm:
     def __str__(self):
         res = []
         if self.prefices is not None:
-            res.append("("+"|".join(sorted(self.prefices, key=len))+")")
+            res.append("(?:"+"|".join(sorted(self.prefices, key=len))+")")
         res.append(self.stem)
         if self.suffices is not None:
-            res.append("("+"|".join(sorted(self.suffices, key=len))+")")
+            res.append("(?:"+"|".join(sorted(self.suffices, key=len))+")")
         return "".join(res)
 
     def merge(self, stem, prefix, suffix):
         if self.stem != stem:
             return False
-        matchpref = (prefix is None and self.prefices is None) or (prefix in self.prefices)
-        matchsuff = (suffix is None and self.suffix is None) or (suffix in self.suffixes)
+        matchpref = (prefix is None and self.prefices is None) or \
+                    (self.prefices is not None and prefix in self.prefices)
+        matchsuff = (suffix is None and self.suffices is None) or \
+                    (self.suffices is not None and suffix in self.suffices)
         if matchpref and not matchsuff:
             if suffix is not None:
                 self.suffices.add(suffix)
@@ -50,7 +52,7 @@ class WordForms:
         self.forms = []
 
     def __str__(self):
-        return "("+"|".join(self.forms + [self.stem])+ ")"
+        return "(?:"+"|".join([str(f) for f in self.forms] + [self.stem])+ ")"
 
     def merge(self, stem, prefix, suffix):
         if prefix is None and suffix is None:
