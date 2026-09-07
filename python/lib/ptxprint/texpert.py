@@ -287,6 +287,8 @@ texpertOptions = {
     "pbExpandBadness":    O("pbexpbad", "APF", (1.0, 0, 10, 0.1, 1, 1), None, _("Expansion badness cost"), _("Factor to multiply sqrt(abs(1-expand)) * badness^4 as added cost")),
     "pbExpansion":        O("pbexpcost", "APF", (1.0, -5, 5, 0.1, 1, 1), None, _("Added badness for expanded text"), _("Typical badness values 0-1.0, add this value if the paragraph is to expand")),
     "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), None, _("Expansion difference badness factor"), _("Multiply the difference in expansions (1.0 is none), add as a cost")),
+    "pbBackTrack":        O("pbbacktrack", "APF", (1, 0, 5, 1, 1, 0), None, _("Maximum number of pages to backtrack"), _("Maximum number of pages to backtrack")),
+    "pbMaxr":             O("pbmaxr", "APF", (5, 1, 10, 1, 1, 0), None, _("Maximum paragraphs to modify"), _("Maximum number of paragraphs on a page to modify at once")),
 
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),

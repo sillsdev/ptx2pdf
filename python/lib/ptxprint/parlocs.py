@@ -39,9 +39,11 @@ class ParRect:
     xdvlines:   InitVar[None] = None
     tspace:     float = 0.
     nspace:     int = 0
-    lines:      int = 0
-    black:      float = 0.
-    white:      float = 0.
+    lines:      int = 0         # number of lines
+    black:      float = 0.      # total width of ink
+    white:      float = 0.      # total width of spaces
+    parwhite:   float = 0.      # total width of right rag space
+    nspaces:    int = 0         # number of spaces
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
@@ -322,7 +324,7 @@ class Paragraphs(list):
                     currr.yend = readpts(p[1])
                     ps = currps.get(polycol, None)
                     if ps is not None:
-                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
+                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                     currr = None
                 colinfos[polycol] = None
                 lines.startreplay()
@@ -372,7 +374,7 @@ class Paragraphs(list):
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
-                currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
+                currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                 endpar = True
             elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
                 if not endpar or not inpage:

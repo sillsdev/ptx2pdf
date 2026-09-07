@@ -212,7 +212,7 @@ class XDViReader:
         (k, c, s, d, a, l) = data
         n = bytes(self.readbytes(a+l)).decode("utf-8")
         font = Font(n)
-        font.size = self.mag * s / 1000. / d if d != 0 else 0
+        font.points = self.mag * s / 1000. / d if d != 0 else 0
         font.checksum = c
         self.fonts[k] = font
         return (k, c, s, d, a, l, n)
