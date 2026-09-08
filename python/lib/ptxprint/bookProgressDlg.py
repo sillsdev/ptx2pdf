@@ -108,7 +108,7 @@ class BookProgressCell:
     def update(self, event):
         """Apply a ProgressEvent to this cell. Must be called on GTK main thread."""
         mode = event.mode
-        total = event.total if event.total is not None else self._total
+        total = event.total if event.total is not None and event.total > 0 else self._total
         page = event.page or total
 
         if total is not None:

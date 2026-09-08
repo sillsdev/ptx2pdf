@@ -329,6 +329,7 @@ class TypesetterSolver:
         self.probe_cache: Dict[[Any], Dict[Tuple[float, int], int]] = {}
         self.shape_cache: Dict[Tuple[Any, int], Tuple(float, int, float)] = {}
         self.probe_params = {}
+        self.full_probe = True
         self.baseline_lines: Dict[Any, int] = {}
         self.base_params = {p: (expand, 0) for p in self.paragraph_order}
         self.tried = set()
@@ -378,8 +379,9 @@ class TypesetterSolver:
 
         self.collect_probes(state.layout, self.paragraph_order, self.base_params, isbase=True, page=start_page)
         page = start_page + 1
+        self.low_water = max(0, page - self.backtrack_depth)
         self.numpages = state.numPages()
-        npages = (self.numpages - page + 1) if self.numpages <= 2 * self.lookahead else self.lookahead
+        npages = (self.numpages - page + 1) if self.full_probe or self.numpages <= 2 * self.lookahead else self.lookahead
         try:
             layout = self.initial_probes(state, page, npages, restart=restart)
         except TimeoutError:
@@ -425,7 +427,7 @@ class TypesetterSolver:
                     return state
                 nextpage = state.numPages() - 1 if nextpage is None else nextpage + 1
 
-            # don't reprobe starting on a page we've already given up on
+            # don't reanalyse starting on a page we've already given up on
             while nextpage in self.failed_pages:
                 if nextpage >= state.numPages() - 1:
                     state.failures = self.failed_pages
@@ -433,11 +435,14 @@ class TypesetterSolver:
                 nextpage += 1
 
             # probe starting at the new page
-            if state.numPages() - nextpage >= self.lookahead and self.numpages >= 2 * self.lookahead:
+            if not self.full_probe and state.numPages() - nextpage >= self.lookahead \
+                                   and self.numpages >= 2 * self.lookahead:
                 layout = self.initial_probes(state, nextpage, 10, progress=False)
                 state = EngineState(self.init_state.paragraph_params, state.float_anchors,
                                      layout, self.hooks.printer.parlocs, nextpage)
             page = nextpage
+            if self.low_water < page - self.backtrack_depth:
+                self.low_water = page - self.backtrack_depth
 
             if page in self.failed_pages:
                 # already given up on this page -- don't re-attempt it, and if there's nowhere 
@@ -463,8 +468,8 @@ class TypesetterSolver:
                 continue
 
             # did we mess up something earlier?
-            if state.layout.first_failing_page is not None and state.layout.first_failing_page < page:
-                target, avoid_key, max_depth = state.layout.first_failing_page, None, self.regression_depth
+            if new_state.layout.first_failing_page is not None and new_state.layout.first_failing_page < page:
+                target, avoid_key, max_depth = new_state.layout.first_failing_page, None, self.regression_depth
             else:
                 # backtrack and try a previous page to help us do better
                 target = page - 1
@@ -473,7 +478,7 @@ class TypesetterSolver:
 
             try:
                 state, fixed = self.repair(state, target, start_page,
-                                            avoid_key=avoid_key, max_depth=max_depth)
+                                            avoid_key=avoid_key, floor=self.low_water)
             except TimeoutError:
                 msg = "Stopped" if self.hooks.cancelled else "Timed out"
                 self.hooks.progress(ProgressEvent(self.bk, page, "failed", msg, self.numpages))
@@ -576,7 +581,7 @@ class TypesetterSolver:
         state.passed = False
         return state, False
 
-    def repair(self, state, page, start, avoid_key, max_depth=None):
+    def repair(self, state, page, start, avoid_key, floor=0):
         """Try to give `page` a different combo, cascading backward
         (floor: page 0) if it has none left.
             state: current EngineState.
@@ -587,9 +592,7 @@ class TypesetterSolver:
             max_depth: counts down depth to 0 (None = unbounded).
             Returns (state, success)
         """
-        if page < 0:
-            return state, False
-        if max_depth is not None and max_depth <= 0:
+        if page < floor:
             return state, False
 
         state, ok = self.attempt_page(state, page, start, avoid_key=avoid_key)
@@ -599,7 +602,7 @@ class TypesetterSolver:
         earlier_avoid_key = self.hooks.get_page_para_key(page, state=state)
         return self.repair(state, page - 1, start,
                             avoid_key=earlier_avoid_key,
-                            max_depth=max_depth - 1)
+                            floor=floor)
 
     def evaluate_paragraph_probe(self, pid):
         """
@@ -748,7 +751,8 @@ class TypesetterSolver:
                 (e, s, bad) = self.shape_cache[(p, d)]
                 params[p] = (e, s)
             self.probe_params = dict(params)
-            if allpages or self.numpages <= 2 * self.lookahead or self.numpages - page < 1.5 * self.lookahead:
+            if allpages or self.full_probe or self.numpages <= 2 * self.lookahead \
+                        or self.numpages - page < 1.5 * self.lookahead:
                 npages = self.numpages - page + 1
             else:
                 npages = self.lookahead
@@ -768,7 +772,8 @@ class TypesetterSolver:
                     if pri > mpri:
                         mpri = pri
             if mpri == 0:
-                if self.numpages <= 2 * self.lookahead or page + npages >= self.numpages:
+                if self.full_probe or self.numpages <= 2 * self.lookahead \
+                                   or page + npages >= self.numpages:
                     self.noprobe = True
                 npages = 2      # need to look ahead ready for the next page to process
             logger.log(15, f"{page}+{npages}, probing={not self.noprobe}, {mpri=}")
@@ -782,7 +787,8 @@ class TypesetterSolver:
                 page, self.itercount, not self.noprobe,
                 str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
                 combo)
-        self.collect_probes(layout, probe_pids, self.probe_params, page=page)
+        if not self.noprobe:
+            self.collect_probes(layout, probe_pids, self.probe_params, page=page)
         res = EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
         if page + npages >= self.numpages:
             res.complete = True
@@ -902,7 +908,7 @@ class TypesetterSolver:
         for score, p, d in moves:
             by_para.setdefault(p, []).append((score, d))
         plist = list(by_para.keys())
-        max_r = int(min(self.hooks.badness_maxr, 1.5 * self.hooks.badness_maxr / log10(max(5, len(plist)))))
+        max_r = min(int(self.hooks.badness_maxr / log10(max(5, len(plist)))), len(plist))
         all_combos = []
         seen_col_sigs = {}
         colfree = state.layout.pages[page].column_free_lines if page < len(state.layout.pages) else None
@@ -913,6 +919,8 @@ class TypesetterSolver:
             collengths = [colfree[0], colfree[0]+colfree[1]]
         elif len(colfree) == 1:
             collengths = [colfree[0], colfree[0]]
+        count = 0
+        maxscore = 10000
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
                 if state.paragraph_params.get(pars, (self.expand, 0)) != (self.expand, 0):
