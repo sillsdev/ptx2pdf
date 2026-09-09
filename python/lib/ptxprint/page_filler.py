@@ -185,7 +185,9 @@ class Hooks:
             logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
         vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
-        logger.log(15, f"Badness parameters = {vals}")
+        self.tracing = logger.isEnabledFor(15)
+        if self.tracing:
+            logger.log(15, f"Badness parameters = {vals}")
 
     def run_layout(self,
                    solver: Optional["Typesetter"],
@@ -209,7 +211,8 @@ class Hooks:
             pages.append(PageState(i, u))
         plines = self.printer.get_plines()
         pmap = self.printer.get_pidmap()
-        logger.log(15, f"{firstbad=}")
+        if self.tracing:
+            logger.log(15, f"{firstbad=}")
         res = LayoutRunResult(pages, firstbad, plines, pmap, [], runres)
         return res
 
@@ -241,7 +244,8 @@ class Hooks:
 
     def chap_from_page(self, pnum):
         i = bisect(self.chapters, pnum)
-        logging.log(15, f"page={pnum}, chapter={i}")
+        if self.tracing:
+            logging.log(15, f"page={pnum}, chapter={i}")
         return i
 
     def get_previous(self, pid, page=None):
@@ -702,7 +706,8 @@ class TypesetterSolver:
             layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
             self.collect_probes(layout, all_pids, sweep_params, page=page)
 
-        logging.log(15, f"{self.probe_cache=}, {self.shape_cache=}")
+        if self.hooks.tracing:
+            logging.log(15, f"{self.probe_cache=}, {self.shape_cache=}")
         sweep_count = 0
         while True:
             sweep_count += 1
@@ -720,18 +725,21 @@ class TypesetterSolver:
                         global_max_pri = pri
                 if pri == 2:
                     pri2_pids.append(pid)
-            logging.log(15, 
-                f"[Sweep #{sweep_count}] Priorities -> Pri2: {pri_counts[2]}, Pri1: {pri_counts[1]}, Pri0: {pri_counts[0]}, {requests=}"
-            )
+            if self.hooks.tracing:
+                logging.log(15, 
+                    f"[Sweep #{sweep_count}] Priorities -> Pri2: {pri_counts[2]}, Pri1: {pri_counts[1]}, Pri0: {pri_counts[0]}, {requests=}"
+                )
             if global_max_pri != 2:
-                logging.log(15, f"[Sweep #{sweep_count}] No Priority 2 probes remaining. Exiting sweep loop.")
+                if self.hooks.tracing:
+                    logging.log(15, f"[Sweep #{sweep_count}] No Priority 2 probes remaining. Exiting sweep loop.")
                 break
             if len(pri2_pids) <= 5:
                 logging.log(15, f"[Sweep #{sweep_count}] Active Pri2 Stragglers: {pri2_pids}")
             for pid, (exp, strch, pri) in requests.items():
                 sweep_params[pid] = (exp, strch)
             layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
-            logging.log(15, f"run_layout result = {layout.result}")
+            if self.hooks.tracing:
+                logging.log(15, f"run_layout result = {layout.result}")
             self.collect_probes(layout, all_pids, sweep_params, page=page)
             if progress:
                 p = ProgressEvent(self.bk, sweep_count, "probe", "", self.numpages)
@@ -807,7 +815,7 @@ class TypesetterSolver:
                 return True     # but if we have no badness then we want this
             return False
         e, s = params.get(list(params.keys())[len(params.keys()) // 2])
-        self.hooks.analyse_bw(test_para, page, trackp=e == 1.025)
+        self.hooks.analyse_bw(test_para, page)
         changes = []
         for p in paragraphs:
             e, s = params.get(p, (self.expand, 0))
@@ -826,8 +834,6 @@ class TypesetterSolver:
             # whiteness = whites / (blacks + whites + .01)
             whiteness = whites / (nwhites + 0.01)
             badness = self.badness_modify(p, e, s, whiteness, parwhites, isbase=isbase)
-            if e == 1.025:
-                logging.log(15, f"{p}: ({e}, {s}) {whiteness=:.5f} {badness=:.5f} {parwhites=} {whites=} {blacks=}")
             if (p, 0) not in self.shape_cache:
                 self.shape_cache[(p,0)] = (self.expand, 0, whiteness)
                 self.probe_cache.setdefault(p, {})[(self.expand, 0)] = 0
@@ -856,7 +862,8 @@ class TypesetterSolver:
             if d < 0:
                 self.shape_cache[key] = (e, s, badness)
                 changes.append((key, e, s, badness))
-        logging.log(15, f"{changes=}") 
+        if self.hooks.tracing:
+            logging.log(15, f"{changes=}") 
 
     def next_combination(self, state, page):
         """Candidate combos for `page`, cheapest first. Resumes past
@@ -919,7 +926,6 @@ class TypesetterSolver:
             collengths = [colfree[0], colfree[0]+colfree[1]]
         elif len(colfree) == 1:
             collengths = [colfree[0], colfree[0]]
-        count = 0
         maxscore = 10000
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
@@ -1175,6 +1181,8 @@ class PTXFiller:
         unlockme()
         self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
                 os.path.basename(self.job.pdffile))
+        jobadjfile = self.job.pdffile.replace(".pdf", ".adjlist")
+        self.createAdjs(state.paragraph_params, solver, file=jobadjfile)
         self.job.xdvtopdf(self.job.outfname, self.job.pdffile)
         logger.log(15, f"shape_cache={solver.shape_cache}")
         if isinstance(res, HumanFixRequest):
@@ -1190,7 +1198,7 @@ class PTXFiller:
             print(f"\n{bk}: mean={statistics.mean(self.stats)}, median={statistics.median(self.stats)}, sd={statistics.stdev(self.stats)}, quantiles={statistics.quantiles(self.stats)}")
         return retval
         
-    def createAdjs(self, parparms, solver, lastchap=0):
+    def createAdjs(self, parparms, solver, lastchap=0, file=None):
         def mkkey(s):
             (r, para) = self.pidkey(s)
             key = f"{r[5]}" if r[1] == 0 and r[5] else f"{r[1]}.{r[2]}{r[5]}"
@@ -1232,10 +1240,11 @@ class PTXFiller:
                     else:
                         v = None
                     self.adjs.setdb(self.bk + " " + key, keyv, v)
-        self.adjs.createAdjlist()
-        tname = self.view.getLocalTriggerFilename(self.bk)
-        tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
-        self.adjs.createTriggerlist(fname=tpath)
+        self.adjs.createAdjlist(fname=file)
+        if file is None:
+            tname = self.view.getLocalTriggerFilename(self.bk)
+            tpath = os.path.join(self.view.project.printPath(self.view.cfgid), tname)
+            self.adjs.createTriggerlist(fname=tpath)
 
     def run_layout(self, solver, parparms, floats, lastpage, genfiles=False, prompt="."):
         if self.timedout:

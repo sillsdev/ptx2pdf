@@ -62,8 +62,10 @@ class ParRect:
         ydiff = None
         xdiff = None
         curra = None
+        debug = logger.isEnabledFor(5)
         for a in self.dests:
-            logger.log(5, f"Testing ({x}, {y}) against {a}")
+            if debug:
+                logger.log(5, f"Testing ({x}, {y}) against {a}")
             if a[1][1] > y and (ydiff is None or a[1][1] - y < ydiff):
                 ydiff = a[1][1] - y
                 curra = a

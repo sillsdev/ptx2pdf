@@ -29,6 +29,16 @@ class XdvSpaceMeasure(XDViPositionedReader):
         logging.log(15, f"New page {self.pindex}")
         return super().bop(opcode, parm, data)
 
+    def _skip_xglyphs(self, opcode, parm, data):
+        if parm == 0:
+            tlen = self.readval(2)
+            self.fpos += 2 * tlen
+        width = self.readval(4)
+        slen = self.readval(2)
+        self.fpos += 10 * slen
+        self.h += self.topt(width)
+        return (parm, width, [], [], "")
+
     def xglyphs(self, opcode, parm, data):
         (p, r, _) = self.parllocs.findPos(self.pindex, self.h, self.v, xdv=True)
         fsize = self.fonts[self.currfont].points
@@ -52,11 +62,11 @@ class XdvSpaceMeasure(XDViPositionedReader):
                 elif self.h > self.textend and self.h > self.textend:
                     r.white += (self.h - self.textend) / fsize
                     r.nspaces += 1
-            res = super().xglyphs(opcode, parm, data)
+            res = self._skip_xglyphs(opcode, parm, data)
             r.black += (self.h - bstart) / fsize
             self.textend = self.h
         else:
-            res = super().xglyphs(opcode, parm, data)
+            res = self._skip_xglyphs(opcode, parm, data)
         if p is not None and self.trackp:
             logging.log(15, f"{p.pid()}: ({self.h}, {self.v}) from ({otextend}, {self.liney}) {r=} lines={r.lines if r is not None else 0}, width={self.h-bstart} -> {res}")
         elif self.trackp:
@@ -66,5 +76,5 @@ class XdvSpaceMeasure(XDViPositionedReader):
             self.liney = self.v
         self.currect = r
         self.oldfsize = fsize
-        return res
+        return (parm, 0, [], [], "")        # we don't care about the actual data
 
