@@ -366,7 +366,8 @@ class TypesetterSolver:
         """
         self.bk = book
         self.init_state = state
-        logger.log(15, f"{state.layout.paragraph_pages=}")
+        if self.hooks.tracing:
+            logger.log(15, f"{state.layout.paragraph_pages=}")
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
         if state.layout.first_failing_page is None:
@@ -419,7 +420,8 @@ class TypesetterSolver:
             logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
             if nextpage is None or nextpage == page:
                 if state.complete:
-                    logger.log(15, "solve_complete pages=%s, underfills=%s",
+                    if self.hooks.tracing:
+                        logger.log(15, "solve_complete pages=%s, underfills=%s",
                                len(layout.pages),
                                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages)
                                     if lp.column_free_lines is not None}))
@@ -571,8 +573,9 @@ class TypesetterSolver:
             if (new_state.layout.first_failing_page is None
                     or new_state.layout.first_failing_page > page
                     or free is None or not len(free) or all(x == 0 for x in free)):
-                logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
-                logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
+                if self.hooks.tracing:
+                    logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
+                    logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
                 self.base_params = dict(new_state.paragraph_params)
                 new_state.passed = True
                 return new_state, True
@@ -791,10 +794,11 @@ class TypesetterSolver:
             if layout is None:
                 return None
         self.itercount += 1
-        logger.log(15, "layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
-                page, self.itercount, not self.noprobe,
-                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
-                combo)
+        if self.hooks.tracing:
+            logger.log(15, "layout_run [%s] iter=%s  probe=%s underfill=%s combo=%s",
+                    page, self.itercount, not self.noprobe,
+                    str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
+                    combo)
         if not self.noprobe:
             self.collect_probes(layout, probe_pids, self.probe_params, page=page)
         res = EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
@@ -856,7 +860,8 @@ class TypesetterSolver:
                     # threshold = base_whiteness + (self.hooks.badness_spacing_tolerance * base_whiteness) ** 4
                     threshold = self.hooks.badness_spacing_tolerance
                     if whiteness > threshold:
-                        logging.log(15, f"{p} ({e}, {s}) {whiteness=} {threshold=} {base_whiteness=}")
+                        if self.hooks.tracing:
+                            logging.log(15, f"{p} ({e}, {s}) {whiteness=} {threshold=} {base_whiteness=}")
                         continue
             d = self.badness_cmp((e, s, badness), sc)
             if d < 0:
@@ -919,7 +924,8 @@ class TypesetterSolver:
         all_combos = []
         seen_col_sigs = {}
         colfree = state.layout.pages[page].column_free_lines if page < len(state.layout.pages) else None
-        logger.log(15, f"{first_para=} {last_para=}, {max_r=}, {colfree=}, {moves=}")
+        if self.hooks.tracing:
+            logger.log(15, f"{first_para=} {last_para=}, {max_r=}, {colfree=}, {moves=}")
         if colfree is None:
             collengths = [0, 0]
         elif len(colfree) == 2:
@@ -977,7 +983,8 @@ class TypesetterSolver:
                         else:
                             continue
         all_combos = sorted(list(seen_col_sigs.values()), key=lambda x: (x[0], len(x[1])))
-        logger.log(15, f"{all_combos=}")
+        if self.hooks.tracing:
+            logger.log(15, f"{all_combos=}")
         for _, combo in all_combos[:200]:       # 200 tests for a page better be enough!
             yield combo
 
