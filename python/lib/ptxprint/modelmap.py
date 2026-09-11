@@ -191,6 +191,7 @@ _map = {
     "document/tocleaders":      ("fcb_leaderStyle", "front", None),
     "document/chapfrom":        ("t_chapfrom", "meta", lambda w,v: str(round(float(v))) if v else "1"),
     "document/chapto":          ("t_chapto", "meta", lambda w,v: str(round(float(v))) if v else "999"),
+    "document/fastend":         ("s_stopat", "meta", lambda w,v: int(v) if v else 0),
     "document/colgutterfactor": ("s_colgutterfactor", "layout", lambda w,v: round(float(v or 4)*3)), # Hack to be fixed
     "document/ifrtl":           ("fcb_textDirection", "fontscript", lambda w,v:"true" if v == "rtl" else "false"),
     "document/toptobottom":     ("fcb_textDirection", "fontscript", lambda w,v: "" if v == "ttb" else "%"),

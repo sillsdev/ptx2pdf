@@ -47,11 +47,20 @@ class AdjList:
             self.liststore = Liststore()
         else:
             self.liststore = gtk.ListStore(str, str, int, str, str, int, str, str)
+        self.gtk = gtk
         self.changed = False
         self.adjfile = fname
         self.trigfile = tname
         self.ftime = None
         self.db = []
+
+    def copy(self, gtk=None):
+        res = self.__class__(self.centre, self.lowdiff, self.highdiff, 
+                             gtk=gtk, fname=self.adjfile, tname=self.trigfile)
+        for row in self.liststore:
+            res.liststore.append(list(row))
+        res.db = [d.copy() for d in self.db]
+        return res
 
     def clear(self):
         self.liststore.clear()
@@ -155,6 +164,8 @@ class AdjList:
     def genline(self, i):
         r = self.liststore[i]
         d = self.db[i]
+        if r[3] == 0 and r[5] == self.centre and not len(d):
+            return None
         cv = r[1].replace(":", ".").replace(" ", "")
         if r[2] > 1:
             line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
@@ -184,10 +195,13 @@ class AdjList:
             self.remove_file(fname)
             return
         os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
+        count = 0
         with open(fname, "w", encoding="utf-8") as outf:
             for i in range(len(self.liststore)):
                 line = self.genline(i)
-                outf.write(line + "\n")
+                if line is not None:
+                    count += 1
+                    outf.write(line + "\n")
         self.ftime = os.lstat(fname).st_ctime
 
     def cleanup(self):
@@ -354,8 +368,8 @@ class AdjList:
                 if n is None: continue
                 e = int(n.group(1)) / 100
                 s = int(n.group(2)) if n.group(2) else 0
-                shapes[(rk, d)] = (e, s)
-                probes[(rk, e, s)] = d
+                shapes[(rk, d)] = (e, s, None)
+                probes.setdefault(rk, {})[(e, s)] = d
         return shapes, probes
 
     def _setTriggersInComment(self, key, comment, triggers):

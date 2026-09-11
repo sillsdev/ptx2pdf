@@ -17,11 +17,13 @@ logger = logging.getLogger(__name__)
 STATUS_PENDING       = "pending"
 STATUS_PROBING       = "probing"
 STATUS_RUNNING       = "running"
+STATUS_RUNNINGFAILED = "failing"
 STATUS_GOOD          = "good"
 STATUS_WARNING       = "warning"
 STATUS_FAILED        = "failed"
 STATUS_ALREADY_FILLED = "already_filled"
 STATUS_SKIPPED        = "skipped"
+STATUS_PAGE          = "page"
 
 # Single source of truth: status → (hex_color, msgid).
 # Insertion order determines Color Key display order.
@@ -31,9 +33,10 @@ _STATUS_DATA = {
     STATUS_SKIPPED:        ("#FFDAB9", "No page data — may need attention"),
     STATUS_PROBING:        ("#98BCCA", "Probing — initial analysis"),
     STATUS_RUNNING:        ("#87CEEB", "Filling in progress"),
+    STATUS_RUNNINGFAILED:  ("#D8C291", "Filling with bad pages"),
     STATUS_GOOD:           ("#98FB98", "Complete — all pages filled"),
     STATUS_WARNING:        ("#FFA500", "Incomplete — page(s) could not be solved"),
-    STATUS_FAILED:         ("#FF4500", "Failed"),
+    STATUS_FAILED:         ("#FF9500", "Failed"),
 }
 
 stoplabel = _("Stop!")
@@ -105,8 +108,8 @@ class BookProgressCell:
     def update(self, event):
         """Apply a ProgressEvent to this cell. Must be called on GTK main thread."""
         mode = event.mode
-        page = event.page
-        total = event.total
+        total = event.total if event.total is not None and event.total > 0 else self._total
+        page = event.page or total
 
         if total is not None:
             self._total = total
@@ -118,27 +121,28 @@ class BookProgressCell:
             self._bar.set_text(self._barText(page, total, prefix="init"))
             self._applyColor(STATUS_PROBING)
 
-        elif mode == "goodpage":
+        elif mode == "goodpage" or mode == "page":
             frac = (page / self._total) if self._total else 0.0
             self._bar.set_fraction(min(frac, 1.0))
             self._bar.set_text(self._barText(page, self._total))
-            self._applyColor(STATUS_RUNNING)
+            self._applyColor(STATUS_RUNNINGFAILED if self._hadBadPage else STATUS_RUNNING)
 
         elif mode == "badpage":
             self._hadBadPage = True
             frac = (page / self._total) if self._total else 0.0
             self._bar.set_fraction(min(frac, 1.0))
             self._bar.set_text(self._barText(page, self._total))
-            self._applyColor(STATUS_RUNNING)
+            self._applyColor(STATUS_RUNNINGFAILED if self._hadBadPage else STATUS_RUNNING)
 
         elif mode == "complete":
             self._bar.set_fraction(1.0)
-            self._bar.set_text(self._barStatusText(_("Complete")))
             if not self._total:
                 self._applyColor(STATUS_SKIPPED)
             elif self._hadBadPage:
+                self._bar.set_text(self._barStatusText(event.msg) + f"({self._total})")
                 self._applyColor(STATUS_WARNING)
             else:
+                self._bar.set_text(self._barStatusText(_(f"Complete ({self._total})")))
                 self._applyColor(STATUS_GOOD)
 
         elif mode == "failed":
@@ -194,6 +198,13 @@ class BookProgressDialog:
         self.grid.set_margin_top(1)
         self.grid.set_margin_bottom(1)
         scrolled.add(self.grid)
+
+        self.infogrid = Gtk.Grid(column_spacing=8)
+        vbox.pack_start(self.infogrid, True, False, 0)
+        self.lb_cpu = Gtk.Label(label=_("CPU: ") + "---")
+        self.lb_time = Gtk.Label(label=_("Time: ") + "--:--:--")
+        self.infogrid.attach(self.lb_time, 0, 0, 1, 1)
+        self.infogrid.attach(self.lb_cpu, 1, 0, 1, 1)
 
         # Action area at the bottom
         button_box = Gtk.ButtonBox(orientation=Gtk.Orientation.HORIZONTAL)
@@ -265,6 +276,7 @@ class BookProgressDialog:
             self.grid.attach(cell.frame, col, row, 1, 1)
             self._cells[bk] = cell
 
+        logging.log(16, f"populate with {len(self._cells)} cells")
         self.stop_button.set_sensitive(stop_sensitive)
         self.stop_button.set_label(stoplabel)
         self.grid.show_all()
@@ -280,13 +292,20 @@ class BookProgressDialog:
         self._position_with_size(dw, dh)
         self.window.show_all()
 
-    def updateEvent(self, event):
+    def updateEvent(self, event, usage=0., elapsed=0.):
         """Route a ProgressEvent to the correct BookProgressCell."""
-        cell = self._cells.get(event.book)
+        if event is not None:
+            cell = self._cells.get(event.book)
         # print(f"{event.book=} {event.mode=} {event.page=} {event.total=}")
-
-        if cell is not None:
-            cell.update(event)
+            if cell is not None:
+                cell.update(event)
+        if usage > 0.:
+            self.lb_cpu.set_text(_("CPU: ") + f"{int(usage)}")
+        if elapsed > 0.:
+            hours, remainder = divmod(elapsed, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            formatted_elapsed = f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
+            self.lb_time.set_text(_("Time: ") +  formatted_elapsed)
 
     def show(self):
         dw, dh = self.window.get_size()

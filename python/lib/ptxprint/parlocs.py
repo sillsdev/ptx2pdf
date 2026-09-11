@@ -1,5 +1,6 @@
 import os, re, ctypes, math, heapq
 import logging
+from bisect import bisect
 from dataclasses import dataclass, InitVar, field
 from ptxprint.utils import refSort, _
 from ptxprint.xdv.spacing_oddities import Line, Rivers
@@ -38,7 +39,11 @@ class ParRect:
     xdvlines:   InitVar[None] = None
     tspace:     float = 0.
     nspace:     int = 0
-    lines:      int = 0
+    lines:      int = 0         # number of lines
+    black:      float = 0.      # total width of ink
+    white:      float = 0.      # total width of spaces
+    parwhite:   float = 0.      # total width of right rag space
+    nspaces:    int = 0         # number of spaces
     
     def __str__(self):
         return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
@@ -57,8 +62,10 @@ class ParRect:
         ydiff = None
         xdiff = None
         curra = None
+        debug = logger.isEnabledFor(5)
         for a in self.dests:
-            logger.log(5, f"Testing ({x}, {y}) against {a}")
+            if debug:
+                logger.log(5, f"Testing ({x}, {y}) against {a}")
             if a[1][1] > y and (ydiff is None or a[1][1] - y < ydiff):
                 ydiff = a[1][1] - y
                 curra = a
@@ -221,6 +228,7 @@ class PopplerDest(ctypes.Structure):
 
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
+    chapre = re.compile(r"^\S{3}.*?(\d+)\..*$")
 
     def readParlocs(self, fname, rtl=False, gui=False, parent=None):
         self.pindex = []        # first paragraph on a page
@@ -228,6 +236,7 @@ class Paragraphs(list):
         self.pnumorder = []     # from pageindex to pagenumber
         self.pheights = []
         self.dests = {}
+        self.chapters = [0]
         self.rect_cache = (None, None)
         if fname is None:
             return
@@ -317,7 +326,7 @@ class Paragraphs(list):
                     currr.yend = readpts(p[1])
                     ps = currps.get(polycol, None)
                     if ps is not None:
-                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
+                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                     currr = None
                 colinfos[polycol] = None
                 lines.startreplay()
@@ -326,9 +335,16 @@ class Paragraphs(list):
                 if len(p) == 5:
                     p.insert(0, "")
                 logger.log(5, f"Starting para {p[0]}")
+                try:
+                    chap = int(self.chapre.sub(r"\1", p[0]))
+                except ValueError:
+                    chap = 0
+                if len(self.chapters) <= chap:
+                    self.chapters.extend([self.chapters[-1]]*(chap - len(self.chapters)))
+                    self.chapters.append(pnum)
                 cinfo = colinfos.get(polycol, None)
                 if currr is not None and cinfo is not None:
-                    currr.xend = cinfo.topx
+                    currr.xend = cinfo.topx + cinfo.width
                     currr.yend = readpts(p[5])
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]), polycol)
                 currp.rects = []
@@ -360,7 +376,7 @@ class Paragraphs(list):
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
-                currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
+                currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                 endpar = True
             elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
                 if not endpar or not inpage:
@@ -462,15 +478,19 @@ class Paragraphs(list):
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
         res = []
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
-            for i,r in enumerate(p.rects):
+            for i, r in enumerate(p.rects):
                 if r.pagenum != pnum:
                     continue
                 res.append((p, r))
         self.rect_cache = (pnum, res)
         return res
 
-    def findPos(self, pnum, x, y, rtl=False, endx = None):
+    def findPos(self, pnum, x, y, endx = None, xdv=False, rtl=False):
         """ Given page index (not folio) returns (ParDest, ParRect) covering the given x, y """
+        if xdv:
+            if not len(self.pheights):
+                return (None, None, None)
+            y = (self.pheights[pnum-1] if pnum > 0 and pnum <= len(self.pheights) else self.pheights[-1]) - y
         rects = self._getRectsPage(pnum)
         if not rects:
             return (None, None, None)
@@ -478,19 +498,19 @@ class Paragraphs(list):
             last_p, last_i = self._last_state
             if last_p == pnum:
                 p, r = rects[last_i]
-                if (x, y) in r:
+                if (x, y) in r or (endx is not None and (endx, y) in r):
                     return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
                 next_i = last_i + 1
                 if next_i < len(rects):
                     p, r = rects[next_i]
-                    if (x, y) in r:
+                    if (x, y) in r or (endx is not None and (endx, y) in r):
                         self._last_state = (pnum, next_i)
                         return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
         for i, (p, r) in enumerate(rects):
-            if (x, y) in r:
+            if (x, y) in r or (endx is not None and (endx, y) in r):
                 self._last_state = (pnum, i)
                 return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
-        return (None, None)
+        return (None, None, None)
 
     def getyrects(self, pnum, y):
         res = []
@@ -717,5 +737,10 @@ class Paragraphs(list):
                 if len(r):
                     rivers.add(pnum)
         return (sorted(spaces), sorted(collisions), sorted(rivers), sorted(badglyphs))
-            
-            
+
+    def chap_from_page(self, pnum):
+        if not hasattr(self, 'chapters'):
+            return 0
+        i = bisect(self.chapters, pnum)
+        logging.log(15, f"page={pnum}, chapter={i}")
+        return i

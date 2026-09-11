@@ -540,11 +540,15 @@
   \ifsp@ncols\wd1=\csname colwidth-\the\@col\endcsname \fi
   \ifh@lfrow\lower 0.5\baselineskip\fi
   \ifRTL\ifnum\@col=\maxtablec@l\else
-    \ift@mp\csname \c@tprefix tc\the\@col :fill\endcsname\else\hfill\fi\fi\fi
+    \ifcsname \c@tprefix tc\the\@col :fill\endcsname
+      \ift@mp\csname \c@tprefix tc\the\@col :fill\endcsname\else\hfill\fi
+    \else \hfill\fi\fi\fi
   \box1%
   \trace{t}{t@mp\ift@mp true\else false\fi \space col=\the\@col \space max=\the\maxtablec@l}%
   \ifRTL\else\ifnum\@col=\maxtablec@l\else
-    \ift@mp\csname \c@tprefix tc\the\@col :fill\endcsname\else\hfill\fi\fi\fi
+    \ifcsname \c@tprefix tc\the\@col :fill\endcsname
+      \ift@mp\csname \c@tprefix tc\the\@col :fill\endcsname\else\hfill\fi
+    \else \hfill\fi\fi\fi
 }
 \newcount\nth@line
 

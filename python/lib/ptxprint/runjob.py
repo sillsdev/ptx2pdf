@@ -636,10 +636,17 @@ class RunJob:
                     "run="+str(numruns)])
             cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode",
                    '-output-comment="'+commentstr+'"', "-no-pdf"]
-            if self.forcedlooseness is None:
-                action = outfname
+            actions = []
+            if self.forcedlooseness is not None:
+                actions.append(r"\def\ForcedLooseness{{{}}}".format(self.forcedlooseness))
+            sat = int(self.printer.get("s_stopat", 0))
+            if sat > 0:
+                actions.append(r"\def\fastendchapter{{{}}}".format(sat))
+            if len(actions):
+                actions.append(r"\input {}".format(outfname))
             else:
-                action = r"\def\ForcedLooseness{{{}}}\input {}".format(self.forcedlooseness, outfname)
+                actions.append(outfname)
+            action = "".join(actions)
             logger.debug(f"Running: {cmd} {action}")
             callkw = {}
             if self.silent:

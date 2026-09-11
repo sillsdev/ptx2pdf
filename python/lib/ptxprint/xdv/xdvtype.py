@@ -134,7 +134,10 @@ class XDviType:
         if self.positions:
             pref += "({:.1f},{:.1f})".format(self.h/65536.+72.27, self.v/65536.+72.27)
         self.ofh.write(pref + " " + txt + "\n")
-        
+
+    def topt(self, value):
+        return value * self.dviratio
+
     def setchar(self, opcode, parm, data):
         self.out("setchar({})".format(opcode))
 
@@ -265,7 +268,7 @@ class XDviType:
             if ttf is not None:
                 glyphs = [ttf.ttfont.getGlyphName(g) for g in glyphs]
         res = ["{}@({}={},{})".format(glyphs[i], pos[i][0], self.asdimen(pos[i][0]), pos[i][1]) for i in range(slen)]
-        self.out('xglyphs[{:.1f}@{}]: "{}" {}'.format(width/65536., slen, txt, res))
+        self.out('xglyphs[{:.1f}@{}]: "{}" {}'.format(self.topt(width), slen, txt, res))
         self.h += width
 
     def xpic(self, opcode, parm, data):

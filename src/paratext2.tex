@@ -32,7 +32,9 @@
 
 %+c_pt_intro
 % Here we declare generic useful stuff. Including log output routines.
+\TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
 \catcode`\@=11
+\count11=20 \count14=20 % need more temporary dimens and boxes
 \let\x@=\expandafter
 \relax
 \def\LETIF#1#2{\x@\let \csname if#1\x@\endcsname\csname if#2\endcsname}
@@ -44,8 +46,6 @@
 \input ptx-lua.tex
 \fi
 
-\TeXXeTstate=1 % enable the eTeX bidi extensions, in case we need RTL support
-\count11=20 \count14=20 % need more temporary dimens and boxes
 \newif\iftemp \tempfalse
 \def\stripqu@tes#1"#2"#3\relax{#2}% Strip quotes if present
 \edef\t@mp{\jobname}%
@@ -212,21 +212,21 @@
 
 % set baseline appropriately for the given style (may be using much smaller font than body)
 % baselineskip = leading
-\def\s@tbaseline#1#2{% Setbaseline-normal
+\def\s@tbaseline#1#2{% Setbaseline-normal. #1=style, #2=stack
   \trace{F}{s@tbaseline #1\c@rrdstat /\noexpand#2=#2}%
   \def\s@urce{no data}%
   \def\f@ntstyle{#1\c@rrdstat}%
   \@s@tbaseline{#1}{#2}%
 }
 
-\def\s@tbaseline@#1#2{% Setting-Side specific already, without looking in the tree
+\def\s@tbaseline@#1#2{% Setting-Side specific already, without looking in the style-stack #1=style, #2=diglot side.
   \trace{F}{s@tbaseline@ #1#2}%
   \def\s@urce{no data}%
   \def\f@ntstyle{#1#2}%
-  \@s@tbaseline{#1}{#2}%
+  \@s@tbaseline{#1#2}{#1#2}%
 }
 
-\def\@s@tbaseline#1#2{%
+\def\@s@tbaseline#1#2{%#1,#2 = style, stylestack. (#1==#2 for no search, as normal) Assumes that \f@ntstyle (including diglot suffix) has been defined as where to save the result to.
   \getp@ram{baseline}{#1}{#2}\ifx\p@ram\relax
     \@@s@tb@seline{#1}{#1}%
     \baselineskip=\dimen0 \advance \baselineskip by \ColAdjskip
@@ -234,7 +234,7 @@
     \def\s@urce{store:#1,#2}%
     \baselineskip=\p@ram\fi
   \trace{j}{set baselineskip=\the\baselineskip (\s@urce)}}
-    
+
 \def\@@s@tb@seline#1#2{%
   \getp@ram{fontsize}{#1}{#2}\ifx\p@ram\relax
     \def\s@urce{carryover}%
