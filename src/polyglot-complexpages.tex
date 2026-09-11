@@ -279,6 +279,9 @@
   \fi
 }
 \let\cplx@deps\empty
+%
+% Parsing functions - these are used to interpret the page layout definition and for the check-function 
+% 
 \def\@cplx@chk@dependency{%Per-page(line?) dependencies check.
   \ifx\cplx@deps\empty\else
     \trace{dmcl}{Dependency for \p@lyr@wstring:\cplx@deps}%
@@ -291,25 +294,54 @@
   \else
     \let\tmp\empty
   \fi
-  \x@\xdef\csname \p@lyr@wstring\endcsname{\tmp:}%
+  \ifBookOpenLeft
+    \x@\xdef\csname \p@lyr@wstring\endcsname{:\tmp}%
+  \else
+    \x@\xdef\csname \p@lyr@wstring\endcsname{\tmp:}%
+  \fi
+  \trace{dmcl}{bgroup: \p@lyr@wstring->\csname \p@lyr@wstring\endcsname}%
+  \@@cplx@p@rsebgroup
+}
+\def\@@cplx@p@rsebgroup{%SHARED with parse and check
   \advance\p@lygr@upno by 1
   \bgroup
     \advance\p@lygr@updp by 1
-    \edef\p@lypr@fix{\p@lyr@wstring}%
+    \edef\p@lypr@fix{\p@lyr@wstring-}%
     \p@lyp@geno=\p@lygr@upno % page-pagerow-group-grouprow[-subgroup-subgrouprow]
     \p@lygr@upno=0 % In case of nesting
 }
-\def\@cplx@p@rseegroup{%
+\def\@cplx@chk@p@rsebgroup{%
+  \ifBookOpenLeft
+    \edef\chkstring{:\chkstring}%
+  \else
+    \edef\chkstring{\chkstring:}%
+  \fi
+  \@@cplx@p@rsebgroup
+  \let\chkstring\empty
+}
+  
+\def\@cplx@p@rseegroup{%SHARED with check
     \ifnum\p@lygr@updp<1 \errmessage{Cannot close an unopened group}\fi 
     \@cplx@chk@dependency
   \egroup
 }
-\def\@cplx@p@rsenline{%
+\def\@cplx@chk@p@rseegroup{%
+  \@complexcheck@polyp@ges\chkstring\E%
+  \let\chkstring\empty
+  \@cplx@p@rseegroup
+}
+\def\@cplx@p@rsenline{%%SHARED with check
   %\@cplx@chk@dependency
   \p@lygr@upno=0
   \advance \p@lyr@wno by 1
   \trace{dmcl}{new row: \the\p@lyr@wno -> \p@lyr@wstring}%
 }
+\def\@cplx@chk@p@rsenline{%
+  \@complexcheck@polyp@ges\chkstring\E%
+  \let\chkstring\empty
+  \@cplx@p@rsenline
+}
+
 \def\@cplx@p@rsenpage{%
   \@cplx@vrfygrpzero
   \@cplx@chk@dependency
@@ -320,11 +352,25 @@
   \trace{dmcl}{new page: \the\p@lyp@geno}%
   \@@setup@new@page
 }
+\def\@cplx@chk@p@rsenpage{%
+  \@complexcheck@polyp@ges\chkstring\E%
+  \let\chkstring\empty
+  \@cplx@vrfygrpzero
+  \p@lygr@upno=0
+  \p@lyr@wno=0
+  \advance \p@lyp@geno by 1
+} 
 \x@\let\csname @@p@rse(\endcsname\@cplx@p@rsebgroup
 \x@\let\csname @@p@rse)\endcsname\@cplx@p@rseegroup
 \x@\let\csname @@p@rse/\endcsname\@cplx@p@rsenline
 \x@\let\csname @@p@rse,\endcsname\@cplx@p@rsenpage
 \x@\let\csname @@p@rse:\endcsname\@cplx@pr@cessgroup % A group
+\x@\let\csname @chk@p@rse(\endcsname\@cplx@chk@p@rsebgroup
+\x@\let\csname @chk@p@rse)\endcsname\@cplx@chk@p@rseegroup
+\x@\let\csname @chk@p@rse/\endcsname\@cplx@chk@p@rsenline
+\x@\let\csname @chk@p@rse,\endcsname\@cplx@chk@p@rsenpage
+%\x@\let\csname @chk@p@rse:\endcsname\@cplx@chk@pr@cessgroup % A group
+
 %\x@\let\csname @@p@rse=\endcsname\relax
 %\x@\let\csname @@p@rse-\endcsname\relax
 \def\cplx@endp@rse #1\E{}
@@ -356,6 +402,7 @@
 \def\inactive@col@code#1{\x@\let\csname in@ctive@col@#1\endcsname\tr@e\x@\let\csname @@p@rse#1\endcsname\relax}% Various 'column codes' are not directly connected to any input. Use ifcsname to check for them
 \inactive@col@code{-} % A blank column or page e.g. for marginal notes. If multiple, then they split the empty space.
 \inactive@col@code{=} % Lines
+\inactive@col@code{:} % a sub-column
 
 \def\special@col@code#1#2{\x@\let\csname special@col@#1\endcsname\tr@e
   \edef\tmpn@m{@@p@rse-special-#1}%
@@ -370,15 +417,19 @@
 \special@col@code{e}{} % extended footnote slot(s).
 \special@col@code{@}{} % Image / sidebar slot?? (Images / sidebars can target) 
 
-\def\col@active@count#1{\ifcsname in@ctive@col@#1\endcsname\else\advance\count255 by 1 \fi}% 
+\def\col@active@count#1{\ifcsname in@ctive@col@#1\endcsname\else\advance\count255 by 1 \edef\tmp@ctv{\tmp@ctv#1}\fi}% 
 \def\@@complexr@vpolyp@ges#1{%
   \trace{dmcl}{  @@complexr@vpolyp@ges #1}%
-  \count255=\csname @tmpnum@#1\endcsname
-  \advance\count255 by 1
-  \edef\@tmpnam{decode@#1\the\count255}%
-  \x@\let\x@\x@fch@r\csname \@tmpnam\endcsname
-  \trace{dmc}{... #1\the\count255 \space is \x@fch@r (\rev@r@wstring)}%
-  \xdef@cseq{@tmpnum@#1}{\the\count255}%
+  \ifcsname #1isDiglotColumn\endcsname
+    \count255=\csname @tmpnum@#1\endcsname
+    \advance\count255 by 1
+    \edef\@tmpnam{decode@#1\the\count255}%
+    \x@\let\x@\x@fch@r\csname \@tmpnam\endcsname
+    \trace{dmc}{... #1\the\count255 \space is \x@fch@r (\rev@r@wstring)}%
+    \xdef@cseq{@tmpnum@#1}{\the\count255}%
+  \else
+    \def\x@fch@r{#1}%
+  \fi
   \let\tmp\empty
   \ifcsname\rev@r@wstring\endcsname
     \x@\let\x@\tmp\csname \rev@r@wstring\endcsname
@@ -421,19 +472,19 @@
   \let\col@do\col@count
   \x@\each@col#1\E
   \edef\@cspptotcols{\the\count255}%
-  \count255=0
+  \count255=0 \let\tmp@ctv\empty
   \let\col@do\col@active@count
   \x@\each@col#1\E
   \edef\@csppactcols{\the\count255}%
   %Also need *repeated* cols.
   \let\col@do\save@reset@ht % abuse this to reset #1ht
-  \x@\each@col#1\E
+  \x@\each@col\tmp@ctv\E
   \def\tmp{1pt}%
   \let\col@do\inc@boxht % use this to count column occurances
-  \x@\each@col#1\E
+  \x@\each@col\tmp@ctv\E
   \dimen1=0pt \def\v@lsfx{ht}\let\v@lpfx\empty 
   \let\col@do\max@val % are there repetitions? How many?
-  \x@\each@col#1\E
+  \x@\each@col\tmp@ctv\E
   \trace{dmc}{\the\dimen1}%
   %\tracingassigns=1
   \count255=\dimen1
@@ -501,15 +552,15 @@
   \edef\tmp{#1}%
   \edef\tmpnam{\checkmode p@lyp@gecols\p@lyr@wstring}%
   \edef\tmpval{\csname \tmpnam\endcsname}
-  \trace{dmc}{\tmpval=\tmp ?}
+  \trace{dmc}{\tmpnam: \tmpval=\tmp ?}
   \ifx\tmpval\tmp
   \else
-    \edef\checkreport{\checkreport\tmpnam\space does not agree (\tmpval!=#1) }%
+    \xdef\checkreport{\checkreport\tmpnam\space does not agree (\tmpval (result)!=#1 (supplied)) }%
   \fi
-  \global\advance\p@lyr@wno by 1
+  %\global\advance\p@lyr@wno by 1
 }
 \def\p@lypr@fix{}%
-\def\p@lyr@wstring{\ifx\p@lypr@fix\empty\else\p@lypr@fix-\fi\the\p@lyp@geno-\the\p@lyr@wno}
+\def\p@lyr@wstring{\p@lypr@fix\the\p@lyp@geno-\the\p@lyr@wno}
 \def\p@lyr@wstringrev{}
 \def\p@lyp@gestring{\the\p@lyp@geno}
 \def\p@lyp@gesuffx{@poly@\p@lyp@gestring}
@@ -519,7 +570,7 @@
   \ifx\tmp\empty
     \trace{dmc}{p@rstr:\p@lypr@fix#1-#2}\p@lyp@geno=#1 \p@lyr@wno=#2\relax
   \else
-    \edef\p@lypr@fix{\ifx\p@lypr@fix\empty\else\p@lypr@fix-\fi#1-#2}%
+    \edef\p@lypr@fix{\p@lypr@fix#1-#2-}%
     \p@rser@wstring#3\E
   \fi}
 
@@ -527,14 +578,14 @@
   \ifx\p@lyr@wstringrev\empty
     \edef\p@lyr@wstringrev{\the\numexpr \p@lylastp@ge-#1\relax-#2}%
   \else
-    \edef\p@lyr@wstringrev{\p@lyr@wstringrev-#1\relax-#2}%
+    \edef\p@lyr@wstringrev{\p@lyr@wstringrev-#1-#2}%
   \fi
   \def\tmp{#3}%
   \ifx\tmp\empty
     \p@lyp@geno=#1 \p@lyr@wno=#2\relax
     \trace{dmc}{p@rstr:\p@lypr@fix#1-#2, \the\p@lylastp@ge pgs,  rev: \p@lyr@wstringrev}
   \else
-    \edef\p@lypr@fix{\ifx\p@lypr@fix\empty\else\p@lypr@fix-\fi#1-#2}%
+    \edef\p@lypr@fix{\p@lypr@fix#1-#2-}%
     \revp@rser@wstring#3\E
   \fi}
 
@@ -622,7 +673,12 @@
     \x@\xdef\csname \@tmpnam\endcsname{\x@fch@r}% L0->Z (etc) mapping, needed for reverse-order version
     \xdef@cseq{@tmpnum@#1}{\the\count255}%
   \else 
-    \ifcsname inactive@col@code#1\endcsname\else
+    \ifBookOpenLeft
+      \xdef@cseq{revp@lyp@gecols\p@lyr@wstring}{#1\csname revp@lyp@gecols\p@lyr@wstring\endcsname}%
+    \else
+      \xdef@cseq{p@lyp@gecols\p@lyr@wstring}{\csname p@lyp@gecols\p@lyr@wstring\endcsname#1}%
+    \fi
+    \ifcsname in@ctive@col@#1\endcsname\else
       \errmessage{!!! #1 is neither an inactive column code nor a diglot(polyglot) column. Define it before asking that it go in the layout!}%
       \error%Force stop
     \fi
@@ -637,16 +693,13 @@
 \def\@checkpolypages#1#2{% Testing code - check the calculated result agrees with the known result
   \p@lyp@geno=0
   \def\checkreport{}%
-  \let\d@\complexcheck@polyp@ges
   \edef\checkmode{}%
-  \edef\checknormal{#1}%
-  \edef\checkrev{#2}%
-  \x@\cstackdown\checknormal,\E
-  \p@lyp@geno=0
+  %\tracingassigns=1
+  \x@\complexcheck@polyp@ges#1\E%
   \edef\checkmode{rev}
-  \x@\cstackdown\checkrev,\E
+  \x@\complexcheck@polyp@ges#2\E%
   \ifx\checkreport\empty\else
-    \errmessage{\checkreport}%
+    \errmessage{While checking \ifBookOpenLeft (left-opening) \fi layout against the given standard, errors were found: \checkreport}%
   \fi
   \catcode47=\sl@shcode\relax
   \trace{dmcl}{No errors after checking {#1}{#2}}
@@ -2143,11 +2196,30 @@
 %    \global\advance\p@lyp@geno by 1
 %  }
   \def\complexcheck@polyp@ges#1\E{%
-    \p@lyr@wno=0
-    \let\d@@\@complexcheck@polyp@ges
-    \x@\sstackdown#1/\E
-    \global\advance\p@lyp@geno by 1
+    \p@lyp@geno=0
+    \p@lyr@wno=0 \p@lygr@upno=0 
+    \edef\p@lypr@fix{}%
+    \let\chkstring\empty
+    \x@\@@complexcheck@polyp@ges#1\E
   }
+
+\
+\def\@@complexcheck@polyp@ges#1#2\E{% Calls @complexcheck@polyp@ges with relevant p@lyp@geno, etc, once a group closes
+  \def\nxt{#1}%
+  \ifcsname @chk@p@rse#1\endcsname
+    \csname @chk@p@rse#1\endcsname
+  \else
+    \edef\chkstring{\chkstring#1}%
+  \fi
+  \let\n@xt\@@complexcheck@polyp@ges
+  \def\tmp{#2}\ifx\tmp\empty
+    \x@\@complexcheck@polyp@ges\chkstring\E
+    \let\chkstring\empty
+    \let\n@xt\cplx@endp@rse
+  \fi
+  \n@xt#2\E
+}
+ 
 
 \def\logAllocStats#1{\wlog{#1: insert: \the\et@xins, (reserved to \the\insc@unt).Limit: count:\the\count10,  dim: \the\count11, skip:\the\count12, box: \the\count14 )}}%
 \logAllocStats{Static allocations}
