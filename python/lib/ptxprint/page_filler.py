@@ -198,7 +198,8 @@ class Hooks:
                    prompt: str = ".",
                    genfiles: bool = False) -> LayoutRunResult:
         try:
-            runres = self.printer.run_layout(solver, paragraph_params, float_anchors, last_page, prompt=prompt, genfiles=genfiles)
+            runres = self.printer.run_layout(solver, paragraph_params, float_anchors,
+                        last_page, prompt=prompt, genfiles=genfiles)
         except FileNotFoundError as e:
             logger.warn(f"run_layout failed {e}")
             return None
@@ -789,8 +790,10 @@ class TypesetterSolver:
                 npages = 2      # need to look ahead ready for the next page to process
             logger.log(15, f"{page}+{npages}, probing={not self.noprobe}, {mpri=}")
             # logger.log(15, "BASE %s", {p:v for p,v in self.base_params.items() if v!=(1.0,0)})
-            layout = self.hooks.run_layout(self, self.probe_params, state.float_anchors, start, page+npages)
-            self.collect_probes(layout, probe_pids, self.probe_params, page=page)
+            layout = self.hooks.run_layout(self, self.probe_params, state.float_anchors,
+                        start, page+npages, prompt=("," if mpri > 0 else "."))
+            if not self.noprobe and mpri > 0:
+                self.collect_probes(layout, probe_pids, self.probe_params, page=page)
             if layout is None:
                 return None
         self.itercount += 1
@@ -799,8 +802,6 @@ class TypesetterSolver:
                     page, self.itercount, not self.noprobe,
                     str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
                     combo)
-        if not self.noprobe:
-            self.collect_probes(layout, probe_pids, self.probe_params, page=page)
         res = EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
         if page + npages >= self.numpages:
             res.complete = True
@@ -1246,7 +1247,8 @@ class PTXFiller:
                         # print(f"{s}@{a}={e},{t} into {key},{keyv}={v}")
                     else:
                         v = None
-                    self.adjs.setdb(self.bk + " " + key, keyv, v)
+                    if v is not None:
+                        self.adjs.setdb(self.bk + " " + key, keyv, v)
         self.adjs.createAdjlist(fname=file)
         if file is None:
             tname = self.view.getLocalTriggerFilename(self.bk)
@@ -1302,7 +1304,7 @@ class PTXFiller:
         self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
         logfile = self.job.outfname.replace(".tex", ".log")
         self.parselog(logfile)
-        print(".", flush=True, end="")
+        print(prompt, flush=True, end="")
         return self.job.res
 
     def progress(self, pEvent):

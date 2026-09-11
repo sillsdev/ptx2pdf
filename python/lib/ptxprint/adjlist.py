@@ -1,7 +1,7 @@
 
 from ptxprint.utils import refKey
 from collections import UserList
-import os,re
+import os, re, bisect
 import logging
 
 logger = logging.getLogger(__name__)
@@ -283,27 +283,18 @@ class AdjList:
             return False
         cp = [m.group(1)+m.group(2), m.group(3), int((m.group(4) if m.lastindex > 2 else 1) or 1)]
         cpk = self.calckey(cp)
-        i = -1
-        # rk = self.calckey([cp[0], "200:200", 1, 0, "", 100])
-        for i, r in enumerate(self.liststore):
-            rk = self.calckey(r)
-            if rk >= cpk:
-                break
-        else:
-            i += 1
-            rk = self.calckey([cp[0], "200:200", 1, 0, "", 100, ""])
-        if rk == cpk:
+        i = bisect.bisect_left(self.liststore, cpk, key=self.calckey)
+        if i < len(self.liststore) and self.calckey(self.liststore[i]) == cpk:
             if 0 <= i < len(self.db):
-                doit(r, i)
-        elif rk > cpk:
-            if insert:
-            # book, c:v, para, stretch, mkr, expand, comment%
-                r = [cp[0], cp[1], cp[2], "0", "", 100, "", ""]
-                self.liststore.insert(i, r)
-                self.db.insert(i, {})
-                r = self.liststore[i]         # since the row is turned into something else
-                self.changed = True
-                doit(r, i)
+                doit(self.liststore[i], i)
+        elif insert:
+        # book, c:v, para, stretch, mkr, expand, comment%
+            r = [cp[0], cp[1], cp[2], "0", "", 100, "", ""]
+            self.liststore.insert(i, r)
+            self.db.insert(i, {})
+            r = self.liststore[i]         # since the row is turned into something else
+            self.changed = True
+            doit(r, i)
 
     def increment(self, parref, offset, mrk=None):
         def mydoit(r, i):
