@@ -268,7 +268,7 @@ class XDViReader:
             txt = b""
         width = self.readval(4)
         slen = self.readval(2, uint=True)
-        poses = readvals(4, 2 * range(slen))
+        poses = readvals(4, 2 * slen)
         pos = list(zip(poses[::2], poses[1::2]))
         glyphs = self.readvals(2, range(slen))
         return (parm, width, pos, glyphs, txt)
