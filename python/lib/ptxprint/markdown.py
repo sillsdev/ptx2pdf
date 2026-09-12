@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from markdown_it import MarkdownIt
 from usfmtc.xmlutils import ParentElement
 from usfmtc import USX
@@ -127,7 +128,7 @@ class MarkdownToUSX:
                 else:
                     self.curr = self.curr.parent
 
-            elif t.type == "td":
+            elif t.type in ("td", "th"):
                 if isopen:
                     self.column += 1
                     align = self.alignments.get(t.attrs.get('style', 'text-align:')[11:], "")
@@ -145,4 +146,16 @@ def MarkDown(text):
     root = md.compile(text)
     res = USX(root)
     return res
+
+def main():
+    import sys
+    if len(sys.argv) > 2:
+        infile, outfile = sys.argv[1:3]
+        with open(infile, encoding="utf-8") as inf:
+            text = inf.read()
+        doc = MarkDown(text)
+        doc.saveAs(outfile)
+
+if __name__ == "__main__":
+    main()
 

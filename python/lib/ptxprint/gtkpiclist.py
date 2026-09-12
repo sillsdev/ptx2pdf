@@ -595,7 +595,7 @@ class PicList:
     def _getpixbuf_file(self, src, anchor):
         fpath = None
         if self.picinfo is None:
-            return None, None
+            return None
         self.parent.setupPicinfos(self.picinfo)
         for p in self.picinfo.find(anchor=anchor):
             p.clear_src_paths()
@@ -604,6 +604,7 @@ class PicList:
         return fpath
 
     def _getpixbuf(self, src, anchor, nolimit=False):
+        pixbuf = None
         fpath = self._getpixbuf_file(src, anchor)
         if fpath is not None and os.path.exists(fpath):
             if nolimit:
@@ -622,9 +623,8 @@ class PicList:
                         pixbuf = None
                 else:
                     pixbuf = None
-            res = (pixbuf, fpath)
-        logger.debug(f"Figure Path={fpath}, {res=}")
-        return res
+        logger.debug(f"Figure Path={fpath}, {pixbuf=}")
+        return pixbuf, fpath
 
     def _updatePreview(self, currow):
         r_image = self.parent.get("r_image", default="preview")

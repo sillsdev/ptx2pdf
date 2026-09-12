@@ -113,7 +113,8 @@ class XDViReader:
         return res
 
     def readval(self, size, uint=False):
-        d = self.readbytes(size)
+        d = self.buffer[self.fpos:self.fpos+size]   # save a function call. We are called a lot
+        self.fpos += size
         if size != 3:
             return int.from_bytes(d, byteorder='big', signed=not uint)
         
@@ -122,6 +123,15 @@ class XDViReader:
         if not uint and (val & 0x800000):
             val -= 0x1000000  # Convert to negative complement
         return val
+
+    def readvals(self, size, num, uint=False):
+        if not num:
+            return []
+        if size == 3:
+            return [self.readval(size, uint=unit) for i in range(num)]
+        fmt = ("bhxi" if uint else "BHXI")[size]
+        d = self.readbytes(size * num)
+        return list(unpack(f">{num}{fmt}", d))
 
     def parse(self):
         selfopen = False
@@ -212,7 +222,7 @@ class XDViReader:
         (k, c, s, d, a, l) = data
         n = bytes(self.readbytes(a+l)).decode("utf-8")
         font = Font(n)
-        font.size = self.mag * s / 1000. / d if d != 0 else 0
+        font.points = self.mag * s / 1000. / d if d != 0 else 0
         font.checksum = c
         self.fonts[k] = font
         return (k, c, s, d, a, l, n)
@@ -258,8 +268,9 @@ class XDViReader:
             txt = b""
         width = self.readval(4)
         slen = self.readval(2, uint=True)
-        pos = [(self.readval(4), self.readval(4)) for i in range(slen)]
-        glyphs = [self.readval(2) for i in range(slen)]
+        poses = readvals(4, 2 * slen)
+        pos = list(zip(poses[::2], poses[1::2]))
+        glyphs = self.readvals(2, range(slen))
         return (parm, width, pos, glyphs, txt)
         # res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
         # self.out("xglyphs: {}".format(res))
