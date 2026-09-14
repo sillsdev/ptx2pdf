@@ -129,7 +129,7 @@ class XDViReader:
             return []
         if size == 3:
             return [self.readval(size, uint=unit) for i in range(num)]
-        fmt = ("bhxi" if uint else "BHXI")[size]
+        fmt = ("bhxi" if uint else "BHXI")[size-1]
         d = self.readbytes(size * num)
         return list(unpack(f">{num}{fmt}", d))
 
@@ -268,9 +268,9 @@ class XDViReader:
             txt = b""
         width = self.readval(4)
         slen = self.readval(2, uint=True)
-        poses = readvals(4, 2 * slen)
+        poses = self.readvals(4, 2 * slen)
         pos = list(zip(poses[::2], poses[1::2]))
-        glyphs = self.readvals(2, range(slen))
+        glyphs = self.readvals(2, slen)
         return (parm, width, pos, glyphs, txt)
         # res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
         # self.out("xglyphs: {}".format(res))

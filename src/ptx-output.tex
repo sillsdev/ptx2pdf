@@ -156,7 +156,7 @@
   \pr@pinserts
   \s@ttrialheight
   \setbox14=\makefootbox
-  \ifvoid14\else\ifnoinkinmargin \advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
+  \ifvoid14\else\ifnoinkinmargin \advance\trialheight -\ht14\else\setbox14=\vbox to 1sp{\box14\vss}\fi\fi
   \trace{i}{1c TRIAL with ht=\the\trialheight, depth=\the\dp255, vsize=\the\vsize, hIns=\the\holdinginserts, vfuzz=\the\vfuzz}%
   \r@membermarks %TODO: Check this 
   \trace{o}{c@lcavailht1}%
@@ -485,7 +485,7 @@
   \fi
   \s@ttrialheight
   \setbox14=\makefootbox\ifvoid14\else
-    \ifnoinkinmargin\advance\trialheight by -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
+    \ifnoinkinmargin\advance\trialheight by -\ht14\else\setbox14=\vbox to 1sp{\box14\vss}\fi\fi
   \setbox0=\vbox{\unvcopy255}%
   \trace{o}{savepartialpage: b@dy\ifb@dy true\else false\fi\space for trialheight \the\trialheight, \the\ht255}%
   %\global\t@xttrialheight=\ht0
@@ -1538,7 +1538,7 @@
   \ifnum\outputpenalty=\book@ndpenalty\global\endbooktrue\inendbooktrue\iflastptxfile\global\lastpagetrue\fi\fi
   \s@ttrialheight
   \setbox14=\makefootbox\ifvoid14\else
-    \ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
+    \ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 1sp{\box14\vss}\fi\fi
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
@@ -1722,7 +1722,7 @@
   \pr@pinserts
   \s@ttrialheight
   \setbox14=\makefootbox
-  \ifvoid14\else\ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
+  \ifvoid14\else\ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 1sp{\box14\vss}\fi\fi
   \r@membermarks %TODO: Check this 
   \trace{o}{c@lcavailht10}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
@@ -2144,6 +2144,7 @@
       \iflastpage
       \else %Don't force a break before a colophon
         \setbox14=\makefootbox
+        \ifnoinkinmargin\setbox14=\vbox to 1sp{\vss\box14}\fi
         \twocolp@geout %Set up pagecontents and call \plainoutput
         \clearn@tes
       \fi
@@ -2228,7 +2229,7 @@
   \pr@pinserts
   \s@ttrialheight
   \setbox14=\makefootbox
-  \ifvoid14\else\ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
+  \ifvoid14\else\ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 1sp{\box14\vss}\fi\fi
   \r@membermarks %TODO: Check this 
   \trace{o}{c@lcavailht11}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
@@ -2388,7 +2389,7 @@
   \ifnum\outputpenalty=\book@ndpenalty\global\endbooktrue\inendbooktrue\iflastptxfile\global\lastpagetrue\fi\fi
   \s@ttrialheight
   \setbox14=\makefootbox\ifvoid14\else
-    \ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi\fi
+    \ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 1sp{\box14\vss}\fi\fi
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
