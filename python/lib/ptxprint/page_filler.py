@@ -1200,7 +1200,8 @@ class PTXFiller:
         else:
             retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
             msg = f"Failed: {' '.join(str(x) for x in res.failures)}" if res.failures else _("All done")
-            self.progress(ProgressEvent(bk, 0, "complete", msg, -1))
+            pages = -1 if res.failures else res.numPages()
+            self.progress(ProgressEvent(bk, 0, "complete", msg, pages))
             self.printbk(bk, "Y", progress=False)
         if len(self.stats):
             print(f"\n{bk}: mean={statistics.mean(self.stats)}, median={statistics.median(self.stats)}, sd={statistics.stdev(self.stats)}, quantiles={statistics.quantiles(self.stats)}")
