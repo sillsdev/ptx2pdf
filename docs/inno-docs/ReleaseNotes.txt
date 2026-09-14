@@ -1,8 +1,39 @@
-PTXprint 3.0.38 Release Notes
-14 Aug 2026
+PTXprint 3.0.39 Release Notes
+14 Sep 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.39 - (14 Sep 2026)
+
+  * Automatic Page Filler (Note: This is still an experimental feature)
+    - Refactor page filling, with big improvements to how well pages are filled
+    - Speed up page filling of long books by a lot (O(N^2) -> O(N log N))
+    - Speed up the post-layout analysis, xdv processing and parlocs reading
+    - Buffer the xdv file for parsing
+    - Show books that have already been filled in green
+    - Allow the Page Filler dialog to be re-run without restarting
+    - Add more badness controls
+    - Add support for the \pl marker
+    - Cope with bad chapter numbers instead of failing
+    - Protect against active characters in \k names when reading parlocs
+    - Ensure noinkinmargin is applied for single page books
+    - Fix various NoneType errors
+
+  * Diglot
+    - Allow mixed separate / combined note styles for diglot
+
+  * Pictures
+    - Cache the aspect ratio in the shared piclist file
+    - Update the aspect when the src of a picture changes
+    - Fix a couple of bugs in the picture list editor
+
+  * Other
+    - Fix table multiline cell alignment problems
+    - Fix inline Strong's numbers truncating the text that follows
+    - Restore control over baselineskip
+    - Add \fastendchapter and \STOPHERE to stop typesetting early (for testing)
+    - Fix readvals call in xdv
 
 Bug fixes and Improvements in 3.0.38 - (14 Aug 2026)
 
