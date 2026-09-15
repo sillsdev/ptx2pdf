@@ -1,10 +1,10 @@
-PTXprint 3.0.40 Release Notes
+PTXprint 3.0.41 Release Notes
 15 Sep 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.0.40 - (15 Sep 2026)
+Bug fixes and Improvements in 3.0.41 - (15 Sep 2026)
 
   * Automatic Page Filler (Note: This is still an experimental feature)
     - Get the Page Filler working for peripheral books (e.g. GLO/A9), which have
@@ -23,7 +23,7 @@ Bug fixes and Improvements in 3.0.40 - (15 Sep 2026)
       and end references disagree, and keep paragraphs in document order
     - Fix chapter range handling for books with a chapter count of 999
 
-Bug fixes and Improvements in 3.0.39 - (14 Sep 2026) - recakked
+Bug fixes and Improvements in 3.0.39 - (14 Sep 2026) - recalled
 
   * Automatic Page Filler (Note: This is still an experimental feature)
     - Refactor page filling, with big improvements to how well pages are filled
