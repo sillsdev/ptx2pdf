@@ -401,10 +401,11 @@ class Paragraphs(list):
                 if currp.lastref != currp.ref:
                     ra = makeref(currp.ref)
                     rb = makeref(currp.lastref)
-                    rc = ra.nextverse(thisbook=True)
-                    if rc <= rb:
-                        currp.ref=f"{rc.book}{rc.chapter}.{rc.verse}"
-                        currp.parnum = 1
+                    if ra is not None and rb is not None:
+                        rc = ra.nextverse(thisbook=True)
+                        if rc <= rb:
+                            currp.ref=f"{rc.book}{rc.chapter}.{rc.verse}"
+                            currp.parnum = 1
                 if currp.lastref == currp.ref:
                     currp.parnum = int(p[1])
                 prev_p = par_ref_map.get((polycol, currp.ref), None)
