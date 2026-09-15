@@ -184,6 +184,7 @@ class Hooks:
             val = float(printer.view.get("s_"+a[1]))
             logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
+        # setattr(self, "strictness", printer.view.get("c_pbstrict", False))
         vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
         self.tracing = logger.isEnabledFor(15)
         if self.tracing:
@@ -238,8 +239,8 @@ class Hooks:
     def get_first_page_for_para(self, para):
         return self.printer.get_paragraph_start_page(para)
 
-    def get_page_para_key(self, page, state=None):
-        p = self.printer.get_page_first_pid(page, state=state)
+    def get_page_para_key(self, page, col=None, state=None):
+        p = self.printer.get_page_first_pid(page, col=col, state=state)
         r = self.printer.get_lines_para_page(p, page, state=state)
         return (p, r)
 
@@ -270,6 +271,9 @@ class Hooks:
 
     def get_para(self, pid):
         return self.printer.get_para(pid)
+
+    def getcols(self, polycol="L"):
+        return self.printer.parlocs.colcount.get(polycol, 1)
 
     def append_stats(self, w):
         self.printer.stats.append(w)
@@ -368,11 +372,20 @@ class TypesetterSolver:
         self.bk = book
         self.init_state = state
         if self.hooks.tracing:
-            logger.log(15, f"{state.layout.paragraph_pages=}")
+            logger.log(15, f"{state=} {state.layout.paragraph_pages=}")
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
-        if state.layout.first_failing_page is None:
-            return state
+        if state.layout.first_failing_page is None or state.layout.first_failing_page >= start_page:
+            for i in range(state.layout.first_failing_page if state.layout.first_failing_page else state.numPages()):
+                if not self.layout_checks(state, i-1):
+                    start_page = i - 2
+                    logging.log(17, f"Layout check failed at {i}")
+                    break
+            else:
+                if state.layout.first_failing_page is None:
+                    return state
+                else:
+                    start_page = state.layout.first_failing_page - 1
         if restart:
             logger.debug(state.layout.first_failing_page)
             self.base_params = {}
@@ -384,7 +397,7 @@ class TypesetterSolver:
             self.base_params = dict(state.paragraph_params)
 
         self.collect_probes(state.layout, self.paragraph_order, self.base_params, isbase=True, page=start_page)
-        page = start_page + 1
+        page = start_page
         self.low_water = max(0, page - self.backtrack_depth)
         self.numpages = state.numPages()
         npages = (self.numpages - page + 1) if self.full_probe or self.numpages <= 2 * self.lookahead else self.lookahead
@@ -419,8 +432,14 @@ class TypesetterSolver:
             layout = state.layout
             nextpage = layout.first_failing_page
             logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
-            if nextpage is None or nextpage == page:
-                if state.complete:
+            if nextpage is None or nextpage > page:
+                for i in range(page, nextpage if nextpage else self.numpages):
+                    if not self.layout_checks(state, i):
+                        nextpage = i
+                        break
+                else:
+                    nextpage = page + 1
+                if state.complete and nextpage == self.numpages - 1:
                     if self.hooks.tracing:
                         logger.log(15, "solve_complete pages=%s, underfills=%s",
                                len(layout.pages),
@@ -432,7 +451,6 @@ class TypesetterSolver:
                         f"Failed: {' '.join(str(p) for p in self.failed_pages)}" if self.failed_pages else None,
                         self.numpages))
                     return state
-                nextpage = state.numPages() - 1 if nextpage is None else nextpage + 1
 
             # don't reanalyse starting on a page we've already given up on
             while nextpage in self.failed_pages:
@@ -574,12 +592,13 @@ class TypesetterSolver:
             if (new_state.layout.first_failing_page is None
                     or new_state.layout.first_failing_page > page
                     or free is None or not len(free) or all(x == 0 for x in free)):
-                if self.hooks.tracing:
-                    logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
-                    logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
-                self.base_params = dict(new_state.paragraph_params)
-                new_state.passed = True
-                return new_state, True
+                if self.layout_checks(state, page):
+                    if self.hooks.tracing:
+                        logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
+                        logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
+                    self.base_params = dict(new_state.paragraph_params)
+                    new_state.passed = True
+                    return new_state, True
 
             state = new_state
 
@@ -588,6 +607,23 @@ class TypesetterSolver:
         state = self.run_layout(page_base_params, state, {}, page, start)
         state.passed = False
         return state, False
+
+    def layout_checks(self, state, page):
+        if False and not self.hooks.strictness:
+            return True
+        # find first para in each column
+        numcols = self.hooks.getcols()
+        for i in range(numcols):
+            (pid, lines) = self.hooks.get_page_para_key(page-1, col=i, state=state)
+            # get marker of pid
+            p = self.hooks.get_para(pid)
+            if p is None:
+                continue
+            m = p.mrk
+            logger.log(17, f"{pid}: \\{m} on {page}, col={i}")
+            if m in ('q2', 'q3', 'q4'):
+                return False
+        return True
 
     def repair(self, state, page, start, avoid_key, floor=0):
         """Try to give `page` a different combo, cascading backward
@@ -972,11 +1008,12 @@ class TypesetterSolver:
                         score += self.hooks.badness_contrast_factor * abs(pe - preve)
                     else:
                         if collengths[0] > 0 and 0 <= col_deltas[0] + col_deltas[1] + col_deltas[3] < collengths[0]:
-                            logger.log(12, f"Rejecting against col 1 {col_deltas} {combo}")
+                            logger.log(5, f"Rejecting against {collengths[0]}, col 1 {col_deltas} {combo}")
                             continue
                         if collengths[1] > 0 and 0 <= sum(col_deltas) < collengths[1]:
-                            logger.log(12, f"Rejecting against col 2 {col_deltas}, {combo}")
+                            logger.log(5, f"Rejecting against {collengths[1]}, col 2 {col_deltas}, {combo}")
                             continue
+                        logger.log(5, f"Accepting {col_deltas}, {combo}")
                         sig = tuple(col_deltas)
                         (oldscore, oldcombo) = seen_col_sigs.get(sig, (10000, None))
                         if score < oldscore:
@@ -1069,12 +1106,13 @@ class PTXFiller:
 
     reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+?)\]\s+ht=([\d.]+?)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
 
-    def __init__(self, build_params, nid, progress_q=None):
+    def __init__(self, build_params, nid, progress_q=None, cpu_q=None):
         super().__init__()
         self.nid = nid
         self.timedout = False
         self.cancelled = False
         self.progress_queue = progress_q
+        self.cpu_q = cpu_q
         self.view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
@@ -1192,6 +1230,8 @@ class PTXFiller:
         jobadjfile = self.job.pdffile.replace(".pdf", ".adjlist")
         self.createAdjs(state.paragraph_params, solver, file=jobadjfile)
         self.job.xdvtopdf(self.job.outfname, self.job.pdffile)
+        if self.cpu_q is not None:
+            self.cpu_q.put((os.getpid(), self.job.cpu_seconds))
         logger.log(15, f"shape_cache={solver.shape_cache}")
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
@@ -1298,6 +1338,8 @@ class PTXFiller:
         if not hasattr(self.job, 'outfname'):
             raise FileNotFoundError(self.view.getBooks())
         self.job.run_xetex(self.job.outfname, self.job.pdffile)
+        if self.cpu_q is not None:
+            self.cpu_q.put((os.getpid(), self.job.cpu_seconds))
         parlocsfile = self.job.outfname.replace(".tex", ".parlocs")
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(parlocsfile, self.rtl)
@@ -1336,12 +1378,11 @@ class PTXFiller:
                 colmask[p.pid()] = colmask.get(p.pid(), 0) | (r.col + 1)
         return sorted(res, key=self.pidkey)
 
-    def get_page_first_pid(self, page, state=None):
+    def get_page_first_pid(self, page, col=None, state=None):
         plocs = self.parlocs if state is None else state.parlocs
-        pfirst = None
         res = 0
-        for p, r in plocs.getParas(page+1, inclast=True):
-            if pfirst is None:
+        for p, r in plocs.getParas(page+1):
+            if col is None or r.col == col:
                 return p.pid()
         return None
 
@@ -1468,6 +1509,7 @@ class PTXFiller:
                     else:
                             v = [lines]
                     self.underfills[pnum] = v
+                    logger.debug(f"{pnum=} {self.underfills[pnum]}")
                 elif l.startswith("Underfill"):
                     logger.warn(f"Unparsed underfill {l} at line {i+1}")
 

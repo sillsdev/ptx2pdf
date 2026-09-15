@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree, copy2, copystat
 from threading import Thread
-from ptxprint.runner import call, checkoutput
+from ptxprint.runner import call, checkoutput, child_cpu_time
 from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.version import VersionStr
@@ -30,6 +30,7 @@ from ptxprint.xdv.colouring import procxdv
 from ptxprint.report import Report
 from usfmtc.versification import Versification
 import numpy as np
+import psutil
 from datetime import datetime
 import logging
 
@@ -651,13 +652,14 @@ class RunJob:
             callkw = {}
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
+            self.cpu_seconds = child_cpu_time(None)
             self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
             if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
                 try:
-                    #runner.wait(self.args.timeout)
                     self.runner.wait()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
+                self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
                 self.res = self.runner.returncode
             elif isinstance(self.runner, subprocess.CompletedProcess):
                 self.res = self.runner.returncode
@@ -731,6 +733,7 @@ class RunJob:
         #    cmd += ["-z", "0"]
         if self.args.extras & 7:
             cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
+        self.cpu_seconds = child_cpu_time(None)
         with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
             self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
         logger.debug(f"Running: {cmd} for {outfname}")
@@ -739,11 +742,11 @@ class RunJob:
         if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
             try:
                 self.runner.wait()
-                #runner.wait(self.args.timeout)
             except subprocess.TimeoutExpired:
                 print("Timed out!")
+            self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
             self.res = 4 if self.runner.returncode else 0
-            logger.debug(f"{runner.stdout.decode('UTF-8')}")
+            logger.debug(f"{self.runner.stdout}")
         elif isinstance(self.runner, subprocess.CompletedProcess):
             self.res = 4 if self.runner.returncode else 0
             logger.debug(f"{self.runner.stdout}")

@@ -16,10 +16,11 @@ from usfmtc.reference import chaps, RefList
 
 class ViewPrinter:
     """Printer wrapper for view-based rendering jobs, mirroring PTXFiller's interface."""
-    def __init__(self, build_params, nid: str, progress_q=None):
+    def __init__(self, build_params, nid: str, progress_q=None, cpu_q=None):
         self.build_params = build_params
         self.nid = nid
         self.progress_q = progress_q
+        self.cpu_q = cpu_q
         self.timedout = False
         self.cancelled = False
 
@@ -118,9 +119,10 @@ class GLibCompatQueue:
 
 class WorkerContext:
     """Manages worker lifecycle, cached printer instance, and job watchdog execution."""
-    def __init__(self, nid: str, progress_q, cancel_event):
+    def __init__(self, nid: str, progress_q, cpu_q, cancel_event):
         self.nid = nid
         self.progress_q = progress_q
+        self.cpu_q = cpu_q
         self.cancel_event = cancel_event
 
         self.last_job: Optional[Job] = None
@@ -140,10 +142,10 @@ class WorkerContext:
         """Returns the active printer, creating a new instance if job configuration changed."""
         if not self.matches_last_job(job):
             if job.action == 'fill':
-                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q)
+                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q, cpu_q=self.cpu_q)
                 logging.debug(f"{self.current_printer=}")
             elif job.action == 'print':
-                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q)
+                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q, cpu_q=self.cpu_q)
             else:
                 raise ValueError(f"Unknown job action: {job.action}")
             self.last_job = job
@@ -227,10 +229,10 @@ class WorkerContext:
 
 _worker_ctx: Optional[WorkerContext] = None
 
-def _init_worker(progress_q, cancel_event):
+def _init_worker(progress_q, cpu_q, cancel_event):
     global _worker_ctx
     nid = mp.current_process().name
-    _worker_ctx = WorkerContext(nid, progress_q, cancel_event)
+    _worker_ctx = WorkerContext(nid, progress_q, cpu_q, cancel_event)
 
 def _worker_dispatch(job: Job):
     global _worker_ctx
@@ -245,6 +247,7 @@ class MultiPrint:
         self.ctx = mp.get_context('spawn')
         self.numproc = numproc or max(1, mp.cpu_count() - 2)
         self.progress_q = GLibCompatQueue(self.ctx) if progress else None
+        self.cpu_q = GLibCompatQueue(self.ctx)
         self.cancel_event = self.ctx.Value('b', False)
 
         self.executor: Optional[ProcessPoolExecutor] = None
@@ -254,14 +257,14 @@ class MultiPrint:
     def start(self):
         """Start the worker pool."""
         if self.numproc == 1:
-            _init_worker(self.progress_q, self.cancel_event)
+            _init_worker(self.progress_q, self.cpu_q, self.cancel_event)
             return
         self.cancel_event.value = False
         self.executor = ProcessPoolExecutor(
             mp_context=self.ctx,
             max_workers=self.numproc,
             initializer=_init_worker,
-            initargs=(self.progress_q, self.cancel_event)
+            initargs=(self.progress_q, self.cpu_q, self.cancel_event)
         )
 
     def _dispatch_job(self, job: Job):
@@ -345,6 +348,12 @@ class MultiPrint:
                     self.prev_cpu_times[pid] = total_proc_cpu
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     continue
+        while True:
+            try:
+                pid, child_cpu = self.cpu_q.get_nowait()
+            except queue.Empty:
+                break
+            tick_cpu_seconds += child_cpu
         self.total_gops += tick_cpu_seconds * current_ghz
         return self.total_gops
 
