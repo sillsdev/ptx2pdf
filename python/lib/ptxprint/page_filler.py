@@ -13,7 +13,7 @@ from time import time, asctime, sleep
 from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob, unlockme
-from ptxprint.utils import refSort, bookcodes, f_, ProgressEvent, _
+from ptxprint.utils import refSort, bookcodes, booknumbers, f_, ProgressEvent, _
 from ptxprint.view import ViewModel
 from ptxprint.project import ProjectList
 from ptxprint.utils import BuildParams
@@ -45,6 +45,14 @@ def cmp(x, y):
     return -1 if x < y else 0 if x == y else 1
 
 bkltrs = "".join([chr(x) for (a, b) in [(65, 91), (97, 123), (33, 65)] for x in range(a, b)])
+
+def bookletter(bk):
+    """Single character console tag for a book. Peripheral books (GLO, FRT, NDX ...) have
+       non-numeric codes (A9, A0, B1 ...) and numbers beyond the end of bkltrs, so fall back."""
+    if bk is None:
+        return ""
+    i = booknumbers.get(bk, 0) - 1
+    return bkltrs[i] if 0 <= i < len(bkltrs) else "?"
 
 all_probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1), (1.0, 0)]
 
@@ -350,7 +358,7 @@ class TypesetterSolver:
                 (maxexp, 1), (maxexp, 0), (expand, 0)]
 
     def printbk(self, bk, page, progress=True, total=None):
-        bkc = bkltrs[int(bookcodes[bk])-1] if bk is not None else ""
+        bkc = bookletter(bk)
         print(bkc+str(page), flush=True, end="")
         if progress:
             pe = ProgressEvent(bk, page, "page", "")
@@ -1141,7 +1149,7 @@ class PTXFiller:
                                 logger.warning(f"Cannot delete {fp} — file still locked; skipping")
 
     def printbk(self, bk, page, progress=True):
-        bkc = bkltrs[int(bookcodes[bk])-1] if bk is not None else ""
+        bkc = bookletter(bk)
         print(bkc+str(page), flush=True, end="")
         if progress:
             self.hooks.progress(ProgressEvent(bk, None, "page", ""))

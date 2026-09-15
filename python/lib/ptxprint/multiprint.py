@@ -1,6 +1,7 @@
 import os, argparse
 import logging
 import time
+import traceback
 from configparser import ConfigParser
 from dataclasses import dataclass
 from typing import Union, Any, Optional
@@ -209,7 +210,8 @@ class WorkerContext:
                 res = printer.solve(job.books, cfgid_override=job.cfgid)
         except Exception as e:
             print(f"Exception {job.books[0]}: {e}")
-            logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n{f_('Traceback: ')}")
+            logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n"
+                         f"{f_('Traceback: ')}{traceback.format_exc()}")
             if watchdog:
                 watchdog.cancel()
             if self.progress_q:
@@ -319,6 +321,7 @@ class MultiPrint:
             try:
                 results.append(future.result())
             except Exception as exc:
+                logging.warning(f"Job failed for {job.books}: {exc}\n{traceback.format_exc()}")
                 results.append((job.books, None, False, str(exc)))
 
         self.pending_futures.clear()
