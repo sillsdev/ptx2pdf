@@ -349,6 +349,8 @@ class TypesetterSolver:
         self.full_probe = True
         self.baseline_lines: Dict[Any, int] = {}
         self.base_params = {p: (expand, 0) for p in self.paragraph_order}
+        self.committed_params = dict(self.base_params)
+        self.committed_page = -1
         self.tried = set()
         self.itercount = 0
         self.frozen_paragraphs = set()
@@ -441,22 +443,31 @@ class TypesetterSolver:
             nextpage = layout.first_failing_page
             logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
             if nextpage is None or nextpage > page:
-                for i in range(page, nextpage if nextpage else self.numpages):
-                    if not self.layout_checks(state, i):
-                        nextpage = i
-                        break
+                if self.noprobe:
+                    for i in range(page, nextpage if nextpage else self.numpages):
+                        if not self.layout_checks(state, i):
+                            nextpage = i
+                            break
+                    else:
+                        nextpage = page + 1
                 else:
-                    nextpage = page + 1
+                    if nextpage is None or nextpage > page + 1:
+                        nextpage = page + 1
                 if state.complete and nextpage == self.numpages - 1:
                     if self.hooks.tracing:
                         logger.log(15, "solve_complete pages=%s, underfills=%s",
                                len(layout.pages),
                                str({i: lp.column_free_lines for i, lp in enumerate(layout.pages)
                                     if lp.column_free_lines is not None}))
+                    bad = [i for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None 
+                                        and any(x != 0 for x in lp.column_free_lines) and i not in self.failed_pages]
+                    if bad:
+                        self.failed_pages.extend(bad)
+                        logger.log(15, f"Completion sweep found underfilled pages: {bad}")
                     state.failures = self.failed_pages
                     self.hooks.progress(ProgressEvent(
                         self.bk, (page or 0) + 1, "complete",
-                        f"Failed: {' '.join(str(p) for p in self.failed_pages)}" if self.failed_pages else None,
+                        f"Failed from {self.failed_pages[0]+1}" if self.failed_pages else None,
                         self.numpages))
                     return state
 
@@ -509,30 +520,34 @@ class TypesetterSolver:
                 avoid_key = self.hooks.get_page_para_key(page, state=state)
                 max_depth = self.backtrack_depth
 
-            try:
-                state, fixed = self.repair(state, target, start_page,
-                                            avoid_key=avoid_key, floor=self.low_water)
-            except TimeoutError:
-                msg = "Stopped" if self.hooks.cancelled else "Timed out"
-                self.hooks.progress(ProgressEvent(self.bk, page, "failed", msg, self.numpages))
-                return HumanFixRequest(state, page, msg)
-
-            if fixed:
-                continue
+            if not len(self.failed_pages) or self.failed_pages[0] > self.low_water:
+                try:
+                    state, fixed = self.repair(state, target, start_page,
+                                                avoid_key=avoid_key, floor=self.low_water)
+                except TimeoutError:
+                    msg = "Stopped" if self.hooks.cancelled else "Timed out"
+                    self.hooks.progress(ProgressEvent(self.bk, page, "failed", msg, self.numpages))
+                    return HumanFixRequest(state, page, msg)
+                if fixed:
+                    continue
 
             # Couldn't fix `page` -- ordinary failed-page handling.
+            self.base_params = dict(self.committed_params)
             state.layout.first_failing_page = page
             while state.layout.first_failing_page is not None and state.layout.first_failing_page == page:
                 state.layout.next_bad()
             self.failed_pages.append(page)
             if state.layout.first_failing_page is None and state.complete:
-                msg = f"Failed: {' '.join(str(p) for p in self.failed_pages)}"
+                msg = f"Failed from {self.failed_pages[0]+1}"
                 self.hooks.progress(ProgressEvent(self.bk, page+1, "complete", msg))
                 return HumanFixRequest(state, page + 1, msg)
             if state.layout.first_failing_page is None or state.layout.first_failing_page > page:
                 self.hooks.progress(ProgressEvent(self.bk, page + 1, "badpage", "", self.numpages))
             start_page = state.layout.first_failing_page or state.numPages() + 1
             continue
+
+    def _combo_key(self, combo):
+        return frozenset(combo.items())
 
     def attempt_page(self, state, page, start, avoid_key=None):
         """Search `page` for a sufficient combo.
@@ -549,66 +564,68 @@ class TypesetterSolver:
 
         page_base_params = self.page_base_params.get(page, dict(self.base_params))
         self.printbk(self.bk, page)
-        startcount = self.itercount
+        maxcombos = 200
+        tried = set()
+        reprobed = False
 
-        for combo in self.next_combination(state, page):
-            if self.hooks.cancelled:
-                raise TimeoutError("Stopped")
-            if not combo and self.itercount > 0:
-                continue
-            if self.itercount - startcount > 200:
-                break
-
-            new_state = self.run_layout(page_base_params, state, combo, page, start)
-
-            if page < len(new_state.layout.pages):
-                free = new_state.layout.pages[page].column_free_lines
-            else:
-                free = None
-
-            if free is not None and any(x > 5 for x in free):
-                logger.log(15, "Skipping combo for large gap")
-                continue
-
-            if (new_state.layout.first_failing_page is not None
-                    and new_state.layout.first_failing_page < page):
-                logger.log(15, f"Rejecting combo: invalidates earlier page "
-                                f"{new_state.layout.first_failing_page} < {page}")
-                continue
-
-            if avoid_key is not None:
-                next_key = self.hooks.get_page_para_key(page + 1, state=new_state)
-                if next_key == avoid_key or next_key in self.failed_starts.get(page + 1, set()):
+        while True:
+            startcount = self.itercount
+            for combo in self.next_combination(state, page):
+                if self.hooks.cancelled:
+                    raise TimeoutError("Stopped")
+                if not combo and self.itercount > 0:
                     continue
+                if self.itercount - startcount > maxcombos:
+                    break
+                key = self._combo_key(combo)
+                if key in tried:
+                    continue
+                tried.add(key)
 
-            if not self.noprobe and (free is None or all(x == 0 for x in free)):
-                lpars = state.layout.get_pars(page)
-                pps = state.layout.paragraph_pages[lpars[-1]]
-                if len(pps) > 1 and lpars[-1] in self.probe_params:
-                    self.noprobe = True
-                    new_state = self.run_layout(page_base_params, state, combo, page, start)
-                    logger.log(15, f"Test run for good page, without probes "
-                                    f"{new_state.layout.first_failing_page=}")
-                    self.noprobe = False
+                new_state = self.run_layout(page_base_params, state, combo, page, start)
+
+                if page < len(new_state.layout.pages):
                     free = new_state.layout.pages[page].column_free_lines
+                else:
+                    free = None
+
                 if (new_state.layout.first_failing_page is not None
                         and new_state.layout.first_failing_page < page):
-                    logger.log(15, "Rejecting combo: noprobe retest invalidates "
-                                   f"earlier page {new_state.layout.first_failing_page} < {page}")
+                    logger.log(15, f"Rejecting combo: invalidates earlier page "
+                                    f"{new_state.layout.first_failing_page} < {page}")
                     continue
 
-            if (new_state.layout.first_failing_page is None
-                    or new_state.layout.first_failing_page > page
-                    or free is None or not len(free) or all(x == 0 for x in free)):
-                if self.layout_checks(state, page):
-                    if self.hooks.tracing:
-                        logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
-                        logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
-                    self.base_params = dict(new_state.paragraph_params)
-                    new_state.passed = True
-                    return new_state, True
+                if avoid_key is not None:
+                    next_key = self.hooks.get_page_para_key(page + 1, state=new_state)
+                    if next_key == avoid_key or next_key in self.failed_starts.get(page + 1, set()):
+                        continue
 
-            state = new_state
+                if not self.noprobe and (free is None or all(x == 0 for x in free)):
+                    lpars = state.layout.get_pars(page)
+                    straddler = lpars[-1]
+                    if self.hooks.get_first_page_for_para(straddler) <= page \
+                            and straddler in self.probe_params \
+                            and self.probe_params[straddler] != page_base_params.get(straddler, (self.expand, 0)):
+                        page_base_params[straddler] = self.probe_params[straddler]
+
+                page_full = free is None or not len(free) or all(x == 0 for x in free)
+                if page_full and (new_state.layout.first_failing_page is None
+                        or new_state.layout.first_failing_page > page):
+                    if self.layout_checks(state, page):
+                        if self.hooks.tracing:
+                            logger.log(15, "page_solved page=%s iterations=%s", page, self.itercount)
+                            logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
+                        self.base_params = dict(new_state.paragraph_params)
+                        new_state.passed = True
+                        if page > self.committed_page:
+                            self.committed_params = dict(self.base_params)
+                            self.committed_page = page
+                        return new_state, True
+                state = new_state
+            if not reprobed and not self.noprobe:
+                self.run_layout({}, state, {}, page-1, start, allpages=True)
+                continue
+            break
 
         logger.log(15, "page_failed page=%s", page)
         self.failed_starts.setdefault(page, set()).add(self.hooks.get_page_para_key(page, state=state))
@@ -747,16 +764,23 @@ class TypesetterSolver:
         Executes vectorized full-document layout sweeps.
         Calls evaluate_paragraph_probe(pid) as a completely stateless helper.
         """
+        def do_progress(sweep):
+            if progress:
+                p = ProgressEvent(self.bk, sweep, "probe", "", self.numpages)
+                p.total = 10
+                self.hooks.progress(p)
+        sweep_count = 0
         all_pids = self.hooks.get_paragraphs_for_pages(page, page + npages)
         last_page = page + npages
         for a in ((self.minexp, -1), (self.maxexp, 1)):
             sweep_params = {pid: a for pid in all_pids}
             layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
             self.collect_probes(layout, all_pids, sweep_params, page=page)
+            sweep_count += 1
+            do_progress(sweep_count)
 
         if self.hooks.tracing:
             logging.log(15, f"{self.probe_cache=}, {self.shape_cache=}")
-        sweep_count = 0
         while True:
             sweep_count += 1
             sweep_params = {pid: (self.expand, 0) for pid in all_pids}
@@ -789,13 +813,11 @@ class TypesetterSolver:
             if self.hooks.tracing:
                 logging.log(15, f"run_layout result = {layout.result}")
             self.collect_probes(layout, all_pids, sweep_params, page=page)
-            if progress:
-                p = ProgressEvent(self.bk, sweep_count, "probe", "", self.numpages)
-                p.total = 10
-                self.hooks.progress(p)
+            do_progress(sweep_count)
 
         sweep_params = {pid: (self.expand, 0) for pid in all_pids}
         layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
+        do_progress(sweep_count)
         return layout
 
     def run_layout(self, page_base_params, state, combo, page, start, allpages=False):
@@ -940,6 +962,7 @@ class TypesetterSolver:
 
     def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
         yield {}
+        maxcombos = 2000
         moves = []
         pset = set(paragraphs)
         lpars = state.layout.get_pars(page)
@@ -1031,7 +1054,7 @@ class TypesetterSolver:
         all_combos = sorted(list(seen_col_sigs.values()), key=lambda x: (x[0], len(x[1])))
         if self.hooks.tracing:
             logger.log(15, f"{all_combos=}")
-        for _, combo in all_combos[:200]:       # 200 tests for a page better be enough!
+        for _, combo in all_combos[:maxcombos]:       # 200 tests for a page better be enough!
             yield combo
 
     def _para_order(self, pid):
@@ -1243,11 +1266,11 @@ class PTXFiller:
         logger.log(15, f"shape_cache={solver.shape_cache}")
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
-            self.progress(ProgressEvent(bk, res.page, 'failed', res.message, -1))
+            self.progress(ProgressEvent(bk, res.page, 'complete', res.message, -1))
             self.printbk(bk, "T", progress=False)
         else:
             retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
-            msg = f"Failed: {' '.join(str(x) for x in res.failures)}" if res.failures else _("All done")
+            msg = f"Failed from {res.failures[0]+1}" if res.failures else _("All done")
             pages = -1 if res.failures else res.numPages()
             self.progress(ProgressEvent(bk, 0, "complete", msg, pages))
             self.printbk(bk, "Y", progress=False)

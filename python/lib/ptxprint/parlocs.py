@@ -540,7 +540,7 @@ class Paragraphs(list):
 
     def getParas(self, pnum, inclast=False, inclafter=False):
         ''' Iterates all ParDest, ParRect on page with given index '''
-        if pnum > len(self.pindex):
+        if pnum > len(self.pindex) or pnum < 1:
             return
         e = self.pindex[pnum] if not inclafter and pnum < len(self.pindex) else len(self)
 
