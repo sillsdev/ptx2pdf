@@ -611,7 +611,7 @@ class TypesetterSolver:
                         page_base_params[straddler] = self.probe_params[straddler]
 
                 page_full = free is None or not len(free) or all(x == 0 for x in free)
-                if almostcombo is None and free is not None and all(x == 1 for x in free):
+                if page == 0 and almostcombo is None and free is not None and all(x == 1 for x in free):
                     almostcombo = combo
                 if page_full and (new_state.layout.first_failing_page is None
                         or new_state.layout.first_failing_page > page):
