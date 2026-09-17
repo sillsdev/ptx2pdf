@@ -679,17 +679,26 @@ class TTFont:
                 numc = struct.unpack(">L", dat[8:])[0]
                 ttcdat = inf.read(numc * 4)
                 if ttcindex is None:
+                    firstdir = None
                     for i in range(numc):
                         offset = struct.unpack(">L", ttcdat[4*i:4*(i+1)])[0]
                         inf.seek(offset)
                         dat = inf.read(12)
                         numtables = struct.unpack(">H", dat[4:6])[0]
                         thisdir = self._read_dir(inf, numtables)
-                        thisnames = self.readNames(inf, dirdic=thisdir)
+                        thisnames = self.readNames(inf, dirdic=thisdir) or {}
+                        if firstdir is None:
+                            firstdir = thisdir
                         if thisnames.get(1, "") == self.family:     # Mac fonts don't obey standards?
                             self.dict = thisdir
                             ttcindex = i
                             break
+                    else:
+                        # Collections such as macOS Arial or Courier have no US English
+                        # family name to match against, so fall back to the first font
+                        if firstdir is not None:
+                            self.dict = firstdir
+                            ttcindex = 0
                 else:
                     offset = struct.unpack(">L", ttcdat[4*ttcindex:4*(ttcindex+1)])[0]
                     inf.seek(offset)
@@ -698,7 +707,9 @@ class TTFont:
                     self.dict = self.read_dir(inf, numtables)
             else:
                 self.dict = self._read_dir(inf, numtables)
-            self.names = self.readNames(inf)
+            if not len(self.dict):
+                return False
+            self.names = self.readNames(inf) or {}
             self.readFeat(inf)
             self.readSill(inf)
             self.readOTFeats(inf)
