@@ -15,18 +15,8 @@ class XdvSpaceMeasure(XDViPositionedReader):
         self.trackp = trackp
         logging.log(15, "Init new xdvspace")
 
-    #def __next__(self):
-    #    op = self.readval(1, uint=True)
-    #    opc = opcodes[op]
-    #    data = [self.readval((x if x>0 else -x), uint=x>0) for x in opc[1]]
-    #    res = (op, opc, data)
-    #    if self.trackp:
-    #        logging.log(15, f"{opc[0]}[{op}] = {data}")
-    #    return res
-
     def bop(self, opcode, parm, data):
         self.pindex = data[0]
-        logging.log(15, f"New page {self.pindex}")
         return super().bop(opcode, parm, data)
 
     def _skip_xglyphs(self, opcode, parm, data):

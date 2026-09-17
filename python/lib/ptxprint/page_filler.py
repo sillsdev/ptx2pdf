@@ -385,8 +385,9 @@ class TypesetterSolver:
             logger.log(15, f"{state=} {state.layout.paragraph_pages=}")
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
-        if state.layout.first_failing_page is None or state.layout.first_failing_page >= start_page:
-            for i in range(state.layout.first_failing_page if state.layout.first_failing_page else state.numPages()):
+        logger.log(15, f"{start_page=}, failing={state.layout.first_failing_page}")
+        if start_page > 0 and (state.layout.first_failing_page is None or state.layout.first_failing_page >= start_page):
+            for i in range(state.layout.first_failing_page if state.layout.first_failing_page is None else state.numPages()):
                 if not self.layout_checks(state, i-1):
                     start_page = i - 2
                     logging.log(17, f"Layout check failed at {i}")
@@ -506,8 +507,7 @@ class TypesetterSolver:
             if ok:
                 # we're good for this page
                 state = new_state
-                self.hooks.progress(ProgressEvent(self.bk, state.layout.first_failing_page or state.numPages(),
-                                                "goodpage", "", self.numpages))
+                self.hooks.progress(ProgressEvent(self.bk, page+1, "goodpage", "", self.numpages))
                 self.init_state = state
                 continue
 
@@ -526,7 +526,7 @@ class TypesetterSolver:
                                                 avoid_key=avoid_key, floor=self.low_water)
                 except TimeoutError:
                     msg = "Stopped" if self.hooks.cancelled else "Timed out"
-                    self.hooks.progress(ProgressEvent(self.bk, page, "failed", msg, self.numpages))
+                    self.hooks.progress(ProgressEvent(self.bk, page+1, "failed", msg, self.numpages))
                     return HumanFixRequest(state, page, msg)
                 if fixed:
                     continue
@@ -567,9 +567,11 @@ class TypesetterSolver:
         maxcombos = 200
         tried = set()
         reprobed = False
+        almostcombo = None
 
         while True:
             startcount = self.itercount
+            logger.log(17, f"Attempt page {page} from {start}, count={self.itercount}, {reprobed=}")
             for combo in self.next_combination(state, page):
                 if self.hooks.cancelled:
                     raise TimeoutError("Stopped")
@@ -609,6 +611,8 @@ class TypesetterSolver:
                         page_base_params[straddler] = self.probe_params[straddler]
 
                 page_full = free is None or not len(free) or all(x == 0 for x in free)
+                if almostcombo is None and free is not None and all(x == 1 for x in free):
+                    almostcombo = combo
                 if page_full and (new_state.layout.first_failing_page is None
                         or new_state.layout.first_failing_page > page):
                     if self.layout_checks(state, page):
@@ -625,6 +629,9 @@ class TypesetterSolver:
             if not reprobed and not self.noprobe:
                 self.run_layout({}, state, {}, page-1, start, allpages=True)
                 continue
+            elif almostcombo is not None:
+                new_state = self.run_layout(page_base_params, state, almostcombo, page, start)
+                return new_state, True
             break
 
         logger.log(15, "page_failed page=%s", page)
