@@ -41,6 +41,7 @@ jobs:
           python-platformdirs:p
           python-pyopenssl:p
           python-regex:p
+          python-psutil:p
 
     - name: Checkout repository
       uses: actions/checkout@v7
