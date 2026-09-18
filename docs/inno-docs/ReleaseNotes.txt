@@ -1,8 +1,23 @@
-PTXprint 3.0.41 Release Notes
-15 Sep 2026
+PTXprint 3.0.42 Release Notes
+18 Sep 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.42 - (18 Sep 2026)
+
+  * Automatic Page Filler (Note: This is still an experimental feature)
+    - Further improvements to the page filling solver
+    - As a last resort, allow a balanced single line underfill (page 1 only)
+    - Handle string values for binary properties in find_ucd
+    - Don't fail if a page has no layout parameters
+
+  * Other
+    - Update to TeX Live 2026 (on Windows) (#1249) - note that ptx-unicode.tex will be
+      updated once Unicode 18 is released
+    - Fix Windows hang after "Laying out..." when printing or previewing
+    - Fix type error when using Save PDF as...
+    - Refactor mkptxunicode to use ucd and fix duplicate entries
 
 Bug fixes and Improvements in 3.0.41 - (15 Sep 2026)
 
