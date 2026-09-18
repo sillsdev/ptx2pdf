@@ -655,12 +655,19 @@ class RunJob:
             self.cpu_seconds = child_cpu_time(None)
             self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
             if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+                procout = None
                 try:
-                    self.runner.wait()
+                    # must use communicate() not wait(): if stdout is a pipe, the child
+                    # blocks once the pipe buffer fills and we deadlock waiting for it
+                    (procout, procerr) = self.runner.communicate()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
+                    self.runner.kill()
+                    (procout, procerr) = self.runner.communicate()
                 self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
                 self.res = self.runner.returncode
+                if procout:
+                    logger.debug(procout.decode("UTF-8", errors="ignore") if isinstance(procout, bytes) else procout)
             elif isinstance(self.runner, subprocess.CompletedProcess):
                 self.res = self.runner.returncode
                 if self.runner.stdout not in (None, subprocess.DEVNULL):
@@ -740,13 +747,18 @@ class RunJob:
         if self.args.extras & 1:
             print(f"Subprocess return value: {self.runner}")
         if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+            procout = None
             try:
-                self.runner.wait()
+                # communicate() rather than wait(), so a piped stdout can't deadlock us
+                (procout, procerr) = self.runner.communicate()
             except subprocess.TimeoutExpired:
                 print("Timed out!")
+                self.runner.kill()
+                (procout, procerr) = self.runner.communicate()
             self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
             self.res = 4 if self.runner.returncode else 0
-            logger.debug(f"{self.runner.stdout}")
+            if procout:
+                logger.debug(procout.decode("UTF-8", errors="ignore") if isinstance(procout, bytes) else procout)
         elif isinstance(self.runner, subprocess.CompletedProcess):
             self.res = 4 if self.runner.returncode else 0
             logger.debug(f"{self.runner.stdout}")
