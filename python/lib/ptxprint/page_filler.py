@@ -905,7 +905,7 @@ class TypesetterSolver:
             if par.rects is not None:
                 blacks = sum(r.black for r in par.rects)
                 whites = sum(r.white for r in par.rects)
-                parwhites = sum(r.parwhite / max(1, r.lines - 1) for r in par.rects)
+                parwhites = sum(r.parwhite for r in par.rects)
                 nwhites = sum(r.nspaces for r in par.rects)
             else:
                 (blacks, whites, parwhites, nwhites) = (0, 0, 0, 0)
