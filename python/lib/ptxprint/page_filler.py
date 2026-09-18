@@ -504,6 +504,8 @@ class TypesetterSolver:
             except TimeoutError:
                 return HumanFixRequest(state, page + 1, "Stopped" if self.hooks.cancelled else "Timed out")
 
+            pparams = {k: v for k, v in new_state.paragraph_params.items() if v != (self.expand, 0)}
+            logger.log(15, f"Completed {page=} {ok=} {pparams}")
             if ok:
                 # we're good for this page
                 state = new_state
@@ -611,8 +613,9 @@ class TypesetterSolver:
                         page_base_params[straddler] = self.probe_params[straddler]
 
                 page_full = free is None or not len(free) or all(x == 0 for x in free)
-                if page == 0 and almostcombo is None and free is not None and all(x == 1 for x in free):
+                if page == 0 and almostcombo is None and free is not None and len(free) and all(x == 1 for x in free):
                     almostcombo = combo
+                    logger.log(15, f"This might work {almostcombo=}")
                 if page_full and (new_state.layout.first_failing_page is None
                         or new_state.layout.first_failing_page > page):
                     if self.layout_checks(state, page):
@@ -631,6 +634,7 @@ class TypesetterSolver:
                 continue
             elif almostcombo is not None:
                 new_state = self.run_layout(page_base_params, state, almostcombo, page, start)
+                logger.log(15, f"Ran {almostcombo=}. We'll say we're done")
                 return new_state, True
             break
 
@@ -892,6 +896,8 @@ class TypesetterSolver:
             if eo == e and so == s and b is None:
                 return True     # but if we have no badness then we want this
             return False
+        if not len(params):
+            return
         e, s = params.get(list(params.keys())[len(params.keys()) // 2])
         self.hooks.analyse_bw(test_para, page)
         changes = []
