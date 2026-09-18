@@ -108,7 +108,7 @@ class LayoutRunResult:
     def next_bad(self, page=None):
         if page is None:
             page = (-1 if self.first_failing_page is None else self.first_failing_page) + 1
-        for i in range(page, len(self.pages)):
+        for i in range(page, len(self.pages) - 1):
             u = self.pages[i].column_free_lines
             if u is not None and u not in ([0], [0,0]):
                 res = i
@@ -349,8 +349,6 @@ class TypesetterSolver:
         self.full_probe = True
         self.baseline_lines: Dict[Any, int] = {}
         self.base_params = {p: (expand, 0) for p in self.paragraph_order}
-        self.committed_params = dict(self.base_params)
-        self.committed_page = -1
         self.tried = set()
         self.itercount = 0
         self.frozen_paragraphs = set()
@@ -383,6 +381,9 @@ class TypesetterSolver:
         self.init_state = state
         if self.hooks.tracing:
             logger.log(15, f"{state=} {state.layout.paragraph_pages=}")
+        if not state.layout.pages or state.layout.result != 0:
+            logger.log(15, f"Bad initial layout pages={state.layout.pages}, result={state.layout.result}")
+            return HumanFixRequest(state, max(start_page, 0), "Bad initial layout")
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
         logger.log(15, f"{start_page=}, failing={state.layout.first_failing_page}")
@@ -424,6 +425,7 @@ class TypesetterSolver:
         self.page_base_params = {}
         self.failed_starts = {}
         self.failed_pages = []
+        self.init_state = state
         return self.run_forward(state, page, start_page, stop)
 
     def run_forward(self, state, page, start_page, stop):
@@ -492,6 +494,8 @@ class TypesetterSolver:
             if page in self.failed_pages:
                 # already given up on this page -- don't re-attempt it, and if there's nowhere 
                 # left to go, we're as done as we're going to get.
+                state = self.init_state
+                self.base_params = dict(state.paragraph_params)
                 if page >= state.numPages() - 1:
                     return state
                 state.layout.first_failing_page = page
@@ -534,7 +538,8 @@ class TypesetterSolver:
                     continue
 
             # Couldn't fix `page` -- ordinary failed-page handling.
-            self.base_params = dict(self.committed_params)
+            state = self.init_state
+            self.base_params = dict(state.paragraph_params)
             state.layout.first_failing_page = page
             while state.layout.first_failing_page is not None and state.layout.first_failing_page == page:
                 state.layout.next_bad()
@@ -624,9 +629,6 @@ class TypesetterSolver:
                             logger.log(15, f"Winning params {','.join(str(v) for v in new_state.paragraph_params.items() if v[1] != (1.0, 0))}")
                         self.base_params = dict(new_state.paragraph_params)
                         new_state.passed = True
-                        if page > self.committed_page:
-                            self.committed_params = dict(self.base_params)
-                            self.committed_page = page
                         return new_state, True
                 state = new_state
             if not reprobed and not self.noprobe:
@@ -645,7 +647,7 @@ class TypesetterSolver:
         return state, False
 
     def layout_checks(self, state, page):
-        if False and not self.hooks.strictness:
+        if True or not self.hooks.strictness:
             return True
         # find first para in each column
         numcols = self.hooks.getcols()
@@ -1099,13 +1101,16 @@ class TypesetterSolver:
         return score
 
     def badness_modify(self, p, e, s, badness, parbadness, isbase=False):
-        exp = math.sqrt(abs(self.expand - e))
-        badness += self.hooks.badness_expansion_factor * exp * badness
-        expxtra = 10 * (e - self.expand) * self.hooks.badness_expansion_cost
-        if expxtra > 0.:
-            badness += expxtra
-        # badness += math.sqrt(parbadness)
-        badness += parbadness
+        if parbadness > 0.1:
+            badness += parbadness
+        else:
+            exp = math.sqrt(abs(self.expand - e))
+            badness += self.hooks.badness_expansion_factor * exp * badness
+            expxtra = 10 * (e - self.expand) * self.hooks.badness_expansion_cost
+            if expxtra > 0.:
+                badness += expxtra
+            # badness += math.sqrt(parbadness)
+            badness += parbadness
         is_header = self.hooks.is_header(p)
         if not isbase and is_header:
             badness += 10
