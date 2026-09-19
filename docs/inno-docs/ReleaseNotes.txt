@@ -1,8 +1,13 @@
-PTXprint 3.0.42 Release Notes
-18 Sep 2026
+PTXprint 3.0.43 Release Notes
+19 Sep 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.43 - (19 Sep 2026)
+
+  * Automatic Page Filler improved further
+  * Missing pictures in GLO book restored
 
 Bug fixes and Improvements in 3.0.42 - (18 Sep 2026)
 
