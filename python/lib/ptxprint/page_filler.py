@@ -428,6 +428,11 @@ class TypesetterSolver:
         self.init_state = state
         return self.run_forward(state, page, start_page, stop)
 
+    def _last_content_page(self, layout):
+        last = self.paragraph_order[-1]
+        pp = layout.paragraph_pages.get(last)
+        return max(pp) if pp else 0
+
     def run_forward(self, state, page, start_page, stop):
         """Drive the page-by-page solve from `page` onward, repairing
         earlier pages on failure and falling back to stop/skip-forward
@@ -446,6 +451,11 @@ class TypesetterSolver:
             nextpage = layout.first_failing_page
             logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
             if nextpage is None or nextpage > page:
+                if nextpage is None and page >= self._last_content_page(layout):
+                    state.failures = self.failed_pages
+                    self.hooks.progress(ProgressEvent(self.bk, (page or 0) + 1, "complete",
+                            f"Failed from {self.failed_pages[0]+1}" if self.failed_pages else None, self.numpages))
+                    return state
                 if self.noprobe:
                     for i in range(page, nextpage if nextpage else self.numpages):
                         if not self.layout_checks(state, i):
@@ -965,7 +975,7 @@ class TypesetterSolver:
         if key not in seen:
             seen.add(key)
             self.tried_combos[page] = set()
-            self.page_base_params[page] = dict(self.base_params)
+        self.page_base_params[page] = dict(self.base_params)
         tried = self.tried_combos[page]
         paragraphs = self.get_candidate_paragraphs(state, page)
         for combo in self.generate_combos(paragraphs, state, page):
@@ -974,6 +984,24 @@ class TypesetterSolver:
                 continue
             tried.add(ckey)
             yield combo
+
+    def _bucket_for(self, p, d, page, state, first_para, last_para):
+        """Return (role, score) for paragraph p taking delta d on this page,
+        or None if p can't be bucketed (straddler -> caller handles as singleton).
+        role is the col_deltas index this move lands in."""
+        mask = state.layout.paragraph_pages[p].get(page, 0)
+        if p == first_para or p == last_para:
+            return None                      # straddlers stay singletons
+        if mask == 3:
+            role = 1                         # both columns
+        elif mask == 1:
+            role = 3                         # col 1 only
+        elif mask == 2:
+            role = 4                         # col 2 only
+        else:
+            role = 5                         # fallback (mask 0)
+        score = self.shape_cache[(p, d)][2]  # badness of this shape
+        return (role, d), score
 
     def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
         yield {}
@@ -1002,10 +1030,29 @@ class TypesetterSolver:
         by_para = {}
         for score, p, d in moves:
             by_para.setdefault(p, []).append((score, d))
+        buckets = {}          # (role, d) -> [(score, p, d), ...] sorted cheapest-first
+        max_r = min(int(self.hooks.badness_maxr / log10(max(5, len(by_para)))), len(by_para))
+        straddlers = set()
+        for p, deltas in by_para.items():
+            for score, d in deltas:
+                b = self._bucket_for(p, d, page, state, first_para, last_para)
+                if b is None:
+                    straddlers.add(p)                       # straddler: never pruned
+                else:
+                    key, bscore = b
+                    buckets.setdefault(key, []).append((bscore, p, d))
+        kept_moves = {}
+        for p in straddlers:
+            kept_moves[p] = by_para[p]
+        for key, members in buckets.items():
+            members.sort()
+            for bscore, p, d in members[:max_r]:
+                kept_moves.setdefault(p, []).append((bscore, d))
+        by_para = kept_moves
         plist = list(by_para.keys())
-        max_r = min(int(self.hooks.badness_maxr / log10(max(5, len(plist)))), len(plist))
-        all_combos = []
-        seen_col_sigs = {}
+        if self.hooks.tracing:
+            logger.log(15, f"bucket prune: {len(by_para)} -> {len(plist)} paras, "
+                           f"{len(buckets)} buckets, max_r={max_r}")
         colfree = state.layout.pages[page].column_free_lines if page < len(state.layout.pages) else None
         if self.hooks.tracing:
             logger.log(15, f"{first_para=} {last_para=}, {max_r=}, {colfree=}, {moves=}")
@@ -1015,11 +1062,9 @@ class TypesetterSolver:
             collengths = [colfree[0], colfree[0]+colfree[1]]
         elif len(colfree) == 1:
             collengths = [colfree[0], colfree[0]]
-        maxscore = 10000
+        seen_col_sigs = {}
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
-                if state.paragraph_params.get(pars, (self.expand, 0)) != (self.expand, 0):
-                    continue
                 delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, d in choice) + 0.1 * len(choice)
