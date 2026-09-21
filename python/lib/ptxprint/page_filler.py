@@ -80,6 +80,7 @@ class LayoutRunResult:
     paragraph_total_lines: Dict[ParagraphRef, int]  # p -> total lines in this run
     paragraph_pages: Dict[ParagraphRef, List[Dict[PageIndex, ColMask]]]     # pidmap
     page_figures: Dict[PageIndex, List[FigurePlacement]]
+    col2_first: List[Optional[ParagraphRef]]
     result: int
 
     def _cmp(self, other):
@@ -220,10 +221,10 @@ class Hooks:
                 firstbad = i
             pages.append(PageState(i, u))
         plines = self.printer.get_plines()
-        pmap = self.printer.get_pidmap()
+        pmap, col2_first = self.printer.get_pidmap()
         if self.tracing:
             logger.log(15, f"{firstbad=}")
-        res = LayoutRunResult(pages, firstbad, plines, pmap, [], runres)
+        res = LayoutRunResult(pages, firstbad, plines, pmap, [], col2_first, runres)
         return res
 
     def get_paragraphs_for_pages(self,
@@ -446,12 +447,15 @@ class TypesetterSolver:
         """
         while True:
             # Find the next page that actually needs typesetting, or
-            # detect completion / extend the lookahead probe.
+            # detect completion / extend the lookahead probe.:w
+
             layout = state.layout
             nextpage = layout.first_failing_page
             logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
             if nextpage is None or nextpage > page:
-                if nextpage is None and page >= self._last_content_page(layout):
+                if not state.complete:
+                    nextpage = page + 1
+                elif nextpage is None and page >= self._last_content_page(layout):
                     state.failures = self.failed_pages
                     self.hooks.progress(ProgressEvent(self.bk, (page or 0) + 1, "complete",
                             f"Failed from {self.failed_pages[0]+1}" if self.failed_pages else None, self.numpages))
@@ -554,6 +558,7 @@ class TypesetterSolver:
             while state.layout.first_failing_page is not None and state.layout.first_failing_page == page:
                 state.layout.next_bad()
             self.failed_pages.append(page)
+            self.low_water = max(self.low_water, page + 1)
             if state.layout.first_failing_page is None and state.complete:
                 msg = f"Failed from {self.failed_pages[0]+1}"
                 self.hooks.progress(ProgressEvent(self.bk, page+1, "complete", msg))
@@ -684,7 +689,7 @@ class TypesetterSolver:
             max_depth: counts down depth to 0 (None = unbounded).
             Returns (state, success)
         """
-        if page < floor:
+        if page < floor or page in self.failed_pages:
             return state, False
 
         state, ok = self.attempt_page(state, page, start, avoid_key=avoid_key)
@@ -989,7 +994,8 @@ class TypesetterSolver:
         """Return (role, score) for paragraph p taking delta d on this page,
         or None if p can't be bucketed (straddler -> caller handles as singleton).
         role is the col_deltas index this move lands in."""
-        mask = state.layout.paragraph_pages[p].get(page, 0)
+        rawmask = state.layout.paragraph_pages[p].get(page, 0)
+        mask, is_col_first = (rawmask & 3, bool(rawmask & 4))
         if p == first_para or p == last_para:
             return None                      # straddlers stay singletons
         if mask == 3:
@@ -1062,6 +1068,8 @@ class TypesetterSolver:
             collengths = [colfree[0], colfree[0]+colfree[1]]
         elif len(colfree) == 1:
             collengths = [colfree[0], colfree[0]]
+        col2_first = state.layout.col2_first[page] if page < len(state.layout.col2_first) else None
+        col2_first_lines = state.layout.paragraph_total_lines.get(col2_first, 0) if col2_first else 0
         seen_col_sigs = {}
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
@@ -1079,7 +1087,8 @@ class TypesetterSolver:
                             break
                         # mask = 1 = col1, 2 = col2, 3 = both
                         # col_deltas: 0 = first, 1 = both, 2 = last, 3 = col1 only, 4 = col2 only
-                        mask = state.layout.paragraph_pages[p].get(page, 0)
+                        rawmask = state.layout.paragraph_pages[p].get(page, 0)
+                        mask, is_col_first = (rawmask & 3, bool(rawmask & 4))
                         if mask == 3:
                             col_deltas[1] += d
                         elif p == first_para:
@@ -1098,10 +1107,14 @@ class TypesetterSolver:
                         pe = self.shape_cache[(p, d)][0]
                         score += self.hooks.badness_contrast_factor * abs(pe - preve)
                     else:
-                        if collengths[0] > 0 and 0 <= col_deltas[0] + col_deltas[1] + col_deltas[3] < collengths[0]:
+                        col1_net = col_deltas[0] + col_deltas[1] + col_deltas[3]
+                        migration = 0
+                        if col2_first is not None and col2_first not in combo and col1_net > 0 and col2_first_lines >= 4:
+                            migration = min(col1_net, col2_first_lines - 2)
+                        if collengths[0] > 0 and 0 <= col1_net < collengths[0]:
                             logger.log(5, f"Rejecting against {collengths[0]}, col 1 {col_deltas} {combo}")
                             continue
-                        if collengths[1] > 0 and 0 <= sum(col_deltas) < collengths[1]:
+                        if collengths[1] > 0 and 0 <= sum(col_deltas) < collengths[1] - migration:
                             logger.log(5, f"Rejecting against {collengths[1]}, col 2 {col_deltas}, {combo}")
                             continue
                         logger.log(5, f"Accepting {col_deltas}, {combo}")
@@ -1454,23 +1467,29 @@ class PTXFiller:
 
     def get_pidmap(self):
         res = {}
+        seen = {}   # (page, col) -> True once a paragraph has started that column
+        col2_first = GrowList()
         for p in self.parlocs:
             if not isinstance(p, ParInfo):
                 continue
+            pid = p.pid()
+            cols_on_page = {}
             for r in p.rects:
-                c = res.setdefault(p.pid(), {}).get(r.pagenum - 1, 0)
-                res[p.pid()][r.pagenum - 1] = c | (r.col + 1)
-        return res
-
-    def get_pids_on_pages(self, first, last, state=None):
-        plocs = self.parlocs if state is None else state.parlocs
-        res = set()
-        colmask = {}
-        for i in range(first + 1, last + 2):
-            for p, r in plocs.getParas(i, inclast=True):
-                res.add(p.pid())
-                colmask[p.pid()] = colmask.get(p.pid(), 0) | (r.col + 1)
-        return sorted(res, key=self.pidkey)
+                cols_on_page.setdefault(r.pagenum - 1, set()).add(r.col)
+            for r in p.rects:
+                page = r.pagenum - 1
+                c = res.setdefault(pid, {}).get(page, 0)
+                bit = 0
+                key = (page, r.col)
+                if key not in seen:
+                    seen[key] = True
+                    is_straddle_continuation = (r.col > 0 and (r.col - 1) in cols_on_page[page])
+                    if not is_straddle_continuation:
+                        bit = 4
+                        if r.col == 1:
+                            col2_first[page] = pid
+                res[pid][page] = c | (r.col + 1) | bit
+        return res, col2_first
 
     def get_page_first_pid(self, page, col=None, state=None):
         plocs = self.parlocs if state is None else state.parlocs
