@@ -449,56 +449,37 @@ class TypesetterSolver:
         """
         while True:
             # Find the next page that actually needs typesetting, or
-            # detect completion / extend the lookahead probe.:w
-
+            # detect completion / extend the lookahead probe.
             layout = state.layout
             nextpage = layout.first_failing_page
             logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
+            lc = self._last_content_page(layout)
             if nextpage is None:
-                lc = self._last_content_page(layout)
                 if lc is not None and page >= lc:
+                    bad = [i for i, lp in enumerate(layout.pages)
+                           if i < lc                                    # exclude the legit-short last page
+                           and lp.column_free_lines is not None
+                           and any(x != 0 for x in lp.column_free_lines)
+                           and i not in self.failed_pages]
+                    if bad:
+                        self.failed_pages.extend(bad)
+                    logger.log(15, f"Completion sweep found underfilled pages: {bad}")
                     state.failures = self.failed_pages
                     self.hooks.progress(ProgressEvent(self.bk, (page or 0) + 1, "complete",
                             f"Failed from {self.failed_pages[0]+1}" if self.failed_pages else None, self.numpages))
                     return state
-                if self.noprobe:
-                    for i in range(page, nextpage if nextpage else self.numpages):
-                        if not self.layout_checks(state, i):
-                            nextpage = i
-                            break
-                    else:
-                        nextpage = page + 1
-                else:
-                    if nextpage is None or nextpage > page + 1:
-                        nextpage = page + 1
-                if state.complete and nextpage == self.numpages - 1:
-                    if self.hooks.tracing:
-                        logger.log(15, "solve_complete pages=%s, underfills=%s",
-                               len(layout.pages),
-                               str({i: lp.column_free_lines for i, lp in enumerate(layout.pages)
-                                    if lp.column_free_lines is not None}))
-                    bad = [i for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None 
-                                        and any(x != 0 for x in lp.column_free_lines) and i not in self.failed_pages]
-                    if bad:
-                        self.failed_pages.extend(bad)
-                        logger.log(15, f"Completion sweep found underfilled pages: {bad}")
-                    state.failures = self.failed_pages
-                    self.hooks.progress(ProgressEvent(
-                        self.bk, (page or 0) + 1, "complete",
-                        f"Failed from {self.failed_pages[0]+1}" if self.failed_pages else None,
-                        self.numpages))
-                    return state
+                nextpage = page + 1
 
             # don't reanalyse starting on a page we've already given up on
             while nextpage in self.failed_pages:
-                if nextpage >= state.numPages() - 1:
+                if lc is not None and nextpage >= lc:
                     state.failures = self.failed_pages
                     return state
                 nextpage += 1
 
             # probe starting at the new page
             if not self.full_probe and state.numPages() - nextpage >= self.lookahead \
-                                   and self.numpages >= 2 * self.lookahead:
+                                   and state.numPages() >= 2 * self.lookahead:
                 layout = self.initial_probes(state, nextpage, 10, progress=False)
                 state = EngineState(self.init_state.paragraph_params, state.float_anchors,
                                      layout, self.hooks.printer.parlocs, nextpage)
@@ -511,7 +492,7 @@ class TypesetterSolver:
                 # left to go, we're as done as we're going to get.
                 state = self.init_state
                 self.base_params = dict(state.paragraph_params)
-                if page >= state.numPages() - 1:
+                if lc is not None and page >= lc:
                     return state
                 state.layout.first_failing_page = page
                 while state.layout.first_failing_page is not None and state.layout.first_failing_page == page:
@@ -941,8 +922,9 @@ class TypesetterSolver:
             whiteness = whites / (nwhites + 0.01)
             badness = self.badness_modify(p, e, s, whiteness, parwhites, isbase=isbase)
             if (p, 0) not in self.shape_cache:
-                self.shape_cache[(p,0)] = (self.expand, 0, whiteness)
-                self.probe_cache.setdefault(p, {})[(self.expand, 0)] = 0
+                if True or whiteness <= self.hooks.badness_spacing_tolerance:
+                    self.shape_cache[(p,0)] = (e, s, whiteness)
+                    self.probe_cache.setdefault(p, {})[(e, s)] = 0
             base = self.baseline_lines.get(p)
             if base is None:
                 logger.log(15, f"{p} missing from base_lines")
@@ -958,12 +940,10 @@ class TypesetterSolver:
             sc = self.shape_cache.get(key, None)
             if not isbase:
                 if parwhites < 0.01:
-                    base_whiteness = self.shape_cache[(p, 0)][2]
-                    # threshold = base_whiteness + (self.hooks.badness_spacing_tolerance * base_whiteness) ** 4
                     threshold = self.hooks.badness_spacing_tolerance
                     if whiteness > threshold:
                         if self.hooks.tracing:
-                            logging.log(15, f"{p} ({e}, {s}) {whiteness=} {threshold=} {base_whiteness=}")
+                            logging.log(15, f"{p} ({e}, {s}) {whiteness=} {threshold=}")
                         continue
             d = self.badness_cmp((e, s, badness), sc)
             if d < 0:
@@ -1015,7 +995,15 @@ class TypesetterSolver:
         return (role, d), score
 
     def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
-        yield {}
+        forced = {}
+        for p in paragraphs:
+            if (p, 0) not in self.shape_cache:
+                cands = [(abs(d), self.shape_cache[(pp, d)][2], d)
+                            for (pp, d) in self.shape_cache if pp == p]
+                if cands:
+                    cands.sort()
+                    forced[p] = cands[0][2]
+        yield dict(forced)
         maxcombos = 2000
         moves = []
         pset = set(paragraphs)
@@ -1134,7 +1122,9 @@ class TypesetterSolver:
         if self.hooks.tracing:
             logger.log(15, f"{all_combos=}")
         for _, combo in all_combos[:maxcombos]:       # 200 tests for a page better be enough!
-            yield combo
+            merged = dict(forced)
+            merged.update(combo)
+            yield merged
 
     def _para_order(self, pid):
         try:
