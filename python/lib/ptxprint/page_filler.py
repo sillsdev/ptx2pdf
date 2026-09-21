@@ -432,7 +432,9 @@ class TypesetterSolver:
     def _last_content_page(self, layout):
         last = self.paragraph_order[-1]
         pp = layout.paragraph_pages.get(last)
-        return max(pp) if pp else 0
+        res = max(pp) if pp else None
+        logger.log(15, f"last_content_page={res} {self.numpages=}")
+        return res
 
     def run_forward(self, state, page, start_page, stop):
         """Drive the page-by-page solve from `page` onward, repairing
@@ -452,10 +454,9 @@ class TypesetterSolver:
             layout = state.layout
             nextpage = layout.first_failing_page
             logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
-            if nextpage is None or nextpage > page:
-                if not state.complete:
-                    nextpage = page + 1
-                elif nextpage is None and page >= self._last_content_page(layout):
+            if nextpage is None:
+                lc = self._last_content_page(layout)
+                if lc is not None and page >= lc:
                     state.failures = self.failed_pages
                     self.hooks.progress(ProgressEvent(self.bk, (page or 0) + 1, "complete",
                             f"Failed from {self.failed_pages[0]+1}" if self.failed_pages else None, self.numpages))
@@ -565,7 +566,8 @@ class TypesetterSolver:
                 return HumanFixRequest(state, page + 1, msg)
             if state.layout.first_failing_page is None or state.layout.first_failing_page > page:
                 self.hooks.progress(ProgressEvent(self.bk, page + 1, "badpage", "", self.numpages))
-            start_page = state.layout.first_failing_page or state.numPages() + 1
+            # start_page = state.layout.first_failing_page or state.numPages() + 1
+            start_page = max(start_page, page + 1)
             continue
 
     def _combo_key(self, combo):
@@ -613,15 +615,18 @@ class TypesetterSolver:
                 else:
                     free = None
 
+                logger.log(17, f" try p{page} #{self.itercount} {combo=} -> {free=} ffp={new_state.layout.first_failing_page}")
                 if (new_state.layout.first_failing_page is not None
-                        and new_state.layout.first_failing_page < page):
-                    logger.log(15, f"Rejecting combo: invalidates earlier page "
+                        and new_state.layout.first_failing_page < page
+                        and new_state.layout.first_failing_page not in self.failed_pages):
+                    logger.log(15, f"Rejecting combo p{page}: invalidates earlier page "
                                     f"{new_state.layout.first_failing_page} < {page}")
                     continue
 
                 if avoid_key is not None:
                     next_key = self.hooks.get_page_para_key(page + 1, state=new_state)
                     if next_key == avoid_key or next_key in self.failed_starts.get(page + 1, set()):
+                        logger.log(15, f" reject p{page}: {avoid_key=}, {next_key=}")
                         continue
 
                 if not self.noprobe and (free is None or all(x == 0 for x in free)):
@@ -1125,6 +1130,7 @@ class TypesetterSolver:
                         else:
                             continue
         all_combos = sorted(list(seen_col_sigs.values()), key=lambda x: (x[0], len(x[1])))
+        logger.log(15, f"gen p{page}: {len(all_combos)} combos, {len(seen_col_sigs)} distinct from {len(plist)} paras, {max_r=}")
         if self.hooks.tracing:
             logger.log(15, f"{all_combos=}")
         for _, combo in all_combos[:maxcombos]:       # 200 tests for a page better be enough!
