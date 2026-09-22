@@ -1132,7 +1132,7 @@
   \let\old@ep=\everypar
   \everypar{}%
   \setbox#1\vbox to \ht#2{%
-    %\hsize=\wd#1%
+    %\hsize=\wd#2%
     \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
     \pdfsavepos
     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%

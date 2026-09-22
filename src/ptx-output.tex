@@ -129,7 +129,10 @@
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
       \locs@startstop{\colA}{\colA}{A}%
-      \trace{o}{colwidth=\the\wd\colA, height=\the\ht\colA, lastpage\iflastpage true\else false\fi}%
+      \ifdim\dimen1<\wd\colA
+        \message{Text column does not fit: tw:\the\textwidth, \the\dimen1 <\the\wd\colA }%
+      \fi
+      \trace{o}{colwidth=\the\wd\colA, height=\the\ht\colA, lastpage\iflastpage true\else false\fi, \the\dimen1}%
       %\trace{o}{onecoltrial: dimen=\the\dimen3, lastd@pth=\the\lastd@pth}%
       \ifColNotes\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi\fi
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
@@ -532,6 +535,7 @@
     \ifinendbook\ifvoid255 \endbooktrue\fi\fi
     \m@keinp@gegap
     \global\setbox\partial=\vbox{%
+      \marks\m@rknumdbg{savepartialpage}%
       \dimen1=\textwidth
       \ifvoid\partial\else \vbox{\hbox to \dimen1{%
         \box\partial}} \fi
@@ -979,6 +983,7 @@
 %+c_splitcols
 \newif\ifswapcol
 \newm@rknum{c@l}
+\newm@rknum{dbg}% for debug / comments
 \def\c@lp@gebotmark{}
 \def\spl@tcols#1{%
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over, unless there's an initial penalty
@@ -1592,10 +1597,10 @@
     \trace{o}{\the\ht\colA+\the\dp\colA//\the\ht\colB+\the\dp\colB}%
     \dimen8=\dp\colA \dimen9=\dp\colB
     \ifdim\ht\colA>0pt
-      \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\ifvoid0\else\global\dimen8=\dp0\box0\fi}%
+      \setbox\colA=\vbox to \dimen3{\marks\m@rknumdbg{savepartialpagedA}\unvbox\colA\unskip\setbox0\lastbox\ifvoid0\else\global\dimen8=\dp0\box0\fi}%
     \else \setbox\colA=\vbox to \dimen3{\hbox to \hsize{}}\dimen8=0pt \fi
     \ifdim\ht\colB>0pt
-      \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\ifvoid0\else\global\dimen9=\dp0\box0\fi}%
+      \setbox\colB=\vbox to \dimen3{\marks\m@rknumdbg{savepartialpagedB}\unvbox\colB\unskip\setbox0\lastbox\ifvoid0\else\global\dimen9=\dp0\box0\fi}%
     \else \setbox\colB=\vbox to \dimen3{\hbox to \hsize{}}\dimen9=0pt \fi
     \trace{o}{Setting lastdepth to max of (\the\dimen8,\the\dimen9)}%
     \lastd@pth=\ifdim\dimen8>\dimen9 \dimen8\else\dimen9\fi

@@ -10,7 +10,7 @@ TPATH=.:${DIR}//
 
 pretest.pdf: pretest.tex  $(DIR)/*.tex *.sty $(DIR)/*.sty
 subtest.log: subtest.tex $(DIR)/*.tex  Makefile
-	TEXINPUTS="$(TPATH)"  xetex --no-pdf $<
+	TEXINPUTS="$(TPATH)"  xetex $<
 	
 bisect:
 	-mkdir ../bisect || rm -f ../bisect/*
