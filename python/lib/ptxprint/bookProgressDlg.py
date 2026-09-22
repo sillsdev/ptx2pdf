@@ -30,13 +30,13 @@ STATUS_PAGE          = "page"
 _STATUS_DATA = {
     STATUS_PENDING:        ("#AAAAAA", "Not yet started"),
     STATUS_ALREADY_FILLED: ("#FFFF99", "Already filled — no action needed"),
-    STATUS_SKIPPED:        ("#FFDAB9", "No page data — may need attention"),
+    STATUS_SKIPPED:        ("#FFDAB9", "No page data — skipped pages, may need attention"),
     STATUS_PROBING:        ("#98BCCA", "Probing — initial analysis"),
     STATUS_RUNNING:        ("#87CEEB", "Filling in progress"),
     STATUS_RUNNINGFAILED:  ("#D8C291", "Filling with bad pages"),
     STATUS_GOOD:           ("#98FB98", "Complete — all pages filled"),
     STATUS_WARNING:        ("#FFA500", "Incomplete — page(s) could not be solved"),
-    STATUS_FAILED:         ("#FF9500", "Failed"),
+    STATUS_FAILED:         ("#F08080", "Failed — fault or timeout"),
 }
 
 stoplabel = _("Stop!")
@@ -109,7 +109,7 @@ class BookProgressCell:
         """Apply a ProgressEvent to this cell. Must be called on GTK main thread."""
         mode = event.mode
         total = event.total if event.total is not None and event.total > 0 else self._total
-        page = event.page or total
+        page = event.page or 0
 
         if total is not None:
             self._total = total

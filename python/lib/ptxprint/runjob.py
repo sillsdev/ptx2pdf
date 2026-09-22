@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree, copy2, copystat
 from threading import Thread
-from ptxprint.runner import call, checkoutput
+from ptxprint.runner import call, checkoutput, child_cpu_time
 from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.version import VersionStr
@@ -30,6 +30,7 @@ from ptxprint.xdv.colouring import procxdv
 from ptxprint.report import Report
 from usfmtc.versification import Versification
 import numpy as np
+import psutil
 from datetime import datetime
 import logging
 
@@ -651,14 +652,22 @@ class RunJob:
             callkw = {}
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
+            self.cpu_seconds = child_cpu_time(None)
             self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
             if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+                procout = None
                 try:
-                    #runner.wait(self.args.timeout)
-                    self.runner.wait()
+                    # must use communicate() not wait(): if stdout is a pipe, the child
+                    # blocks once the pipe buffer fills and we deadlock waiting for it
+                    (procout, procerr) = self.runner.communicate()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
+                    self.runner.kill()
+                    (procout, procerr) = self.runner.communicate()
+                self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
                 self.res = self.runner.returncode
+                if procout:
+                    logger.debug(procout.decode("UTF-8", errors="ignore") if isinstance(procout, bytes) else procout)
             elif isinstance(self.runner, subprocess.CompletedProcess):
                 self.res = self.runner.returncode
                 if self.runner.stdout not in (None, subprocess.DEVNULL):
@@ -731,19 +740,25 @@ class RunJob:
         #    cmd += ["-z", "0"]
         if self.args.extras & 7:
             cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
+        self.cpu_seconds = child_cpu_time(None)
         with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
             self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
         logger.debug(f"Running: {cmd} for {outfname}")
         if self.args.extras & 1:
             print(f"Subprocess return value: {self.runner}")
         if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+            procout = None
             try:
-                self.runner.wait()
-                #runner.wait(self.args.timeout)
+                # communicate() rather than wait(), so a piped stdout can't deadlock us
+                (procout, procerr) = self.runner.communicate()
             except subprocess.TimeoutExpired:
                 print("Timed out!")
+                self.runner.kill()
+                (procout, procerr) = self.runner.communicate()
+            self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
             self.res = 4 if self.runner.returncode else 0
-            logger.debug(f"{runner.stdout.decode('UTF-8')}")
+            if procout:
+                logger.debug(procout.decode("UTF-8", errors="ignore") if isinstance(procout, bytes) else procout)
         elif isinstance(self.runner, subprocess.CompletedProcess):
             self.res = 4 if self.runner.returncode else 0
             logger.debug(f"{self.runner.stdout}")

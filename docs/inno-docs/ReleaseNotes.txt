@@ -1,8 +1,78 @@
-PTXprint 3.0.38 Release Notes
-14 Aug 2026
+PTXprint 3.0.43 Release Notes
+19 Sep 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.43 - (19 Sep 2026)
+
+  * Automatic Page Filler improved further
+  * Missing pictures in GLO book restored
+
+Bug fixes and Improvements in 3.0.42 - (18 Sep 2026)
+
+  * Automatic Page Filler (Note: This is still an experimental feature)
+    - Further improvements to the page filling solver
+    - As a last resort, allow a balanced single line underfill (page 1 only)
+    - Handle string values for binary properties in find_ucd
+    - Don't fail if a page has no layout parameters
+
+  * Other
+    - Update to TeX Live 2026 (on Windows) (#1249) - note that ptx-unicode.tex will be
+      updated once Unicode 18 is released
+    - Fix Windows hang after "Laying out..." when printing or previewing
+    - Fix type error when using Save PDF as...
+    - Refactor mkptxunicode to use ucd and fix duplicate entries
+
+Bug fixes and Improvements in 3.0.41 - (15 Sep 2026)
+
+  * Automatic Page Filler (Note: This is still an experimental feature)
+    - Get the Page Filler working for peripheral books (e.g. GLO/A9), which have
+      non-numeric book codes
+    - Refactor the solver ready for layout constraints: check page layout as well as
+      fill on every page, and re-examine pages that pass the fill test but fail layout
+    - Track the first paragraph per column (not just per page)
+    - Get the CPU usage calculations right: measure the actual xetex child process time
+      on all platforms and feed it back to the multiprint progress display
+    - Distinguish the Failed status colour from Incomplete, and clarify the status
+      wording for skipped pages
+    - Report full tracebacks when a page fill or print job fails
+
+  * Other
+    - Fix missing references in parlocs: derive the reference when a paragraph's start
+      and end references disagree, and keep paragraphs in document order
+    - Fix chapter range handling for books with a chapter count of 999
+
+Bug fixes and Improvements in 3.0.39 - (14 Sep 2026) - recalled
+
+  * Automatic Page Filler (Note: This is still an experimental feature)
+    - Refactor page filling, with big improvements to how well pages are filled
+    - Speed up page filling of long books by a lot (O(N^2) -> O(N log N))
+    - Speed up the post-layout analysis, xdv processing and parlocs reading
+    - Buffer the xdv file for parsing
+    - Show books that have already been filled in green
+    - Allow the Page Filler dialog to be re-run without restarting
+    - Add more badness controls
+    - Add support for the \pl marker
+    - Cope with bad chapter numbers instead of failing
+    - Protect against active characters in \k names when reading parlocs
+    - Ensure noinkinmargin is applied for single page books
+    - Fix various NoneType errors
+
+  * Diglot
+    - Allow mixed separate / combined note styles for diglot
+
+  * Pictures
+    - Cache the aspect ratio in the shared piclist file
+    - Update the aspect when the src of a picture changes
+    - Fix a couple of bugs in the picture list editor
+
+  * Other
+    - Fix table multiline cell alignment problems
+    - Fix inline Strong's numbers truncating the text that follows
+    - Restore control over baselineskip
+    - Add \fastendchapter and \STOPHERE to stop typesetting early (for testing)
+    - Fix readvals call in xdv
 
 Bug fixes and Improvements in 3.0.38 - (14 Aug 2026)
 
