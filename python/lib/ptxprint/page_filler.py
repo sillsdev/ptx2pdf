@@ -351,6 +351,7 @@ class TypesetterSolver:
         self.baseline_lines: Dict[Any, int] = {}
         self.base_params = {p: (expand, 0) for p in self.paragraph_order}
         self.tried = set()
+        self.forced_delta = set()
         self.itercount = 0
         self.frozen_paragraphs = set()
         self.noprobe = False
@@ -904,6 +905,7 @@ class TypesetterSolver:
         e, s = params.get(list(params.keys())[len(params.keys()) // 2])
         self.hooks.analyse_bw(test_para, page)
         changes = []
+        threshold = self.hooks.badness_spacing_tolerance
         for p in paragraphs:
             e, s = params.get(p, (self.expand, 0))
             par = self.hooks.get_para(p)
@@ -921,10 +923,11 @@ class TypesetterSolver:
             # whiteness = whites / (blacks + whites + .01)
             whiteness = whites / (nwhites + 0.01)
             badness = self.badness_modify(p, e, s, whiteness, parwhites, isbase=isbase)
-            if (p, 0) not in self.shape_cache:
-                if True or whiteness <= self.hooks.badness_spacing_tolerance:
-                    self.shape_cache[(p,0)] = (e, s, whiteness)
-                    self.probe_cache.setdefault(p, {})[(e, s)] = 0
+            if isbase and whiteness > threshold and (p, 0) not in self.shape_cache:
+                self.shape_cache[(p,0)] = (e, s, whiteness)
+                self.probe_cache.setdefault(p, {})[(e, s)] = 0
+                self.forced_delta.add(p)
+                continue
             base = self.baseline_lines.get(p)
             if base is None:
                 logger.log(15, f"{p} missing from base_lines")
@@ -934,13 +937,13 @@ class TypesetterSolver:
                 continue
             delta = new - base
             self.probe_cache.setdefault(p, {})[(e, s)] = delta
-            if delta == 0:
-                continue
+            if delta == 0 and whiteness <= threshold and p in self.forced_delta:
+                self.shape_cache[(p,0)] = (e, s, badness)
+                self.forced_delta.discard(p)
             key = (p, delta)
             sc = self.shape_cache.get(key, None)
             if not isbase:
                 if parwhites < 0.01:
-                    threshold = self.hooks.badness_spacing_tolerance
                     if whiteness > threshold:
                         if self.hooks.tracing:
                             logging.log(15, f"{p} ({e}, {s}) {whiteness=} {threshold=}")
@@ -997,12 +1000,15 @@ class TypesetterSolver:
     def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
         forced = {}
         for p in paragraphs:
-            if (p, 0) not in self.shape_cache:
-                cands = [(abs(d), self.shape_cache[(pp, d)][2], d)
-                            for (pp, d) in self.shape_cache if pp == p]
+            if p in self.forced_delta:
+                cands = [(self.shape_cache[(pp, d)][2], d)
+                            for pp, d in self.shape_cache if pp == p and d != 0]
                 if cands:
-                    cands.sort()
-                    forced[p] = cands[0][2]
+                    forced[p] = min(cands)[1]
+            else:
+                entry = self.shape_cache.get((p, 0))
+                if entry is not None and (entry[0], entry[1]) != (self.expand, 0):
+                    forced[p] = 0
         yield dict(forced)
         maxcombos = 2000
         moves = []
@@ -1022,37 +1028,35 @@ class TypesetterSolver:
                 first_para_adj = (1 - l)
         last_para = lpars[-1] if len(lpars) else None
         for (p, d), (e, s, score) in self.shape_cache.items():
-            if p not in pset or d == 0 or d is None or p is None or score is None:
+            if p not in pset or d is None or p is None or score is None:
+                continue
+            if d == 0 and p not in forced:
                 continue
             moves.append((score, p, d))
-        moves.sort()
-        by_para = {}
-        for score, p, d in moves:
-            by_para.setdefault(p, []).append((score, d))
-        buckets = {}          # (role, d) -> [(score, p, d), ...] sorted cheapest-first
-        max_r = min(int(self.hooks.badness_maxr / log10(max(5, len(by_para)))), len(by_para))
-        straddlers = set()
-        for p, deltas in by_para.items():
-            for score, d in deltas:
-                b = self._bucket_for(p, d, page, state, first_para, last_para)
-                if b is None:
-                    straddlers.add(p)                       # straddler: never pruned
-                else:
-                    key, bscore = b
-                    buckets.setdefault(key, []).append((bscore, p, d))
-        kept_moves = {}
-        for p in straddlers:
-            kept_moves[p] = by_para[p]
-        for key, members in buckets.items():
-            members.sort()
-            for bscore, p, d in members[:max_r]:
-                kept_moves.setdefault(p, []).append((bscore, d))
-        by_para = kept_moves
-        plist = list(by_para.keys())
-        if self.hooks.tracing:
-            logger.log(15, f"bucket prune: {len(by_para)} -> {len(plist)} paras, "
-                           f"{len(buckets)} buckets, max_r={max_r}")
+        max_r = int(self.hooks.badness_maxr)
         colfree = state.layout.pages[page].column_free_lines if page < len(state.layout.pages) else None
+        keep_moves = []
+        shrinks, stretches = [], []
+        for m in moves:
+            score, p, d = m
+            if p == first_para or p == last_para or p in forced:
+                keep_moves.append(m)
+            elif d < 0:
+                shrinks.append(m)
+            elif d > 0:
+                stretches.append(m)
+            else:
+                keep_moves.append(m)
+        shrinks.sort()
+        stretches.sort()
+        keep_moves.extend(shrinks[:max_r])
+        keep_moves.extend(stretches[:max_r])
+
+        # Rebuild by_para / plist from surviving moves.
+        by_para = {}
+        for score, p, d in keep_moves:
+            by_para.setdefault(p, []).append((score, d))
+        plist = list(by_para.keys())
         if self.hooks.tracing:
             logger.log(15, f"{first_para=} {last_para=}, {max_r=}, {colfree=}, {moves=}")
         if colfree is None:
@@ -1353,7 +1357,11 @@ class PTXFiller:
     def createAdjs(self, parparms, solver, lastchap=0, file=None):
         def mkkey(s):
             (r, para) = self.pidkey(s)
-            key = f"{r[5]}" if r[1] == 0 and r[5] else f"{r[1]}.{r[2]}{r[5]}"
+            if r[1] == 0 and r[5]:
+                key = f"{r[5]}"
+            else:
+                key = f"{r[1]}.{r[2]}{r[5]}"
+                para = para or 1
             return key, para
         def getchap(key):
             c, _d = key.split('.', 1) if '.' in key else (key, None)
@@ -1367,14 +1375,17 @@ class PTXFiller:
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
         if not hasattr(self, 'init_adjs'):
             self.adjs = AdjList(int(self.expand*100), int(self.minexp*100), int(self.maxexp*100), fname=adjfname, gtk=None)
+            doappend = True
         else:
             self.adjs = self.init_adjs.copy()
+            doappend = False
         logger.log(12, f"{self.bk}: {parparms=}")
         for s, p in parparms.items():
             key, para = mkkey(s)
             c = getchap(key)
             if lastchap == 0 or lastchap > int(c):
-                self.adjs.setval(self.bk, key, para, p[1], None, expand=int(p[0]*100), append=True)
+                self.adjs.setval(self.bk, key, para, p[1], None, expand=int(p[0]*100), append=doappend)
+        self.adjs.sort()
         if solver is not None:
             for s in solver.paragraph_order:
                 key, para = mkkey(s)
@@ -1382,17 +1393,18 @@ class PTXFiller:
                 if lastchap != 0 and lastchap <= int(c):
                     break
                 for a in range(-2, 3):
-                    if a == 0:
-                        continue
-                    keyv = f"{'p' if a > 0 else 'm'}{abs(a)}"
+                    keyv = f"{'p' if a >= 0 else 'm'}{abs(a)}"
                     if (s, a) in solver.shape_cache:
                         e, t, badness = solver.shape_cache[(s, a)]
-                        v = f"{int(e*100)}" if t == 0 else f"{int(e*100)}{t:+1d}"
+                        if e == self.expand and t == 0:
+                            v = None
+                        else:
+                            v = f"{int(e*100)}" if t == 0 else f"{int(e*100)}{t:+1d}"
                         # print(f"{s}@{a}={e},{t} into {key},{keyv}={v}")
                     else:
                         v = None
                     if v is not None:
-                        self.adjs.setdb(self.bk + " " + key, keyv, v)
+                        self.adjs.setdb(f"{self.bk} {key}[{para}]", keyv, v)
         self.adjs.createAdjlist(fname=file)
         if file is None:
             tname = self.view.getLocalTriggerFilename(self.bk)

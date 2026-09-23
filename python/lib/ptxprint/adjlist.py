@@ -81,6 +81,7 @@ class AdjList:
         allvals = [[*r] for r in self.liststore]
         alldb = self.db[:]
         self.liststore.clear()
+        self.db = []
         for a in sorted(range(len(allvals)), key=lambda x:self.calckey(allvals[x])):
             self.liststore.append(allvals[a])
             self.db.append(alldb[a])
