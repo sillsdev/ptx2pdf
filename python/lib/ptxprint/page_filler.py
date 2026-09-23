@@ -1213,11 +1213,11 @@ class PTXFiller:
 
     reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+?)\]\s+ht=([\d.]+?)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
 
-    def __init__(self, build_params, nid, progress_q=None, cpu_q=None):
+    def __init__(self, build_params, nid, progress_q=None, cpu_q=None, cancel_event=None):
         super().__init__()
         self.nid = nid
         self.timedout = False
-        self.cancelled = False
+        self.cancel_event = cancel_event    # shared mp.Value set by MultiPrint.cancel()
         self.progress_queue = progress_q
         self.cpu_q = cpu_q
         self.view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
@@ -1246,6 +1246,10 @@ class PTXFiller:
                                 _time.sleep(0.5)
                             else:
                                 logger.warning(f"Cannot delete {fp} — file still locked; skipping")
+
+    @property
+    def cancelled(self):
+        return self.cancel_event is not None and bool(self.cancel_event.value)
 
     def printbk(self, bk, page, progress=True):
         bkc = bookletter(bk)
@@ -1295,7 +1299,13 @@ class PTXFiller:
             self.maxexp = float(self.view.get("s_maxtextlimit", "105")) / 100
         except ValueError:
             self.maxexp = 1.05 * self.expand
-        init_layout = self.hooks.run_layout(None, parms, {}, -1, -1, genfiles=True)
+        try:
+            init_layout = self.hooks.run_layout(None, parms, {}, -1, -1, genfiles=True)
+        except TimeoutError:
+            msg = "Stopped" if self.cancelled else "Timed out"
+            self.progress(ProgressEvent(bk, 0, "failed", msg=msg))
+            self.printbk(bk, "T", progress=False)
+            return (False, f"{msg}: {bk} before initial layout")
         self.init_adjs = self.adjs
         if init_layout is None:
             self.printbk(bk, "!")
@@ -1412,7 +1422,7 @@ class PTXFiller:
             self.adjs.createTriggerlist(fname=tpath)
 
     def run_layout(self, solver, parparms, floats, lastpage, genfiles=False, prompt="."):
-        if self.timedout:
+        if self.timedout or self.cancelled:
             raise TimeoutError()
         if lastpage <= 0 or getattr(self, 'parlocs', None) is None:
             stopchap = 0
@@ -1468,9 +1478,8 @@ class PTXFiller:
     def progress(self, pEvent):
         if self.progress_queue is None:
             return
-        if not pEvent.total:
-            np = self.parlocs.numPages()
-            pEvent.total = np
+        if not pEvent.total and getattr(self, 'parlocs', None) is not None:
+            pEvent.total = self.parlocs.numPages()
         self.progress_queue.put(pEvent)
 
     def get_pidmap(self):

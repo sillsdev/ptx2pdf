@@ -8379,9 +8379,10 @@ Thank you,
         return GLib.SOURCE_CONTINUE
 
     def onFillCancelled(self):
+        # Workers stop cooperatively after their current layout run; queued books are skipped.
+        # _pollFillProgress tears the pool down once every job has returned.
         if self.mprint is not None:
             self.mprint.cancel()
-            GLib.timeout_add(10000, self.mprint.terminate)
 
     def _fill_progress(self, event, usage=0., elapsed=0.):
         if self.bkProgressDlg is None:

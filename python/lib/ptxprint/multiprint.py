@@ -17,13 +17,13 @@ from usfmtc.reference import chaps, RefList
 
 class ViewPrinter:
     """Printer wrapper for view-based rendering jobs, mirroring PTXFiller's interface."""
-    def __init__(self, build_params, nid: str, progress_q=None, cpu_q=None):
+    def __init__(self, build_params, nid: str, progress_q=None, cpu_q=None, cancel_event=None):
         self.build_params = build_params
         self.nid = nid
         self.progress_q = progress_q
         self.cpu_q = cpu_q
+        self.cancel_event = cancel_event    # shared mp.Value set by MultiPrint.cancel()
         self.timedout = False
-        self.cancelled = False
 
         self.view = ViewModel(
             build_params.prjtree,
@@ -33,6 +33,10 @@ class ViewPrinter:
         )
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
+
+    @property
+    def cancelled(self):
+        return self.cancel_event is not None and bool(self.cancel_event.value)
 
     def solve(self, books: list[str], cfgid_override: Optional[str] = None):
         cfgid = cfgid_override or self.build_params.cfgid
@@ -143,10 +147,12 @@ class WorkerContext:
         """Returns the active printer, creating a new instance if job configuration changed."""
         if not self.matches_last_job(job):
             if job.action == 'fill':
-                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q, cpu_q=self.cpu_q)
+                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q,
+                                                 cpu_q=self.cpu_q, cancel_event=self.cancel_event)
                 logging.debug(f"{self.current_printer=}")
             elif job.action == 'print':
-                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q, cpu_q=self.cpu_q)
+                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q,
+                                                   cpu_q=self.cpu_q, cancel_event=self.cancel_event)
             else:
                 raise ValueError(f"Unknown job action: {job.action}")
             self.last_job = job
@@ -179,6 +185,8 @@ class WorkerContext:
 
         logging.debug(f"Executing for {target_id}")
         if self.cancel_event and self.cancel_event.value:
+            if self.progress_q:
+                self.progress_q.put(ProgressEvent(target_id, 0, "failed", msg="Stopped"))
             return (target_id, self.nid, False, "Cancelled")
 
         if job.log_config:
@@ -186,7 +194,6 @@ class WorkerContext:
 
         printer = self.get_printer(job)
         printer.timedout = False
-        printer.cancelled = False
 
         # Shared Watchdog Timer for both Fill and Print jobs
         watchdog = None
