@@ -8374,7 +8374,10 @@ Thank you,
                 a = self.get_adjlist(bk, save=False)
                 if i == 0:
                     self.adjView.set_model(a)
+            qr = self.get("c_quickRun")
+            self.set("c_quickRun", False)
             self.onOK(None)
+            self.set("c_quickRun", qr)
             return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE
 
