@@ -1031,7 +1031,7 @@ class TexModel:
                                      Ref(book=bk, chapter=int(float(self.dict["document/chapto"])), verse=200)), ))
 
             if chaprange is None or not isbk or not len(chaprange) or chaprange[0].first.chapter is None \
-                or chaprange[0].last.chapter is None or \
+                or chaprange[0].last.chapter is None or chaps.get(bk) == "999" or \
                 (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
                     (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
                 if dat is None:

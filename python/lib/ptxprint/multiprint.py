@@ -1,6 +1,7 @@
 import os, argparse
 import logging
 import time
+import traceback
 from configparser import ConfigParser
 from dataclasses import dataclass
 from typing import Union, Any, Optional
@@ -21,12 +22,13 @@ logger = logging.getLogger(__name__)
 
 class ViewPrinter:
     """Printer wrapper for view-based rendering jobs, mirroring PTXFiller's interface."""
-    def __init__(self, build_params, nid: str, progress_q=None):
+    def __init__(self, build_params, nid: str, progress_q=None, cpu_q=None, cancel_event=None):
         self.build_params = build_params
         self.nid = nid
         self.progress_q = progress_q
+        self.cpu_q = cpu_q
+        self.cancel_event = cancel_event    # shared mp.Value set by MultiPrint.cancel()
         self.timedout = False
-        self.cancelled = False
 
         self.view = ViewModel(
             build_params.prjtree,
@@ -36,6 +38,10 @@ class ViewPrinter:
         )
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
+
+    @property
+    def cancelled(self):
+        return self.cancel_event is not None and bool(self.cancel_event.value)
 
     def solve(self, books: list[str], cfgid_override: Optional[str] = None, override_config: Optional[dict] = None):
         cfgid = cfgid_override or self.build_params.cfgid
@@ -131,9 +137,10 @@ class GLibCompatQueue:
 
 class WorkerContext:
     """Manages worker lifecycle, cached printer instance, and job watchdog execution."""
-    def __init__(self, nid: str, progress_q, cancel_event):
+    def __init__(self, nid: str, progress_q, cpu_q, cancel_event):
         self.nid = nid
         self.progress_q = progress_q
+        self.cpu_q = cpu_q
         self.cancel_event = cancel_event
 
         self.last_job: Optional[Job] = None
@@ -153,10 +160,12 @@ class WorkerContext:
         """Returns the active printer, creating a new instance if job configuration changed."""
         if not self.matches_last_job(job):
             if job.action == 'fill':
-                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q)
+                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q,
+                                                 cpu_q=self.cpu_q, cancel_event=self.cancel_event)
                 logging.debug(f"{self.current_printer=}")
             elif job.action == 'print':
-                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q)
+                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q,
+                                                   cpu_q=self.cpu_q, cancel_event=self.cancel_event)
             else:
                 raise ValueError(f"Unknown job action: {job.action}")
             self.last_job = job
@@ -189,6 +198,8 @@ class WorkerContext:
 
         logging.debug(f"Executing for {target_id}")
         if self.cancel_event and self.cancel_event.value:
+            if self.progress_q:
+                self.progress_q.put(ProgressEvent(target_id, 0, "failed", msg="Stopped"))
             return (target_id, self.nid, False, "Cancelled")
 
         if job.log_config:
@@ -196,7 +207,6 @@ class WorkerContext:
 
         printer = self.get_printer(job)
         printer.timedout = False
-        printer.cancelled = False
 
         # Shared Watchdog Timer for both Fill and Print jobs
         watchdog = None
@@ -220,7 +230,8 @@ class WorkerContext:
                 res = printer.solve(' '.join(job.books), cfgid_override=job.cfgid, override_config=job.override_config)
         except Exception as e:
             print(f"Exception {job.books[0]}: {e}")
-            logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n{f_('Traceback: ')}")
+            logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n"
+                         f"{f_('Traceback: ')}{traceback.format_exc()}")
             if watchdog:
                 watchdog.cancel()
             if self.progress_q:
@@ -240,10 +251,10 @@ class WorkerContext:
 
 _worker_ctx: Optional[WorkerContext] = None
 
-def _init_worker(progress_q, cancel_event):
+def _init_worker(progress_q, cpu_q, cancel_event):
     global _worker_ctx
     nid = mp.current_process().name
-    _worker_ctx = WorkerContext(nid, progress_q, cancel_event)
+    _worker_ctx = WorkerContext(nid, progress_q, cpu_q, cancel_event)
 
 def _worker_dispatch(job: Job):
     global _worker_ctx
@@ -258,6 +269,7 @@ class MultiPrint:
         self.ctx = mp.get_context('spawn')
         self.numproc = numproc or max(1, mp.cpu_count() - 2)
         self.progress_q = GLibCompatQueue(self.ctx) if progress else None
+        self.cpu_q = GLibCompatQueue(self.ctx)
         self.cancel_event = self.ctx.Value('b', False)
 
         self.executor: Optional[ProcessPoolExecutor] = None
@@ -267,14 +279,14 @@ class MultiPrint:
     def start(self):
         """Start the worker pool."""
         if self.numproc == 1:
-            _init_worker(self.progress_q, self.cancel_event)
+            _init_worker(self.progress_q, self.cpu_q, self.cancel_event)
             return
         self.cancel_event.value = False
         self.executor = ProcessPoolExecutor(
             mp_context=self.ctx,
             max_workers=self.numproc,
             initializer=_init_worker,
-            initargs=(self.progress_q, self.cancel_event)
+            initargs=(self.progress_q, self.cpu_q, self.cancel_event)
         )
 
     def _dispatch_job(self, job: Job):
@@ -329,6 +341,7 @@ class MultiPrint:
             try:
                 results.append(future.result())
             except Exception as exc:
+                logging.warning(f"Job failed for {job.books}: {exc}\n{traceback.format_exc()}")
                 results.append((job.books, None, False, str(exc)))
 
         self.pending_futures.clear()
@@ -358,6 +371,12 @@ class MultiPrint:
                     self.prev_cpu_times[pid] = total_proc_cpu
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     continue
+        while True:
+            try:
+                pid, child_cpu = self.cpu_q.get_nowait()
+            except queue.Empty:
+                break
+            tick_cpu_seconds += child_cpu
         self.total_gops += tick_cpu_seconds * current_ghz
         return self.total_gops
 

@@ -6,6 +6,7 @@ from ptxprint.utils import refSort, _
 from ptxprint.xdv.spacing_oddities import Line, Rivers
 from typing import Tuple, Optional
 from ptxprint.gtkutils import background_msg, pump_gtk
+from usfmtc.reference import Ref
 from gi.repository import Gtk
 
 logger = logging.getLogger(__name__)
@@ -24,6 +25,12 @@ def readpts(s):
         except ValueError:
             return 0
 
+refre = re.compile(r"^(\S{3})?\D?(\d+)\.(\d+)(.*)$")
+def makeref(s):
+    m = refre.match(s)
+    if m is not None:
+        return Ref(book=m.group(1), chapter=int(m.group(2)), verse=int(m.group(3)), subverse=m.group(4))
+    return None
 
 @dataclass
 class ParRect:
@@ -39,12 +46,14 @@ class ParRect:
     xdvlines:   InitVar[None] = None
     tspace:     float = 0.
     nspace:     int = 0
-    lines:      int = 0
-    black:      float = 0.
-    white:      float = 0.
+    lines:      int = 0         # number of lines
+    black:      float = 0.      # total width of ink
+    white:      float = 0.      # total width of spaces
+    parwhite:   float = 0.      # total width of right rag space
+    nspaces:    int = 0         # number of spaces
     
     def __str__(self):
-        return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
+        return f"{self.pagenum}+{self.col} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
 
     def __repr__(self):
         return self.__str__()
@@ -60,8 +69,10 @@ class ParRect:
         ydiff = None
         xdiff = None
         curra = None
+        debug = logger.isEnabledFor(5)
         for a in self.dests:
-            logger.log(5, f"Testing ({x}, {y}) against {a}")
+            if debug:
+                logger.log(5, f"Testing ({x}, {y}) against {a}")
             if a[1][1] > y and (ydiff is None or a[1][1] - y < ydiff):
                 ydiff = a[1][1] - y
                 curra = a
@@ -234,6 +245,7 @@ class Paragraphs(list):
         self.dests = {}
         self.chapters = [0]
         self.rect_cache = (None, None)
+        self.colcount = {}
         if fname is None:
             return
         currp = None
@@ -294,7 +306,9 @@ class Paragraphs(list):
                 #if len(cinfo) > 2:
                 #    colinfos[polycol] = [cinfo.height, 0, cinfo.depth, 0, cinfo.width]
                 lastyend = 0
-                for k in colcount.keys():
+                for k, v in colcount.items():
+                    if v > self.colcount.get(k, 0):
+                        self.colcount[k] = v
                     colcount[k] = -1
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
@@ -322,7 +336,7 @@ class Paragraphs(list):
                     currr.yend = readpts(p[1])
                     ps = currps.get(polycol, None)
                     if ps is not None:
-                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
+                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                     currr = None
                 colinfos[polycol] = None
                 lines.startreplay()
@@ -330,7 +344,6 @@ class Paragraphs(list):
             elif c == "parstart":       # ref, type, mrk, baselineskip, x, y
                 if len(p) == 5:
                     p.insert(0, "")
-                logger.log(5, f"Starting para {p[0]}")
                 try:
                     chap = int(self.chapre.sub(r"\1", p[0]))
                 except ValueError:
@@ -344,6 +357,7 @@ class Paragraphs(list):
                     currr.yend = readpts(p[5])
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]), polycol)
                 currp.rects = []
+                logger.log(5, f"Starting para {p[0]}={currp}")
                 if cinfo is not None:
                     ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
                     currr = ParRect(pnum, colcount[polycol], cinfo.topx, ystart)
@@ -372,7 +386,7 @@ class Paragraphs(list):
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
-                currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
+                currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                 endpar = True
             elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
                 if not endpar or not inpage:
@@ -384,13 +398,22 @@ class Paragraphs(list):
                 currp.lastref = p[0]
                 if "k." in p[0]:
                     currp.ref = p[0]
-                currp.parnum = int(p[1])
+                if currp.lastref != currp.ref:
+                    ra = makeref(currp.ref)
+                    rb = makeref(currp.lastref)
+                    if ra is not None and rb is not None:
+                        rc = ra.nextverse(thisbook=True)
+                        if rc <= rb:
+                            currp.ref=f"{rc.book}{rc.chapter}.{rc.verse}"
+                            currp.parnum = 1
+                if currp.lastref == currp.ref:
+                    currp.parnum = int(p[1])
                 prev_p = par_ref_map.get((polycol, currp.ref), None)
                 if prev_p and prev_p is not currp:
                     currp.parnum = getattr(prev_p, 'parnum', 0) + 1
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
-                logger.log(5, f"Stopping para {p[0]}")
+                logger.log(5, f"Stopping para {p[0]}={currp}")
                 currps[polycol] = None
                 currr = None
             elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
@@ -454,7 +477,7 @@ class Paragraphs(list):
             # "nontextstart":   # x, y
             # "nontextstop":    # x, y
             # "parpicanchor":   # ref, picid, x, y
-        self.sort(key=lambda x:x.sortKey())
+        #self.sort(key=lambda x:x.sortKey())    # keep in document order given some odd paragraphs that change index halfway
         if gui and keepgoing:
             dlg.response(Gtk.ResponseType.OK)
         self._parloc_dlg = None
@@ -517,7 +540,7 @@ class Paragraphs(list):
 
     def getParas(self, pnum, inclast=False, inclafter=False):
         ''' Iterates all ParDest, ParRect on page with given index '''
-        if pnum > len(self.pindex):
+        if pnum > len(self.pindex) or pnum < 1:
             return
         e = self.pindex[pnum] if not inclafter and pnum < len(self.pindex) else len(self)
 

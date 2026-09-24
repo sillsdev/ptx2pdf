@@ -23,19 +23,20 @@ STATUS_WARNING       = "warning"
 STATUS_FAILED        = "failed"
 STATUS_ALREADY_FILLED = "already_filled"
 STATUS_SKIPPED        = "skipped"
+STATUS_PAGE          = "page"
 
 # Single source of truth: status → (hex_color, msgid).
 # Insertion order determines Color Key display order.
 _STATUS_DATA = {
     STATUS_PENDING:        ("#AAAAAA", "Not yet started"),
     STATUS_ALREADY_FILLED: ("#FFFF99", "Already filled — no action needed"),
-    STATUS_SKIPPED:        ("#FFDAB9", "No page data — may need attention"),
+    STATUS_SKIPPED:        ("#FFDAB9", "No page data — skipped pages, may need attention"),
     STATUS_PROBING:        ("#98BCCA", "Probing — initial analysis"),
     STATUS_RUNNING:        ("#87CEEB", "Filling in progress"),
     STATUS_RUNNINGFAILED:  ("#D8C291", "Filling with bad pages"),
     STATUS_GOOD:           ("#98FB98", "Complete — all pages filled"),
     STATUS_WARNING:        ("#FFA500", "Incomplete — page(s) could not be solved"),
-    STATUS_FAILED:         ("#FF9500", "Failed"),
+    STATUS_FAILED:         ("#F08080", "Failed — fault or timeout"),
 }
 
 stoplabel = _("Stop!")
@@ -107,8 +108,8 @@ class BookProgressCell:
     def update(self, event):
         """Apply a ProgressEvent to this cell. Must be called on GTK main thread."""
         mode = event.mode
-        page = event.page
-        total = event.total
+        total = event.total if event.total is not None and event.total > 0 else self._total
+        page = event.page or 0
 
         if total is not None:
             self._total = total
@@ -120,7 +121,7 @@ class BookProgressCell:
             self._bar.set_text(self._barText(page, total, prefix="init"))
             self._applyColor(STATUS_PROBING)
 
-        elif mode == "goodpage":
+        elif mode == "goodpage" or mode == "page":
             frac = (page / self._total) if self._total else 0.0
             self._bar.set_fraction(min(frac, 1.0))
             self._bar.set_text(self._barText(page, self._total))
@@ -138,10 +139,10 @@ class BookProgressCell:
             if not self._total:
                 self._applyColor(STATUS_SKIPPED)
             elif self._hadBadPage:
-                self._bar.set_text(self._barStatusText(event.msg))
+                self._bar.set_text(self._barStatusText(event.msg) + f"({self._total})")
                 self._applyColor(STATUS_WARNING)
             else:
-                self._bar.set_text(self._barStatusText(_("Complete")))
+                self._bar.set_text(self._barStatusText(_(f"Complete ({self._total})")))
                 self._applyColor(STATUS_GOOD)
 
         elif mode == "failed":
@@ -299,7 +300,7 @@ class BookProgressDialog:
             if cell is not None:
                 cell.update(event)
         if usage > 0.:
-            self.lb_cpu.set_text(_("CPU: ") + f"{usage:3f}")
+            self.lb_cpu.set_text(_("CPU: ") + f"{int(usage)}")
         if elapsed > 0.:
             hours, remainder = divmod(elapsed, 3600)
             minutes, seconds = divmod(remainder, 60)

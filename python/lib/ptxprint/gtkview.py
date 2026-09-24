@@ -8022,6 +8022,10 @@ Thank you,
         return False
 
     def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
+        srcpath = getattr(self.pdf_viewer, "fname", None) if self.pdf_viewer is not None else None
+        if srcpath is None:
+            self.doStatus(_("No PDF is currently open to save"))
+            return
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",
             parent = self.mainapp.win,
@@ -8029,7 +8033,7 @@ Thank you,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                      Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
         dialog.set_current_folder(self.userconfig.get('init', 'saveasfolder', fallback=os.path.expanduser("~")))
-        dialog.set_current_name(self.pdf_viewer.fname)
+        dialog.set_current_name(os.path.basename(srcpath))
         pdf_filter = Gtk.FileFilter()
         pdf_filter.set_name("PDF files")
         pdf_filter.add_mime_type("application/pdf")
@@ -8040,7 +8044,7 @@ Thank you,
             if not new_file_path.lower().endswith('.pdf'):
                 new_file_path += '.pdf'
             try:
-                pdffilepath = os.path.join(self.project.printPath(None), self.pdf_viewer.fname)
+                pdffilepath = os.path.join(self.project.printPath(None), srcpath)
                 copy2(pdffilepath, new_file_path)
                 self.doStatus(_("PDF saved as: ") + new_file_path)
                 self.userconfig.set('init', 'saveasfolder', os.path.dirname(new_file_path).replace("\\", "/"))
@@ -8475,9 +8479,10 @@ Thank you,
         return GLib.SOURCE_CONTINUE
 
     def onFillCancelled(self):
+        # Workers stop cooperatively after their current layout run; queued books are skipped.
+        # _pollFillProgress tears the pool down once every job has returned.
         if self.mprint is not None:
             self.mprint.cancel()
-            GLib.timeout_add(10000, self.mprint.terminate)
 
     def _fill_progress(self, event, usage=0., elapsed=0.):
         if self.bkProgressDlg is None:
@@ -8710,3 +8715,13 @@ Thank you,
         win = self.builder.get_object("mainapp_win")
         win.connect("destroy", Gtk.main_quit)
         win.show_all()
+
+    def onPublicationsClicked(self, *a):
+        pass
+
+    def onAddPub(self, *a):
+        pass
+
+    def onRmPub(self, *a):
+        pass
+    

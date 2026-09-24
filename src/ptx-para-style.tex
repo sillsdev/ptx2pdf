@@ -147,7 +147,7 @@
     \global\let\tmppcl@ss\thisp@rclass %pass out the heading group class
   \fi
   \edef\tmp{\the\s@vedm@rks}\ifx\tmp\empty\else
-    \global\setbox\he@dingnotes\vbox{\unvbox\he@dingbox\the\s@vedm@rks}%
+    \global\setbox\he@dingnotes\vbox{\unvbox\he@dingnotes\the\s@vedm@rks}%
     \global\s@vedm@rks{}%
   \fi
   \egroup %\showbox\he@dingbox

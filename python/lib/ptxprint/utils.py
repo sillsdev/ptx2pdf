@@ -160,7 +160,7 @@ class BuildParams:
 class ProgressEvent:
     book:   str
     page:   int
-    mode:   Literal["complete", "failed", "badpage", "goodpage", "already_filled"]
+    mode:   Literal["probe", "complete", "failed", "badpage", "goodpage", "page", "already_filled"]
     msg:    Optional[str] = None
     total:  Optional[int] = None
 
@@ -551,12 +551,15 @@ def get_gitver(gitdir=None, version=None):
         gitdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', '.git')
         if not os.path.exists(gitdir):
             return version
-    with open(os.path.join(gitdir, 'HEAD')) as inf:
-        l = inf.readline()
-        try:
-            ref = l[l.index(":")+1:].strip()
-        except ValueError:
-            return version
+    try:
+        with open(os.path.join(gitdir, 'HEAD')) as inf:
+            l = inf.readline()
+            try:
+                ref = l[l.index(":")+1:].strip()
+            except ValueError:
+                return version
+    except NotADirectoryError:
+        return version
     refpath = os.path.join(gitdir, *ref.split("/"))
     if not os.path.exists(refpath):
         packedrefsfile = os.path.join(gitdir, "packed-refs")

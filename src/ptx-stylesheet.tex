@@ -1302,11 +1302,6 @@
 }
 %-csty_dropchap
 
-%+csty_strippt
-\let\E=\empty
-{\catcode`P=12 \catcode`T=12 \lowercase{\gdef\@strip@pt#1PT#2\E{#1} \xdef\@pt{PT}}}
-\def\strip@pt#1{\x@\x@\x@\@strip@pt\x@\the\x@ #1\@pt\E}
-%-csty_strippt
 
 %+csty_hangverse
 \def\AfterVerseSpaceFactor{2}
