@@ -801,7 +801,7 @@ class TypesetterSolver:
                 self.hooks.progress(p)
         sweep_count = 0
         all_pids = self.hooks.get_paragraphs_for_pages(page, page + npages)
-        last_page = page + npages
+        last_page = -1 if page + npages >= self.numpages else page + npages
         for a in ((self.minexp, -1), (self.maxexp, 1)):
             sweep_params = {pid: a for pid in all_pids}
             layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
@@ -1481,6 +1481,15 @@ class PTXFiller:
         parlocsfile = self.job.outfname.replace(".tex", ".parlocs")
         self.parlocs = Paragraphs()
         self.parlocs.readParlocs(parlocsfile, self.rtl)
+        # keep the page->chapter map current: exact up to the cut, old entries shifted past it
+        new = self.parlocs.chapters
+        old = getattr(self.hooks, 'chapters', None)
+        if stopchap == 0 or not old:
+            self.hooks.chapters = list(new)
+        else:
+            n = min(len(new), stopchap)
+            shift = new[n-1] - old[n-1] if n - 1 < len(old) else 0
+            self.hooks.chapters = list(new[:n]) + [max(new[n-1], c + shift) for c in old[n:]]
         self.pidmap = {p.pid(): i for i, p in enumerate(self.parlocs) if isinstance(p, ParInfo)}
         self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
         logfile = self.job.outfname.replace(".tex", ".log")
