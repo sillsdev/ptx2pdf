@@ -288,7 +288,7 @@ texpertOptions = {
     "pbExpansion":        O("pbexpcost", "APF", (1.0, -5, 5, 0.1, 1, 1), "", _("Added badness for expanded text"), _("Typical badness values 0-1.0, add this value if the paragraph is to expand")),
     "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Expansion difference badness factor"), _("Multiply the difference in expansions (1.0 is none), add as a cost")),
     "pbBackTrack":        O("pbbacktrack", "APF", (2, 0, 5, 1, 1, 0), "", _("Maximum number of pages to backtrack"), _("Maximum number of pages to backtrack")),
-    "pbMaxr":             O("pbmaxr", "APF", (5, 1, 10, .1, 1, 1), "", _("log max paragraph combinations per page"), _("An approximate log(10) of the number of paragraph combinations to consider for a page")),
+    "pbMaxr":             O("pbmaxr", "APF", (6, 1, 10, 1, 1, 0), "", _("log max paragraph combinations per page"), _("An approximate log(10) of the number of paragraph combinations to consider for a page")),
 #    "pbStrict":           O("pbstrict", "APF", False, "", _("Add strict layout constraints"), _("Ensure things like \\q2 don't start a column")),
 
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),

@@ -82,6 +82,7 @@ class LayoutRunResult:
     page_figures: Dict[PageIndex, List[FigurePlacement]]
     col2_first: List[Optional[ParagraphRef]]
     result: int
+    complete: bool = False  # was the whole book covered
 
     def _cmp(self, other):
         res = cmp(self.first_failing_page, other.first_failing_page)
@@ -109,7 +110,7 @@ class LayoutRunResult:
     def next_bad(self, page=None):
         if page is None:
             page = (-1 if self.first_failing_page is None else self.first_failing_page) + 1
-        for i in range(page, len(self.pages) - 1):
+        for i in range(page, len(self.pages) if self.complete else (len(self.pages) - 1)):
             u = self.pages[i].column_free_lines
             if u is not None and u not in ([0], [0,0]):
                 res = i
@@ -132,7 +133,6 @@ class EngineState:
     page: int
     passed: bool = False
     failures: Optional[list] = None
-    complete: bool = False
 
     def _cmp(self, other):
         res = cmp(self.layout, other.layout)
@@ -215,16 +215,19 @@ class Hooks:
             return None
         pages = []
         firstbad = None
-        for i in range(self.printer.parlocs.numPages()):
+        complete = self.covers_book(last_page)
+        npages = self.printer.parlocs.numPages()
+        trusted = npages if complete else npages - 1
+        for i in range(npages):
             u = self.printer.underfills[i]
-            if firstbad is None and u is not None and len(u) and u not in ([0], [0,0]) and i > base_page:
+            if firstbad is None and i < trusted and u is not None and len(u) and u not in ([0], [0,0]) and i > base_page:
                 firstbad = i
             pages.append(PageState(i, u))
         plines = self.printer.get_plines()
         pmap, col2_first = self.printer.get_pidmap()
         if self.tracing:
             logger.log(15, f"{firstbad=}")
-        res = LayoutRunResult(pages, firstbad, plines, pmap, [], col2_first, runres)
+        res = LayoutRunResult(pages, firstbad, plines, pmap, [], col2_first, runres, complete=complete)
         return res
 
     def get_paragraphs_for_pages(self,
@@ -261,6 +264,10 @@ class Hooks:
 
     def get_previous(self, pid, page=None):
         return self.printer.get_previous(pid, page=page)
+
+    def covers_book(self, last_page):
+        """ Is this last_page from a layout covering the whole book? """
+        return last_page <= 0 or self.chap_from_page(last_page) + 1 >= len(self.chapters)
 
     @property
     def cancelled(self):
@@ -422,6 +429,7 @@ class TypesetterSolver:
 
         state = EngineState(self.init_state.paragraph_params, state.float_anchors, layout,
                              self.hooks.printer.parlocs, 0)
+        layout.complete = True
         self.searched_start_keys = {}
         self.tried_combos = {}
         self.page_base_params = {}
@@ -453,30 +461,36 @@ class TypesetterSolver:
             # detect completion / extend the lookahead probe.
             layout = state.layout
             nextpage = layout.first_failing_page
-            logger.log(15, f"{page=}, {nextpage=}, is completed {state.complete}")
-            lc = self._last_content_page(layout)
+            logger.log(15, f"{page=}, {nextpage=}, is completed {layout.complete}")
             if nextpage is None:
-                if lc is not None and page >= lc:
-                    bad = [i for i, lp in enumerate(layout.pages)
-                           if i < lc                                    # exclude the legit-short last page
-                           and lp.column_free_lines is not None
-                           and any(x != 0 for x in lp.column_free_lines)
-                           and i not in self.failed_pages]
-                    if bad:
-                        self.failed_pages.extend(bad)
-                    logger.log(15, f"Completion sweep found underfilled pages: {bad}")
-                    state.failures = self.failed_pages
-                    self.hooks.progress(ProgressEvent(self.bk, (page or 0) + 1, "complete",
-                            f"Failed from {self.failed_pages[0]+1}" if self.failed_pages else None, self.numpages))
-                    return state
+                if not self.noprobe:
+                    nextpage = page + 1
+                elif not layout.complete:
+                    nextpage = max(page+1, len(layout.pages) - 1)
+            elif nextpage > page + 1 and not self.noprobe:
                 nextpage = page + 1
 
-            # don't reanalyse starting on a page we've already given up on
-            while nextpage in self.failed_pages:
-                if lc is not None and nextpage >= lc:
-                    state.failures = self.failed_pages
-                    return state
+            while nextpage is not None and nextpage in self.failed_pages:
                 nextpage += 1
+
+            lc = self._last_content_page(layout)
+            if lc is None and layout.complete:
+                lc = len(layout.pages) - 1
+                logger.warning(f"{self.bk}: last paragraph {self.paragraph_order[-1]} not in full layout, "
+                               f"treating page {lc} as the end")
+            if nextpage is None or (lc is not None and nextpage > lc):
+                bad = [i for i, lp in enumerate(layout.pages)
+                       if i < lc                                    # exclude the legit-short last page
+                       and lp.column_free_lines is not None
+                       and any(x != 0 for x in lp.column_free_lines)
+                       and i not in self.failed_pages]
+                if bad:
+                    self.failed_pages.extend(bad)
+                logger.log(15, f"Completion sweep found underfilled pages: {bad}")
+                state.failures = self.failed_pages
+                self.hooks.progress(ProgressEvent(self.bk, (page or 0) + 1, "complete",
+                        f"Failed from {self.failed_pages[0]+1}" if self.failed_pages else None, self.numpages))
+                return state
 
             # probe starting at the new page
             if not self.full_probe and state.numPages() - nextpage >= self.lookahead \
@@ -484,6 +498,7 @@ class TypesetterSolver:
                 layout = self.initial_probes(state, nextpage, 10, progress=False)
                 state = EngineState(self.init_state.paragraph_params, state.float_anchors,
                                      layout, self.hooks.printer.parlocs, nextpage)
+                layout.complete = self.hooks.covers_book(nextpage+10)
             page = nextpage
             if self.low_water < page - self.backtrack_depth:
                 self.low_water = page - self.backtrack_depth
@@ -542,7 +557,7 @@ class TypesetterSolver:
                 state.layout.next_bad()
             self.failed_pages.append(page)
             self.low_water = max(self.low_water, page + 1)
-            if state.layout.first_failing_page is None and state.complete:
+            if state.layout.first_failing_page is None and state.layout.complete:
                 msg = f"Failed from {self.failed_pages[0]+1}"
                 self.hooks.progress(ProgressEvent(self.bk, page+1, "complete", msg))
                 return HumanFixRequest(state, page + 1, msg)
@@ -884,8 +899,6 @@ class TypesetterSolver:
                     str({i: lp.column_free_lines for i, lp in enumerate(layout.pages) if lp.column_free_lines is not None and (page is None or i <= page+2)}),
                     combo)
         res = EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
-        if page + npages >= self.numpages:
-            res.complete = True
         return res
 
     def collect_probes(self, layout, paragraphs, params, isbase=False, page=0):
@@ -1424,7 +1437,7 @@ class PTXFiller:
     def run_layout(self, solver, parparms, floats, lastpage, genfiles=False, prompt="."):
         if self.timedout or self.cancelled:
             raise TimeoutError()
-        if lastpage <= 0 or getattr(self, 'parlocs', None) is None:
+        if getattr(self, 'parlocs', None) is None or self.hooks.covers_book(lastpage):
             stopchap = 0
         else:
             stopchap = self.hooks.chap_from_page(lastpage) + 1
