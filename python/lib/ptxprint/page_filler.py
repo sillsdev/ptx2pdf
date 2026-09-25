@@ -1284,8 +1284,8 @@ class PTXFiller:
             self.view.set(a, False)
         self.view.set("fcb_pagesPerSpread", 1)
         self.view.set("fcb_outputFormat", "Screen")
-        self.view.savePics()
-        self.view.saveStyles()
+        # Don't save pics/styles here: parallel workers share those files and rewriting
+        # them races with other workers' XeTeX runs. The GUI saves them before dispatching.
         self.hooks = Hooks(self, None)
         self.job = None
         self.hascash = False
@@ -1321,16 +1321,18 @@ class PTXFiller:
             self.printbk(bk, "!")
             return (False, f"Failed: {bk}")
         #print(f"Init laid out {bk}")
+        np = self.parlocs.numPages()
+        if np == 0:
+            msg = "TeX error - see log" if self.job.res else "No page data"
+            logger.warning(f"{bk}: initial layout produced no pages (xetex result {self.job.res}); "
+                           f"see {self.job.outfname.replace('.tex', '.log')}")
+            self.progress(ProgressEvent(bk, 0, "failed", msg=msg))
+            self.printbk(bk, "x", progress=False)
+            return (False, f"Failed: {bk} {msg}")
         if restart and init_layout.first_failing_page is None:
-            np = self.parlocs.numPages()
-            if np > 0:
-                self.progress(ProgressEvent(bk, np, "already_filled", total=np))
-                self.printbk(bk, "\u2713", progress=False)
-                return (True, f"Complete {bk} Already good")
-            else:
-                self.progress(ProgressEvent(bk, 0, "failed", msg="No page data"))
-                self.printbk(bk, "x", progress=False)
-                return (False, f"Failed: {bk} No page data")
+            self.progress(ProgressEvent(bk, np, "already_filled", total=np))
+            self.printbk(bk, "\u2713", progress=False)
+            return (True, f"Complete {bk} Already good")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
         state = EngineState(parms if restart else {p: (self.expand, 0) for p in pids}, [], init_layout, self.parlocs, 0)

@@ -8305,6 +8305,9 @@ Thank you,
 
     def _onFillPagesClicked(self, resume=False):
         self.saveAdjlists()
+        # save shared files once here; the parallel fill workers must not rewrite them
+        self.savePics()
+        self.saveStyles()
         mprint = getattr(self, 'mprint', None)
         if mprint is not None:
             self.mprint.terminate()

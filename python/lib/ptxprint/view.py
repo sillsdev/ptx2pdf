@@ -1601,9 +1601,31 @@ class ViewModel:
         if not force and self.configLocked():
             return
         fname = os.path.join(self.project.createConfigDir(self.cfgid), "ptxprint.sty")
+        buf = StringIO()
+        self.styleEditor.output_diffile(buf)
+        newdat = buf.getvalue()
+        # Other processes (e.g. parallel page filler workers) may be reading this file,
+        # so never truncate it in place: skip if unchanged, else write a temp file and swap it in.
+        if os.path.exists(fname):
+            try:
+                with open(fname, encoding="Utf-8") as inf:
+                    if inf.read() == newdat:
+                        return
+            except OSError:
+                pass
         logger.debug(f"Writing stylefile {fname}")
-        with open(fname, "w", encoding="Utf-8") as outf:
-            self.styleEditor.output_diffile(outf)
+        tmpname = f"{fname}.{os.getpid()}.tmp"
+        with open(tmpname, "w", encoding="Utf-8") as outf:
+            outf.write(newdat)
+        for attempt in range(10):
+            try:
+                os.replace(tmpname, fname)
+                break
+            except PermissionError:     # Windows: target held open by a reader
+                if attempt == 9:
+                    os.remove(tmpname)
+                    raise
+                time.sleep(0.2)
 
     def updatePicList(self, bks=None, priority="Both", output=False):
         return
