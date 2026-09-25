@@ -142,6 +142,7 @@ class ViewModel:
         self.hyphenation = None
         self.report = Report()
         self.zf = None
+        self.publications = {}
 
         # private to this implementation
         self.dict = {}
@@ -1048,6 +1049,8 @@ class ViewModel:
                 self._configset(config, f"vars.publishable/{k}", True, update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
+        if hasattr(self, "publications_table") and self.publications_table is not None:
+            self._update_publications_config(config)
         # for attribute, value in vars(self.polyglots).items():
             # print(f"{attribute}: {value}")    
         # for k, v in self.polyglots.items():
@@ -1060,6 +1063,36 @@ class ViewModel:
 
         TeXpert.saveConfig(config, self, diff=diff)
         return config
+
+    def _update_publications_config(self, config):
+        updated_data = self._get_publications_from_table()
+        for publication_id, publication_vars in updated_data.items():
+            for var_name, var_val in publication_vars.items():
+                self._configset(config, f'publications:{publication_id}/{var_name}', var_val)
+        for sect in config.sections():
+            if sect.startswith('publications:'):
+                if sect.split('publications:')[1] not in updated_data.keys():
+                    config.remove_section(sect)
+
+    def _get_publications_from_table(self):
+        model = self.publications_table.model  # Gtk.TreeStore
+        updated_data = {}
+
+        parent = model.get_iter_first()
+        while parent is not None:
+            row_key = model[parent][6]
+            entry = {"select": "True" if model[parent][2] else "False"}
+
+            for i in range(model.iter_n_children(parent)):
+                child = model.iter_nth_child(parent, i)
+                col_key = model[child][5]
+                val = model[child][1].strip("'")
+                entry[col_key] = val
+
+            updated_data[row_key] = entry
+            parent = model.iter_next(parent)
+
+        return updated_data
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
         try:
@@ -1428,6 +1461,12 @@ class ViewModel:
                 editableOverride = len(opt) != len(opt.strip("*"))
                 key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
+                if key.startswith('publications:'):
+                    pub_id = key.split(':')[1].split('/')[0]
+                    if pub_id not in self.publications:
+                        self.publications[pub_id] = {}
+                    self.publications[pub_id][key.split('/')[1]] = val
+
                 if key in ModelMap:
                     v = ModelMap[key]
                     if categories is not None and v.category not in categories:
