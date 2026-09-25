@@ -366,9 +366,9 @@ class TypesetterSolver:
         self.all_probes = [(expand, -1), (minexp, -1), ((minexp + expand) / 2, -1),
                 (maxexp, 1), (maxexp, 0), (expand, 0)]
 
-    def printbk(self, bk, page, progress=True, total=None):
+    def printbk(self, bk, page, extra="", progress=True, total=None):
         bkc = bookletter(bk)
-        print(bkc+str(page), flush=True, end="")
+        print(bkc+str(page)+extra, flush=True, end="")
         if progress:
             pe = ProgressEvent(bk, page, "page", "")
             pe.total = total or self.numpages
@@ -395,7 +395,8 @@ class TypesetterSolver:
             return HumanFixRequest(state, max(start_page, 0), "Bad initial layout")
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
-        logger.log(15, f"{start_page=}, failing={state.layout.first_failing_page}")
+        if self.hooks.tracing:
+            logger.log(15, f"{start_page=}, failing={state.layout.first_failing_page}")
         if start_page > 0 and (state.layout.first_failing_page is None or state.layout.first_failing_page >= start_page):
             for i in range(state.layout.first_failing_page if state.layout.first_failing_page is None else state.numPages()):
                 if not self.layout_checks(state, i-1):
@@ -442,7 +443,8 @@ class TypesetterSolver:
         last = self.paragraph_order[-1]
         pp = layout.paragraph_pages.get(last)
         res = max(pp) if pp else None
-        logger.log(15, f"last_content_page={res} {self.numpages=}")
+        if self.hooks.tracing:
+            logger.log(15, f"last_content_page={res} {self.numpages=}")
         return res
 
     def run_forward(self, state, page, start_page, stop):
@@ -521,7 +523,8 @@ class TypesetterSolver:
                 return HumanFixRequest(state, page + 1, "Stopped" if self.hooks.cancelled else "Timed out")
 
             pparams = {k: v for k, v in new_state.paragraph_params.items() if v != (self.expand, 0)}
-            logger.log(15, f"Completed {page=} {ok=} {pparams}")
+            if self.hooks.tracing:
+                logger.log(15, f"Completed {page=} {ok=} {pparams}")
             if ok:
                 # we're good for this page
                 state = new_state
@@ -612,7 +615,8 @@ class TypesetterSolver:
                 else:
                     free = None
 
-                logger.log(17, f" try p{page} #{self.itercount} {combo=} -> {free=} ffp={new_state.layout.first_failing_page}")
+                if self.hooks.tracing:
+                    logger.log(17, f" try p{page} #{self.itercount} {combo=} -> {free=} ffp={new_state.layout.first_failing_page}")
                 if (new_state.layout.first_failing_page is not None
                         and new_state.layout.first_failing_page < page
                         and new_state.layout.first_failing_page not in self.failed_pages):
@@ -649,6 +653,7 @@ class TypesetterSolver:
                         return new_state, True
                 state = new_state
             if not reprobed and not self.noprobe:
+                reprobed = True
                 self.run_layout({}, state, {}, page-1, start, allpages=True)
                 continue
             elif almostcombo is not None:
@@ -991,25 +996,6 @@ class TypesetterSolver:
             tried.add(ckey)
             yield combo
 
-    def _bucket_for(self, p, d, page, state, first_para, last_para):
-        """Return (role, score) for paragraph p taking delta d on this page,
-        or None if p can't be bucketed (straddler -> caller handles as singleton).
-        role is the col_deltas index this move lands in."""
-        rawmask = state.layout.paragraph_pages[p].get(page, 0)
-        mask, is_col_first = (rawmask & 3, bool(rawmask & 4))
-        if p == first_para or p == last_para:
-            return None                      # straddlers stay singletons
-        if mask == 3:
-            role = 1                         # both columns
-        elif mask == 1:
-            role = 3                         # col 1 only
-        elif mask == 2:
-            role = 4                         # col 2 only
-        else:
-            role = 5                         # fallback (mask 0)
-        score = self.shape_cache[(p, d)][2]  # badness of this shape
-        return (role, d), score
-
     def generate_combos(self, paragraphs, state, page) -> Generator[Dict[Any, int], None, None]:
         forced = {}
         for p in paragraphs:
@@ -1081,8 +1067,12 @@ class TypesetterSolver:
         col2_first = state.layout.col2_first[page] if page < len(state.layout.col2_first) else None
         col2_first_lines = state.layout.paragraph_total_lines.get(col2_first, 0) if col2_first else 0
         seen_col_sigs = {}
+        count = 0
         for r in range(1, max_r + 1):
             for pars in itertools.combinations(plist, r):
+                if count > 100000:
+                    break
+                count += 1
                 delta_lists = sorted(by_para[p] for p in pars)
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, d in choice) + 0.1 * len(choice)
@@ -1122,12 +1112,15 @@ class TypesetterSolver:
                         if col2_first is not None and col2_first not in combo and col1_net > 0 and col2_first_lines >= 4:
                             migration = min(col1_net, col2_first_lines - 2)
                         if collengths[0] > 0 and 0 <= col1_net < collengths[0]:
-                            logger.log(5, f"Rejecting against {collengths[0]}, col 1 {col_deltas} {combo}")
+                            if self.hooks.tracing:
+                                logger.log(5, f"Rejecting against {collengths[0]}, col 1 {col_deltas} {combo}")
                             continue
                         if collengths[1] > 0 and 0 <= sum(col_deltas) < collengths[1] - migration:
-                            logger.log(5, f"Rejecting against {collengths[1]}, col 2 {col_deltas}, {combo}")
+                            if self.hooks.tracing:
+                                logger.log(5, f"Rejecting against {collengths[1]}, col 2 {col_deltas}, {combo}")
                             continue
-                        logger.log(5, f"Accepting {col_deltas}, {combo}")
+                        if self.hooks.tracing:
+                            logger.log(5, f"Accepting {col_deltas}, {combo}")
                         sig = tuple(col_deltas)
                         (oldscore, oldcombo) = seen_col_sigs.get(sig, (10000, None))
                         if score < oldscore:
@@ -1135,8 +1128,8 @@ class TypesetterSolver:
                         else:
                             continue
         all_combos = sorted(list(seen_col_sigs.values()), key=lambda x: (x[0], len(x[1])))
-        logger.log(15, f"gen p{page}: {len(all_combos)} combos, {len(seen_col_sigs)} distinct from {len(plist)} paras, {max_r=}")
         if self.hooks.tracing:
+            logger.log(15, f"gen p{page}: {len(all_combos)} combos, {len(seen_col_sigs)} distinct from {len(plist)} paras, {max_r=}")
             logger.log(15, f"{all_combos=}")
         for _, combo in all_combos[:maxcombos]:       # 200 tests for a page better be enough!
             merged = dict(forced)

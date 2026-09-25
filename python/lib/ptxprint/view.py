@@ -132,6 +132,7 @@ class ViewModel:
         self.copyrightInfo = None
         self.pubvars = {}
         self.pubvars_publishable = {}
+        self.publications = {}          # dict per pubid
         self.strongsvars = {}
         self.font2baselineRatio = 1.
         self.docreatediff = False
@@ -1046,6 +1047,11 @@ class ViewModel:
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
             if self.pubvars_publishable.get(k, False):
                 self._configset(config, f"vars.publishable/{k}", True, update=False, diff=diff)
+        for pubid, pubv in self.publications.items():
+            for k, v in pubv.items():
+                if k == "":
+                    k = "__books"
+                self._configset(config, f"publication.{pubid}/{k}", v, update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
         # for attribute, value in vars(self.polyglots).items():
@@ -1428,6 +1434,10 @@ class ViewModel:
                 editableOverride = len(opt) != len(opt.strip("*"))
                 key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
+                if sect.startswith("publication."):
+                    pubid = sect[12:]
+                    self.publications.setdefault(pubid, {})[opt]=val
+                    continue
                 if key in ModelMap:
                     v = ModelMap[key]
                     if categories is not None and v.category not in categories:
