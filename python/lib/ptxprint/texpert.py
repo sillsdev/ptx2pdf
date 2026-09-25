@@ -282,13 +282,53 @@ texpertOptions = {
     "RiverOverlap":       O("riveroverlap", "PRV", (0.4, -5, 5, 0.1, 0.1, 1), "", _("River Detection minimum overlap (em)"),
                             _("Minimum overlap in ems required for two spaces above each other to be considered part of the same river")),
 
-    "pbtimeout":          O("pbtimeout", "APF", (100, 0, 1000, 1, 10, 0), "", _("Page fill timeout (mins)"), _("Cancel page filler books that take longer than this many minutes")),
-    "pbSpacingTol":       O("pbspacingtol", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Page fill bad spacing threshold factor"), _("The spacing badness: white/(black + white) my increase up to the default + (k * default)^4")),
-    "pbExpandBadness":    O("pbexpbad", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Expansion badness cost"), _("Factor to multiply sqrt(abs(1-expand)) * badness^4 as added cost")),
-    "pbExpansion":        O("pbexpcost", "APF", (1.0, -5, 5, 0.1, 1, 1), "", _("Added badness for expanded text"), _("Typical badness values 0-1.0, add this value if the paragraph is to expand")),
-    "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Expansion difference badness factor"), _("Multiply the difference in expansions (1.0 is none), add as a cost")),
-    "pbBackTrack":        O("pbbacktrack", "APF", (4, 0, 10, 1, 1, 0), "", _("Maximum number of pages to backtrack"), _("Maximum number of pages to backtrack")),
-    "pbMaxr":             O("pbmaxr", "APF", (6, 1, 10, 1, 1, 0), "", _("log max paragraph combinations per page"), _("An approximate log(10) of the number of paragraph combinations to consider for a page")),
+    # Translators: "page filler" = the Automatic Page Filler feature. Please translate these terms the
+    # same way in every string below: page filler, paragraph, stretch, shrink, word space, failed page.
+    # Speed settings (how hard the page filler tries)
+    "pbtimeout":          O("pbtimeout", "APF", (180, 0, 1000, 1, 10, 0), "", _("Time limit for the whole job (minutes)"),
+                            _("The page filler works on all the books together. When this time is reached, the page filler stops. "
+                              "A book that is not finished keeps the pages that are already filled. "
+                              "Usually this affects only the longest book.\n"
+                              "Higher: more time to find a good layout for every page.")),
+    "pbBackTrack":        O("pbbacktrack", "APF", (4, 0, 10, 1, 1, 0), "", _("Earlier pages to retry"),
+                            _("If the page filler cannot fill a page, it backtracks to the page before and tries a different layout there. "
+                              "This is the largest number of pages it can backtrack.\n"
+                              "Higher: fewer failed pages, but much slower.\n"
+                              "Lower: faster, but more pages may fail. 0 = never backtrack (fastest).\n"
+                              "Affects: Speed.")),
+    "pbMaxr":             O("pbmaxr", "APF", (6, 1, 10, 1, 1, 0), "", _("Paragraphs to adjust on each page"),
+                            _("The largest number of paragraphs on one page that the page filler may stretch or shrink. "
+                              "Each poetry line (\\q1, \\q2 …) counts as one paragraph. "
+                              "Each extra paragraph doubles the number of layouts the page filler tries.\n"
+                              "Higher: more ways to fill each page, so fewer failed pages, but each page takes longer.\n"
+                              "Lower: faster, but more pages may fail.\n"
+                              "Affects: Speed.")),
+    # Quality settings (how good the text must look)
+    "pbSpacingTol":       O("pbspacingtol", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Widest word space allowed (× text size)"),
+                            _("When the page filler stretches a paragraph, the average space between words must not be wider than this. "
+                              "1.0 = as wide as the text size. A normal word space is about 0.3 to 0.5.\n"
+                              "Higher: easier to fill pages, but the text can look too spread out.\n"
+                              "Lower: tighter, better-looking text, but pages are harder to fill and take longer.\n"
+                              "Affects: Quality and Speed.")),
+    "pbExpandBadness":    O("pbexpbad", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Keep paragraphs close to normal width"),
+                            _("The page filler prefers small changes to a paragraph over big changes. "
+                              "This setting controls how strong that preference is. "
+                              "Higher: the page filler tries small changes first, so the text looks more even.\n"
+                              "Lower: the page filler accepts big changes more easily.\n"
+                              "Affects: Quality.")),
+    "pbExpansion":        O("pbexpcost", "APF", (1.0, -5, 5, 0.1, 1, 1), "", _("Penalise shrink or stretch"),
+                            _("Tells the page filler whether to shrink paragraphs or stretch them when both are possible.\n"
+                              "Positive numbers: penalise stretching (so the text prefers to shrink more).\n"
+                              "Negative numbers: penalise shrinking. (so the text prefers to stretch more).\n"
+                              "0: no preference.\n"
+                              "A bigger number (+ or −) means a higher penalty.\n"
+                              "Affects: Quality.")),
+    "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Keep neighbouring paragraphs alike"),
+                            _("The page filler compares each paragraph with the paragraph before it. "
+                              "It tries to avoid a very stretched paragraph next to a very shrunk one.\n"
+                              "Higher: neighbouring paragraphs look more alike, so the page looks more even.\n"
+                              "Lower: neighbouring paragraphs can look more different.\n"
+                              "Affects: Quality.")),
 #    "pbStrict":           O("pbstrict", "APF", False, "", _("Add strict layout constraints"), _("Ensure things like \\q2 don't start a column")),
 
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
