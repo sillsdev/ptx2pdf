@@ -1069,8 +1069,10 @@ class TypesetterSolver:
         seen_col_sigs = {}
         count = 0
         for r in range(1, max_r + 1):
+            goagain = True
             for pars in itertools.combinations(plist, r):
                 if count > 100000:
+                    goagain = False
                     break
                 count += 1
                 delta_lists = sorted(by_para[p] for p in pars)
@@ -1127,6 +1129,8 @@ class TypesetterSolver:
                             seen_col_sigs[sig] = (score, combo)
                         else:
                             continue
+            if not goagain:
+                break
         all_combos = sorted(list(seen_col_sigs.values()), key=lambda x: (x[0], len(x[1])))
         if self.hooks.tracing:
             logger.log(15, f"gen p{page}: {len(all_combos)} combos, {len(seen_col_sigs)} distinct from {len(plist)} paras, {max_r=}")
@@ -1298,11 +1302,11 @@ class PTXFiller:
         except ValueError:
             self.expand = 1
         try:
-            self.minexp = float(self.view.get("s_shrinktextlimit", "95")) / 100
+            self.minexp = float(self.view.get("s_shrinktextlimit", "95")) / 100 * self.expand
         except ValueError:
             self.minexp = 0.95 * self.expand
         try:
-            self.maxexp = float(self.view.get("s_maxtextlimit", "105")) / 100
+            self.maxexp = float(self.view.get("s_maxtextlimit", "105")) / 100 * self.expand
         except ValueError:
             self.maxexp = 1.05 * self.expand
         try:
