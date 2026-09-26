@@ -51,6 +51,7 @@ class AdjList:
         self.changed = False
         self.adjfile = fname
         self.trigfile = tname
+        logger.log(15, f"{self.adjfile} ({self.centre}, +{self.highdiff}, -{self.lowdiff})")
         self.ftime = None
         self.db = []
 

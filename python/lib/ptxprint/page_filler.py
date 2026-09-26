@@ -1221,7 +1221,7 @@ class GrowList(list):
 
 class PTXFiller:
 
-    reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+?)\]\s+ht=([\d.]+?)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+)pt")
+    reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+?)\]\s+ht=([\d.]+?)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+?)pt")
 
     def __init__(self, build_params, nid, progress_q=None, cpu_q=None, cancel_event=None):
         super().__init__()
@@ -1309,6 +1309,7 @@ class PTXFiller:
             self.maxexp = float(self.view.get("s_maxtextlimit", "105")) / 100 * self.expand
         except ValueError:
             self.maxexp = 1.05 * self.expand
+        logger.log(15, f"{self.expand=}, {self.minexp=}, {self.maxexp=}")
         try:
             init_layout = self.hooks.run_layout(None, parms, {}, -1, -1, genfiles=True)
         except TimeoutError:
@@ -1350,8 +1351,8 @@ class PTXFiller:
         else:
             state = res
             page = state.page
-        if self.filter_params(state.paragraph_params, solver, page):
-            self.createAdjs(state.paragraph_params, solver)
+        #if self.filter_params(state.paragraph_params, solver, page):
+        self.createAdjs(state.paragraph_params, solver)
         endtime = time()
         unlockme()
         self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
@@ -1660,7 +1661,7 @@ class PTXFiller:
                     else:
                             v = [lines]
                     self.underfills[pnum] = v
-                    logger.debug(f"{pnum=} {self.underfills[pnum]}")
+                    logger.log(15, f"{pnum=} {self.underfills[pnum]}")
                 elif l.startswith("Underfill"):
                     logger.warn(f"Unparsed underfill {l} at line {i+1}")
 

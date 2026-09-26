@@ -1740,8 +1740,21 @@ class ViewModel:
         tname = self.getLocalTriggerFilename(bk)
         tpath = os.path.join(self.project.printPath(self.cfgid), tname)
         # get expansion of regular font
+        font_info = self.get("bl_fontR")
+        try:
+            expand = float(font_info.feats.get('extend', "1"))
+        except ValueError:
+            expand = 1
+        try:
+            minexp = float(self.get("s_shrinktextlimit", "95")) / 100 * expand
+        except ValueError:
+            minexp = 0.95 * self.expand
+        try:
+            maxexp = float(self.get("s_maxtextlimit", "105")) / 100 * expand
+        except ValueError:
+            maxexp = 1.05 * self.expand
         centre = 100
-        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath, tname=tpath)
+        adj = AdjList(int(expand * 100), int(minexp * 100), int(maxexp * 100), gtk=gtk, fname=fpath, tname=tpath)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj
