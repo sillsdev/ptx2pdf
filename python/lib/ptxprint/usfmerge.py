@@ -1134,10 +1134,9 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
             return(scores)
         else:
             logger.debug(f"No section {key}")
-    synchronise = "normal"
-    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting to {synchronise}.")
-        
-    return(SyncPoints[{synchronise}])
+    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting to normal.")
+    # Hand back the plain weight so the Collector applies the normal sync points scaled by it
+    return(startvals if startvals else int(round(fallbackweight)))
     
 def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
@@ -1162,6 +1161,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                 raise ValueError("Cannot have reapeated entries in key array! (%c already seen)" %(k))
             scorearr[k] = int(v)
         del tmp
+    else:
+        # Work on a copy: scores get replaced by per-column dicts below, and callers may reuse scorearr across books
+        scorearr = dict(scorearr)
     logger.debug(f"{type(mode)}, {mode=}")
     logger.debug(f"{type(scorearr)}, {scorearr=}")
     logger.debug(f"{type(keyarr)}, {keyarr=}")
