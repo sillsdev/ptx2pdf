@@ -122,11 +122,13 @@ class PDFViewer:
                   onPdfAnalysisChanged onPrintItClicked onZoomLevelChanged onSeekPage2fill
                   onNavigatePageClicked onPgNumChanged onEditingPgNum onSavePDFasClicked
                   onAnchorKeyRelease onOpenItClicked showRulesClicked showGridClicked
-                  showRulesOrGridClicked
+                  showRulesOrGridClicked onZoomFitClicked onAnchorFocusOut
+                  set_preview_pages
                """.split()
 
     def __init__(self, model, nbook, tv):
         self.model = model
+        self.model.register(self, self._methods)
         self.nbook = nbook
         self.lastpage = 0
         nbook.connect("notify::page", self.onPageChanged)
@@ -264,12 +266,12 @@ class PDFViewer:
 
     def set_preview_pages(self, npages, units=None):
         if units:
-            self.builder.get_object("l_pdfPgsSprds").set_label(units)
-        lpcount = self.builder.get_object("l_pdfPgCount")
+            self.model.builder.get_object("l_pdfPgsSprds").set_label(units)
+        lpcount = self.model.builder.get_object("l_pdfPgCount")
         if npages is None:
             lpcount.set_label("")
         else:
-            pgmin, pgmax, pgnum = self.pdf_viewer.minmaxnumpages()
+            pgmin, pgmax, pgnum = self.minmaxnumpages()
             if npages < pgnum:
                 lpcount.set_label(f"{str(npages)}")  # Default to total pages
             elif pgmin < 1:
@@ -307,7 +309,7 @@ class PDFViewer:
         self.set_zoom(adj_zl / 100, scrolled=True, setz=False)
             
     def onZoomFitClicked(self, btn):
-        self.pdf_viewer.set_zoom_fit_to_screen(True)
+        self.set_zoom_fit_to_screen(True)
 
     def onSeekPage2fill(self, btn):
         direction = Gtk.Buildable.get_name(btn).split("_")[-1]
