@@ -8,7 +8,7 @@ from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.version import VersionStr
 from ptxprint.utils import _, f2s, coltoonemax, getcaller, \
-    cleanParatextRef, sendRefToParatext
+    cleanParatextRef, sendRefToParatext, startfile
 from ptxprint.gtkutils import background_msg, pump_gtk
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
@@ -117,6 +117,13 @@ def arrayImage(imarray, width, height):
 class PDFViewer:
     boxcodes = {v: i for i, v in enumerate("""content cover diff manual""".split())}
     boxnames = ["bx_previewPDF", "bx_previewCover", "bx_previewDiff", "bx_previewManual"]
+
+    _methods = """onBookViewClicked onPdfAdjOverlayChanged onPdfParaBoxesChanged
+                  onPdfAnalysisChanged onPrintItClicked onZoomLevelChanged onSeekPage2fill
+                  onNavigatePageClicked onPgNumChanged onEditingPgNum onSavePDFasClicked
+                  onAnchorKeyRelease onOpenItClicked showRulesClicked showGridClicked
+                  showRulesOrGridClicked
+               """.split()
 
     def __init__(self, model, nbook, tv):
         self.model = model
@@ -255,6 +262,184 @@ class PDFViewer:
     def settingsChanged(self):
         self.viewers[0].settingsChanged()
 
+    def set_preview_pages(self, npages, units=None):
+        if units:
+            self.builder.get_object("l_pdfPgsSprds").set_label(units)
+        lpcount = self.builder.get_object("l_pdfPgCount")
+        if npages is None:
+            lpcount.set_label("")
+        else:
+            pgmin, pgmax, pgnum = self.pdf_viewer.minmaxnumpages()
+            if npages < pgnum:
+                lpcount.set_label(f"{str(npages)}")  # Default to total pages
+            elif pgmin < 1:
+                lpcount.set_label(f"({str(abs(pgmin))})+{str(pgmax)}")
+            else:
+                lpcount.set_label(f"{str(pgmax)}")
+
+    def onBookViewClicked(self, widget):
+        bkview = self.model.get("c_bkView", True)
+        step_increment = 2 if bkview else 1
+        if hasattr(self, 'pdf_viewer'):
+            self.set_zoom_fit_to_screen(None)
+            self.onPgNumChanged(None, None)
+
+    def onPdfAdjOverlayChanged(self, widget):
+        self.setShowAdjOverlay(self.model.get("c_pdfadjoverlay"))
+        
+    def onPdfParaBoxesChanged(self, widget):
+        self.setShowParaBoxes(self.model.get("c_pdfparabounds"))
+
+    def onPdfAnalysisChanged(self, widget):
+        self.setShowAnalysis(self.model.get("c_layoutAnalysis"), float(self.model.get("s_spaceEms", 3.0)))
+        
+    def onPrintItClicked(self, widget):
+        self.print_document()
+
+    def onZoomLevelChanged(self, widget):
+        if self.model.loadingConfig:
+            return
+        adj_zl = max(10, min(int(float(self.model.get("s_pdfZoomLevel", 100))), 800))
+        spin = self.model.builder.get_object("s_pdfZoomLevel")
+        if spin is not None:
+            step = max(10, int(adj_zl / 100 + 0.5) * 10)
+            spin.get_adjustment().set_step_increment(step)
+        self.set_zoom(adj_zl / 100, scrolled=True, setz=False)
+            
+    def onZoomFitClicked(self, btn):
+        self.pdf_viewer.set_zoom_fit_to_screen(True)
+
+    def onSeekPage2fill(self, btn):
+        direction = Gtk.Buildable.get_name(btn).split("_")[-1]
+        self.seekUFpage(direction)
+
+    def onNavigatePageClicked(self, btn):
+        if self.model.loadingConfig:
+            return
+        n = Gtk.Buildable.get_name(btn)
+        x = n.split("_")[-1]
+        self.set_page(x)
+
+    def onPgNumChanged(self, widget, *args):
+        if widget is None:
+            widget = self.model.builder.get_object("t_pgNum")
+        txt = widget.get_text().strip()
+        if not txt:
+            return False
+
+        try:
+            typedPg = int(txt)
+        except ValueError:
+            return False
+
+        # cancel previous delayed jump
+        if getattr(self, "_pgNumTimerId", None):
+            GLib.source_remove(self._pgNumTimerId)
+            self._pgNumTimerId = None
+
+        self._pgNumTimerId = GLib.timeout_add(300, self._jumpToTypedPgNum, typedPg)
+        return False
+
+    def onEditingPgNum(self, widget, *args):
+        txt = widget.get_text().strip()
+        if not txt:
+            return False
+        try:
+            typedPg = int(txt)
+        except ValueError:
+            return False
+        if getattr(self, "_pgNumTimerId", None):
+            GLib.source_remove(self._pgNumTimerId)
+            self._pgNumTimerId = None
+        return self._jumpToTypedPgNum(typedPg)
+
+    def _jumpToTypedPgNum(self, typedPg):
+        self._pgNumTimerId = None
+        if self.pdf_viewer.document is None:
+            return False
+        typedPg = self.closestpnum(typedPg)
+        if self.parlocs is not None:
+            cpage = self.parlocs.pnums.get(typedPg, typedPg)
+        else:
+            cpage = typedPg
+        cpage = max(1, min(int(cpage), int(self.numpages or 1)))
+        self.show_pdf(cpage)
+        return False
+
+    def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
+        srcpath = getattr(self,  "fname", None)
+        if srcpath is None:
+            self.model.doStatus(_("No PDF is currently open to save"))
+            return
+        dialog = Gtk.FileChooserDialog(
+            title="Save PDF As...",
+            parent = self.mainapp.win,
+            action=Gtk.FileChooserAction.SAVE,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                     Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
+        dialog.set_current_folder(self.model.userconfig.get('init', 'saveasfolder', fallback=os.path.expanduser("~")))
+        dialog.set_current_name(os.path.basename(srcpath))
+        pdf_filter = Gtk.FileFilter()
+        pdf_filter.set_name("PDF files")
+        pdf_filter.add_mime_type("application/pdf")
+        dialog.add_filter(pdf_filter)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            new_file_path = dialog.get_filename()
+            if not new_file_path.lower().endswith('.pdf'):
+                new_file_path += '.pdf'
+            try:
+                pdffilepath = os.path.join(self.model.project.printPath(None), srcpath)
+                copy2(pdffilepath, new_file_path)
+                self.model.doStatus(_("PDF saved as: ") + new_file_path)
+                self.model.userconfig.set('init', 'saveasfolder', os.path.dirname(new_file_path).replace("\\", "/"))
+            except Exception as e:
+                self.model.doError(_("Error saving PDF: ") + str(e), 
+                    secondary=_("Unable to save the PDF in the new location:") + "\n" + new_file_path)
+                self.model.doStatus(_("Error saving PDF: ") + new_file_path)
+        dialog.destroy()
+      
+    def onAnchorKeyRelease(self, btn, *a):
+        self.model.builder.get_object("btn_anc_ok").set_sensitive(False) 
+        curpos = self.model.builder.get_object("t_newAnchor").get_position() 
+        msg = ""
+        anc = re.sub(':', '.', self.model.get("t_newAnchor"))
+        pattern = r"(^[123A-Z]{3})([LRA-G]?)*\s((\d+)\.(\d+)(-\d+)*|k\.\S+)$"  # includes possibility if GLO k.keywordinglossary
+        match = re.match(pattern, anc)
+        if not match:
+            msg = _("Invalid Anchor; use format: JHN 3.16")
+        else:
+            self.model.set("t_newAnchor", anc, mod=False)
+            self.model.builder.get_object("t_newAnchor").set_position(curpos) 
+            piciter = self.picListView.find_row(anc)
+            if piciter is not None:
+                msg = _("There is a picture at that verse.{}Choose a different verse as anchor.").format("\n")
+            else:
+                self.model.builder.get_object("btn_anc_ok").set_sensitive(True)
+            self.anchorKeypressed = True
+        self.model.builder.get_object("l_newAnchorMsg").set_text(msg)
+
+    def onAnchorFocusOut(self, btn, *a):
+        self.anchorKeypressed = False
+
+    def onOpenItClicked(self, btn):
+        startfile(self.fname)
+
+    def showRulesClicked(self, btn):
+        v = self.model.get("c_gridLines")
+        self.set('showguides', v)
+        self.show_pdf()
+
+    def showGridClicked(self, btn):
+        v = self.model.get("c_gridGraph")
+        self.set('showgrid', v)
+        self.show_pdf()
+
+    def showRulesOrGridClicked(self, btn):
+        if self.model.loadingConfig:
+            return
+        if self.model.get('c_updatePDF', False):
+            self.model.onOK(None)
 
 class PDFFileViewer:
     def __init__(self, model, widget, alloc=None): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
@@ -421,7 +606,7 @@ class PDFFileViewer:
         rmax = self.document.get_n_pages() if self.document else 0
         return (rmin, rmax, rmax)
 
-    def getpnum(self, n, d):
+    def getpnum(self, n=1, d=1):
         return n
 
     def closestpnum(self, pg):
