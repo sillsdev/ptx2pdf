@@ -904,10 +904,23 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, prjtree, userconfig, scriptsdir, args=None):
         # logger.debug("Starting init in gtkview")
+        self._routes = {}
         super(GtkViewModel, self).__init__(prjtree, userconfig, scriptsdir, args)
         self.lang = args.lang if args.lang is not None else 'en'
         self.args = args
         self.initialised = False
+
+    def __getattr__(self, name):
+        ctrl = self._routes.get(name)
+        if ctrl is None:
+            raise AttributeError(name)
+        return getattr(ctrl, name)
+
+    def register(self, ctrl, names):
+        for n in names:
+            if n in self._routes or hasattr(type(self), n):
+                raise RunTimeError(f"{n}: Already routed to {self._routes.get(n)} or defined in view")
+            self._routes[n] = ctrl
 
     def _add_mac_menu(self, app, menudesc=mac_menu, parent=None):
         if parent is None:
@@ -1016,6 +1029,12 @@ class GtkViewModel(ViewModel):
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder()
         self.builder.add_from_string(xml_text) # this is where the error/warning/critial msgs come from
+        # Create controllers here since must register methods before connecting signals
+        self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
+        self.styleEditor = StyleEditorView(self)
+        self.pdf_viewer = PDFViewer(self, self.builder.get_object("nbk_PDFviewer"), self.builder.get_object("tv_pdfContents"))
+        self.adjView = AdjListView(self)
+
         self.builder.connect_signals_full(self.connect_signal, self)
         self.mw = self.builder.get_object("ptxprint")
         logger.debug("Glade loaded in gtkview")
@@ -1185,9 +1204,6 @@ class GtkViewModel(ViewModel):
         self.adjListTooltip = self.builder.get_object("l_AdjList").get_tooltip_text()
 
         logger.debug("Create PicList")
-        self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
-        self.styleEditor = StyleEditorView(self)
-        self.pdf_viewer = PDFViewer(self, self.builder.get_object("nbk_PDFviewer"), self.builder.get_object("tv_pdfContents"))
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
@@ -1631,7 +1647,6 @@ class GtkViewModel(ViewModel):
             if k.startswith("Settings"):
                 view.get_style_context().add_class(f"backsettings{k[-1]}")
 
-        self.adjView = AdjListView(self)
         scroll = self.builder.get_object("tb_AdjList")
         scroll.add(self.adjView.view)
         logger.debug("Setting project")
@@ -3775,15 +3790,6 @@ class GtkViewModel(ViewModel):
     # def hoverOverStyleLink(self, *argv):  # signal: query_tooltip
         # self.wiggleCurrentTabLabel()
 
-    def wiggleCurrentTabLabel(self):
-        lb = self.builder.get_object("lb_StyleEditor")
-        t = lb.get_label()
-        for b in range(8,-1,-1):
-            lb.set_label(" "*b+t)
-            Gtk.main_iteration_do(False)
-            time.sleep(0.08)
-            Gtk.main_iteration_do(False)
-        
     def onProcessScriptClicked(self, btn):
         self.colorTabs()
         if not self.sensiVisible("c_processScript"):
@@ -5858,8 +5864,6 @@ class GtkViewModel(ViewModel):
     def onOpenTextBorderDialog(self, btn):
         self.setPublishableTextBorder()
         self.styleEditor.sidebarBorderDialog()
-        # mpgnum = self.notebooks['Main'].index("tb_TabsBorders")
-        # self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
     def setPublishableTextBorder(self):
         x = "" if self.get("c_useOrnaments") and self.get("c_inclPageBorder") \
@@ -6112,13 +6116,6 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.styleEditor.item_changed(btn, "_publishable")
         return
-        # if self.styleEditor.marker == 'textborder':
-            # if 'publishable' in self.styleEditor.getval('textborder', 'TextProperties'):
-                # for w in ["c_useOrnaments", "c_inclPageBorder"]:
-                    # self.set(w, True)
-                # self.set("r_border", "text")
-            # else:
-                # self.set("c_inclPageBorder", False)
 
     def onFontStyclicked(self, btn):
         if self.getFontNameFace("bl_font_styFontName"): #, noStyles=True)
@@ -6181,12 +6178,6 @@ class GtkViewModel(ViewModel):
             w.set_text(new)
             self.changed()
         
-    def onStyleAdd(self, btn):
-        self.styleEditor.mkrDialog(newkey=True)
-
-    def onStyleEdit(self, btn):
-        self.styleEditor.mkrDialog()
-
     def onAdvancedNotebookChanged(self, nb, page, page_num):
         btn = self.builder.get_object("btn_texpertFilter")
         if btn is None:
@@ -6223,33 +6214,10 @@ class GtkViewModel(ViewModel):
                 ex.set_visible(True)
                 ex.set_expanded(False)
 
-    def onStyleFilter(self, btn):
-        def widen(x):
-            if x in aliases:
-                return [x, x+"1"]
-            elif x[:-1] in aliases and x.endswith("1"):
-                return [x, x[:-1]]
-            else:
-                return [x]
-        try:
-            mrkrset = self.get_usfms().get_markers(self.getBooks()) if btn.get_active() else set()
-        except SyntaxError as e:
-            self.doError(_("USFM syntax error"), secondary=_("Syntax error: {}").format(e))
-            return
-        mrkrset = set(sum((widen(x) for x in mrkrset), []))
-        logger.debug(f"{self.getBooks()=}  {mrkrset=}")
-        self.styleEditor.add_filter(btn.get_active(), mrkrset)
-
     def onEditMarkerChanged(self, mkrw):
         m = mkrw.get_text()
         t = self.get("t_styName")
         self.set("t_styName", re.sub(r"^.*?-", m+" -", t), mod=False)
-
-    def onStyleDel(self, btn):
-        self.styleEditor.delKey()
-
-    def onStyleRefresh(self, btn):
-        self.styleEditor.refreshKey()
 
     def onPlAddClicked(self, btn):
         picroot = self.project.path
@@ -7285,9 +7253,6 @@ class GtkViewModel(ViewModel):
     def onCatSBtoggled(self, cell, path):
         self.sbcatlist[path][2] = not cell.get_active()
 
-    def onSBborderClicked(self, btn):
-        self.styleEditor.sidebarBorderDialog()
-
     def onBorderLineClicked(self, btn):
         btname = Gtk.Buildable.get_name(btn)
         if btname[-3:] in ["inn", "out"] and self.get(btname):
@@ -7704,15 +7669,6 @@ Thank you,
             self.thumbnails.set_imageset(imgset)
         except AttributeError:
             pass
-
-    def onSBborderSettingsChanged(self, btn):
-        self.styleEditor.onSBborderSettingsChanged()
-        
-    def boxPaddingUniformClicked(self, btn):
-        self.styleEditor.boxPaddingUniformClicked()
-        
-    def bdrPaddingUniformClicked(self, btn):
-        self.styleEditor.bdrPaddingUniformClicked()
 
     def onlockXeTeXLayoutClicked(self, wid):
         if self.get("c_lockXeTeXLayout"):

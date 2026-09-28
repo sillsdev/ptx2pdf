@@ -200,6 +200,11 @@ def triefit(k, base, start):
 
 class StyleEditorView(StyleEditor):
 
+    _methods = """wiggleCurrentTabLabel onStyleFilter onStyleAdd onStyleEdit
+                  onStyleDel onStyleRefresh onSBborderClicked onSBborderSettingsChanged
+                  boxPaddingUniformClicked bdrPaddingUniformClicked
+               """.split()
+
     def __init__(self, model):
         super().__init__(model)
         self.mrkrlist = []
@@ -208,6 +213,7 @@ class StyleEditorView(StyleEditor):
             "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
         }
         self.builder = model.builder
+        self.model.register(self, self._methods)
         self.treestore = self.builder.get_object("ts_styles")
         self.treeview = self.builder.get_object("tv_Styles")
         self.filter = self.treestore.filter_new()
@@ -1028,7 +1034,7 @@ class StyleEditorView(StyleEditor):
         elif res:
             sb.removeStyle(self, self.marker)
 
-    def sidebarBorderDialog(self):
+    def onSBborderClicked(self, *a):
         self.sb = borderStyleFromStyle(self, self.marker)
         if self.sb is None:
             self.sb = BorderStyle()
@@ -1037,16 +1043,16 @@ class StyleEditorView(StyleEditor):
             self.sb.toStyle(self, self.marker)
         self.sb = None
 
-    def onSBborderSettingsChanged(self):
+    def onSBborderSettingsChanged(self, *a):
         self.sb.onSBborderSettingsChanged()
         
-    def boxPaddingUniformClicked(self):
+    def boxPaddingUniformClicked(self, *a):
         self.sb.boxPaddingUniformClicked()
         
-    def bdrPaddingUniformClicked(self):
+    def bdrPaddingUniformClicked(self, *a):
         self.sb.bdrPaddingUniformClicked()
 
-    def delKey(self, key=None):
+    def onStyleDel(self, *a, key=None):
         if key is None:
             key = self.marker
         if self.sheet.get(key, {}).get(" deletable", False):
@@ -1059,7 +1065,7 @@ class StyleEditorView(StyleEditor):
             model.remove(i)
             self.onSelected(selection)
 
-    def refreshKey(self):
+    def onStyleRefresh(self, *a):
         if self.marker in self.sheet:
             self.sheet[self.marker] = {k: v for k,v in self.sheet[self.marker].items() if k in dialogKeys}
             self.editMarker()
@@ -1086,3 +1092,36 @@ class StyleEditorView(StyleEditor):
             if oldval is None:
                 self.setval(self.marker, 'fontname', None)
 
+#### signal methods
+
+    def wiggleCurrentTabLabel(self):
+        lb = self.builder.get_object("lb_StyleEditor")
+        t = lb.get_label()
+        for b in range(8,-1,-1):
+            lb.set_label(" "*b+t)
+            Gtk.main_iteration_do(False)
+            time.sleep(0.08)
+            Gtk.main_iteration_do(False)
+
+    def onStyleFilter(self, btn):
+        def widen(x):
+            if x in aliases:
+                return [x, x+"1"]
+            elif x[:-1] in aliases and x.endswith("1"):
+                return [x, x[:-1]]
+            else:
+                return [x]
+        try:
+            mrkrset = self.model.get_usfms().get_markers(self.model.getBooks()) if btn.get_active() else set()
+        except SyntaxError as e:
+            self.model.doError(_("USFM syntax error"), secondary=_("Syntax error: {}").format(e))
+            return
+        mrkrset = set(sum((widen(x) for x in mrkrset), []))
+        logger.debug(f"{self.model.getBooks()=}  {mrkrset=}")
+        self.add_filter(btn.get_active(), mrkrset)
+
+    def onStyleAdd(self, btn):
+        self.mkrDialog(newkey=True)
+
+    def onStyleEdit(self, btn):
+        self.mkrDialog()
