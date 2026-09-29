@@ -1164,8 +1164,7 @@
   \fi
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi [\digl@tc@ntentlist|\digl@tc@ntent@xcs]}%
-  \edef\tmp{#2}
-  
+  \edef\tmp{#2}%
   \ifdiglotcolh@scontent
     \ifx\tmp\empty\else
       \save@cutouts{\c@rrdstat}%
@@ -1181,6 +1180,7 @@
   \ifx\tmp\empty\else
     \restore@cutouts{#2}%
   \fi
+  \tempfalse
   \ifdiglotcolh@scontent \temptrue \fi
   \ifnum\savedpenalty=-10000 \temptrue\fi
   \iftemp
