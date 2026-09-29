@@ -450,7 +450,7 @@ _nonsensitivities = {
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_createZipArchiveXtra", "btn_Generate",
-                    "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot"), 
+                    "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot", "btn_pubPrint"), 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission",
                     "btn_requestIllustrations", "c_noupdate", "c_quickRun", 
@@ -2235,6 +2235,8 @@ class GtkViewModel(ViewModel):
     def on_zvarPubToggled(self, cr, path):
         self.pubvarlist[path][4] = not self.pubvarlist[path][4]
         self.pubvars_publishable[self.pubvarlist[path][0]] = self.pubvarlist[path][4]
+        self.publications = self.pubView.save()
+        self.pubView.load(self.publications)
 
     def allvars(self, dest=None):
         if dest is None:

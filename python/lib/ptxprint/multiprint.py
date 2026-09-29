@@ -12,6 +12,8 @@ import threading, queue, psutil
 from ptxprint.page_filler import PTXFiller
 from ptxprint.project import ProjectList
 from ptxprint.utils import BuildParams, ProgressEvent, f_
+from ptxprint.view import ViewModel
+from ptxprint.runjob import RunJob
 from usfmtc.reference import chaps, RefList
 
 
@@ -41,7 +43,7 @@ class ViewPrinter:
     def solve(self, books: list[str], cfgid_override: Optional[str] = None):
         cfgid = cfgid_override or self.build_params.cfgid
         self.view.setConfigId(cfgid)
-        self.view.set("ecb_booklist", books)
+        self.view.set("ecb_booklist", str(books))
         self.view.set("r_book", "multiple")
 
         runjob = RunJob(
@@ -160,7 +162,7 @@ class WorkerContext:
             logging.debug("new job matches old job, using that")
         # always set up the view even if same as before
         if job.action == 'print' and job.build_params.setupfn is not None:
-            job.build_params.setupfn(self.current_printer.view, job.build_params.setup_args)
+            job.build_params.setupfn(self.current_printer.view, job.build_params.setupargs)
 
         return self.current_printer
 
@@ -181,7 +183,7 @@ class WorkerContext:
 
     def execute_job(self, job: Job):
         """Unified execution handler with shared watchdog timer and logger setup."""
-        target_id = job.books[0] if job.action == 'fill' else "_".join(job.books)
+        target_id = job.books[0] if job.action == 'fill' else "_".join([job.books.first.book, job.books.last.book])
 
         logging.debug(f"Executing for {target_id}")
         if self.cancel_event and self.cancel_event.value:
@@ -309,8 +311,7 @@ class MultiPrint:
             self.start()
 
         job = Job(action='print', books=books, build_params=build_params, cfgid=cfgid, log_config=log_config)
-        self._dispatch_job(job)
-        return fut
+        return self._dispatch_job(job)
 
     def is_finished(self) -> bool:
         """Non-blocking check to determine if all submitted futures are complete."""

@@ -150,8 +150,8 @@ class BuildParams:
     guid: str
     cfgid: str
     scriptsdir: str
-    timeout: Optional[int]
-    loglevel: Optional[int]
+    timeout: Optional[int] = 0
+    loglevel: Optional[int] = 0
     setupfn: Optional[Callable] = None
     setupargs: Optional[Any] = field(default=None, compare=False)
     resultfn: Optional[Callable] = None

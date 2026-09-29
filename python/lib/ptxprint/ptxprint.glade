@@ -37634,7 +37634,7 @@ main scripture pages.</property>
                             <property name="valign">start</property>
                             <property name="layout-style">start</property>
                             <child>
-                              <object class="GtkButton">
+                              <object class="GtkButton" id="btn_pubAdd">
                                 <property name="label">gtk-add</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -37650,7 +37650,7 @@ main scripture pages.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton">
+                              <object class="GtkButton" id="btn_pubDel">
                                 <property name="label">gtk-delete</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -37669,7 +37669,7 @@ main scripture pages.</property>
                               <placeholder/>
                             </child>
                             <child>
-                              <object class="GtkButton">
+                              <object class="GtkButton" id="btn_pubPrint">
                                 <property name="label" translatable="yes">Print Selected</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
