@@ -46,6 +46,7 @@ from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackBundle, GetDBLName
 from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets, setupCatalog
+from ptxprint.publications import PublicationsView
 from ptxprint.hyphen import Hyphenation
 from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
@@ -1037,6 +1038,7 @@ class GtkViewModel(ViewModel):
         self.adjView = AdjListView(self)
         self.tv_polyglot = Gtk.TreeView()
         self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
+        self.pubView = PublicationsView(self)
         setupCatalog(self)
         setupGtkFonts(self)
 
@@ -2568,6 +2570,7 @@ class GtkViewModel(ViewModel):
             self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
     def createConfig(self, diff=None):
+        self.publications = self.pubView.save()
         config = super().createConfig(diff=diff)
         if self.coverwiz is not None:
             self.coverwiz.state.saveConfig(config)
@@ -2717,6 +2720,7 @@ class GtkViewModel(ViewModel):
                     obj = self.builder.get_object(w)
                     if obj is not None:
                         obj.set_sensitive(state)
+        self.pubView.load(self.publications)
         self.colorTabs()
         self.updateMarginGraphics()
         self.sensiVisible('c_lockUI4Layout') # Why does this do nothing? Is it in the wrong place?

@@ -16234,7 +16234,7 @@ should the Slice contain?</property>
       <action-widget response="-6">btn_slice_cancel</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkListStore" id="ts_publications">
+  <object class="GtkTreeStore" id="ts_publications">
     <columns>
       <!-- column-name label -->
       <column type="gchararray"/>
@@ -37562,6 +37562,8 @@ main scripture pages.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="shadow-type">in</property>
+                            <property name="min-content-height">300</property>
+                            <property name="propagate-natural-height">True</property>
                             <child>
                               <object class="GtkTreeView" id="tv_publications">
                                 <property name="visible">True</property>
@@ -37569,11 +37571,16 @@ main scripture pages.</property>
                                 <property name="model">ts_publications</property>
                                 <property name="headers-visible">False</property>
                                 <property name="headers-clickable">False</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection"/>
+                                </child>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_pub_select">
                                     <property name="title" translatable="yes">Select</property>
                                     <child>
-                                      <object class="GtkCellRendererToggle" id="cr_pub_select"/>
+                                      <object class="GtkCellRendererToggle" id="cr_pub_select">
+                                        <signal name="toggled" handler="onPubSelect" swapped="no"/>
+                                      </object>
                                       <attributes>
                                         <attribute name="visible">3</attribute>
                                         <attribute name="active">2</attribute>
@@ -37586,7 +37593,13 @@ main scripture pages.</property>
                                     <property name="resizable">True</property>
                                     <property name="title" translatable="yes">Field</property>
                                     <child>
-                                      <object class="GtkCellRendererText" id="cr_pub_field"/>
+                                      <object class="GtkCellRendererText" id="cr_pub_field">
+                                        <signal name="edited" handler="onPubEdited" swapped="no"/>
+                                      </object>
+                                      <attributes>
+                                        <attribute name="editable">4</attribute>
+                                        <attribute name="text">0</attribute>
+                                      </attributes>
                                     </child>
                                   </object>
                                 </child>
@@ -37595,9 +37608,11 @@ main scripture pages.</property>
                                     <property name="resizable">True</property>
                                     <property name="title" translatable="yes">Value</property>
                                     <child>
-                                      <object class="GtkCellRendererText" id="cr_pub_value"/>
+                                      <object class="GtkCellRendererText" id="cr_pub_value">
+                                        <property name="editable">True</property>
+                                        <signal name="edited" handler="onPubEdited" swapped="no"/>
+                                      </object>
                                       <attributes>
-                                        <attribute name="editable">4</attribute>
                                         <attribute name="text">1</attribute>
                                       </attributes>
                                     </child>
@@ -37626,6 +37641,7 @@ main scripture pages.</property>
                                 <property name="receives-default">True</property>
                                 <property name="halign">start</property>
                                 <property name="use-stock">True</property>
+                                <signal name="clicked" handler="onPubAdd" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">True</property>
@@ -37641,6 +37657,7 @@ main scripture pages.</property>
                                 <property name="receives-default">True</property>
                                 <property name="halign">start</property>
                                 <property name="use-stock">True</property>
+                                <signal name="clicked" handler="onPubDel" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">True</property>
@@ -37658,6 +37675,7 @@ main scripture pages.</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
                                 <property name="halign">end</property>
+                                <signal name="clicked" handler="onPubPrint" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">True</property>
