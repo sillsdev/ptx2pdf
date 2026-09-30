@@ -37838,9 +37838,11 @@ named 'Copy of ...'</property>
                     </child>
                     <child type="tab">
                       <object class="GtkLabel" id="lb_Publications">
-                        <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
-                        <property name="tooltip-text" translatable="yes">...</property>
+                        <property name="tooltip-text" translatable="yes">Define several publications (each with
+its own books, titles and other \zvars)
+from this one configuration, and print
+them all in one go.</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Publications</property>
                       </object>
