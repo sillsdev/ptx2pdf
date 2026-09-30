@@ -37750,7 +37750,7 @@ named 'Copy of ...'</property>
                                   <object class="GtkTreeViewColumn" id="col_pub_field">
                                     <property name="resizable">True</property>
                                     <property name="min-width">200</property>
-                                    <property name="title" translatable="yes">Publication / Field</property>
+                                    <property name="title" translatable="yes">Publication ID / Field</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_pub_field">
                                         <signal name="edited" handler="onPubEdited" swapped="no"/>
