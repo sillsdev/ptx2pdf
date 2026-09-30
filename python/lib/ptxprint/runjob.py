@@ -165,6 +165,7 @@ class RunJob:
         self.extrafiles = {}
         self.piclist = None
         self.outfname = None
+        self.pdffile = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -334,7 +335,8 @@ class RunJob:
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
         sheets = {}
         keyarr = ["L"]
-        self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        if self.outfname is None:
+            self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.dict.setdefault("diglots_", {})
         for k, diginfo in diginfos.items():
             texfiles = []
@@ -469,7 +471,8 @@ class RunJob:
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        if self.outfname is None:
+            self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.update(None)
         if self.info['project/iffrontmatter'] != '%':
             frtfname = os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_FRT.SFM"))
@@ -563,7 +566,8 @@ class RunJob:
         outpath = os.path.join(self.tmpdir, '..', self.outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
-        self.pdffile = outpath + f"{pdfext}.pdf"
+        if self.pdffile is None:
+            self.pdffile = outpath + f"{pdfext}.pdf"
         logger.debug(f"{self.pdffile} exists({os.path.exists(self.pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:

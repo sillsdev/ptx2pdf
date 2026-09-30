@@ -155,6 +155,7 @@ class BuildParams:
     setupfn: Optional[Callable] = None
     setupargs: Optional[Any] = field(default=None, compare=False)
     resultfn: Optional[Callable] = None
+    pubid: Optional[str] = None
 
 @dataclass
 class ProgressEvent:

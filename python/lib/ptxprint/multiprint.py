@@ -35,14 +35,34 @@ class ViewPrinter:
         )
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
+        self.view.setConfigId(build_params.cfgid)
+        self.rtl = self.view.get("fcb_textDirection", "") == "rtl"
+        self.macrosdir = build_params.scriptsdir
+        self.view.project.ext = None
+        if nid is not None:
+            self.view.project.ext = f"pbuild{nid}"
+            d = self.view.project.printPath(self.view.cfgid)
+            if os.path.exists(d):
+                import time as _time
+                for f in os.listdir(d):
+                    fp = os.path.join(d, f)
+                    if not os.path.isfile(fp):
+                        continue
+                    for attempt in range(4):
+                        try:
+                            os.unlink(fp)
+                            break
+                        except PermissionError:
+                            if attempt < 3:
+                                _time.sleep(0.5)
+                            else:
+                                logger.warning(f"Cannot delete {fp} — file still locked; skipping")
 
     @property
     def cancelled(self):
         return self.cancel_event is not None and bool(self.cancel_event.value)
 
     def solve(self, books: list[str], cfgid_override: Optional[str] = None):
-        cfgid = cfgid_override or self.build_params.cfgid
-        self.view.setConfigId(cfgid)
         self.view.set("ecb_booklist", str(books))
         self.view.set("r_book", "multiple")
 
@@ -54,6 +74,13 @@ class ViewPrinter:
         )
         runjob.nothreads = True
         runjob.silent = True
+        if self.build_params.pubid:
+            bks = self.build_params.pubid
+        else:
+            bks = books.first.book + ("-"+books.last.book) if books.first.book != books.last.book else ""
+        runjob.outfname = f"{self.build_params.pid}_{self.build_params.cfgid}_{bks}_ptxp.tex"
+        runjob.pdffile = os.path.join(self.view.project.printPath(self.build_params.cfgid),
+                               '..', '..', runjob.outfname[:-4]) + ".pdf"
         res = runjob.doit(noview=True, noaction=False)
         if self.build_params.resultfn is not None:
             res = self.build_params.resultfn(self.view)
@@ -216,7 +243,7 @@ class WorkerContext:
                     restart=job.build_params.args.restart
                 )
             else:
-                res = printer.solve(job.books, cfgid_override=job.cfgid)
+                res = printer.solve(job.books)
         except Exception as e:
             print(f"Exception {job.books[0]}: {e}")
             logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n"
@@ -305,12 +332,12 @@ class MultiPrint:
             job = Job(action='fill', books=[bk], build_params=build_params, log_config=log_config, stop=stop)
             self._dispatch_job(job)
 
-    def submit_print_job(self, books: list[str], build_params: BuildParams, cfgid: Optional[str] = None, log_config: Optional[dict] = None) -> Future:
+    def submit_print_job(self, books: list[str], build_params: BuildParams, log_config: Optional[dict] = None) -> Future:
         """Enqueues a print job and returns the Future handle immediately."""
         if not self.executor:
             self.start()
 
-        job = Job(action='print', books=books, build_params=build_params, cfgid=cfgid, log_config=log_config)
+        job = Job(action='print', books=books, build_params=build_params, log_config=log_config)
         return self._dispatch_job(job)
 
     def is_finished(self) -> bool:

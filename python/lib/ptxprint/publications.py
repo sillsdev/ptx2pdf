@@ -267,7 +267,8 @@ class PublicationsView:
                 guid = self.view.project.guid,
                 cfgid = self.view.cfgid,
                 setupfn = printSetup,       # must be module global
-                setupargs = pvars)
+                setupargs = pvars,
+                pubid = pid)
             self.view.mprint.submit_print_job(books, bparms)
         w = self.builder.get_object("btn_pubPrint")
         w.get_style_context().add_class("active")
