@@ -1,8 +1,36 @@
-PTXprint 3.0.43 Release Notes
-19 Sep 2026
+PTXprint 3.0.44 Release Notes
+30 Sep 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
+
+Bug fixes and Improvements in 3.0.44 - (30 Sep 2026)
+
+  * Automatic Page Filler is much faster now
+    - Settings on the Advanced tab have clearer names and tooltips, split into
+      Speed and Quality settings. The default time limit is now 180 minutes
+    - Improved page building: paragraphs that would look bad can be pushed to
+      look good enough, and the number of combinations tried is now limited
+    - The AdjList now takes font expansion and other settings into account
+    - Use the correct paragraph references, and refresh chapter map on each run
+    - Stop now cancels books that are part-way through filling, instead of
+      waiting for them to finish
+    - Parallel workers no longer write to the same shared files
+    - The Page Filler can be run more than once without restarting PTXprint
+
+  * New Publications tab
+    - Define several publications from one configuration. Each one has its own
+      books, titles and other \zvars. Tick the ones you want to print in one go
+    - Book lists are checked as you type. Unknown book codes, backwards ranges
+      and chapters past the end of a book show in red with a tooltip
+    - Print Selected saves the configuration first, skips publications with
+      invalid books, and opens the output folder when it finishes
+
+  * Other
+    - The Basic tab shows a warning for a bad book list instead of crashing
+    - New defaults for Shrink/Expand Text: 1% steps, 95% min and 105% max
+    - Internal: some utility TeX macros moved into ptx-utility.tex, and GUI code
+      moved out of gtkview.py
 
 Bug fixes and Improvements in 3.0.43 - (19 Sep 2026)
 
