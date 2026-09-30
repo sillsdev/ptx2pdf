@@ -37611,9 +37611,11 @@ main scripture pages.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Add a new publication using
-the current values of the
-publishable \zvars.</property>
+                                <property name="tooltip-text" translatable="yes">Add a new publication, filled in from
+the current configuration: the books
+chosen on the Basic tab, and the title,
+subtitle and other publishable \zvars
+from the Peripherals tab.</property>
                                 <signal name="clicked" handler="onPubAdd" swapped="no"/>
                               </object>
                               <packing>

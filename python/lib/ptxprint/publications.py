@@ -2,7 +2,7 @@ import os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib, Pango
-from ptxprint.utils import BuildParams, parseBookList, startfile, _
+from ptxprint.utils import BuildParams, parseBookList, startfile, chaps, _
 from ptxprint.multiprint import MultiPrint
 
 def printSetup(view, args):
@@ -71,7 +71,7 @@ class PublicationsView:
             for col in selected_keys:
                 val = pub.get(col)
                 if val is None:
-                    val = self.view.pubvars.get(col, "")
+                    val = self.view.getvar(col, "")
                 self.ts.append(parent_iter, self._childRow(col, val, pid))
         if len(self.ts) < 6:
             self.tv.expand_all()
@@ -156,11 +156,35 @@ class PublicationsView:
         for w in ("btn_pubDuplicate", "btn_pubDel"):
             self.builder.get_object(w).set_sensitive(hascurr)
 
+    def _currentBooks(self):
+        """ Returns the books/range/module currently chosen on the Basic tab """
+        scope = self.view.get("r_book")
+        if scope == "module":
+            return str(self.view.moduleFile or "")
+        elif scope == "multiple":
+            return self.view.get("ecb_booklist", "").strip()
+        bk = self.view.get("ecb_book") or ""
+        if not bk:
+            return ""
+        try:
+            fromch = round(float(self.view.get("t_chapfrom") or "1"))
+            toch = round(float(self.view.get("t_chapto") or "0"))
+        except ValueError:
+            return bk
+        maxch = int(chaps.get(bk, "0"))
+        if fromch <= 1 and (toch <= 0 or toch >= maxch):
+            return bk
+        elif fromch == toch:
+            return f"{bk} {fromch}"
+        return f"{bk} {fromch}-{toch}"
+
     def onPubAdd(self, btn):
-        pid = self._uniquePid(_("New publication"))
-        parent_iter = self.ts.append(None, self._parentRow(pid, "", False))
+        """ Adds a publication pre-filled from the current configuration """
+        title = self.view.getvar("maintitle", "").strip()
+        pid = self._uniquePid(title or _("New publication"))
+        parent_iter = self.ts.append(None, self._parentRow(pid, self._currentBooks(), True))
         for k in self._publishableKeys():
-            self.ts.append(parent_iter, self._childRow(k, self.view.pubvars.get(k, ""), pid))
+            self.ts.append(parent_iter, self._childRow(k, self.view.getvar(k, ""), pid))
         self._selectAndShow(parent_iter)
         self._updateStatus()
 
