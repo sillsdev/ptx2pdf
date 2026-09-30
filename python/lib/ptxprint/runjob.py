@@ -166,6 +166,7 @@ class RunJob:
         self.piclist = None
         self.outfname = None
         self.pdffile = None
+        self.env = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -497,19 +498,21 @@ class RunJob:
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        filedir = self.printer.project.printPath(self.info.dict["config/name"], noext=True)
+        # filedir = self.printer.project.printPath(self.info.dict["config/name"], noext=True)
+        filedir = self.printer.project.printPath(self.info.dict["config/name"])
         texfiledat = self.info.asTex(filedir=filedir, jobname=swapext(self.outfname, ext=".tex"), extra=extra, diglots=diglots)
         with open(os.path.join(self.tmpdir, self.outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=x)) for x in (".tex", ".xdv")]
         if self.inArchive:
             return genfiles
-        os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
+        self.env = dict(os.environ)
+        self.env["hyph_size"] = "65521"     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
         # os.putenv("extra_mem_bot", "5000000")    # extra main memory on top of 5M
-        os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
+        self.env["stack_size"] = "32768"    # extra input stack space (up from 5000)
         # os.putenv("save_size", "1000000")    # extra increase save stack from 80000
-        os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
-        os.putenv("max_print_line", "32767")    # Allow long error messages
+        self.env["pool_size"] = "12500000"  # Double conventional pool size for big jobs (Full Bible with xrefs)
+        self.env["max_print_line"] = "32767"    # Allow long error messages
         ptxmacrospath = os.path.abspath(self.macrosdir)
         ptxmacrobase = os.path.join(pycodedir(), 'ptx2pdf')
         if not os.path.exists(ptxmacrobase):
@@ -528,10 +531,10 @@ class RunJob:
                     break
 
         pathjoiner = (";" if sys.platform.startswith("win") else ":")
-        envtexinputs = os.getenv("TEXINPUTS")
+        envtexinputs = self.env.get("TEXINPUTS")
         texinputs = envtexinputs.split(pathjoiner) if envtexinputs is not None and len(envtexinputs) else []
         for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
-            if a not in texinputs:
+            if a+"//" not in texinputs:
                 texinputs.append(a+"//")
         miscfonts = getfontcache().fontpaths[:]
         if sys.platform.startswith("darwin") and not nosysfonts:
@@ -551,15 +554,15 @@ class RunJob:
                 fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
                 with open(os.path.join(self.tmpdir, 'fonts.conf'), "w") as outf:
                     outf.write(fontconfig_template_nofc.format(fontsdirs=fcs))
-                os.putenv("FONTCONFIG_FILE", os.path.join(self.tmpdir, "fonts.conf"))
+                self.env["FONTCONFIG_FILE"] = os.path.join(self.tmpdir, "fonts.conf")
                 logger.debug(f"FONTCONFIG_FILE={os.path.join(self.tmpdir, 'fonts.conf')}")
-                os.putenv("MISCFONTS", pathjoiner.join((ptxmacrospath, sfonts)))
+                self.env["MISCFONTS"] = pathjoiner.join((ptxmacrospath, sfonts))
             else:
-                os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
+                self.env["MISCFONTS"] = pathjoiner.join(miscfonts)
         logger.debug(f"MISCFONTS={pathjoiner.join(miscfonts)}")
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
-        os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
+        self.env['TEXINPUTS'] = pathjoiner.join(texinputs)
         # if os.system == "win32":
         #     os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
         os.chdir(self.tmpdir)
@@ -657,7 +660,7 @@ class RunJob:
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
             self.cpu_seconds = child_cpu_time(None)
-            self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
+            self.runner = call(cmd + [action], cwd=self.tmpdir, env=self.env, **callkw)
             if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
                 procout = None
                 try:
@@ -746,7 +749,8 @@ class RunJob:
             cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
         self.cpu_seconds = child_cpu_time(None)
         with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
-            self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
+            self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir,
+                                env=self.env, stdout=outf, stderr=outf)
         logger.debug(f"Running: {cmd} for {outfname}")
         if self.args.extras & 1:
             print(f"Subprocess return value: {self.runner}")

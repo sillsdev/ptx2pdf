@@ -213,7 +213,7 @@ def putenv(k, v):
         from ctypes import cdll
         from ctypes.util import find_msvcrt
         cdll.msvcrt._putenv('{}={}'.format(k, v))
-    os.putenv(k, v)
+    os.environ[k] = v
     
 def getlang():
     global lang
