@@ -16250,6 +16250,12 @@ should the Slice contain?</property>
       <column type="gchararray"/>
       <!-- column-name row_key -->
       <column type="gchararray"/>
+      <!-- column-name weight -->
+      <column type="gint"/>
+      <!-- column-name foreground -->
+      <column type="gchararray"/>
+      <!-- column-name tooltip -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkTreeStore" id="ts_styles">
@@ -37553,30 +37559,180 @@ main scripture pages.</property>
                     <child>
                       <object class="GtkBox" id="tb_Publications">
                         <property name="can-focus">False</property>
-                        <property name="valign">start</property>
-                        <property name="margin-bottom">6</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">12</property>
+                        <property name="vexpand">True</property>
                         <property name="orientation">vertical</property>
-                        <property name="homogeneous">True</property>
+                        <property name="spacing">8</property>
+                        <child>
+                          <object class="GtkLabel" id="l_pubHeading">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">&lt;span size="large"&gt;&lt;b&gt;Publications&lt;/b&gt;&lt;/span&gt;</property>
+                            <property name="use-markup">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="l_pubIntro">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Each publication prints this configuration with its own set of books and its own values for the \zvars marked 'Pub' on the Peripherals tab (such as the main title and subtitle). Tick the publications you want, then click 'Print Selected'. Click on any value to edit it.</property>
+                            <property name="wrap">True</property>
+                            <property name="xalign">0</property>
+                            <property name="max-width-chars">90</property>
+                            <style>
+                              <class name="dim-label"/>
+                            </style>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="bx_pubToolbar">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-top">4</property>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkButton" id="btn_pubAdd">
+                                <property name="label" translatable="yes">Add</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Add a new publication using
+the current values of the
+publishable \zvars.</property>
+                                <signal name="clicked" handler="onPubAdd" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_pubDuplicate">
+                                <property name="label" translatable="yes">Duplicate</property>
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Make a complete copy of the
+highlighted publication,
+named 'Copy of ...'</property>
+                                <signal name="clicked" handler="onPubDuplicate" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_pubDel">
+                                <property name="label" translatable="yes">Delete</property>
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Delete the highlighted publication
+(you will be asked to confirm).</property>
+                                <signal name="clicked" handler="onPubDel" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="orientation">vertical</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_pubExpandAll">
+                                <property name="label" translatable="yes">Expand All</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Show the details of every publication.</property>
+                                <signal name="clicked" handler="onPubExpandAll" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_pubCollapseAll">
+                                <property name="label" translatable="yes">Collapse All</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Hide the details of every publication.</property>
+                                <signal name="clicked" handler="onPubCollapseAll" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">5</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
                         <child>
                           <object class="GtkScrolledWindow" id="scr_publications">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="vexpand">True</property>
                             <property name="shadow-type">in</property>
                             <property name="min-content-height">300</property>
-                            <property name="propagate-natural-height">True</property>
                             <child>
                               <object class="GtkTreeView" id="tv_publications">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="model">ts_publications</property>
-                                <property name="headers-visible">False</property>
                                 <property name="headers-clickable">False</property>
+                                <property name="enable-search">False</property>
+                                <property name="enable-tree-lines">True</property>
+                                <property name="tooltip-column">9</property>
+                                <signal name="row-activated" handler="onPubRowActivated" swapped="no"/>
                                 <child internal-child="selection">
-                                  <object class="GtkTreeSelection"/>
+                                  <object class="GtkTreeSelection" id="sel_publications">
+                                    <signal name="changed" handler="onPubSelectionChanged" swapped="no"/>
+                                  </object>
                                 </child>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_pub_select">
-                                    <property name="title" translatable="yes">Select</property>
+                                    <property name="title" translatable="yes">Print</property>
                                     <child>
                                       <object class="GtkCellRendererToggle" id="cr_pub_select">
                                         <signal name="toggled" handler="onPubSelect" swapped="no"/>
@@ -37591,7 +37747,8 @@ main scripture pages.</property>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_pub_field">
                                     <property name="resizable">True</property>
-                                    <property name="title" translatable="yes">Field</property>
+                                    <property name="min-width">200</property>
+                                    <property name="title" translatable="yes">Publication / Field</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_pub_field">
                                         <signal name="edited" handler="onPubEdited" swapped="no"/>
@@ -37599,6 +37756,7 @@ main scripture pages.</property>
                                       <attributes>
                                         <attribute name="editable">4</attribute>
                                         <attribute name="text">0</attribute>
+                                        <attribute name="weight">7</attribute>
                                       </attributes>
                                     </child>
                                   </object>
@@ -37606,7 +37764,8 @@ main scripture pages.</property>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_pub_value">
                                     <property name="resizable">True</property>
-                                    <property name="title" translatable="yes">Value</property>
+                                    <property name="expand">True</property>
+                                    <property name="title" translatable="yes">Books / Value</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_pub_value">
                                         <property name="editable">True</property>
@@ -37614,6 +37773,8 @@ main scripture pages.</property>
                                       </object>
                                       <attributes>
                                         <attribute name="text">1</attribute>
+                                        <attribute name="weight">7</attribute>
+                                        <attribute name="foreground">8</attribute>
                                       </attributes>
                                     </child>
                                   </object>
@@ -37622,26 +37783,23 @@ main scripture pages.</property>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
+                            <property name="expand">True</property>
                             <property name="fill">True</property>
-                            <property name="position">0</property>
+                            <property name="position">3</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButtonBox">
+                          <object class="GtkBox" id="bx_pubFooter">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="valign">start</property>
-                            <property name="layout-style">start</property>
+                            <property name="spacing">6</property>
                             <child>
-                              <object class="GtkButton" id="btn_pubAdd">
-                                <property name="label">gtk-add</property>
+                              <object class="GtkLabel" id="l_pubStatus">
                                 <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
+                                <property name="can-focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="use-stock">True</property>
-                                <signal name="clicked" handler="onPubAdd" swapped="no"/>
+                                <property name="xalign">0</property>
+                                <property name="ellipsize">end</property>
                               </object>
                               <packing>
                                 <property name="expand">True</property>
@@ -37650,45 +37808,27 @@ main scripture pages.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="btn_pubDel">
-                                <property name="label">gtk-delete</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="halign">start</property>
-                                <property name="use-stock">True</property>
-                                <signal name="clicked" handler="onPubDel" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
                               <object class="GtkButton" id="btn_pubPrint">
                                 <property name="label" translatable="yes">Print Selected</property>
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
-                                <property name="halign">end</property>
+                                <property name="tooltip-text" translatable="yes">Create a PDF for each ticked publication.</property>
                                 <signal name="clicked" handler="onPubPrint" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
+                                <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="pack-type">end</property>
-                                <property name="position">3</property>
+                                <property name="position">1</property>
                               </packing>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">1</property>
+                            <property name="position">4</property>
                           </packing>
                         </child>
                       </object>
