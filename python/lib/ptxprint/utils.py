@@ -132,6 +132,36 @@ booknumbers = {k: booknum(v) for k, v in bookcodes.items()}
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
+def parseBookList(text, **kw):
+    """ Parses a list of books/references (e.g. 'RUT JON', 'MAT 5:3-7:29').
+        Returns (RefList, None) on success or (None, error message) on failure,
+        so callers can warn the user rather than crash on a bad reference. """
+    from usfmtc.reference import RefList
+    kw.setdefault("bookranges", True)
+    try:
+        res = RefList(text, **kw)
+    except SyntaxError as e:
+        return (None, str(e))
+    except ValueError as e:
+        refs = re.findall(r"Ref\('([^']*)'\)", str(e))
+        if len(refs) == 2:
+            return (None, _("The range from {} to {} goes backwards. "
+                            "The start of a range must come before its end.").format(*refs))
+        return (None, str(e))
+    bad = []
+    for r in res:
+        for ref in (r.first, r.last):
+            if ref.book not in bookcodes:
+                bad.append(_("Unknown book code: {}").format(ref.book))
+                continue
+            maxch = int(chaps.get(ref.book, "0"))
+            ch = ref.chapter
+            if maxch > 0 and ch is not None and ch > maxch:
+                bad.append(_("{} only has {} chapters").format(ref.book, maxch))
+    if len(bad):
+        return (None, "\n".join(dict.fromkeys(bad)))
+    return (res, None)
+
 APP = 'ptxprint'
 
 chgsHeader = """# This (changes.txt) file is for configuration-specific changes (not affecting other configs).

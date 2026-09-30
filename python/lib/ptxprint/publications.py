@@ -2,8 +2,7 @@ import os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib, Pango
-from usfmtc.reference import RefList
-from ptxprint.utils import BuildParams, bookcodes, _
+from ptxprint.utils import BuildParams, parseBookList, startfile, _
 from ptxprint.multiprint import MultiPrint
 
 def printSetup(view, args):
@@ -102,18 +101,19 @@ class PublicationsView:
         if not books:
             return (ERRORCOL, GLib.markup_escape_text(_("No books specified. Click here to enter "
                                         "a list of books, e.g. 'RUT JON' or 'MAT-JHN'.")))
-        try:
-            bks = [r.book for r in RefList(books, bookranges=True)]
-        except SyntaxError:
-            if os.path.isfile(books) or (getattr(self.view.project, "path", None) is not None
-                                         and os.path.isfile(os.path.join(self.view.project.path, books))):
-                return (NORMALCOL, None)        # a module file
-            return (ERRORCOL, GLib.markup_escape_text(_("'{}' is not a valid list of books, "
-                                        "nor an existing module file.").format(books)))
-        bad = [b for b in bks if b not in bookcodes]
-        if len(bad):
-            return (ERRORCOL, GLib.markup_escape_text(_("Unknown book code(s): {}").format(" ".join(bad))))
+        if self._isModule(books):
+            return (NORMALCOL, None)
+        refs, err = parseBookList(books)
+        if err is not None:
+            return (ERRORCOL, GLib.markup_escape_text(err))
         return (NORMALCOL, None)
+
+    def _isModule(self, books):
+        """ A books value may instead be the path to a module file """
+        if os.path.isfile(books):
+            return True
+        prjpath = getattr(self.view.project, "path", None)
+        return prjpath is not None and os.path.isfile(os.path.join(prjpath, books))
 
     def _uniquePid(self, base):
         existing = set(r[0] for r in self.ts)
@@ -241,18 +241,35 @@ class PublicationsView:
         self._updateStatus()
 
     def onPubPrint(self, btn):
-        self.save()
+        # Save the config first so that the publications (and any other changes) are kept
+        self.view.onSaveConfig(None)
+        jobs = []
+        skipped = []
+        for (i, r) in self.iter_selected():
+            books = r[1].strip()
+            if self._isModule(books):
+                jobs.append((r, [books]))
+                continue
+            refs, err = parseBookList(books)
+            if err is not None or not len(refs):
+                skipped.append("{}: {}".format(r[0], err or _("No books specified")))
+            else:
+                jobs.append((r, refs))
+        if len(skipped):
+            msg = "\n".join(skipped)
+            if not len(jobs):
+                self.view.doError(_("None of the selected publications can be printed"), secondary=msg)
+                return
+            if not self.view.msgQuestion(_("Some publications have invalid books"),
+                        msg + "\n\n" + _("These will be skipped. Print the other publications anyway?")):
+                return
         self.printing = True
         btn.set_sensitive(False)
         if getattr(self.view, 'mprint', None) is None:
             numproc = int(self.view.get("s_maxproc"))
             self.view.mprint = MultiPrint(numproc=numproc, progress=True)
-        for (i, r) in self.iter_selected():
+        for (r, books) in jobs:
             pid = r[6]
-            try:
-                books = RefList(r[1], bookranges=True)
-            except SyntaxError:
-                books = [r[1]]      # treat as a module
             pvars = {}
             for cr in r.iterchildren():
                 pvars[cr[5]] = cr[1]
@@ -280,5 +297,7 @@ class PublicationsView:
             pbutton = self.builder.get_object("btn_pubPrint")
             pbutton.get_style_context().remove_class("active")
             self._updateStatus()
+            # Show the user where the publication PDFs were created
+            startfile(self.view.project.printPath(None))
             return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE

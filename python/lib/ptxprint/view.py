@@ -8,7 +8,7 @@ from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontca
 from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
-                            zipopentext, xdvigetfonts, calledme
+                            zipopentext, xdvigetfonts, calledme, parseBookList
 from ptxprint.usxutils import UsfmCollection, Usfm, Sheets, simple_parse, merge_sty, out_sty
 from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
@@ -313,12 +313,13 @@ class ViewModel:
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
-        try:
-            bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
-        except SyntaxError as e:
+        bl, err = parseBookList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False)
+        if err is not None:
             if errors:
-                self.doError(str(e),
-                             secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
+                self.doError(_("Invalid book list or reference"),
+                             secondary=err + "\n\n" + _("Book codes must be 3-letter USFM codes "
+                                                        "(e.g. GEN, MAT, JHN, REV), optionally followed "
+                                                        "by chapters and verses (e.g. MAT 5:3-7:29)."))
             return []
         bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
