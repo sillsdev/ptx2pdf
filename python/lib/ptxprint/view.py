@@ -244,7 +244,7 @@ class ViewModel:
 
     def allvars(self, dest=None):
         if dest is None:
-            return self.pubvars.keys()
+            return [k for k in self.pubvars.keys() if not k.startswith("__")]
         elif dest == "strongs":
             return self.strongsvars.keys()
 

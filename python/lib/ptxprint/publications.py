@@ -6,7 +6,6 @@ from ptxprint.utils import BuildParams, parseBookList, startfile, chaps, _
 from ptxprint.multiprint import MultiPrint
 
 def printSetup(view, args):
-    print(args)
     for k, v in args.items():
         view.setvar(k, v)
 

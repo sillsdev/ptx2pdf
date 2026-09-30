@@ -62,9 +62,13 @@ class ViewPrinter:
     def cancelled(self):
         return self.cancel_event is not None and bool(self.cancel_event.value)
 
-    def solve(self, books: list[str], cfgid_override: Optional[str] = None):
-        self.view.set("ecb_booklist", str(books))
-        self.view.set("r_book", "multiple")
+    def solve(self, books: RefList|str, cfgid_override: Optional[str] = None):
+        if isinstance(books, str):
+            self.moduleFile = books
+            self.view.set("r_book", "module")
+        else:
+            self.view.set("ecb_booklist", str(books))
+            self.view.set("r_book", "multiple")
 
         runjob = RunJob(
             self.view,
@@ -76,6 +80,8 @@ class ViewPrinter:
         runjob.silent = True
         if self.build_params.pubid:
             bks = self.build_params.pubid
+        elif isinstance(books, str):
+            bks = re.sub(r"^(.*/)?(.*)(\..*)?$", r"\2", books.replace(" ", "_"))
         else:
             bks = books.first.book + ("-"+books.last.book) if books.first.book != books.last.book else ""
         runjob.outfname = f"{self.build_params.pid}_{self.build_params.cfgid}_{bks}_ptxp.tex"
@@ -332,7 +338,7 @@ class MultiPrint:
             job = Job(action='fill', books=[bk], build_params=build_params, log_config=log_config, stop=stop)
             self._dispatch_job(job)
 
-    def submit_print_job(self, books: list[str], build_params: BuildParams, log_config: Optional[dict] = None) -> Future:
+    def submit_print_job(self, books: RefList|str, build_params: BuildParams, log_config: Optional[dict] = None) -> Future:
         """Enqueues a print job and returns the Future handle immediately."""
         if not self.executor:
             self.start()
