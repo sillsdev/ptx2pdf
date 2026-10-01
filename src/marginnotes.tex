@@ -112,23 +112,35 @@
 
 \newdimen\marginnotesgap     % distance from edge of text to start of notes. Not enforced here
 \newdimen\marginnoteswidth   % width of marginal notes allocation - marginnotesgap
+\def\m@rginnoteref#1#2{% #1 = reference, #2 = marker. Sets \mn@ref
+  \edef\mn@ref{#1}%
+  \x@\ifx\csname mn-lastref-#2\endcsname\mn@ref
+    \x@\xdef\csname mn-refcount-#2\endcsname{\the\numexpr\csname mn-refcount-#2\endcsname+1\relax}%
+    \edef\mn@ref{\mn@ref[\csname mn-refcount-#2\endcsname]}%
+  \else
+    \x@\global\x@\let\csname mn-lastref-#2\endcsname\mn@ref
+    \x@\gdef\csname mn-refcount-#2\endcsname{0}%
+  \fi
+}
+
 \def\d@marginnote#1#2#3#4#5#6#7{%
 % #1 = vbox, #2 = reference, #3 = marker #4 = side #5 = valign #6 = x-shift #7 = y-shift
+  \m@rginnoteref{#2}{#3}%
   \edef\p@s{#4}%
   \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
-  \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else
-    \ifm@rginalnotesw@rn\else\MSG{*** marginnotes: no marginal note for #2-#3; re-run for accurate note positions}\global\m@rginalnotesw@rntrue\fi
+  \ifcsname marginnote-\mn@ref @#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-\mn@ref @#3:\t@mpa no\endcsname}\else
+    \ifm@rginalnotesw@rn\else\MSG{*** marginnotes: no marginal note for \mn@ref -#3; re-run for accurate note positions}\global\m@rginalnotesw@rntrue\fi
     \edef\p@geno{\the\pageno}\fi
   \ifx\p@s\@uter \ifodd\p@geno \ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi \else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
   \else\ifx\p@s\@nner\ifodd\p@geno \ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi \else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
   \dimen0 = #6%
   \dimen3 = #7%
-  \trace{M}{marginnote (#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
+  \trace{M}{marginnote (#1) \mn@ref \space #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-\mn@ref @#3:colno\endcsname, col=\csname marginnote-\mn@ref @#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
   %\dimen0=0pt
-  \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname \else\dimen1=0pt \fi
-  \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname \else\dimen2=0pt \fi
-  \xdef\wr@tet@mp{\string\@marginnote{#2}{#3}{\p@s}{#5}{\the\dimen0}{\the\wd#1}{\the\ht#1}{\the\dp#1}{\the\dimen1}{\the\dimen2}}%
+  \ifcsname marginnote-\mn@ref @#3:xshift\endcsname\dimen1=\csname marginnote-\mn@ref @#3:xshift\endcsname \else\dimen1=0pt \fi
+  \ifcsname marginnote-\mn@ref @#3:yshift\endcsname\dimen2=\csname marginnote-\mn@ref @#3:yshift\endcsname \else\dimen2=0pt \fi
+  \xdef\wr@tet@mp{\string\@marginnote{\mn@ref}{#3}{\p@s}{#5}{\the\dimen0}{\the\wd#1}{\the\ht#1}{\the\dp#1}{\the\dimen1}{\the\dimen2}}%
   \advance\dimen2 by \dimen3%
   %\showbox#1
   \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%
