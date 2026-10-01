@@ -92,8 +92,8 @@ jobs:
         name: PTXPrint windows bundle
         path: |
           Output/Setup*.exe
-          latest.*.json
-          *.download_info
+          Output/latest.*.json
+          Output/*.download_info
         if-no-files-found: error
         retention-days: 7
 
