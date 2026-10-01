@@ -86,10 +86,10 @@ jobs:
           sidebar="yes"
         } | ConvertTo-Json | Tee-Object -FilePath "latest.win.json" | Out-File -Encoding "UTF8" -FilePath "$exe_obj.download_info"
 
-    - name: Upload signed exe
+    - name: Upload installer exe
       uses: actions/upload-artifact@v7
       with:
-        name: PTXPrint bundle
+        name: PTXPrint windows bundle
         path: |
           Output/Setup*.exe
           latest.*.json
@@ -130,6 +130,9 @@ jobs:
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
     
+    - name: Install tools
+      run: npm i appdmg
+
     - name: Build installer
       env:
         SKIP_CODESIGN: ${{ vars.SKIP_CODESIGN }}
@@ -139,7 +142,7 @@ jobs:
       uses: actions/upload-artifact@v7
       if: ${{ vars.SKIP_CODESIGN != '1' }}
       with:
-        name: PTXPrint bundle
+        name: PTXPrint macOS bundle
         path: |
           Output/*.dmg
           latest.*.json
