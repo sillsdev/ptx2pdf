@@ -116,7 +116,7 @@
 
 \def\stylesheetL{\gdef\ds@ffix{L}\stylesh@@t}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
 \def\stylesheetR{\gdef\ds@ffix{R}\stylesh@@t}
-\def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}
+\def\stylesh@@t#1{\stylesheet{#1}\gdef\ds@ffix{}}% ds@ffix must be empty in normal operations, or we can't save values / swap diglot sides properly.
 
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitVerseNumberOne,MakeChapterLabel,ColAdjskip,intercharspace}
@@ -336,6 +336,31 @@
 \newif\iftrialfailed
 \global\def\n@xtc@mmand{}%
 
+
+\def\MergedNoteType#1{\global\x@\let\csname @SepNote-#1\endcsname\false \@update@note@lists}
+\def\SepNoteType#1{\global\x@\let\csname @SepNote-#1\endcsname\false \@update@note@lists}
+\newtoks\combn@tecl@sses
+\newtoks\sepn@tecl@sses
+\def\sepn@tecl@sscount{0}
+\def\combn@tecl@sscount{0}
+\def\@@update@note@lists#1{\@testSep{#1}%
+  \if@sep@notes
+    \xdef\sepn@tecl@sscount{\the\numexpr \sepn@tecl@sscount +1\relax}%
+    \global\x@\sepn@tecl@sses\x@{\the\sepn@tecl@sses\\{#1}}%
+  \else
+    \xdef\combn@tecl@sscount{\the\numexpr \combn@tecl@sscount +1\relax}%
+    \global\x@\combn@tecl@sses\x@{\the\combn@tecl@sses\\{#1}}%
+  \fi
+}
+\def\@update@note@lists{% Maintain separate lists of separate and combined note classes allong with \n@tecl@sses 
+  \global\combn@tecl@sses{}%
+  \global\sepn@tecl@sses{}%
+  \gdef\combn@tecl@sscount{0}\gdef\sepn@tecl@sscount{0}%
+  \let\\=\@@update@note@lists\the\n@tecl@sses
+}
+\newif\if@sep@notes
+\def\@testSep#1{\@sep@notesfalse \ifdiglotSepNotes \x@\ifx\csname @SepNote-#1\endcsname\false \else \@sep@notestrue\fi\fi\trace{d}{@testSep for #1 is \if@sep@notes separate \else combined\fi}}
+
 %\partial % fully set Partial page (both columns)
 \newbox\n@xtpartialNrml % next chunk that we'll add to partial assuming all goes well - normal orientatin
 \newbox\n@xtpartialRev % next chunk that we'll add to partial assuming all goes well - reversed orientation
@@ -490,8 +515,8 @@
 
 \def\rej@ctgalley{%For calling by trial routines that don't like the galley they've just been given 
   \trace{d}{rej@ctgalley (\c@rrdstat) reflow:\refl@wlist}%
-  \r@storenotes{\g@tndstat}{1}%
-  \ifdiglotSepNotes\else\crosscoll@notes{entry}\fi
+  \r@storenotes{\c@rrdstat}{1}%
+  \ifnum \combn@tecl@sscount>0 \crosscoll@notes{entry}\fi
   %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
   \r@storeinserts{col}%
   %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
@@ -614,9 +639,9 @@
     %Make sure partialX (last galley) is dropped or recycled ...
     \iflate@stage@reflow
      % \x@\advance\csname availht\c@rrdstat\endcsname\csname ov@rfull\c@rrdstat\endcsname
-      \ifdiglotSepNotes\else
+      %\ifdiglotSepNotes\else
         %\x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
-      \fi
+      %\fi
       \global\trialheight=\availht
       \trace{D}{late stage reflow, \csname ov@rfull\c@rrdstat\endcsname -> av:\the\availht}%
       %\trace{D}{restoring notes, trigger:\late@stage@trigger}%
@@ -627,7 +652,7 @@
       % No need to *save* notes after restoring, because they're already saved.
       %\diglotDebugFollowContentstrue
     \else
-      \s@venotes{\g@tndstat}{1}%
+      \s@venotes{\c@rrdstat}{1}%
     \fi
     \s@veinserts{col}%
     \ifdiglotDebugFollowContents
@@ -928,8 +953,11 @@
 \newdimen\@bls % Temp baselineskip
 \newdimen\tri@ldelta
 \def\shown@tedims#1{%
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
-  \trace{n}{#1:\the\count\th@cl@ss, \l@gdims{\th@cl@ss}}%
+  \trace{n}{\meaning#1}%
+  \ifcsname note-#1\endcsname
+    \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+    \trace{n}{#1:\the\count\th@cl@ss, \l@gdims{\th@cl@ss}}%
+  \fi
 }
 \def\diglot@any@trial{%output routine for any column
  % Handles calling d@resplit@galley
@@ -1160,7 +1188,7 @@
         %\ifdiglotDebugFollowContents
           %\ifp@rtlset \Showbox\p@rtl\fi
         %\fi
-        \r@storenotes{\g@tndstat}{1}% As if galley hadn't happened.
+        \r@storenotes{\c@rrdstat}{1}% As if galley hadn't happened.
         \r@storeinserts{col}%
         \global\setbox\@xcs\copy\@whl
         \global\galleypenalty=0 
@@ -1168,8 +1196,8 @@
         \let\after@this=\whichtrial% 
       \else 
         \traceNum{D}{Backing up and trying again (th:\the\trialheight)}%
-        \r@storenotes{\g@tndstat}{1}%
-        \ifdiglotSepNotes\else\crosscoll@notes{entry}\fi
+        \r@storenotes{\c@rrdstat}{1}%
+        \ifnum \combn@tecl@sscount>0 \crosscoll@notes{entry}\fi
         %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
         \r@storeinserts{col}%
         %\let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E%TESTING
@@ -1203,7 +1231,7 @@
   \trace{d}{coll@ct@overrun: \the\insertpenalties, \l@gdims{255}}%
   \global\setbox10=\box255% Stash away the current box
   %\global\@@debugnotestrue
-  \s@venotes{\g@tndstat}{3}%
+  \s@venotes{\c@rrdstat}{3}%
   \clearn@tes
   \st@shinserts{chunk}%
   \global\output={\@coll@ct@overrun}%
@@ -1219,8 +1247,8 @@
   \ifnum\outputpenalty=\dgl@tPenOverrun\else
     \message{!!! EEK. Wrong penalty while collecting overrunning inserts!}%
   \fi
-  \s@venotes{\g@tndstat}{2}%Save notes for next page
-  \r@storenotes{\g@tndstat}{3}%
+  \s@venotes{\c@rrdstat}{2}%Save notes for next page
+  \r@storenotes{\c@rrdstat}{3}%
   \st@shinserts{nxtpg}%
   \r@storeinserts{chunk}%
   \setbox0\box255
@@ -1507,12 +1535,11 @@
 \def\c@rrdstat{}%What is the current diglotstate, in loops?
 \def\@g@tdst@t#1{\ifdiglot\if L#1\else#1\fi\fi}% Returns "" or "R" (Or other state values in the future)
 \def\g@tdstat{\@g@tdst@t\c@rrdstat}% Normal access routine for above
-\def\@g@tndstat#1{\ifdiglotSepNotes \if L#1\else#1\fi\fi} %if notes are merged, there should be no R (etc)  suffix notes.
+\def\@g@tndstat#1{\if@sep@notes \if L#1\else#1\fi\fi} %if notes are merged, there should be no R (etc)  suffix notes.
 \def\g@tndstat{\@g@tndstat{\c@rrdstat}} %if notes are merged, there should be no R (etc)  suffix notes.
 
 \def\show@dstat{\c@rrdstat\f@lwgdstat\n@xtdstat}% for debugging output 
 \def\setc@rdstat#1{\xdef\c@rrdstat{#1}%
- \xdef\ds@ffix{#1}%
  \ifx\c@rrdstat\empty
    \diglotfalse % Is this necessary? YES.
    \trace{d}{current diglot state set to empty! End of diglot?}%
@@ -1522,7 +1549,7 @@
 }
 \def\usediglot#1{\xdef\c@rrdstat{#1}}
 
-\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}\xdef\ds@ffix{\f@lwgdstat}}% Restore to correct value for new text. Mainly for use in Collect
+\def\resetc@rdstat{\xdef\c@rrdstat{\f@lwgdstat}\let\ds@ffix\empty}% Restore to correct value for new text. Mainly for use in Collect
 
 \def\diglotLtrue{%
   \oldboole@n{L}{diglotLtrue}%
@@ -2498,7 +2525,7 @@
   \lastd@pth=0pt
   \global\setbox\csname #1box\endcsname=\vbox{%
      \x@\the\csname diglot#1ho@ks\endcsname
-     \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses}%
+     \let\\=\ins@rtn@tecl@ss \the\sepn@tecl@sses}%
   \iff@rstnote
       \trace{f}{No footnotes for #1 (\csname @prev#1dp\endcsname)}%
   \else\LRf@@tnotestrue
@@ -2671,7 +2698,7 @@
 \def\diglot@applypgnotes#1{%Insert saved notes at start of unused galley
   \trace{D}{diglot@applypgnotes #1}%
   \global\setbox\csname whole#1\endcsname\vtop{%
-    \applysavedn@tes{\@g@tndstat{#1}}{2}%
+    \applysavedn@tes{#1}{2}%
     %\Showlists
     \unvbox\csname whole#1\endcsname
   }%
@@ -2761,8 +2788,8 @@
   \fi
   \traceifcheck{@do@writep@ge@simplecols-b}%
   \traceifset{@do@writep@ge@simplecols-c}%
-  \ifdiglotSepNotes%
-  \else%
+  \trace{d}{\combn@tecl@sscount\space combined note class(es).}%
+  \ifnum \combn@tecl@sscount>0 
      % RTLness will have been asserted (or not) when the note was defined.
      \setbox\notechunk\vbox{%
        \ifdiglot%might be monoglot..
@@ -2772,8 +2799,11 @@
        \def\c@rrdstat{L}%
        \traceNum{d}{Inserting Notes}%
        \f@rstnotetrue%
+       \let\@@tmpnc\n@tecl@sses
+       \let\n@tecl@sses\combn@tecl@sses
        \m@kenotebox
        \unvbox2 % defined by m@kenotebox
+       \let\combn@tecl@sses\@@tmpnc
      }%
   \fi%
 %
@@ -2920,8 +2950,7 @@
      \ifvoid\bottomins\else%\kern-\lastd@pth \dimen0=0pt 
        \trace{i}{Using bottomins \the\ht\bottomins x\the\wd\bottomins}%
        \vskip\skip\bottomins \unvbox\bottomins \fi%
-     \ifdiglotSepNotes%
-     \else%
+     \ifnum \combn@tecl@sscount>0
        % RTLness will have been asserted (or not) when the note was defined.
        \ifactually@write\else \vfill\fi
        \iftrue
@@ -2953,7 +2982,7 @@
       \plainoutput%
       \let\pagecontents\empty
     \fi
-    \ifdiglotSepNotes\else
+    \ifnum \combn@tecl@sscount>0 
       \r@storeallnotes{2}%
       \f@rstnotetrue%
       \def\pagecontents{%
@@ -3484,7 +3513,7 @@
   \trace{d}{postponen@xtpartial \the\ht\partial+\the\dp\partial, \the\ht\n@xtpartial+\the\dp\n@xtpartial}%
   \global\late@stage@reflowtrue % Need to re-flow all columns.
   \gdef\late@stage@trigger{postponen@xt@partial}%
-  \def\col@do##1{\r@storenotes{\@g@tndstat{##1}}{1}}%Restore footnotes on all columns.
+  \def\col@do##1{\r@storenotes{##1}{1}}%Restore footnotes on all columns.
   \x@\each@col\diglot@list\E% 
   \let\col@do=\restore@storedmarks
   \x@\each@col\diglot@list\E% 
@@ -3582,11 +3611,11 @@
       \let\d@=\sh@winsertdim\edef\v@lpfx{save}\edef\v@lsfx{chunk}%%TESTING
        \x@\cstackdown\ins@rts\E
       \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
-      \shown@tedims
+       \let\\=\shown@tedims\the\n@tecl@sses
     }%
     \r@storeinserts{chunk}%
     \trace{d}{Resetting notes: \refl@wlist}%
-    \def\col@do##1{\r@storenotes{\@g@tndstat{##1}}{1}}%Restore footnotes on all columns.
+    \def\col@do##1{\r@storenotes{##1}{1}}%Restore footnotes on all columns.
     \x@\each@col\refl@wlist\E%
     \ifnum\lastchunkpenalty>9999
       \postponen@xt@partial

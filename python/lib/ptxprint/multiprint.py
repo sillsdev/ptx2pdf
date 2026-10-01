@@ -1,27 +1,31 @@
 import os, argparse
 import logging
-from time import asctime
+import time
+import traceback
 from configparser import ConfigParser
 from dataclasses import dataclass
 from typing import Union, Any, Optional
 from concurrent.futures import ProcessPoolExecutor, Future, as_completed
 from concurrent.futures import wait as wait_futures
 import multiprocessing as mp
-import threading
+import threading, queue, psutil
 from ptxprint.page_filler import PTXFiller
 from ptxprint.project import ProjectList
-from ptxprint.utils import BuildParams
+from ptxprint.utils import BuildParams, ProgressEvent, f_
+from ptxprint.view import ViewModel
+from ptxprint.runjob import RunJob
 from usfmtc.reference import chaps, RefList
 
 
 class ViewPrinter:
     """Printer wrapper for view-based rendering jobs, mirroring PTXFiller's interface."""
-    def __init__(self, build_params, nid: str, progress_q=None):
+    def __init__(self, build_params, nid: str, progress_q=None, cpu_q=None, cancel_event=None):
         self.build_params = build_params
         self.nid = nid
         self.progress_q = progress_q
+        self.cpu_q = cpu_q
+        self.cancel_event = cancel_event    # shared mp.Value set by MultiPrint.cancel()
         self.timedout = False
-        self.cancelled = False
 
         self.view = ViewModel(
             build_params.prjtree,
@@ -31,12 +35,40 @@ class ViewPrinter:
         )
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
+        self.view.setConfigId(build_params.cfgid)
+        self.rtl = self.view.get("fcb_textDirection", "") == "rtl"
+        self.macrosdir = build_params.scriptsdir
+        self.view.project.ext = None
+        if nid is not None:
+            self.view.project.ext = f"pbuild{nid}"
+            d = self.view.project.printPath(self.view.cfgid)
+            if os.path.exists(d):
+                import time as _time
+                for f in os.listdir(d):
+                    fp = os.path.join(d, f)
+                    if not os.path.isfile(fp):
+                        continue
+                    for attempt in range(4):
+                        try:
+                            os.unlink(fp)
+                            break
+                        except PermissionError:
+                            if attempt < 3:
+                                _time.sleep(0.5)
+                            else:
+                                logger.warning(f"Cannot delete {fp} — file still locked; skipping")
 
-    def solve(self, books: list[str], cfgid_override: Optional[str] = None):
-        cfgid = cfgid_override or self.build_params.cfgid
-        self.view.setConfigId(cfgid)
-        self.view.set("ecb_booklist", books)
-        self.view.set("r_book", "multiple")
+    @property
+    def cancelled(self):
+        return self.cancel_event is not None and bool(self.cancel_event.value)
+
+    def solve(self, books: RefList|str, cfgid_override: Optional[str] = None):
+        if isinstance(books, str):
+            self.moduleFile = books
+            self.view.set("r_book", "module")
+        else:
+            self.view.set("ecb_booklist", str(books))
+            self.view.set("r_book", "multiple")
 
         runjob = RunJob(
             self.view,
@@ -46,6 +78,15 @@ class ViewPrinter:
         )
         runjob.nothreads = True
         runjob.silent = True
+        if self.build_params.pubid:
+            bks = self.build_params.pubid
+        elif isinstance(books, str):
+            bks = re.sub(r"^(.*/)?(.*)(\..*)?$", r"\2", books.replace(" ", "_"))
+        else:
+            bks = books.first.book + ("-"+books.last.book) if books.first.book != books.last.book else ""
+        runjob.outfname = f"{self.build_params.pid}_{self.build_params.cfgid}_{bks}_ptxp.tex"
+        runjob.pdffile = os.path.join(self.view.project.printPath(self.build_params.cfgid),
+                               '..', '..', runjob.outfname[:-4]) + ".pdf"
         res = runjob.doit(noview=True, noaction=False)
         if self.build_params.resultfn is not None:
             res = self.build_params.resultfn(self.view)
@@ -98,6 +139,13 @@ class GLibCompatQueue:
     def join_thread(self):
         pass
 
+    def clear(self):
+        try:
+            while True:
+                self._mp_queue.get_nowait()
+        except (queue.Empty, ValueError):
+            pass
+
     # --- Pickling support ---
     # When Worker (mp.Process) is pickled for spawning on Windows, only the
     # inner mp.Queue crosses the process boundary.
@@ -111,9 +159,10 @@ class GLibCompatQueue:
 
 class WorkerContext:
     """Manages worker lifecycle, cached printer instance, and job watchdog execution."""
-    def __init__(self, nid: str, progress_q, cancel_event):
+    def __init__(self, nid: str, progress_q, cpu_q, cancel_event):
         self.nid = nid
         self.progress_q = progress_q
+        self.cpu_q = cpu_q
         self.cancel_event = cancel_event
 
         self.last_job: Optional[Job] = None
@@ -133,15 +182,20 @@ class WorkerContext:
         """Returns the active printer, creating a new instance if job configuration changed."""
         if not self.matches_last_job(job):
             if job.action == 'fill':
-                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q)
+                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q,
+                                                 cpu_q=self.cpu_q, cancel_event=self.cancel_event)
+                logging.debug(f"{self.current_printer=}")
             elif job.action == 'print':
-                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q)
+                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q,
+                                                   cpu_q=self.cpu_q, cancel_event=self.cancel_event)
             else:
                 raise ValueError(f"Unknown job action: {job.action}")
             self.last_job = job
+        else:
+            logging.debug("new job matches old job, using that")
         # always set up the view even if same as before
         if job.action == 'print' and job.build_params.setupfn is not None:
-            job.build_params.setupfn(self.current_printer.view, job.build_params.setup_args)
+            job.build_params.setupfn(self.current_printer.view, job.build_params.setupargs)
 
         return self.current_printer
 
@@ -158,13 +212,16 @@ class WorkerContext:
             filename=log_file, filemode="w", encoding="utf-8",
             force=True, **log_config
         )
-        logging.info(f"Opened log file {asctime()}")
+        logging.info(f"Opened log file {time.asctime()}")
 
     def execute_job(self, job: Job):
         """Unified execution handler with shared watchdog timer and logger setup."""
-        target_id = job.books[0] if job.action == 'fill' else "_".join(job.books)
+        target_id = job.books[0] if job.action == 'fill' else "_".join([job.books.first.book, job.books.last.book])
 
+        logging.debug(f"Executing for {target_id}")
         if self.cancel_event and self.cancel_event.value:
+            if self.progress_q:
+                self.progress_q.put(ProgressEvent(target_id, 0, "failed", msg="Stopped"))
             return (target_id, self.nid, False, "Cancelled")
 
         if job.log_config:
@@ -172,32 +229,36 @@ class WorkerContext:
 
         printer = self.get_printer(job)
         printer.timedout = False
-        printer.cancelled = False
 
         # Shared Watchdog Timer for both Fill and Print jobs
         watchdog = None
         if job.build_params.timeout is not None:
             def trigger_timeout():
+                logging.debug("Timeout triggered")
                 printer.timedout = True
             watchdog = threading.Timer(job.build_params.timeout, trigger_timeout)
             watchdog.start()
+        logging.debug(f"{printer=}, {watchdog=}")
 
         try:
             if job.action == 'fill':
+                logging.debug(f"Actioning fill for {target_id}")
                 res = printer.solve(
-                    job.books[0],
+                    target_id,
                     stop=job.stop,
                     restart=job.build_params.args.restart
                 )
             else:
-                res = printer.solve(job.books, cfgid_override=job.cfgid)
+                res = printer.solve(job.books)
         except Exception as e:
             print(f"Exception {job.books[0]}: {e}")
-            logger.debug(f"Unhandled error during {job.action} for {target_id}: {e}\n{f_('Traceback: ')}")
+            logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n"
+                         f"{f_('Traceback: ')}{traceback.format_exc()}")
             if watchdog:
                 watchdog.cancel()
             if self.progress_q:
                 self.progress_q.put(ProgressEvent(target_id, 0, "failed", msg=f"Internal error: {e}"))
+            raise
             return (target_id, self.nid, False, str(e))
 
         if watchdog:
@@ -206,19 +267,20 @@ class WorkerContext:
         if res is None and job.action == 'fill':
             return (target_id, self.nid, f"{target_id} does not exist")
 
-        logging.info(f"Finished {job.action} for {target_id} at {asctime()}")
+        logging.info(f"Finished {job.action} for {target_id} at {time.asctime()}")
         return (target_id, self.nid, *res) if isinstance(res, tuple) else (target_id, self.nid, res)
 
 
 _worker_ctx: Optional[WorkerContext] = None
 
-def _init_worker(progress_q, cancel_event):
+def _init_worker(progress_q, cpu_q, cancel_event):
     global _worker_ctx
     nid = mp.current_process().name
-    _worker_ctx = WorkerContext(nid, progress_q, cancel_event)
+    _worker_ctx = WorkerContext(nid, progress_q, cpu_q, cancel_event)
 
 def _worker_dispatch(job: Job):
     global _worker_ctx
+    logging.debug(f"{_worker_ctx=}, {job=}")
     return _worker_ctx.execute_job(job)
 
 
@@ -229,42 +291,60 @@ class MultiPrint:
         self.ctx = mp.get_context('spawn')
         self.numproc = numproc or max(1, mp.cpu_count() - 2)
         self.progress_q = GLibCompatQueue(self.ctx) if progress else None
+        self.cpu_q = GLibCompatQueue(self.ctx)
         self.cancel_event = self.ctx.Value('b', False)
 
         self.executor: Optional[ProcessPoolExecutor] = None
         self.pending_futures: dict[Future, Job] = {}
+        self.prev_cpu_times = {}
 
     def start(self):
         """Start the worker pool."""
+        if self.numproc == 1:
+            _init_worker(self.progress_q, self.cpu_q, self.cancel_event)
+            return
         self.cancel_event.value = False
         self.executor = ProcessPoolExecutor(
             mp_context=self.ctx,
             max_workers=self.numproc,
             initializer=_init_worker,
-            initargs=(self.progress_q, self.cancel_event)
+            initargs=(self.progress_q, self.cpu_q, self.cancel_event)
         )
+
+    def _dispatch_job(self, job: Job):
+        if self.numproc == 1:
+            res = _worker_dispatch(job)
+            fut = Future()
+            fut.set_result(res)
+            self.pending_futures[fut] = job
+        else:
+            if not self.executor:
+                self.start()
+            fut = self.executor.submit(_worker_dispatch, job)
+            self.pending_futures[fut] = job
+        return fut
 
     def submit_fill_jobs(self, books: list[str], build_params: BuildParams, log_config: Optional[dict] = None, stop: bool = False):
         """Enqueues fill jobs (sorted longest-first) in non-blocking fashion."""
         if not self.executor:
             self.start()
+        if self.cancel_event is not None:
+            self.cancel_event.value = False
 
         sorted_books = sorted(books, key=lambda bk: chaps.get(bk, 0), reverse=True)
 
+        logging.debug(f"adding fill for {books}, {build_params=}")
         for bk in sorted_books:
             job = Job(action='fill', books=[bk], build_params=build_params, log_config=log_config, stop=stop)
-            fut = self.executor.submit(_worker_dispatch, job)
-            self.pending_futures[fut] = job
+            self._dispatch_job(job)
 
-    def submit_print_job(self, books: list[str], build_params: BuildParams, cfgid: Optional[str] = None, log_config: Optional[dict] = None) -> Future:
+    def submit_print_job(self, books: RefList|str, build_params: BuildParams, log_config: Optional[dict] = None) -> Future:
         """Enqueues a print job and returns the Future handle immediately."""
         if not self.executor:
             self.start()
 
-        job = Job(action='print', books=books, build_params=build_params, cfgid=cfgid, log_config=log_config)
-        fut = self.executor.submit(_worker_dispatch, job)
-        self.pending_futures[fut] = job
-        return fut
+        job = Job(action='print', books=books, build_params=build_params, log_config=log_config)
+        return self._dispatch_job(job)
 
     def is_finished(self) -> bool:
         """Non-blocking check to determine if all submitted futures are complete."""
@@ -282,10 +362,44 @@ class MultiPrint:
             try:
                 results.append(future.result())
             except Exception as exc:
+                logging.warning(f"Job failed for {job.books}: {exc}\n{traceback.format_exc()}")
                 results.append((job.books, None, False, str(exc)))
 
         self.pending_futures.clear()
         return results
+
+    def start_clock(self):
+        self.time = time.time()
+        self.prev_cpu_times = {}
+        self.total_gops = 0.
+
+    def sample_usage(self):
+        freq = psutil.cpu_freq()
+        current_ghz = (freq.current / 1000.0) if (freq and freq.current) else 3.0
+        processes = getattr(self.executor, '_processes', {})
+        tick_cpu_seconds = 0.0
+        for pid, proc in list(processes.items()):
+            if proc.is_alive():
+                try:
+                    p = psutil.Process(pid)
+                    t = p.cpu_times()
+                    total_proc_cpu = t.user + t.system
+
+                    if pid in self.prev_cpu_times:
+                        cpu_delta = max(0.0, total_proc_cpu - self.prev_cpu_times[pid])
+                        tick_cpu_seconds += cpu_delta
+
+                    self.prev_cpu_times[pid] = total_proc_cpu
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+        while True:
+            try:
+                pid, child_cpu = self.cpu_q.get_nowait()
+            except queue.Empty:
+                break
+            tick_cpu_seconds += child_cpu
+        self.total_gops += tick_cpu_seconds * current_ghz
+        return self.total_gops
 
     def wait(self, timeout:Optional[float] = None) -> list:
         """ Blocks until all jobs finish (or timeout occurs) and returns results. """
@@ -298,6 +412,9 @@ class MultiPrint:
             self.cancel_event.value = True
 
     def teardown(self):
+        if self.pending_futures:
+            for fut in self.pending_futures.keys():
+                fut.cancel()
         if self.executor:
             self.executor.shutdown(wait=False, cancel_futures=True)
             self.executor = None
@@ -306,31 +423,25 @@ class MultiPrint:
             self.progress_q = None
 
     def terminate(self):
-            """
-            Hard stop: Forcefully terminates all worker processes immediately,
-            cancels remaining futures, and cleans up queues.
-            """
-            # 1. Signal workers via cancellation flag
-            if self.cancel_event is not None:
-                self.cancel_event.value = True
+        """
+        Hard stop: Forcefully terminates all worker processes immediately,
+        cancels remaining futures, and cleans up queues.
+        """
+        if self.cancel_event is not None:
+            self.cancel_event.value = True
 
-            # 2. Force-kill underlying worker processes
-            if self.executor is not None:
-                # Reaches into internal pool to terminate active processes directly
-                processes = getattr(self.executor, '_processes', {})
-                for pid, process in list(processes.items()):
-                    if process.is_alive():
-                        process.terminate()  # Sends SIGTERM to kill worker immediately
+        if self.executor is not None:
+            processes = getattr(self.executor, '_processes', {})
+            for pid, process in list(processes.items()):
+                if process.is_alive():
+                    process.terminate()  # Sends SIGTERM to kill worker immediately
+            self.executor.shutdown(wait=False, cancel_futures=True)
+            self.executor = None
 
-                # 3. Shutdown executor and cancel queued futures
-                self.executor.shutdown(wait=False, cancel_futures=True)
-                self.executor = None
-
-            # 4. Wipe pending state and close queues
-            self.pending_futures.clear()
-            if self.progress_q:
-                try:
-                    self.progress_q.close()
-                except Exception:
-                    pass
-                self.progress_q = None
+        self.pending_futures.clear()
+        if self.progress_q:
+            try:
+                self.progress_q.close()
+            except Exception:
+                pass
+            self.progress_q = None

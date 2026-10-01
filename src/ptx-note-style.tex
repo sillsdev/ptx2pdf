@@ -73,7 +73,7 @@
 	\x@\newb@x\csname notesave1-#1\endcsname % - saved as a revert-to point
 	\x@\newb@x\csname notesave2-#1\endcsname % - Notes that need to pass onto next page 
 	\x@\newb@x\csname notesave3-#1\endcsname % - save-point for 'page full but overflowing notes.'
-        \x@\newc@unt\csname refn@te-#1\endcsname
+        \x@\newc@unt\csname refn@te-#1\endcsname% Note number for adjustlist-checking
 }
 \def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }
 \def\incn@tecount#1{\global\advance\csname refn@te-#1\endcsname by 1 }
@@ -357,6 +357,7 @@
   \global\advance\n@teid by 1 %
   \edef\m@sg{\string\@noteid{\the\n@teid}{#1}}%
   \let\next\relax%
+  \@testSep{#1}%
   \edef\n@tetype{#1\g@tndstat}%
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
@@ -369,11 +370,11 @@
   %\ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else \d@note{\th@sins}\fi
-  \x@\let\x@\currn@tenum\csname refn@te-#1\endcsname
+  \x@\let\x@\currn@tenum\csname refn@te-#1\g@tndstat\endcsname%
   \global\advance\currn@tenum by 1
   \global\currn@tetparnum=1
   \xdef\currn@tetype{#1}%
-  \trace{n}{Footnote (\n@tetype) [\ch@pter:\v@rse] will \ifp@ranotes\else not \fi be paragraphed and \the\n@tewidth \space wide (page is \the\hsize)}%
+  \trace{n}{Footnote (\n@tetype [\c@rrdstat] #1) number \the\currn@tenum \space [\ch@pter:\v@rse] will \ifp@ranotes\else not \fi be paragraphed and \the\n@tewidth \space wide (page is \the\hsize)}%
   \global\floatingpenalty\@MM % make sure note does not float away from caller to another page
   \the\d@note
   \bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
@@ -602,7 +603,7 @@
 
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
-  \edef\cl@ss{#1\g@tndstat}%
+  \@testSep{#1}\edef\cl@ss{#1\g@tndstat}%
   \edef\tmp{#1}\ifx\tmp\l@stnoteclass\lastn@tetrue\else\ifversion{6}{\lastn@tetrue}{\lastn@tefalse}\fi
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   \trace{f}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
@@ -633,7 +634,7 @@
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
-  \edef\cl@ss{#1\g@tndstat}%
+  \@testSep{#1}\edef\cl@ss{#1\g@tndstat}%
   \n@tedepth=\prevdepth
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   \def\@@oright{}%
@@ -654,7 +655,7 @@
 
 % insert a note class which is two column study notes style
 \def\studyins@rtn@tecl@ss#1{%
-  \edef\cl@ss{#1\g@tndstat}%
+  \@testSep{#1}\edef\cl@ss{#1\g@tndstat}%
   \trace{n}{studyins@rtn@tecl@ss \cl@ss \space (from #1)}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
@@ -760,10 +761,10 @@
 
 % determine if a given note class is to be paragraphed
 %+c_paragraphedNotes
-\def\ParagraphedNotes#1{\Par@gr@phedNotes{#1\g@tndstat}}
+\def\ParagraphedNotes#1{\@testSep{#1}\Par@gr@phedNotes{#1\g@tndstat}}
 \def\Par@gr@phedNotes#1{\TRACE{Par@gr@phedNotes #1}\x@\let\csname paranotes-#1\endcsname=1}
-\def\StudyNotes#1{\x@\let\csname studynotes-#1\g@tndstat\endcsname=1}
-\def\NotStudyNotes#1{\x@\let\csname studynotes-#1\g@tndstat\endcsname\relax}
+\def\StudyNotes#1{\@testSep{#1}\x@\let\csname studynotes-#1\g@tndstat\endcsname=1}
+\def\NotStudyNotes#1{\@testSep{#1}\x@\let\csname studynotes-#1\g@tndstat\endcsname\relax}
 
 \newif\ifp@ranotes
 \newif\ifColNotes \ColNotesfalse
@@ -793,7 +794,8 @@
   \ifx\th@sins\relax % Normal footnote
    \ifdiglot
      \trace{d}{setn@tewidth (\show@dstat)}%
-     \ifdiglotSepNotes
+     \@testSep{#1}%
+     \if@sep@notes
         \ifnum 1=\ifx\c@rrdstat\empty 0\else \ifcsname column\c@rrdstat fullwidth\endcsname 1 \else 0\fi\fi
           \n@tewidth=\csname column\c@rrdstat fullwidth\endcsname
         \else
@@ -818,6 +820,7 @@
        \else\n@tewidth=\textwidth\fi
      \fi
    \fi
+   \trace{d}{setn@tewidth #1(\c@rrdstat)->\the\n@tewidth}%
   \else
     %Assume that the note will be inserted using the current text width.
     \ifnum\c@rrentcols=1 \onecolwidth{\n@tewidth}\else

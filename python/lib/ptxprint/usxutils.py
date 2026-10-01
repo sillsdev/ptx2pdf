@@ -788,9 +788,9 @@ class Usfm:
                             i += 1
                             lastw = e
                         elif isin and i == 0:
-                            x.text += b[a] + (b[a+1] if a < len(b) - 2 else "")
+                            x.text += b[a] + (b[a+1] if a < len(b) - 1 else "")
                         else:
-                            lastw.tail += b[a] + (b[a+1] if a < len(b) - 2 else "")
+                            lastw.tail += b[a] + (b[a+1] if a < len(b) - 1 else "")
                     matched = True
                 t = x.text if isin else x.tail
                 logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")

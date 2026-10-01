@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 
 import argparse
-from ptxprint.unicode.ucd import find_ucd
+#from ptxprint.unicode.ucd import find_ucd
+from ucd import find_ucd
 
 class Or:
     def __init__(self, a, b):
@@ -64,7 +65,8 @@ pairs = [   (0, 0), ("CM", 0), ("Num", 0), (0, "Num"), ("CM", "Num"), ("CM", "Ar
             ("Num", "ArabD"), ("Num", "ArabU") ]
 
 extras = {
-    0x0E33: 'CM'
+    0x0E33: 'CM',
+    0x180E: 'ArabL'
 }
 
 classdat = {}
@@ -77,6 +79,8 @@ for k, b in classes.items():
     classdat[k] = dat
 
 for k, v in extras.items():
+    for c, s in classdat.items():
+        s.discard(k)
     classdat[v].add(k)
 
 used = {}

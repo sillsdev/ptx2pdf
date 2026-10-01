@@ -122,12 +122,8 @@ class SpacingOddities(XDViPositionedReader):
         self.line = Line(startpos[1], self.ref, self.curr_font, rect, outlines=self.outlines)
     
     def get_rect(self, pos):
-        v_rects = self.parent.getyrects(self.page_index, pos[1])
-        for r in v_rects:
-            if r.xstart <= pos[0] <= r.xend:
-                return r
-            if abs(pos[0] - r.xstart) < self.curr_font.points and pos[0] <= r.xend:
-                return r
+        (para, rect, bline) = self.parent.findPos(self.page_index, pos[0], pos[1], xdv=True)
+        return rect
 
 class Line: 
     def __init__(self, v, ref, font, rect, outlines=False):

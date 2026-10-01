@@ -68,7 +68,7 @@ texpertOptions = {
     "DoubleSided":          O("doublesided", "LAY", True, None, _("Double Sided Layout"), 
                             _("This setting can be disabled to turn off inner/outer margins, forcing the inner/outer gutter, and Notelines to always appear on the same side of the printed page.")),
 
-    "MaxProcesses":         O("maxproc", "LAY", (int(cpu_count() * 0.9), 1, cpu_count(), 1, 1, 1), None, _("Maximum parallel processes"),
+    "MaxProcesses":         O("maxproc", "LAY", (int(cpu_count() * 0.9), 1, cpu_count(), 1, 1, 0), None, _("Maximum parallel processes"),
                             _("The maximum number of parallel processes to use for example when page filling")),
     "MaxFillTime":          O("maxfilltime", "LAY", (0, 0, 100, 0.1, 1, 1), None, _("Maximum Filling Time (mins)"),
                             _("Stop page filling a book after this many minutes")),
@@ -255,13 +255,13 @@ texpertOptions = {
 
     "autoUpdateDelay":    O("autoupdatedelay", "PRV", (3, 0.0, 120.0, 0.1, 1.0, 1), "", _("Auto-update Delay (seconds)"),
                             _("Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-update from running.")),
-    "ShrinkTextStep":     O("shrinktextstep", "PRV", (2, 1, 5, 1, 1, 0), "", _("Shrink Text Step Value (%)"),
+    "ShrinkTextStep":     O("shrinktextstep", "PRV", (1, 1, 5, 1, 1, 0), "", _("Shrink Text Step Value (%)"),
                             _("Step Value to shrink text using right-click context menu adjustment.")),
-    "ShrinkTextLimit":    O("shrinktextlimit", "PRV", (92, 75, 95, 1, 1, 0), "", _("Minimum Text Shrink (%)"),
+    "ShrinkTextLimit":    O("shrinktextlimit", "PRV", (95, 85, 100, 1, 5, 0), "", _("Minimum Text Shrink (%)"),
                             _("Limit how much text can shrink to using right-click context menu adjustment.")),
-    "ExpandTextStep":     O("expandtextstep", "PRV", (3, 1, 5, 1, 1, 0), "", _("Expand Text Step Value (%)"),
+    "ExpandTextStep":     O("expandtextstep", "PRV", (1, 1, 5, 1, 1, 0), "", _("Expand Text Step Value (%)"),
                             _("Step Value to expand text using right-click context menu adjustment.")),
-    "ExpandTextLimit":    O("expandtextlimit", "PRV", (106, 105, 125, 1, 1, 0), "", _("Maximum Text Expand (%)"),
+    "ExpandTextLimit":    O("expandtextlimit", "PRV", (105, 100, 115, 1, 5, 0), "", _("Maximum Text Expand (%)"),
                             _("Limit how much text can expand to using right-click context menu adjustment.")),
     "BadSpaces":          O("spaceEms", "PRV", (1.3, 0, 10, 0.1, 0.1, 1), "", _("Bad Space minimum width (em)"),
                             _("Minimum width for a bad space. 0 says to calculate for the 20 worst spaces in the doc")),
@@ -282,12 +282,54 @@ texpertOptions = {
     "RiverOverlap":       O("riveroverlap", "PRV", (0.4, -5, 5, 0.1, 0.1, 1), "", _("River Detection minimum overlap (em)"),
                             _("Minimum overlap in ems required for two spaces above each other to be considered part of the same river")),
 
-    "pbtimeout":          O("pbtimeout", "APF", (100, 0, 1000, 1, 10, 0), None, _("Page fill timeout (mins)"), _("Cancel page filler books that take longer than this many minutes")),
-    "pbJustification":    O("pbjustify", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill justified text cost"), _("Factor to multiply stretching a justified paragraph over a non-justified")),
-    "pbSpacingTol":       O("pbspacingtol", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill expansion cost"), _("Weighting of badness caused by expansion")),
-    "pbShrinkPref":       O("pbshrinkpref", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill longer paragraph cost"), _("Extra cost for making paragraphs longer")),
-    "pbHeadings":         O("pbheadings", "APF", (60, 0, 200, 1, 10, 0), None, _("Page fill heading cost"), _("Factor to pay for adjusting a heading")),
-    "pbLastLine":         O("pblastline", "APF", (20, 0, 200, 1, 10, 0), None, _("Page fill last line effect weight"), _("Weighting of last line length effect costs")),
+    # Translators: "page filler" = the Automatic Page Filler feature. Please translate these terms the
+    # same way in every string below: page filler, paragraph, stretch, shrink, word space, failed page.
+    # Speed settings (how hard the page filler tries)
+    "pbtimeout":          O("pbtimeout", "APF", (180, 0, 1000, 1, 10, 0), "", _("Time limit for the whole job (minutes)"),
+                            _("The page filler works on all the books together. When this time is reached, the page filler stops. "
+                              "A book that is not finished keeps the pages that are already filled. "
+                              "Usually this affects only the longest book.\n"
+                              "Higher: more time to find a good layout for every page.")),
+    "pbBackTrack":        O("pbbacktrack", "APF", (4, 0, 10, 1, 1, 0), "", _("Earlier pages to retry"),
+                            _("If the page filler cannot fill a page, it backtracks to the page before and tries a different layout there. "
+                              "This is the largest number of pages it can backtrack.\n"
+                              "Higher: fewer failed pages, but much slower.\n"
+                              "Lower: faster, but more pages may fail. 0 = never backtrack (fastest).\n"
+                              "Affects: Speed.")),
+    "pbMaxr":             O("pbmaxr", "APF", (6, 1, 10, 1, 1, 0), "", _("Paragraphs to adjust on each page"),
+                            _("The largest number of paragraphs on one page that the page filler may stretch or shrink. "
+                              "Each poetry line (\\q1, \\q2 …) counts as one paragraph. "
+                              "Each extra paragraph doubles the number of layouts the page filler tries.\n"
+                              "Higher: more ways to fill each page, so fewer failed pages, but each page takes longer.\n"
+                              "Lower: faster, but more pages may fail.\n"
+                              "Affects: Speed.")),
+    # Quality settings (how good the text must look)
+    "pbSpacingTol":       O("pbspacingtol", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Widest word space allowed (× text size)"),
+                            _("When the page filler stretches a paragraph, the average space between words must not be wider than this. "
+                              "1.0 = as wide as the text size. A normal word space is about 0.3 to 0.5.\n"
+                              "Higher: easier to fill pages, but the text can look too spread out.\n"
+                              "Lower: tighter, better-looking text, but pages are harder to fill and take longer.\n"
+                              "Affects: Quality and Speed.")),
+    "pbExpandBadness":    O("pbexpbad", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Keep paragraphs close to normal width"),
+                            _("The page filler prefers small changes to a paragraph over big changes. "
+                              "This setting controls how strong that preference is. "
+                              "Higher: the page filler tries small changes first, so the text looks more even.\n"
+                              "Lower: the page filler accepts big changes more easily.\n"
+                              "Affects: Quality.")),
+    "pbExpansion":        O("pbexpcost", "APF", (1.0, -5, 5, 0.1, 1, 1), "", _("Penalise shrink or stretch"),
+                            _("Tells the page filler whether to shrink paragraphs or stretch them when both are possible.\n"
+                              "Positive numbers: penalise stretching (so the text prefers to shrink more).\n"
+                              "Negative numbers: penalise shrinking. (so the text prefers to stretch more).\n"
+                              "0: no preference.\n"
+                              "A bigger number (+ or −) means a higher penalty.\n"
+                              "Affects: Quality.")),
+    "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Keep neighbouring paragraphs alike"),
+                            _("The page filler compares each paragraph with the paragraph before it. "
+                              "It tries to avoid a very stretched paragraph next to a very shrunk one.\n"
+                              "Higher: neighbouring paragraphs look more alike, so the page looks more even.\n"
+                              "Lower: neighbouring paragraphs can look more different.\n"
+                              "Affects: Quality.")),
+#    "pbStrict":           O("pbstrict", "APF", False, "", _("Add strict layout constraints"), _("Ensure things like \\q2 don't start a column")),
 
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),

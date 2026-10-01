@@ -3,7 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 import re, json
 from enum import IntEnum
-from ptxprint.utils import _, coltoonemax
+from ptxprint.utils import _, coltoonemax, brent
 from ptxprint.polyglot import PolyglotConfig
 from ptxprint.pastelcolorpicker import ColorPickerDialog
 
@@ -12,9 +12,14 @@ _modelfields = ('code', 'pg', 'prj', 'cfg', 'captions', 'fontsize', 'baseline', 
 m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
 
 class PolyglotSetup(Gtk.Box):
+
+    _methods = """onDiglotClicked loadPolyglotSettings onDiglotAutoAdjust update_diglot_polyglot_UI
+               """.split()
+
     def __init__(self, builder, view, tv):
         self.builder = builder
         self.view = view
+        self.view.register(self, self._methods)
         Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.treeview = tv  
         self.treeview.set_reorderable(False)
@@ -1025,4 +1030,259 @@ class PolyglotSetup(Gtk.Box):
         widget.add(spread_box)
         widget.show_all()
 
-        
+### View methods
+
+    def onDiglotClicked(self, btn):
+        # Guard against re-entry when we programmatically restore the checkbox state below.
+        if getattr(self, '_restoringDiglot', False):
+            return
+
+        # GTK3 fires 'clicked' from set_active() as well as from real user clicks.
+        # During config/project loading, loadingConfig=True — run only the cheap UI
+        # updates and return immediately so no dialog can ever appear mid-load.
+        if self.view.loadingConfig:
+            self.view.sensiVisible("c_diglot")
+            self.view.colorTabs()
+            return
+
+        # ---- Interactive click only beyond this point ----
+
+        # User just unchecked diglot: restore it visually and offer Save-As-Monoglot.
+        if not self.view.get("c_diglot"):
+            self._restoringDiglot = True
+            btn.set_active(True)          # restore visual state (triggers clicked again)
+            self._restoringDiglot = False
+            self._showSaveAsMonoglotDialog()
+            return
+
+        # User just checked diglot: confirm this is intentional.
+        dialog = self.builder.get_object("dlg_confirmDiglot")
+        response = dialog.run()
+        dialog.hide()
+        if response != Gtk.ResponseType.YES:
+            # User declined – silently restore the checkbox to unchecked and return
+            # before any UI state has changed.  handler_block prevents re-entering
+            # this function; mod=False avoids marking the config as changed.
+            btn.handler_block_by_func(self.onDiglotClicked)
+            self.view.set("c_diglot", False, mod=False)
+            btn.handler_unblock_by_func(self.onDiglotClicked)
+            return
+
+        # ---- Normal path: activation confirmed ----
+        self.view.sensiVisible("c_diglot")
+        self.view.colorTabs()
+        if self.view.get("c_diglot"):
+            self.loadPolyglotSettings()
+            self.view.createDiglotView()  # stores result in self.diglotViews['R'] only when non-None
+            self.view.set("c_doublecolumn", True)
+            self.builder.get_object("c_doublecolumn").set_sensitive(False)
+            # Open the Project dropdown for the R row so the user immediately knows
+            # they need to select a secondary project.
+            tv = self.treeview
+            cols = tv.get_columns()
+            if len(cols) > 2:
+                proj_col = cols[2]   # Code=0, 1|2=1, Project=2
+                def _open_project_dropdown(tv=tv, proj_col=proj_col):
+                    model = tv.get_model()
+                    for i, row in enumerate(model):
+                        if row[0] == "R":   # m.code == 0
+                            path = Gtk.TreePath([i])
+                            tv.scroll_to_cell(path, proj_col, False, 0.0, 0.0)
+                            tv.set_cursor(path, proj_col, True)
+                            break
+                    return False
+                GLib.idle_add(_open_project_dropdown)
+        else:
+            self.builder.get_object("c_doublecolumn").set_sensitive(True)
+            self.view.setPrintBtnStatus(2)
+            self.view.diglotViews = {}
+        self.view.updateDialogTitle()
+        self.view.disableLayoutAnalysis()
+        self.view.loadPics(mustLoad=False, force=True)
+        if self.view.get("c_includeillustrations"):
+            self.view.onUpdatePicCaptionsClicked(None)
+
+    def _onMonoglotNameChanged(self, entry):
+        """Live validation for the 't_newMonoglotConfigName' entry in dlg_saveAsMonoglot."""
+        cfg = entry.get_text()
+        ok_btn   = self.builder.get_object("btn_disableDiglot_ok")
+        msg_lbl  = self.builder.get_object("l_diableDiglotNewCfgMsg")
+        cleanCfg = re.sub('[^-a-zA-Z0-9_()]+', '', cfg)
+        cpath    = self.view.project.srcPath(cleanCfg) if cleanCfg and self.project else None
+        if cfg != cleanCfg:
+            msg = _("Do not use spaces or special characters")
+        elif not len(cfg):
+            msg = ""
+        elif cpath is not None and os.path.exists(cpath):
+            msg = _("That Configuration already exists.\nUse another name.")
+        else:
+            ok_btn.set_sensitive(True)
+            msg_lbl.set_text("")
+            return
+        ok_btn.set_sensitive(False)
+        msg_lbl.set_text(msg)
+
+    def _showSaveAsMonoglotDialog(self):
+        r"""Show the 'Save As Monoglot' dialog and act on the response.
+
+        Cancel  -> c_diglot stays True (already restored before this is called).
+        OK      -> The current settings are saved under the chosen name with
+                  c_diglot turned off; that new monoglot configuration becomes active.
+                  The original diglot configuration is left untouched on disk.
+        """
+        entry   = self.builder.get_object("t_newMonoglotConfigName")
+        ok_btn  = self.builder.get_object("btn_disableDiglot_ok")
+        msg_lbl = self.builder.get_object("l_diableDiglotNewCfgMsg")
+
+        # Reset dialog widgets to a clean state
+        entry.set_text("")
+        ok_btn.set_sensitive(False)
+        msg_lbl.set_text("")
+
+        # Connect live validation once (avoid duplicate connections on repeated opens)
+        if not getattr(self, '_monoglotDlgSigConnected', False):
+            entry.connect("changed", self._onMonoglotNameChanged)
+            self._monoglotDlgSigConnected = True
+
+        dialog   = self.builder.get_object("dlg_saveAsMonoglot")
+        dialog.show_all()
+        response = dialog.run()
+        dialog.hide()
+
+        if response != Gtk.ResponseType.OK:
+            return  # User cancelled – diglot remains active, nothing to do.
+
+        cfg = re.sub('[^-a-zA-Z0-9_()]+', '', entry.get_text())
+        if not cfg:
+            return  # Safety guard – shouldn't be reachable while OK button is insensitive.
+
+        # ── Step 1: Save the current state as a new configuration ──
+        # This mirrors onSaveAsNewConfig exactly.  Internally, onSaveConfig calls
+        # updateProjectSettings(readConfig=True) which copies the existing diglot
+        # config files to the new name and then re-reads them from disk.  That
+        # read restores c_diglot=True in memory, so we must NOT try to turn diglot
+        # off before this call – we do it in step 2 instead.
+        self.view.set("ecb_savedConfig", cfg)
+        self.view.doConfigNameChange(cfg)
+        self.view.changed()
+        self.view.onSaveConfig(None)
+        # After onSaveConfig the new config is on disk but still has c_diglot=True
+        # because the re-read from the copied file restored that value in memory.
+
+        # ── Step 2: Turn off diglot in memory and overwrite the new config ──
+        # Block the signal so set() doesn't re-enter onDiglotClicked.
+        diglot_btn = self.builder.get_object("c_diglot")
+        diglot_btn.handler_block_by_func(self.onDiglotClicked)
+        self.view.set("c_diglot", False)   # marks isChanged=True via changed()
+        diglot_btn.handler_unblock_by_func(self.onDiglotClicked)
+        self.view.saveConfig()             # writes c_diglot=False to the new config on disk
+
+        # ── Step 3: Finalise the new config identity ──
+        # Now that c_diglot=False, loadPolyglotSettings will only clear the
+        # treeview rather than trying to load diglot data.
+        self.view.updateConfigIdentity(cfg)
+
+        # ── Step 4: Run the deactivation housekeeping that onDiglotClicked would ──
+        # have done in its 'else' branch (and the shared tail code after it).
+        self.view.sensiVisible("c_diglot")
+        self.view.colorTabs()
+        self.builder.get_object("c_doublecolumn").set_sensitive(True)
+        self.view.setPrintBtnStatus(2)
+        self.view.diglotViews = {}
+        self.view.updateDialogTitle()
+        self.view.disableLayoutAnalysis()
+        self.view.loadPics(mustLoad=False, force=True)
+        if self.view.get("c_includeillustrations"):
+            self.view.onUpdatePicCaptionsClicked(None)
+
+    def switchToDiglot(self, pref):
+        dv = None
+        dvprj = None
+        dvcfg = None
+        if self.view.otherDiglot is not None:
+            if pref is not None:
+                dv = self.view.otherDiglot[2].get(pref, None)
+        elif self.view.diglotViews is not None:
+            dv = self.view.diglotViews.get(pref, None)
+        if dv is None:
+            if self.view.otherDiglot is not None:
+                dvprj, dvcfg = self.otherDiglot[:2]
+            else:
+                return False
+        elif dv:
+            dv.saveConfig()
+            dvprj = dv.project
+            dvcfg = dv.cfgid
+        if pref is not None:
+            if self.view.otherDiglot is None:
+                self.view.otherDiglot = (self.view.project, self.view.cfgid, self.view.diglotViews.copy())
+            # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+            self.view.changeBtnLabel("b_print", _("Return to Primary"))
+            self.builder.get_object("b_reprint").set_sensitive(False)
+            self.builder.get_object("b_print2ndDiglotText").set_visible(True)
+        else:
+            self.view.changeBtnLabel("b_print", _("Print (Make PDF)"))
+            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
+            self.builder.get_object("b_reprint").set_sensitive(True)
+            if self.view.otherDiglot is not None:
+                self.view.diglotViews = self.view.otherDiglot[2]
+                self.view.otherDiglot = None
+        self.view.set("fcb_project", dvprj.prjid)
+        self.view.set("ecb_savedConfig", dvcfg)
+        self.view.disableLayoutAnalysis()
+        # self.updateProjectSettings(dvprj.prjid, dvprj.guid, configName=dv.cfgid)
+        # self.updateDialogTitle()
+        return True
+
+    def onDiglotAutoAdjust(self, btn):
+        if self.isDiglotMeasuring:
+            btn.set_active(True)
+            return
+        elif not self.get("c_diglot"):
+            btn.set_active(False)
+            return
+        elif not btn.get_active():
+            return
+        self.isDiglotMeasuring = True
+        btn.set_active(True)
+        xdvname = os.path.join(self.view.project.printPath(self.view.cfgid), self.view.baseTeXPDFnames()[0] + ".xdv")
+        def score(x):
+            self.set_fraction(x)
+            runjob = self.view.callback(self, maxruns=1, noview=True)
+            while runjob.thread.is_alive():
+                Gtk.main_iteration_do(False)
+            runres = runjob.res
+            return 20000 if runres else xdvigetpages(xdvname)
+        mid = self.get_fraction()
+        res = brent(0., 1., mid, score, 0.001)
+        self.set_fraction(res)
+        self.isDiglotMeasuring = False
+        self.view.callback(self)
+        btn.set_active(False)
+
+    def update_diglot_polyglot_UI(self):
+        dglt = True if len(self.ls_treeview) < 3 else False
+        self.builder.get_object("btn_adjust_diglot").set_sensitive(dglt)
+        orig = self.view.get("fcb_diglotMerge", "scores")
+        merge_types = {
+            _("Document based"):   "doc",
+            _("Chapter Verse"):    "simple",
+            _("Scored"):           "scores",
+            _("Scored (Chapter)"): "scores-chapter",
+            _("Scored (Verse)"):   "scores-verse"
+            }
+        mrgtyplist = self.builder.get_object("ls_diglotMerge")
+        mrgtyplist.clear()
+        for desc, code in merge_types.items():
+            if dglt or code.startswith("scores"):
+                mrgtyplist.append([desc, code])
+        found = any(row[1] == orig for row in mrgtyplist)
+        self.view.set("fcb_diglotMerge", orig if found else "scores") 
+
+    def loadPolyglotSettings(self, config=None):
+        self.clear_polyglot_treeview()
+        if self.view.get("c_diglot"):
+            if config is not None:
+                self.view.polyglots["L"].cfg = config
+            self.load_polyglots_into_treeview()
+

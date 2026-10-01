@@ -8,7 +8,7 @@ from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontca
 from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
-                            zipopentext, xdvigetfonts, calledme
+                            zipopentext, xdvigetfonts, calledme, parseBookList
 from ptxprint.usxutils import UsfmCollection, Usfm, Sheets, simple_parse, merge_sty, out_sty
 from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
@@ -132,6 +132,7 @@ class ViewModel:
         self.copyrightInfo = None
         self.pubvars = {}
         self.pubvars_publishable = {}
+        self.publications = {}          # dict per pubid
         self.strongsvars = {}
         self.font2baselineRatio = 1.
         self.docreatediff = False
@@ -243,7 +244,7 @@ class ViewModel:
 
     def allvars(self, dest=None):
         if dest is None:
-            return self.pubvars.keys()
+            return [k for k in self.pubvars.keys() if not k.startswith("__")]
         elif dest == "strongs":
             return self.strongsvars.keys()
 
@@ -312,12 +313,13 @@ class ViewModel:
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
-        try:
-            bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
-        except SyntaxError as e:
+        bl, err = parseBookList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False)
+        if err is not None:
             if errors:
-                self.doError(str(e),
-                             secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
+                self.doError(_("Invalid book list or reference"),
+                             secondary=err + "\n\n" + _("Book codes must be 3-letter USFM codes "
+                                                        "(e.g. GEN, MAT, JHN, REV), optionally followed "
+                                                        "by chapters and verses (e.g. MAT 5:3-7:29)."))
             return []
         bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
@@ -1046,6 +1048,11 @@ class ViewModel:
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
             if self.pubvars_publishable.get(k, False):
                 self._configset(config, f"vars.publishable/{k}", True, update=False, diff=diff)
+        for pubid, pubv in self.publications.items():
+            for k, v in pubv.items():
+                if k == "":
+                    k = "__books"
+                self._configset(config, f"publication.{pubid}/{k}", v, update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
         # for attribute, value in vars(self.polyglots).items():
@@ -1428,6 +1435,10 @@ class ViewModel:
                 editableOverride = len(opt) != len(opt.strip("*"))
                 key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
+                if sect.startswith("publication."):
+                    pubid = sect[12:]
+                    self.publications.setdefault(pubid, {})[opt]=val
+                    continue
                 if key in ModelMap:
                     v = ModelMap[key]
                     if categories is not None and v.category not in categories:
@@ -1591,9 +1602,31 @@ class ViewModel:
         if not force and self.configLocked():
             return
         fname = os.path.join(self.project.createConfigDir(self.cfgid), "ptxprint.sty")
+        buf = StringIO()
+        self.styleEditor.output_diffile(buf)
+        newdat = buf.getvalue()
+        # Other processes (e.g. parallel page filler workers) may be reading this file,
+        # so never truncate it in place: skip if unchanged, else write a temp file and swap it in.
+        if os.path.exists(fname):
+            try:
+                with open(fname, encoding="Utf-8") as inf:
+                    if inf.read() == newdat:
+                        return
+            except OSError:
+                pass
         logger.debug(f"Writing stylefile {fname}")
-        with open(fname, "w", encoding="Utf-8") as outf:
-            self.styleEditor.output_diffile(outf)
+        tmpname = f"{fname}.{os.getpid()}.tmp"
+        with open(tmpname, "w", encoding="Utf-8") as outf:
+            outf.write(newdat)
+        for attempt in range(10):
+            try:
+                os.replace(tmpname, fname)
+                break
+            except PermissionError:     # Windows: target held open by a reader
+                if attempt == 9:
+                    os.remove(tmpname)
+                    raise
+                time.sleep(0.2)
 
     def updatePicList(self, bks=None, priority="Both", output=False):
         return
@@ -1708,8 +1741,21 @@ class ViewModel:
         tname = self.getLocalTriggerFilename(bk)
         tpath = os.path.join(self.project.printPath(self.cfgid), tname)
         # get expansion of regular font
+        font_info = self.get("bl_fontR")
+        try:
+            expand = float(font_info.feats.get('extend', "1"))
+        except ValueError:
+            expand = 1
+        try:
+            minexp = float(self.get("s_shrinktextlimit", "95")) / 100 * expand
+        except ValueError:
+            minexp = 0.95 * self.expand
+        try:
+            maxexp = float(self.get("s_maxtextlimit", "105")) / 100 * expand
+        except ValueError:
+            maxexp = 1.05 * self.expand
         centre = 100
-        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath, tname=tpath)
+        adj = AdjList(int(expand * 100), int(minexp * 100), int(maxexp * 100), gtk=gtk, fname=fpath, tname=tpath)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj

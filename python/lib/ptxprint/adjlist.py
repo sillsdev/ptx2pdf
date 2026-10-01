@@ -1,7 +1,7 @@
 
 from ptxprint.utils import refKey
 from collections import UserList
-import os,re
+import os, re, bisect
 import logging
 
 logger = logging.getLogger(__name__)
@@ -47,11 +47,21 @@ class AdjList:
             self.liststore = Liststore()
         else:
             self.liststore = gtk.ListStore(str, str, int, str, str, int, str, str)
+        self.gtk = gtk
         self.changed = False
         self.adjfile = fname
         self.trigfile = tname
+        logger.log(15, f"{self.adjfile} ({self.centre}, +{self.highdiff}, -{self.lowdiff})")
         self.ftime = None
         self.db = []
+
+    def copy(self, gtk=None):
+        res = self.__class__(self.centre, self.lowdiff, self.highdiff, 
+                             gtk=gtk, fname=self.adjfile, tname=self.trigfile)
+        for row in self.liststore:
+            res.liststore.append(list(row))
+        res.db = [d.copy() for d in self.db]
+        return res
 
     def clear(self):
         self.liststore.clear()
@@ -72,6 +82,7 @@ class AdjList:
         allvals = [[*r] for r in self.liststore]
         alldb = self.db[:]
         self.liststore.clear()
+        self.db = []
         for a in sorted(range(len(allvals)), key=lambda x:self.calckey(allvals[x])):
             self.liststore.append(allvals[a])
             self.db.append(alldb[a])
@@ -155,6 +166,8 @@ class AdjList:
     def genline(self, i):
         r = self.liststore[i]
         d = self.db[i]
+        if r[3] == 0 and r[5] == self.centre and not len(d):
+            return None
         cv = r[1].replace(":", ".").replace(" ", "")
         if r[2] > 1:
             line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
@@ -184,10 +197,13 @@ class AdjList:
             self.remove_file(fname)
             return
         os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
+        count = 0
         with open(fname, "w", encoding="utf-8") as outf:
             for i in range(len(self.liststore)):
                 line = self.genline(i)
-                outf.write(line + "\n")
+                if line is not None:
+                    count += 1
+                    outf.write(line + "\n")
         self.ftime = os.lstat(fname).st_ctime
 
     def cleanup(self):
@@ -269,27 +285,18 @@ class AdjList:
             return False
         cp = [m.group(1)+m.group(2), m.group(3), int((m.group(4) if m.lastindex > 2 else 1) or 1)]
         cpk = self.calckey(cp)
-        i = -1
-        # rk = self.calckey([cp[0], "200:200", 1, 0, "", 100])
-        for i, r in enumerate(self.liststore):
-            rk = self.calckey(r)
-            if rk >= cpk:
-                break
-        else:
-            i += 1
-            rk = self.calckey([cp[0], "200:200", 1, 0, "", 100, ""])
-        if rk == cpk:
+        i = bisect.bisect_left(self.liststore, cpk, key=self.calckey)
+        if i < len(self.liststore) and self.calckey(self.liststore[i]) == cpk:
             if 0 <= i < len(self.db):
-                doit(r, i)
-        elif rk > cpk:
-            if insert:
-            # book, c:v, para, stretch, mkr, expand, comment%
-                r = [cp[0], cp[1], cp[2], "0", "", 100, "", ""]
-                self.liststore.insert(i, r)
-                self.db.insert(i, {})
-                r = self.liststore[i]         # since the row is turned into something else
-                self.changed = True
-                doit(r, i)
+                doit(self.liststore[i], i)
+        elif insert:
+        # book, c:v, para, stretch, mkr, expand, comment%
+            r = [cp[0], cp[1], cp[2], "0", "", 100, "", ""]
+            self.liststore.insert(i, r)
+            self.db.insert(i, {})
+            r = self.liststore[i]         # since the row is turned into something else
+            self.changed = True
+            doit(r, i)
 
     def increment(self, parref, offset, mrk=None):
         def mydoit(r, i):
@@ -354,8 +361,8 @@ class AdjList:
                 if n is None: continue
                 e = int(n.group(1)) / 100
                 s = int(n.group(2)) if n.group(2) else 0
-                shapes[(rk, d)] = (e, s)
-                probes[(rk, e, s)] = d
+                shapes[(rk, d)] = (e, s, None)
+                probes.setdefault(rk, {})[(e, s)] = d
         return shapes, probes
 
     def _setTriggersInComment(self, key, comment, triggers):

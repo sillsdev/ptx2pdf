@@ -2,6 +2,8 @@
 
 # Parses xdv
 from struct import unpack, pack
+import logging
+
 class Font:
     def __init__(self, fname):
         self.name = fname
@@ -78,21 +80,23 @@ opcodes += [
 packings = ("bhxi", "BHxI")
 
 class XDViReader:
-    def __init__(self, fname, diffable=False):
+    def __init__(self, fname, diffable=False, page=0):
         self.fonts = {}
         self.fname = fname
         self.diffable = diffable
         self.pageno = 0
-        self.file = None
+        self.buffer = None
+        self.fpos = 0
+        self.startpage = max(page, 0)
 
     def __enter__(self):
-        self.file = open(self.fname, "rb")
+        with open(self.fname, "rb") as inf:
+            self.buffer = memoryview(inf.read())
+        self.fpos = 0
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        if self.file is not None:
-            self.file.close()
-            self.file = None
+        self.buffer = None
 
     def __iter__(self):
         return self
@@ -104,31 +108,40 @@ class XDViReader:
         return (op, opc, data)
 
     def readbytes(self, num):
-        return self.file.read(num)
+        res = self.buffer[self.fpos:self.fpos+num]
+        self.fpos += num
+        return res
 
     def readval(self, size, uint=False):
-        d = self.readbytes(size)
+        d = self.buffer[self.fpos:self.fpos+size]   # save a function call. We are called a lot
+        self.fpos += size
+        if size != 3:
+            return int.from_bytes(d, byteorder='big', signed=not uint)
+        
+        # Special handling for 3-byte (24-bit) TeX DVI integers
+        val = int.from_bytes(d, byteorder='big', signed=False)
+        if not uint and (val & 0x800000):
+            val -= 0x1000000  # Convert to negative complement
+        return val
+
+    def readvals(self, size, num, uint=False):
+        if not num:
+            return []
         if size == 3:
-            if uint:
-                s = unpack(">"+packings[1][1]+packings[1][0], d)
-                res = s[0] * 256 + s[1]
-            else:
-                s = unpack(">"+packings[0][1]+packings[1][0], d)
-                res = s[0] * 256 + (s[1] if s[0] > 0 else -s[1])
-        else:
-            res = unpack(">"+packings[1 if uint else 0][size-1], d)[0]
-        return res
+            return [self.readval(size, uint=unit) for i in range(num)]
+        fmt = ("bhxi" if uint else "BHXI")[size-1]
+        d = self.readbytes(size * num)
+        return list(unpack(f">{num}{fmt}", d))
 
     def parse(self):
         selfopen = False
-        if self.file is None:
+        if self.buffer is None:
             selfopen = True
             self.__enter__()
         self.readpost()
         yield from self._parse()
         if selfopen:
             self.__exit__(None, None, None)
-            self.file = None
 
     def _parse(self):
         for (op, opc, data) in self:
@@ -138,20 +151,33 @@ class XDViReader:
                 break
 
     def readpost(self):
-        self.file.seek(-16, 2)
-        dat = self.file.read(16)
+        dat = self.buffer[-16:]
         postpos = 0
         for i in range(16):
             if dat[-1-i] != 0xDF:
-                postpos = unpack(">L", dat[-5-i:-1-i])[0]
+                postpos = int.from_bytes(dat[-5-i:-1-i], byteorder='big', signed=False)
                 break
         else:
             self.seek(0)
             return
-        self.file.seek(postpos)
+        self.fpos = postpos
+        spage = 0
+        lastbop = 0
         for (op, res) in self._parse():
-            pass
-        self.file.seek(0)
+            if self.startpage != 0:
+                if op == "multiparm":       # post
+                    spage = res[6] - self.startpage  # t, numpages
+                    lastbop = res[0]
+        self.fpos = 0
+        while spage > 0:
+            self.fpos = lastbop
+            (op, opc, data) = next(self)
+            if op != "bop":     # error!
+                self.fpos = 0
+                break
+            spage -= 1
+            lastbop = data[10]
+        logging.log(15, f"{self.fname}: {self.fpos=}")
 
     def out(self, txt):
         # print(("pg[{}] ".format(self.pageno) + txt).encode("utf-8"))
@@ -189,14 +215,14 @@ class XDViReader:
         return (data[0],)
 
     def xxx(self, opcode, parm, data):
-        txt = self.readbytes(data[0])
+        txt = bytes(self.readbytes(data[0]))
         return (txt.decode("utf-8"),)
 
     def fontdef(self, opcode, parm, data):
         (k, c, s, d, a, l) = data
-        n = self.readbytes(a+l).decode("utf-8")
+        n = bytes(self.readbytes(a+l)).decode("utf-8")
         font = Font(n)
-        font.size = self.mag * s / 1000. / d if d != 0 else 0
+        font.points = self.mag * s / 1000. / d if d != 0 else 0
         font.checksum = c
         self.fonts[k] = font
         return (k, c, s, d, a, l, n)
@@ -214,7 +240,7 @@ class XDViReader:
     def xfontdef(self, opcode, parm, data):
         (k, points, flags) = data
         plen = self.readval(1, uint=True)
-        font_name = self.readbytes(plen).decode("utf-8")
+        font_name = bytes(self.readbytes(plen)).decode("utf-8")
         if self.diffable:
             font_name = os.path.basename(font_name)
         font = Font(font_name)
@@ -237,21 +263,22 @@ class XDViReader:
     def xglyphs(self, opcode, parm, data):
         if parm == 0:
             tlen = self.readval(2)
-            txt = self.readbytes(2*tlen).decode("utf-16be")
+            txt = bytes(self.readbytes(2*tlen)).decode("utf-16be")
         else:
             txt = b""
         width = self.readval(4)
         slen = self.readval(2, uint=True)
-        pos = [(self.readval(4), self.readval(4)) for i in range(slen)]
-        glyphs = [self.readval(2) for i in range(slen)]
+        poses = self.readvals(4, 2 * slen)
+        pos = list(zip(poses[::2], poses[1::2]))
+        glyphs = self.readvals(2, slen)
         return (parm, width, pos, glyphs, txt)
         # res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
         # self.out("xglyphs: {}".format(res))
 
 class XDViPositionedReader(XDViReader):
     """ Keeps track of where we are. Positions are in pt """
-    def __init__(self, fname, diffable=False):
-        super().__init__(fname, diffable=diffable)
+    def __init__(self, fname, diffable=False, page=0):
+        super().__init__(fname, diffable=diffable, page=page)
         self.stack = []
         self.dviratio = 1.
         self.h = 0

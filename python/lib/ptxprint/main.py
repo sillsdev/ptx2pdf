@@ -150,6 +150,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-c', '--config', help="Path to a configuration file")
     parser.add_argument('-R', '--runs', type=int, default=0, help="Limit XeTeX runs")
     parser.add_argument('-P', '--print', action='store_true', help="Run print operation")
+    parser.add_argument('-B', '--pub', action='append', help="Publication id to print (repeatable), requires -P")
 
     # Core Configuration
     parser.add_argument('-p', '--projects', action='append', default=[], help="Path(s) to project directories (repeatable)")
@@ -491,6 +492,32 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
         if args.print or retview or args.cmd in ("print", "fill"):
+            if len(args.pub):
+                from ptxprint.publications import printSetup
+                from ptxprint.utils import BuildParams
+                from ptxprint.multiprint import MultiPrint
+                from usfmtc.reference import RefList
+
+                mprint = MultiPrint(numproc=args.jobs or None)
+                for pub in args.pub:
+                    pvars = mainw.publications.get(pub, {})
+                    books = pvars.get("__books", "")
+                    bparms = BuildParams(
+                        prjtree = mainw.prjTree,
+                        config = mainw.userconfig,
+                        macrosdir = mainw.scriptsdir,
+                        scriptsdir = mainw.scriptsdir,
+                        args = mainw.args,
+                        restart = False,
+                        pid = mainw.project.prjid,
+                        guid = mainw.project.guid,
+                        cfgid = mainw.cfgid,
+                        setupfn = printSetup,       # must be module global
+                        setupargs = pvars,
+                        pubid = pub)
+                    mprint.submit_print_job(RefList(books), bparms)
+                mprint.wait()
+                sys.exit(0)
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)

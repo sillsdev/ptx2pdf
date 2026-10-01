@@ -26,11 +26,11 @@ from gi.repository import GtkSource, Poppler, Gio
 import cairo
 
 import xml.etree.ElementTree as et
-from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
+from ptxprint.font import TTFont, initFontCache, fccache, FontRef
 from ptxprint.view import ViewModel, Path
 from ptxprint.version import VersionStr, GitVersionStr
-from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton, doError
-from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
+from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, doError
+from ptxprint.utils import APP, setup_i18n, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pt_bindir, pycodedir, getcaller, runChanges, \
             _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig, \
             _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates, f2s, BuildParams
@@ -45,13 +45,15 @@ from ptxprint.modelmap import ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackBundle, GetDBLName
 from ptxprint.texpert import TeXpert
-from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
+from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets, setupCatalog
+from ptxprint.publications import PublicationsView
 from ptxprint.hyphen import Hyphenation
 from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
 from ptxprint.pdf_viewer import PDFViewer, Paragraphs
 from ptxprint.tatweel import TatweelDialog
 from ptxprint.gtkpolyglot import PolyglotSetup
+from ptxprint.gtkfont import setupGtkFonts
 from ptxprint.report import Report
 from ptxprint.gtktesting import GtkTester
 from ptxprint.printers import init_printers, comparePrinterPrices
@@ -61,7 +63,7 @@ from ptxprint.wizards.cover.coverwizard import CoverWizardApp
 from ptxprint.wizards.configuration import launchWizard
 
 import ptxprint.scriptsnippets as scriptsnippets
-import configparser, logging, threading
+import configparser, logging, threading, time
 import webbrowser
 import unicodedata
 from threading import Thread
@@ -448,7 +450,7 @@ _nonsensitivities = {
 }
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_createZipArchiveXtra", "btn_Generate",
-                    "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot"), 
+                    "b_reprint", "btn_refreshCaptions", "btn_adjust_diglot", "btn_pubPrint"), 
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission",
                     "btn_requestIllustrations", "c_noupdate", "c_quickRun", 
@@ -904,10 +906,23 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, prjtree, userconfig, scriptsdir, args=None):
         # logger.debug("Starting init in gtkview")
+        self._routes = {}
         super(GtkViewModel, self).__init__(prjtree, userconfig, scriptsdir, args)
         self.lang = args.lang if args.lang is not None else 'en'
         self.args = args
         self.initialised = False
+
+    def __getattr__(self, name):
+        ctrl = self._routes.get(name)
+        if ctrl is None:
+            raise AttributeError(name)
+        return getattr(ctrl, name)
+
+    def register(self, ctrl, names):
+        for n in names:
+            if n in self._routes or hasattr(type(self), n):
+                raise RunTimeError(f"{n}: Already routed to {self._routes.get(n)} or defined in view")
+            self._routes[n] = ctrl
 
     def _add_mac_menu(self, app, menudesc=mac_menu, parent=None):
         if parent is None:
@@ -1016,6 +1031,17 @@ class GtkViewModel(ViewModel):
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder()
         self.builder.add_from_string(xml_text) # this is where the error/warning/critial msgs come from
+        # Create controllers here since must register methods before connecting signals
+        self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
+        self.styleEditor = StyleEditorView(self)
+        self.pdf_viewer = PDFViewer(self, self.builder.get_object("nbk_PDFviewer"), self.builder.get_object("tv_pdfContents"))
+        self.adjView = AdjListView(self)
+        self.tv_polyglot = Gtk.TreeView()
+        self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
+        self.pubView = PublicationsView(self)
+        setupCatalog(self)
+        setupGtkFonts(self)
+
         self.builder.connect_signals_full(self.connect_signal, self)
         self.mw = self.builder.get_object("ptxprint")
         logger.debug("Glade loaded in gtkview")
@@ -1081,7 +1107,6 @@ class GtkViewModel(ViewModel):
         self.blInitValue = None
         self.currCodeletVbox = None
         self.codeletVboxes = {}
-        self.gtkpolyglot = None
         self.currentPDFpath = None
         self.ufPages = []
         self.picrect = None
@@ -1184,14 +1209,14 @@ class GtkViewModel(ViewModel):
         self.frtMatterTooltip = self.builder.get_object("btn_infoViewEdit").get_tooltip_text()
         self.adjListTooltip = self.builder.get_object("l_AdjList").get_tooltip_text()
 
+        polyset = self.builder.get_object('bx_polyglot')
+        polyset.pack_start(self.gtkpolyglot, True, True, 0)
+        # polyset.show_all()
+
         logger.debug("Create PicList")
-        self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
-        self.styleEditor = StyleEditorView(self)
-        self.pdf_viewer = PDFViewer(self, self.builder.get_object("nbk_PDFviewer"), self.builder.get_object("tv_pdfContents"))
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
-        self.tv_polyglot = Gtk.TreeView()
 
         for w in self.allControls:
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
@@ -1631,7 +1656,6 @@ class GtkViewModel(ViewModel):
             if k.startswith("Settings"):
                 view.get_style_context().add_class(f"backsettings{k[-1]}")
 
-        self.adjView = AdjListView(self)
         scroll = self.builder.get_object("tb_AdjList")
         scroll.add(self.adjView.view)
         logger.debug("Setting project")
@@ -2211,6 +2235,8 @@ class GtkViewModel(ViewModel):
     def on_zvarPubToggled(self, cr, path):
         self.pubvarlist[path][4] = not self.pubvarlist[path][4]
         self.pubvars_publishable[self.pubvarlist[path][0]] = self.pubvarlist[path][4]
+        self.publications = self.pubView.save()
+        self.pubView.load(self.publications)
 
     def allvars(self, dest=None):
         if dest is None:
@@ -2235,6 +2261,9 @@ class GtkViewModel(ViewModel):
     def onDestroy(self, btn, *a):
         if self.testing is not None:
             self.testing.finalise()
+        mprint = getattr(self, 'mprint', None)
+        if mprint is not None:
+            mprint.terminate()
         logger.debug(f"Main width={self.mainapp.win.get_size().width}")
         self.builder.get_object("mainapp_win").destroy()
         self.mainapp.quit()
@@ -2291,15 +2320,6 @@ class GtkViewModel(ViewModel):
         if self.gtkpolyglot is not None:    
             self.builder.get_object("btn_adjust_diglot").set_sensitive(not self.printReason and len(self.gtkpolyglot.ls_treeview) == 2)
 
-    def checkFontsMissing(self):
-        self.setPrintBtnStatus(4, "")
-        for f in ['R','B','I','BI']:
-            if self.get("bl_font" + f) is None:
-                logger.debug(f"bl_font: {f} is None. {getcaller()}")
-                self.setPrintBtnStatus(4, _("Font(s) not set"))
-                return True
-        return False
-                
     def print2ndDiglotTextClicked(self, btn):
         self.onOK(btn)
         
@@ -2552,6 +2572,7 @@ class GtkViewModel(ViewModel):
             self.picChecksView.writeCfg(self.project.srcPath(), self.cfgid)
 
     def createConfig(self, diff=None):
+        self.publications = self.pubView.save()
         config = super().createConfig(diff=diff)
         if self.coverwiz is not None:
             self.coverwiz.state.saveConfig(config)
@@ -2701,6 +2722,7 @@ class GtkViewModel(ViewModel):
                     obj = self.builder.get_object(w)
                     if obj is not None:
                         obj.set_sensitive(state)
+        self.pubView.load(self.publications)
         self.colorTabs()
         self.updateMarginGraphics()
         self.sensiVisible('c_lockUI4Layout') # Why does this do nothing? Is it in the wrong place?
@@ -3772,15 +3794,6 @@ class GtkViewModel(ViewModel):
     # def hoverOverStyleLink(self, *argv):  # signal: query_tooltip
         # self.wiggleCurrentTabLabel()
 
-    def wiggleCurrentTabLabel(self):
-        lb = self.builder.get_object("lb_StyleEditor")
-        t = lb.get_label()
-        for b in range(8,-1,-1):
-            lb.set_label(" "*b+t)
-            Gtk.main_iteration_do(False)
-            time.sleep(0.08)
-            Gtk.main_iteration_do(False)
-        
     def onProcessScriptClicked(self, btn):
         self.colorTabs()
         if not self.sensiVisible("c_processScript"):
@@ -3794,266 +3807,6 @@ class GtkViewModel(ViewModel):
         if not self.sensiVisible("c_introOutline"):
             self.builder.get_object("c_prettyIntroOutline").set_active(False)
         self.changed()
-
-    def onRefreshFontsclicked(self, btn):
-        fc = fccache()
-        lsfonts = self.builder.get_object("ls_font")
-        fc.fill_liststore(lsfonts)
-
-    def onFontRclicked(self, btn, highlightWid=None):
-        if self.getFontNameFace("bl_fontR", highlightWid=highlightWid):
-            btn = self.builder.get_object("bl_fontR")
-            self.onFontChanged(btn)
-        self.checkFontsMissing()
-
-    def onLocateDigitMappingClicked(self, btn):
-        self.onFontRclicked(None, highlightWid='fcb_fontdigits')
-
-    def onFontBclicked(self, btn):
-        self.getFontNameFace("bl_fontB")
-        self.checkFontsMissing()
-        
-    def onFontIclicked(self, btn):
-        self.getFontNameFace("bl_fontI")
-        self.checkFontsMissing()
-        
-    def onFontBIclicked(self, btn):
-        self.getFontNameFace("bl_fontBI")
-        self.checkFontsMissing()
-        
-    def onFontRowSelected(self, dat):
-        lsstyles = self.builder.get_object("ls_fontFaces")
-        lb = self.builder.get_object("tv_fontFamily")
-        sel = lb.get_selection()
-        ls, row = sel.get_selected()
-        if row is not None:
-            name = ls.get_value(row, 0)
-            initFontCache().fill_cbstore(name, lsstyles)
-            self.builder.get_object("fcb_fontFaces").set_active(0)
-            self.set("t_fontFeatures", "")
-
-    def responseToDialog(entry, dialog, response):
-        dialog.response(response)
-
-    def _getSelectedFont(self, fallback=""):
-        lb = self.builder.get_object("tv_fontFamily")
-        sel = lb.get_selection()
-        ls, row = sel.get_selected()
-        if row is None:
-            return (fallback, None)
-        name = ls.get_value(row, 0) or fallback
-        style = self.get("fcb_fontFaces")
-        if style.lower() == "regular":
-            style = ""
-        return (name, style)
-
-    def getFontNameFace(self, btnid, noStyles=False, noFeats=False, highlightWid=None):
-        btn = self.builder.get_object(btnid) if btnid is not None else None
-        f = self.get(btnid) if btnid is not None else None
-        lb = self.builder.get_object("tv_fontFamily")
-        ls = lb.get_model()
-        fc = initFontCache()
-        fc.wait()
-        fc.fill_liststore(ls)
-        dialog = self.builder.get_object("dlg_fontChooser")
-        if f is None:
-            i = 0
-            isGraphite = False
-            feats = ""
-            hasfake = False
-            embolden = None
-            italic = None
-            extend = None
-            isCtxtSpace = False
-            mapping = "Default"
-            tfont = self.get("bl_fontR")
-            name = tfont.name if tfont is not None else None
-        else:
-            for i, row in enumerate(ls):
-                if row[0] == f.name:
-                    break
-            else:
-                i = 0
-            isGraphite = f.isGraphite
-            isCtxtSpace = f.isCtxtSpace
-            feats = f.asFeatStr()
-            embolden = f.getFake("embolden")
-            italic = f.getFake("slant")
-            extend = f.getFake("extend") or "1.0"
-            hasfake = embolden is not None or italic is not None
-            mapping = f.getMapping()
-            name = f.name
-        lb.set_cursor(i)
-        lb.scroll_to_cell(i)
-        if name is not None:
-            tv = self.builder.get_object("tv_fontFamily")
-            tm = self.builder.get_object("ls_font")
-            try:
-                tp = [x[0] for x in tm].index(name)
-            except ValueError:
-                tp = None
-            if tp is not None:
-                ti = tm.get_iter(Gtk.TreePath.new_from_indices([tp]))
-                tv.get_selection().select_iter(ti)
-                logger.debug("Found {} in font dialog at {}".format(name, tp))
-        self.builder.get_object("t_fontSearch").set_text("")
-        self.builder.get_object("t_fontSearch").has_focus()
-        self.builder.get_object("fcb_fontFaces").set_sensitive(not noStyles)
-        self.builder.get_object("t_fontFeatures").set_text(feats)
-        self.builder.get_object("t_fontFeatures").set_sensitive(not noFeats)
-        self.builder.get_object("c_fontGraphite").set_active(isGraphite)
-        self.builder.get_object("c_fontCtxtSpaces").set_active(isCtxtSpace)
-        self.builder.get_object("s_fontBold").set_value(float(embolden or 0.))
-        self.builder.get_object("s_fontItalic").set_value(float(italic or 0.))
-        self.builder.get_object("s_fontExtend").set_value(float(extend or 1.0))
-        self.builder.get_object("c_fontFake").set_active(hasfake)
-        self.builder.get_object("fcb_fontdigits").set_active_id(mapping)
-        for a in ("Bold", "Italic"):
-            self.builder.get_object("s_font"+a).set_sensitive(hasfake)
-        # dialog.set_default_response(Gtk.ResponseType.OK)
-
-        if highlightWid is not None:
-            w = self.builder.get_object(highlightWid)
-            w.get_style_context().add_class("highlighted")
-            
-        response = dialog.run()
-        if highlightWid is not None:
-            w = self.builder.get_object(highlightWid)
-            w.get_style_context().remove_class("highlighted")
-        if response == Gtk.ResponseType.OK:
-            (name, style) = self._getSelectedFont(name)
-            if self.get("c_fontFake"):
-                bi = (self.get("s_fontBold"), self.get("s_fontItalic"))
-            else:
-                bi = None
-            f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), 
-                                   self.get("c_fontCtxtSpaces"), self.get("t_fontFeatures"),
-                                   bi, self.get("s_fontExtend"), self.get("fcb_fontdigits"))
-            if btnid is not None:
-                self.set(btnid, f)
-            res = True
-        else:
-            res = False
-        dialog.hide()
-        return res
-
-    def onFontFeaturesClicked(self, btn):
-        (name, style) = self._getSelectedFont()
-        if name is None:
-            return
-        f = TTFont(name, style)
-        if f is None:
-            return
-        isGraphite = self.get("c_fontGraphite")
-        dialog = self.builder.get_object("dlg_features")
-        featbox = self.builder.get_object("box_featsFeatures")
-        lslangs = self.builder.get_object("ls_featsLangs")
-        if isGraphite:
-            feats = f.feats
-            vals = f.featvals
-            langs = getattr(f, 'grLangs', {})
-            self.currdefaults = f.featdefaults
-            langfeats = f.langfeats
-            tips = {}
-        else:
-            feats = f.otFeats
-            vals = f.otVals
-            langs = f.otLangs
-            self.currdefaults = {}
-            langfeats = {}
-            tips = f.tipFeats
-
-        numrows = len(feats)
-        (lang, setfeats) = parseFeatString(self.get("t_fontFeatures"), defaults=self.currdefaults, langfeats=langfeats)
-        for i, (k, v) in enumerate(sorted(feats.items())):
-            featbox.insert_row(i)
-            l = Gtk.Label(label=v+":")
-            l.set_halign(Gtk.Align.END)
-            if k in tips:
-                l.set_tooltip_markup(tips[k])
-            featbox.attach(l, 0, i, 1, 1)
-            l.show()
-            inival = int(setfeats.get(k, -1))
-            if k in vals:
-                if len(vals[k]) < 3:
-                    obj = Gtk.CheckButton()
-                    if k in vals and len(vals[k]) > 1:
-                        obj.set_tooltip_text(vals[k][1])
-                    obj.set_active(max(inival, 0))
-                else:
-                    obj = Gtk.ComboBoxText()
-                    for j, n in sorted(vals[k].items()):
-                        obj.append(str(j), n)
-                    obj.set_active(inival+1)
-                    obj.set_entry_text_column(1)
-            elif k == "aalt":
-                obj = makeSpinButton(0, 100, 0)
-                obj.set_value(max(inival, 0))
-            else:
-                obj = Gtk.CheckButton()
-                obj.set_active(max(inival, 0))
-            obj.set_halign(Gtk.Align.START)
-            featbox.attach(obj, 1, i, 1, 1)
-            obj.show()
-        lslangs.clear()
-        for k, v in sorted(langs.items()):
-            lslangs.append([v, k])
-        if lang is not None:
-            self.set("fcb_featsLangs", lang, mod=False)
-        def onLangChanged(fcb):
-            newlang = self.get("fcb_featsLangs")
-            newdefaults = langfeats.get(newlang, self.currdefaults)
-            logger.debug("New defaults for lang {}: {}".format(newlang, newdefaults))
-            for i, (k, v) in enumerate(sorted(feats.items())):
-                if newdefaults.get(k, 0) == self.currdefaults.get(k, 0):
-                    continue
-                obj = featbox.get_child_at(1, i)
-                logger.debug("Changing feature {} in lang {}".format(k, newlang))
-                if isinstance(obj, Gtk.CheckButton):
-                    if (1 if obj.get_active() else 0) == self.currdefaults.get(k, 0):
-                        obj.set_active(newdefaults.get(k, 0) == 1)
-                elif isinstance(obj, GtkSpinButton):
-                    if obj.get_value() == self.currdefaults.get(k, 0):
-                        obj.set_value(newdefaults.get(k, 0))
-                elif isinstance(obj, Gtk.ComboBoxText):
-                    if obj.get_active_id() == self.currdefaults.get(k, 0):
-                        ob.set_active_id(newdefaults.get(k, 0))
-            self.currdefaults = newdefaults
-        langChangedId = self.builder.get_object("fcb_featsLangs").connect("changed", onLangChanged)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            results = []
-            lang = self.get("fcb_featsLangs")
-            if lang is not None:
-                results.append("language="+lang)
-                self.currdefaults = langfeats.get(lang, self.currdefaults)
-            for i, (k, v) in enumerate(sorted(feats.items())):
-                obj = featbox.get_child_at(1, i)
-                if isinstance(obj, Gtk.CheckButton):
-                    val = 1 if obj.get_active() else None
-                elif isinstance(obj, Gtk.SpinButton):
-                    val = int(obj.get_value()) or None
-                elif isinstance(obj, Gtk.ComboBoxText):
-                    val = int(obj.get_active_id())
-                    val = val - 1 if val else None
-                if val is not None and str(self.currdefaults.get(k, None)) != str(val):
-                    results.append("{}={}".format(k, val))
-            self.set("t_fontFeatures", ", ".join(results), mod=False)
-        for i in range(numrows-1, -1, -1):
-            featbox.remove_row(i)
-        self.builder.get_object("fcb_featsLangs").disconnect(langChangedId)
-        dialog.hide()
-
-    def onFontIsGraphiteClicked(self, btn):
-        self.onSimpleClicked(btn)
-        self.set("t_fontFeatures", "", mod=False)
-
-    # this is copied from 'onFontFeaturesClicked' in order to do something similar with TeXpert options
-
-    # Dict looks like this:
-#          "notesEachBook": ["Endnotes at Each Book", "Output endnotes at the end of each book", True],
-    # Results need to look like this:
-#          \ifnotesEachBookfalse   (and should only be set if option is set different to the default value)
 
     def setupTeXOptions(self):
         groupCats = {
@@ -4703,19 +4456,6 @@ class GtkViewModel(ViewModel):
     def updateConfigIdentity(self, cfg):
         self.cfgid = cfg
         self.loadPolyglotSettings(cfg)
-
-    def loadPolyglotSettings(self, config=None):
-        if self.gtkpolyglot is not None:
-            self.gtkpolyglot.clear_polyglot_treeview()
-        if self.get("c_diglot"):
-            if self.gtkpolyglot is None:
-                self.gtkpolyglot = PolyglotSetup(self.builder, self, self.tv_polyglot)
-                polyset = self.builder.get_object('bx_polyglot')
-                polyset.pack_start(self.gtkpolyglot, True, True, 0)
-                polyset.show_all()
-            if config is not None:
-                self.polyglots["L"].cfg = config
-            self.gtkpolyglot.load_polyglots_into_treeview()
 
     def showmybook(self, isfirst=False, nodate=False):
         if self.otherDiglot is None and self.initialised and self.showPDFmode == "preview": # preview is on
@@ -5474,209 +5214,6 @@ class GtkViewModel(ViewModel):
         dialog.destroy()
         return fcFilepath
 
-    def onDiglotClicked(self, btn):
-        # Guard against re-entry when we programmatically restore the checkbox state below.
-        if getattr(self, '_restoringDiglot', False):
-            return
-
-        # GTK3 fires 'clicked' from set_active() as well as from real user clicks.
-        # During config/project loading, loadingConfig=True — run only the cheap UI
-        # updates and return immediately so no dialog can ever appear mid-load.
-        if self.loadingConfig:
-            self.sensiVisible("c_diglot")
-            self.colorTabs()
-            return
-
-        # ---- Interactive click only beyond this point ----
-
-        # User just unchecked diglot: restore it visually and offer Save-As-Monoglot.
-        if not self.get("c_diglot"):
-            self._restoringDiglot = True
-            btn.set_active(True)          # restore visual state (triggers clicked again)
-            self._restoringDiglot = False
-            self._showSaveAsMonoglotDialog()
-            return
-
-        # User just checked diglot: confirm this is intentional.
-        dialog = self.builder.get_object("dlg_confirmDiglot")
-        response = dialog.run()
-        dialog.hide()
-        if response != Gtk.ResponseType.YES:
-            # User declined – silently restore the checkbox to unchecked and return
-            # before any UI state has changed.  handler_block prevents re-entering
-            # this function; mod=False avoids marking the config as changed.
-            btn.handler_block_by_func(self.onDiglotClicked)
-            self.set("c_diglot", False, mod=False)
-            btn.handler_unblock_by_func(self.onDiglotClicked)
-            return
-
-        # ---- Normal path: activation confirmed ----
-        self.sensiVisible("c_diglot")
-        self.colorTabs()
-        if self.get("c_diglot"):
-            self.loadPolyglotSettings()
-            self.createDiglotView()  # stores result in self.diglotViews['R'] only when non-None
-            self.set("c_doublecolumn", True)
-            self.builder.get_object("c_doublecolumn").set_sensitive(False)
-            # Open the Project dropdown for the R row so the user immediately knows
-            # they need to select a secondary project.
-            if self.gtkpolyglot is not None:
-                tv = self.gtkpolyglot.treeview
-                cols = tv.get_columns()
-                if len(cols) > 2:
-                    proj_col = cols[2]   # Code=0, 1|2=1, Project=2
-                    def _open_project_dropdown(tv=tv, proj_col=proj_col):
-                        model = tv.get_model()
-                        for i, row in enumerate(model):
-                            if row[0] == "R":   # m.code == 0
-                                path = Gtk.TreePath([i])
-                                tv.scroll_to_cell(path, proj_col, False, 0.0, 0.0)
-                                tv.set_cursor(path, proj_col, True)
-                                break
-                        return False
-                    GLib.idle_add(_open_project_dropdown)
-        else:
-            self.builder.get_object("c_doublecolumn").set_sensitive(True)
-            self.setPrintBtnStatus(2)
-            self.diglotViews = {}
-        self.updateDialogTitle()
-        self.disableLayoutAnalysis()
-        self.loadPics(mustLoad=False, force=True)
-        if self.get("c_includeillustrations"):
-            self.onUpdatePicCaptionsClicked(None)
-
-    def _onMonoglotNameChanged(self, entry):
-        """Live validation for the 't_newMonoglotConfigName' entry in dlg_saveAsMonoglot."""
-        cfg = entry.get_text()
-        ok_btn   = self.builder.get_object("btn_disableDiglot_ok")
-        msg_lbl  = self.builder.get_object("l_diableDiglotNewCfgMsg")
-        cleanCfg = re.sub('[^-a-zA-Z0-9_()]+', '', cfg)
-        cpath    = self.project.srcPath(cleanCfg) if cleanCfg and self.project else None
-        if cfg != cleanCfg:
-            msg = _("Do not use spaces or special characters")
-        elif not len(cfg):
-            msg = ""
-        elif cpath is not None and os.path.exists(cpath):
-            msg = _("That Configuration already exists.\nUse another name.")
-        else:
-            ok_btn.set_sensitive(True)
-            msg_lbl.set_text("")
-            return
-        ok_btn.set_sensitive(False)
-        msg_lbl.set_text(msg)
-
-    def _showSaveAsMonoglotDialog(self):
-        r"""Show the 'Save As Monoglot' dialog and act on the response.
-
-        Cancel  -> c_diglot stays True (already restored before this is called).
-        OK      -> The current settings are saved under the chosen name with
-                  c_diglot turned off; that new monoglot configuration becomes active.
-                  The original diglot configuration is left untouched on disk.
-        """
-        entry   = self.builder.get_object("t_newMonoglotConfigName")
-        ok_btn  = self.builder.get_object("btn_disableDiglot_ok")
-        msg_lbl = self.builder.get_object("l_diableDiglotNewCfgMsg")
-
-        # Reset dialog widgets to a clean state
-        entry.set_text("")
-        ok_btn.set_sensitive(False)
-        msg_lbl.set_text("")
-
-        # Connect live validation once (avoid duplicate connections on repeated opens)
-        if not getattr(self, '_monoglotDlgSigConnected', False):
-            entry.connect("changed", self._onMonoglotNameChanged)
-            self._monoglotDlgSigConnected = True
-
-        dialog   = self.builder.get_object("dlg_saveAsMonoglot")
-        dialog.show_all()
-        response = dialog.run()
-        dialog.hide()
-
-        if response != Gtk.ResponseType.OK:
-            return  # User cancelled – diglot remains active, nothing to do.
-
-        cfg = re.sub('[^-a-zA-Z0-9_()]+', '', entry.get_text())
-        if not cfg:
-            return  # Safety guard – shouldn't be reachable while OK button is insensitive.
-
-        # ── Step 1: Save the current state as a new configuration ──
-        # This mirrors onSaveAsNewConfig exactly.  Internally, onSaveConfig calls
-        # updateProjectSettings(readConfig=True) which copies the existing diglot
-        # config files to the new name and then re-reads them from disk.  That
-        # read restores c_diglot=True in memory, so we must NOT try to turn diglot
-        # off before this call – we do it in step 2 instead.
-        self.set("ecb_savedConfig", cfg)
-        self.doConfigNameChange(cfg)
-        self.changed()
-        self.onSaveConfig(None)
-        # After onSaveConfig the new config is on disk but still has c_diglot=True
-        # because the re-read from the copied file restored that value in memory.
-
-        # ── Step 2: Turn off diglot in memory and overwrite the new config ──
-        # Block the signal so set() doesn't re-enter onDiglotClicked.
-        diglot_btn = self.builder.get_object("c_diglot")
-        diglot_btn.handler_block_by_func(self.onDiglotClicked)
-        self.set("c_diglot", False)   # marks isChanged=True via changed()
-        diglot_btn.handler_unblock_by_func(self.onDiglotClicked)
-        self.saveConfig()             # writes c_diglot=False to the new config on disk
-
-        # ── Step 3: Finalise the new config identity ──
-        # Now that c_diglot=False, loadPolyglotSettings will only clear the
-        # treeview rather than trying to load diglot data.
-        self.updateConfigIdentity(cfg)
-
-        # ── Step 4: Run the deactivation housekeeping that onDiglotClicked would ──
-        # have done in its 'else' branch (and the shared tail code after it).
-        self.sensiVisible("c_diglot")
-        self.colorTabs()
-        self.builder.get_object("c_doublecolumn").set_sensitive(True)
-        self.setPrintBtnStatus(2)
-        self.diglotViews = {}
-        self.updateDialogTitle()
-        self.disableLayoutAnalysis()
-        self.loadPics(mustLoad=False, force=True)
-        if self.get("c_includeillustrations"):
-            self.onUpdatePicCaptionsClicked(None)
-
-    def switchToDiglot(self, pref):
-        dv = None
-        dvprj = None
-        dvcfg = None
-        if self.otherDiglot is not None:
-            if pref is not None:
-                dv = self.otherDiglot[2].get(pref, None)
-        elif self.diglotViews is not None:
-            dv = self.diglotViews.get(pref, None)
-        if dv is None:
-            if self.otherDiglot is not None:
-                dvprj, dvcfg = self.otherDiglot[:2]
-            else:
-                return False
-        elif dv:
-            dv.saveConfig()
-            dvprj = dv.project
-            dvcfg = dv.cfgid
-        if pref is not None:
-            if self.otherDiglot is None:
-                self.otherDiglot = (self.project, self.cfgid, self.diglotViews.copy())
-            # self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-            self.changeBtnLabel("b_print", _("Return to Primary"))
-            self.builder.get_object("b_reprint").set_sensitive(False)
-            self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-        else:
-            self.changeBtnLabel("b_print", _("Print (Make PDF)"))
-            self.builder.get_object("b_print2ndDiglotText").set_visible(False)
-            self.builder.get_object("b_reprint").set_sensitive(True)
-            if self.otherDiglot is not None:
-                self.diglotViews = self.otherDiglot[2]
-                self.otherDiglot = None
-        self.set("fcb_project", dvprj.prjid)
-        self.set("ecb_savedConfig", dvcfg)
-        self.disableLayoutAnalysis()
-        # self.updateProjectSettings(dvprj.prjid, dvprj.guid, configName=dv.cfgid)
-        # self.updateDialogTitle()
-        return True
-
     def changeBtnLabel(self, w, lbl):
         b = self.builder.get_object(w)
         b.set_visible(False)
@@ -5855,8 +5392,6 @@ class GtkViewModel(ViewModel):
     def onOpenTextBorderDialog(self, btn):
         self.setPublishableTextBorder()
         self.styleEditor.sidebarBorderDialog()
-        # mpgnum = self.notebooks['Main'].index("tb_TabsBorders")
-        # self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
     def setPublishableTextBorder(self):
         x = "" if self.get("c_useOrnaments") and self.get("c_inclPageBorder") \
@@ -6109,13 +5644,6 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.styleEditor.item_changed(btn, "_publishable")
         return
-        # if self.styleEditor.marker == 'textborder':
-            # if 'publishable' in self.styleEditor.getval('textborder', 'TextProperties'):
-                # for w in ["c_useOrnaments", "c_inclPageBorder"]:
-                    # self.set(w, True)
-                # self.set("r_border", "text")
-            # else:
-                # self.set("c_inclPageBorder", False)
 
     def onFontStyclicked(self, btn):
         if self.getFontNameFace("bl_font_styFontName"): #, noStyles=True)
@@ -6178,12 +5706,6 @@ class GtkViewModel(ViewModel):
             w.set_text(new)
             self.changed()
         
-    def onStyleAdd(self, btn):
-        self.styleEditor.mkrDialog(newkey=True)
-
-    def onStyleEdit(self, btn):
-        self.styleEditor.mkrDialog()
-
     def onAdvancedNotebookChanged(self, nb, page, page_num):
         btn = self.builder.get_object("btn_texpertFilter")
         if btn is None:
@@ -6220,62 +5742,10 @@ class GtkViewModel(ViewModel):
                 ex.set_visible(True)
                 ex.set_expanded(False)
 
-    def onStyleFilter(self, btn):
-        def widen(x):
-            if x in aliases:
-                return [x, x+"1"]
-            elif x[:-1] in aliases and x.endswith("1"):
-                return [x, x[:-1]]
-            else:
-                return [x]
-        try:
-            mrkrset = self.get_usfms().get_markers(self.getBooks()) if btn.get_active() else set()
-        except SyntaxError as e:
-            self.doError(_("USFM syntax error"), secondary=_("Syntax error: {}").format(e))
-            return
-        mrkrset = set(sum((widen(x) for x in mrkrset), []))
-        logger.debug(f"{self.getBooks()=}  {mrkrset=}")
-        self.styleEditor.add_filter(btn.get_active(), mrkrset)
-
     def onEditMarkerChanged(self, mkrw):
         m = mkrw.get_text()
         t = self.get("t_styName")
         self.set("t_styName", re.sub(r"^.*?-", m+" -", t), mod=False)
-
-    def onStyleDel(self, btn):
-        self.styleEditor.delKey()
-
-    def onStyleRefresh(self, btn):
-        self.styleEditor.refreshKey()
-
-    def onPlAddClicked(self, btn):
-        picroot = self.project.path
-        for a in ("figures", "Figures", "FIGURES"):
-            picdir = os.path.join(picroot, a)
-            if os.path.exists(picdir):
-                break
-        else:
-            picdir = picroot
-        def update_preview(dialog):
-            picpath = dialog.get_preview_filename()
-            try:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(picpath, 200, 300)
-            except Exception as e:
-                pixbuf = None
-
-            return pixbuf
-        picfile = self.fileChooser(_("Choose Image"),
-                                  filters={"Images": {"patterns": ['*.tif', '*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
-                                   multiple=False, basedir=picdir, preview=update_preview)
-        if picfile is not None:
-            self.set("nbk_PicList", 1)
-            self.picListView.add_row()
-            for w in ["t_plAnchor", "t_plFilename", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"]: 
-                self.set(w, "", mod=False)
-            self.picListView.set_src(os.path.basename(picfile[0]))
-
-    def onPlDelClicked(self, btn):
-        self.picListView.del_row()
 
     def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
         # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator and that _bk_ is upperCASE
@@ -6416,271 +5886,6 @@ class GtkViewModel(ViewModel):
                 return True
         else:
             return False
-
-    def onImageSetClicked(self, btn):
-        if not hasattr(self, '_imagesetTvSetupDone'):
-            self._setupImagesetTreeview()
-            self._imagesetTvSetupDone = True
-        self._populateImagesetList()
-        # Reset Select All/None toggle without firing the handler
-        sel_all = self.builder.get_object("c_imgSet_selectAll")
-        sel_all.handler_block_by_func(self.onImagesetSelectAllToggled)
-        sel_all.set_active(False)
-        sel_all.handler_unblock_by_func(self.onImagesetSelectAllToggled)
-
-        dialog = self.builder.get_object("dlg_getImageSet")
-        response = dialog.run()
-        dialog.hide()
-        if response != Gtk.ResponseType.OK:
-            return
-
-        store = self.builder.get_object("ls_imagesets")
-        # COL: 0=selected, 1=id, 7=description, 8=url, 9=license_text, 10=requires_terms
-        selected_rows = [(row[1], row[8], row[10]) for row in store if row[0] and row[12]]
-        if not selected_rows:
-            return
-
-        any_installed = False
-        for imgset_id, url, requires_terms in selected_rows:
-            filename = url.split("/")[-1]
-            self.doStatus(_("Downloading '{}' — please wait...".format(imgset_id)))
-            while Gtk.events_pending():
-                Gtk.main_iteration()
-            try:
-                urlfile = urllib.request.urlopen(url)
-                tzdir = extraDataDir("imagesets", "../zips", create=True)
-                zfile = os.path.join(tzdir, filename)
-                with open(zfile, 'wb') as f:
-                    f.write(urlfile.read())
-            except urllib.error.URLError:
-                self.doStatus(_("ERROR: Download of '{}' failed. Check internet connection.".format(imgset_id)))
-                while Gtk.events_pending():
-                    Gtk.main_iteration()
-                continue
-
-            imgsetname = unpackImageset(zfile, self.project.path)
-            if imgsetname is None:
-                self.doError("Failed Image Set", secondary=f"'{imgset_id}' failed to download and/or install.")
-                continue
-            if imgsetname == "":
-                f = os.path.join(self.project.path, "local", "figures")
-                self.doStatus(_("Unzipped images to {}".format(f)))
-                continue
-
-            if requires_terms:
-                uddir = extraDataDir("imagesets", imgsetname, create=False)
-                if not self.displayReadmeFile(imgsetname, uddir):
-                    try:
-                        if uddir and len(uddir):
-                            rmtree(uddir)
-                            self.doStatus(_("Image Set '{}' removed — terms not accepted.".format(imgsetname)))
-                    except OSError:
-                        self.doStatus(_("Cannot delete folder! Image Set: {}".format(imgsetname)))
-                    continue
-
-            self._registerInstalledImageset(imgsetname)
-            any_installed = True
-            self.doStatus(_("Installed Image Set: {}".format(imgsetname)))
-
-        if any_installed:
-            self.onGetPicturesClicked(None)
-        self.onHideStatusMsgClicked(None)
-
-    def _setupImagesetTreeview(self):
-        tv = self.builder.get_object("tv_imagesets")
-        store = self.builder.get_object("ls_imagesets")
-        tv.set_model(store)
-
-        # Column indices in ls_imagesets:
-        # 0=selected, 1=id, 2=name, 3=artist, 4=style, 5=filesize,
-        # 6=license, 7=description, 8=url, 9=license_text,
-        # 10=requires_terms, 11=status_text, 12=is_selectable
-
-        r_toggle = Gtk.CellRendererToggle()
-        r_toggle.connect("toggled", self._onImagesetRowToggled)
-        col_sel = Gtk.TreeViewColumn("", r_toggle)
-        col_sel.add_attribute(r_toggle, "active", 0)
-        col_sel.add_attribute(r_toggle, "activatable", 12)
-        tv.append_column(col_sel)
-
-        for title, col_idx, min_w, expand in [
-            ("Status",      11, 70,  False),
-            ("Name",         2, 130, False),
-            ("Artist",       3, 90,  False),
-            ("Style",        4, 60,  False),
-            ("Size",         5, 60,  False),
-            ("License",      6, 90,  False),
-            ("Description",  7, 120, True),
-        ]:
-            r = Gtk.CellRendererText()
-            if expand:
-                r.set_property("ellipsize", Pango.EllipsizeMode.END)
-            col = Gtk.TreeViewColumn(title, r, text=col_idx)
-            col.set_min_width(min_w)
-            col.set_expand(expand)
-            col.set_resizable(True)
-            col.set_clickable(True)
-            col.set_sort_column_id(col_idx)
-            tv.append_column(col)
-
-    def _onImagesetRowToggled(self, renderer, path):
-        store = self.builder.get_object("ls_imagesets")
-        it = store.get_iter(path)
-        if store.get_value(it, 12):  # is_selectable
-            store.set_value(it, 0, not store.get_value(it, 0))
-
-    def onImagesetSelectAllToggled(self, btn):
-        store = self.builder.get_object("ls_imagesets")
-        active = btn.get_active()
-        for row in store:
-            if row[12]:  # is_selectable
-                row[0] = active
-
-    def onImagesetQueryTooltip(self, tv, x, y, keyboard_mode, tooltip):
-        if keyboard_mode:
-            path, col = tv.get_cursor()
-            if path is None:
-                return False
-        else:
-            bx, by = tv.convert_widget_to_bin_window_coords(x, y)
-            result = tv.get_path_at_pos(bx, by)
-            if result is None:
-                return False
-            path, col, _cx, _cy = result
-
-        store = tv.get_model()
-        it = store.get_iter(path)
-        cols = tv.get_columns()
-        if col not in cols:
-            return False
-        col_idx = cols.index(col)
-
-        # Visual column order: 0=toggle, 1=status, 2=name, 3=artist,
-        #                      4=style, 5=size, 6=license, 7=description
-        if col_idx == 6:    # License column → show full license_text (model col 9)
-            text = store.get_value(it, 9)
-        elif col_idx == 7:  # Description column → show full description (model col 7)
-            text = store.get_value(it, 7)
-        else:
-            return False
-
-        if not text:
-            return False
-        tooltip.set_text(text)
-        tv.set_tooltip_cell(tooltip, path, col, None)
-        return True
-
-    def _populateImagesetList(self):
-        store = self.builder.get_object("ls_imagesets")
-        store.clear()
-        catalog = self._loadImagesetsCatalog()
-        installed = set(imgid for imgid, _ in (getImageSets() or []))
-        for item in catalog:
-            imgid = item.get("id", "")
-            already_installed = imgid in installed
-            store.append([
-                False,                                              # 0  selected
-                imgid,                                             # 1  id
-                item.get("name", ""),                              # 2  name
-                item.get("artist", ""),                            # 3  artist
-                item.get("style", ""),                             # 4  style
-                item.get("filesize", ""),                          # 5  filesize
-                item.get("license", ""),                           # 6  license
-                item.get("description", ""),                       # 7  description
-                item.get("url", ""),                               # 8  url
-                item.get("license_text", ""),                      # 9  license_text
-                item.get("requires_terms_acceptance", False),      # 10 requires_terms
-                "\u2713 Installed" if already_installed else "",   # 11 status_text
-                not already_installed,                             # 12 is_selectable
-            ])
-
-    def _loadImagesetsCatalog(self):
-        catalog_path = os.path.join(pycodedir(), "imagesets.json")
-        try:
-            with open(catalog_path, 'r', encoding='utf-8') as f:
-                return json.load(f).get("imagesets", [])
-        except (FileNotFoundError, json.JSONDecodeError, KeyError):
-            return []
-
-    def _imagesetName(self, imgsetname):
-        """Return the display name for an installed imageset ID."""
-        for item in self._loadImagesetsCatalog():
-            if item.get('id') == imgsetname:
-                return item.get('name', imgsetname)
-        uddir = extraDataDir("imagesets", imgsetname)
-        if uddir:
-            illpath = os.path.join(uddir, "illustrations.json")
-            try:
-                with open(illpath, encoding='utf-8') as f:
-                    return json.load(f).get('name', imgsetname)
-            except Exception:
-                pass
-        return imgsetname
-
-    def _registerInstalledImageset(self, imgsetname):
-        """Add imgsetname to the picture-set combo box if not already present."""
-        lsp = self.builder.get_object("ecb_artPictureSet")
-        if not lsp.set_active_id(imgsetname):
-            name = self._imagesetName(imgsetname)
-            model = lsp.get_model()
-            for i, row in enumerate(model):
-                if name.casefold() < row[0].casefold():
-                    lsp.insert(i, imgsetname, name)
-                    break
-            else:
-                lsp.append(imgsetname, name)
-            lsp.set_active_id(imgsetname)
-
-    def displayReadmeFile(self, imgsetname, uddir):
-        readme_path = os.path.join(uddir, "readme.txt")
-        try:
-            with open(readme_path, 'r') as f:
-                readme_content = f.read()
-        except FileNotFoundError:
-            # No readme.txt — treat as freely available; no terms to accept.
-            return True
-
-        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL,
-            Gtk.MessageType.INFO, Gtk.ButtonsType.YES_NO, "readme")
-        dialog.set_default_size(400, 300)
-        dialog.set_title("Do you agree to the terms and conditions of use?")
-        dialog.set_property("text", f"\nImage Set: {imgsetname}\n\n" + readme_content)
-        response = dialog.run()
-        dialog.destroy()
-        return response == Gtk.ResponseType.YES
-
-    def onInstallFromZipActivated(self, btn):
-        """Handler for the 'Install from ZIP file...' link button in dlg_getImageSet."""
-        imgsetfile = self.fileChooser("Select an Image Set ZIP file",
-                filters={"Image Sets": {"patterns": ["*.zip"], "mime": "text/plain", "default": True},
-                         "All Files": {"pattern": "*"}},
-                multiple=False, basedir=os.path.join(self.project.path, "Bundles"))
-        if imgsetfile is None:
-            return True  # suppress browser open
-
-        zfile = imgsetfile[0]
-        imgsetname = unpackImageset(zfile, self.project.path)
-        if imgsetname is not None and imgsetname != "":
-            uddir = extraDataDir("imagesets", imgsetname, create=False)
-            if not self.displayReadmeFile(imgsetname, uddir):
-                try:
-                    if uddir and len(uddir):
-                        rmtree(uddir)
-                        self.doStatus(_("Image Set '{}' removed — terms not accepted.".format(imgsetname)))
-                except OSError:
-                    self.doStatus(_("Cannot delete folder! Image Set: {}".format(imgsetname)))
-                return True
-            self._registerInstalledImageset(imgsetname)
-            self.doStatus(_("Installed Image Set: {}".format(imgsetname)))
-            # Refresh the list so the newly installed set shows as "✓ Installed"
-            self._populateImagesetList()
-        elif imgsetname == "":
-            f = os.path.join(self.project.path, "local", "figures")
-            self.doStatus(_("Unzipped images to {}".format(f)))
-        else:
-            self.doError("Faulty Image Set",
-                         secondary="Please check that you have selected a valid Image Set (ZIP) file.")
-        return True  # suppress browser open
 
     def onLocateDBLbundleClicked(self, btn):
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
@@ -6880,32 +6085,6 @@ class GtkViewModel(ViewModel):
             pic.clear()
         else:
             pic.set_from_pixbuf(pixbuf)
-
-    def onDiglotAutoAdjust(self, btn):
-        if self.isDiglotMeasuring:
-            btn.set_active(True)
-            return
-        elif not self.get("c_diglot"):
-            btn.set_active(False)
-            return
-        elif not btn.get_active():
-            return
-        self.isDiglotMeasuring = True
-        btn.set_active(True)
-        xdvname = os.path.join(self.project.printPath(self.cfgid), self.baseTeXPDFnames()[0] + ".xdv")
-        def score(x):
-            self.gtkpolyglot.set_fraction(x)
-            runjob = self.callback(self, maxruns=1, noview=True)
-            while runjob.thread.is_alive():
-                Gtk.main_iteration_do(False)
-            runres = runjob.res
-            return 20000 if runres else xdvigetpages(xdvname)
-        mid = self.gtkpolyglot.get_fraction()
-        res = brent(0., 1., mid, score, 0.001)
-        self.gtkpolyglot.set_fraction(res)
-        self.isDiglotMeasuring = False
-        self.callback(self)
-        btn.set_active(False)
 
     def onFootnotesClicked(self, btn):
         if not self.sensiVisible("c_includeFootnotes"):
@@ -7281,9 +6460,6 @@ class GtkViewModel(ViewModel):
 
     def onCatSBtoggled(self, cell, path):
         self.sbcatlist[path][2] = not cell.get_active()
-
-    def onSBborderClicked(self, btn):
-        self.styleEditor.sidebarBorderDialog()
 
     def onBorderLineClicked(self, btn):
         btname = Gtk.Buildable.get_name(btn)
@@ -7702,15 +6878,6 @@ Thank you,
         except AttributeError:
             pass
 
-    def onSBborderSettingsChanged(self, btn):
-        self.styleEditor.onSBborderSettingsChanged()
-        
-    def boxPaddingUniformClicked(self, btn):
-        self.styleEditor.boxPaddingUniformClicked()
-        
-    def bdrPaddingUniformClicked(self, btn):
-        self.styleEditor.bdrPaddingUniformClicked()
-
     def onlockXeTeXLayoutClicked(self, wid):
         if self.get("c_lockXeTeXLayout"):
             self.set("s_ptxversion", str(TexModel._ptxversion))
@@ -7813,188 +6980,6 @@ Thank you,
     def onClosePreview(self, widget):
         self.builder.get_object("dlg_preview").hide()
 
-    def set_preview_pages(self, npages, units=None):
-        if units:
-            self.builder.get_object("l_pdfPgsSprds").set_label(units)
-        lpcount = self.builder.get_object("l_pdfPgCount")
-        if npages is None:
-            lpcount.set_label("")
-        else:
-            pgmin, pgmax, pgnum = self.pdf_viewer.minmaxnumpages()
-            if npages < pgnum:
-                lpcount.set_label(f"{str(npages)}")  # Default to total pages
-            elif pgmin < 1:
-                lpcount.set_label(f"({str(abs(pgmin))})+{str(pgmax)}")
-            else:
-                lpcount.set_label(f"{str(pgmax)}")
-
-    def onBookViewClicked(self, widget):
-        bkview = self.get("c_bkView", True)
-        step_increment = 2 if bkview else 1
-        if hasattr(self, 'pdf_viewer'):
-            self.pdf_viewer.set_zoom_fit_to_screen(None)
-            self.onPgNumChanged(None, None)
-
-    def getPgNum(self):
-        return self.pdf_viewer.getpnum(1, 1)
-
-    def onPdfAdjOverlayChanged(self, widget):
-        self.pdf_viewer.setShowAdjOverlay(self.get("c_pdfadjoverlay"))
-        
-    def onPdfParaBoxesChanged(self, widget):
-        self.pdf_viewer.setShowParaBoxes(self.get("c_pdfparabounds"))
-
-    def onPdfAnalysisChanged(self, widget):
-        self.pdf_viewer.setShowAnalysis(self.get("c_layoutAnalysis"), float(self.get("s_spaceEms", 3.0)))
-        
-    def onPrintItClicked(self, widget):
-        self.pdf_viewer.print_document()
-
-    def onZoomLevelChanged(self, widget):
-        if self.loadingConfig:
-            return
-        adj_zl = max(10, min(int(float(self.get("s_pdfZoomLevel", 100))), 800))
-        spin = self.builder.get_object("s_pdfZoomLevel")
-        if spin is not None:
-            step = max(10, int(adj_zl / 100 + 0.5) * 10)
-            spin.get_adjustment().set_step_increment(step)
-        if self.pdf_viewer is not None:
-            self.pdf_viewer.set_zoom(adj_zl / 100, scrolled=True, setz=False)
-            
-    def onZoomFitClicked(self, btn):
-        self.pdf_viewer.set_zoom_fit_to_screen(True)
-
-    def onSeekPage2fill(self, btn):
-        direction = Gtk.Buildable.get_name(btn).split("_")[-1]
-        self.pdf_viewer.seekUFpage(direction)
-
-    def onNavigatePageClicked(self, btn):
-        if self.loadingConfig:
-            return
-        n = Gtk.Buildable.get_name(btn)
-        x = n.split("_")[-1]
-        self.pdf_viewer.set_page(x)
-
-    def onPgNumChanged(self, widget, *args):
-        if widget is None:
-            widget = self.builder.get_object("t_pgNum")
-        txt = widget.get_text().strip()
-        if not txt:
-            return False
-
-        try:
-            typedPg = int(txt)
-        except ValueError:
-            return False
-
-        # cancel previous delayed jump
-        if getattr(self, "_pgNumTimerId", None):
-            GLib.source_remove(self._pgNumTimerId)
-            self._pgNumTimerId = None
-
-        self._pgNumTimerId = GLib.timeout_add(300, self._jumpToTypedPgNum, typedPg)
-        return False
-
-    def onEditingPgNum(self, widget, *args):
-        txt = widget.get_text().strip()
-        if not txt:
-            return False
-        try:
-            typedPg = int(txt)
-        except ValueError:
-            return False
-        if getattr(self, "_pgNumTimerId", None):
-            GLib.source_remove(self._pgNumTimerId)
-            self._pgNumTimerId = None
-        return self._jumpToTypedPgNum(typedPg)
-
-    def _jumpToTypedPgNum(self, typedPg):
-        self._pgNumTimerId = None
-        if self.pdf_viewer is None or self.pdf_viewer.document is None:
-            return False
-        typedPg = self.pdf_viewer.closestpnum(typedPg)
-        if self.pdf_viewer.parlocs is not None:
-            cpage = self.pdf_viewer.parlocs.pnums.get(typedPg, typedPg)
-        else:
-            cpage = typedPg
-        cpage = max(1, min(int(cpage), int(self.pdf_viewer.numpages or 1)))
-        self.pdf_viewer.show_pdf(cpage)
-        return False
-
-    def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
-        dialog = Gtk.FileChooserDialog(
-            title="Save PDF As...",
-            parent = self.mainapp.win,
-            action=Gtk.FileChooserAction.SAVE,
-            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                     Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
-        dialog.set_current_folder(self.userconfig.get('init', 'saveasfolder', fallback=os.path.expanduser("~")))
-        dialog.set_current_name(self.pdf_viewer.fname)
-        pdf_filter = Gtk.FileFilter()
-        pdf_filter.set_name("PDF files")
-        pdf_filter.add_mime_type("application/pdf")
-        dialog.add_filter(pdf_filter)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            new_file_path = dialog.get_filename()
-            if not new_file_path.lower().endswith('.pdf'):
-                new_file_path += '.pdf'
-            try:
-                pdffilepath = os.path.join(self.project.printPath(None), self.pdf_viewer.fname)
-                copy2(pdffilepath, new_file_path)
-                self.doStatus(_("PDF saved as: ") + new_file_path)
-                self.userconfig.set('init', 'saveasfolder', os.path.dirname(new_file_path).replace("\\", "/"))
-            except Exception as e:
-                self.doError(_("Error saving PDF: ") + str(e), 
-                    secondary=_("Unable to save the PDF in the new location:") + "\n" + new_file_path)
-                self.doStatus(_("Error saving PDF: ") + new_file_path)
-        dialog.destroy()
-      
-    def onAnchorKeyRelease(self, btn, *a):
-        self.builder.get_object("btn_anc_ok").set_sensitive(False) 
-        curpos = self.builder.get_object("t_newAnchor").get_position() 
-        msg = ""
-        anc = re.sub(':', '.', self.get("t_newAnchor"))
-        pattern = r"(^[123A-Z]{3})([LRA-G]?)*\s((\d+)\.(\d+)(-\d+)*|k\.\S+)$"  # includes possibility if GLO k.keywordinglossary
-        match = re.match(pattern, anc)
-        if not match:
-            msg = _("Invalid Anchor; use format: JHN 3.16")
-        else:
-            self.set("t_newAnchor", anc, mod=False)
-            self.builder.get_object("t_newAnchor").set_position(curpos) 
-            piciter = self.picListView.find_row(anc)
-            if piciter is not None:
-                msg = _("There is a picture at that verse.{}Choose a different verse as anchor.").format("\n")
-            else:
-                self.builder.get_object("btn_anc_ok").set_sensitive(True)
-            self.anchorKeypressed = True
-        self.builder.get_object("l_newAnchorMsg").set_text(msg)
-
-    def onAnchorFocusOut(self, btn, *a):
-        self.anchorKeypressed = False
-
-    def onOpenItClicked(self, btn):
-        if self.pdf_viewer.fname is not None:
-            startfile(self.pdf_viewer.fname)
-
-    def showRulesClicked(self, btn):
-        v = self.get("c_gridLines")
-        if self.pdf_viewer is not None:
-            self.pdf_viewer.set('showguides', v)
-            self.pdf_viewer.show_pdf()
-
-    def showGridClicked(self, btn):
-        v = self.get("c_gridGraph")
-        if self.pdf_viewer is not None:
-            self.pdf_viewer.set('showgrid', v)
-            self.pdf_viewer.show_pdf()
-
-    def showRulesOrGridClicked(self, btn):
-        if self.loadingConfig:
-            return
-        if self.get('c_updatePDF', False):
-            self.onOK(None)
-            
     def onShowMainDialogClicked(self, btn):
         prvw = self.builder.get_object("dlg_preview")
         if prvw and not prvw.get_visible():
@@ -8093,25 +7078,6 @@ Thank you,
         widget.hide()  # Hide the dialog instead of destroying it
         return True    # Returning True prevents the default destroy behavior
 
-    def update_diglot_polyglot_UI(self):
-        dglt = True if len(self.gtkpolyglot.ls_treeview) < 3 else False
-        self.builder.get_object("btn_adjust_diglot").set_sensitive(dglt)
-        orig = self.get("fcb_diglotMerge", "scores")
-        merge_types = {
-            _("Document based"):   "doc",
-            _("Chapter Verse"):    "simple",
-            _("Scored"):           "scores",
-            _("Scored (Chapter)"): "scores-chapter",
-            _("Scored (Verse)"):   "scores-verse"
-            }
-        mrgtyplist = self.builder.get_object("ls_diglotMerge")
-        mrgtyplist.clear()
-        for desc, code in merge_types.items():
-            if dglt or code.startswith("scores"):
-                mrgtyplist.append([desc, code])
-        found = any(row[1] == orig for row in mrgtyplist)
-        self.set("fcb_diglotMerge", orig if found else "scores") 
-           
     def onGenerateReportClicked(self, btn):
         fpath = self.runReport()
         if fpath is not None:
@@ -8298,20 +7264,22 @@ Thank you,
 
     def _onFillPagesClicked(self, resume=False):
         self.saveAdjlists()
+        # save shared files once here; the parallel fill workers must not rewrite them
+        self.savePics()
+        self.saveStyles()
         mprint = getattr(self, 'mprint', None)
         if mprint is not None:
             self.mprint.terminate()
-        else:
-            numproc = int(self.get("s_maxproc"))
-            if numproc == 0:
-                numproc = 1
-            self.mprint = MultiPrint(numproc=numproc, progress=True)
+        numproc = int(self.get("s_maxproc"))
+        if numproc == 0:
+            numproc = 1
+        self.mprint = MultiPrint(numproc=numproc, progress=True)
 
         args = argparse.Namespace(**vars(self.args))
         args.restart = resume
         tout = float(self.get("s_pbtimeout")) * 60
         if tout < 1:
-            tout = float(self.get("s_maxfilltime")) * 60
+            tout = None
         build_params = BuildParams(
                 prjtree = self.prjTree,
                 config = self.userconfig,
@@ -8326,6 +7294,7 @@ Thank you,
                 loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
         bks = self.getBooks()
         self.mprint.submit_fill_jobs(bks, build_params, stop=False)
+        self.mprint.start_clock()
         # Poll for progress events every 100 ms — simpler and more reliable
         # on Windows than io_add_watch + socketpair.
         if getattr(self, '_progress_watch_id', None) is not None:
@@ -8348,13 +7317,15 @@ Thank you,
         if q is None:
             self._progress_watch_id = None
             return GLib.SOURCE_REMOVE
+        usage = int(mprint.sample_usage())
+        elapsed = time.time() - mprint.time
         try:
             while True:
                 event = q.get_nowait()
                 if event is not None:
-                    self._fill_progress(event)
+                    self._fill_progress(event, usage=usage, elapsed=elapsed)
         except queue.Empty:
-            pass
+            self._fill_progress(None, usage=usage, elapsed=elapsed)
 
         if mprint.is_finished():
             self._progress_watch_id = None
@@ -8365,18 +7336,23 @@ Thank you,
                 a = self.get_adjlist(bk, save=False)
                 if i == 0:
                     self.adjView.set_model(a)
+            qr = self.get("c_quickRun")
+            self.set("c_quickRun", False)
             self.onOK(None)
+            self.set("c_quickRun", qr)
             return GLib.SOURCE_REMOVE
         return GLib.SOURCE_CONTINUE
 
     def onFillCancelled(self):
+        # Workers stop cooperatively after their current layout run; queued books are skipped.
+        # _pollFillProgress tears the pool down once every job has returned.
         if self.mprint is not None:
             self.mprint.cancel()
 
-    def _fill_progress(self, event):
+    def _fill_progress(self, event, usage=0., elapsed=0.):
         if self.bkProgressDlg is None:
             return
-        self.bkProgressDlg.updateEvent(event)
+        self.bkProgressDlg.updateEvent(event, usage=usage, elapsed=elapsed)
 
     def onProgressMonitorToggle(self, widget, *a):
         if self.bkProgressDlg is None:
@@ -8392,7 +7368,6 @@ Thank you,
         launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),
              projectDir=self.project.path, configName=self.cfgid,
              ptxprintVersion=VersionStr, onApply=lambda _: self.saveConfig())
-
 
     def onStartTestRecording(self, btn):
         if self.args.capture:
@@ -8430,3 +7405,13 @@ Thank you,
         self.testing.finalise()
         self.testing = None
         self.builder.get_object("c_testrecording").set_active(False)
+
+    def onPublicationsClicked(self, *a):
+        pass
+
+    def onAddPub(self, *a):
+        pass
+
+    def onRmPub(self, *a):
+        pass
+    

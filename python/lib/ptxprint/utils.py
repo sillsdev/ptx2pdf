@@ -12,7 +12,7 @@ from shutil import copy2
 from inspect import currentframe
 from struct import unpack
 from dataclasses import dataclass, field
-from typing import Any, Optional, Callable
+from typing import Any, Optional, Callable, Literal
 import contextlib, pickle, gzip
 import regex
 import threading
@@ -132,6 +132,36 @@ booknumbers = {k: booknum(v) for k, v in bookcodes.items()}
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
+def parseBookList(text, **kw):
+    """ Parses a list of books/references (e.g. 'RUT JON', 'MAT 5:3-7:29').
+        Returns (RefList, None) on success or (None, error message) on failure,
+        so callers can warn the user rather than crash on a bad reference. """
+    from usfmtc.reference import RefList
+    kw.setdefault("bookranges", True)
+    try:
+        res = RefList(text, **kw)
+    except SyntaxError as e:
+        return (None, str(e))
+    except ValueError as e:
+        refs = re.findall(r"Ref\('([^']*)'\)", str(e))
+        if len(refs) == 2:
+            return (None, _("The range from {} to {} goes backwards. "
+                            "The start of a range must come before its end.").format(*refs))
+        return (None, str(e))
+    bad = []
+    for r in res:
+        for ref in (r.first, r.last):
+            if ref.book not in bookcodes:
+                bad.append(_("Unknown book code: {}").format(ref.book))
+                continue
+            maxch = int(chaps.get(ref.book, "0"))
+            ch = ref.chapter
+            if maxch > 0 and ch is not None and ch > maxch:
+                bad.append(_("{} only has {} chapters").format(ref.book, maxch))
+    if len(bad):
+        return (None, "\n".join(dict.fromkeys(bad)))
+    return (res, None)
+
 APP = 'ptxprint'
 
 chgsHeader = """# This (changes.txt) file is for configuration-specific changes (not affecting other configs).
@@ -150,11 +180,20 @@ class BuildParams:
     guid: str
     cfgid: str
     scriptsdir: str
-    timeout: Optional[int]
-    loglevel: Optional[int]
+    timeout: Optional[int] = 0
+    loglevel: Optional[int] = 0
     setupfn: Optional[Callable] = None
     setupargs: Optional[Any] = field(default=None, compare=False)
     resultfn: Optional[Callable] = None
+    pubid: Optional[str] = None
+
+@dataclass
+class ProgressEvent:
+    book:   str
+    page:   int
+    mode:   Literal["probe", "complete", "failed", "badpage", "goodpage", "page", "already_filled"]
+    msg:    Optional[str] = None
+    total:  Optional[int] = None
 
 
 _ = gettext.gettext
@@ -204,7 +243,7 @@ def putenv(k, v):
         from ctypes import cdll
         from ctypes.util import find_msvcrt
         cdll.msvcrt._putenv('{}={}'.format(k, v))
-    os.putenv(k, v)
+    os.environ[k] = v
     
 def getlang():
     global lang
@@ -215,7 +254,7 @@ _outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Trans
 
 def f_(s):
     frame = currentframe().f_back
-    return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
+    return eval("f'{}'".format(_(s)), dict(frame.f_locals), dict(frame.f_globals))
 
 def calledme(s=0):
     res = traceback.format_stack(limit=s+2)[-s-2].strip()
@@ -543,12 +582,15 @@ def get_gitver(gitdir=None, version=None):
         gitdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', '.git')
         if not os.path.exists(gitdir):
             return version
-    with open(os.path.join(gitdir, 'HEAD')) as inf:
-        l = inf.readline()
-        try:
-            ref = l[l.index(":")+1:].strip()
-        except ValueError:
-            return version
+    try:
+        with open(os.path.join(gitdir, 'HEAD')) as inf:
+            l = inf.readline()
+            try:
+                ref = l[l.index(":")+1:].strip()
+            except ValueError:
+                return version
+    except NotADirectoryError:
+        return version
     refpath = os.path.join(gitdir, *ref.split("/"))
     if not os.path.exists(refpath):
         packedrefsfile = os.path.join(gitdir, "packed-refs")

@@ -161,7 +161,7 @@ class TexModel:
     }
         # '|': 'pipe'
 
-    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None):
+    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None, notracing=False):
         from ptxprint.version import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
@@ -186,7 +186,8 @@ class TexModel:
                      "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "default_cmyk.icc").replace("\\","/"),
                      "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/"),
-                     "/ptxdocpath": printpath.replace("\\", "/")}
+                     "/ptxdocpath": printpath.replace("\\", "/"),
+                     "/notracing": "%" if notracing else ""}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
@@ -1031,7 +1032,7 @@ class TexModel:
                                      Ref(book=bk, chapter=int(float(self.dict["document/chapto"])), verse=200)), ))
 
             if chaprange is None or not isbk or not len(chaprange) or chaprange[0].first.chapter is None \
-                or chaprange[0].last.chapter is None or \
+                or chaprange[0].last.chapter is None or chaps.get(bk) == "999" or \
                 (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
                     (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
                 if dat is None:

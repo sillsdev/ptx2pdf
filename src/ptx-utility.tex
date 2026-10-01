@@ -28,6 +28,47 @@
 % use or other dealings in this Software without prior written  
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% General purpose stuff-removal 
+\def\zap@space#1 #2{%borrowed from latex.ltx. Eats all spaces in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@space\fi
+  #2}
+\def\zap@plus#1+#2{%borrowed from latex.ltx. Eats all pluses in arg, including mid-position
+  #1%
+  \ifx#2\empty\else\expandafter\zap@plus\fi
+  #2}
+\def\zap@comma#1,#2{%borrowed from latex.ltx. Eats all commas in arg, including mid-position
+  #1%
+  \ifx#2\empty\else\expandafter\zap@comma\fi
+  #2}
+\def\zap@colon#1:#2{%borrowed from latex.ltx. Eats all commas in arg, including mid-position
+  #1%
+  \ifx#2\empty\else\expandafter\zap@colon\fi
+  #2}%
+\def\stripqu@te#1{\x@\@stripqu@te #1""\E\relax}% There's another way to do it in paratext2.tex
+\def\@stripqu@te #1"#2"#3\E{\def\@@result{#2}\ifx\@@result\empty\def\@@result{#1}\fi}
+%
+\def\oddc@tcodes{\xdef\sl@shcode{\the\catcode`\/}\catcode`"=11 \catcode`==11
+\catcode`\ =11 \catcode`|=0\catcode`\/=12\catcode`\\=12}
+\def\normalc@tcodes{\catcode`"=12 \catcode`==12
+\catcode`\ =10\catcode`\\=0\catcode`\/=\sl@shcode\catcode`\|=12}
+%
+\oddc@tcodes%NO SPACES until |normalc@tcodes is called.
+|def|zap@slash#1\#2{#1|ifx#2|empty|else|expandafter|zap@slash|fi#2}%
+|normalc@tcodes%
+%
+
+%+csty_strippt Remove pt from a measurement.
+\let\E=\empty
+{\catcode`P=12 \catcode`T=12 \lowercase{\gdef\@strip@pt#1PT#2\E{#1} \xdef\@pt{PT}}}
+\def\strip@pt#1{\x@\x@\x@\@strip@pt\x@\the\x@ #1\@pt\E}
+%-csty_strippt
+%+cfig_stripspace
+\def\stripspace#1 \end/#2\relax#3{\if\relax#2\relax\xdef\p@ram{#3}\else\stripspace#1\end/ \end/\relax{#1}\fi}
+%-cfig_stripspace
+\def\strip@minus#1-{#1}
+
 %
 % General purpose "book ch:V" parser.
 \def\@p@rseref#1{%
@@ -112,8 +153,6 @@
 \long\def\addto@macro#1#2{%
     \x@\x@\x@\def\x@\x@\x@#1\x@\x@\x@{\x@#1#2}}%
 
-\def\stripqu@te#1{\x@\@stripqu@te #1""\E\relax}
-\def\@stripqu@te #1"#2"#3\E{\def\@@result{#2}\ifx\@@result\empty\def\@@result{#1}\fi}
 
 \def\ch@cktypecs#1{% Check type of named control sequence
  \ifcsname \m@rker\endcsname

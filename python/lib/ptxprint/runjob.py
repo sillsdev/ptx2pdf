@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree, copy2, copystat
 from threading import Thread
-from ptxprint.runner import call, checkoutput
+from ptxprint.runner import call, checkoutput, child_cpu_time
 from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.version import VersionStr
@@ -30,6 +30,7 @@ from ptxprint.xdv.colouring import procxdv
 from ptxprint.report import Report
 from usfmtc.versification import Versification
 import numpy as np
+import psutil
 from datetime import datetime
 import logging
 
@@ -153,6 +154,7 @@ class RunJob:
         self.norun = False
         self.nothreads = False
         self.nopdf = False
+        self.notracing = False
         self.silent = False
         self.forcedlooseness = None
         # self.oldversions = 1
@@ -164,6 +166,8 @@ class RunJob:
         self.extrafiles = {}
         self.piclist = None
         self.outfname = None
+        self.pdffile = None
+        self.env = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -182,7 +186,8 @@ class RunJob:
             return
         self.printer.loadHyphenation()
         self.printer.incrementProgress(True, stage="pr")
-        self.info = TexModel(self.printer, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
+        self.info = TexModel(self.printer, self.printer.ptsettings, self.printer.prjid,
+                    inArchive=self.inArchive, notracing=self.notracing)
         self.info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = self.info.dict["project/id"]
@@ -248,7 +253,8 @@ class RunJob:
                     captions.append(k)
                 digprjdir = dv.project.path
                 digptsettings = ParatextSettings(digprjdir)
-                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive, diglotbinfo=self.info, digcfg=digcfg)
+                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive,
+                            diglotbinfo=self.info, digcfg=digcfg, notracing=self.notracing)
                 reasons = diginfos[k].prePrintChecks()
                 if len(reasons):
                     self.fail(", ".join(reasons) + " in diglot secondary")
@@ -333,7 +339,8 @@ class RunJob:
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
         sheets = {}
         keyarr = ["L"]
-        self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        if self.outfname is None:
+            self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.dict.setdefault("diglots_", {})
         for k, diginfo in diginfos.items():
             texfiles = []
@@ -468,7 +475,8 @@ class RunJob:
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        if self.outfname is None:
+            self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.update(None)
         if self.info['project/iffrontmatter'] != '%':
             frtfname = os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_FRT.SFM"))
@@ -493,19 +501,21 @@ class RunJob:
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        filedir = self.printer.project.printPath(self.info.dict["config/name"], noext=True)
+        # filedir = self.printer.project.printPath(self.info.dict["config/name"], noext=True)
+        filedir = self.printer.project.printPath(self.info.dict["config/name"])
         texfiledat = self.info.asTex(filedir=filedir, jobname=swapext(self.outfname, ext=".tex"), extra=extra, diglots=diglots)
         with open(os.path.join(self.tmpdir, self.outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=x)) for x in (".tex", ".xdv")]
         if self.inArchive:
             return genfiles
-        os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
+        self.env = dict(os.environ)
+        self.env["hyph_size"] = "65521"     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
         # os.putenv("extra_mem_bot", "5000000")    # extra main memory on top of 5M
-        os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
+        self.env["stack_size"] = "32768"    # extra input stack space (up from 5000)
         # os.putenv("save_size", "1000000")    # extra increase save stack from 80000
-        os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
-        os.putenv("max_print_line", "32767")    # Allow long error messages
+        self.env["pool_size"] = "12500000"  # Double conventional pool size for big jobs (Full Bible with xrefs)
+        self.env["max_print_line"] = "32767"    # Allow long error messages
         ptxmacrospath = os.path.abspath(self.macrosdir)
         ptxmacrobase = os.path.join(pycodedir(), 'ptx2pdf')
         if not os.path.exists(ptxmacrobase):
@@ -524,10 +534,10 @@ class RunJob:
                     break
 
         pathjoiner = (";" if sys.platform.startswith("win") else ":")
-        envtexinputs = os.getenv("TEXINPUTS")
+        envtexinputs = self.env.get("TEXINPUTS")
         texinputs = envtexinputs.split(pathjoiner) if envtexinputs is not None and len(envtexinputs) else []
         for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
-            if a not in texinputs:
+            if a+"//" not in texinputs:
                 texinputs.append(a+"//")
         miscfonts = getfontcache().fontpaths[:]
         if sys.platform.startswith("darwin") and not nosysfonts:
@@ -547,22 +557,23 @@ class RunJob:
                 fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
                 with open(os.path.join(self.tmpdir, 'fonts.conf'), "w") as outf:
                     outf.write(fontconfig_template_nofc.format(fontsdirs=fcs))
-                os.putenv("FONTCONFIG_FILE", os.path.join(self.tmpdir, "fonts.conf"))
+                self.env["FONTCONFIG_FILE"] = os.path.join(self.tmpdir, "fonts.conf")
                 logger.debug(f"FONTCONFIG_FILE={os.path.join(self.tmpdir, 'fonts.conf')}")
-                os.putenv("MISCFONTS", pathjoiner.join((ptxmacrospath, sfonts)))
+                self.env["MISCFONTS"] = pathjoiner.join((ptxmacrospath, sfonts))
             else:
-                os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
+                self.env["MISCFONTS"] = pathjoiner.join(miscfonts)
         logger.debug(f"MISCFONTS={pathjoiner.join(miscfonts)}")
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
-        os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
+        self.env['TEXINPUTS'] = pathjoiner.join(texinputs)
         # if os.system == "win32":
         #     os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
         os.chdir(self.tmpdir)
         outpath = os.path.join(self.tmpdir, '..', self.outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
-        self.pdffile = outpath + f"{pdfext}.pdf"
+        if self.pdffile is None:
+            self.pdffile = outpath + f"{pdfext}.pdf"
         logger.debug(f"{self.pdffile} exists({os.path.exists(self.pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:
@@ -628,6 +639,8 @@ class RunJob:
                         logger.warning(f"Cannot delete marginnotes file — still locked, skipping: {marginnotesfname}")
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a)))
+        if self.maxRuns == 0:
+            numruns = -1
         while numruns < self.maxRuns:
             self.printer.incrementProgress(stage="lo", run=numruns)
             commentstr = " ".join([
@@ -636,22 +649,37 @@ class RunJob:
                     "run="+str(numruns)])
             cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode",
                    '-output-comment="'+commentstr+'"', "-no-pdf"]
-            if self.forcedlooseness is None:
-                action = outfname
+            actions = []
+            if self.forcedlooseness is not None:
+                actions.append(r"\def\ForcedLooseness{{{}}}".format(self.forcedlooseness))
+            sat = int(self.printer.get("s_stopat", 0))
+            if sat > 0:
+                actions.append(r"\def\fastendchapter{{{}}}".format(sat))
+            if len(actions):
+                actions.append(r"\input {}".format(outfname))
             else:
-                action = r"\def\ForcedLooseness{{{}}}\input {}".format(self.forcedlooseness, outfname)
+                actions.append(outfname)
+            action = "".join(actions)
             logger.debug(f"Running: {cmd} {action}")
             callkw = {}
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
-            self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
+            self.cpu_seconds = child_cpu_time(None)
+            self.runner = call(cmd + [action], cwd=self.tmpdir, env=self.env, **callkw)
             if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+                procout = None
                 try:
-                    #runner.wait(self.args.timeout)
-                    self.runner.wait()
+                    # must use communicate() not wait(): if stdout is a pipe, the child
+                    # blocks once the pipe buffer fills and we deadlock waiting for it
+                    (procout, procerr) = self.runner.communicate()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
+                    self.runner.kill()
+                    (procout, procerr) = self.runner.communicate()
+                self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
                 self.res = self.runner.returncode
+                if procout:
+                    logger.debug(procout.decode("UTF-8", errors="ignore") if isinstance(procout, bytes) else procout)
             elif isinstance(self.runner, subprocess.CompletedProcess):
                 self.res = self.runner.returncode
                 if self.runner.stdout not in (None, subprocess.DEVNULL):
@@ -674,7 +702,7 @@ class RunJob:
             rererun = rerun
             if os.path.exists(marginnotesfname):
                 (tsize, ttop, tbot) = self.info.getTextBlockSize()
-                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot):
+                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot, quiet=self.silent):
                     rererun = True
                     if self.maxRuns == 1:
                         self.maxRuns = 2
@@ -724,19 +752,26 @@ class RunJob:
         #    cmd += ["-z", "0"]
         if self.args.extras & 7:
             cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
+        self.cpu_seconds = child_cpu_time(None)
         with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
-            self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
+            self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir,
+                                env=self.env, stdout=outf, stderr=outf)
         logger.debug(f"Running: {cmd} for {outfname}")
         if self.args.extras & 1:
             print(f"Subprocess return value: {self.runner}")
         if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+            procout = None
             try:
-                self.runner.wait()
-                #runner.wait(self.args.timeout)
+                # communicate() rather than wait(), so a piped stdout can't deadlock us
+                (procout, procerr) = self.runner.communicate()
             except subprocess.TimeoutExpired:
                 print("Timed out!")
+                self.runner.kill()
+                (procout, procerr) = self.runner.communicate()
+            self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
             self.res = 4 if self.runner.returncode else 0
-            logger.debug(f"{runner.stdout.decode('UTF-8')}")
+            if procout:
+                logger.debug(procout.decode("UTF-8", errors="ignore") if isinstance(procout, bytes) else procout)
         elif isinstance(self.runner, subprocess.CompletedProcess):
             self.res = 4 if self.runner.returncode else 0
             logger.debug(f"{self.runner.stdout}")
@@ -793,10 +828,13 @@ class RunJob:
             logger.debug(f"Testing log file {fname}")
             if os.path.exists(fname):
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                    p = logfile.seek(0, 2)
-                    p = max(p - 60000, 0)
-                    logfile.seek(p, 0)
-                    log = logfile.read(60000)
+                    if self.notracing:
+                        log = logfile.read()
+                    else:
+                        p = logfile.seek(0, 2)
+                        p = max(p - 60000, 0)
+                        logfile.seek(p, 0)
+                        log = logfile.read(60000)
                 smry, msgList, ufPages = summarizeTexLog(log)
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0

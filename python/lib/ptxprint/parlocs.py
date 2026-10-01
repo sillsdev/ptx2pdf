@@ -1,10 +1,12 @@
 import os, re, ctypes, math, heapq
 import logging
+from bisect import bisect
 from dataclasses import dataclass, InitVar, field
 from ptxprint.utils import refSort, _
 from ptxprint.xdv.spacing_oddities import Line, Rivers
 from typing import Tuple, Optional
 from ptxprint.gtkutils import background_msg, pump_gtk
+from usfmtc.reference import Ref
 from gi.repository import Gtk
 
 logger = logging.getLogger(__name__)
@@ -23,6 +25,12 @@ def readpts(s):
         except ValueError:
             return 0
 
+refre = re.compile(r"^(\S{3})?\D?(\d+)\.(\d+)(.*)$")
+def makeref(s):
+    m = refre.match(s)
+    if m is not None:
+        return Ref(book=m.group(1), chapter=int(m.group(2)), verse=int(m.group(3)), subverse=m.group(4))
+    return None
 
 @dataclass
 class ParRect:
@@ -38,13 +46,22 @@ class ParRect:
     xdvlines:   InitVar[None] = None
     tspace:     float = 0.
     nspace:     int = 0
-    lines:      int = 0
+    lines:      int = 0         # number of lines
+    black:      float = 0.      # total width of ink
+    white:      float = 0.      # total width of spaces
+    parwhite:   float = 0.      # total width of right rag space
+    nspaces:    int = 0         # number of spaces
     
     def __str__(self):
-        return f"{self.pagenum} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
+        return f"{self.pagenum}+{self.col} ({self.xstart},{self.ystart}-{self.xend},{self.yend})"
 
     def __repr__(self):
         return self.__str__()
+
+    def __contains__(self, p):
+        if self.ystart >= p[1] >= self.yend:
+            return self.xstart <= p[0] <= self.xend
+        return False
 
     def get_dest(self, x, y, baseline):
         if self.dests is None or baseline is None:
@@ -52,8 +69,10 @@ class ParRect:
         ydiff = None
         xdiff = None
         curra = None
+        debug = logger.isEnabledFor(5)
         for a in self.dests:
-            logger.log(5, f"Testing ({x}, {y}) against {a}")
+            if debug:
+                logger.log(5, f"Testing ({x}, {y}) against {a}")
             if a[1][1] > y and (ydiff is None or a[1][1] - y < ydiff):
                 ydiff = a[1][1] - y
                 curra = a
@@ -216,6 +235,7 @@ class PopplerDest(ctypes.Structure):
 
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
+    chapre = re.compile(r"^\S{3}.*?(\d+)\..*$")
 
     def readParlocs(self, fname, rtl=False, gui=False, parent=None):
         self.pindex = []        # first paragraph on a page
@@ -223,6 +243,9 @@ class Paragraphs(list):
         self.pnumorder = []     # from pageindex to pagenumber
         self.pheights = []
         self.dests = {}
+        self.chapters = [0]
+        self.rect_cache = (None, None)
+        self.colcount = {}
         if fname is None:
             return
         currp = None
@@ -240,6 +263,8 @@ class Paragraphs(list):
         pwidth = 0.
         keepgoing = True
         self._parloc_dlg = None
+        self_append = self.append       # fast access to method
+        par_ref_map = {}                # (polycol, ref) -> ParInfo (saves searching)
         if gui:
             def dlgresponse(rid):
                 nonlocal keepgoing
@@ -248,16 +273,20 @@ class Paragraphs(list):
             dlg = self._parloc_dlg
         lines = ParlocLinesIterator(fname)
         for l in lines:
-            m = self.parlinere.match(l)
-            if not m:
+            if not l.startswith(r"\@"):
                 continue
+            b_open = l.find("{")
+            b_close = l.rfind("}")
+            if b_open == -1 or b_close == -1:
+                continue
+            c = l[2:b_open].strip()
+            p = l[b_open+1:b_close].split("}{")
+
             logger.log(5, l[:-1])
             if gui:
                 pump_gtk()
                 if not keepgoing:
                     return False
-            c = m.group(1)
-            p = m.group(2).split("}{")
             if c == "pgstart":          # pageno, available height, pagewidth, pageheight
                 pnum += 1
                 npnum = int(p[0])
@@ -277,7 +306,9 @@ class Paragraphs(list):
                 #if len(cinfo) > 2:
                 #    colinfos[polycol] = [cinfo.height, 0, cinfo.depth, 0, cinfo.width]
                 lastyend = 0
-                for k in colcount.keys():
+                for k, v in colcount.items():
+                    if v > self.colcount.get(k, 0):
+                        self.colcount[k] = v
                     colcount[k] = -1
             elif c == "parpageend":     # bottomx, bottomy, type=bottomins, notes, verybottomins, pageend
                 pginfo = [readpts(x) for x in p[:2]] + [p[2]]
@@ -305,7 +336,7 @@ class Paragraphs(list):
                     currr.yend = readpts(p[1])
                     ps = currps.get(polycol, None)
                     if ps is not None:
-                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
+                        currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                     currr = None
                 colinfos[polycol] = None
                 lines.startreplay()
@@ -313,19 +344,27 @@ class Paragraphs(list):
             elif c == "parstart":       # ref, type, mrk, baselineskip, x, y
                 if len(p) == 5:
                     p.insert(0, "")
-                logger.log(5, f"Starting para {p[0]}")
+                try:
+                    chap = int(self.chapre.sub(r"\1", p[0]))
+                except ValueError:
+                    chap = 0
+                if len(self.chapters) <= chap:
+                    self.chapters.extend([self.chapters[-1]]*(chap - len(self.chapters)))
+                    self.chapters.append(pnum)
                 cinfo = colinfos.get(polycol, None)
                 if currr is not None and cinfo is not None:
-                    currr.xend = cinfo.topx
+                    currr.xend = cinfo.topx + cinfo.width
                     currr.yend = readpts(p[5])
                 currp = ParInfo(p[0], p[1], p[2], readpts(p[3]), polycol)
                 currp.rects = []
+                logger.log(5, f"Starting para {p[0]}={currp}")
                 if cinfo is not None:
                     ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
                     currr = ParRect(pnum, colcount[polycol], cinfo.topx, ystart)
                     currp.rects.append(currr)
                 currps[polycol] = currp
                 self.append(currp)
+                par_ref_map[(polycol, currp.ref)] = currp
             elif c == "parend":         # badness, bottomx, bottomy, lastdepth
                 cinfo = colinfos.get(polycol, None)
                 ps = currps.get(polycol, None)
@@ -347,7 +386,7 @@ class Paragraphs(list):
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
                 lastyend = currr.yend
-                currr.lines = int((currr.ystart - currr.yend) / ps.baseline)
+                currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                 endpar = True
             elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
                 if not endpar or not inpage:
@@ -359,16 +398,22 @@ class Paragraphs(list):
                 currp.lastref = p[0]
                 if "k." in p[0]:
                     currp.ref = p[0]
-                currp.parnum = int(p[1])
-                i = self.index(currp)
-                for ps in reversed(self[:i]):
-                    if isinstance(ps, ParInfo) and ps.glot == polycol:
-                        if ps.ref == currp.ref:
-                            currp.parnum = getattr(ps, 'parnum', 0) + 1
-                        break
+                #if currp.lastref != currp.ref:
+                #    ra = makeref(currp.ref)
+                #    rb = makeref(currp.lastref)
+                #    if ra is not None and rb is not None:
+                #        rc = ra.nextverse(thisbook=True)
+                #        if rc <= rb:
+                #            currp.ref=f"{rc.book}{rc.chapter}.{rc.verse}"
+                #            currp.parnum = 1
+                if currp.lastref == currp.ref:
+                    currp.parnum = int(p[1])
+                prev_p = par_ref_map.get((polycol, currp.ref), None)
+                if prev_p and prev_p is not currp:
+                    currp.parnum = getattr(prev_p, 'parnum', 0) + 1
                 currp.lines = int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
-                logger.log(5, f"Stopping para {p[0]}")
+                logger.log(5, f"Stopping para {p[0]}={currp}")
                 currps[polycol] = None
                 currr = None
             elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
@@ -432,7 +477,7 @@ class Paragraphs(list):
             # "nontextstart":   # x, y
             # "nontextstop":    # x, y
             # "parpicanchor":   # ref, picid, x, y
-        self.sort(key=lambda x:x.sortKey())
+        #self.sort(key=lambda x:x.sortKey())    # keep in document order given some odd paragraphs that change index halfway
         if gui and keepgoing:
             dlg.response(Gtk.ResponseType.OK)
         self._parloc_dlg = None
@@ -443,29 +488,47 @@ class Paragraphs(list):
     def numPages(self):
         return len(self.pindex)
         
-    def _iterRectsPage(self, pnum):
+    def _getRectsPage(self, pnum):
+        if self.rect_cache[0] == pnum:
+            return self.rect_cache[1]
         if pnum > len(self.pindex): # need some other test here 
-            return
+            return None
+        self._last_state = None
         e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
+        res = []
         for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
-            for i,r in enumerate(p.rects):
+            for i, r in enumerate(p.rects):
                 if r.pagenum != pnum:
                     continue
-                yield p, r
+                res.append((p, r))
+        self.rect_cache = (pnum, res)
+        return res
 
-    def findPos(self, pnum, x, y, rtl=False, endx = None):
+    def findPos(self, pnum, x, y, endx = None, xdv=False, rtl=False):
         """ Given page index (not folio) returns (ParDest, ParRect) covering the given x, y """
-        # just iterate over paragraphs on this page
-        for p, r in self._iterRectsPage(pnum):
-            logger.log(7, f"Testing {r} against ({x},{y})")
-            if r.ystart >=y and r.yend <= y:
-                if r.xstart <= x and x <= r.xend:
+        if xdv:
+            if not len(self.pheights):
+                return (None, None, None)
+            y = (self.pheights[pnum-1] if pnum > 0 and pnum <= len(self.pheights) else self.pheights[-1]) - y
+        rects = self._getRectsPage(pnum)
+        if not rects:
+            return (None, None, None)
+        if self._last_state is not None:
+            last_p, last_i = self._last_state
+            if last_p == pnum:
+                p, r = rects[last_i]
+                if (x, y) in r or (endx is not None and (endx, y) in r):
                     return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
-                if endx != None:
-                    if r.xstart <= endx and endx <= r.xend:
+                next_i = last_i + 1
+                if next_i < len(rects):
+                    p, r = rects[next_i]
+                    if (x, y) in r or (endx is not None and (endx, y) in r):
+                        self._last_state = (pnum, next_i)
                         return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
-                    if x <= r.xstart and r.xend <= endx:
-                        return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
+        for i, (p, r) in enumerate(rects):
+            if (x, y) in r or (endx is not None and (endx, y) in r):
+                self._last_state = (pnum, i)
+                return (p, r, r.get_dest(x, y, getattr(p, 'baseline', None)))
         return (None, None, None)
 
     def getyrects(self, pnum, y):
@@ -473,11 +536,11 @@ class Paragraphs(list):
         if not len(self.pheights):
             return []
         y = (self.pheights[pnum-1] if pnum > 0 and pnum <= len(self.pheights) else self.pheights[-1]) - y
-        return [r for p, r in self._iterRectsPage(pnum) if r.ystart >= y and r.yend <= y]
+        return [r for p, r in self._getRectsPage(pnum) if r.ystart >= y and r.yend <= y]
 
     def getParas(self, pnum, inclast=False, inclafter=False):
         ''' Iterates all ParDest, ParRect on page with given index '''
-        if pnum > len(self.pindex):
+        if pnum > len(self.pindex) or pnum < 1:
             return
         e = self.pindex[pnum] if not inclafter and pnum < len(self.pindex) else len(self)
 
@@ -693,5 +756,10 @@ class Paragraphs(list):
                 if len(r):
                     rivers.add(pnum)
         return (sorted(spaces), sorted(collisions), sorted(rivers), sorted(badglyphs))
-            
-            
+
+    def chap_from_page(self, pnum):
+        if not hasattr(self, 'chapters'):
+            return 0
+        i = bisect(self.chapters, pnum)
+        logging.log(15, f"page={pnum}, chapter={i}")
+        return i
