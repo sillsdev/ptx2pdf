@@ -68,6 +68,7 @@ jobs:
     
     - name: Generate download info
       shell: pwsh
+      working-directory: Output
       run: |
         $exe_obj = Get-Item -Path "Setup*.exe"
         $ver_inf = $exe_obj.VersionInfo
