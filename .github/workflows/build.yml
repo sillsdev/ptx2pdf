@@ -138,14 +138,16 @@ jobs:
         SKIP_CODESIGN: ${{ vars.SKIP_CODESIGN }}
       run: ./mac-build.sh
 
+    - run: tree || find
+    
     - name: Upload signed exe
       uses: actions/upload-artifact@v7
       with:
         name: PTXPrint macOS bundle
         path: |
-          Output/*.dmg
-          latest.*.json
-          *.download_info
+          dist/*.dmg
+          dist/latest.*.json
+          dist/*.download_info
         if-no-files-found: error
         retention-days: 7
   
