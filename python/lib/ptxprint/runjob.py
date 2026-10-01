@@ -154,6 +154,7 @@ class RunJob:
         self.norun = False
         self.nothreads = False
         self.nopdf = False
+        self.notracing = False
         self.silent = False
         self.forcedlooseness = None
         # self.oldversions = 1
@@ -185,7 +186,8 @@ class RunJob:
             return
         self.printer.loadHyphenation()
         self.printer.incrementProgress(True, stage="pr")
-        self.info = TexModel(self.printer, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
+        self.info = TexModel(self.printer, self.printer.ptsettings, self.printer.prjid,
+                    inArchive=self.inArchive, notracing=self.notracing)
         self.info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = self.info.dict["project/id"]
@@ -251,7 +253,8 @@ class RunJob:
                     captions.append(k)
                 digprjdir = dv.project.path
                 digptsettings = ParatextSettings(digprjdir)
-                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive, diglotbinfo=self.info, digcfg=digcfg)
+                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive,
+                            diglotbinfo=self.info, digcfg=digcfg, notracing=self.notracing)
                 reasons = diginfos[k].prePrintChecks()
                 if len(reasons):
                     self.fail(", ".join(reasons) + " in diglot secondary")
@@ -636,6 +639,8 @@ class RunJob:
                         logger.warning(f"Cannot delete marginnotes file — still locked, skipping: {marginnotesfname}")
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a)))
+        if self.maxRuns == 0:
+            numruns = -1
         while numruns < self.maxRuns:
             self.printer.incrementProgress(stage="lo", run=numruns)
             commentstr = " ".join([
@@ -697,7 +702,7 @@ class RunJob:
             rererun = rerun
             if os.path.exists(marginnotesfname):
                 (tsize, ttop, tbot) = self.info.getTextBlockSize()
-                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot):
+                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot, quiet=self.silent):
                     rererun = True
                     if self.maxRuns == 1:
                         self.maxRuns = 2
@@ -823,10 +828,13 @@ class RunJob:
             logger.debug(f"Testing log file {fname}")
             if os.path.exists(fname):
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                    p = logfile.seek(0, 2)
-                    p = max(p - 60000, 0)
-                    logfile.seek(p, 0)
-                    log = logfile.read(60000)
+                    if self.notracing:
+                        log = logfile.read()
+                    else:
+                        p = logfile.seek(0, 2)
+                        p = max(p - 60000, 0)
+                        logfile.seek(p, 0)
+                        log = logfile.read(60000)
                 smry, msgList, ufPages = summarizeTexLog(log)
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0

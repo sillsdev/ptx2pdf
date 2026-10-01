@@ -145,13 +145,20 @@ def getside(pnum, side):
 
 class MarginNotes:
 
-    def __init__(self, fpath=None, psize=597.5, top=28.5, bot=28.5):
+    def __init__(self, fpath=None, psize=597.5, top=28.5, bot=28.5, quiet=False):
         self.pages = []
         self.psize = psize
         self.top = top
         self.bot = bot
+        self.quiet = quiet
         if fpath is not None:
             self.readFile(fpath)
+
+    def _error(self, *a):
+        if self.quiet:
+            logger.debug(*a)
+        else:
+            logger.error(*a)
 
     def readFile(self, fpath):
         with universalopen(fpath) as inf:
@@ -224,7 +231,7 @@ class MarginNotes:
                             shift = self.bot - t[i-1].ymin - t[i-1].yshift                  # increase shift
                             islast = False
                             if math.fabs(shift) > maxshift:
-                                logger.error(f"Shift {shift} out of bounds ({maxshift}) on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
+                                self._error(f"Shift {shift} out of bounds ({maxshift}) on page {pnum} around {t[i-1].ref} ({t[i-1].ymin}-{t[i-1].ymax}+{t[i-1].yshift})")
                         for j in range(i-1, start-1, -1):
                             if islast and -t[j].yshift < shift:     # if we can hit original position, do it
                                 shift = max(0, -t[j].yshift)        # don't make matters worse (more shifting away)
@@ -270,7 +277,7 @@ class MarginNotes:
                 if i < len(t):
                     curry = t[i].ymin + t[i].yshift
                 elif curry < self.bot - 1:
-                    logger.error(f"Page {t[i-1].pnum} with {len(t)} at {i}({t[i-1].ref}) too full to fit everything")
+                    self._error(f"Page {t[i-1].pnum} with {len(t)} at {i}({t[i-1].ref}) too full to fit everything")
                 i += 1
         return
 
@@ -363,7 +370,7 @@ class MarginNotes:
                         s[a] = str(int(s[a] * 65536))
                     for a in ("gap", "width", "height", "depth", "xoffset", "yoffset"):
                         if math.fabs(s[a]) > 32766:
-                            logger.error(f"Dimension [{a}] on page {i} of {s[a]}pt too large in {s['ref']}")
+                            self._error(f"Dimension [{a}] on page {i} of {s[a]}pt too large in {s['ref']}")
                             s[a] = 0
                         s[a] = "{:.5f}pt".format(s[a])
                     outf.write("\\@marginnote" + "".join(["{{{}}}".format(s[a]) for a in allfields]) + "\n") 

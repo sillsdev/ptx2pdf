@@ -2439,13 +2439,13 @@
 %-csty_usfm
 
 \def\mapinput "#1"{%
-  \message{INPUTFILE: #1}%
+  \trace{r}{INPUTFILE: #1}%
   \input "#1"
 }
 
 \def\mapimagefile#1#2#3{%
 % #1 command to load the file, #2 file, #3 rest of modifiers, etc.
-  \message{INPUTFILE: #2}%
+  \trace{r}{INPUTFILE: #2}%
   #1 #2 #3\relax
 }
 

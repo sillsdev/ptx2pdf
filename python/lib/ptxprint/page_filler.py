@@ -1274,16 +1274,18 @@ class PTXFiller:
         #def _print(level, s, *a):
         #    print(bk+": "+(s % a))
         #logger.log = _print
-        self.view.set("c_allowUnbalanced", True)
-        self.view.set("r_book", "single")
-        self.view.set("ecb_book", bk)
         # suppress peripherals
+        oldvals = {}
         for a in """c_inclFrontMatter c_autoToC c_frontmatter c_inclMaps c_useSectIntros c_makeCoverPage
                     c_colophon c_inclBackMatter c_extradvproc c_inclSettingsInPDF c_applyWatermark
-                    c_cropmarks c_extractInserts c_printArchive""".split():
+                    c_cropmarks c_extractInserts c_printArchive c_quickRun""".split():
+            oldvals[a] = self.view.get(a)
             self.view.set(a, False)
-        self.view.set("fcb_pagesPerSpread", 1)
-        self.view.set("fcb_outputFormat", "Screen")
+        for k,v in (("fcb_pagesPerSpread", 1), ("fcb_outputFormat", "Screen"), ("c_allowUnbalanced", True),
+                    ("r_book", "single"), ("ecb_book", bk), ("t_chapfrom", "1"),
+                    ("t_chapto", str(chaps.get(bk, 200)))):
+            oldvals[k] = self.view.get(k)
+            self.view.set(k, v)
         # Don't save pics/styles here: parallel workers share those files and rewriting
         # them races with other workers' XeTeX runs. The GUI saves them before dispatching.
         self.hooks = Hooks(self, None)
@@ -1448,9 +1450,10 @@ class PTXFiller:
             self.job = RunJob(self.view, self.view.scriptsdir, self.macrosdir, self.view.args)
             self.job.norun = True
             self.job.nopdf = True
+            self.job.notracing = True
             self.job.silent = True
             self.job.doit(noview=True, noaction=not genfiles)
-            self.job.maxRuns = 1
+            self.job.maxRuns = 0
 
         if floats is not None and len(floats):
             piclist = self.view.picinfos.copy()
@@ -1645,7 +1648,7 @@ class PTXFiller:
                     pnum = int(m.group(2))
                     pnum = self.parlocs.pnums.get(pnum, pnum) - 1
                     side = 0 if m.group(1) == "A" else 1
-                    lines = int((float(m.group(4)) - float(m.group(3))) / float(m.group(5)) + 0.1)
+                    lines = int((float(m.group(4)) - float(m.group(3))) / float(m.group(5)) + 0.4)
                     if lines > 5:
                         logger.log(15, f"{m.groups()=}, {lines=}")
                     v = self.underfills[pnum]

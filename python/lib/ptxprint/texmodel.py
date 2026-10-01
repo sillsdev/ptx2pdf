@@ -161,7 +161,7 @@ class TexModel:
     }
         # '|': 'pipe'
 
-    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None):
+    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None, notracing=False):
         from ptxprint.version import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
@@ -186,7 +186,8 @@ class TexModel:
                      "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "default_cmyk.icc").replace("\\","/"),
                      "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/"),
-                     "/ptxdocpath": printpath.replace("\\", "/")}
+                     "/ptxdocpath": printpath.replace("\\", "/"),
+                     "/notracing": "%" if notracing else ""}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
