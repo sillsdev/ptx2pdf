@@ -68,7 +68,6 @@ jobs:
     
     - name: Generate download info
       shell: pwsh
-      if: ${{ vars.SKIP_CODESIGN != '1' }}
       run: |
         $exe_obj = Get-Item -Path "Setup*.exe"
         $ver_inf = $exe_obj.VersionInfo
@@ -140,14 +139,15 @@ jobs:
 
     - run: find .
 
-    - name: Upload signed exe
+    - name: Upload distribution DMG
       uses: actions/upload-artifact@v7
+      working-directory: dist
       with:
         name: PTXPrint macOS bundle
         path: |
-          dist/*.dmg
-          dist/latest.*.json
-          dist/*.download_info
+          *.dmg
+          latest.*.json
+          *.download_info
         if-no-files-found: error
         retention-days: 7
   
