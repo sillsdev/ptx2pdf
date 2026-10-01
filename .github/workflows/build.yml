@@ -140,7 +140,6 @@ jobs:
 
     - name: Upload signed exe
       uses: actions/upload-artifact@v7
-      if: ${{ vars.SKIP_CODESIGN != '1' }}
       with:
         name: PTXPrint macOS bundle
         path: |
