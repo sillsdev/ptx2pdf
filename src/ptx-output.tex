@@ -33,11 +33,15 @@
 %+c_onecol
 \global\output={\onecol}
 \global\holdinginserts=1
+\newwrite\st@tusfile
+\def\st@underfill#1#2#3#4#5{}
 \def\underf@ll#1#2#3{%
   \ifdim#1<\dimexpr #2 - .5 \baselineskip\relax
-    \immediate\write-1{Underfill[#3]: [\the\pageno] ht=\the #1, space=\the #2, baseline=\the\baselineskip}%
+    \immediate\write\st@tusfile{\string\st@underfill{\the\pageno}{#3}{\the #2}{\the #1}{\the\baselineskip}}%
   \fi
 }
+\addtoendhooks{\immediate\closeout\st@tusfile}
+
 \newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
 \def\onecol{%
   \global\setbox\galley=\copy255                                        %(1)

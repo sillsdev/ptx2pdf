@@ -11,7 +11,7 @@ from ptxprint.version import VersionStr
 from ptxprint.view import ViewModel
 from ptxprint.font import getfontcache, fontconfig_template_nofc
 from ptxprint.usfmerge import usfmerge2
-from ptxprint.texlog import summarizeTexLog
+from ptxprint.texlog import summarizeTexLog, readUnderfills
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
         saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, \
         runChanges, swapext, refKey
@@ -826,16 +826,14 @@ class RunJob:
 
             fname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".log"))
             logger.debug(f"Testing log file {fname}")
-            if os.path.exists(fname):
+            if os.path.exists(fname) and not self.notracing:
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                    if self.notracing:
-                        log = logfile.read()
-                    else:
-                        p = logfile.seek(0, 2)
-                        p = max(p - 60000, 0)
-                        logfile.seek(p, 0)
-                        log = logfile.read(60000)
-                smry, msgList, ufPages = summarizeTexLog(log)
+                    p = logfile.seek(0, 2)
+                    p = max(p - 60000, 0)
+                    logfile.seek(p, 0)
+                    log = logfile.read(60000)
+                statusfname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".status"))
+                smry, msgList, ufPages = summarizeTexLog(log, readUnderfills(statusfname))
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages

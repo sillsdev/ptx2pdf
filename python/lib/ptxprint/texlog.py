@@ -150,8 +150,23 @@ def summarize_log_file(log_file_path):
         log_contents = log_file.read()
     summarizeTexLog(log_contents)
 
+# Underfilled pages/columns from <job>.status
+#   \st@underfill{page}{col}{availht}{usedht}{baselineskip}
+re_stunderfill = re.compile(r"\\st@underfill\{(-?\d+)\}\{([^}]*)\}\{(-?[\d.]+)pt\}\{(-?[\d.]+)pt\}\{(-?[\d.]+)pt\}")
+def readUnderfills(fname):
+    """ Returns a list of (page, col, availht, usedht, baselineskip) from a .status file """
+    res = []
+    if fname is None or not os.path.exists(fname):
+        return res
+    with open(fname, encoding="utf-8", errors="ignore") as inf:
+        for l in inf.readlines():
+            m = re_stunderfill.match(l)
+            if m:
+                res.append((int(m.group(1)), m.group(2), float(m.group(3)), float(m.group(4)), float(m.group(5))))
+    return res
+
 # Function to summarize issues in the log text
-def summarizeTexLog(logText):
+def summarizeTexLog(logText, underfills=None):
     # Create dictionaries to count occurrences of each category
     category_counts = {"I": 0, "W": 0, "E": 0}
     messageSummary = []
@@ -174,11 +189,10 @@ def summarizeTexLog(logText):
                         messageSummary.append(f"  Try {j}. {responses[r]}")
 
     # Look for Unbalanced or Unfilled pages
-    uf_matches = list(re.findall(r'Underfill\[(A|B)\]:\s*\[(\d+)\]', logText))
     unique_page_numbers = []
-    if len(uf_matches):
+    if underfills:
         # Extract unique page numbers and sort them in ascending order
-        unique_page_numbers = sorted(set(int(match[1]) for match in uf_matches), key=int)
+        unique_page_numbers = sorted(set(int(u[0]) for u in underfills if u[0] > 0), key=int)
         category_counts["W"] += 1
         messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {shorten_ranges(unique_page_numbers)}")
 

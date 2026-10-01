@@ -13,6 +13,7 @@ from time import time, asctime, sleep
 from ptxprint.parlocs import Paragraphs, ParInfo
 from ptxprint.adjlist import AdjList
 from ptxprint.runjob import RunJob, unlockme
+from ptxprint.texlog import readUnderfills
 from ptxprint.utils import refSort, bookcodes, booknumbers, f_, ProgressEvent, _
 from ptxprint.view import ViewModel
 from ptxprint.project import ProjectList
@@ -1221,8 +1222,6 @@ class GrowList(list):
 
 class PTXFiller:
 
-    reunderfill = re.compile(r"^Underfill\[(\S+?)\]:\s+\[(\d+?)\]\s+ht=([\d.]+?)pt,\s+space=([\d.]+?)pt,\s+baseline=([\d.]+?)pt")
-
     def __init__(self, build_params, nid, progress_q=None, cpu_q=None, cancel_event=None):
         super().__init__()
         self.nid = nid
@@ -1492,8 +1491,8 @@ class PTXFiller:
             self.hooks.chapters = list(new[:n]) + [max(new[n-1], c + shift) for c in old[n:]]
         self.pidmap = {p.pid(): i for i, p in enumerate(self.parlocs) if isinstance(p, ParInfo)}
         self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
-        logfile = self.job.outfname.replace(".tex", ".log")
-        self.parselog(logfile)
+        statusfile = self.job.outfname.replace(".tex", ".status")
+        self.parsestatus(statusfile)
         print(prompt, flush=True, end="")
         return self.job.res
 
@@ -1636,34 +1635,30 @@ class PTXFiller:
     def isheader(self, mrk):
         return Grammar.marker_categories.get(mrk, '') in ("sectionpara", "title")
 
-    def parselog(self, fname):
+    def parsestatus(self, fname):
         self.underfills = GrowList()
-        with open(fname, encoding="utf-8") as inf:
-            for i, l in enumerate(inf.readlines()):
-                m = self.reunderfill.match(l)
-                if m:
-                    pnum = int(m.group(2))
-                    pnum = self.parlocs.pnums.get(pnum, pnum) - 1
-                    side = 0 if m.group(1) == "A" else 1
-                    lines = int((float(m.group(4)) - float(m.group(3))) / float(m.group(5)) + 0.4)
-                    if lines > 5:
-                        logger.log(15, f"{m.groups()=}, {lines=}")
-                    v = self.underfills[pnum]
-                    if side:
-                        if isinstance(v, list) and len(v) == 1:
-                            v = v + [lines]
-                        elif isinstance(v, int):
-                            v = [v] + [lines]
-                        else:
-                            v = [0, lines]
-                    elif isinstance(v, list):
-                            v[0] = lines
-                    else:
-                            v = [lines]
-                    self.underfills[pnum] = v
-                    logger.log(15, f"{pnum=} {self.underfills[pnum]}")
-                elif l.startswith("Underfill"):
-                    logger.warn(f"Unparsed underfill {l} at line {i+1}")
+        for (pnum, col, avail, used, baseline) in readUnderfills(fname):
+            if pnum <= 0:       # roman numbered (negative) pages are not filled
+                continue
+            pnum = self.parlocs.pnums.get(pnum, pnum) - 1
+            side = 0 if col == "A" else 1
+            lines = int((avail - used) / baseline + 0.4)
+            if lines > 5:
+                logger.log(15, f"{pnum=}, {col=}, {avail=}, {used=}, {baseline=}, {lines=}")
+            v = self.underfills[pnum]
+            if side:
+                if isinstance(v, list) and len(v) == 1:
+                    v = v + [lines]
+                elif isinstance(v, int):
+                    v = [v] + [lines]
+                else:
+                    v = [0, lines]
+            elif isinstance(v, list):
+                    v[0] = lines
+            else:
+                    v = [lines]
+            self.underfills[pnum] = v
+            logger.log(15, f"{pnum=} {self.underfills[pnum]}")
 
     def read_badnesses(self):
         xdvname = self.job.outfname.replace(".tex", ".xdv")
