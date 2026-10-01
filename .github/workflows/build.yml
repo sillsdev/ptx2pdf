@@ -138,8 +138,8 @@ jobs:
         SKIP_CODESIGN: ${{ vars.SKIP_CODESIGN }}
       run: ./mac-build.sh
 
-    - run: tree || find
-    
+    - run: find .
+
     - name: Upload signed exe
       uses: actions/upload-artifact@v7
       with:
