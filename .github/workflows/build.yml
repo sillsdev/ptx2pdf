@@ -131,7 +131,7 @@ jobs:
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
     
     - name: Install tools
-      run: npm i appdmg
+      run: npm i -g --allow-scripts=fs-xattr,macos-alias appdmg
 
     - name: Build installer
       env:
