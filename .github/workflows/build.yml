@@ -141,13 +141,12 @@ jobs:
 
     - name: Upload distribution DMG
       uses: actions/upload-artifact@v7
-      working-directory: dist
       with:
         name: PTXPrint macOS bundle
         path: |
-          *.dmg
-          latest.*.json
-          *.download_info
+          dist/*.dmg
+          dist/latest.*.json
+          dist/*.download_info
         if-no-files-found: error
         retention-days: 7
   
