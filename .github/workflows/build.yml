@@ -137,8 +137,6 @@ jobs:
         SKIP_CODESIGN: ${{ vars.SKIP_CODESIGN }}
       run: ./mac-build.sh
 
-    - run: find .
-
     - name: Upload distribution DMG
       uses: actions/upload-artifact@v7
       with:
