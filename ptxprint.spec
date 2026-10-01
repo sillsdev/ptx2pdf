@@ -490,12 +490,10 @@ elif sys.platform == "darwin":
                     'CFBundleExecutable':f"{app_name}-app"
                 })
 
-    skip_codesign = os.environ.get("SKIP_CODESIGN") == "1"
-    if  skip_codesign:
-        sys.exit(0)
 
     dmg_staging = create_dmg_staging(app_name)
-    code_sign(app_name, dmg_staging)
+    if not os.environ.get("SKIP_CODESIGN") == "1":
+        code_sign(app_name, dmg_staging)
     dmg_path = create_dmg(app_name, version, dmg_staging)
     if not os.environ.get("SKIP_NOTARIZE") == "1":
         notarize(dmg_path)
