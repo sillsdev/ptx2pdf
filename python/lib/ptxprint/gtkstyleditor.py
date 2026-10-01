@@ -205,7 +205,7 @@ class StyleEditorView(StyleEditor):
                   boxPaddingUniformClicked bdrPaddingUniformClicked
                """.split()
 
-    def __init__(self, model):
+    def __init__(self, model, copy=False):
         super().__init__(model)
         self.mrkrlist = []
         self.stylediverts = {
@@ -213,7 +213,8 @@ class StyleEditorView(StyleEditor):
             "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
         }
         self.builder = model.builder
-        self.model.register(self, self._methods)
+        if not copy:
+            self.model.register(self, self._methods)
         self.treestore = self.builder.get_object("ts_styles")
         self.treeview = self.builder.get_object("tv_Styles")
         self.filter = self.treestore.filter_new()

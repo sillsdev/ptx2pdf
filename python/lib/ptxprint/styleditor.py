@@ -305,7 +305,7 @@ _fieldmap = {
 
 class StyleEditor:
 
-    def __init__(self, model, basepath=None):
+    def __init__(self, model, basepath=None, copy=False):
         self.model = model
         self.sheet = {}
         self.marker = None
@@ -313,7 +313,7 @@ class StyleEditor:
         self.reset(basepath=basepath)
 
     def copy(self):
-        res = self.__class__(self.model)
+        res = self.__class__(self.model,copy=True)
         res.sheet = Sheets(base=self.sheet)
         res.basesheet = Sheets(base=self.basesheet)
         res.marker = self.marker

@@ -1271,9 +1271,6 @@ class PTXFiller:
         self.bk = bk        # needed by run()
         if bk not in self.view.getAllBooks().keys():
             return None
-        #def _print(level, s, *a):
-        #    print(bk+": "+(s % a))
-        #logger.log = _print
         # suppress peripherals
         oldvals = {}
         for a in """c_inclFrontMatter c_autoToC c_frontmatter c_inclMaps c_useSectIntros c_makeCoverPage

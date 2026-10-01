@@ -921,7 +921,7 @@ class GtkViewModel(ViewModel):
     def register(self, ctrl, names):
         for n in names:
             if n in self._routes or hasattr(type(self), n):
-                raise RunTimeError(f"{n}: Already routed to {self._routes.get(n)} or defined in view")
+                raise RuntimeError(f"{n}: Already routed to {self._routes.get(n)} or defined in view")
             self._routes[n] = ctrl
 
     def _add_mac_menu(self, app, menudesc=mac_menu, parent=None):
