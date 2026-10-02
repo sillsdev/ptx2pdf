@@ -40,6 +40,14 @@
 \def\b@xbotmark{}
 \newcount\r@a@trialdepth
 \r@a@trialdepth=0
+% \topins and \bottomins have \count=1000, so if a trial is too short for one of their inserts, TeX's page
+% builder holds the insert over to the next page. The trial is then discarded, but the held-over copy survives
+% alongside the copy still in the saved galley, so the picture appears twice. Trials compute availht from the
+% actual insert box heights, so zero the counts while a trial runs, which stops TeX holding them over.
+\def\z@roTrialInsCounts{%
+  \xdef\r@storeTrialInsCounts{\global\count\topins=\the\count\topins\relax \global\count\bottomins=\the\count\bottomins\relax}%
+  \global\count\topins=0 \global\count\bottomins=0 }
+\let\r@storeTrialInsCounts\relax
 
 \xdef\f@rstb@dy{0pt}%
 \def\TextBorderColumns{} % If unset, then border all scripture. If set, only border the ones set. E.g. for when a 
@@ -728,6 +736,7 @@
     \global\output{\diglot@any@trial}%
     \trace{D}{TRIAL! \the\ht\galley+\the\dp\galley}%
     \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
+    \ifnum\r@a@trialdepth=1 \z@roTrialInsCounts\fi
     \unvcopy\galley
     \unpenalty
     \traceifset{run@a@trial\the\r@a@trialdepth}%
@@ -737,6 +746,7 @@
     %\iflate@stage@reflow \showlists\fi
     \traceifcheck{run@a@trial\the\r@a@trialdepth}%
     \advance\r@a@trialdepth by -1
+    \ifnum\r@a@trialdepth=0 \r@storeTrialInsCounts\fi
     \relax\relax
     \let\after@run@a@trial=\relax
   \else
@@ -3712,6 +3722,7 @@
   \let\nxt\relax
   \ifx\cts@list\empty\else\let\nxt\diglot@run@trials\let\digl@tc@ntentlist\cts@list
     \trace{d}{Eh? Why is there still content? Will rerun}%
+    \r@storeinserts{chunk}% The rerun trials the same material again, so drop the inserts the earlier trials added or they get added twice.
   \fi
   \trace{d}{end of diglot@run@trials, \cts@list(\the\curactivecols)}%
   \nxt
