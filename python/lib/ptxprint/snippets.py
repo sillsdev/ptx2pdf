@@ -24,9 +24,9 @@ class PDFx1aOutput(Snippet):
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N {_iccnumcols}>>}}
 %\special{{pdf:close @OBJCVR}}
-\special{{pdf:stream @OBJCMR (
+\special{{pdf:stream @OBJCMR (<?xpacket begin="^^^^feff" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
-  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-ref-syntax-ns#"
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
        xmlns:xmp="http://ns.adobe.com/xap/1.0/"
        xmlns:dc="http://purl.org/dc/elements/1.1/"
        xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
@@ -145,7 +145,7 @@ class PDFx1aOutput(Snippet):
 /RegistryName (http://www.color.org)
 >> <<
 /Type/OutputIntent
-/S/GTS_PDFA4
+/S/GTS_PDFA1
 /OutputCondition (An Unknown print device)
 /OutputConditionIdentifier (Custom)
 /Info (Boilerplate null output intent)
@@ -178,7 +178,7 @@ class PDFx1aOutput(Snippet):
         for a in ('author', 'title', 'subject'):
             extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
         if model['document/printarchive']:
-            extras['_gtspdfaid'] = "      <pdfaid:part>4</pdfaid:part>\n"
+            extras['_gtspdfaid'] = "      <pdfaid:part>4</pdfaid:part>\n        <pdfaid:rev>2020</pdfaid:rev>\n"
             res += "\\XeTeXgenerateactualtext=1\n"
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-6)%\n"
             extras['_docinfo'] = '\special{pdf:docinfo << >>}'
