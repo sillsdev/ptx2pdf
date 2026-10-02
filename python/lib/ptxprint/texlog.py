@@ -193,14 +193,17 @@ def summarizeTexLog(logText, underfills=None):
     if underfills:
         # Extract unique page numbers and sort them in ascending order
         unique_page_numbers = sorted(set(int(u[0]) for u in underfills if u[0] > 0), key=int)
+    if unique_page_numbers:
         category_counts["W"] += 1
         messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {shorten_ranges(unique_page_numbers)}")
 
     return category_counts, messageSummary, unique_page_numbers
 
 def shorten_ranges(numbers):
+    if not numbers:
+        return ""
     ranges = []
-    current_range = [numbers[0]] if len(numbers) else []
+    current_range = [numbers[0]]
 
     for i in range(1, len(numbers)):
         if numbers[i] - numbers[i-1] == 1:

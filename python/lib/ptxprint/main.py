@@ -150,7 +150,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-c', '--config', help="Path to a configuration file")
     parser.add_argument('-R', '--runs', type=int, default=0, help="Limit XeTeX runs")
     parser.add_argument('-P', '--print', action='store_true', help="Run print operation")
-    parser.add_argument('-B', '--pub', action='append', help="Publication id to print (repeatable), requires -P")
+    parser.add_argument('-B', '--pub', action='append', default=[], help="Publication id to print (repeatable), requires -P")
 
     # Core Configuration
     parser.add_argument('-p', '--projects', action='append', default=[], help="Path(s) to project directories (repeatable)")
