@@ -35,7 +35,17 @@ def safeRename(infile, outfile):
     except (FileNotFoundError, PermissionError):
         pass
 
-def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
+def stripInfo(trailer):
+    """ PDF 2.0 deprecates the document information dictionary. The only entry
+        that may remain is ModDate, and then only if the catalog has PieceInfo. """
+    info = trailer.Info
+    if info is not None and trailer.Root.PieceInfo is not None and info.ModDate is not None:
+        trailer.Info = PdfDict(ModDate=info.ModDate)
+    else:
+        trailer.Info = None
+
+def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
+                stripinfo=False, **kw):
     res = {}
     opath = pdffile
     ext = None
@@ -65,6 +75,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
             bpdf.private.pages = eps
             for v in eps:
                 v.parent = bpdf.Root.Pages
+            if stripinfo:
+                stripInfo(bpdf)
             if ispdfxa == "Screen":
                 outpdf(bpdf, bpdfname)
             else:
@@ -197,6 +209,13 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip, **kw):
                 origobj.do_compress = compress
                 # Note: deliberately NOT calling origobj.write() here
         zio.close()
+
+    if stripinfo:
+        if outpdfobj is None:
+            outpdfobj = PdfWriter(None, trailer=PdfReader(opath))
+        stripInfo(outpdfobj.trailer)
+        if origobj is not None:
+            stripInfo(origobj.trailer)
 
     if outpdfobj is not None:
         if opath != pdffile:

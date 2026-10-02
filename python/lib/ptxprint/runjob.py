@@ -747,7 +747,7 @@ class RunJob:
         tmppdf = self.procpdfFile(outfname, pdffile)
         if self.info["finishing/extraxdvproc"]:
             self.processxdv(swapext(outfname, ext=".tex", withext=".xdv"), self.getxdvname(outfname))
-        pdfv = 2.0 if self.info["document/printarchive"] else self.args.pdversion / 10
+        pdfv = 2.0 if self.info["document/printarchive"] else self.args.pdfversion / 10
         cmd = ["xdvipdfmx", "-E", "-V", str(pdfv), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
         #if self.ispdfxa == "PDF/A-1":
         #    cmd += ["-z", "0"]
@@ -1037,6 +1037,7 @@ class RunJob:
             else:
                 kw[a] = self.info['finishing/'+a]
         kw['date'] = self.info["pdfdate_"]
+        kw['stripinfo'] = bool(self.info["document/printarchive"])
 
         def doSettingsZip(zio):
             z = zipfile.ZipFile(zio, "w", compression=zipfile.ZIP_DEFLATED)

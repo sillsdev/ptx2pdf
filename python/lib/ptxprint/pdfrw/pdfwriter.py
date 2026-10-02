@@ -187,6 +187,22 @@ def FormatObjects(f, trailer, version=None, compress=True, killobj=(),
     for objid in killobj:
         assert swapobj(objid) is not None
 
+    # Work out the header version before the trailer gets formatted into a
+    # string. Never go below what the document itself claims to be (the
+    # reader stores the source header version in trailer.Version, and the
+    # catalog may carry an explicit /Version override).
+    versions = [v for v in (version, trailer.Version, trailer.Root.Version)
+                if v is not None]
+    def _vnum(v):
+        try:
+            return float(str(v).lstrip('/'))
+        except ValueError:
+            return 0.
+    version = str(max(versions, key=_vnum)).lstrip('/') if versions else '1.3'
+    # /Version is not a valid trailer key, don't write it out
+    origversion = trailer.Version
+    trailer.Version = None
+
     # The first format of trailer gets all the information,
     # but we throw away the actual trailer formatting.
     format_obj(trailer)
@@ -197,16 +213,14 @@ def FormatObjects(f, trailer, version=None, compress=True, killobj=(),
     # Now we know the size, so we update the trailer dict
     # and get the formatted data.
     trailer.Size = PdfObject(len(objlist) + 1)
+    trailerobj = trailer
     trailer = format_obj(trailer)
+    trailerobj.Version = origversion
 
     # Now we have all the pieces to write out to the file.
     # Keep careful track of the counts while we do it so
     # we can correctly build the cross-reference.
 
-    if version is None:
-        version = getattr(trailer, 'Version', None)
-    if version is None:
-        version = '1.3'
     header = '%%PDF-%s\n%%\xe2\xe3\xcf\xd3\n' % version
     f_write(header)
     offset = len(header)

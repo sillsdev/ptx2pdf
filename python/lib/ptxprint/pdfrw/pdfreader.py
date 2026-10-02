@@ -678,7 +678,7 @@ class PdfReader(PdfDict):
                 trailer.Encrypt = None
 
             if source.is_stream:
-                for a in ('Root', 'Info', 'ID', 'Size', 'Encrypt'):
+                for a in ('Root', 'Info', 'ID', 'Size', 'Encrypt', 'Version'):
                     v = getattr(trailer, a)
                     setattr(self, a, v.copy() if sourceonly else v)
             else:
