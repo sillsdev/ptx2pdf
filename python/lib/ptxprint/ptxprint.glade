@@ -37571,8 +37571,8 @@ main scripture pages.</property>
                             <property name="halign">start</property>
                             <property name="label" translatable="yes">Each publication prints this configuration with its own set of books and its own values for the \zvars marked 'Pub' on the Peripherals tab (such as the main title and subtitle). Tick the publications you want, then click 'Print Selected'. Click on any value to edit it.</property>
                             <property name="wrap">True</property>
-                            <property name="xalign">0</property>
                             <property name="max-width-chars">90</property>
+                            <property name="xalign">0</property>
                             <style>
                               <class name="dim-label"/>
                             </style>
@@ -37750,17 +37750,17 @@ named 'Copy of ...'</property>
                                 <child>
                                   <object class="GtkTreeViewColumn" id="col_pub_value">
                                     <property name="resizable">True</property>
-                                    <property name="expand">True</property>
                                     <property name="title" translatable="yes">Books / Value</property>
+                                    <property name="expand">True</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cr_pub_value">
                                         <property name="editable">True</property>
                                         <signal name="edited" handler="onPubEdited" swapped="no"/>
                                       </object>
                                       <attributes>
+                                        <attribute name="foreground">8</attribute>
                                         <attribute name="text">1</attribute>
                                         <attribute name="weight">7</attribute>
-                                        <attribute name="foreground">8</attribute>
                                       </attributes>
                                     </child>
                                   </object>
@@ -37784,8 +37784,8 @@ named 'Copy of ...'</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="xalign">0</property>
                                 <property name="ellipsize">end</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="expand">True</property>
@@ -38680,14 +38680,16 @@ share config settings with other users.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_printArchive">
-                                    <property name="label" translatable="yes">Archive (PDF/A-1a)</property>
+                                    <property name="label" translatable="yes">Archive (PDF/A-4)</property>
                                     <property name="name">Include unicode text within PDF (to help with archiving)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
                                     <property name="tooltip-text" translatable="yes">Check this option to include the Unicode
 text in the PDF which is a good practice
-for final print and long-term archiving.</property>
+for final print and long-term archiving.
+PDF/A-4 is the currently preferred
+archival format.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">55</property>
