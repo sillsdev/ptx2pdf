@@ -200,7 +200,7 @@ def summarizeTexLog(logText, underfills=None):
 
 def shorten_ranges(numbers):
     ranges = []
-    current_range = [numbers[0]]
+    current_range = [numbers[0]] if len(numbers) else []
 
     for i in range(1, len(numbers)):
         if numbers[i] - numbers[i-1] == 1:
