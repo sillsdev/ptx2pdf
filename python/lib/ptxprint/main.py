@@ -492,7 +492,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
         if args.print or retview or args.cmd in ("print", "fill"):
-            if len(args.pub):
+            if args.pub:
                 from ptxprint.publications import printSetup
                 from ptxprint.utils import BuildParams
                 from ptxprint.multiprint import MultiPrint
