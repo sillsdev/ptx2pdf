@@ -44,7 +44,7 @@ def user_fmt(obj, isinstance=isinstance, float=float, str=str,
     return str(obj)
 
 
-def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
+def FormatObjects(f, trailer, version=None, compress=True, killobj=(),
                   user_fmt=user_fmt, do_compress=do_compress,
                   convert_store=convert_store, iteritems=iteritems,
                   id=id, isinstance=isinstance, getattr=getattr, len=len,
@@ -203,6 +203,10 @@ def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
     # Keep careful track of the counts while we do it so
     # we can correctly build the cross-reference.
 
+    if version is None:
+        version = getattr(trailer, 'Version', None)
+    if version is None:
+        version = '1.3'
     header = '%%PDF-%s\n%%\xe2\xe3\xcf\xd3\n' % version
     f_write(header)
     offset = len(header)
@@ -227,7 +231,7 @@ class PdfWriter(object):
     canonicalize = False
     fname = None
 
-    def __init__(self, fname=None, version='1.3', compress=False, **kwargs):
+    def __init__(self, fname=None, version=None, compress=False, **kwargs):
         """
             Parameters:
                 fname -- Output file name, or file-like binary object
@@ -245,9 +249,6 @@ class PdfWriter(object):
             except (ValueError, TypeError):
                 pass
             else:
-                if version != '1.3':
-                    assert compress == False
-                    compress = version
                 version = fname
                 fname = None
 

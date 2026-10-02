@@ -589,6 +589,8 @@ class PdfReader(PdfDict):
                                             repr(lines[0]))
 
                 self.private.version = fdata[5:8]
+                if self.version is None:
+                    self.version = self.private.version
 
                 endloc = fdata.rfind('%EOF')
                 if endloc < 0:
@@ -668,6 +670,8 @@ class PdfReader(PdfDict):
             if (trailer.Version and
                     float(trailer.Version) > float(self.version)):
                 self.private.version = trailer.Version
+            else:
+                trailer.Version = self.version
 
             if decrypt:
                 self.decrypt_all()

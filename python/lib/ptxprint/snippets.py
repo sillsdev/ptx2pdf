@@ -19,17 +19,8 @@ class PDFx1aOutput(Snippet):
 \bgroup
 \catcode`\#=12 
 \catcode`\@=11 \catcode`\^^M=10 \activ@tecustomch@rs\deactiv@tecustomch@rs
-\special{{pdf:docinfo<<
-/Title({document/title})%
-/Subject({document/subject})%
-/Author({document/author})%
-/Creator(PTXprint {/ptxprint_gitversion} ({config/name}))%
-/CreationDate(D:{pdfdate_})%
-/ModDate(D:{pdfdate_})%
-/Producer(XeTeX)%
-/Trapped /False
-{_gtspdfx}>> }}
 \message{{snippet 1}}%
+{_docinfo}
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N {_iccnumcols}>>}}
 %\special{{pdf:close @OBJCVR}}
@@ -154,7 +145,7 @@ class PDFx1aOutput(Snippet):
 /RegistryName (http://www.color.org)
 >> <<
 /Type/OutputIntent
-/S/GTS_PDFA1
+/S/GTS_PDFA4
 /OutputCondition (An Unknown print device)
 /OutputConditionIdentifier (Custom)
 /Info (Boilerplate null output intent)
@@ -183,12 +174,25 @@ class PDFx1aOutput(Snippet):
             extras['_iccnumcols'] = "1"
         else:
             extras['_iccnumcols'] = "4"
-        extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
         extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['cover/rtlbookbinding'] == "true" else ""
         for a in ('author', 'title', 'subject'):
             extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
         if model['document/printarchive']:
+            extras['_gtspdfaid'] = "      <pdfaid:part>4</pdfaid:part>\n"
             res += "\\XeTeXgenerateactualtext=1\n"
+            extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-6)%\n"
+            extras['_docinfo'] = '\special{pdf:docinfo << >>}'
+        else:
+            extras['_docinfo'] = r"""\special{{pdf:docinfo<<
+/Title({document/title})%
+/Subject({document/subject})%
+/Author({document/author})%
+/Creator(PTXprint {/ptxprint_gitversion} ({config/name}))%
+/CreationDate(D:{pdfdate_})%
+/ModDate(D:{pdfdate_})%
+/Producer(XeTeX)%
+/Trapped /False
+{_gtspdfx}>> }}""".format(**{**model.dict, **extras})
         return res.format(**{**model.dict, **extras}) + "\n"
     
 class FancyIntro(Snippet):
