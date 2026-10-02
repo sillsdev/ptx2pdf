@@ -1265,7 +1265,6 @@ class PolyglotSetup(Gtk.Box):
         self.builder.get_object("btn_adjust_diglot").set_sensitive(dglt)
         orig = self.view.get("fcb_diglotMerge", "scores")
         merge_types = {
-            _("Document based"):   "doc",
             _("Chapter Verse"):    "simple",
             _("Scored"):           "scores",
             _("Scored (Chapter)"): "scores-chapter",

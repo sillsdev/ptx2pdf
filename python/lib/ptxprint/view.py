@@ -1348,6 +1348,10 @@ class ViewModel:
                 val = "top" if self._config_bool("texpert", "vhyphenup", config, fallback=False) else "bottom"
                 self._configset(config, "texpert/vhyphenmode", val)
 
+        if v < 3.02: # "Document based" diglot merge mode removed; use "Scored" instead
+            if config.get("document", "diglotmergemode", fallback=None) == "doc":
+                self._configset(config, "document/diglotmergemode", "scores")
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
