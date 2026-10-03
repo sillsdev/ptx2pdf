@@ -667,11 +667,15 @@ class PdfReader(PdfDict):
 
             trailer.Prev = None
 
-            if (trailer.Version and self.version and 
-                    float(trailer.Version) > float(self.version)):
+            # When built from an existing source+trailer (no fdata) there is
+            # no header to read a version from, so inherit the trailer's.
+            if self.version is None:
+                self.private.version = trailer.Version
+            elif (trailer.Version and
+                    float(str(trailer.Version).lstrip('/')) > float(self.version)):
                 self.private.version = trailer.Version
             else:
-                trailer.Version = self.version or '1.3'
+                trailer.Version = self.version
 
             if decrypt:
                 self.decrypt_all()
