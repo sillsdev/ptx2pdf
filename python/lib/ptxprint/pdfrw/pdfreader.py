@@ -667,11 +667,11 @@ class PdfReader(PdfDict):
 
             trailer.Prev = None
 
-            if (trailer.Version and
+            if (trailer.Version and self.version and 
                     float(trailer.Version) > float(self.version)):
                 self.private.version = trailer.Version
             else:
-                trailer.Version = self.version
+                trailer.Version = self.version or '1.3'
 
             if decrypt:
                 self.decrypt_all()
