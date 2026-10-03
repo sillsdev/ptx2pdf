@@ -1,7 +1,72 @@
-PTXprint 3.0.44 Release Notes
-30 Sep 2026
+PTXprint 3.1 Release Notes
+3 Oct 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Version 3.1 release summary: (major changes since last major version 3.0)
+
+  *** IMPORTANT - Diglot merge mode 'Document Based' has been removed ***
+    - The old 'Document Based' method of merging Diglot texts was unreliable,
+      so it has been removed. Diglot configurations that used it will be
+      switched to 'Scored' automatically when they are opened.
+    - The layout of these Diglots may change, so please check them again
+      before sending them for publication.
+
+  * Automatic Page Filler (experimental)
+    - A new (Auto) Fill Page option in the PDF Viewer tries to fill every page
+      and avoid bad page and column breaks, without adjusting each by hand
+    - Several books are filled at once (in parallel), with a progress display
+      for each book
+    - Speed and Quality settings on the Advanced tab control how hard it tries
+
+  * Publications tab
+    - Define several publications (e.g. NT, Gospels, single books) from one
+      configuration, each with its own books, titles and other \zvars
+    - Print all the selected publications in one go, from the GUI or from the
+      command line using --pub (-B)
+
+  * Printers tab
+    - Get print quotes and compare costs between printers (Pretore,
+      Print Gallery and Pothi.com), with a cost comparison graph
+
+  * Cover Wizard
+    - The Cover tab has been replaced by a Cover Wizard (see the top of the
+      Peripherals tab), which builds the front, spine and back cover
+    - Supports cropped and positioned background images, colours, borders,
+      and a hinge for hardbacks
+
+  * Diglot and Polyglot
+    - Study notes can now be used in Diglots, with better space calculations
+    - Text borders can surround just selected columns (e.g. the original Greek)
+    - Separate and combined note styles can be mixed
+    - Pictures can come from more than one of the Diglot projects
+    - New Diglot Front Matter template
+    - Safer to switch on and off: a warning when enabling Diglot, and a
+      "Save as Monoglot..." option when disabling it
+    - Many fixes to merging and page layout to make Diglots more reliable
+
+  * Faster working
+    - New 'Layout Only' mode skips re-processing the USFM text on every run, so
+      layout changes can be checked much more quickly
+    - Shift/Ctrl+Left/Right-click in the PDF Viewer makes quick adjustments
+
+  * Archive-quality PDFs
+    - The Archive option now produces PDF 2.0 files that conform to PDF/A-4
+      (and PDF/X-6), the current standards for long-term archiving
+
+  * Other new features
+    - The PDF Viewer highlights missing glyphs (tofu) in purple
+    - Custom lists (e.g. List of Measurements, List of Prayers) using
+      \DefineListOf, \zlistentry and \ztoc
+    - Initial support for Markdown input via a converter for .md texts
+    - Functions can now be called from changes.txt
+    - Marginal notes are working, and side-aligned notes are available (codelet)
+    - Improvements to the Picture Catalogue, and a new ImageSet downloader 
+    - PicList: problem pictures are now highlighted
+    - Charis is now included, so fewer fonts need to be installed
+    - Updated to TeX Live 2026 on Windows
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.0.44 - (30 Sep 2026)

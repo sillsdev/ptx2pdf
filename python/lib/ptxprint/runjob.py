@@ -430,8 +430,8 @@ class RunJob:
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
 
                 mode = self.info["document/diglotmergemode"]
-                if mode in ('True', 'False') or not mode:
-                    mode = "doc"
+                if mode in ('True', 'False', 'doc') or not mode:
+                    mode = "scores"     # 'Document Based' (doc) merge mode has been removed
                 sync = "normal"
                 if "-" in mode:
                     (mode, sync) = mode.split("-")

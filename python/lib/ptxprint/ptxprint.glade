@@ -38539,7 +38539,8 @@ Screen (fastest, no post processing)
 Digital (smallest size, for local printing, PDF/X-4)
 Print (for professional printers, PDF/X-1a:2003)
 
-Note: Digital and Print comply with archive standard PDF/A-1b.</property>
+Note: Tick 'Archive' to also comply with
+the archive standard PDF/A-4.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="model">ls_outputFormat</property>
@@ -38570,7 +38571,8 @@ Print (for professional printers)
 Transparency (if CMYK is required)
 Archive (largest size, for keeping long-term)
 
-Note: All comply with archive standard PDF/A-1b.</property>
+Note: Tick 'Archive' to also comply with
+the archive standard PDF/A-4.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">20</property>
