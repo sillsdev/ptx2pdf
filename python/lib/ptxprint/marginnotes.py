@@ -252,7 +252,7 @@ class MarginNotes:
                                 t[k].yshift += shiftu
                                 currt = t[k].ymax + t[k].yshift
                                 k -= 1
-                            start = k
+                            start = k + 1
                             currw = 0
                             currc = 0
                             # now calculate weighted cost and so shift for the whole block from bottom to top
