@@ -1748,7 +1748,7 @@ class ViewModel:
         font_info = self.get("bl_fontR")
         try:
             expand = float(font_info.feats.get('extend', "1"))
-        except ValueError:
+        except (ValueError, AttributeError):
             expand = 1
         try:
             minexp = float(self.get("s_shrinktextlimit", "95")) / 100 * expand
