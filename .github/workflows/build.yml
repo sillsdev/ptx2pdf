@@ -1,7 +1,7 @@
 name: Windows installer build
 on: 
   push:
-    branches: [poc-github-actions]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
