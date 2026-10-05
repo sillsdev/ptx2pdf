@@ -600,7 +600,8 @@ class TypesetterSolver:
             for combo in self.next_combination(state, page):
                 if self.hooks.cancelled:
                     raise TimeoutError("Stopped")
-                if not combo and self.itercount > 0:
+                if not combo and self.itercount > 0 and self.noprobe \
+                        and state.layout.first_failing_page == page:
                     continue
                 if self.itercount - startcount > maxcombos:
                     break
