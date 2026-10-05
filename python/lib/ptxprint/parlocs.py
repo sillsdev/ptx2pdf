@@ -259,6 +259,8 @@ class Paragraphs(list):
         currps = {polycol: None}
         colcount = {polycol: -1}
         colinfos = {}
+        ignored = []
+        nested = {}
         innote = False
         pwidth = 0.
         keepgoing = True
@@ -302,6 +304,7 @@ class Paragraphs(list):
                 self.pindex.append(len(self))
                 self.pheights.append(pheight)
                 inpage = True
+                ignored = []
                 #cinfo = [readpts(x) for x in p[1:4]]
                 #if len(cinfo) > 2:
                 #    colinfos[polycol] = [cinfo.height, 0, cinfo.depth, 0, cinfo.width]
@@ -352,6 +355,10 @@ class Paragraphs(list):
                     self.chapters.extend([self.chapters[-1]]*(chap - len(self.chapters)))
                     self.chapters.append(pnum)
                 cinfo = colinfos.get(polycol, None)
+                if cinfo is not None:
+                    nested.setdefault(polycol, []).append((currps[polycol], currr, 
+                        (currr.xend, currr.yend) if currr is not None else None, lastyend, endpar,
+                        readpts(p[4])))
                 if currr is not None and cinfo is not None:
                     currr.xend = cinfo.topx + cinfo.width
                     currr.yend = readpts(p[5])
@@ -385,10 +392,31 @@ class Paragraphs(list):
                 ps.lastwidth = (endx - cinfo.topx) / cinfo.width if cinfo.width else 0
                 if len(p) > 3:
                     currr.yend -= readpts(p[3])
+                outer = nested.get(polycol, None)
+                if outer and outer[-1][0] is not ps:
+                    (oldp, oldr, oldrend, oldlastyend, oldendpar, startx) = outer.pop()
+                    if startx > cinfo.topx + cinfo.width or endx < cinfo.topx:
+                        for i in range(len(self)-1, -1, -1):
+                            if self[i] is ps:
+                                del self[i]
+                                break
+                        if par_ref_map.get((polycol, ps.ref), None) is ps:
+                            del par_ref_map[(polycol, ps.ref)]
+                        ignored.append((ps.ref, ps.mrk))
+                        currps[polycol] = oldp
+                        currr = oldr
+                        if oldr is not None:
+                            (oldr.xend, oldr.yend) = oldrend
+                        lastyend = oldlastyend
+                        endpar = oldendpar
+                        continue
                 lastyend = currr.yend
                 currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                 endpar = True
-            elif c == "parlen":         # ref, parnum, numlines, marker, adjustment
+            elif c == "parlen":         # ref, parnum, numlines, marker, startref, adjustment
+                if len(ignored) and p[3] == ignored[-1][1] and (len(p) < 5 or p[4] == ignored[-1][0]):
+                    ignored.pop()
+                    continue
                 if not endpar or not inpage:
                     continue
                 endpar = False
@@ -398,14 +426,6 @@ class Paragraphs(list):
                 currp.lastref = p[0]
                 if "k." in p[0]:
                     currp.ref = p[0]
-                #if currp.lastref != currp.ref:
-                #    ra = makeref(currp.ref)
-                #    rb = makeref(currp.lastref)
-                #    if ra is not None and rb is not None:
-                #        rc = ra.nextverse(thisbook=True)
-                #        if rc <= rb:
-                #            currp.ref=f"{rc.book}{rc.chapter}.{rc.verse}"
-                #            currp.parnum = 1
                 if currp.lastref == currp.ref:
                     currp.parnum = int(p[1])
                 prev_p = par_ref_map.get((polycol, currp.ref), None)

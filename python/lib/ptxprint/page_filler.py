@@ -196,7 +196,7 @@ class Hooks:
             setattr(self, "badness_"+a[0], val)
         # setattr(self, "strictness", printer.view.get("c_pbstrict", False))
         vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
-        self.tracing = logger.isEnabledFor(15)
+        self.tracing = logger.isEnabledFor(14)
         if self.tracing:
             logger.log(15, f"Badness parameters = {vals}")
 
@@ -284,7 +284,7 @@ class Hooks:
         return self.printer.pid_isheader(paragraph)
 
     def analyse_bw(self, testfn, page, trackp=False):
-        self.printer.analyse_bw(testfn, page, trackp=trackp)
+        self.printer.analyse_bw(testfn, page, trackp=trackp or self.tracing)
 
     def get_para(self, pid):
         return self.printer.get_para(pid)
