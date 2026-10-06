@@ -48,7 +48,7 @@ which a particular text *only* occurs in a single column, *vs*  **(b)** those
 where one text is split between several different 'windows' or 'displays'. This
 second variety includes where a double-column layout is desired for one or more of the  texts, or,  equally, when it is desired to have an interlinear text across both pages of a 2 page layout, with other translations above/below it.  The NET study-bible layout mentioned above is another example.  
 
-Algorithms for both of these layouts will be considered below. One user has already asked if it would be possible to have one translation being in a 2 column layout at the top of the page, with another 2 translations below it.
+Algorithms for both of these layouts  will be considered below. One user has already asked if it would be possible to have one translation being in a 2 column layout at the top of the page, with another 2 translations below it. 
 
 That seems possible, but  there are some arrangements that, while seeming plausible, need to be  rapidly rejected out of hand.  It is simply not possible for XeTeX to produce a layout in which 
 a single flow of text changes its column width without a *rigid* page layout,  or simulating one with multiple additional runs, as are required for  figures in cutouts.  If each page needed only a single re-run (probably unlikely) the number of job re-runs needed would scale as  O(2<sup>N</sup>) (N being the page count). 
@@ -62,13 +62,9 @@ Too much of the existing code assumes that the display identifier is a
 * Use column identifiers as display identifiers for the first column,
 encountered (Note this depends on LTR or RTL reading direction). Follow-on columns are 
 mapped to otherwise unused upper case letters. E.g. second A (mnemonically A2)  which maps to e.g. U). The mnemonic mapping is
-defined as the column definition is read, and to aid debugging, it is unclear if this 
-should be a permanent assignment. (e.g. no matter if other layouts are used, A2 is always  U, once defined that way.) 
+defined as the column definition is read. As resources are limited, altering the layout discards previous assignments (i.e. if another layout is used part way through, for example,  if a different selection of texts are used for OT vs NT, A2 may not remain always  U.)
 
-* If a new page-layout description is given, there are 2 options:
- to discard the intermediate assignments or to leave them as-is. Debugging ease suggests leaving them as-is. The corollary of this is that  the code must disconnect the mapping if less columns are provided in the new mapping.
-* A new page-layout description must trigger a page break and output of all pending material, or it might not be printed.
-
+* A new page layout must trigger a page break and output of all pending material, or read content might not be printed.
 
 ### Multiple chunks and alternative displays with repeated columns
 If  a given column is repeated, then the question of responding to a new chunk
@@ -297,7 +293,6 @@ a partial list of line-no/insert measurements. [NEEDLESS - recursive split funct
 * Identify which inputs end up in repeated columns, especially cross-page. [DONE]
 * Something to determine possible split heights [DONE]  [TESTED]
 * Analyse how inserts affect layout [DONE?]  [TESTED]
-* ~~Determine initial split lengths based on ratios. **COMPLEX** ~~ [not needed]
 * Determine total galley lengths [DONE]   [TESTED]
 * Split into sub-galleys, with chaining through follow-ons [DONE]   [TESTED]
 * Eventually add 'top-here', 'bottom-here' pseudo-column inserts, to supplement tL, etc.

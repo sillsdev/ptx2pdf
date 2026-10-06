@@ -336,7 +336,7 @@
   \let\chkstring\empty
 }
 
-\def\@cplx@fwd@group{%process a subgroup while reversing
+\def\@cplx@fwd@group{%process a subgroup while forward-processing a group
   \@@cplx@p@rsebgroup%starts a group
     \edef\p@lyr@wstring{\p@lyr@wstringrev-\the\p@lyp@geno-\the\p@lyr@wno}%
     \ifBookOpenLeft
@@ -345,9 +345,9 @@
       \edef\rev@r@wstring{revp@lyp@gecols\p@lyr@wstringrev}%
     \fi
     \def\tmpnam{r@wstrings-\p@lypr@fix\the\p@lygr@upno}%
-    \trace{dmcr}{reversing \tmpnam -> \csname \tmpnam\endcsname }%
+    \trace{dmcr}{processing \tmpnam -> \csname \tmpnam\endcsname }%
     \x@\let\x@\tmp\csname \tmpnam\endcsname
-    \let\d@=\complexr@vpolyrows
+    \let\d@=\complexfwd@polyrows
     \x@\cstackdown\tmp,\E
   \egroup
 }  
@@ -441,12 +441,12 @@
       \ifx\p@lypr@fix\empty
         \xdef\r@wstringstop{\ifx\r@wstringstop\empty\else\r@wstringstop,\fi\p@lyr@wstring}%
       \else
-        \def\tmpnam{r@wstrings-\p@lypr@fix\the\p@lygr@upno}%
+        \def\tmpnam{r@wstrings-\p@lypr@fix\the\p@lygr@upno}% csname{\tmpnam} contains a (comma-separated) list of the rows in this group. 
         \ifcsname\tmpnam\endcsname
           \x@\xdef\csname \tmpnam\x@\endcsname\x@{\ifcsname \tmpnam\endcsname\csname \tmpnam\endcsname,\fi\p@lyr@wstring}%
         \else
           \x@\xdef\csname \tmpnam\x@\endcsname\x@{\p@lyr@wstring}%
-          \xdef\gr@upstrings{\ifx\gr@upstrings\empty\else \gr@upstrings,\fi\tmpnam}
+          \xdef\gr@upstrings{\ifx\gr@upstrings\empty\else \gr@upstrings,\fi\tmpnam}% gr@upstrings
         \fi
       \fi
     \fi 
@@ -667,7 +667,7 @@
     \let\p@lypr@fix\empty
     \x@\p@rser@wstring#1-\E
     \x@\let\x@\tmp\csname #1\endcsname
-    \x@\@complexs@tpolyp@ges\tmp\E% The bit of page-setup that happens after parsing.
+    \x@\@complexs@tpolyp@ges\tmp\E% Height calcs, etc.
   \else
     \trace{dmc}{complexfwd@polyrows didn't find #1}%
   \fi
@@ -743,10 +743,10 @@
 }
 \def\@@complexs@tpolyp@ges#1{%column processing
   \trace{dmc}{@@cspp #1}%
-  \traceifset{@@cspp}%
+  \traceifset{@@cspp-\the\p@lygr@updp}%
   \ifcsname #1isDiglotColumn\endcsname
     \x@\let\x@\@@cspptmp\csname @max@cols@#1\endcsname
-    \trace{dmc}{#1 @@cspptmp \meaning\@@cspptmp}%
+    \trace{dmc}{(#1) @@cspptmp \meaning\@@cspptmp}%
     \ifnum \@@cspptmp =0 % This must be the first occurance
       %\ifnum\@csppactcols>1 \x@\let\csname layout@#1\endcsname\gr@dnormal % Normal 
       %\else\x@\let\csname layout@#1\endcsname\gr@dnone \fi % No sync
@@ -768,9 +768,14 @@
     \x@\xdef\csname ther@wno\x@fch@r\endcsname{\the\p@lyr@wno}%
     \x@\xdef\csname thep@geno\x@fch@r\endcsname{\the\p@lyp@geno}%
     \x@\xdef\csname thec@ll\x@fch@r\endcsname{\p@lyr@wstring}%
-  \else 
+  \else
+    \ifcsname @f@p@rse#1\endcsname
+      \csname @f@p@rse#1\endcsname
+    \else
+      \trace{dmcl}{#1 is neither a column nor parsable}%
+    \fi
   \fi
-  \traceifcheck{@@cspp}%
+  \traceifcheck{@@cspp-\the\p@lygr@updp}%
 }
 \def\checkpolypages{%
   \edef\sl@shcode{\the\catcode47}%
@@ -819,7 +824,7 @@
   \def\cplx@proc@all{}%
   \def\cplx@proc@allII{}%dependent columns (footnotes, etc)
   \let\r@wstrings\empty %r@wstrings will be a comma-separated list of all row-content ids.
-  \let\r@wstringstop\empty %r@wstringstop will be a comma-separated list of all row-content ids at the top level (ungrouped).
+  \let\r@wstringstop\empty %r@wstringstop will be a comma-separated list of all row-content ids at the top level (ungrouped).  csname r@wstrings-\groupID\endcsname contains each group's content.
   \let\gr@upstrings\empty %gr@upstrings will be a comma-separated list of group-ids.
   \reset@colindexes
   \@cplx@p@rse#1\E
@@ -827,7 +832,7 @@
   \xdef\p@lyp@ges{\the\p@lyp@geno}% Another (historic) endstop.
   \@cplx@vrfygrpzero
   \message{Parsed:\r@wstrings (top level:\r@wstringstop)}%
-  % Now turn column contents into unique columns,
+  % Now turn column contents into unique columns and generate height calcs.
   \let\d@=\complexfwd@polyrows
   %\tracingmacros=1
   \x@\cstackdown\r@wstringstop,\E
@@ -2260,41 +2265,6 @@
   \def\sstackdown#1/#2\E{\edef\sstack@tmp{#1}\ifx\sstack@tmp\empty\else\d@@ #1\E\fi\edef\sstack@tmp{#2}\ifx\sstack@tmp\empty\let\n@x=\sstackrelax\else\let\n@x=\sstackdown\fi\n@x #2\E}
   \def\sstackrelax#1\E{}
     
-%  \def\complexs@tpolyp@ges#1\E{%page processing (#1 is a page contents
-%    \p@lyr@wno=0
-%    \edef\r@wstring{}%
-%    \x@\let\csname ins@rts-\the\p@lyp@geno\endcsname\relax
-%    \edef\pg@hts{\csname ins@rts-\the\p@lyp@geno\endcsname}%
-%    \fntoks{}%
-%    \let\d@@\@complexs@tpolyp@ges
-%    \x@\sstackdown#1/\E
-%    \x@\xdef\csname p@lyr@wcount-\the\p@lyp@geno\endcsname{\the\p@lyr@wno}% Rows on this page
-%    \x@\xdef\csname p@lypgcts-\the\p@lyp@geno\endcsname{\r@wstring}% Contents of this page (in terms of page-row)
-%    \x@\gdef\csname p@lypght-\the\p@lyp@geno\x@\endcsname\x@{\x@\dimexpr\pg@hts\relax}%
-%    \ifcsname p@gehtloss-\the\p@lyp@geno\endcsname\else
-%      \x@\mkn@wht\csname p@gehtloss-\the\p@lyp@geno\endcsname\E % Height for this bit of page.
-%    \fi
-%    %\def\tmp
-%    %\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp
-%    \x@\gdef\csname sc@re-\the\p@lyp@geno\x@\endcsname\x@{\x@\dimexpr \the\fntoks\relax}%
-%    \x@\xdef\x@\r@wstrings\x@{\ifx\r@wstrings\empty\else \r@wstrings,\fi\r@wstring}% % What is the complete list of sections (in terms of page-row)?
-%    \trace{dmc}{page \the\p@lyp@geno \space height is \x@\meaning\csname p@lypght-\the\p@lyp@geno\endcsname. Score is \csname sc@re-\the\p@lyp@geno\endcsname}%
-%    \ifnum \p@lyp@geno>0  % new@poly@page doesn't get run for page0, as those take over the standard boxes
-%      \edef\tmpname{partial\p@lyr@wsuffx }
-%      \ifcsname \tmpname\endcsname\else
-%        \new@poly@page % side effect: trashes \d@
-%      \fi
-%    \fi
-%    \xdef\p@lyp@ges{\the\p@lyp@geno}%
-%    \global\p@lylastp@ge=\p@lyp@geno% This and p@lyp@ages  both serve as endstops (p@lypages for if < ... continue, this for possibly deeply nested recursion, where every cycle counts)
-%    \global\advance\p@lyp@geno by 1\relax
-%  }
-%  \def\complexr@vpolyp@ges#1\E{%reverse processing. There may be repeated columns, and 'reversed column order' doesn't affect reading order. Thus it does not equate to an inversion (LLR becomes LZR forward and  RLZ when reversed.)
-%    \p@lyr@wno=0
-%    \let\d@@=\@complexr@vpolyp@ges % Do the mirrored-version
-%    \x@\sstackdown#1/\E
-%    \global\advance\p@lyp@geno by 1
-%  }
   \def\complexcheck@polyp@ges#1\E{%
     \p@lyp@geno=0
     \p@lyr@wno=0 \p@lygr@upno=0 
