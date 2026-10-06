@@ -387,10 +387,11 @@
     \x@\fullstack@xpand\x@\StackComplexity\x@|\x@ 0\x@|\this@stystak\E%
     \let\p@ssParams\@@ut
   \fi
-  \trace{sk}{1. Checking list: \p@ssParams}%
+  \trace{sk}{1. Checking list: \p@ssParams (msprefix:\mspr@fix)}%
   \ifx\mspr@fix\empty\else
      %If we expand our prefix list for special styling of milestone+marker, (rather than just relying on the stack) then:
-     %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
+     \exp@ndmspr@fix{\let\@ut=\empty \def\do@it##1{\@lso##1,##1}\let\d@=\cs@apply\x@\cstackdown \p@ssParams,\E \let\p@ssParams\@ut}%
+     \trace{sk}{1b Checking list: \p@ssParams}%
   \fi
   \let\tmpd@=\d@
   \ifx\empty\periph@@@\else
@@ -629,14 +630,20 @@
   \let\r@s\empty
   \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}%
     \ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}%
-      \ifx\p@ram\relax\else
+      \ifx\p@ram\relax
+        \edef\wh@renot{\wh@renot,##1}%
+      \else
         \ifx\p@ram\r@setparam
+          \edef\wh@refound{##1}%
           \let\d@\cstackrelax
         \else
-          \ifx\p@ram\empty\else
+          \ifx\p@ram\empty
+            \edef\wh@renot{\wh@renot,##1}%
+          \else
             % Param might be in stacking (issue #575) [foo,bar] format or older :foo:bar
             % Reprocess to stacking format:
             %\x@\ch@ckfontfeatures\p@ram\E % Initial colon test
+            \edef\wh@refound{##1}%
             \x@\ch@ckfontfeaturesbrk\p@ram[]\E % Lack of square brackets test.
             \xdef\r@s{\p@ram\space\r@s\space}%Processed left to right, so top level (overrides) go *LAST*
           \fi
