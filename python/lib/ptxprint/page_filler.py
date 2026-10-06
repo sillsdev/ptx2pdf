@@ -394,6 +394,12 @@ class TypesetterSolver:
         if not state.layout.pages or state.layout.result != 0:
             logger.log(15, f"Bad initial layout pages={state.layout.pages}, result={state.layout.result}")
             return HumanFixRequest(state, max(start_page, 0), "Bad initial layout")
+        resumed = restart and bool(self.shape_cache)
+        if resumed:
+            self.noprobe = True
+            for (p, d) in self.shape_cache:
+                if d != 0 and (p, 0) not in self.shape_cache:
+                    self.forced_delta.add(p)
         if not self.baseline_lines:
             self.baseline_lines = dict(state.layout.paragraph_total_lines)
         if self.hooks.tracing:
@@ -419,13 +425,19 @@ class TypesetterSolver:
         else:
             self.base_params = dict(state.paragraph_params)
 
-        self.collect_probes(state.layout, self.paragraph_order, self.base_params, isbase=True, page=start_page)
+        if not resumed:
+            self.collect_probes(state.layout, self.paragraph_order, self.base_params, isbase=True, page=start_page)
         page = start_page
         self.low_water = max(0, page - self.backtrack_depth)
         self.numpages = state.numPages()
         npages = (self.numpages - page + 1) if self.full_probe or self.numpages <= 2 * self.lookahead else self.lookahead
         try:
-            layout = self.initial_probes(state, page, npages, restart=restart)
+            if resumed:
+                layout = self.hooks.run_layout(self, self.base_params, state.float_anchors, -1, -1)
+                if layout is None:
+                    return HumanFixRequest(state, max(page, 0), "Bad resume layout")
+            else:
+                layout = self.initial_probes(state, page, npages, restart=restart)
         except TimeoutError:
             return HumanFixRequest(state, page, "Stopped" if self.hooks.cancelled else "Timed out")
 
@@ -1414,15 +1426,18 @@ class PTXFiller:
                 c = getchap(key)
                 if lastchap != 0 and lastchap <= int(c):
                     break
+                hasshapes = any((s, a) in solver.shape_cache for a in range(-2, 3))
                 for a in range(-2, 3):
                     keyv = f"{'p' if a >= 0 else 'm'}{abs(a)}"
-                    if (s, a) in solver.shape_cache:
+                    if a == 0 and s in solver.forced_delta:
+                        v = None
+                        self.adjs.setdb(f"{self.bk} {key}[{para}]", keyv, None, insert=False)
+                    elif (s, a) in solver.shape_cache:
                         e, t, badness = solver.shape_cache[(s, a)]
-                        if e == self.expand and t == 0:
+                        if badness is None or (e == self.expand and t == 0 and not hasshapes):
                             v = None
                         else:
-                            v = f"{int(e*100)}" if t == 0 else f"{int(e*100)}{t:+1d}"
-                        # print(f"{s}@{a}={e},{t} into {key},{keyv}={v}")
+                            v = f"{int(e*100)}{t:+d}@" + f"{badness:.3f}".rstrip("0").rstrip(".")
                     else:
                         v = None
                     if v is not None:
@@ -1556,7 +1571,7 @@ class PTXFiller:
     def get_para_ind(self, pid, state=None):
         if state is not None:
             parlocs = state.parlocs
-            pidmap = {p.pid(): i for i, p in enumerate(parlocs)}
+            pidmap = {p.pid(): i for i, p in enumerate(parlocs) if isinstance(p, ParInfo)}
         else:
             parlocs = self.parlocs
             pidmap = self.pidmap
@@ -1613,7 +1628,8 @@ class PTXFiller:
         if pi < len(self.parlocs):
             p = self.parlocs[pi]
             pnum = p.rects[0].pagenum
-            if self.parlocs[self.parlocs.pindex[pnum]].pid() == pid:
+            first= self.parlocs[self.parlocs.pindex[pnum]]
+            if isinstance(first, ParInfo) and first.pid() == pid:
                 return self.isheader(p.mrk)
         return False
 

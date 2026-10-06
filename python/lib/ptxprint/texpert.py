@@ -304,7 +304,7 @@ texpertOptions = {
                               "Lower: faster, but more pages may fail.\n"
                               "Affects: Speed.")),
     # Quality settings (how good the text must look)
-    "pbSpacingTol":       O("pbspacingtol", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Widest word space allowed (× text size)"),
+    "pbSpacingTol":       O("pbspacingtol", "APF", (1.0, 0, 10, 0.05, 1, 2), "", _("Widest word space allowed (× text size)"),
                             _("When the page filler stretches a paragraph, the average space between words must not be wider than this. "
                               "1.0 = as wide as the text size. A normal word space is about 0.3 to 0.5.\n"
                               "Higher: easier to fill pages, but the text can look too spread out.\n"

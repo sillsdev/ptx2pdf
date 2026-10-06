@@ -137,7 +137,7 @@ class FigInfo:
     limit:      bool
     wide:       bool
     rects:      InitVar[None] = None
-    pid:        Optional[str] = None
+    anchor_pid: Optional[str] = None
 
     def __str__(self):
         return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
@@ -625,7 +625,7 @@ class Paragraphs(list):
             return self.pnumorder[pindex - 1]
 
     def setFigPids(self):
-        pindex = 0
+        pnum = 0
         for i, p in self:
             while i >= self.pindex[pnum]:
                 pnum += 1
@@ -633,7 +633,7 @@ class Paragraphs(list):
                 lastpa = None
                 for pa in self.getParas(pnum, inclast=True):
                     if pa.ref > p.ref:
-                        p.pid = lastpa.pid()
+                        p.anchor_pid = lastpa.pid()
                         break
                     lastpa = pa
 
