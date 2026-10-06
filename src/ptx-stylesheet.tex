@@ -494,14 +494,9 @@
  \ifx\gp@test\empty\message{Eh? getp@ram called for #2 and empty parameter}\else 
    \setpossParams{#2}{#3}%
    {%protect outer version of \d@, etc.
-   %\tracingassigns=1
-   %\tracingmacros=1
   % Final version of the list might be cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
    \ifcsname getthep@ram-#1\endcsname %call a parameter-specific routine. e.g. for fontsize.
      \trace{sa}{Specific 'getpar@m-#1'}%
-     %\tracingmacros=0
-     %\tracingassigns=1
-     %\tracingifs=1
      \ifg@ttingspecificparam % Avoid lookup loops.
        \trace{sa}{No recursion}%
        \gettop@param{#1}%
@@ -510,9 +505,6 @@
        \csname getthep@ram-#1\endcsname{#1}%
        \g@ttingspecificparamfalse
      \fi
-     %\tracingifs=0
-     %\tracingassigns=0
-     %\tracingmacros=0
    \else
      \gettop@param{#1}%
    \fi

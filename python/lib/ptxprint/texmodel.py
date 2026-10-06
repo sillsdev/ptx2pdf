@@ -187,7 +187,7 @@ class TexModel:
                      "/iccfpath": os.path.join(libpath, "default_cmyk.icc").replace("\\","/"),
                      "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/"),
                      "/ptxdocpath": printpath.replace("\\", "/"),
-                     "/notracing": "%" if notracing else ""}
+                     "/notracing": "" if notracing else "%"}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
