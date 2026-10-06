@@ -488,8 +488,10 @@
 }
 
 \newif\ifg@ttingspecificparam
+\newcount\getp@ramnest \getp@ramnest=0
 \def\getp@ram#1#2#3{\trace{s}{getp@ram #2:#1 [#3](\mcstack)}\ifnotracestacks\pushtracing\fi
- \traceifset{getparam}%
+ \advance\getp@ramnest by 1
+ \traceifset{getparam-\the\getp@ramnest}%
  \let\p@ram\relax
  \def\gp@test{#1}%
  \xdef\tmpstyst@k{#3}%
@@ -518,7 +520,8 @@
  \fi
  \trace{s}{\space\space (\c@tprefix)(\mspr@fix)#2\ifdiglot(\c@rrdstat)\fi :#1 is \p@ram (\wh@refound, not:\wh@renot)}%
  \ifnotracestacks\poptracing\fi
- \traceifcheck{getparam}%
+ \traceifcheck{getparam-\the\getp@ramnest}%
+ \advance\getp@ramnest by -1
 }
 
 \def\gettop@param#1{%Check list of acceptable parameters and return the first one found.
