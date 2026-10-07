@@ -36,7 +36,7 @@ class GtkFonts:
     def onFontRclicked(self, btn, highlightWid=None):
         if self.getFontNameFace("bl_fontR", highlightWid=highlightWid):
             btn = self.builder.get_object("bl_fontR")
-            self.onFontChanged(btn)
+            self.view.onFontChanged(btn)
         self.checkFontsMissing()
 
     def onLocateDigitMappingClicked(self, btn):
@@ -239,6 +239,7 @@ class GtkFonts:
             lslangs.append([v, k])
         if lang is not None:
             self.set("fcb_featsLangs", lang, mod=False)
+
         def onLangChanged(fcb):
             newlang = self.get("fcb_featsLangs")
             newdefaults = langfeats.get(newlang, self.currdefaults)
@@ -258,6 +259,7 @@ class GtkFonts:
                     if obj.get_active_id() == self.currdefaults.get(k, 0):
                         ob.set_active_id(newdefaults.get(k, 0))
             self.currdefaults = newdefaults
+
         langChangedId = self.builder.get_object("fcb_featsLangs").connect("changed", onLangChanged)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:

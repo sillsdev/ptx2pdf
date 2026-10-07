@@ -357,7 +357,7 @@ class PDFViewer:
 
     def _jumpToTypedPgNum(self, typedPg):
         self._pgNumTimerId = None
-        if self.pdf_viewer.document is None:
+        if self.document is None:
             return False
         typedPg = self.closestpnum(typedPg)
         if self.parlocs is not None:

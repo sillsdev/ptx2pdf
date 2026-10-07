@@ -326,9 +326,9 @@ class Paragraphs(list):
                     continue
                 colinfos[polycol] = cinfo
                 colcount[polycol] = colcount.get(polycol, 0) + 1
-                if currps.get(polycol, None) is not None:
+                if currps.get(polycol, None) is not None:       # are we restarting an existing paragraph
                     if currr is not None and currr.yend == 0 and currps[polycol].rects:
-                        currps[polycol].rects.pop()
+                        currps[polycol].rects.pop()             # remove empty rectangle from previous page
                     currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
                 lastyend = 0
@@ -358,7 +358,7 @@ class Paragraphs(list):
                 if cinfo is not None:
                     nested.setdefault(polycol, []).append((currps[polycol], currr, 
                         (currr.xend, currr.yend) if currr is not None else None, lastyend, endpar,
-                        readpts(p[4])))
+                        readpts(p[4]), (pnum, colcount[polycol])))
                 if currr is not None and cinfo is not None:
                     currr.xend = cinfo.topx + cinfo.width
                     currr.yend = readpts(p[5])
@@ -394,8 +394,9 @@ class Paragraphs(list):
                     currr.yend -= readpts(p[3])
                 outer = nested.get(polycol, None)
                 if outer and outer[-1][0] is not ps:
-                    (oldp, oldr, oldrend, oldlastyend, oldendpar, startx) = outer.pop()
-                    if startx > cinfo.topx + cinfo.width or endx < cinfo.topx:
+                    (oldp, oldr, oldrend, oldlastyend, oldendpar, startx, startcol) = outer.pop()
+                    if startcol == (pnum, colcount[polycol]) and \
+                            (startx > cinfo.topx + cinfo.width or endx < cinfo.topx):
                         for i in range(len(self)-1, -1, -1):
                             if self[i] is ps:
                                 del self[i]
@@ -431,7 +432,7 @@ class Paragraphs(list):
                 prev_p = par_ref_map.get((polycol, currp.ref), None)
                 if prev_p and prev_p is not currp:
                     currp.parnum = getattr(prev_p, 'parnum', 0) + 1
-                currp.lines = int(p[2]) # this seems to be the current number of lines in para
+                currp.lines += int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
                 logger.log(5, f"Stopping para {p[0]}={currp}")
                 currps[polycol] = None
@@ -493,6 +494,7 @@ class Paragraphs(list):
                 
             # "parnote":        # type, caller, ref, index, callerx, callery
             # "notebox":        # type, width, height
+            # "noteid":         # noteid, type, c=caller n=note, pageno, startx, starty
             # "parlines":       # numlines in previous paragraph (occurs after @parlen)
             # "nontextstart":   # x, y
             # "nontextstop":    # x, y
