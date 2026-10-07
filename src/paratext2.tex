@@ -90,7 +90,10 @@
 %: `\addtoinithooks` is for stuff we do during one-time-setup before the first PTX file
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
 \newtoks\@nithooks
-
+\newtoks\e@rly@nithooks
+%: `\addtoinithooks` is for stuff we do earlier - before opening the first style sheet.
+\def\addtoearlyinithooks#1{\x@\global\x@\e@rly@nithooks\x@{\the\e@rly@nithooks #1}}
+\addtoearlyinithooks{\global\e@rly@nithooks{}}% Clear itself
 %: `\addtoidhooks` is for stuff we do at an id or a periph
 \def\addtoidhooks#1{\x@\global\x@\@idhooks\x@{\the\@idhooks #1}}
 \newtoks\@idhooks
@@ -461,4 +464,5 @@
 \clubpenalty=10000
 \brokenpenalty=50
 \savingvdiscards=1
+\everypar{\@netimesetup}% A default, in case user-setup causes output
 \endinput
