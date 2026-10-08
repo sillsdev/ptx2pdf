@@ -2264,7 +2264,8 @@ class ViewModel:
 
     def _writearchive(self, zf, ifile, fname, for_test=False):
         if for_test:
-            if pathlib.Path(fname).parts[1] == 'local':
+            p = pathlib.Path(fname).parts
+            if len(p) > 1 and p[1] == 'local':
                 return  # we can exclude the local subdirectory from the test archive
         try:
             zinfo = zf.getinfo(fname)
