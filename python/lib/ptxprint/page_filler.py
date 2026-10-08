@@ -1252,23 +1252,33 @@ class PTXFiller:
         self.stats = []
         if nid is not None:
             self.view.project.ext = f"pbuild{nid}"
-            d = self.view.project.printPath(self.view.cfgid)
-            if os.path.exists(d):
-                import time as _time
-                for f in os.listdir(d):
-                    fp = os.path.join(d, f)
-                    if not os.path.isfile(fp):
-                        continue
-                    for attempt in range(4):
-                        try:
-                            os.unlink(fp)
-                            break
-                        except PermissionError:
-                            if attempt < 3:
-                                _time.sleep(0.5)
-                            else:
-                                logger.warning(f"Cannot delete {fp} — file still locked; skipping")
 
+    def clear_book_files(self, bk):
+        """ Delete the working files left from a previous run of this book only,
+            keeping other books' outputs in the shared worker directory. """
+        if self.nid is None:
+            return
+        d = self.view.project.printPath(self.view.cfgid)
+        if not os.path.exists(d):
+            return
+        prefixes = [self.view.baseTeXPDFnames([bk])[0]]
+        srcname = self.view.getBookFilename(bk)
+        if srcname:
+            prefixes.append(os.path.splitext(srcname)[0])
+        for f in os.listdir(d):
+            fp = os.path.join(d, f)
+            if not os.path.isfile(fp) or not any(f.startswith(p) for p in prefixes):
+                continue
+            for attempt in range(4):
+                try:
+                    os.unlink(fp)
+                    break
+                except PermissionError:
+                    if attempt < 3:
+                        sleep(0.5)
+                    else:
+                        logger.warning(f"Cannot delete {fp} — file still locked; skipping")
+ 
     @property
     def cancelled(self):
         return self.cancel_event is not None and bool(self.cancel_event.value)
@@ -1283,6 +1293,7 @@ class PTXFiller:
         self.bk = bk        # needed by run()
         if bk not in self.view.getAllBooks().keys():
             return None
+        self.clear_book_files(bk)
         # suppress peripherals
         oldvals = {}
         for a in """c_inclFrontMatter c_autoToC c_frontmatter c_inclMaps c_useSectIntros c_makeCoverPage

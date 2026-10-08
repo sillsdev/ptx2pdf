@@ -969,7 +969,8 @@ class TexModel:
                 def printError(msg, **kw):
                     self.printer.doError(msg, show=not self.printer.get("c_quickRun"))
                 self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
-                                            bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
+                                            bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar,
+                                            prjdir=printer.project.path)
         draft = "-" + (printer.cfgid or "draft")
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):

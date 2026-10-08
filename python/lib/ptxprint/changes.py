@@ -156,11 +156,15 @@ def _mkfmtfn(s):
     else:
         return s
 
-def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, grammar=None):
+def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, grammar=None, prjdir=None):
     if grammar is not None:
         cats = _makecat_props(grammar)
     else:
         cats = None
+    def make_fname(t):
+        if prjdir is not None:
+            t = re.sub(r"\$PRJDIR", prjdir, t)
+        return os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(fname)), t))
     changes = {}
     if passes is None:
         passes = ["default"]
@@ -200,8 +204,10 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
                 continue
             m = re.match(r"^\s*include\s+(['\"])(.*?)\1", l)
             if m:
-                lchs = readChanges(os.path.join(os.path.dirname(fname), m.group(2)), bk,
-                                passes=passes, doError=doError, get_usfm=get_usfm, grammar=grammar)
+                incname = make_fname(m.group(2))
+                logger.debug(f"changes include {m.group(2)} -> {incname}")
+                lchs = readChanges(incname, bk, passes=passes, doError=doError,
+                                    get_usfm=get_usfm, grammar=grammar, prjdir=prjdir)
                 for k, v in lchs.items():
                     changes.setdefault(k, []).extend(v)
                 continue

@@ -234,7 +234,7 @@ class UsfmCollection:
 
     def reload(self, cfile):
         if os.path.exists(cfile):
-            allchanges = readChanges(cfile, None, grammar=self.grammar)
+            allchanges = readChanges(cfile, None, grammar=self.grammar, prjdir=self.basedir)
             self.changes = allchanges.get('initial', None)
         else:
             self.changes = None
