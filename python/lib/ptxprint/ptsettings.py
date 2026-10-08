@@ -271,7 +271,7 @@ class ParatextSettings:
 
     def getArchiveFiles(self):
         res = {}
-        for a in ("Settings.xml", "BookNames.xml", "ptxSettings.xml"):
+        for a in ("Settings.xml", "BookNames.xml", "ptxSettings.xml", "custom.vrs"):
             path = os.path.join(self.prjdir, a)
             if os.path.exists(path):
                 res[path] = a

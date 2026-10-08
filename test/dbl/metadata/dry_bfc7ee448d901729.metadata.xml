@@ -1,0 +1,204 @@
+<DBLMetadata version="2.2.1" id="bfc7ee448d901729" revision="1">
+    <identification>
+      <name>Darai</name>
+      <nameLocal>Darai</nameLocal>
+      <description>Darai: Darai (Bible)</description>
+      <descriptionLocal>दराई</descriptionLocal>
+      <abbreviation>DRY</abbreviation>
+      <abbreviationLocal>DRY</abbreviationLocal>
+      <scope>Bible</scope>
+      <bundleProducer>Paratext/9.4.101.15</bundleProducer>
+      <systemId type="paratext">
+        <id>bfc7ee448d901729544c8e514bf2a23366988557</id>
+        <csetId>68b5d3f550c663c9869362827557c034d559965f</csetId>
+        <name>DARAI</name>
+        <fullName>Darai</fullName>
+      </systemId>
+      <systemId type="ptreg">
+        <id>mypk7YjFKBajN46B5</id>
+      </systemId>
+    </identification>
+    <type>
+      <medium>text</medium>
+      <isConfidential>true</isConfidential>
+      <hasCharacters>true</hasCharacters>
+      <isTranslation>true</isTranslation>
+      <isExpression>true</isExpression>
+      <translationType>First</translationType>
+      <audience>Common</audience>
+      <projectType>Standard</projectType>
+    </type>
+    <relationships/>
+    <agencies>
+      <rightsHolder>
+        <abbr>WBT</abbr>
+        <url>https://www.sil.org/</url>
+        <nameLocal>Wycliffe Bible Translators, Inc.</nameLocal>
+        <uid>545d2cb00be06579ca809b57</uid>
+        <name>Wycliffe Bible Translators, Inc.</name>
+      </rightsHolder>
+      <rightsAdmin>
+        <url>https://www.sil.org/</url>
+        <uid>545d2cb00be06579ca809b57</uid>
+        <name>Wycliffe Bible Translators, Inc.</name>
+      </rightsAdmin>
+      <contributor>
+        <content>true</content>
+        <publication>true</publication>
+        <management>true</management>
+        <finance>true</finance>
+        <qa>true</qa>
+        <uid>a69557e8a322a887ab50fc48</uid>
+        <name>Wycliffe USA</name>
+      </contributor>
+    </agencies>
+    <language>
+      <iso>dry</iso>
+      <name>Darai</name>
+      <script>Devanagari</script>
+      <scriptCode>Deva</scriptCode>
+      <scriptDirection>LTR</scriptDirection>
+      <ldml>dry</ldml>
+      <numerals>Devanagari</numerals>
+    </language>
+    <countries>
+      <country>
+        <iso>NP</iso>
+        <name>Nepal</name>
+      </country>
+    </countries>
+    <format>
+      <usxVersion>3.0</usxVersion>
+      <versedParagraphs>false</versedParagraphs>
+    </format>
+    <names>
+      <name id="book-mrk">
+        <abbr>मर्‌कु</abbr>
+        <short>मर्‌कुस</short>
+        <long>मर्‌कुसेइ लेख्‍ल सुसमचारक किताप</long>
+      </name>
+      <name id="book-luk">
+        <abbr>लुक</abbr>
+        <short>लुका</short>
+        <long>लुकाइ लेख्‍ल सुसमचारक किताप</long>
+      </name>
+      <name id="book-act">
+        <abbr>प्रे</abbr>
+        <short>प्रेरित</short>
+        <long>लुकाइ प्रेरितसब्‍क कामसब्‍क बारेयँ लेख्‍ल किताप</long>
+      </name>
+      <name id="book-1th">
+        <abbr>१ थेस</abbr>
+        <short>१ थेस</short>
+        <long>थेसलोनिकिसब्‍के पावलेइ लेख्‍ल पइला चिठि</long>
+      </name>
+      <name id="book-2th">
+        <abbr>२ थेस</abbr>
+        <short>२ थेस</short>
+        <long>थेसलोनिकिसब्‍के पावलेइ लेख्‍ल दोस्रा चिठि</long>
+      </name>
+      <name id="book-1ti">
+        <abbr>१ तिमो</abbr>
+        <short>१ तिमो</short>
+        <long>तिमोथिके पावलेइ लेख्‍ल पइला चिठि</long>
+      </name>
+      <name id="book-2ti">
+        <abbr>२ तिमो</abbr>
+        <short>२ तिमो</short>
+        <long>तिमोथिके पावलेइ लेख्‍ल दोस्रा चिठि</long>
+      </name>
+      <name id="book-tit">
+        <abbr>तित</abbr>
+        <short>तित</short>
+        <long>तितसके पावलेइ लेख्‍ल चिठि</long>
+      </name>
+    </names>
+    <manifest>
+      <resource checksum="55b4924a466e02bceb1a0017e6bcdb45" mimeType="application/xml" size="50268" uri="release/USX_1/1TH.usx"/>
+      <resource checksum="97182ebe5da07618d542cb00b5a06cb2" mimeType="application/xml" size="58632" uri="release/USX_1/1TI.usx"/>
+      <resource checksum="94ec5df5152c6ad7765648b49d64ce36" mimeType="application/xml" size="26574" uri="release/USX_1/2TH.usx"/>
+      <resource checksum="6745a4c79dd35b80c861898a5645d0bd" mimeType="application/xml" size="43934" uri="release/USX_1/2TI.usx"/>
+      <resource checksum="feecf8bf31253c713de3c18931ec935d" mimeType="application/xml" size="470972" uri="release/USX_1/ACT.usx"/>
+      <resource checksum="2270b24328c7b5e6d5f9f7a1fa0f32fa" mimeType="application/xml" size="532558" uri="release/USX_1/LUK.usx"/>
+      <resource checksum="b4c427ef789ec7c874357966d471022b" mimeType="application/xml" size="311778" uri="release/USX_1/MRK.usx"/>
+      <resource checksum="e11edbd16458e9d463fce4925d542f95" mimeType="application/xml" size="26011" uri="release/USX_1/TIT.usx"/>
+      <resource checksum="d5c3d604a20e531898417adcb7c8f7bb" mimeType="application/x-font-ttf" size="532652" uri="release/AnnapurnaSIL-Nepal-Bold.ttf"/>
+      <resource checksum="e82c6fed7ebb09398ea159973735ede2" mimeType="application/x-font-ttf" size="522212" uri="release/AnnapurnaSIL-Nepal-Regular.ttf"/>
+      <resource checksum="670fdd0a14046a0c06e09c4c84105d65" mimeType="application/xml" size="1647" uri="release/dry.ldml"/>
+      <resource checksum="d049c5d6938329b3eab7c8d9ef7e5d08" mimeType="application/xml" size="104245" uri="release/styles.xml"/>
+      <resource checksum="ad829a7d2ac2acbed7a573364ce818df" mimeType="text/plain" size="15359" uri="release/versification.vrs"/>
+      <resource checksum="8f379fa33634ab524734875c73fced80" mimeType="application/zip" size="6305192" uri="source/source.zip"/>
+    </manifest>
+    <source>
+      <canonicalContent>
+        <book code="1TH"/>
+        <book code="1TI"/>
+        <book code="2TH"/>
+        <book code="2TI"/>
+        <book code="ACT"/>
+        <book code="LUK"/>
+        <book code="MRK"/>
+        <book code="TIT"/>
+      </canonicalContent>
+      <structure>
+        <content src="source/source.zip" role="sourceZip"/>
+      </structure>
+    </source>
+    <publications>
+      <publication id="p1" default="true">
+        <name>Darai</name>
+        <nameLocal>दराई</nameLocal>
+        <description>Protestant</description>
+        <descriptionLocal>Protestant</descriptionLocal>
+        <abbreviation>DRY</abbreviation>
+        <abbreviationLocal>DRY</abbreviationLocal>
+        <canonicalContent>
+          <book code="1TH"/>
+          <book code="1TI"/>
+          <book code="2TH"/>
+          <book code="2TI"/>
+          <book code="ACT"/>
+          <book code="LUK"/>
+          <book code="MRK"/>
+          <book code="TIT"/>
+        </canonicalContent>
+        <structure>
+          <content name="book-mrk" src="release/USX_1/MRK.usx" role="MRK"/>
+          <content name="book-luk" src="release/USX_1/LUK.usx" role="LUK"/>
+          <content name="book-act" src="release/USX_1/ACT.usx" role="ACT"/>
+          <content name="book-1th" src="release/USX_1/1TH.usx" role="1TH"/>
+          <content name="book-2th" src="release/USX_1/2TH.usx" role="2TH"/>
+          <content name="book-1ti" src="release/USX_1/1TI.usx" role="1TI"/>
+          <content name="book-2ti" src="release/USX_1/2TI.usx" role="2TI"/>
+          <content name="book-tit" src="release/USX_1/TIT.usx" role="TIT"/>
+        </structure>
+      </publication>
+    </publications>
+    <copyright>
+      <fullStatement>
+        <statementContent type="xhtml">
+          <p>© 2024 (Active), Mother Tongue Translators Society and Wycliffe Bible Translators, Inc. All rights reserved.</p>
+        </statementContent>
+      </fullStatement>
+    </copyright>
+    <promotion/>
+    <progress>
+      <book code="MAT" stage="5"/>
+      <book code="MRK" stage="7"/>
+      <book code="LUK" stage="4"/>
+      <book code="ACT" stage="6"/>
+      <book code="1CO" stage="2"/>
+      <book code="2CO" stage="2"/>
+      <book code="1TH" stage="7"/>
+      <book code="2TH" stage="7"/>
+      <book code="1TI" stage="7"/>
+      <book code="2TI" stage="7"/>
+      <book code="TIT" stage="7"/>
+    </progress>
+    <archiveStatus>
+      <archivistName>Dennis Conroy</archivistName>
+      <dateArchived>2024-09-10T15:59:54.8819908+00:00</dateArchived>
+      <dateUpdated>2024-09-10T16:00:12.081893</dateUpdated>
+      <comments>First upload, 2024-Sep-10</comments>
+    </archiveStatus>
+  </DBLMetadata>

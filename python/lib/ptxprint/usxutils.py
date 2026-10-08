@@ -11,6 +11,7 @@ from ptxprint.changes import readChanges
 from ptxprint.ptsettings import PTEnvironment
 from ptxprint.unicode.ucd import get_ucd
 from copy import deepcopy
+from collections import Counter
 
 logger = logging.getLogger(__name__)
 
@@ -714,6 +715,53 @@ class Usfm:
             if ellipsis and i < j + offset - 1:
                 addellipsis(root, i - 1)
         return
+
+    # marker categories (usfmtc Grammar.marker_categories) whose text is not main vernacular text
+    _hiddencats = {"attribute", "crossreference", "crossreferencechar", "footnote",
+                   "footnotechar", "header", "internal", "milestone"}
+
+    def visibleText(self, root=None, hidden=None):
+        """ Yields the strings of main text a reader would see. Elements whose
+            marker category is in hidden (default _hiddencats) are skipped,
+            e.g. notes, figures, remarks and headers. Tails of skipped elements
+            are kept. """
+        if root is None:
+            root = self.getroot()
+        if hidden is None:
+            hidden = self._hiddencats
+        grammar = self.grammar if self.grammar is not None else Grammar()
+        cats = grammar.marker_categories
+        def category(e):
+            s = e.get("style", None)
+            if s is None:
+                return ""
+            return cats.get(grammar.parsetag(s), "")
+        def walk(e):
+            if category(e) not in hidden:
+                if e.text:
+                    yield e.text
+                for c in e:
+                    yield from walk(c)
+                    if c.tail:
+                        yield c.tail
+        for c in root:
+            yield from walk(c)
+            if c.tail:
+                yield c.tail
+
+    def collectClusters(self, counter=None, words=None):
+        """ Counts the grapheme clusters in the visible text (see visibleText).
+            Whitespace is skipped. If words is a set, the casefolded words are
+            added to it. """
+        if counter is None:
+            counter = Counter()
+        for t in self.visibleText():
+            for g in regex.findall(r"\X", t):
+                if not g.isspace():
+                    counter[g] += 1
+            if words is not None:
+                words.update(w.casefold() for w in regex.findall(r"\w+", t))
+        return counter
 
     def findScript(self):
         stats = {}

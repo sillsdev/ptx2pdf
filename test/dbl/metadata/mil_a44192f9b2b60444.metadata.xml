@@ -1,0 +1,368 @@
+<DBLMetadata version="2.2.1" id="a44192f9b2b60444" revision="9">
+  <identification>
+    <systemId type="gbc">
+      <id>53ac243a5117ad56de235b26</id>
+    </systemId>
+    <systemId type="reap">
+      <id>http://www.reap.insitehome.org/handle/9284745/15164</id>
+    </systemId>
+    <systemId type="paratext">
+      <id>a44192f9b2b604445580073099ad913f4b6df7c3</id>
+      <csetId>1cee0bee3f8ceedcfa4615f1daf4d4afd52b71e8</csetId>
+      <name>milDBL</name>
+      <fullName>Mixteco, Peñoles_DBL</fullName>
+    </systemId>
+    <name>Mixtec, Peñoles NT</name>
+    <nameLocal>Mixtec, Peñoles</nameLocal>
+    <abbreviation>mil</abbreviation>
+    <abbreviationLocal>mil</abbreviationLocal>
+    <description>Mixtec, Peñoles New Testament</description>
+    <descriptionLocal>Mixtec, Peñoles: Tnúhu ní cáháⁿ yǎ ndiǒxí xito cùu uú</descriptionLocal>
+    <scope>New Testament</scope>
+    <dateCompleted>2002</dateCompleted>
+    <bundleProducer>nathanael/0.61.1</bundleProducer>
+    <canonSpec type="NT">
+      <component>westernNT</component>
+    </canonSpec>
+  </identification>
+  <relationships/>
+  <agencies>
+    <rightsHolder>
+      <abbr>WBT</abbr>
+      <url>http://www.wycliffe.org</url>
+      <nameLocal>Wycliffe Bible Translators, Inc.</nameLocal>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </rightsHolder>
+    <contributor>
+      <content>false</content>
+      <publication>true</publication>
+      <management>false</management>
+      <qa>false</qa>
+      <uid>54650cf25117ad690fb05fac</uid>
+      <name>Bible League International</name>
+    </contributor>
+    <contributor>
+      <content>true</content>
+      <publication>true</publication>
+      <management>false</management>
+      <qa>false</qa>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </contributor>
+  </agencies>
+  <language>
+    <iso>mil</iso>
+    <name>Mixtec, Peñoles</name>
+    <nameLocal>Mixtec, Peñoles</nameLocal>
+    <scriptCode>Latn</scriptCode>
+    <script>Latin</script>
+    <scriptDirection>LTR</scriptDirection>
+    <numerals>Arabic</numerals>
+    <ldml>mil</ldml>
+  </language>
+  <countries>
+    <country>
+      <iso>MX</iso>
+      <name>Mexico</name>
+    </country>
+  </countries>
+  <type>
+    <medium>text</medium>
+    <hasCharacters>true</hasCharacters>
+    <isTranslation>true</isTranslation>
+    <isExpression>true</isExpression>
+    <translationType>First</translationType>
+    <audience>Common</audience>
+    <isConfidential>false</isConfidential>
+  </type>
+  <format>
+    <versedParagraphs>false</versedParagraphs>
+  </format>
+  <manifest>
+    <resource checksum="3970cd0fb277fe1e28cc113ef13d9159" mimeType="application/octet-stream" size="53" uri="release/Mixtec.lds"/>
+    <resource checksum="3ec027c403c57889bd29662da6844d2a" mimeType="application/xml" size="160091" uri="release/USX_1/1CO.usx"/>
+    <resource checksum="25d480d2f8b03bf342b044065887f77f" mimeType="application/xml" size="33525" uri="release/USX_1/1JN.usx"/>
+    <resource checksum="36c9e15befc89b25248e8c70620018f1" mimeType="application/xml" size="41089" uri="release/USX_1/1PE.usx"/>
+    <resource checksum="faf3b83af873711ee7e053bca08fa745" mimeType="application/xml" size="29572" uri="release/USX_1/1TH.usx"/>
+    <resource checksum="827c37b5a35ab3865cafe1064eea3dc3" mimeType="application/xml" size="41859" uri="release/USX_1/1TI.usx"/>
+    <resource checksum="7a547bfc94d80d6845b5257d48bf4a5e" mimeType="application/xml" size="101265" uri="release/USX_1/2CO.usx"/>
+    <resource checksum="f9fe264edbd4ce5262fc57248dac0c62" mimeType="application/xml" size="4519" uri="release/USX_1/2JN.usx"/>
+    <resource checksum="72454af87789ff2204d8849cfdb55de9" mimeType="application/xml" size="26119" uri="release/USX_1/2PE.usx"/>
+    <resource checksum="02930359e5731b398cef2d48caf0248f" mimeType="application/xml" size="16475" uri="release/USX_1/2TH.usx"/>
+    <resource checksum="8f7b2e647d9ff2c1b9c291632b1d6462" mimeType="application/xml" size="27911" uri="release/USX_1/2TI.usx"/>
+    <resource checksum="79cad8f97b91cb82d2172833e93860fc" mimeType="application/xml" size="5227" uri="release/USX_1/3JN.usx"/>
+    <resource checksum="548f715c128ba6b0c5479215c9b416e1" mimeType="application/xml" size="350168" uri="release/USX_1/ACT.usx"/>
+    <resource checksum="035d602a7bc79ba324e1429567cd3d1a" mimeType="application/xml" size="34104" uri="release/USX_1/COL.usx"/>
+    <resource checksum="9f3e8032d2533767f4075fda3bbefbbc" mimeType="application/xml" size="54253" uri="release/USX_1/EPH.usx"/>
+    <resource checksum="41bf438e66a93eea8bc350568561f932" mimeType="application/xml" size="54961" uri="release/USX_1/GAL.usx"/>
+    <resource checksum="6d81279f92bb81298144974ff6a92a31" mimeType="application/xml" size="123454" uri="release/USX_1/HEB.usx"/>
+    <resource checksum="51c92feca05a8586a629fe150bb875f3" mimeType="application/xml" size="32884" uri="release/USX_1/JAS.usx"/>
+    <resource checksum="4eb201ff225261a80b8f88be386e2c7e" mimeType="application/xml" size="269965" uri="release/USX_1/JHN.usx"/>
+    <resource checksum="8563f3f18624ef4191b56dc70b3914fc" mimeType="application/xml" size="11915" uri="release/USX_1/JUD.usx"/>
+    <resource checksum="95bac6d0fcfcf111e1ab79022e8a6d7e" mimeType="application/xml" size="393514" uri="release/USX_1/LUK.usx"/>
+    <resource checksum="58915d3c9680993177dc423d8194b1f0" mimeType="application/xml" size="407558" uri="release/USX_1/MAT.usx"/>
+    <resource checksum="e2cf9b9f2c37a3400c90e92b88b3438c" mimeType="application/xml" size="250769" uri="release/USX_1/MRK.usx"/>
+    <resource checksum="07528e7323f4a71d8527a63d2c299055" mimeType="application/xml" size="7578" uri="release/USX_1/PHM.usx"/>
+    <resource checksum="3b52c66b1efa98426c9a610cc8d1359f" mimeType="application/xml" size="35642" uri="release/USX_1/PHP.usx"/>
+    <resource checksum="3d12ceefd432e72f95e7337b2b315eb5" mimeType="application/xml" size="175995" uri="release/USX_1/REV.usx"/>
+    <resource checksum="2429a2fdfb0419f5d934a2c566156032" mimeType="application/xml" size="157482" uri="release/USX_1/ROM.usx"/>
+    <resource checksum="8afc5c78840bf6e164e49b4af9f38616" mimeType="application/xml" size="17569" uri="release/USX_1/TIT.usx"/>
+    <resource checksum="a06a4534aa1b9e59a55efa6dc41d632c" mimeType="application/xml" size="2958" uri="release/ldml.xml"/>
+    <resource checksum="a06a4534aa1b9e59a55efa6dc41d632c" mimeType="application/octet-stream" size="2958" uri="release/mil.ldml"/>
+    <resource checksum="f17409f3abc32240da539ea28258fde8" mimeType="application/xml" size="78093" uri="release/styles.xml"/>
+    <resource checksum="e3d6a793c359b0cfdaa7e0916ee7ddb6" mimeType="application/octet-stream" size="12768" uri="release/versification.vrs"/>
+    <resource checksum="143bf644386faa1053d209ec29700a88" mimeType="application/zip" size="41822430" uri="source/source.zip"/>
+  </manifest>
+  <names>
+    <name id="book-mat">
+      <abbr>Mt.</abbr>
+      <short>SAN MATEO</short>
+      <long>TNÚHU NÍ CHÍDÓ TNÙNÍ TÉ MÀTEÚ</long>
+    </name>
+    <name id="book-mrk">
+      <abbr>Mr.</abbr>
+      <short>SAN MARCOS</short>
+      <long>TNÚHU NÍ CHÍDÓ TNÙNÍ TÉ MǍCÚ</long>
+    </name>
+    <name id="book-luk">
+      <abbr>Lc.</abbr>
+      <short>SAN LUCAS</short>
+      <long>TNÚHU NÍ CHÍDÓ TNÙNÍ TÉ LÙCÁ</long>
+    </name>
+    <name id="book-jhn">
+      <abbr>Jn.</abbr>
+      <short>SAN JUAN</short>
+      <long>TNÚHU NÍ CHÍDÓ TNÙNÍ TÉ JUÀÁ</long>
+    </name>
+    <name id="book-act">
+      <abbr>Hch.</abbr>
+      <short>LOS HECHOS</short>
+      <long>NCHAA NÀCUÁA NÍ QUIDE CUE TÉE NÍ TÁÚCHÍÚⁿ JÈSÚS DACUÀHA ÑAHA XII ÑÁYIU TNÚHU‑GÁ</long>
+    </name>
+    <name id="book-rom">
+      <abbr>Ro.</abbr>
+      <short>ROMANOS</short>
+      <long>TUTÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU ÑUÚ RÒMÁ</long>
+    </name>
+    <name id="book-1co">
+      <abbr>1 Co.</abbr>
+      <short>1 CORINTIOS</short>
+      <long>TUTÚ DÍHNA NUU NǏ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU ÑUÚ CÒRINTÚ</long>
+    </name>
+    <name id="book-2co">
+      <abbr>2 Co.</abbr>
+      <short>2 CORINTIOS</short>
+      <long>TUTÚ CÚÚ ÙÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU ÑUÚ CÒRINTÚ</long>
+    </name>
+    <name id="book-gal">
+      <abbr>Gá.</abbr>
+      <short>GÁLATAS</short>
+      <long>TUTÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU DISTRÌTÚ GÀLACIÁ</long>
+    </name>
+    <name id="book-eph">
+      <abbr>Ef.</abbr>
+      <short>EFESIOS</short>
+      <long>TUTÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU ÑUÚ ÉFESÚ</long>
+    </name>
+    <name id="book-php">
+      <abbr>Fil.</abbr>
+      <short>FILIPENSES</short>
+      <long>TUTÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU ÑUÚ FÌLIPÚ</long>
+    </name>
+    <name id="book-col">
+      <abbr>Col.</abbr>
+      <short>COLOSENSES</short>
+      <long>TUTÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU ÑUÚ CÒLOSÁ</long>
+    </name>
+    <name id="book-1th">
+      <abbr>1 Ts.</abbr>
+      <short>1 TESALONICENSES</short>
+      <long>TUTÚ DÍHNA NUU NǏ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU ÑUÚ TESÀLÓNICÁ</long>
+    </name>
+    <name id="book-2th">
+      <abbr>2 Ts.</abbr>
+      <short>2 TESALONICENSES</short>
+      <long>TUTÚ CÚÚ ÙÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA ÑÁYIU ÑUÚ TESÀLÓNICÁ</long>
+    </name>
+    <name id="book-1ti">
+      <abbr>1 Ti.</abbr>
+      <short>1 TIMOTEO</short>
+      <long>TUTÚ DÍHNA NUU NǏ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA TÉ TIMÙTEÚ</long>
+    </name>
+    <name id="book-2ti">
+      <abbr>2 Ti.</abbr>
+      <short>2 TIMOTEO</short>
+      <long>TUTÚ CÚÚ ÙÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA TÉ TIMÙTEÚ</long>
+    </name>
+    <name id="book-tit">
+      <abbr>Tit.</abbr>
+      <short>TITO</short>
+      <long>TUTÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA TÉ TÌTÚ</long>
+    </name>
+    <name id="book-phm">
+      <abbr>Flm.</abbr>
+      <short>FILEMÓN</short>
+      <long>TUTÚ NÍ CADÚHA TÉ PǍBLÚ QUƗ́HƗ́ⁿ NDAHA TÉ FILÈMÓN</long>
+    </name>
+    <name id="book-heb">
+      <abbr>He.</abbr>
+      <short>HEBREOS</short>
+      <long>TUTÚ QUƗ́HƗ́ⁿ NDAHA CUE ÑÁYIU HÈBREÚ</long>
+    </name>
+    <name id="book-jas">
+      <abbr>Stg.</abbr>
+      <short>SANTIAGO</short>
+      <long>TUTÚ NÍ CADÚHA TÉ SÀNTIAÚ</long>
+    </name>
+    <name id="book-1pe">
+      <abbr>1 P.</abbr>
+      <short>1 PEDRO</short>
+      <long>TUTÚ DÍHNA NUU NǏ CADÚHA TÉ PÈLÚ</long>
+    </name>
+    <name id="book-2pe">
+      <abbr>2 P.</abbr>
+      <short>2 PEDRO</short>
+      <long>TUTÚ CÚÚ ÙÚ NÍ CADÚHA TÉ PÈLÚ</long>
+    </name>
+    <name id="book-1jn">
+      <abbr>1 Jn.</abbr>
+      <short>1 JUAN</short>
+      <long>TUTÚ DÍHNA NÍ CADÚHA TÉ JUÀÁ</long>
+    </name>
+    <name id="book-2jn">
+      <abbr>2 Jn.</abbr>
+      <short>2 JUAN</short>
+      <long>TUTÚ CÚÚ ÙÚ NÍ CADÚHA TÉ JUÀÁ</long>
+    </name>
+    <name id="book-3jn">
+      <abbr>3 Jn.</abbr>
+      <short>3 JUAN</short>
+      <long>TUTÚ CÚÚ ÙNÍ NÍ CADÚHA TÉ JUÀÁ</long>
+    </name>
+    <name id="book-jud">
+      <abbr>Jud.</abbr>
+      <short>JUDAS</short>
+      <long>TUTÚ NÍ CADÚHA TÉ JÙDÁS</long>
+    </name>
+    <name id="book-rev">
+      <abbr>Ap.</abbr>
+      <short>APOCALIPSIS</short>
+      <long>NCHAA SÁ NǏ XINÍ TÉ JUÀÁ NDƗHƗ NCHAA SÁ NǏ TECÚ DÓHO‑DÉ</long>
+    </name>
+  </names>
+  <source>
+    <canonicalContent>
+      <book code="1CO"/>
+      <book code="1JN"/>
+      <book code="1PE"/>
+      <book code="1TH"/>
+      <book code="1TI"/>
+      <book code="2CO"/>
+      <book code="2JN"/>
+      <book code="2PE"/>
+      <book code="2TH"/>
+      <book code="2TI"/>
+      <book code="3JN"/>
+      <book code="ACT"/>
+      <book code="COL"/>
+      <book code="EPH"/>
+      <book code="GAL"/>
+      <book code="HEB"/>
+      <book code="JAS"/>
+      <book code="JHN"/>
+      <book code="JUD"/>
+      <book code="LUK"/>
+      <book code="MAT"/>
+      <book code="MRK"/>
+      <book code="PHM"/>
+      <book code="PHP"/>
+      <book code="REV"/>
+      <book code="ROM"/>
+      <book code="TIT"/>
+    </canonicalContent>
+    <structure>
+      <content src="source/source.zip" role="sourceZip"/>
+    </structure>
+  </source>
+  <publications>
+    <publication id="p1" default="true">
+      <name>Tnúhu ní cáháⁿ yǎ ndiǒxí xito cùu uú</name>
+      <description>New Testament</description>
+      <descriptionLocal>New Testament</descriptionLocal>
+      <canonicalContent>
+        <book code="1CO"/>
+        <book code="1JN"/>
+        <book code="1PE"/>
+        <book code="1TH"/>
+        <book code="1TI"/>
+        <book code="2CO"/>
+        <book code="2JN"/>
+        <book code="2PE"/>
+        <book code="2TH"/>
+        <book code="2TI"/>
+        <book code="3JN"/>
+        <book code="ACT"/>
+        <book code="COL"/>
+        <book code="EPH"/>
+        <book code="GAL"/>
+        <book code="HEB"/>
+        <book code="JAS"/>
+        <book code="JHN"/>
+        <book code="JUD"/>
+        <book code="LUK"/>
+        <book code="MAT"/>
+        <book code="MRK"/>
+        <book code="PHM"/>
+        <book code="PHP"/>
+        <book code="REV"/>
+        <book code="ROM"/>
+        <book code="TIT"/>
+      </canonicalContent>
+      <structure>
+        <content name="book-mat" src="release/USX_1/MAT.usx" role="MAT"/>
+        <content name="book-mrk" src="release/USX_1/MRK.usx" role="MRK"/>
+        <content name="book-luk" src="release/USX_1/LUK.usx" role="LUK"/>
+        <content name="book-jhn" src="release/USX_1/JHN.usx" role="JHN"/>
+        <content name="book-act" src="release/USX_1/ACT.usx" role="ACT"/>
+        <content name="book-rom" src="release/USX_1/ROM.usx" role="ROM"/>
+        <content name="book-1co" src="release/USX_1/1CO.usx" role="1CO"/>
+        <content name="book-2co" src="release/USX_1/2CO.usx" role="2CO"/>
+        <content name="book-gal" src="release/USX_1/GAL.usx" role="GAL"/>
+        <content name="book-eph" src="release/USX_1/EPH.usx" role="EPH"/>
+        <content name="book-php" src="release/USX_1/PHP.usx" role="PHP"/>
+        <content name="book-col" src="release/USX_1/COL.usx" role="COL"/>
+        <content name="book-1th" src="release/USX_1/1TH.usx" role="1TH"/>
+        <content name="book-2th" src="release/USX_1/2TH.usx" role="2TH"/>
+        <content name="book-1ti" src="release/USX_1/1TI.usx" role="1TI"/>
+        <content name="book-2ti" src="release/USX_1/2TI.usx" role="2TI"/>
+        <content name="book-tit" src="release/USX_1/TIT.usx" role="TIT"/>
+        <content name="book-phm" src="release/USX_1/PHM.usx" role="PHM"/>
+        <content name="book-heb" src="release/USX_1/HEB.usx" role="HEB"/>
+        <content name="book-jas" src="release/USX_1/JAS.usx" role="JAS"/>
+        <content name="book-1pe" src="release/USX_1/1PE.usx" role="1PE"/>
+        <content name="book-2pe" src="release/USX_1/2PE.usx" role="2PE"/>
+        <content name="book-1jn" src="release/USX_1/1JN.usx" role="1JN"/>
+        <content name="book-2jn" src="release/USX_1/2JN.usx" role="2JN"/>
+        <content name="book-3jn" src="release/USX_1/3JN.usx" role="3JN"/>
+        <content name="book-jud" src="release/USX_1/JUD.usx" role="JUD"/>
+        <content name="book-rev" src="release/USX_1/REV.usx" role="REV"/>
+      </structure>
+    </publication>
+  </publications>
+  <archiveStatus>
+    <dateArchived>2013-07-30T17:40:37.408865</dateArchived>
+    <dateUpdated>2022-06-15T23:02:08.564162</dateUpdated>
+    <bundleCreatorName>Lois Gourley</bundleCreatorName>
+    <archivistName>Lois Gourley</archivistName>
+    <comments>Metadata updated</comments>
+  </archiveStatus>
+  <copyright>
+    <fullStatement>
+      <statementContent type="xhtml">
+        <p>© 2002, Wycliffe Bible Translators, Inc. All rights reserved</p>
+      </statementContent>
+    </fullStatement>
+  </copyright>
+  <promotion/>
+</DBLMetadata>
