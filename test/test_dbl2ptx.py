@@ -275,7 +275,7 @@ class TestMeasure(unittest.TestCase):
     def test_size(self):
         m = dbl2ptx.Measurement(1000, 800, 250, 550)
         dbl2ptx.sizeFromMeasurement(m, textsize=10, leading=0.5)
-        self.assertAlmostEqual(m.fontsize, 10 * dbl2ptx.REF_BASE_HEIGHT / 0.55, places=2)
+        self.assertAlmostEqual(m.fontsize, round(10 * dbl2ptx.REF_BASE_TOP / 0.55, 2), places=2)
         self.assertAlmostEqual(m.linespacing, round(1.05 * m.fontsize + 0.5, 1))
 
 

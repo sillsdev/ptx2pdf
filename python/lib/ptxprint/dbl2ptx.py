@@ -22,14 +22,16 @@ logger = logging.getLogger("dbl2ptx")
 LFF_LANG_URL = "https://lff.api.languagetechnology.org/lang/{}"
 FAMILIES_URL = "https://raw.githubusercontent.com/silnrsi/fonts/main/families.json"
 
-# Average base character height (in em) of ordinary Latin text set in a typical
-# text font (Charis SIL measured over English scripture text). --textsize is
-# interpreted as the point size Latin text would be set at, and other fonts and
-# scripts are scaled so their average base character height matches.
-REF_BASE_HEIGHT = 0.55
+# The visual size of a font is taken from the height of its tallest commonly
+# used base characters: the BASE_PERCENTILE (by occurrence) of the heights of
+# the base (decomposed, unmarked) letters in the text. Unlike an average, this
+# hardly depends on the language's letter frequencies. For Latin text in
+# Charis SIL it is the ascender height, 0.737em, whatever the language.
+# --textsize is the point size of Charis SIL; other fonts and scripts are
+# scaled so their tallest base height matches REF_BASE_TOP at that size.
+REF_BASE_TOP = 0.737
+BASE_PERCENTILE = 95
 
-# Scripts that do not use spaces between words and need a line break locale
-NOSPACE_SCRIPTS = {"Thai", "Laoo", "Khmr", "Mymr", "Lana", "Tavt", "Talu", "Tale", "Hani", "Hans", "Hant", "Jpan"}
 # Scripts whose letters join, and so should also be measured in medial form
 JOINING_SCRIPTS = {"Arab", "Aran", "Syrc", "Mong", "Nkoo", "Adlm", "Rohg", "Mand", "Phag"}
 
@@ -905,7 +907,7 @@ class Measurement:
     upem: int
     height: float           # font units
     depth: float            # font units (positive)
-    avgbase: float          # font units
+    basetop: float          # font units: tallest base character height (BASE_PERCENTILE)
     fontsize: float = 0.
     linespacing: float = 0.
 
@@ -940,7 +942,7 @@ def measureText(fontpath, clusters, script=None, lang=None, direction=None, feat
         bot = None
         y = 0
         for info, pos in zip(buf.glyph_infos, buf.glyph_positions):
-            if start <= info.cluster < start + length:
+            if start <= info.cluster < start + length and info.codepoint != 0:   # skip .notdef
                 ext = font.get_glyph_extents(info.codepoint)
                 if ext is not None and ext.height != 0:
                     gt = y + pos.y_offset + ext.y_bearing
@@ -952,8 +954,7 @@ def measureText(fontpath, clusters, script=None, lang=None, direction=None, feat
 
     heights = []
     depths = []
-    basesum = 0
-    basen = 0
+    basetops = Counter()
     basecache = {}
     for g, n in clusters.items():
         if g.isspace():
@@ -969,23 +970,25 @@ def measureText(fontpath, clusters, script=None, lang=None, direction=None, feat
             continue
         heights.append((top, n))
         depths.append((-bot, n))
-        if unicodedata.category(g[0]).startswith("L"):
-            b = g[0]
+        b = unicodedata.normalize("NFD", g)[0]      # é -> e: precomposed accents aren't base height
+        if unicodedata.category(b).startswith("L"):
             if b not in basecache:
                 basecache[b] = shape(b, 0, 1)[0]
             if basecache[b] is not None:
-                basesum += basecache[b] * n
-                basen += n
+                basetops[basecache[b]] += n
     height = _weighted_percentile(heights, percentile)
     depth = max(0, _weighted_percentile(depths, percentile))
-    avgbase = basesum / basen if basen else upem * REF_BASE_HEIGHT
-    return Measurement(upem, height, depth, avgbase)
+    if len(basetops):
+        basetop = _weighted_percentile(list(basetops.items()), BASE_PERCENTILE)
+    else:
+        basetop = upem * REF_BASE_TOP
+    return Measurement(upem, height, depth, basetop)
 
 def sizeFromMeasurement(m, textsize=8., leading=0.5):
-    ratio = m.avgbase / m.upem
+    ratio = m.basetop / m.upem
     if ratio <= 0:
-        ratio = REF_BASE_HEIGHT
-    m.fontsize = round(textsize * REF_BASE_HEIGHT / ratio, 2)
+        ratio = REF_BASE_TOP
+    m.fontsize = round(textsize * REF_BASE_TOP / ratio, 2)
     m.linespacing = round((m.height + m.depth) / m.upem * m.fontsize + leading, 1)
     return m
 
@@ -1091,12 +1094,6 @@ def inferSettings(info, stats, args, finder):
     settings["fcb_textDirection"] = direction
     settings["c_RTLbookBinding"] = direction == "rtl"
     settings["c_RTLpagination"] = direction == "rtl"
-    # line breaking
-    if script in NOSPACE_SCRIPTS:
-        settings["c_linebreakon"] = True
-        settings["t_linebreaklocale"] = info.langtag.split("-")[0] if info.langtag else ""
-    if script == "Mymr":
-        settings["c_scrmymrSyllable"] = True
     # books
     books = [b for b in (info.books or stats.bookorder) if b in stats.bookorder] or stats.bookorder
     if len(books):
@@ -1148,7 +1145,7 @@ def inferSettings(info, stats, args, finder):
                         lang=info.langtag.split("-")[0] if info.langtag else None,
                         direction=direction, features=hbfeats, percentile=args.percentile)
         sizeFromMeasurement(m, args.textsize, args.leading)
-        info.note("font size", m.fontsize, f"avg base height {m.avgbase/m.upem:.3f}em")
+        info.note("font size", m.fontsize, f"tallest base height {m.basetop/m.upem:.3f}em")
         info.note("line spacing", m.linespacing, f"height {m.height/m.upem:.3f}em depth {m.depth/m.upem:.3f}em")
         settings["s_fontsize"] = m.fontsize
         settings["s_linespacing"] = m.linespacing
@@ -1229,7 +1226,7 @@ def parseArgs(argv=None):
     parser.add_argument("-o", "--output", help="Output archive (default <prjid>-<cfg>PTXprintArchive.zip)")
     parser.add_argument("--prjid", help="Project id to create")
     parser.add_argument("--cfgname", help="Configuration name to use (and to pick from an archive)")
-    parser.add_argument("--textsize", type=float, default=8., help="Equivalent Latin text size in points [8]")
+    parser.add_argument("--textsize", type=float, default=8., help="Point size for Charis SIL. Other fonts are scaled so their tallest common base letters (95th percentile) are 0.737 x this size, as Charis SIL's are [8]")
     parser.add_argument("--leading", type=float, default=0.5, help="Extra space (pt) added to measured text height + depth [0.5]")
     parser.add_argument("--percentile", type=float, default=99.5, help="Percentile of cluster occurrences that must fit in the line spacing [99.5]")
     parser.add_argument("--font", help="Font family to try before any inferred ones")
