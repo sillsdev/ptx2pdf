@@ -763,6 +763,21 @@ class Usfm:
                 words.update(w.casefold() for w in regex.findall(r"\w+", t))
         return counter
 
+    # word separators: whitespace, ZWSP and the / used as a visible word break in some SE Asian texts
+    _wordsep = re.compile(r"[\s​/]+")
+
+    def collectWords(self, counter=None):
+        """ Counts the words in the visible text (see visibleText), splitting
+            on whitespace, ZWSP and / and stripping surrounding punctuation. """
+        if counter is None:
+            counter = Counter()
+        for t in self.visibleText():
+            for w in self._wordsep.split(t):
+                w = regex.sub(r"^[\p{P}\p{S}]+|[\p{P}\p{S}]+$", "", w)
+                if w:
+                    counter[w] += 1
+        return counter
+
     def findScript(self):
         stats = {}
         root = self.getroot()

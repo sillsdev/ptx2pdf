@@ -263,20 +263,46 @@ class TestMeasure(unittest.TestCase):
 
     def test_stacking(self):
         base = dbl2ptx.measureText(self.font, Counter({"a": 10}), script="latn")
-        stacked = dbl2ptx.measureText(self.font, Counter({"á̄": 10}), script="latn")
-        self.assertGreater(stacked.height, base.height)
+        stacked = dbl2ptx.measureText(self.font, Counter({"a\u0301\u0304": 10}), script="latn")
+        self.assertGreater(stacked.top, base.top)
 
-    def test_percentile(self):
-        c = Counter({"a": 10000, "x": 10000, "Ǻ": 1})
-        m99 = dbl2ptx.measureText(self.font, c, script="latn", percentile=99.5)
-        m100 = dbl2ptx.measureText(self.font, c, script="latn", percentile=100)
-        self.assertGreater(m100.height, m99.height)
+    def test_in_context(self):
+        # a Myanmar stack measured in its word hangs below the baseline; its consonant alone doesn't
+        padauk = os.path.join(fontsdir, "Padauk-Regular.ttf")
+        word = dbl2ptx.measureText(padauk, Counter({"\u1000\u1039\u1000": 1}), script="mymr")
+        alone = dbl2ptx.measureText(padauk, Counter({"\u1000": 1}), script="mymr")
+        self.assertGreater(word.depthmax, alone.depthmax)
+
+    def test_rare_descenders(self):
+        # a few deep descenders hardly change the spacing; common ones do
+        common = Counter({"name": 1000, "man": 1000, "time": 1000})
+        rare = common + Counter({"gypsy": 5})
+        many = common + Counter({"gypsy": 1000})
+        ls = [dbl2ptx.sizeFromMeasurement(dbl2ptx.measureText(self.font, c, c, script="latn"), textsize=10).linespacing
+              for c in (common, rare, many)]
+        self.assertLessEqual(ls[1] - ls[0], 0.1)
+        self.assertGreater(ls[2] - ls[0], 0.3)
 
     def test_size(self):
-        m = dbl2ptx.Measurement(1000, 800, 250, 550)
-        dbl2ptx.sizeFromMeasurement(m, textsize=10, leading=0.5)
+        m = dbl2ptx.Measurement(1000, top=800, depth=250, basetop=550)
+        dbl2ptx.sizeFromMeasurement(m, textsize=10, gap=0.45, mingap=0.5)
         self.assertAlmostEqual(m.fontsize, round(10 * dbl2ptx.REF_BASE_TOP / 0.55, 2), places=2)
-        self.assertAlmostEqual(m.linespacing, round(1.05 * m.fontsize + 0.5, 1))
+        self.assertAlmostEqual(m.linespacing, round((1.05 + 0.45) * m.fontsize, 1))
+        self.assertFalse(m.floored)
+
+    def test_mingap(self):
+        m = dbl2ptx.sizeFromMeasurement(dbl2ptx.Measurement(1000, top=800, depth=250, basetop=737),
+                                        textsize=10, gap=0.01, mingap=2)
+        self.assertTrue(m.floored)
+        self.assertAlmostEqual(m.linespacing, round(1.05 * 10 + 2, 1))
+
+    def test_spacing_table(self):
+        self.assertEqual(dbl2ptx.spacingGap("normal", "Latn", "Charis SIL"), (0.45, "default"))
+        self.assertEqual(dbl2ptx.spacingGap("tight", "Arab", "Scheherazade New"), (0.18, "Arab"))
+        self.assertEqual(dbl2ptx.spacingGap("loose", "Arab", "Awami Nastaliq"), (0.52, "default"))
+        self.assertEqual(dbl2ptx.spacingGap("normal", "Aran", "Some Font")[1], "default")
+        tall = dbl2ptx.Measurement(1000, top=1400, depth=300, basetop=600)
+        self.assertEqual(dbl2ptx.spacingGap("normal", "Arab", "Unknown", tall)[1], "default")
 
 
 class TestEndToEnd(unittest.TestCase):

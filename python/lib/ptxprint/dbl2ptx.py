@@ -6,7 +6,7 @@
     about script or direction. """
 
 import argparse, os, sys, re, io, json, shutil, tempfile, logging, configparser
-import unicodedata, urllib.request, urllib.parse
+import unicodedata, urllib.request, urllib.parse, bisect
 from zipfile import ZipFile, BadZipFile
 from collections import Counter
 from dataclasses import dataclass, field
@@ -32,8 +32,18 @@ FAMILIES_URL = "https://raw.githubusercontent.com/silnrsi/fonts/main/families.js
 REF_BASE_TOP = 0.737
 BASE_PERCENTILE = 95
 
-# Scripts whose letters join, and so should also be measured in medial form
-JOINING_SCRIPTS = {"Arab", "Aran", "Syrc", "Mong", "Nkoo", "Adlm", "Rohg", "Mand", "Phag"}
+# Line spacing = (TOP_PERCENTILE cluster top + average cluster depth) x size + gap x size,
+# with clusters measured in context within their shaped words. The gaps (em) for each
+# --spacing level are the 25th percentile, median and 75th percentile of the gaps found in
+# 150 real ptxprint configurations. Naskh Arabic is set markedly tighter than other scripts
+# (Nastaliq is not, once its height is measured). Myanmar and Tai Tham also looked a little
+# tighter, but each came mostly from one project, so they use the default for now.
+TOP_PERCENTILE = 95
+SPACING_LEVELS = ("tight", "normal", "loose")
+SPACING_GAPS = {
+    "default":  (0.38, 0.45, 0.52),
+    "Arab":     (0.18, 0.30, 0.42),     # naskh styles only
+}
 
 # Digit mappings available in ptx2pdf (src/mappings/<name>digits.*)
 DIGIT_MAPPINGS = set("""adlam ahom arabic-indic balinese bengali bhaiksuki brahmi burmese chakma cham
@@ -93,7 +103,8 @@ class ProjectInfo:
 @dataclass
 class TextStats:
     clusters: Counter = field(default_factory=Counter)
-    words: set = field(default_factory=set)
+    words: set = field(default_factory=set)             # casefolded vocabulary, for titles
+    wordcounts: Counter = field(default_factory=Counter)    # word frequencies, for measuring
     digits: Counter = field(default_factory=Counter)
     scripts: Counter = field(default_factory=Counter)
     bidi: Counter = field(default_factory=Counter)
@@ -428,6 +439,7 @@ def analyseText(info):
             continue
         stats.bookorder.append(bk)
         doc.collectClusters(stats.clusters, words=stats.words)
+        doc.collectWords(stats.wordcounts)
         root = doc.getroot()
         stats.tocs[bk] = [_innertext(root.find('.//para[@style="toc{}"]'.format(i))) for i in range(1, 4)]
         for e in root.iter():
@@ -905,23 +917,30 @@ def _weighted_percentile(pairs, pct):
 @dataclass
 class Measurement:
     upem: int
-    height: float           # font units
-    depth: float            # font units (positive)
+    top: float              # font units: TOP_PERCENTILE of cluster tops
+    depth: float            # font units: average cluster depth (positive)
     basetop: float          # font units: tallest base character height (BASE_PERCENTILE)
+    topmax: float = 0.      # font units: 99.5th percentile, for reporting
+    depthmax: float = 0.
     fontsize: float = 0.
     linespacing: float = 0.
+    gap: float = 0.         # em
+    gappt: float = 0.       # pt, after the mingap floor
+    floored: bool = False
 
-def measureText(fontpath, clusters, script=None, lang=None, direction=None, features=None,
-                percentile=99.5):
-    """ Shapes each distinct grapheme cluster and measures its ink extents """
+def measureText(fontpath, words, clusters=None, script=None, lang=None, direction=None, features=None):
+    """ Shapes each distinct word and measures the ink of each grapheme cluster where
+        it sits in its word, so that joining, cascading (Nastaliq) and stacking across
+        cluster boundaries (viramas, sakot, coeng) are measured as printed. Clusters
+        are weighted by their word's frequency. Base character heights, for font
+        sizing, come from the base letters of clusters shaped alone. """
     import uharfbuzz as hb
     blob = hb.Blob.from_file_path(fontpath)
     face = hb.Face(blob)
     font = hb.Font(face)
     upem = face.upem
-    joining = script in JOINING_SCRIPTS
 
-    def shape(text, start, length):
+    def shape(text):
         buf = hb.Buffer()
         buf.add_str(text)
         buf.guess_segment_properties()
@@ -938,58 +957,75 @@ def measureText(fontpath, clusters, script=None, lang=None, direction=None, feat
         if direction in ("ltr", "rtl"):
             buf.direction = direction
         hb.shape(font, buf, features or {})
-        top = None
-        bot = None
+        return buf.glyph_infos, buf.glyph_positions
+
+    def inks(text, starts):
+        """ {cluster index: (top, bottom)} for the grapheme clusters starting at starts """
+        res = {}
         y = 0
-        for info, pos in zip(buf.glyph_infos, buf.glyph_positions):
-            if start <= info.cluster < start + length and info.codepoint != 0:   # skip .notdef
+        infos, poss = shape(text)
+        for info, pos in zip(infos, poss):
+            if info.codepoint != 0:             # skip .notdef
                 ext = font.get_glyph_extents(info.codepoint)
                 if ext is not None and ext.height != 0:
+                    k = bisect.bisect_right(starts, info.cluster) - 1
                     gt = y + pos.y_offset + ext.y_bearing
                     gb = gt + ext.height
-                    top = gt if top is None else max(top, gt)
-                    bot = gb if bot is None else min(bot, gb)
+                    t, b = res.get(k, (None, None))
+                    res[k] = (gt if t is None else max(t, gt), gb if b is None else min(b, gb))
             y += pos.y_advance
-        return top, bot
+        return res
 
-    heights = []
-    depths = []
+    tops = Counter()
+    depths = Counter()
+    for w, n in words.items():
+        starts = [m.start() for m in regex.finditer(r"\X", w)]
+        for t, b in inks(w, starts).values():
+            tops[t] += n
+            depths[max(0, -b)] += n
     basetops = Counter()
     basecache = {}
-    for g, n in clusters.items():
-        if g.isspace():
-            continue
-        top, bot = shape(g, 0, len(g))
-        if joining and unicodedata.category(g[0]).startswith("L"):
-            # measure the medial form too; ZWJ is invisible
-            t2, b2 = shape("\u200D" + g + "\u200D", 1, len(g))
-            if t2 is not None:
-                top = t2 if top is None else max(top, t2)
-                bot = b2 if bot is None else min(bot, b2)
-        if top is None:
-            continue
-        heights.append((top, n))
-        depths.append((-bot, n))
+    for g, n in (clusters or {}).items():
         b = unicodedata.normalize("NFD", g)[0]      # é -> e: precomposed accents aren't base height
         if unicodedata.category(b).startswith("L"):
             if b not in basecache:
-                basecache[b] = shape(b, 0, 1)[0]
+                basecache[b] = inks(b, [0]).get(0, (None, None))[0]
             if basecache[b] is not None:
                 basetops[basecache[b]] += n
-    height = _weighted_percentile(heights, percentile)
-    depth = max(0, _weighted_percentile(depths, percentile))
     if len(basetops):
         basetop = _weighted_percentile(list(basetops.items()), BASE_PERCENTILE)
     else:
         basetop = upem * REF_BASE_TOP
-    return Measurement(upem, height, depth, basetop)
+    total = sum(depths.values())
+    return Measurement(upem,
+                top=_weighted_percentile(list(tops.items()), TOP_PERCENTILE) if total else 0,
+                depth=sum(v * n for v, n in depths.items()) / total if total else 0,
+                basetop=basetop,
+                topmax=_weighted_percentile(list(tops.items()), 99.5) if total else 0,
+                depthmax=_weighted_percentile(list(depths.items()), 99.5) if total else 0)
 
-def sizeFromMeasurement(m, textsize=8., leading=0.5):
+def isNastaliq(script, family, m=None):
+    if script == "Aran" or "nastaliq" in (family or "").lower():
+        return True
+    return m is not None and m.upem and m.top / m.upem > 1.2
+
+def spacingGap(level="normal", script=None, family=None, m=None):
+    """ Returns (gap in em, table row used) for a --spacing level """
+    row = "Arab" if script == "Arab" and not isNastaliq(script, family, m) else "default"
+    gaps = SPACING_GAPS.get(row, SPACING_GAPS["default"])
+    return gaps[SPACING_LEVELS.index(level)], row
+
+def sizeFromMeasurement(m, textsize=8., gap=SPACING_GAPS["default"][1], mingap=0.5):
+    """ Sets m.fontsize from the tallest base height and m.linespacing from the
+        measured ink plus the perceived gap between lines (never below mingap pt) """
     ratio = m.basetop / m.upem
     if ratio <= 0:
         ratio = REF_BASE_TOP
     m.fontsize = round(textsize * REF_BASE_TOP / ratio, 2)
-    m.linespacing = round((m.height + m.depth) / m.upem * m.fontsize + leading, 1)
+    m.gap = gap
+    m.floored = gap * m.fontsize < mingap
+    m.gappt = max(gap * m.fontsize, mingap)
+    m.linespacing = round((m.top + m.depth) / m.upem * m.fontsize + m.gappt, 1)
     return m
 
 
@@ -1141,12 +1177,21 @@ def inferSettings(info, stats, args, finder):
                     hbfeats[k.strip()] = int(v)
                 except ValueError:
                     pass
-        m = measureText(fpath, stats.clusters, script=script.lower() if script else None,
+        m = measureText(fpath, stats.wordcounts, stats.clusters, script=script.lower() if script else None,
                         lang=info.langtag.split("-")[0] if info.langtag else None,
-                        direction=direction, features=hbfeats, percentile=args.percentile)
-        sizeFromMeasurement(m, args.textsize, args.leading)
+                        direction=direction, features=hbfeats)
+        gap, row = spacingGap(args.spacing, script, family, m)
+        if args.gap is not None:
+            gap, row = args.gap, "--gap"
+        sizeFromMeasurement(m, args.textsize, gap, args.mingap)
         info.note("font size", m.fontsize, f"tallest base height {m.basetop/m.upem:.3f}em")
-        info.note("line spacing", m.linespacing, f"height {m.height/m.upem:.3f}em depth {m.depth/m.upem:.3f}em")
+        info.note("line spacing", m.linespacing,
+                  f"top {m.top/m.upem:.3f}em + depth {m.depth/m.upem:.3f}em + gap {m.gap:.2f}em "
+                  f"({args.spacing}, {row})" + (f", raised to --mingap {args.mingap}pt" if m.floored else ""))
+        inkmax = (m.topmax + m.depthmax) / m.upem * m.fontsize
+        if m.linespacing < inkmax:
+            info.note("note", f"rare tall/deep clusters ({inkmax:.1f}pt) may touch adjacent lines",
+                      "99.5% ink extent")
         settings["s_fontsize"] = m.fontsize
         settings["s_linespacing"] = m.linespacing
         settings["c_lockFontSize2Baseline"] = False
@@ -1227,8 +1272,9 @@ def parseArgs(argv=None):
     parser.add_argument("--prjid", help="Project id to create")
     parser.add_argument("--cfgname", help="Configuration name to use (and to pick from an archive)")
     parser.add_argument("--textsize", type=float, default=8., help="Point size for Charis SIL. Other fonts are scaled so their tallest common base letters (95th percentile) are 0.737 x this size, as Charis SIL's are [8]")
-    parser.add_argument("--leading", type=float, default=0.5, help="Extra space (pt) added to measured text height + depth [0.5]")
-    parser.add_argument("--percentile", type=float, default=99.5, help="Percentile of cluster occurrences that must fit in the line spacing [99.5]")
+    parser.add_argument("--spacing", choices=SPACING_LEVELS, default="normal", help="How generously to space lines, relative to the conventions for the script [normal]")
+    parser.add_argument("--gap", type=float, help="Perceived gap between lines in em, overriding --spacing")
+    parser.add_argument("--mingap", type=float, default=0.5, help="Minimum gap between lines in pt [0.5]")
     parser.add_argument("--font", help="Font family to try before any inferred ones")
     parser.add_argument("-D", "--define", action=DictAction, default={}, help="Set UI component=value after inference (repeatable)")
     parser.add_argument("-l", "--logging", default="WARNING", help="Logging level")
