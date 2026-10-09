@@ -464,5 +464,5 @@
 \clubpenalty=10000
 \brokenpenalty=50
 \savingvdiscards=1
-\everypar{\@netimesetup}% A default, in case user-setup causes output
+\catcode`\@=11 \everypar{\@netimesetup}\catcode`\@=12 % A default, in case user-setup causes output
 \endinput
