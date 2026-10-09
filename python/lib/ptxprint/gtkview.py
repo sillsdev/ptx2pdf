@@ -4845,6 +4845,11 @@ class GtkViewModel(ViewModel):
                 basedir=os.path.join(self.project.printPath(self.cfgid), '..'), defaultSaveName=zfname)
         if archiveZipFile is not None:
             btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
+            btn_createZipArchive.set_sensitive(False)
+            busyMsg = _("Creating archive...")
+            self.doStatus(busyMsg)
+            while Gtk.events_pending():     # let the disabled state paint before we block
+                Gtk.main_iteration_do(False)
             try:
                 self.createArchive(str(archiveZipFile[0]))
                 startfile(os.path.dirname(archiveZipFile[0]))
@@ -4852,6 +4857,10 @@ class GtkViewModel(ViewModel):
                 s = traceback.format_exc()
                 s += "\n{}: {}".format(type(e), str(e))
                 self.doError(s, copy2clip=True)
+            finally:
+                btn_createZipArchive.set_sensitive(True)
+                if self.get("l_statusLine") == busyMsg:
+                    self.doStatus("")
         else:
             self.doStatus(_("No Archive File Created"))
 

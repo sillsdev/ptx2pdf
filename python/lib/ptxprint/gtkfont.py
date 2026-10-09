@@ -3,6 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.gtkutils import makeSpinButton
+from ptxprint.utils import getcaller
 import logging
 
 logger = logging.getLogger(__name__)
