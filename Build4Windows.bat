@@ -1,4 +1,4 @@
-if not defined MSYS2_DIR set MSYS2_DIR="C:\msys64\mingw64"
+if not defined MSYS2_DIR set MSYS2_DIR=C:\msys64\mingw64
 if not defined INNOSETUP_PATH set INNOSETUP_PATH="C:\Program Files (x86)\Inno Setup 6"
 
 @echo on
