@@ -15,6 +15,7 @@ from ptxprint.gtkpiclist import PicList
 from ptxprint.parlocs import Paragraphs, ParInfo, FigInfo
 from ptxprint.xdv.spacing_oddities import SpacingOddities
 from pathlib import Path
+from shutil import copy2
 from typing import Optional
 from threading import Timer
 import logging
@@ -413,7 +414,7 @@ class PDFViewer:
         else:
             self.model.set("t_newAnchor", anc, mod=False)
             self.model.builder.get_object("t_newAnchor").set_position(curpos) 
-            piciter = self.picListView.find_row(anc)
+            piciter = self.model.picListView.find_row(anc)
             if piciter is not None:
                 msg = _("There is a picture at that verse.{}Choose a different verse as anchor.").format("\n")
             else:
