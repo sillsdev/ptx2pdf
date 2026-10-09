@@ -487,6 +487,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         if args.pid:
             mainw.setPrjid(args.pid, project.guid, loadConfig=False, startup=True)
             mainw.setConfigId(args.config or "Default")
+        if args.zip:
+            mainw.set("c_usesysfonts", False)
         res = 0
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
@@ -582,6 +584,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                     mainw.splash.terminate()
                 print("Failed to open project directory")
                 sys.exit(1)
+            if args.zip:
+                mainw.set("c_usesysfonts", False)
             if args.nointernet:
                 mainw.set('c_noInternet', True)
                 mainw.noInt = True

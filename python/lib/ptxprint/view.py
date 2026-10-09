@@ -2117,8 +2117,6 @@ class ViewModel:
 
         # fonts
         allfonts.update(self.getallfonts())
-        if xdv is not None:
-            cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
             # res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
