@@ -1974,10 +1974,10 @@ class ViewModel:
             self.digSuffix = suffix
             self.diglotViews[suffix] = digview
             if inserting and self.picinfos:
-                if digView.picinfos is None:
-                    digView.picinfos = PicList(digView)
-                    digView.picinfos.load_files(digView)
-                self.picinfos.merge(v.picinfos, suffix, mergeCaptions=self.mergeCaptions)
+                if digview.picinfos is None:
+                    digview.picinfos = Piclist(digview)
+                    digview.picinfos.load_files(digview)
+                self.picinfos.merge(digview.picinfos, suffix, mergeCaptions=self.mergeCaptions)
         return digview
 
     def removeDiglotView(self, suffix):
@@ -2657,7 +2657,7 @@ set stack_size=32768""".format(self.cfgid)
         return fpath
 
     def createPrinterZip(self, fname):
-        with zipfile.ZipFile(fname, "w") as ozip:
+        with ZipFile(fname, "w") as ozip:
             for k, v in self.pdfFiles.items():
                 with open(v, "rb") as inf:
                     d = inf.read()

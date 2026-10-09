@@ -3,7 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.gtkutils import makeSpinButton
-from ptxprint.utils import getcaller
+from ptxprint.utils import getcaller, _
 import logging
 
 logger = logging.getLogger(__name__)
@@ -253,12 +253,12 @@ class GtkFonts:
                 if isinstance(obj, Gtk.CheckButton):
                     if (1 if obj.get_active() else 0) == self.currdefaults.get(k, 0):
                         obj.set_active(newdefaults.get(k, 0) == 1)
-                elif isinstance(obj, GtkSpinButton):
+                elif isinstance(obj, Gtk.SpinButton):
                     if obj.get_value() == self.currdefaults.get(k, 0):
                         obj.set_value(newdefaults.get(k, 0))
                 elif isinstance(obj, Gtk.ComboBoxText):
                     if obj.get_active_id() == self.currdefaults.get(k, 0):
-                        ob.set_active_id(newdefaults.get(k, 0))
+                        obj.set_active_id(newdefaults.get(k, 0))
             self.currdefaults = newdefaults
 
         langChangedId = self.builder.get_object("fcb_featsLangs").connect("changed", onLangChanged)

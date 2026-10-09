@@ -1,9 +1,9 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
-import re, json
+from gi.repository import Gtk, Gdk, GLib
+import re, json, os
 from enum import IntEnum
-from ptxprint.utils import _, coltoonemax, brent
+from ptxprint.utils import _, coltoonemax, brent, xdvigetpages
 from ptxprint.polyglot import PolyglotConfig
 from ptxprint.pastelcolorpicker import ColorPickerDialog
 

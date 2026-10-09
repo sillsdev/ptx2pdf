@@ -6,7 +6,7 @@ from ptxprint.utils import _, coltotex, textocol, asfloat
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
 from ptxprint.borderstyle import borderStyleFromStyle, BorderStyle
 from usfmtc.usfmparser import Grammar
-import re, logging
+import re, logging, time
 
 logger = logging.getLogger(__name__)
 
