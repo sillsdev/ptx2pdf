@@ -377,8 +377,10 @@ class TeXpert:
                 view._configset(config, "{}/{}".format(self.section, opt.ident), v, diff=diff)
 
     @classmethod
-    def loadConfig(self, config, view):
+    def loadConfig(self, config, view, defaults=True):
         for opt in texpertOptions.values():
+            if not defaults and not config.has_option(self.section, opt.ident):
+                continue    # overlay configs only override what they mention
             n = widgetName(opt)
             default = opt.val
             if isinstance(default, (tuple, list)):

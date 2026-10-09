@@ -1502,7 +1502,7 @@ class ViewModel:
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
         if categories is None or 'texpert' in categories:
-            TeXpert.loadConfig(config, self)
+            TeXpert.loadConfig(config, self, defaults=clearvars)
         for k, v in self._settingmappings.items():
             if categories is not None and ModelMap[k].category not in categories:
                 continue
