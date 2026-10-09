@@ -1027,7 +1027,7 @@ class ViewModel:
                     if isinstance(val, list):
                         val = "\n".join(x.withvars(self, relto=self.project.path) for x in val)
                     else:
-                        val = re.sub(r"\s*,\s*", "\n", val)
+                        val = re.sub(r"\s*,\s*", "\n", str(val))
                 else:
                     val = val.withvars(self, relto=self.project.path)
             elif v.widget.startswith("bl_"):
