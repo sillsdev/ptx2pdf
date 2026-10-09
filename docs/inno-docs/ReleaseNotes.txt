@@ -1,10 +1,10 @@
-PTXprint 3.1.1 Release Notes
-9 Oct 2026
+PTXprint 3.1.2 Release Notes
+10 Oct 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _____________________________________________________________
 
-Bug fixes and Improvements in 3.1.1 - (9 Oct 2026)
+Bug fixes and Improvements in 3.1.2 - (10 Oct 2026)
 
   * Margin notes
     - Margin notes near the bottom of the page are now placed correctly
@@ -47,14 +47,15 @@ Bug fixes and Improvements in 3.1.1 - (9 Oct 2026)
       correctly in the PDF Viewer
     - Diglot merge: fixed two small coding errors in the 'Scored' merge
     - Fixed several crashes caused by missing imports and typos (Font
-      features, Polyglot settings, Style Editor, adding Diglot pictures and
-      creating the printer ZIP)
+      features, Polyglot settings, Style Editor, PDF Viewer, adding Diglot
+      pictures and creating the printer ZIP)
 
   * New tool for developers
     - dbl2ptx: build a PTXprint archive from a DBL bundle and a base
       configuration. It works out the script, direction, font, size, line
       spacing, digits, title, copyright and books from the text and metadata
     - Windows and macOS installers can now be built using GitHub Actions
+    - Fixed the Windows build script
 
 _____________________________________________________________
 
