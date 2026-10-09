@@ -375,7 +375,7 @@ class PDFViewer:
             return
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",
-            parent = self.mainapp.win,
+            parent = self.nbook.get_toplevel(),
             action=Gtk.FileChooserAction.SAVE,
             buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                      Gtk.STOCK_SAVE,Gtk.ResponseType.OK))
