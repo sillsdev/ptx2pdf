@@ -1,7 +1,61 @@
-PTXprint 3.1 Release Notes
-3 Oct 2026
+PTXprint 3.1.1 Release Notes
+9 Oct 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.1 - (9 Oct 2026)
+
+  * Margin notes
+    - Margin notes near the bottom of the page are now placed correctly
+    - Notes that start at the same height keep their original order
+    - Fixed where a block of notes starts after it is moved up to avoid
+      overlapping
+    - Marginal paragraphs no longer upset the PDF Viewer's paragraph locations
+
+  * Automatic Page Filler (experimental)
+    - When filling several books at once, each book now clears only its own
+      old working files, so other books' files are kept
+    - The AdjList keeps 'badness' values, so an interrupted fill can resume
+      properly
+    - No more redundant +1/-1 adjustment pairs
+    - Debug tracing works again
+
+  * Archives
+    - Create Archive handles paths correctly, and its button is disabled
+      while the archive is being made
+    - System fonts are now turned off only when running with -z (--zip);
+      ordinary archives no longer change this setting
+
+  * Configurations
+    - Override files (ptxprint_override.cfg and ptxprint_project.cfg) now only
+      change the Expert (TeXpert) settings they actually list, instead of
+      putting every other Expert setting back to its default
+
+  * Styling (for advanced users)
+    - Styles can now be applied with ms:foo|marker as well as
+      marker(+context)+foo
+    - Complex style definitions now work properly
+    - Fixed a loop where a style condition (IFCHECK) could call itself
+    - New \addtoearlyinithook{...} for code that has to run very early (for
+      example, before an error in ptxprint-mods.tex makes a page get output)
+
+  * Other fixes
+    - Font collections (.ttc): if no family name matches, the first font in
+      the collection is used instead of crashing
+    - Text borders and paragraphs that go across a page break are now read
+      correctly in the PDF Viewer
+    - Diglot merge: fixed two small coding errors in the 'Scored' merge
+    - Fixed several crashes caused by missing imports and typos (Font
+      features, Polyglot settings, Style Editor, adding Diglot pictures and
+      creating the printer ZIP)
+
+  * New tool for developers
+    - dbl2ptx: build a PTXprint archive from a DBL bundle and a base
+      configuration. It works out the script, direction, font, size, line
+      spacing, digits, title, copyright and books from the text and metadata
+    - Windows and macOS installers can now be built using GitHub Actions
+
 _____________________________________________________________
 
 Version 3.1 release summary: (major changes since last major version 3.0)
