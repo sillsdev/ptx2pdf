@@ -163,7 +163,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
         cats = None
     def make_fname(t):
         if prjdir is not None:
-            t = re.sub(r"\$PRJDIR", prjdir, t)
+            t = t.replace("$PRJDIR", prjdir)
         return os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(fname)), t))
     changes = {}
     if passes is None:
