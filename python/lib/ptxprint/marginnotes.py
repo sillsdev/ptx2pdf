@@ -8,6 +8,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+SP = 65536
+
+
+def tosp(pt):
+    return int(round(pt * SP))
+
+
 default_weights = {"f": 1, "x": 1, "s": 10, "c": 100, "v": 1000, 'esb': 10}
 allfields = "ref marker hpos vpos gap width height depth xoffset yoffset pnum xpos ypos".split()
 mnotelinere = re.compile(r"\\@marginnote" + "".join(r"\{{(?P<{}>.*?)\}}".format(a) for a in allfields))
@@ -102,7 +109,7 @@ class MarginNotes:
                     continue
                 data = m.groupdict()
                 for a in ("gap", "width", "height", "depth", "xoffset", "yoffset", "xpos", "ypos"):
-                    data[a] = readpts(data[a])
+                    data[a] = tosp(readpts(data[a])) / SP
                 data["pnum"] = int(data["pnum"]) - 1
                 note = MarginNote(**data)
                 while note.pnum >= len(self.pages):
@@ -225,12 +232,14 @@ class MarginNotes:
             for i, p in enumerate(self.pages):
                 for n in p:
                     s = asdict(n)
-                    s['yoffset'] += -s['yshift']  # + s['yoffset']  # amount of push down
+                    # Fixed-point rule: docs/dev/marginnotes_overflow.md.
+                    # Ignore sub-sp residue and predict the next TeX position.
+                    d = 0 if abs(n.yshift * SP) < 1 else tosp(n.yshift)
+                    s['yoffset'] = (tosp(n.yoffset) - d) / SP
+                    s['xpos'] = str(tosp(n.xpos))
+                    s['ypos'] = str(tosp(n.ypos) + d)
                     s['pnum'] += 1
-                    if s['yshift'] != 0:
-                        changed = True
-                    for a in ("xpos", "ypos"):
-                        s[a] = str(int(s[a] * 65536))
+                    changed |= d != 0
                     for a in ("gap", "width", "height", "depth", "xoffset", "yoffset"):
                         if math.fabs(s[a]) > 32766:
                             self._error(f"Dimension [{a}] on page {i} of {s[a]}pt too large in {s['ref']}")

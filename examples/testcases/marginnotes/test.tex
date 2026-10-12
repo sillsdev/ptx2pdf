@@ -1,0 +1,39 @@
+% Native marginal f/x notes: https://github.com/sillsdev/ptx2pdf/issues/1258
+% Four verses, eight notes, inner side: the smallest fixture where the margin
+% note solver left a sub-sp residual and a note's y alternated by 1sp between
+% passes, so PTXprint always hit its five-pass limit. The solver is in Python,
+% so plain xetex cannot show this; `make converge` runs RunJob.run_xetex() on
+% this file three times and fails unless each run settles within three passes
+% (two after the fix). `make reproduce` checks for the old jitter instead.
+% Both need ptxprint importable, e.g. make converge PYTHON=.venv/bin/python
+\def\pluginlist{}
+\input paratext2.tex
+\stylesheet{usfm.sty}
+\stylesheet{ptx2pdf.sty}
+\stylesheet{test.sty}
+\def\regular{"[Charis-Regular.ttf]"}
+\def\bold{"[Charis-Bold.ttf]"}
+\def\italic{"[Charis-Italic.ttf]"}
+\def\bolditalic{"[Charis-BoldItalic.ttf]"}
+\PaperHeight=210mm
+\PaperWidth=148mm
+\MarginUnit=15mm
+\def\TopMarginFactor{1}
+\def\BottomMarginFactor{1}
+\def\SideMarginFactor{2.2}
+\BodyColumns=1
+\FontSizeUnit=1pt
+\def\LineSpacingFactor{1}
+\def\VerticalSpaceFactor{1}
+\hyphenpenalty=10000
+\begingroup
+\catcode`\@=11
+\marginaln@te{f}
+\marginaln@te{x}
+\global\marginnotesgap=3mm
+\global\marginnoteswidth=27mm
+\gdef\MarginNoteSide{inner}
+\endgroup
+\nolotwritetrue
+\ptxfile{test.usfm}
+\bye

@@ -33,21 +33,19 @@ The 13 fields of an `\@marginnote` line, and who uses them:
 | xpos | `\pdflastxpos` | `:colno` (side parity in multi-column) | grouping notes into tracks |
 | ypos | `\pdflastypos` | ignored | the note's current y |
 
-The file mixes two units. Lengths (gap, width, height, depth, xoffset, yoffset) are written with a `pt` suffix: TeX writes them via `\the\dimen` (for example `5.0pt`), and Python writes them with five decimals (`5.00000pt`). Positions (`xpos`, `ypos`) are bare integers in sp, taken straight from `\pdflastxpos`/`\pdflastypos` and measured from the bottom-left of the paper, so y grows upward. `readpts` turns both into pt on reading, treating a bare number as sp, and `outfile` writes positions back as `int(pt × 65536)`. `top` and `bot` from `getTextBlockSize` are in pt.
+The file mixes two units. Lengths (gap, width, height, depth, xoffset, yoffset) are written with a `pt` suffix: TeX writes them via `\the\dimen` (for example `5.0pt`), and Python writes them with five decimals (`5.00000pt`). Positions (`xpos`, `ypos`) are bare integers in sp, taken straight from `\pdflastxpos`/`\pdflastypos` and measured from the bottom-left of the paper, so y grows upward. `readpts` turns both into pt on reading, treating a bare number as sp, and `outfile` writes positions back as `round(pt × 65536)`. `top` and `bot` from `getTextBlockSize` are in pt.
 
 Because `\pdfsavepos` runs inside the `\vadjust` (vertical mode, before the note box), `xpos` is the left edge of the column the anchor sits in. Every note in the same column on a page records the same `xpos`, whatever its width or side. The side, gap, width and x shift all live inside the box, after the position is saved.
 
 ## Problems found
 
-Four problems in the current Python need fixing, and the first two are bugs today, independent of overflow.
+Three problems in the current Python need fixing, and the first is a bug today, independent of overflow.
 
-**1. `outfile` is not idempotent.** It adds the new shift to `yoffset` but writes `ypos` back unchanged, so the file claims the note is still where it was. Run on its own output, the algorithm applies the same shift again. Verified: four overlapping notes gave shifts of 40, 10, −20 and −50pt on every pass, and after three passes the first note's `yoffset` was −120pt instead of −40pt.
+**1. Overflow has no outlet.** When a track's notes are taller than `top − bot`, `processpage` pushes them past the bottom, then back up past the top, and logs "Shift out of bounds". Nothing ever moves to another page or column.
 
-**2. Overflow has no outlet.** When a track's notes are taller than `top − bot`, `processpage` pushes them past the bottom, then back up past the top, and logs "Shift out of bounds". Nothing ever moves to another page or column.
+**2. The x model is column-relative, not absolute.** `xmin`/`xmax` are `xpos + xoffset ± gap/width`, measured from the column's left edge with no `\hsize`. For right-side notes this is off by a whole column width. It is fine for grouping notes into tracks, but not for placing them. It also adds `xoffset` for both sides, whereas TeX moves left-side notes away from the text by that amount, which is the opposite direction. That never mattered while Python left `xoffset` alone.
 
-**3. The x model is column-relative, not absolute.** `xmin`/`xmax` are `xpos + xoffset ± gap/width`, measured from the column's left edge with no `\hsize`. For right-side notes this is off by a whole column width. It is fine for grouping notes into tracks, but not for placing them. It also adds `xoffset` for both sides, whereas TeX moves left-side notes away from the text by that amount, which is the opposite direction. That never mattered while Python left `xoffset` alone.
-
-**4. Side in multi-column mode is driven by `xpos`.** `\@m@rginnote` derives `:colno` from `xpos`, and `\d@marginnote` uses `:colno` as the side parity in multi-column mode. The file's `hpos` field is ignored by TeX. So today the only way Python could steer a note's side is by rewriting `xpos`, which also corrupts Python's own record of where the anchor is.
+**3. Side in multi-column mode is driven by `xpos`.** `\@m@rginnote` derives `:colno` from `xpos`, and `\d@marginnote` uses `:colno` as the side parity in multi-column mode. The file's `hpos` field is ignored by TeX. So today the only way Python could steer a note's side is by rewriting `xpos`, which also corrupts Python's own record of where the anchor is.
 
 ## Design decisions
 
@@ -70,12 +68,12 @@ Rejected along the way:
 
 ## File format
 
-The file keeps its current note lines, with one change to what Python writes in them, and gains one new line type for pushes.
+The file keeps its current note lines and gains one new line type for pushes.
 
 **Note lines** keep all 13 fields as today, always describing the anchor. Python writes them exactly as TeX would after applying Python's shifts:
 
 - `yoffset` = old `yoffset` − `yshift`, as now.
-- `ypos` = old `ypos` + `yshift` (new). The note line then says where the note will be, so a second pass finds nothing to move.
+- `ypos` = old `ypos` + `yshift`, as now. The note line then says where the note will be, so a second pass finds nothing to move.
 - For a pushed note, every field is left as read. `yshift` is 0 for these notes, so the line is unchanged and still describes the anchor.
 
 **Push lines** are new. There is one per pushed note, written after all the note lines:
@@ -90,10 +88,10 @@ TeX uses the target column: it draws each column's stack at the top of that colu
 
 **The fixed-point rule.** For any file F that Python writes, reading F and writing again must produce F byte for byte. Two details of units make this harder than it sounds:
 
-- **Round positions to whole sp.** `ypos` + `yshift` is a fractional sp, and `outfile` truncates it with `int()`. The second pass then sees a position up to 1sp away from where the first pass meant it to be, computes a tiny `yshift`, and the five-decimal `yoffset` changes. So Python should round to the nearest sp when writing, and treat any |`yshift`| under 1sp as zero.
+- **Round positions to whole sp.** `ypos` + `yshift` is a fractional sp, and `outfile` used to truncate it with `int()`. The second pass then saw a position up to 1sp away from where the first pass meant it to be, computed a tiny `yshift`, and the five-decimal `yoffset` changed. So Python rounds to the nearest sp when writing, and treats any |`yshift`| under 1sp as zero, as it already does.
 - **Compare in Python's own formatting.** A file freshly written by TeX never matches Python's output byte for byte, because TeX writes `5.0pt` where Python writes `5.00000pt`. The change check therefore compares Python's output with the input as Python would format it unchanged, not with the raw text it read.
 
-With both in place, `outfile` reports a change only when a value actually moved. That replaces the current "any non-zero `yshift`" test, which would report a change on every pass once any note is pushed.
+With both in place, `outfile` reports a change only when a value actually moved. That replaces the current "any `yshift` of 1sp or more" test.
 
 ## Python changes
 
@@ -167,7 +165,7 @@ A note whose `hpos` is `left` or `right` keeps that side wherever it goes, so pu
 
 ### 10. Callers
 
-`runjob.py` passes `rtl` through `tidymarginnotes`. No other caller constructs `MarginNotes`.
+`runjob.py` passes `rtl` through `tidymarginnotes`. No other production caller constructs `MarginNotes`.
 
 ## Edge cases and open questions
 
@@ -195,7 +193,6 @@ The Python can be tested on synthetic `.marginnotes` files before any TeX exists
 | Test | Checks |
 | --- | --- |
 | Fixed point | For every case below, read → write → read → write gives the same bytes, and the second `outfile` returns false. |
-| Double-shift regression | The four-note case that currently gives a `yoffset` of −120pt after three passes stays at −40pt. |
 | Single column overflow | The excess goes to the next page, the block sits at the top with `yshift` 0, and natives lie below it. |
 | Two columns | Col 0 overflow goes to col 1 on the same page, col 1 overflow to col 0 of the next page, and push lines carry the right side. |
 | RTL | Same as two columns, with column numbering and sides mirrored. |

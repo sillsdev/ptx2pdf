@@ -4,6 +4,7 @@ from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree, copy2, copystat
 from threading import Thread
+from functools import partial
 from ptxprint.runner import call, checkoutput, child_cpu_time
 from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
@@ -35,6 +36,34 @@ from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Fields TeX never reads: \@noteid, \@parnote and \@parpageend are no-ops in
+# ptx-para-style.tex, and \@m@rginnote ignores ypos.
+TEXIGNOREDFIELDS = {"noteid": (4, 5), "parnote": (4, 5), "parpageend": (0, 1),
+                    "marginnote": (12,)}
+# Records written via \noexpand carry a space before the first brace.
+_texrecord = re.compile(r"^\\@(\w+)\s*((?:\{[^{}]*\})+)\s*$")
+
+
+def cmptexrecords(data, datb, ignore):
+    """Compare cache records, ignoring only coordinates TeX never reads."""
+    linesa, linesb = data.splitlines(), datb.splitlines()
+    if len(linesa) != len(linesb):
+        return False
+    for la, lb in zip(linesa, linesb):
+        if la == lb:
+            continue
+        ma, mb = _texrecord.match(la), _texrecord.match(lb)
+        if ma is None or mb is None or ma[1] != mb[1] or ma[1] not in ignore:
+            return False
+        va = re.findall(r"\{([^{}]*)\}", ma[2])
+        vb = re.findall(r"\{([^{}]*)\}", mb[2])
+        if len(va) != len(vb):
+            return False
+        if any(a != b for i, (a, b) in enumerate(zip(va, vb)) if i not in ignore[ma[1]]):
+            return False
+    return True
+
 
 _errmsghelp = {
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
@@ -622,25 +651,7 @@ class RunJob:
     def run_xetex(self, outfname, pdffile):
         numruns = 0
         cachedata = {}
-        texspfields = { "@marginnote":  (2, 3, 8, 9, 11, 2),
-                        "@noteid":      (4, 5) }
-        retexspfns = re.compile(r"^\\@("+"|".join(x[:-1] for x in texspfields.keys())+r")\{")
-        def cmptexfiles(data, datb):
-            bufa = io.StringIO(data)
-            bufb = io.StringIO(datb)
-            for la, lb in zip(bufa, bufb):
-                if not (m := retexspfns.match(la)):
-                    if la != lb:
-                        return False
-                    continue
-                if not lb.startswith("\\@"+m.group(1)):
-                    return False
-                va = la[m.end():-1].split("}{")
-                vb = lb[m.end():-1].split("}{")
-                for i in texspfields["@"+m.group(1)]:
-                    if int(va[i]) // 2 != int(vb[i]) // 2:
-                        return False
-            return True
+        cmptexfiles = partial(cmptexrecords, ignore=TEXIGNOREDFIELDS)
         def cmpdat(data, datb):
             return data == datb
         cacheexts = {"toc":         (_("table of contents"), True, cmpdat), 
@@ -728,17 +739,20 @@ class RunJob:
                     rererun = True
                     if self.maxRuns == 1:
                         self.maxRuns = 2
+            # A solver change always alters the .marginnotes cache below, which
+            # records "margin note positions" if the limit has been reached.
             for a, v in cacheexts.items():
-                testdata = cachedata[a]
                 fpath = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a))
-                cachedata[a] = self.readfile(fpath)
-                if not v[2](testdata, cachedata[a]):
-                    if numruns >= self.maxRuns or not cacheexts[a][1]:
-                        self.rerunReasons.append(cacheexts[a][0])
+                newdata = self.readfile(fpath)
+                changed = not v[2](cachedata[a], newdata)
+                # Refresh every cache so later files do not lag by a pass.
+                cachedata[a] = newdata
+                if changed:
+                    if numruns >= self.maxRuns or not v[1]:
+                        self.rerunReasons.append(v[0])
                     else:
-                        print(_("Rerunning because the {} changed").format(cacheexts[a][0]))
+                        print(_("Rerunning because the {} changed").format(v[0]))
                         rererun = True
-                        break
             delayed = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".delayed"))
             if not rerun and os.path.exists(delayed):
                 with open(delayed, encoding="utf-8") as inf:
@@ -758,6 +772,22 @@ class RunJob:
                     outf.write(newtoc)
             if not rererun:
                 break
+
+        # Non-rerunnable reasons (image copyrights) are reported even when the
+        # loop converged, the log asks for reruns without recording a reason,
+        # maxRuns 0 is page_filler's single managed pass, and a single requested
+        # pass (quick run) is not expected to converge.
+        rerunnable = {v[0] for v in cacheexts.values() if v[1]}
+        if self.maxRuns > 1 and numruns >= self.maxRuns and not self.res \
+                and (rererun or rerunnable.intersection(self.rerunReasons)):
+            if self.rerunReasons:
+                message = _("Rerun limit reached ({} passes); unresolved: {}").format(
+                    numruns, ", ".join(self.rerunReasons))
+            else:
+                message = _("Rerun limit reached ({} passes)").format(numruns)
+            logger.warning(message)
+            if not self.silent:
+                print(message)
 
         if not self.res and not self.nopdf:
             self.printer.incrementProgress(stage="xp")

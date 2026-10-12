@@ -1,0 +1,7 @@
+# Outputs of make and run.py
+converge/
+reproduce/
+fonts.conf
+*.marginnotes
+*.xdv
+test.status
