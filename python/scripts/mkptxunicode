@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
-#from ptxprint.unicode.ucd import find_ucd
-from ucd import find_ucd
+from ucdinfo import find_ucd
 
 class Or:
     def __init__(self, a, b):
