@@ -622,13 +622,17 @@ class RunJob:
     def run_xetex(self, outfname, pdffile):
         numruns = 0
         cachedata = {}
-        texspfields = { "@marginnote":  (2, 3, 8, 9, 11, 2),
-                        "@noteid":      (4, 5) }
+        texspfields = { "marginnote":  (2, 3, 8, 9, 11, 12),
+                        "noteid":      (4, 5),
+                        "parnote":     (4, 5),
+                        "parpageend":  (0, 1) }
         retexspfns = re.compile(r"^\\@("+"|".join(x[:-1] for x in texspfields.keys())+r")\{")
         def cmptexfiles(data, datb):
-            bufa = io.StringIO(data)
-            bufb = io.StringIO(datb)
-            for la, lb in zip(bufa, bufb):
+            linesa = data.splitlines()
+            linesb = datb.splitlines()
+            if len(linesa) != len(linesb):
+                return False
+            for la, lb in zip(linesa, linesb):
                 if not (m := retexspfns.match(la)):
                     if la != lb:
                         return False
@@ -637,17 +641,19 @@ class RunJob:
                     return False
                 va = la[m.end():-1].split("}{")
                 vb = lb[m.end():-1].split("}{")
-                for i in texspfields["@"+m.group(1)]:
-                    if int(va[i]) // 2 != int(vb[i]) // 2:
+                for i in texspfields[m.group(1)]:
+                    if (int(va[i]) - int(vb[i])) ** 2 > 10:
                         return False
             return True
+
         def cmpdat(data, datb):
             return data == datb
+
         cacheexts = {"toc":         (_("table of contents"), True, cmpdat), 
                     "picpages":     (_("image copyrights"), False, cmpdat), 
                     "parlocs":      (_("chapter positions"), True, cmptexfiles),
                     "marginnotes":  (_("margin note positions"), True, cmptexfiles)}
-            
+
         marginnotesfname = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".marginnotes"))
         if os.path.exists(marginnotesfname):
             for _attempt in range(4):
@@ -736,9 +742,8 @@ class RunJob:
                     if numruns >= self.maxRuns or not cacheexts[a][1]:
                         self.rerunReasons.append(cacheexts[a][0])
                     else:
-                        print(_("Rerunning because the {} changed").format(cacheexts[a][0]))
+                        print(_("Rerunning because the {} changed").format(v[0]))
                         rererun = True
-                        break
             delayed = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".delayed"))
             if not rerun and os.path.exists(delayed):
                 with open(delayed, encoding="utf-8") as inf:
@@ -758,6 +763,8 @@ class RunJob:
                     outf.write(newtoc)
             if not rererun:
                 break
+        else:
+            print(_("Maximum runs exceeded"))
 
         if not self.res and not self.nopdf:
             self.printer.incrementProgress(stage="xp")
