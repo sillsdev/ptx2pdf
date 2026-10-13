@@ -538,7 +538,7 @@
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
    \ifRTL\beginR\fi
-   \def\c@l{0}\ifnum\c@rrentcols>1 \relax
+   \def\c@l{0}\ifdefined\m@rginc@l \let\c@l\m@rginc@l\else\ifnum\c@rrentcols>1 \relax
      \ifcsname startx:#1-\c@rref\endcsname
        \dimen0=\csname startx:#1-\c@rref\endcsname sp
      \else \ifcsname marginnote-\c@rref @#1:xshift\endcsname
@@ -550,7 +550,7 @@
      \let\p@num\pageno \ifcsname pnum:#1-\c@rref\endcsname \x@\let\x@\p@num\csname pnum:#1-\c@rref\endcsname
      \else\ifcsname marginnote-\c@rref @#1:pageno\endcsname \x@\let\x@\p@num\csname marginnote-\c@rref @#1:pageno\endcsname\fi\fi
      \ifodd\p@num \def\c@l{1}\fi
-   \fi
+   \fi\fi
    \getp@ram{justification}{#1}{\tmpstyst@k}%
    \ifx\p@ram\@nner \ifnum\c@l=0 \let\p@ram\r@ght\else\let\p@ram\l@ft\fi
    \else\ifx\p@ram\@uter \ifnum\c@l=0 \let\p@ram\l@ft\else\let\p@ram\r@ght\fi\fi\fi

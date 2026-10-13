@@ -730,7 +730,9 @@ class RunJob:
             rererun = rerun
             if os.path.exists(marginnotesfname):
                 (tsize, ttop, tbot) = self.info.getTextBlockSize()
-                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot, quiet=self.silent):
+                mncols = 2 if self.info.dict.get("paper/columns", "1") == "2" or self.info.asBool("document/diffcolayout") else 1
+                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot, quiet=self.silent,
+                                   rtl=self.info.dict.get("document/ifrtl", "false") == "true", ncols=mncols):
                     rererun = True
                     if self.maxRuns == 1:
                         self.maxRuns = 2

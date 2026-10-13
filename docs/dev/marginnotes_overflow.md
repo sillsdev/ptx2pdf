@@ -39,7 +39,7 @@ Because `\pdfsavepos` runs inside the `\vadjust` (vertical mode, before the note
 
 ## Problems found
 
-Four problems in the current Python need fixing, and the first two are bugs today, independent of overflow.
+Five problems in the current Python need fixing. Problems 1 and 5 are bugs today, independent of overflow; problem 5 is issue #1261.
 
 **1. `outfile` is not idempotent.** It adds the new shift to `yoffset` but writes `ypos` back unchanged, so the file claims the note is still where it was. Run on its own output, the algorithm applies the same shift again. Verified: four overlapping notes gave shifts of 40, 10, −20 and −50pt on every pass, and after three passes the first note's `yoffset` was −120pt instead of −40pt.
 
@@ -48,6 +48,8 @@ Four problems in the current Python need fixing, and the first two are bugs toda
 **3. The x model is column-relative, not absolute.** `xmin`/`xmax` are `xpos + xoffset ± gap/width`, measured from the column's left edge with no `\hsize`. For right-side notes this is off by a whole column width. It is fine for grouping notes into tracks, but not for placing them. It also adds `xoffset` for both sides, whereas TeX moves left-side notes away from the text by that amount, which is the opposite direction. That never mattered while Python left `xoffset` alone.
 
 **4. Side in multi-column mode is driven by `xpos`.** `\@m@rginnote` derives `:colno` from `xpos`, and `\d@marginnote` uses `:colno` as the side parity in multi-column mode. The file's `hpos` field is ignored by TeX. So today the only way Python could steer a note's side is by rewriting `xpos`, which also corrupts Python's own record of where the anchor is.
+
+**5. A stale offset is never re-checked (#1261).** An offset is kept by note identity, so it travels with the note when its verse moves to another page. `processpage` only checks notes against `top` and `bot` while shifting a group of colliding notes, so a single note that collides with nothing is never checked. In the reported case, the note for Genesis 4:15 hung 12.45pt below the foot of page 40 and was moved up. On the next pass the verse sat at the top of page 41, the note kept its −12.45pt offset, its top ended up 8.30pt above the text block, and `outfile` reported no change, so it stayed there on every later pass. More generally, Python lays out from where notes currently are, not from their anchors, so an offset that is no longer needed is never taken back off.
 
 ## Design decisions
 
@@ -59,6 +61,8 @@ These came out of the discussion; each one closes off an approach that turned ou
 4. **Python resolves the side; TeX uses it.** For a pushed note, Python writes the resolved `left`/`right` in the push line, so `xpos` no longer has to be faked to steer `:colno`.
 5. **Pushed notes form a fixed block at the top of their slot.** They are stacked at their natural height and kept out of `processpage`, with no `yshift`. Native notes on that slot are laid out below the block, so they can never interleave with it.
 6. **Python owns the vertical model of a pushed block; TeX owns placement.** TeX stacks held boxes from the top of the slot with no kerns. Python's model must match that stacking exactly, so neither side needs absolute positions from the other.
+7. **Every pass lays out from the anchors.** Python removes the applied offset to get each note's anchor position and works out every shift from there. An offset left over from an earlier layout, or from another page, never carries forward. The result depends only on the anchors, which is what makes the file a fixed point.
+8. **Every note is kept inside its slot, including a note on its own.** The bounds check applies to every track, not only to groups of colliding notes.
 
 Rejected along the way:
 
@@ -74,8 +78,8 @@ The file keeps its current note lines, with one change to what Python writes in 
 
 **Note lines** keep all 13 fields as today, always describing the anchor. Python writes them exactly as TeX would after applying Python's shifts:
 
-- `yoffset` = old `yoffset` − `yshift`, as now.
-- `ypos` = old `ypos` + `yshift` (new). The note line then says where the note will be, so a second pass finds nothing to move.
+- Python recovers each note's anchor position as `ypos` + `yoffset`, since TeX's `\kern` with a negative `yoffset` moved the note up by that amount. Layout decides each note's final position from its anchor.
+- Python writes `ypos` = final position and `yoffset` = anchor − final. Read back, `ypos` + `yoffset` gives the same anchor, so a second pass reaches the same layout and writes the same line. This replaces adding `yshift` to whatever offset was already there.
 - For a pushed note, every field is left as read. `yshift` is 0 for these notes, so the line is unchanged and still describes the anchor.
 
 **Push lines** are new. There is one per pushed note, written after all the note lines:
@@ -144,7 +148,7 @@ The only point of contact is the side. `get_tracks` sets `n.side` from `getside(
 3. **Fit the block.** For each track, add up block heights (height + depth). If the block alone exceeds `top − bot`, the notes from the first one that doesn't fit onward go to the front of the outgoing queue.
 4. **Fit the natives.** Capacity left is `top − bot − H`, where H is the height of the block that stayed. Take natives top-down by `ymax`. The first one that doesn't fit, and all after it, go to the outgoing queue after any block overflow.
 5. **Guard oversized notes.** A note taller than a whole slot is left where it is with an error logged, rather than pushed for ever. This guard only applies when the note is first in its slot.
-6. **Lay out the natives.** Run `processpage` on the remaining native notes with the track's top lowered by H. Block notes never enter `processpage` and keep `yshift` = 0.
+6. **Lay out the natives.** Run `processpage` on the remaining native notes, starting each at its anchor position, with the track's top lowered by H. Every track goes through the bounds check, including a track holding a single note: a note whose top is above the track top moves down, and one whose bottom is below `bot` moves up. Block notes never enter `processpage` and keep `yshift` = 0.
 7. **Record pushes.** Each block note that stayed gets its push target: this slot's page, column and resolved side.
 
 A note whose anchor slot has room is never pushed, so a note can come back as soon as space frees up.
@@ -156,12 +160,12 @@ A note whose `hpos` is `left` or `right` keeps that side wherever it goes, so pu
 ### 8. `processpage`
 
 - Takes a per-track top instead of always `self.top`.
-- Works on native notes only.
-- Keeps its current weighting and settling logic. Its out-of-bounds error now only fires for a single oversized note, since everything else has been made to fit.
+- Works on native notes only, starting from their anchor positions rather than their current ones.
+- Keeps its current weighting and settling logic for colliding groups, and adds a bounds check for every track, so a single note that collides with nothing is still kept inside the slot (#1261). Its out-of-bounds error now only fires for a single oversized note, since everything else has been made to fit.
 
 ### 9. Writing
 
-- **Note lines:** written for every note in file order, with `yoffset` −= `yshift` and `ypos` += `yshift`. Pushed notes have `yshift` = 0, so their lines are unchanged.
+- **Note lines:** written for every note in file order, with `ypos` = final position and `yoffset` = anchor − final (see File format). Pushed notes keep their lines as read, still describing the anchor.
 - **Push lines:** written after all note lines, one per pushed note, in TeX stacking order.
 - **Change check:** `outfile` returns true only if the new text differs from that rendering of the input (see File format). If a note sits in the same place two runs running, no rerun is triggered.
 
@@ -186,7 +190,7 @@ None of these needs special handling in the first version. Overflow is rare, at 
 - **Diglot.** Each language's columns form extra clusters. The grid's "keep 2 clusters" becomes "keep the expected number of columns", once we know what diglot pages look like.
 - **Pages with no notes.** These still exist as slots, and their column positions come from the grid for their parity.
 - **Overflow past the last page with notes.** The queue simply continues onto later pages. If it runs off the end of the document, TeX warns about the leftovers at the end.
-- **Notes already shifted by an earlier run.** Ordering uses current `ymax`, and capacity uses only heights, so earlier shifts don't affect what gets pushed.
+- **Notes already shifted by an earlier run.** Layout starts from anchor positions, so offsets from an earlier pass, including ones carried over from another page (#1261), are discarded. Capacity uses only heights, so earlier shifts don't affect what gets pushed either.
 
 ## Testing plan
 
@@ -196,6 +200,7 @@ The Python can be tested on synthetic `.marginnotes` files before any TeX exists
 | --- | --- |
 | Fixed point | For every case below, read → write → read → write gives the same bytes, and the second `outfile` returns false. |
 | Double-shift regression | The four-note case that currently gives a `yoffset` of −120pt after three passes stays at −40pt. |
+| Single note bounds (#1261) | One note with top 500, bot 100, `yoffset` −12.45 and `ypos` 510 ends inside the text block, and `outfile` reports a change. A note with a stale offset but room at its anchor goes back to its anchor. |
 | Single column overflow | The excess goes to the next page, the block sits at the top with `yshift` 0, and natives lie below it. |
 | Two columns | Col 0 overflow goes to col 1 on the same page, col 1 overflow to col 0 of the next page, and push lines carry the right side. |
 | RTL | Same as two columns, with column numbering and sides mirrored. |
