@@ -622,11 +622,14 @@ class RunJob:
     def run_xetex(self, outfname, pdffile):
         numruns = 0
         cachedata = {}
-        texspfields = { "marginnote":  (2, 3, 8, 9, 11, 12),
+        texspfields = { "marginnote":  (11, 12),
                         "noteid":      (4, 5),
                         "parnote":     (4, 5),
-                        "parpageend":  (0, 1) }
-        retexspfns = re.compile(r"^\\@("+"|".join(x[:-1] for x in texspfields.keys())+r")\{")
+                        "parpageend":  (0, 1),
+                        "colstart":    (3, 4),
+                        "parend":      (1, 2),
+                        "parstart":    (4, 5) }
+        retexspfns = re.compile(r"^\\@("+"|".join(texspfields.keys())+r")\s*\{")
         def cmptexfiles(data, datb):
             linesa = data.splitlines()
             linesb = datb.splitlines()
@@ -649,10 +652,10 @@ class RunJob:
         def cmpdat(data, datb):
             return data == datb
 
-        cacheexts = {"toc":         (_("table of contents"), True, cmpdat), 
-                    "picpages":     (_("image copyrights"), False, cmpdat), 
-                    "parlocs":      (_("chapter positions"), True, cmptexfiles),
-                    "marginnotes":  (_("margin note positions"), True, cmptexfiles)}
+        cacheexts = {"toc":          (_("table of contents"), True, cmpdat), 
+                     "picpages":     (_("image copyrights"), False, cmpdat), 
+                     "parlocs":      (_("chapter positions"), True, cmptexfiles),
+                     "marginnotes":  (_("margin note positions"), True, cmptexfiles)}
 
         marginnotesfname = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".marginnotes"))
         if os.path.exists(marginnotesfname):
@@ -740,6 +743,7 @@ class RunJob:
                 testdata = cachedata[a]
                 fpath = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a))
                 cachedata[a] = self.readfile(fpath)
+                # logging.log(11, f"{a} =\n{cachedata[a]}")
                 if not v[2](testdata, cachedata[a]):
                     if numruns >= self.maxRuns or not cacheexts[a][1]:
                         self.rerunReasons.append(cacheexts[a][0])
@@ -767,6 +771,7 @@ class RunJob:
                 break
         else:
             print(_("Maximum runs exceeded"))
+        logging.info(f"It took {numruns} runs to get here")
 
         if not self.res and not self.nopdf:
             self.printer.incrementProgress(stage="xp")
