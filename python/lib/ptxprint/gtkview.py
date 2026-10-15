@@ -7076,7 +7076,8 @@ Thank you,
         GObject.timeout_add(150, present)
         
     def onPolyglotLayoutFocusOut(self, a, b):
-        self.gtkpolyglot.update_layout_preview()
+        if self.gtkpolyglot is not None:
+            self.gtkpolyglot.update_layout_preview()
 
     def onSpinnerClicked(self, btn, foo):
         self.highlightwidget('s_autoupdatedelay')

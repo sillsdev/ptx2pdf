@@ -97,14 +97,14 @@ class PTXTag(Tag):
         return res
 
 class PTXEmitter(Emitter):
-    def tag(self, e, sep=" "):
+    def tag(self, e, sep=" ", prefix=""):
         s = e.get('style', '')
         if s is not None and len(s):
             if 'stretch' in e.attrib:
                 s = "{}^{}".format(s, int(float(e.get("stretch")) * 100))
             if "colspan" in e.attrib:
                 s = "{}-{}".format(s, e.get('colspan'))
-            self("\\{0}{1}".format(s, sep))
+            self("\\{0}{1}".format(prefix+s, sep))
 
 
 class Sheets(dict):

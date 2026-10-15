@@ -645,7 +645,7 @@ class PolyglotSetup(Gtk.Box):
         model, iter = selection.get_selected()
         if iter:
             pref = model.get_value(iter, m.code)
-            self.view.switchToDiglot(pref)
+            self.switchToDiglot(pref)
 
     def get_curr_proj(self):
         w = self.builder.get_object('fcb_project')
@@ -1235,20 +1235,20 @@ class PolyglotSetup(Gtk.Box):
         return True
 
     def onDiglotAutoAdjust(self, btn):
-        if self.isDiglotMeasuring:
+        if self.view.isDiglotMeasuring:
             btn.set_active(True)
             return
-        elif not self.get("c_diglot"):
+        elif not self.view.get("c_diglot"):
             btn.set_active(False)
             return
         elif not btn.get_active():
             return
-        self.isDiglotMeasuring = True
+        self.view.isDiglotMeasuring = True
         btn.set_active(True)
         xdvname = os.path.join(self.view.project.printPath(self.view.cfgid), self.view.baseTeXPDFnames()[0] + ".xdv")
         def score(x):
             self.set_fraction(x)
-            runjob = self.view.callback(self, maxruns=1, noview=True)
+            runjob = self.view.callback(self.view, maxruns=1, noview=True)
             while runjob.thread.is_alive():
                 Gtk.main_iteration_do(False)
             runres = runjob.res
@@ -1257,7 +1257,7 @@ class PolyglotSetup(Gtk.Box):
         res = brent(0., 1., mid, score, 0.001)
         self.set_fraction(res)
         self.isDiglotMeasuring = False
-        self.view.callback(self)
+        self.view.callback(self.view)
         btn.set_active(False)
 
     def update_diglot_polyglot_UI(self):

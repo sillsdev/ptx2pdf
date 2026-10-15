@@ -156,6 +156,9 @@ class ColInfo:
     width:  float
     topx:   float
     topy:   float
+    slice:  int = 0         # polyglot slice (sync group) id, 0 if unknown
+    baseline: float = 0.    # polyglot column baselineskip
+    align:  str = ""        # polyglot: where the alignment space goes, t(op) or b(ottom)
 
 
 @dataclass
@@ -437,9 +440,13 @@ class Paragraphs(list):
                 logger.log(5, f"Stopping para {p[0]}={currp}")
                 currps[polycol] = None
                 currr = None
-            elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode
+            elif c == "Poly@colstart": # height, depth, width, topx, topy, polycode [, slice, baselineskip, align]
                 polycol = p[5]
-                colinfos[polycol] = ColInfo(*[readpts(x) for x in p[:-1]])
+                colinfos[polycol] = ColInfo(*[readpts(x) for x in p[:5]])
+                if len(p) > 8:
+                    colinfos[polycol].slice = int(p[6])
+                    colinfos[polycol].baseline = readpts(p[7])
+                    colinfos[polycol].align = p[8]
                 cinfo = colinfos[polycol]
                 colcount[polycol] = colcount.get(polycol, 0) + 1
                 if polycol not in currps:

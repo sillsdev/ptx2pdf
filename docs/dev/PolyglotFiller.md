@@ -45,11 +45,18 @@ glots are in scope, so the stack is a simple list. The stacked `L/R`
   before typesetting, so this always holds.
 * The height of a slice that does not cross a page boundary is the maximum of
   its glots' content heights.
-* Each heading block is its own slice. Heading slices put their alignment
-  space at the top, so the heading sits on the text below it. Other slices
-  put it at the bottom. Space at the top of a heading slice is kept at the top
-  of a page, because the tallest glot reaches the top and the others sit below
-  it. It is ordinary slice imbalance.
+* A glot may be empty in a slice, and then has no rectangles in it. This is
+  common in heading slices, where only some glots have the heading (e.g. BSB
+  section heads against a Greek text without them). An empty glot has height
+  0 in that slice.
+* A heading block is normally its own slice. Heading slices put their
+  alignment space at the top, so the heading sits on the text below it. Other
+  slices put it at the bottom. Space at the top of a heading slice is kept at
+  the top of a page, because the tallest glot reaches the top and the others
+  sit below it. It is ordinary slice imbalance.
+* A heading that exists in only some glots can also fall inside a body slice,
+  when the merge does not split it out (JHN 5:15–16, `\s1` in L only). It is
+  then just more content in that glot of the slice.
 * Figures are in their own slices, typically page width or two side by side.
   A figure slice is tied to the page holding its anchors and never crosses a
   page boundary. Moving anchors is possible in principle, as in monoglot, but
@@ -277,8 +284,9 @@ page, which can be used to reorder the remaining candidates for that page.
 * The adjlist format already allows a glot letter after the book. There is
   one `.adj` per merged book (`…-diglot.SFM.adj`).
 * **Unconfirmed:** TeX's diglot `\dc@rref` uses both `:` and `.`
-  (`ptx-stylesheet.tex:1020` against `ptx-triggers.tex:273`). Needs checking
-  with a real diglot run.
+  (`ptx-stylesheet.tex:1020` against `ptx-triggers.tex:273`). In a real
+  diglot run (BSB_1 Diglot_NT, JHN) every parlocs ref uses `.`
+  (e.g. `JHNL1.1`); the adjlist side still needs checking.
 
 ### 6.4 Two-page frames (`src/polyglot-simplepages.tex`)
 
@@ -309,23 +317,52 @@ must be translated to frames.
 
 Before the solver work:
 
-1. **TeX output.** For each page slice and each glot, write to parlocs:
-   * the slice id, on every `\@Poly@colstart` and `\@Poly@colstop`;
-   * content height and allocated height (for the last slice on the page,
-     the glot's available height after notes), giving the slice underfill;
-   * the glot's baseline;
-   * whether the alignment space is at the top (headings) or the bottom.
+1. **TeX output.** Done (patch 01). For each page slice and each glot, parlocs
+   has:
 
-   A glot's frame underfill is then the underfill of its last page slice. No
-   page-level record or frame marker is needed.
+   ```
+   \@Poly@colstart{ht}{dp}{wd}{x}{y}{glot}{slice}{baselineskip}{t|b}
+   \@Poly@colstop{x}{y}{glot}{slice}
+   ```
+
+   * `ht + dp` is the glot's content height in this page slice. (Before
+     patch 01 these were expanded at shipout, so every record on a page held
+     the glot's last slice's values.)
+   * `slice` is `\p@lysl@ce`, advanced at the very start of
+     `\polyglotendcols`, so it counts usfmerge sync groups from 1. It must
+     come before `\pr@sideswitch`, because ordinary chunks are prepared inside
+     that call, while heading chunks are prepared in the trials after it.
+   * `t` means the alignment space is at the top (all-heading chunk), `b` at
+     the bottom.
+
+   A glot's available height cannot be recorded per slice: `availhtX` is the
+   trial's vsplit target and excludes notes, and separate notes are placed with
+   glue, so the bottom of a glot's text area has no position to save. Instead
+   each page writes one underfill record per glot to the `.status` file,
+   reusing the monoglot record with the glot letter as the column:
+
+   ```
+   \st@underfill{page}{glot}{avail}{used}{glot baselineskip}
+   ```
+
+   * `avail` = `\textheight` − inserts − that glot's notes (plus
+     `\AboveNoteSpace`), or the combined notes when notes are not separate.
+   * `used` = text height up to the last sync point + the glot's content
+     since then (`@curXht`). It includes the last line's depth, unlike
+     monoglot's `\ht\colA`. It equals the text top minus the glot's last
+     colstop in parlocs.
+   * As in monoglot, nothing is written when the gap is under half the glot's
+     baseline, and nothing for the empty page flushed at the end of a book.
+
+   Diglot keeps about one baseline spare at the foot
+   (`\dglt@calc@vailhttail` subtracts `\@minb@seline`), so many pages show a
+   one-line underfill.
 2. **parlocs fixes** listed in 6.2, and reading of the new records.
 3. **Per-glot settings** available to the filler.
 4. **Adjlist keys** with glot letters, and the `:`/`.` question resolved.
 
 ## 8. Open questions
 
-* Exact parlocs record formats, and where each is written in
-  `ptx-diglot.tex`.
 * Confirm that the slice stack is shared across both pages of a two-page
   frame.
 * Whether phase 2 needs safeguards against repeatedly undoing phase 1 work,

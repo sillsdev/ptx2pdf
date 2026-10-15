@@ -2,10 +2,11 @@
 # Tests for dbl2ptx: DBL bundle -> PTXprint configuration and archive.
 # Uses unittest classes so that conftest's project parametrisation doesn't apply.
 
-import unittest, os, shutil, tempfile, configparser, re
+import unittest, os, shutil, tempfile, configparser, re, sys
 import xml.etree.ElementTree as et
 from zipfile import ZipFile
 from collections import Counter
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "python", "lib"))
 
 def _stub_gi():
     """ ptxprint.view imports Gtk indirectly (report -> parlocs -> gtkutils). Tests
