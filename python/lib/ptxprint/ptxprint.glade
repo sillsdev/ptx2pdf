@@ -9138,6 +9138,10 @@ are using supports these digits too.)</property>
         <col id="1">sa</col>
       </row>
       <row>
+        <col id="0" translatable="yes">star *before and after*</col>
+        <col id="1">sw</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">circumflex ^before word</col>
         <col id="1">cb</col>
       </row>

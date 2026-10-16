@@ -120,6 +120,7 @@ class TexModel:
         "cc": r"\\+zglm \u231e\\+zglm*\1\\+zglm \u231f\\+zglm*",    # "with ⌞corner⌟ characters":
         "sb": r"*\1",               # "star *before word":
         "sa": r"\1*",               # "star after* word":
+        "sw": r"*\1*",              # "star *before and after*":
         "cb": r"^\1",               # "circumflex ^before word": 
         "ca":  r"\1^",              # "circumflex after^ word":  
         "gb": r"\u2020\1",               # "dagger †before word":
