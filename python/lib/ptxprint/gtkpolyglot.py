@@ -282,15 +282,15 @@ class PolyglotSetup(Gtk.Box):
 
             # Set tooltip text based on the column
             tooltips = {
-                m.code:     _("Unique identifier for the text/glot (L, R, A, B, C, ... G)\nRight-click to change background color."),
-                m.pg:       _("Specify whether the should be on the left (1) or right (2) page."),
+                m.code:     _("Unique identifier for the text/glot (L, R, A, B, C, ... G)\nRight-click and choose Set Color... to change its background color."),
+                m.pg:       _("Specify whether this text should be on the left (1) or right (2) page."),
                 m.prj:      _("The (Paratext) project code."),
                 m.cfg:      _("The configuration settings to be applied for the selected project."),
                 m.captions: _("Whether to show captions for this text."),
                 m.fontsize: _("The font size for this text."),
                 m.baseline: _("The line spacing (baseline) for this text."),
                 m.fraction:    _("The page width (as %) that this text should occupy.\nIf the values are red, this indicates that the total doesn't\nadd to 100%, so adjust the values.\nUse right-click menu option to distribute width evenly between columns."),
-                m.weight:   _("The relative weight (as %) of this text when merging with other texts."),
+                m.weight:   _("The relative weight of this text when merging with other texts."),
             }
 
             # Apply the correct tooltip based on column
