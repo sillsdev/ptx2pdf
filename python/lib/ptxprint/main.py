@@ -171,6 +171,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     
     # Performance & Debugging
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
+    parser.add_argument("--restart", action="store_true", default=False, help="fill: start from the current adjustments")
+    parser.add_argument("--stop", action="store_true", default=False, help="fill: stop each book at its first unfixable page")
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
     parser.add_argument('-l', '--logging', help="Logging level [DEBUG, INFO, WARN, ERROR, number]")
     parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
@@ -282,7 +284,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     attach_console()
     if viewClass is None:
-        viewClass = MultiView if args.cmd == "fill" else ViewModel
+        viewClass = ViewModel
     savetreedirs = False
     ptxdir = None
     # necessary for the side effect of setting pt_bindir :(
@@ -546,8 +548,25 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             if not args.enablescripts:
                 mainw.set("c_processScript", False)
             if args.cmd == "fill":
-                mainw.initScheduler(args.jobs, None)
-                results = mainw.run_all(False)
+                from ptxprint.utils import BuildParams
+                from ptxprint.multiprint import MultiPrint
+                tout = float(mainw.get("s_pbtimeout") or 0) * 60
+                bparms = BuildParams(
+                    prjtree = mainw.prjTree,
+                    config = mainw.userconfig,
+                    macrosdir = mainw.scriptsdir,
+                    scriptsdir = mainw.scriptsdir,
+                    args = mainw.args,
+                    restart = args.restart,
+                    pid = mainw.project.prjid,
+                    guid = mainw.project.guid,
+                    cfgid = mainw.cfgid,
+                    timeout = tout if tout >= 1 else None,
+                    loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
+                mprint = MultiPrint(numproc=args.jobs or None)
+                mprint.submit_fill_jobs(mainw.getBooks(), bparms, stop=args.stop)
+                results = mprint.wait()
+                mprint.teardown()
                 print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))
             else:
                 job = doit(mainw, noview=True, nothreads=True)
