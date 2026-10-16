@@ -302,13 +302,13 @@ class TexModel:
                 self.dict[a] = ''
 
         # marginal verses
-        if self.dict["paper/marginnoteswidth"] > 0.:
+        if self.dict["paper/ifmarginnotes"] == "":
             width = self.dict["paper/marginnoteswidth"]     # a float already
             gap = float(self.dict["texpert/marginnotesgap"])
             ncols = int(self.dict["paper/columns"])
             margins = float(self.dict["paper/margins"])
             margins += (width + gap * 72. / 25.4) * ncols / 2.
-            self.dict["paper/margins"] = "{.2f}".format(margins)
+            self.dict["paper/margins"] = "{:.2f}".format(margins)
 
         # handle diglot fractions
         # if self.dict['poly/fraction']:

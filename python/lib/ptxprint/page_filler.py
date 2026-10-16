@@ -1674,7 +1674,7 @@ class PTXFiller:
 
     def pid_isheader(self, pid):
         pind = self.get_para_ind(pid)
-        if pind < len(self.parlocs):
+        if pind is not None and pind < len(self.parlocs):
             p = self.parlocs[pind]
             return self.isheader(p.mrk)
         return False

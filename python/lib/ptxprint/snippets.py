@@ -502,6 +502,8 @@ class MarginalNotes(Snippet):
 \addtoeveryparhooks{\insertm@rginheadingbox}
 '''
     def generateTex(self, model):
+        if model.dict["paper/ifmarginnotes"] == "%":
+            return ""
         mwidth = model.dict["paper/marginnoteswidth"]
         if mwidth < 1:
             return ""
