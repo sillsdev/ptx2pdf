@@ -256,20 +256,36 @@ Patch 04 adds both classes in `python/lib/ptxprint/poly_filler.py`.
 `multiprint` makes the view first (`make_filler_view`) and creates a
 `PolyFiller` when it has `c_diglot`, otherwise a `PTXFiller`. So far:
 
-* `PolyFiller` reads each glot's expansion limits from its view
-  (`expansion_limits(view)`, shared with `PTXFiller`), warns if they differ
-  and uses the primary's, since the solver has one set of limits. To lift
-  this, the solver's ~25 uses of `expand`/`minexp`/`maxexp`, nearly all with
-  a pid to hand, become `self.limits(pid)`, which `PolySolver` answers from
-  the pid's glot.
+* Each glot has its own expansion limits, read from its view by
+  `expansion_limits(view)` (shared with `PTXFiller`). *(Patch 04b.)* The
+  solver asks `limits(pid)` for `(expand, minexp, maxexp)` and `neutral(pid)`
+  for an unadjusted paragraph's parameters. `TypesetterSolver` returns its
+  one set, and `PolySolver` the set for the pid's glot (`pid_glot`, from the
+  ref). `PTXFiller.solve` makes the solver before the initial state, so the
+  starting parameters come from `neutral`. The adjlist keeps one centre per
+  file, so a glot with a different default gets `expand=` on its rows.
 * `parsestatus` gives `underfills[page]` = lines per glot, in glot order,
   or `None` when every glot is full. TeX skips the end of a book, as in
   monoglot.
 * `get_slicemap` gives `slices[slice][page][glot]` = lines and
   `parslice[pid]` = slice.
 * After each layout run, duplicate paragraph ids are reported.
-* `PolySolver` probes as `TypesetterSolver` does, then `run_forward` only
-  reports per-glot underfill and slice balance and makes no moves.
+* `PolySolver` probes as `TypesetterSolver` does. `run_forward` then runs
+  phase 1 and reports; it makes no page moves yet.
+* *(Patch 05)* Phase 1, `balance_slices`: for each slice wholly on one page
+  with content in every glot, `_glot_options` gives per glot the cheapest
+  set of paragraph deltas for each total line change. Costs are shape
+  badness above the paragraph's unadjusted shape, plus
+  `balance_change_cost` per changed paragraph. Headers and shapes worse
+  than `balance_maxbad` are skipped. Glot heights are the measured page slice
+  heights (`ht + dp` from `\@Poly@colstart`, kept in `Paragraphs.polycols`)
+  plus delta × the glot's baseline. The combination with the least
+  imbalance, in whole lines of the largest baseline, and then the lowest
+  cost is used, if it improves the slice. One layout run follows, and
+  `check_balance` logs any slice whose measured imbalance differs from the
+  prediction. On BSB_1 Diglot_NT JHN it balanced 60 slices. Single-page
+  slices went from 23 level (85 measured) to 67 (84), with no mispredictions
+  (10 slices now cross a page), and the book went from 66 to 65 pages.
 
 ## 6. Findings from the current code
 
@@ -418,3 +434,13 @@ Before the solver work:
   frame.
 * Whether phase 2 needs safeguards against repeatedly undoing phase 1 work,
   for example a cap on balance-breaking moves per frame.
+* With `limits(pid)` the limits are per paragraph. Users could set them for
+  individual paragraphs, perhaps by extending the adjlist (e.g. min/max
+  expansion alongside `expand=`), and the filler would keep to them when
+  probing. To consider: the syntax in the comment field, how it fits with the
+  per-file centre and range, showing it in the adjlist view, and whether TeX
+  needs to know (probably not: it only limits the filler's search). The
+  centre is already a problem for polyglots: an adjlist has one centre per
+  file, taken from the primary, so a glot whose default expansion differs
+  gets `expand=` written on every one of its rows. Per-glot (or
+  per-paragraph) defaults in the adjlist would remove that noise.

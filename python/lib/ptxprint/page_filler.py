@@ -357,7 +357,7 @@ class TypesetterSolver:
         self.probe_params = {}
         self.full_probe = True
         self.baseline_lines: Dict[Any, int] = {}
-        self.base_params = {p: (expand, 0) for p in self.paragraph_order}
+        self.base_params = {p: self.neutral(p) for p in self.paragraph_order}
         self.tried = set()
         self.forced_delta = set()
         self.itercount = 0
@@ -366,6 +366,14 @@ class TypesetterSolver:
         self.bk = None
         self.all_probes = [(expand, -1), (minexp, -1), ((minexp + expand) / 2, -1),
                 (maxexp, 1), (maxexp, 0), (expand, 0)]
+
+    def limits(self, pid):
+        """ (expand, minexp, maxexp) for a paragraph """
+        return (self.expand, self.minexp, self.maxexp)
+
+    def neutral(self, pid):
+        """ The parameters of an unadjusted paragraph """
+        return (self.limits(pid)[0], 0)
 
     def printbk(self, bk, page, extra="", progress=True, total=None):
         bkc = bookletter(bk)
@@ -535,7 +543,7 @@ class TypesetterSolver:
             except TimeoutError:
                 return HumanFixRequest(state, page + 1, "Stopped" if self.hooks.cancelled else "Timed out")
 
-            pparams = {k: v for k, v in new_state.paragraph_params.items() if v != (self.expand, 0)}
+            pparams = {k: v for k, v in new_state.paragraph_params.items() if v != self.neutral(k)}
             if self.hooks.tracing:
                 logger.log(15, f"Completed {page=} {ok=} {pparams}")
             if ok:
@@ -649,7 +657,7 @@ class TypesetterSolver:
                     straddler = lpars[-1]
                     if self.hooks.get_first_page_for_para(straddler) <= page \
                             and straddler in self.probe_params \
-                            and self.probe_params[straddler] != page_base_params.get(straddler, (self.expand, 0)):
+                            and self.probe_params[straddler] != page_base_params.get(straddler, self.neutral(straddler)):
                         page_base_params[straddler] = self.probe_params[straddler]
 
                 page_full = free is None or not len(free) or all(x == 0 for x in free)
@@ -727,13 +735,14 @@ class TypesetterSolver:
         Evaluates candidate expansion probes for a paragraph.
         p_probes values represent relative line deltas (e.g., -2, -1, 0, +1, +2).
         """
+        expand, minexp, maxexp = self.limits(pid)
         p_probes = self.probe_cache.get(pid, {})
-        max_pos_delta = p_probes.get((self.maxexp, 1)) or 0
-        max_neg_delta = p_probes.get((self.minexp, -1)) or 0
-        pos_low, pos_high = self.expand, self.maxexp
+        max_pos_delta = p_probes.get((maxexp, 1)) or 0
+        max_neg_delta = p_probes.get((minexp, -1)) or 0
+        pos_low, pos_high = expand, maxexp
         pos_delta_achieved = 0
         for (exp, strch), delta in p_probes.items():
-            if exp <= self.expand or delta is None:
+            if exp <= expand or delta is None:
                 continue
             if delta > 0:
                 pos_high = min(pos_high, exp)
@@ -743,10 +752,10 @@ class TypesetterSolver:
 
         pos_span = pos_high - pos_low
         pos_done = (pos_span <= 0.01)
-        neg_low, neg_high = self.minexp, self.expand
+        neg_low, neg_high = minexp, expand
         neg_delta_achieved = 0
         for (exp, strch), delta in p_probes.items():
-            if exp >= self.expand or delta is None:
+            if exp >= expand or delta is None:
                 continue
             if delta < 0:
                 neg_low = max(neg_low, exp)
@@ -770,7 +779,7 @@ class TypesetterSolver:
             get_target_delta = min
             max_bound_delta = max_neg_delta
         else:
-            return (self.expand, 0, 0)
+            return (expand, 0, 0)
 
         stretch_sequence = [0, dir_sign]
         delta_in_shape_cache = (pid, achieved_delta) in self.shape_cache if achieved_delta != 0 else False
@@ -783,7 +792,7 @@ class TypesetterSolver:
 
         while True:
             if high - low <= 0.01:
-                return (self.expand, 0, 0)
+                return (expand, 0, 0)
             mid = (low + high) / 2.0
             for strch in stretch_sequence:
                 if (mid, strch) not in p_probes:
@@ -821,8 +830,8 @@ class TypesetterSolver:
         sweep_count = 0
         all_pids = self.hooks.get_paragraphs_for_pages(page, page + npages)
         last_page = -1 if page + npages >= self.numpages else page + npages
-        for a in ((self.minexp, -1), (self.maxexp, 1)):
-            sweep_params = {pid: a for pid in all_pids}
+        for (lim, strch) in ((1, -1), (2, 1)):        # (minexp, -1), (maxexp, 1)
+            sweep_params = {pid: (self.limits(pid)[lim], strch) for pid in all_pids}
             layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
             self.collect_probes(layout, all_pids, sweep_params, page=page)
             sweep_count += 1
@@ -832,7 +841,7 @@ class TypesetterSolver:
             logging.log(15, f"{self.probe_cache=}, {self.shape_cache=}")
         while True:
             sweep_count += 1
-            sweep_params = {pid: (self.expand, 0) for pid in all_pids}
+            sweep_params = {pid: self.neutral(pid) for pid in all_pids}
             requests = {}
             global_max_pri = 0
             pri_counts = {0: 0, 1: 0, 2: 0}
@@ -864,7 +873,7 @@ class TypesetterSolver:
             self.collect_probes(layout, all_pids, sweep_params, page=page)
             do_progress(sweep_count)
 
-        sweep_params = {pid: (self.expand, 0) for pid in all_pids}
+        sweep_params = {pid: self.neutral(pid) for pid in all_pids}
         layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
         do_progress(sweep_count)
         return layout
@@ -891,7 +900,7 @@ class TypesetterSolver:
                     if pid in combo:
                         continue
                     exp, strch, pri = self.evaluate_paragraph_probe(pid)
-                    if exp != self.expand or strch != 0:
+                    if (exp, strch) != self.neutral(pid):
                         self.probe_params[pid] = (exp, strch)
                         logmodpids.append(pid)
                     if pri == 2 and self.hooks.get_first_page_for_para(pid) == page+1:
@@ -939,7 +948,7 @@ class TypesetterSolver:
         changes = []
         threshold = self.hooks.badness_spacing_tolerance
         for p in paragraphs:
-            e, s = params.get(p, (self.expand, 0))
+            e, s = params.get(p, self.neutral(p))
             par = self.hooks.get_para(p)
             if par is None:
                 if p not in self.probe_cache or (e, s) not in self.probe_cache[p]:
@@ -980,7 +989,7 @@ class TypesetterSolver:
                         if self.hooks.tracing:
                             logging.log(15, f"{p} ({e}, {s}) {whiteness=} {threshold=}")
                         continue
-            d = self.badness_cmp((e, s, badness), sc)
+            d = self.badness_cmp((e, s, badness), sc, p)
             if d < 0:
                 self.shape_cache[key] = (e, s, badness)
                 changes.append((key, e, s, badness))
@@ -1020,7 +1029,7 @@ class TypesetterSolver:
                     forced[p] = min(cands)[1]
             else:
                 entry = self.shape_cache.get((p, 0))
-                if entry is not None and (entry[0], entry[1]) != (self.expand, 0):
+                if entry is not None and (entry[0], entry[1]) != self.neutral(p):
                     forced[p] = 0
         yield dict(forced)
         maxcombos = 2000
@@ -1033,7 +1042,7 @@ class TypesetterSolver:
             first_para = None
         if first_para is not None:
             l = self.hooks.get_lines_for_para_page(first_para, page, state=state)
-            if state.paragraph_params.get(first_para, (self.expand, 0)) != (self.expand, 0):
+            if state.paragraph_params.get(first_para, self.neutral(first_para)) != self.neutral(first_para):
                 first_para_adj = 1
             elif l == 0:
                 pass
@@ -1096,7 +1105,7 @@ class TypesetterSolver:
                     # have we done the same net col line change before?
                     col_deltas = [0, 0, 0, 0, 0, 0]
                     # skip if another page has modified this para
-                    if any(self.base_params.get(p, (self.expand, 0)) != (self.expand, 0) for p in combo.keys()):
+                    if any(self.base_params.get(p, self.neutral(p)) != self.neutral(p) for p in combo.keys()):
                         continue
                     for p, d in combo.items():
                         if (p, d) not in self.shape_cache:
@@ -1119,7 +1128,7 @@ class TypesetterSolver:
                             logger.log(12, "Can't find mask for {p}")
                             col_deltas[5] += d
                         prev = self.hooks.get_previous(p)
-                        preve = self.shape_cache.get((p, combo.get(p, 0)), (self.expand, 0))[0]
+                        preve = self.shape_cache.get((p, combo.get(p, 0)), self.neutral(p))[0]
                         pe = self.shape_cache[(p, d)][0]
                         score += self.hooks.badness_contrast_factor * abs(pe - preve)
                     else:
@@ -1186,9 +1195,10 @@ class TypesetterSolver:
         if parbadness > 0.1:
             badness += parbadness
         else:
-            exp = math.sqrt(abs(self.expand - e))
+            expand = self.limits(p)[0]
+            exp = math.sqrt(abs(expand - e))
             badness += self.hooks.badness_expansion_factor * exp * badness
-            expxtra = 10 * (e - self.expand) * self.hooks.badness_expansion_cost
+            expxtra = 10 * (e - expand) * self.hooks.badness_expansion_cost
             if expxtra > 0.:
                 badness += expxtra
             # badness += math.sqrt(parbadness)
@@ -1198,15 +1208,16 @@ class TypesetterSolver:
             badness += 10
         return badness
 
-    def badness_cmp(self, a, b):
+    def badness_cmp(self, a, b, pid):
         ''' returns -1 if a is better than b, returns 1 if b better than a.
-            a, b = (e, s, badness) '''
+            a, b = (e, s, badness) for paragraph pid '''
         if b is None:
             return -1
         if a is None:
             return 1
-        ea = abs(a[0] - 1)
-        eb = abs(b[0] - 1)
+        expand = self.limits(pid)[0]
+        ea = abs(a[0] - expand)
+        eb = abs(b[0] - expand)
         r = cmp(ea, eb)
         if r != 0:
             return r
@@ -1370,12 +1381,12 @@ class PTXFiller:
             return (True, f"Complete {bk} Already good")
         pids = list(init_layout.paragraph_pages.keys())
         logger.log(15, f"lastwidths={', '.join(f'{p}={self.get_para(p).lastwidth:.2f}' for p in pids if isinstance(p, ParInfo))}")
-        state = EngineState(parms if restart else {p: (self.expand, 0) for p in pids}, [], init_layout, self.parlocs, 0)
+        solver = self.solver_class(self.hooks, pids, expand=self.expand, minexp=self.minexp, maxexp=self.maxexp)
+        state = EngineState(parms if restart else {p: solver.neutral(p) for p in pids}, [], init_layout, self.parlocs, 0)
         self.hooks.basestate = state
         self.hooks.chapters = self.parlocs.chapters
         starttime = time()
         #print(f"Solving {bk}")
-        solver = self.solver_class(self.hooks, pids, expand=self.expand, minexp=self.minexp, maxexp=self.maxexp)
         if restart:
             solver.shape_cache, solver.probe_cache = adjlist.get_cache()
         res = solver.solve(state, start_page=-1, stop=stop, restart=restart, book=bk)
@@ -1457,7 +1468,7 @@ class PTXFiller:
                         self.adjs.setdb(f"{bk} {key}[{para}]", keyv, None, insert=False)
                     elif (s, a) in solver.shape_cache:
                         e, t, badness = solver.shape_cache[(s, a)]
-                        if badness is None or (e == self.expand and t == 0 and not hasshapes):
+                        if badness is None or ((e, t) == solver.neutral(s) and not hasshapes):
                             v = None
                         else:
                             v = f"{int(e*100)}{t:+d}@" + f"{badness:.3f}".rstrip("0").rstrip(".")

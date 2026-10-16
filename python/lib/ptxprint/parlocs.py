@@ -251,6 +251,7 @@ class Paragraphs(list):
         self.chapters = [0]
         self.rect_cache = (None, None)
         self.colcount = {}
+        self.polycols = []      # (pnum, glot, ColInfo) for each polyglot column start (page slice)
         if fname is None:
             return
         currp = None
@@ -453,6 +454,7 @@ class Paragraphs(list):
                     colinfos[polycol].baseline = readpts(p[7])
                     colinfos[polycol].align = p[8]
                 cinfo = colinfos[polycol]
+                self.polycols.append((pnum, polycol, cinfo))
                 colcount[polycol] = colcount.get(polycol, -1) + 1
                 if polycol not in currps:
                     currps[polycol] = None
