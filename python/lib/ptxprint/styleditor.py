@@ -91,7 +91,9 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'BorderMargin', 'BorderVMargin', 'BorderHMargin', 
                 'BorderStyle', 'BorderStyleExtra', 'BorderRef', 'NonJustifiedFill',
                 'SidebarGridding','SpaceBeside', 'VerticalAlign',
-                'BorderPatternLeft','BorderPatternRight', 'BorderPatternTop','BorderPatternBot','OrnamentScaleRef')}
+                'BorderPatternLeft','BorderPatternRight', 'BorderPatternTop','BorderPatternBot','OrnamentScaleRef',
+                'ShadowColour', 'ShadowColor', 'OutlineColour', 'OutlineColor', 'SpaceBetween',
+                'FontScale', 'OccursUnder', 'NotRepeatable', 'SmallCaps')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
