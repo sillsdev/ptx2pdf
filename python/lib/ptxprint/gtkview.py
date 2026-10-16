@@ -1965,6 +1965,9 @@ class GtkViewModel(ViewModel):
         # Also reset the Peripheral tab Variables
         tv = self.builder.get_object("ls_zvarList")
         tv.clear()
+        self.publications = {}
+        if getattr(self, "pubView", None) is not None:
+            self.pubView.load(self.publications)
         for k, v in self.initValues.items():
             if not updatebklist and k in self._nonresetcontrols:
                 continue

@@ -921,6 +921,8 @@ class ViewModel:
         self.localiseConfig(config)
         self.diglotViews = {}
         self.polyglots = {}
+        self.publications = {}
+        self.pubvars_publishable = {}
         self.loadConfig(config, updatebklist=updatebklist)
         for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
                                (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
