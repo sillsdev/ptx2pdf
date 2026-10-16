@@ -1233,25 +1233,49 @@ class GrowList(list):
             self.extend([None] * (index - len(self) + 1))
 
 
+def expansion_limits(view):
+    """ Returns (expand, minexp, maxexp) for the body text of a view """
+    font_info = view.get("bl_fontR")
+    try:
+        expand = float(font_info.feats.get('extend', "1"))
+    except ValueError:
+        expand = 1
+    try:
+        minexp = float(view.get("s_shrinktextlimit", "95")) / 100 * expand
+    except ValueError:
+        minexp = 0.95 * expand
+    try:
+        maxexp = float(view.get("s_maxtextlimit", "105")) / 100 * expand
+    except ValueError:
+        maxexp = 1.05 * expand
+    return (expand, minexp, maxexp)
+
+def make_filler_view(build_params, nid):
+    """ The view a filler works with. Made separately so the caller can choose the filler class from it. """
+    view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
+    view.setup_ini()
+    view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
+    view.setConfigId(build_params.cfgid)
+    view.project.ext = None
+    if nid is not None:
+        view.project.ext = f"pbuild{nid}"
+    return view
+
 class PTXFiller:
 
-    def __init__(self, build_params, nid, progress_q=None, cpu_q=None, cancel_event=None):
+    solver_class = TypesetterSolver     # subclasses may use their own solver
+
+    def __init__(self, build_params, nid, progress_q=None, cpu_q=None, cancel_event=None, view=None):
         super().__init__()
         self.nid = nid
         self.timedout = False
         self.cancel_event = cancel_event    # shared mp.Value set by MultiPrint.cancel()
         self.progress_queue = progress_q
         self.cpu_q = cpu_q
-        self.view = ViewModel(*[getattr(build_params, x) for x in ('prjtree config macrosdir args'.split())])
-        self.view.setup_ini()
-        self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
-        self.view.setConfigId(build_params.cfgid)
+        self.view = view if view is not None else make_filler_view(build_params, nid)
         self.rtl = self.view.get("fcb_textDirection", "") == "rtl"
         self.macrosdir = build_params.scriptsdir
-        self.view.project.ext = None
         self.stats = []
-        if nid is not None:
-            self.view.project.ext = f"pbuild{nid}"
 
     def clear_book_files(self, bk):
         """ Delete the working files left from a previous run of this book only,
@@ -1318,19 +1342,7 @@ class PTXFiller:
         else:
             parms = {}
         unlockme()
-        font_info = self.view. get("bl_fontR")
-        try:
-            self.expand = float(font_info.feats.get('extend', "1"))
-        except ValueError:
-            self.expand = 1
-        try:
-            self.minexp = float(self.view.get("s_shrinktextlimit", "95")) / 100 * self.expand
-        except ValueError:
-            self.minexp = 0.95 * self.expand
-        try:
-            self.maxexp = float(self.view.get("s_maxtextlimit", "105")) / 100 * self.expand
-        except ValueError:
-            self.maxexp = 1.05 * self.expand
+        self.expand, self.minexp, self.maxexp = expansion_limits(self.view)
         logger.log(15, f"{self.expand=}, {self.minexp=}, {self.maxexp=}")
         try:
             init_layout = self.hooks.run_layout(None, parms, {}, -1, -1, genfiles=True)
@@ -1363,7 +1375,7 @@ class PTXFiller:
         self.hooks.chapters = self.parlocs.chapters
         starttime = time()
         #print(f"Solving {bk}")
-        solver = TypesetterSolver(self.hooks, pids, expand=self.expand, minexp=self.minexp, maxexp=self.maxexp)
+        solver = self.solver_class(self.hooks, pids, expand=self.expand, minexp=self.minexp, maxexp=self.maxexp)
         if restart:
             solver.shape_cache, solver.probe_cache = adjlist.get_cache()
         res = solver.solve(state, start_page=-1, stop=stop, restart=restart, book=bk)

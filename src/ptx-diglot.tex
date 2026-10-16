@@ -2862,9 +2862,11 @@
   \ifunprintable
     \abortpage
   \else
-    \ifdim\p@lytxtht>0pt % End of book can flush an empty page
-      \let\col@do=\p@ly@underfill
-      \x@\each@col\diglot@list\E
+    \ifinendbook\else % As monoglot, the end of a book is not underfilled
+      \ifdim\p@lytxtht>0pt % End of book can flush an empty page
+        \let\col@do=\p@ly@underfill
+        \x@\each@col\diglot@list\E
+      \fi
     \fi
     \let\tmpwrite\diglot@writeparpageend
     \@@setppagecontents@simplecols

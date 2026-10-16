@@ -9,7 +9,8 @@ from concurrent.futures import ProcessPoolExecutor, Future, as_completed
 from concurrent.futures import wait as wait_futures
 import multiprocessing as mp
 import threading, queue, psutil
-from ptxprint.page_filler import PTXFiller
+from ptxprint.page_filler import PTXFiller, make_filler_view
+from ptxprint.poly_filler import PolyFiller
 from ptxprint.project import ProjectList
 from ptxprint.utils import BuildParams, ProgressEvent, f_
 from ptxprint.view import ViewModel
@@ -182,8 +183,10 @@ class WorkerContext:
         """Returns the active printer, creating a new instance if job configuration changed."""
         if not self.matches_last_job(job):
             if job.action == 'fill':
-                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q,
-                                                 cpu_q=self.cpu_q, cancel_event=self.cancel_event)
+                view = make_filler_view(job.build_params, self.nid)
+                fillerClass = PolyFiller if view.get("c_diglot") else PTXFiller
+                self.current_printer = fillerClass(job.build_params, self.nid, progress_q=self.progress_q,
+                                                 cpu_q=self.cpu_q, cancel_event=self.cancel_event, view=view)
                 logging.debug(f"{self.current_printer=}")
             elif job.action == 'print':
                 self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q,

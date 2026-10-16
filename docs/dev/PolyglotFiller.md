@@ -249,6 +249,28 @@ page, which can be used to reorder the remaining candidates for that page.
 * Paragraph ordering across glots and the exact form of backtrack keys are
   implementation details.
 
+### 5.3 Status
+
+Patch 04 adds both classes in `python/lib/ptxprint/poly_filler.py`.
+`PTXFiller.solver_class` names the solver `PTXFiller.solve` creates.
+`multiprint` makes the view first (`make_filler_view`) and creates a
+`PolyFiller` when it has `c_diglot`, otherwise a `PTXFiller`. So far:
+
+* `PolyFiller` reads each glot's expansion limits from its view
+  (`expansion_limits(view)`, shared with `PTXFiller`), warns if they differ
+  and uses the primary's, since the solver has one set of limits. To lift
+  this, the solver's ~25 uses of `expand`/`minexp`/`maxexp`, nearly all with
+  a pid to hand, become `self.limits(pid)`, which `PolySolver` answers from
+  the pid's glot.
+* `parsestatus` gives `underfills[page]` = lines per glot, in glot order,
+  or `None` when every glot is full. TeX skips the end of a book, as in
+  monoglot.
+* `get_slicemap` gives `slices[slice][page][glot]` = lines and
+  `parslice[pid]` = slice.
+* After each layout run, duplicate paragraph ids are reported.
+* `PolySolver` probes as `TypesetterSolver` does, then `run_forward` only
+  reports per-glot underfill and slice balance and makes no moves.
+
 ## 6. Findings from the current code
 
 ### 6.1 TeX (`src/ptx-diglot.tex`)
