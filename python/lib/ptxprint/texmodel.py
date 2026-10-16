@@ -9,7 +9,7 @@ from ptxprint.module import Module
 from ptxprint.markdown import MarkDown
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
-                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect
+                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect, spineWidthMm
 from ptxprint.dimension import Dimension
 from ptxprint.interlinear import Interlinear
 from usfmtc.reference import Ref, RefRange, RefList
@@ -320,6 +320,22 @@ class TexModel:
         self.calcRuleParameters()
         if self.asBool('cover/includespine'):
             self.dict['cover/spinewidth_'] = float((self.dict.get("cover/spinewidth") or "0mm").replace("mm", ""))
+            # A publication may give its own page count, from which we calculate its spine width
+            pages = self.printer.getvar("pagecount", "") if self.printer is not None else ""
+            try:
+                pages = int(float(pages or 0))
+            except ValueError:
+                pages = 0
+            if pages > 0:
+                try:
+                    paper = float(self.dict.get('cover/weightorthick') or 0)
+                    adjust = float(self.dict.get('cover/coveradjust') or 0)
+                except ValueError:
+                    paper = 0
+                if paper > 0:
+                    self.dict['cover/spinewidth_'] = round(spineWidthMm(pages, paper,
+                            self.dict.get('cover/papercalcunits') or "weight", adjust), 3)
+                    logger.info(f"Spine width {self.dict['cover/spinewidth_']:.3f}mm calculated from {pages} pages")
         else:
             if self.asBool('cover/covercropmarks'):
                 self.dict['cover/spinewidth_'] = 0

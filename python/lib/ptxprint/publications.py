@@ -52,7 +52,17 @@ class PublicationsView:
     def _publishableKeys(self):
         res = ['maintitle', 'subtitle']
         res.extend([k for k,v in self.view.pubvars_publishable.items() if k not in res and v])
+        # keep the row if any publication has a value, so it is not lost when saving
+        haspc = any("pagecount" in p for p in self.view.publications.values())
+        if (self.view.get("c_inclSpine") or haspc) and "pagecount" not in res:
+            res.append("pagecount")     # used to calculate each publication's spine width
         return res
+
+    def _defaultValue(self, key):
+        """ Returns the value a publication starts with for this key """
+        if key == "pagecount":
+            return str(self.view.get("s_totalPages") or "")
+        return self.view.getvar(key, "")
 
     def _parentRow(self, pid, books, select):
         fg, tip = self._checkBooks(books)
@@ -70,7 +80,7 @@ class PublicationsView:
             for col in selected_keys:
                 val = pub.get(col)
                 if val is None:
-                    val = self.view.getvar(col, "")
+                    val = self._defaultValue(col)
                 self.ts.append(parent_iter, self._childRow(col, val, pid))
         if len(self.ts) < 6:
             self.tv.expand_all()
@@ -183,7 +193,7 @@ class PublicationsView:
         pid = self._uniquePid(title or _("New publication"))
         parent_iter = self.ts.append(None, self._parentRow(pid, self._currentBooks(), True))
         for k in self._publishableKeys():
-            self.ts.append(parent_iter, self._childRow(k, self.view.getvar(k, ""), pid))
+            self.ts.append(parent_iter, self._childRow(k, self._defaultValue(k), pid))
         self._selectAndShow(parent_iter)
         self._updateStatus()
 
