@@ -1152,7 +1152,7 @@
    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
    \ifdiglot\edef\tmp{cv-all\c@rrdstat\ch@pter.0}\else\edef\tmp{cv-all\ch@pter.0}\fi
    \ifcsname \tmp\endcsname \csname\tmp\endcsname\fi
-   \uppercase{\ifdiglot\xdef\c@rref{\id@@@\c@rrdstat\ch@pter.0}\else\xdef\c@rref{\id@@@\ch@pter.0}\fi}%
+   \uppercase{\ifdiglot\xdef\c@rref{\id@@@\c@rrdstat\ch@pter.0}\xdef\dc@rref{\c@rref}\else\xdef\c@rref{\id@@@\ch@pter.0}\fi}%
    \ifcsname cv-\c@rref\endcsname\csname cv-\c@rref\endcsname\fi
    \global\let\print@bleverse=\v@rse
    \op@ninghooks{start}{c}{\styst@k}%

@@ -1407,7 +1407,7 @@ class PTXFiller:
             else:
                 key = f"{r[1]}.{r[2]}{r[5]}"
                 para = para or 1
-            return key, para
+            return self.bk + r[3], key, para       # r[3] is the polyglot column letter, if any
         def getchap(key):
             c, _d = key.split('.', 1) if '.' in key else (key, None)
             try:
@@ -1426,14 +1426,14 @@ class PTXFiller:
             doappend = False
         logger.log(12, f"{self.bk}: {parparms=}")
         for s, p in parparms.items():
-            key, para = mkkey(s)
+            bk, key, para = mkkey(s)
             c = getchap(key)
             if lastchap == 0 or lastchap > int(c):
-                self.adjs.setval(self.bk, key, para, p[1], None, expand=int(p[0]*100), append=doappend)
+                self.adjs.setval(bk, key, para, p[1], None, expand=int(p[0]*100), append=doappend)
         self.adjs.sort()
         if solver is not None:
             for s in solver.paragraph_order:
-                key, para = mkkey(s)
+                bk, key, para = mkkey(s)
                 c = getchap(key)
                 if lastchap != 0 and lastchap <= int(c):
                     break
@@ -1442,7 +1442,7 @@ class PTXFiller:
                     keyv = f"{'p' if a >= 0 else 'm'}{abs(a)}"
                     if a == 0 and s in solver.forced_delta:
                         v = None
-                        self.adjs.setdb(f"{self.bk} {key}[{para}]", keyv, None, insert=False)
+                        self.adjs.setdb(f"{bk} {key}[{para}]", keyv, None, insert=False)
                     elif (s, a) in solver.shape_cache:
                         e, t, badness = solver.shape_cache[(s, a)]
                         if badness is None or (e == self.expand and t == 0 and not hasshapes):
@@ -1452,7 +1452,7 @@ class PTXFiller:
                     else:
                         v = None
                     if v is not None:
-                        self.adjs.setdb(f"{self.bk} {key}[{para}]", keyv, v)
+                        self.adjs.setdb(f"{bk} {key}[{para}]", keyv, v)
         self.adjs.createAdjlist(fname=file)
         if file is None:
             tname = self.view.getLocalTriggerFilename(self.bk)

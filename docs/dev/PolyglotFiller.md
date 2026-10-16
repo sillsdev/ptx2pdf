@@ -287,6 +287,11 @@ page, which can be used to reorder the remaining candidates for that page.
   02: both accept either separator.)*
 * Heading paragraphs before the first verse have the ref `start` with no
   book or glot, so their pid (`start[n]`) is not unique across glots.
+  *(Fixed in patch 03 for headings after `\c`: on `\c` a diglot set
+  `\c@rref` but not `\dc@rref`, which adjustments and parlocs use, so such
+  headings kept the previous chapter's last verse, e.g. `JHNL1.51` for the
+  chapter 2 heading. They are now `JHNL2.0` as in monoglot. Material before
+  the first `\c` is still `start`, as in monoglot.)*
 
 ### 6.3 `page_filler.py` and adjlists
 
@@ -299,7 +304,16 @@ page, which can be used to reorder the remaining candidates for that page.
 * `C:V` and `C.V` are equivalent, but some contexts require one. Readers
   accept both. Adjlists are always written with `.` (`JHNL 1.1 +1`).
   Anything shown to users uses `:`. In a real diglot run (BSB_1 Diglot_NT,
-  JHN) every parlocs ref uses `.` (e.g. `JHNL1.1`).
+  JHN) every parlocs ref uses `.` (e.g. `JHNL1.1`). TeX matches adjustments
+  against `\dc@rref`, which `\@v@` sets with `:`, but `\ch@ckadjustments`
+  resets it with `.` (`\settrig@refcv`) before matching.
+* *(Patch 03)* `createAdjs` writes the glot letter after the book
+  (`JHNL 1.6 +1`), taken from `refSort(pid)[3]`; monoglot output is
+  unchanged. `AdjList` already reads and writes glot letters, and its
+  `get_params` keys (`JHNL1.6[1]`) match parlocs pids. TeX opens
+  `AdjLists/<book file>-<cfg>-diglot.<ext>.adj` for a merged book, which is
+  what `getAdjListFilename` gives when `c_diglot` is set. Tested: an entry
+  for one glot changes only that glot's paragraph at that ref.
 
 ### 6.4 Two-page frames (`src/polyglot-simplepages.tex`)
 
@@ -373,7 +387,8 @@ Before the solver work:
 2. **parlocs fixes** listed in 6.2, and reading of the new records. Done
    (patch 02).
 3. **Per-glot settings** available to the filler.
-4. **Adjlist keys** with glot letters, written with `.` (see 6.3).
+4. **Adjlist keys** with glot letters, written with `.` (see 6.3). Done
+   (patch 03).
 
 ## 8. Open questions
 
