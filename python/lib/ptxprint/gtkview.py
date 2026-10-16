@@ -268,7 +268,7 @@ btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 _ui_default = """
 ex_copyright ecb_licenseText textv_copyright btn_resetCopyright btn_copyToTargetProj
 btn_resetDefaults btn_editModule s_indentUnit l_linesOnPage l_linesOnPageLabel btn_adjust_spacing
-c_useMarginNotes s_marginNotesWidth l_marginNotesPosn fcb_marginNotesPosn
+c_useMarginNotes s_marginNotesWidth c_marginNotesInner
 c_outerGutter c_lockFontSize2Baseline l_indentUnit c_noteLines col_noteLines s_colgutteroffset
 l_colgutteroffset s_ruleThickness l_ruleThickness s_headerposition s_footerposition btn_adjust_top
 btn_adjust_bottom img_toporange img_toppurple img_topred img_topblue img_topgreen img_tophrule
@@ -607,7 +607,7 @@ _sensitivities = {
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc", "l_leaderStyle", "fcb_leaderStyle"],
     "c_hideEmptyVerses" :      ["c_elipsizeMissingVerses"],
     "c_marginalverses" :       ["l_marginVrsPosn", "fcb_marginVrsPosn", "l_columnShift", "s_columnShift"],
-    "c_useMarginNotes" :       ["s_marginNotesWidth", "l_marginNotesPosn", "fcb_marginNotesPosn",
+    "c_useMarginNotes" :       ["s_marginNotesWidth", "c_marginNotesInner",
                                 "r_fnpos_margin", "r_xrpos_margin"],
     "c_rangeShowVerse" :       ["l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
@@ -1464,7 +1464,6 @@ class GtkViewModel(ViewModel):
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
-        self.marginNotesPosns = [(r[0], r[1]) for r in self.builder.get_object("ls_marginNotesPosn")]
 
         for w in self.allControls:
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
@@ -2955,7 +2954,6 @@ class GtkViewModel(ViewModel):
         self.updateBookList()
         if clearvars:
             self.unpaintUnlock()
-        self.updateMarginNotesPosns(restrict=False)
         super(GtkViewModel, self).loadConfig(config, clearvars=clearvars, **kw)
         if clearvars:
             for k, v in _sensitivities.items():
@@ -2974,7 +2972,7 @@ class GtkViewModel(ViewModel):
                     obj = self.builder.get_object(w)
                     if obj is not None:
                         obj.set_sensitive(state)
-        self.updateMarginNotesPosns(mod=False)
+        self.updateMarginNotesInner(mod=False)
         self.updateHeadingInMargin()
         self.pubView.load(self.publications)
         self.colorTabs()
@@ -3162,7 +3160,7 @@ class GtkViewModel(ViewModel):
     def on2colClicked(self, btn):
         self.onSimpleClicked(btn)
         self.updateMarginGraphics()
-        self.updateMarginNotesPosns(mod=not self.loadingConfig)
+        self.updateMarginNotesInner(mod=not self.loadingConfig)
         self.updateDialogTitle()
         self.disableLayoutAnalysis()
         if self.loadingConfig:
@@ -6353,7 +6351,7 @@ class GtkViewModel(ViewModel):
             for n in ("fn", "xr"):
                 if self.get("r_{}pos".format(n)) == "margin":
                     self.set("r_{}pos".format(n), "normal")
-        self.updateMarginNotesPosns()
+        self.updateMarginNotesInner()
         self.updateHeadingInMargin()
 
     def updateHeadingInMargin(self):
@@ -6361,32 +6359,12 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_headingInMargin").set_sensitive(
                 bool(self.get("c_useMarginNotes")) and bool(self.get("c_sectionHeads")))
 
-    def onMirrorPagesClicked(self, btn):
-        self.updateMarginNotesPosns()
-
-    def updateMarginNotesPosns(self, restrict=True, mod=True):
-        # 2-column layouts only allow outer margin notes; mirrored pages only inner/outer
-        if not restrict:
-            allowed = None
-        elif self.get("c_doublecolumn"):
-            allowed = ("outer",)
-        elif self.get("c_mirrorpages"):
-            allowed = ("inner", "outer")
-        else:
-            allowed = None
-        posns = [p for p in self.marginNotesPosns if allowed is None or p[1] in allowed]
-        self.builder.get_object("fcb_marginNotesPosn").set_sensitive(
-                bool(self.get("c_useMarginNotes")) and not (restrict and self.get("c_doublecolumn")))
-        lsmn = self.builder.get_object("ls_marginNotesPosn")
-        if [r[1] for r in lsmn] == [p[1] for p in posns]:
-            return
-        curr = self.get("fcb_marginNotesPosn")
-        lsmn.clear()
-        for p in posns:
-            lsmn.append(p)
-        if curr not in [p[1] for p in posns]:
-            curr = "outer"
-        self.set("fcb_marginNotesPosn", curr, mod=mod)
+    def updateMarginNotesInner(self, mod=True):
+        # 2-column layouts only allow margin notes on the outer edge
+        twocol = bool(self.get("c_doublecolumn"))
+        self.builder.get_object("c_marginNotesInner").set_sensitive(bool(self.get("c_useMarginNotes")) and not twocol)
+        if twocol and self.get("c_marginNotesInner"):
+            self.set("c_marginNotesInner", False, mod=mod)
 
     def updateColxrefSetting(self, btn):
         xrc = self.get("r_xrpos") == "centre" # i.e. Column Cross-References

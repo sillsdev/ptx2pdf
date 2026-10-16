@@ -9890,32 +9890,6 @@ at workshops (avoids repeated large downloads).</property>
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="ls_marginNotesPosn">
-    <columns>
-      <!-- column-name Heading -->
-      <column type="gchararray"/>
-      <!-- column-name marginVrsPosn -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Left</col>
-        <col id="1">left</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Right</col>
-        <col id="1">right</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Inner</col>
-        <col id="1">inner</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Outer</col>
-        <col id="1">outer</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkListStore" id="ls_marginVrsPosn">
     <columns>
       <!-- column-name Heading -->
@@ -18390,8 +18364,6 @@ it is an odd or even page, then turn off this option.</property>
                                         <property name="margin-start">20</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onMirrorPagesClicked" swapped="no"/>
-                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
@@ -18455,55 +18427,24 @@ Cross-references and/or Section Headings).</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_marginNotesPosn">
+                                      <object class="GtkCheckButton" id="c_marginNotesInner">
+                                        <property name="label" translatable="yes">Margin Notes on Left/Inner</property>
+                                        <property name="name">Place Margin Notes on Left/Inner edge of page</property>
                                         <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">Marginal verses are usually placed
-on the left of the text, but can be
-positioned elsewhere if needed.</property>
-                                        <property name="halign">end</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Margin Notes are normally placed on the
+Right/Outer edge of the page. But this can
+be changed for single column layouts to
+appear on the Left/Inner edge if needed.</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-left">17</property>
-                                        <property name="margin-start">17</property>
-                                        <property name="label" translatable="yes">Position 
-on Page: </property>
+                                        <property name="margin-start">6</property>
+                                        <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
                                         <property name="top-attach">4</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBox" id="fcb_marginNotesPosn">
-                                        <property name="name">Horizontal position of marginal notes and headings</property>
-                                        <property name="width-request">10</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="can-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Marginal Notes are usually placed
-on the outside of the text, but can 
-be positioned elsewhere if needed.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="model">ls_marginNotesPosn</property>
-                                        <property name="wrap-width">1</property>
-                                        <property name="has-entry">True</property>
-                                        <property name="entry-text-column">0</property>
-                                        <property name="id-column">1</property>
-                                        <property name="active-id">left</property>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="can-focus">True</property>
-                                            <property name="halign">start</property>
-                                            <property name="max-length">8</property>
-                                            <property name="width-chars">12</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">4</property>
-                                        <property name="top-attach">4</property>
-                                        <property name="width">2</property>
+                                        <property name="width">3</property>
                                       </packing>
                                     </child>
                                     <child>

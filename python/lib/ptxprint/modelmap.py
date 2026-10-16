@@ -205,7 +205,7 @@ _map = {
     "document/columnshift":     ("s_columnShift", "layout", lambda w,v: v or "16"),
     "document/marginnotes":     ("c_useMarginNotes", "layout", None),
     "document/marginnoteswidth": ("s_marginNotesWidth", "layout", None),
-    "document/marginnotesposn": ("fcb_marginNotesPosn", "layout", None),
+    "document/marginnotesinner": ("c_marginNotesInner", "layout", None),
     "document/headinginmargin": ("c_headingInMargin", "body", None),
     "document/ifshowchapternums": ("c_chapterNumber", "body", lambda w,v: "%" if v else ""),
     "document/showxtrachapnums":  ("c_showNonScriptureChapters", "front", None),
