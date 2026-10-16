@@ -25,7 +25,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, ParaLabelling
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, ParaLabelling, MarginalNotes
 
 def loosint(x):
     try:
@@ -136,7 +136,8 @@ class TexModel:
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
         "snippets/grid":                  ("c_gridLines", None, Grid),
-        "texpert/showusfmcodes":          ("c_showusfmcodes", None, ParaLabelling)
+        "texpert/showusfmcodes":          ("c_showusfmcodes", None, ParaLabelling),
+        "paper/ifmarginalnotes":          ("c_useMarginNotes", None, MarginalNotes)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
@@ -299,6 +300,15 @@ class TexModel:
         for a in ('project/frontfile', 'project/ptxprintstyfile_', 'diglot/ptxprintstyfile_'):
             if a not in self.dict:
                 self.dict[a] = ''
+
+        # marginal verses
+        if self.dict["paper/marginnoteswidth"] > 0.:
+            width = self.dict["paper/marginnoteswidth"]     # a float already
+            gap = float(self.dict["texpert/marginnotesgap"])
+            ncols = int(self.dict["paper/columns"])
+            margins = float(self.dict["paper/margins"])
+            margins += (width + gap * 72. / 25.4) * ncols / 2.
+            self.dict["paper/margins"] = "{.2f}".format(margins)
 
         # handle diglot fractions
         # if self.dict['poly/fraction']:

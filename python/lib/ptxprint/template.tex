@@ -54,6 +54,8 @@
 \OuterGutter{paper/ifoutergutter}
 \def\DefaultSpaceBeside{{{texpert/cutouterpadding} pt}}
 \noinkinmargin{footer/noinkinmargin}
+\marginnoteswidth = \dimexpr {paper/marginnoteswidth}mm + {texpert/marginnotesgap}pt \relax
+\def\MarginNotesSide{{{paper/marginnotespos}}}
 
 %% Columns
 \TitleColumns=1
@@ -145,6 +147,8 @@
 {notes/fnresetcallers}\PageResetCallers{{f}}
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fneachnewline}\ParagraphedNotes{{f}}
+{notes/fnmarginal_}\marginaln@te{{f}}
+{notes/xrmarginal_}\marginaln@te{{x}}
 %\NumericCallers{{f}}
 {document/ifndiglot}{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
 %%%{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}

@@ -181,7 +181,7 @@ class PDFx1aOutput(Snippet):
             extras['_gtspdfaid'] = "      <pdfaid:part>4</pdfaid:part>\n        <pdfaid:rev>2020</pdfaid:rev>\n"
             res += "\\XeTeXgenerateactualtext=1\n"
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-6)%\n"
-            extras['_docinfo'] = '\special{pdf:docinfo << >>}'
+            extras['_docinfo'] = r'\special{pdf:docinfo << >>}'
         else:
             extras['_docinfo'] = r"""\special{{pdf:docinfo<<
 /Title({document/title})%
@@ -492,3 +492,25 @@ class ParaLabelling(Snippet):
 \activ@tecustomch@rs
 '''
 
+class MarginalNotes(Snippet):
+    processTex = False
+    texCode = r'''
+\catcode`\@=11
+\newbox\m@rginheadingbox
+\def\endheadingshook{\ifb@dy\setbox\myheadingbox=\vtop{\vbox to \dp\pstr@t{}\box\he@dingbox}\he@dingsfalse\fi}
+\def\insertm@rginheadingbox{\ifvoid\m@rginheadingbox\else\d@marginnote{\the\m@rginheadingbox}{\c@rref}{s}{outer}{bottom}{6pt}{\dimexpr -\baselineskip - \dp\pstr@t}\setbox\m@rginheadingbox=\box\voidb@x\fi}
+\addtoeveryparhooks{\insertm@rginheadingbox}
+'''
+    def generateTex(self, model):
+        mwidth = model.dict["paper/marginnoteswidth"]
+        if mwidth < 1:
+            return ""
+        res = [self.texCode]
+        # find all used heading styles
+        se = model.printer.styleEditor
+        usfms = self.printer.get_usfms()
+        mrkrset = usfms.get_markers(self.printer.getBooks())
+        for m in mrkrset:
+            if usfms.grammar.marker_categories(m, "") == "sectionpara":
+                res.append(fr"\sethook{{before}}{{{m}}}{{\hsize={mwidth}mm}}")
+        return res

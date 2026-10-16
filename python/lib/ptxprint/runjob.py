@@ -9,7 +9,7 @@ from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.version import VersionStr
 from ptxprint.view import ViewModel
-from ptxprint.font import getfontcache, fontconfig_template_nofc
+from ptxprint.font import getfontcache, fontconfig_template_nofc, fontsconf_dirs, fontsconf_text
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog, readUnderfills
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
@@ -561,6 +561,20 @@ class RunJob:
                 logger.debug(f"FONTCONFIG_FILE={os.path.join(self.tmpdir, 'fonts.conf')}")
                 self.env["MISCFONTS"] = pathjoiner.join((ptxmacrospath, sfonts))
             else:
+                # This job's own fonts.conf, with absolute directories: the shared one can be
+                # rewritten by another ptxprint at any time, and its relative project fonts
+                # directory only works three levels below the project.
+                testsuite = getattr(self.args, 'testsuite', False)
+                dirs, _ = fontsconf_dirs(getattr(self.args, 'fontpath', None), testsuite=testsuite)
+                dirs = [d for d in dirs if os.path.isabs(d)]
+                for d in miscfonts:
+                    d = os.path.abspath(d)
+                    if d not in dirs:
+                        dirs.append(d)
+                with open(os.path.join(self.tmpdir, 'fonts.conf'), "w", encoding="utf-8") as outf:
+                    outf.write(fontsconf_text(dirs, testsuite=testsuite))
+                self.env["FONTCONFIG_FILE"] = os.path.join(self.tmpdir, "fonts.conf")
+                logger.debug(f"FONTCONFIG_FILE={self.env['FONTCONFIG_FILE']}")
                 self.env["MISCFONTS"] = pathjoiner.join(miscfonts)
         logger.debug(f"MISCFONTS={pathjoiner.join(miscfonts)}")
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))

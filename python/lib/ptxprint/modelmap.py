@@ -109,6 +109,9 @@ _map = {
     "paper/gutter":             ("s_pagegutter", "layout", lambda w,v: round(float(v)) if v else "0"),
     "paper/notelines":          ("c_noteLines", "layout", lambda w,v: "\\doNoteLines" if v else ""),
     "paper/ifnotelines_":       ("c_noteLines", "layout", lambda w,v: "true" if v else "false"),
+    "paper/ifmarginnotes":      ("c_useMarginNotes", "layout", lambda w,v: "" if v else "%"),
+    "paper/marginnoteswidth":   ("s_marginNotesWidth", "layout", lambda w,v: float(v) if v else 0.),
+    "paper/marginnotespos":     ("c_martinNotesInner", "layout", lambda w,v: "outer" if w.get("c_doublecolumn") else (("inner" if v else "outer") if w.get("c_mirrorpages") else ("left" if v else "right"))),
     "paper/majornlcolor":       ("col_noteLines", "layout", None),
     "majornlcolor_":            ("col_noteLines", "layout", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
     "paper/colgutteroffset":    ("s_colgutteroffset", "layout", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
@@ -392,6 +395,8 @@ _map = {
     "notes/fnpos":              ("r_fnpos", "noteref", None),
     "notes/columnnotes_":       ("r_fnpos", "noteref", lambda w,v: "true" if v == "column" else "false"),
     "notes/endnotes_":          ("r_fnpos", "noteref", lambda w,v: "" if v == "endnotes" else "%"),
+    "notes/fnmarginal_":        ("r_fnpos", "noteref", lambda w,v: "" if v == "margin" else "%"),
+    "notes/xrmarginal_":        ("r_xrpos", "noteref", lambda w,v: "" if v == "margin" else "%"),
 
     "notes/iffootnoterule":     ("c_footnoterule", "noteref", lambda w,v: "%" if v else ""),
     "notes/ifxrefrule":         ("c_xrefrule", "noteref", lambda w,v: "%" if v else ""),

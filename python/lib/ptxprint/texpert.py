@@ -181,6 +181,8 @@ texpertOptions = {
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")),
     "FootnoteMulC":       O("footnotemulc", "NTS", (1, 0, 2100, 1, 1, 0), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"),
                             _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")),
+    "marginnotesgap":     O("marginnotesgap", "NTS", (6, 0, 100, .1, 1, 1), None, _("Distance of margin notes from text"),
+                            _("The size of the gap between the margin notes and the text")),
 
     "diglotBalNotes":         O("diglotbalnotes", "DIG", False, None, _("Balance diglot/polyglot notes"),
                             _("When there's a note on column R (for example), does that reduce the space from other columns?")),
