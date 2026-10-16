@@ -436,7 +436,7 @@ a1 = Analysis(['python/scripts/ptxprint'],
             binaries = binaries,
             datas = datas,
                 # The registry tends not to get included
-            hiddenimports = hiddenimports.
+            hiddenimports = hiddenimports,
             runtime_hooks = [],
             hookspath = [os.path.abspath("pyinstallerhooks")],
                 # These can drift in from the analysis and we don't want them
