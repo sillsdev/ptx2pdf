@@ -181,6 +181,8 @@ class Hooks:
     badness_line_weight         = 12
     badness_lastline_weight     = 20
     badness_tex_weight          = 12
+    badness_balance_maxbad      = 1.0  # polyglot: scales the worst paragraph shape used to change a slice
+    badness_imbalance_weight    = 1.0  # polyglot: scales the badness of a line of slice imbalance
 
     def __init__(self, printer, state):
         self.printer = printer
@@ -931,6 +933,8 @@ class TypesetterSolver:
 
     def collect_probes(self, layout, paragraphs, params, isbase=False, page=0):
         def test_para(p, r):
+            if not isinstance(p, ParInfo):      # e.g. a picture
+                return False
             pid = p.pid()
             e, s = params.get(pid, (None, None))
             d = self.probe_cache.get(pid, {}).get((e, s), None)
@@ -1274,7 +1278,8 @@ def make_filler_view(build_params, nid):
 
 class PTXFiller:
 
-    solver_class = TypesetterSolver     # subclasses may use their own solver
+    solver_class = TypesetterSolver     # subclasses may use their own solver and hooks
+    hooks_class = Hooks
 
     def __init__(self, build_params, nid, progress_q=None, cpu_q=None, cancel_event=None, view=None):
         super().__init__()
@@ -1343,7 +1348,7 @@ class PTXFiller:
             self.view.set(k, v)
         # Don't save pics/styles here: parallel workers share those files and rewriting
         # them races with other workers' XeTeX runs. The GUI saves them before dispatching.
-        self.hooks = Hooks(self, None)
+        self.hooks = self.hooks_class(self, None)
         self.job = None
         self.hascash = False
         #print(f"Filling {bk}")

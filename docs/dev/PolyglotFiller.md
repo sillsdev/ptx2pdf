@@ -286,6 +286,59 @@ Patch 04 adds both classes in `python/lib/ptxprint/poly_filler.py`.
   prediction. On BSB_1 Diglot_NT JHN it balanced 60 slices. Single-page
   slices went from 23 level (85 measured) to 67 (84), with no mispredictions
   (10 slices now cross a page), and the book went from 66 to 65 pages.
+* *(Patch 05b)* Slices are described by outcomes. `slice_outcomes(slice,
+  params)` lists every assignment of the slice's paragraph shapes as a
+  `SliceOutcome`: per glot heights (pt) for the whole slice, cost (sum over
+  changed paragraphs of badness above the unadjusted shape, plus
+  `balance_change_cost` each), imbalance (lines of the largest baseline),
+  `badness = cost + imbalance weight × imbalance`, and the
+  assignment. Assignments are relative to unadjusted shapes, so they don't
+  depend on the current state; heights are measured from the current layout
+  less the current deltas. `slice_range` gives (min height, lowest badness
+  outcome, max height), and `fit_slice(lo, hi)` the lowest badness outcome
+  whose height (tallest glot) is in range. Phase 1 gives a single-page slice
+  its lowest badness outcome when that beats `current_outcome`. The weight
+  and the shape cap are `Hooks` settings that are factors of about 1, like
+  the other filler settings, so users need not think in shape badness
+  units: the cap is `badness_balance_maxbad` (1.0) × `PolySolver.maxbad_scale`
+  (20) and a line of imbalance costs `badness_imbalance_weight` (1.0) ×
+  `imbalance_scale` (10). On JHN most probed shapes have badness under 2 and
+  loose ones are over 20, with little between, so the cap sits in the gap. With these values phase 1 makes the same choices as patch 05 on
+  JAS (12 slices) and JHN (60). For a slice crossing the page, phase 2 will
+  want the part on the page, `min(h_g, available)` per glot, and the overall
+  badness of the two-part slice (`fit_slice_page`, still to come).
+* *(Patch 06)* Phase 2 reuses `TypesetterSolver.run_forward`, `attempt_page`
+  and `repair`. `PolySolver.run_forward` runs phase 1, sets `base_params` and
+  `init_state` from it, hands over, and ends with a full layout if the last
+  one stopped at a chapter (`s_stopat`), so the report, adjlist and PDF cover
+  the book. `PolyHooks.get_page_para_key` gives the page start key per glot.
+  `generate_combos` is the move generator. Footnotes make effects
+  unpredictable, so predictions only order candidates; each is judged by its
+  layout run. Candidates, from a snapshot of the attempt's own parlocs:
+  private moves (a glot of the page's last slice, crossing or not, gets more
+  or fewer lines); slice moves (slices wholly on the page change height,
+  combined up to `max_slices`, all growing or all shrinking, since a page is
+  one column of slices); pull in (if the page ends at a slice boundary, shrink
+  by about `pull_lines` lines so the next slice can start); and mixed (a
+  growth plus private fix ups). A full page also gets candidates, any change
+  in where it ends, cheapest first, which is what lets backtracking work. The
+  cheapest candidate for each predicted effect is tried first; a combo may
+  change at most `badness_maxr` paragraphs. Underfill lines are rounded down
+  (`parsestatus`), since "used" includes the last line's depth and part of a
+  line can't be filled. Result on six diglots (BSB_1 JAS, aArp TestDiglotA5
+  JAS, WSGlatin, fr_diglot, my_judson and HEBWLen RUT): all pages filled
+  except 3 of WSGlatin's, but BSB_1 and aArp took 255 and 349 layout runs.
+* *(Patch 06b)* Fewer layout runs, as monoglot does it: only the cheapest
+  combo for each predicted effect is tried, and on a page with underfill only
+  combos predicted to cover the need (plus pull in shrinks). `repair` records
+  the page it is repairing for and its need; earlier full pages then try
+  growth first (it pushes material onto the short page), closest to the need,
+  and shrinks after. Filtering instead of ordering, or capping the candidates
+  per repaired page, lost filled pages. Runs: BSB_1 JAS 255 → 136, aArp JAS
+  349 → 239, others unchanged except my_judson RUT (16 → 77 runs, 1 page
+  left underfilled, from repair ping-pong). Most runs are spent backtracking
+  between neighbouring pages, which suggests the move predictions are often
+  wrong; measuring predicted against measured effects is the next step.
 
 ## 6. Findings from the current code
 
