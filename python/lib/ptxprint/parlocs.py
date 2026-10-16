@@ -25,7 +25,7 @@ def readpts(s):
         except ValueError:
             return 0
 
-refre = re.compile(r"^(\S{3})?\D?(\d+)\.(\d+)(.*)$")
+refre = re.compile(r"^(\S{3})?\D?(\d+)[.:](\d+)(.*)$")      # C.V or C:V
 def makeref(s):
     m = refre.match(s)
     if m is not None:
@@ -109,6 +109,7 @@ class ParInfo:
     lines:      int = 0
     lastwidth:  float = 0.
     badness:    int = 0
+    slice:      int = 0         # polyglot slice (sync group) id, 0 if not polyglot
 
     def __str__(self):
         return f"{self.ref}[{getattr(self, 'parnum', '')}] {self.lines} @ {self.baseline} {self.rects}"
@@ -138,6 +139,7 @@ class FigInfo:
     wide:       bool
     rects:      InitVar[None] = None
     anchor_pid: Optional[str] = None
+    slice:      int = 0         # polyglot slice (sync group) id, 0 if not polyglot or outside a slice
 
     def __str__(self):
         return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
@@ -238,7 +240,7 @@ class PopplerDest(ctypes.Structure):
 
 class Paragraphs(list):
     parlinere = re.compile(r"^\\@([a-zA-Z@]+)\s*\{(.*?)\}\s*$")
-    chapre = re.compile(r"^\S{3}.*?(\d+)\..*$")
+    chapre = re.compile(r"^\S{3}.*?(\d+)[.:].*$")
 
     def readParlocs(self, fname, rtl=False, gui=False, parent=None):
         self.pindex = []        # first paragraph on a page
@@ -328,7 +330,7 @@ class Paragraphs(list):
                     lines.collectuntil("\\@colstop", [l])
                     continue
                 colinfos[polycol] = cinfo
-                colcount[polycol] = colcount.get(polycol, 0) + 1
+                colcount[polycol] = colcount.get(polycol, -1) + 1
                 if currps.get(polycol, None) is not None:       # are we restarting an existing paragraph
                     if currr is not None and currr.yend == 0 and currps[polycol].rects:
                         currps[polycol].rects.pop()             # remove empty rectangle from previous page
@@ -345,6 +347,8 @@ class Paragraphs(list):
                         currr.lines = int((currr.ystart - currr.yend) / ps.baseline + 0.1)
                     currr = None
                 colinfos[polycol] = None
+                if c == "Poly@colstop":
+                    polycol = "L"       # anything outside a slice belongs to the primary
                 lines.startreplay()
                 lastyend = 0
             elif c == "parstart":       # ref, type, mrk, baselineskip, x, y
@@ -369,6 +373,7 @@ class Paragraphs(list):
                 currp.rects = []
                 logger.log(5, f"Starting para {p[0]}={currp}")
                 if cinfo is not None:
+                    currp.slice = cinfo.slice
                     ystart = min(readpts(p[5]) + currp.baseline, lastyend or 1000000)
                     currr = ParRect(pnum, colcount[polycol], cinfo.topx, ystart)
                     currp.rects.append(currr)
@@ -448,10 +453,12 @@ class Paragraphs(list):
                     colinfos[polycol].baseline = readpts(p[7])
                     colinfos[polycol].align = p[8]
                 cinfo = colinfos[polycol]
-                colcount[polycol] = colcount.get(polycol, 0) + 1
+                colcount[polycol] = colcount.get(polycol, -1) + 1
                 if polycol not in currps:
                     currps[polycol] = None
                 if currps[polycol] is not None:
+                    if currps[polycol].slice != cinfo.slice:
+                        logger.warning(f"Paragraph {currps[polycol].ref} ({polycol}) starts in slice {currps[polycol].slice} but continues in slice {cinfo.slice}")
                     currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
@@ -462,6 +469,8 @@ class Paragraphs(list):
                     currr.xend = xstart
                 currpic = FigInfo(p[0], pnum, p[1], (0, 0), False, False)
                 currpic.rects = []
+                if cinfo is not None:
+                    currpic.slice = cinfo.slice
                 currr = ParRect(pnum, colcount[polycol], xstart, readpts(p[3]))
                 currpic.rects.append(currr)
                 self.append(currpic)
@@ -506,6 +515,9 @@ class Paragraphs(list):
             # "nontextstart":   # x, y
             # "nontextstop":    # x, y
             # "parpicanchor":   # ref, picid, x, y
+        for k, v in colcount.items():   # include the last page
+            if v > self.colcount.get(k, 0):
+                self.colcount[k] = v
         #self.sort(key=lambda x:x.sortKey())    # keep in document order given some odd paragraphs that change index halfway
         if gui and keepgoing:
             dlg.response(Gtk.ResponseType.OK)

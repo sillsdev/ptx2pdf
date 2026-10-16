@@ -269,11 +269,24 @@ page, which can be used to reorder the remaining candidates for that page.
 * `ParInfo.glot` is set from `Poly@colstart`.
 * `ParRect.col` is a running count of slices on the page for that glot, not a
   physical column.
-* `colcount` misses the last page and starts a new glot at 1.
-* `Poly@colstop` does not reset `polycol`.
-* Rects carry no slice identity.
+* `colcount` misses the last page and starts a new glot at 1. *(Fixed in
+  patch 02. It is the highest 0-based column start index on any page, so
+  for polyglot it counts slices per page, not columns. Its only user,
+  `layout_checks`, is disabled.)*
+* `Poly@colstop` does not reset `polycol`. *(Fixed in patch 02: it returns to
+  `L`. Outside slices there are only page records, `noteid`, and at the end
+  of a book a monoglot `\@colstart`/`\@colstop`.)*
+* Rects carry no slice identity. *(Fixed in patch 02: `ParInfo.slice` and
+  `FigInfo.slice`, 0 when not polyglot. A paragraph lies in one slice, and a
+  slice keeps its id across a page break, so all its rects share the
+  paragraph's slice and rects carry none of their own: a page slice is
+  `(rect.pagenum, par.slice)`. The reader warns if a paragraph continues in
+  a different slice.)*
 * `refre` and `chapre` expect `C.V`. Diglot refs may use `C:V`
-  (`ptx-stylesheet.tex:1020`) and then parse as chapter 0.
+  (`ptx-stylesheet.tex:1020`) and then parse as chapter 0. *(Fixed in patch
+  02: both accept either separator.)*
+* Heading paragraphs before the first verse have the ref `start` with no
+  book or glot, so their pid (`start[n]`) is not unique across glots.
 
 ### 6.3 `page_filler.py` and adjlists
 
@@ -283,10 +296,10 @@ page, which can be used to reorder the remaining candidates for that page.
   `isheader` and `pid_isjustified` read only the primary view.
 * The adjlist format already allows a glot letter after the book. There is
   one `.adj` per merged book (`…-diglot.SFM.adj`).
-* **Unconfirmed:** TeX's diglot `\dc@rref` uses both `:` and `.`
-  (`ptx-stylesheet.tex:1020` against `ptx-triggers.tex:273`). In a real
-  diglot run (BSB_1 Diglot_NT, JHN) every parlocs ref uses `.`
-  (e.g. `JHNL1.1`); the adjlist side still needs checking.
+* `C:V` and `C.V` are equivalent, but some contexts require one. Readers
+  accept both. Adjlists are always written with `.` (`JHNL 1.1 +1`).
+  Anything shown to users uses `:`. In a real diglot run (BSB_1 Diglot_NT,
+  JHN) every parlocs ref uses `.` (e.g. `JHNL1.1`).
 
 ### 6.4 Two-page frames (`src/polyglot-simplepages.tex`)
 
@@ -357,9 +370,10 @@ Before the solver work:
    Diglot keeps about one baseline spare at the foot
    (`\dglt@calc@vailhttail` subtracts `\@minb@seline`), so many pages show a
    one-line underfill.
-2. **parlocs fixes** listed in 6.2, and reading of the new records.
+2. **parlocs fixes** listed in 6.2, and reading of the new records. Done
+   (patch 02).
 3. **Per-glot settings** available to the filler.
-4. **Adjlist keys** with glot letters, and the `:`/`.` question resolved.
+4. **Adjlist keys** with glot letters, written with `.` (see 6.3).
 
 ## 8. Open questions
 
