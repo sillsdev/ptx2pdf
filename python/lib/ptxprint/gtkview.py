@@ -268,6 +268,7 @@ btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 _ui_default = """
 ex_copyright ecb_licenseText textv_copyright btn_resetCopyright btn_copyToTargetProj
 btn_resetDefaults btn_editModule s_indentUnit l_linesOnPage l_linesOnPageLabel btn_adjust_spacing
+c_useMarginNotes s_marginNotesWidth l_marginNotesPosn fcb_marginNotesPosn
 c_outerGutter c_lockFontSize2Baseline l_indentUnit c_noteLines col_noteLines s_colgutteroffset
 l_colgutteroffset s_ruleThickness l_ruleThickness s_headerposition s_footerposition btn_adjust_top
 btn_adjust_bottom img_toporange img_toppurple img_topred img_topblue img_topgreen img_tophrule
@@ -278,21 +279,21 @@ l_headerposition l_footerposition btn_refreshFonts c_colorfonts lb_NumberScript
 fr_fallbackFont btn_findMissingChars l_fallbackFont bl_fontExtraR t_missingChars c_useFallbackFont
 fr_hyphenation c_hyphenate btn_generateHyphenationList c_omitHyphen c_nonBreakingHyphens
 fr_spacingAdj gr_spacingAdj c_spacing c_letterSpacing s_minSpace s_maxSpace s_letterShrink
-s_letterStretch l_minSpace l_maxSpace btn_editParaAdjList c_linebreakon t_linebreaklocale
+s_letterStretch l_minSpace l_maxSpace c_linebreakon t_linebreaklocale
 c_RTLbookBinding c_prettyIntroOutline c_omitverseone c_glueredupwords c_firstParaIndent
-c_hangpoetry c_preventwidows lb_style_s c_parallelRefs lb_style_r lb_style_c lb_style__v
+c_hangpoetry c_preventwidows lb_style_s c_headingInMargin c_parallelRefs lb_style_r lb_style_c lb_style__v
 c_useChapterLabel t_clBookList t_clHeading l_clHeading c_differentColLayout c_optimizePoetryLayout
 t_differentColBookList lb_style_w lb_style_zglm c_fnomitcaller c_fnpageresetcallers bx_fnCallers
 c_fnautocallers t_fncallers btn_resetFNcallers c_fnOverride lb_style_f r_fnpos_endnote
 r_fnpos_column r_fnpos_normal ex_footnotes gr_fnRuleSettings l_fnBelowSpace l_fnAboveSpace
 l_text2NotesSpace1 s_fnAboveSpace s_fnBelowSpace rule_footnote c_footnoterule gr_fnRulePosParms
 s_fnIndent s_fnLength s_fnThick fcb_fnHorizPosn l_fnRulePosParms lb_fnRuleSettings l_spacer1
-c_frVerseOnly ex_miscFootnotes c_addColon c_keepBookWithRefs c_glossaryFootnotes
+c_frVerseOnly r_fnpos_margin ex_miscFootnotes c_addColon c_keepBookWithRefs c_glossaryFootnotes
 l_spaceBetweenNotes s_notespacingmin s_notespacingmax l_min l_max s_internote l_internote
 lb_footnotes
 r_xrpos_endnote r_xrpos_column r_xrpos_normal c_xrOverride bx_xrCallers c_xrautocallers t_xrcallers
 btn_resetXRcallers c_xromitcaller c_xrpageresetcallers lb_style_x r_xrpos_below r_xrpos_blend
-r_xrpos_centre c_useXrefList c_extendedXrefs c_xoVerseOnly l_spacer2 ex_xrListSettings
+r_xrpos_centre c_useXrefList c_extendedXrefs c_xoVerseOnly l_spacer2 r_xrpos_margin ex_xrListSettings
 tb_extXrefs gr_extXrefs l_colXRside1 fcb_xRefExtListSource btn_selectXrFile r_xrSource_standard
 r_xrSource_strongs r_xrSource_tsk r_xrSource_works r_xrSource_ubs r_xrSource_custom
 fr_strongs c_strongsShowInText c_strongsShowNums btn_strongsGenerate c_strongsShowAll lb_style_xts
@@ -530,6 +531,20 @@ _showActiveTabs = {
     "c_colophon" :             ["tb_Peripherals", "bx_colophon"],
 }
 
+# Frames whose settings are hidden (replaced by a short description) until their checkbox is ticked
+# (frame, contents, checkbox, description)
+_collapsibleSections = [
+    ("fr_tabs", "gr_thumbs", "c_thumbtabs",
+     _("Decorative tabs at the page edge to help navigate between book groups.")),
+    ("fr_borders", "gr_borders", "c_useOrnaments",
+     _("Enables decorative borders, rules, and verse markers for section headings, page borders, and more.")),
+    ("bx_colophon", "gr_colophon", "c_colophon", None),
+    ("fr_ef_Layout", "tb_efs", "c_extendedFnotes",
+     _("Lays out extended (study) notes in their own area, with separate column and rule settings.")),
+    ("fr_txlQuestions", "gr_txlQuestions", "c_txlQuestionsInclude",
+     _("Adds Transcelerator comprehension-check questions to the text.")),
+]
+
 # The 3 dicts below are used by method: sensiVisible() to toggle object states
 
 # Checkboxes and the different objects they make (in)sensitive when toggled
@@ -579,6 +594,8 @@ _sensitivities = {
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc", "l_leaderStyle", "fcb_leaderStyle"],
     "c_hideEmptyVerses" :      ["c_elipsizeMissingVerses"],
     "c_marginalverses" :       ["l_marginVrsPosn", "fcb_marginVrsPosn", "l_columnShift", "s_columnShift"],
+    "c_useMarginNotes" :       ["s_marginNotesWidth", "l_marginNotesPosn", "fcb_marginNotesPosn",
+                                "r_fnpos_margin", "r_xrpos_margin"],
     "c_rangeShowVerse" :       ["l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers", "c_xromitcaller", "c_xrpageresetcallers"],
@@ -1434,6 +1451,7 @@ class GtkViewModel(ViewModel):
         self.pubvarlist = self.builder.get_object("ls_zvarList")
         self.sbcatlist = self.builder.get_object("ls_sbCatList")
         self.strongsvarlist = self.builder.get_object("ls_strvarList")
+        self.marginNotesPosns = [(r[0], r[1]) for r in self.builder.get_object("ls_marginNotesPosn")]
 
         for w in self.allControls:
             if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
@@ -2270,7 +2288,7 @@ class GtkViewModel(ViewModel):
         self.checkUpdates()
         # self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
-        for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
+        for f, g, key, d in _collapsibleSections:
             self._updateSectionVisibility(key)
         return True
 
@@ -2924,6 +2942,7 @@ class GtkViewModel(ViewModel):
         self.updateBookList()
         if clearvars:
             self.unpaintUnlock()
+        self.updateMarginNotesPosns(restrict=False)
         super(GtkViewModel, self).loadConfig(config, clearvars=clearvars, **kw)
         if clearvars:
             for k, v in _sensitivities.items():
@@ -2942,6 +2961,8 @@ class GtkViewModel(ViewModel):
                     obj = self.builder.get_object(w)
                     if obj is not None:
                         obj.set_sensitive(state)
+        self.updateMarginNotesPosns(mod=False)
+        self.updateHeadingInMargin()
         self.pubView.load(self.publications)
         self.colorTabs()
         self.updateMarginGraphics()
@@ -2954,7 +2975,7 @@ class GtkViewModel(ViewModel):
             self.set("lb_diffPDF", pdfre.sub(r"\1", x))
         else:
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
-        for key in ("c_thumbtabs", "c_useOrnaments", "c_colophon"):
+        for f, g, key, d in _collapsibleSections:
             self._updateSectionVisibility(key)
         if config.has_section("coverwiz"):
             if self.coverwiz is not None:
@@ -3128,6 +3149,7 @@ class GtkViewModel(ViewModel):
     def on2colClicked(self, btn):
         self.onSimpleClicked(btn)
         self.updateMarginGraphics()
+        self.updateMarginNotesPosns(mod=not self.loadingConfig)
         self.updateDialogTitle()
         self.disableLayoutAnalysis()
         if self.loadingConfig:
@@ -3898,6 +3920,9 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         status = self.sensiVisible("c_sectionHeads")
         self.builder.get_object("c_parallelRefs").set_active(status)
+        if not status:
+            self.set("c_headingInMargin", False)
+        self.updateHeadingInMargin()
 
     def onUseIllustrationsClicked(self, btn):
         changed = not self.loadingConfig
@@ -5366,13 +5391,6 @@ class GtkViewModel(ViewModel):
         self.set("btn_selectDiffPDF", None)
         self.set("lb_diffPDF", _("Previous PDF (_1)"))
 
-    def onEditAdjListClicked(self, btn_editParaAdjList):
-        pgnum = 1
-        mpgnum = self.notebooks["Main"].index("tb_Viewer")
-        self.set("nbk_Main", mpgnum, mod=False)
-        self.set("nbk_Viewer", pgnum, mod=False)
-        self.onViewerChangePage(None,None,pgnum)
-
     def ontv_sizeallocate(self, atv, dummy):
         b = atv.get_buffer()
         it = b.get_iter_at_offset(-1)
@@ -5670,14 +5688,7 @@ class GtkViewModel(ViewModel):
             return
 
     def _setupCollapsibleSections(self):
-        sections = [
-            ("fr_tabs", "gr_thumbs", "c_thumbtabs",
-             _("Decorative tabs at the page edge to help navigate between book groups.")),
-            ("fr_borders", "gr_borders", "c_useOrnaments",
-             _("Enables decorative borders, rules, and verse markers for section headings, page borders, and more.")),
-            ("bx_colophon", "gr_colophon", "c_colophon", None),
-        ]
-        for frame_id, grid_id, key, desc in sections:
+        for frame_id, grid_id, key, desc in _collapsibleSections:
             frame = self.builder.get_object(frame_id)
             grid = self.builder.get_object(grid_id)
             if desc is not None:
@@ -5703,13 +5714,16 @@ class GtkViewModel(ViewModel):
     def _updateSectionVisibility(self, key):
         if not hasattr(self, '_section_desc_labels'):
             return
-        grid_ids = {"c_thumbtabs": "gr_thumbs", "c_useOrnaments": "gr_borders", "c_colophon": "gr_colophon"}
+        grid_ids = {k: g for f, g, k, d in _collapsibleSections}
         if (grid_id := grid_ids.get(key)) is None:
             return
         checked = bool(self.get(key))
         self.builder.get_object(grid_id).set_visible(checked)
         if key in self._section_desc_labels:
             self._section_desc_labels[key].set_visible(not checked)
+
+    def onCollapsibleSectionClicked(self, btn):
+        self._updateSectionVisibility(Gtk.Buildable.get_name(btn))
 
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
@@ -6319,6 +6333,47 @@ class GtkViewModel(ViewModel):
         if not self.sensiVisible("c_includeFootnotes"):
             if self.get("r_xrpos") == "below" or self.get("r_xrpos") == "blend":
                 self.set("r_xrpos", "centre") if self.get("c_useXrefList") else self.set("r_xrpos", "normal")
+
+    def onMarginNotesClicked(self, btn):
+        self.onSimpleClicked(btn)
+        if not self.get("c_useMarginNotes"):
+            for n in ("fn", "xr"):
+                if self.get("r_{}pos".format(n)) == "margin":
+                    self.set("r_{}pos".format(n), "normal")
+        self.updateMarginNotesPosns()
+        self.updateHeadingInMargin()
+
+    def updateHeadingInMargin(self):
+        # Headings can only go in the margin if there are both margin notes and section headings
+        self.builder.get_object("c_headingInMargin").set_sensitive(
+                bool(self.get("c_useMarginNotes")) and bool(self.get("c_sectionHeads")))
+
+    def onMirrorPagesClicked(self, btn):
+        self.updateMarginNotesPosns()
+
+    def updateMarginNotesPosns(self, restrict=True, mod=True):
+        # 2-column layouts only allow outer margin notes; mirrored pages only inner/outer
+        if not restrict:
+            allowed = None
+        elif self.get("c_doublecolumn"):
+            allowed = ("outer",)
+        elif self.get("c_mirrorpages"):
+            allowed = ("inner", "outer")
+        else:
+            allowed = None
+        posns = [p for p in self.marginNotesPosns if allowed is None or p[1] in allowed]
+        self.builder.get_object("fcb_marginNotesPosn").set_sensitive(
+                bool(self.get("c_useMarginNotes")) and not (restrict and self.get("c_doublecolumn")))
+        lsmn = self.builder.get_object("ls_marginNotesPosn")
+        if [r[1] for r in lsmn] == [p[1] for p in posns]:
+            return
+        curr = self.get("fcb_marginNotesPosn")
+        lsmn.clear()
+        for p in posns:
+            lsmn.append(p)
+        if curr not in [p[1] for p in posns]:
+            curr = "outer"
+        self.set("fcb_marginNotesPosn", curr, mod=mod)
 
     def updateColxrefSetting(self, btn):
         xrc = self.get("r_xrpos") == "centre" # i.e. Column Cross-References

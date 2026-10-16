@@ -791,6 +791,11 @@ to block hyphenation.</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">0.10</property>
   </object>
+  <object class="GtkAdjustment" id="a_marginNotesWidth">
+    <property name="upper">100</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">5</property>
+  </object>
   <object class="GtkAdjustment" id="a_margins">
     <property name="lower">0.5</property>
     <property name="upper">200</property>
@@ -9881,6 +9886,32 @@ at workshops (avoids repeated large downloads).</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_marginNotesPosn">
+    <columns>
+      <!-- column-name Heading -->
+      <column type="gchararray"/>
+      <!-- column-name marginVrsPosn -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Left</col>
+        <col id="1">left</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Right</col>
+        <col id="1">right</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inner</col>
+        <col id="1">inner</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Outer</col>
+        <col id="1">outer</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_marginVrsPosn">
     <columns>
       <!-- column-name Heading -->
@@ -17715,7 +17746,7 @@ Configuration settings.</property>
                                 <property name="margin-bottom">4</property>
                                 <property name="label-xalign">0.019999999552965164</property>
                                 <child>
-                                  <!-- n-columns=7 n-rows=6 -->
+                                  <!-- n-columns=7 n-rows=7 -->
                                   <object class="GtkGrid" id="grid_pagesetup">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -18153,6 +18184,7 @@ Note that this may leave larger
 empty spaces at the end of pages
 which will need to be manually
 adjusted using the Adjust List.</property>
+                                            <property name="valign">center</property>
                                             <property name="label" translatable="yes">Align Text to Baseline</property>
                                           </object>
                                           <packing>
@@ -18182,6 +18214,7 @@ use up the entire page.
 Warning: This is a major 'mode' change.
 Everything will shift as a result. Consider
 carefully before changing this setting.</property>
+                                            <property name="valign">center</property>
                                             <property name="margin-start">6</property>
                                             <property name="margin-end">6</property>
                                             <signal name="state-set" handler="onGridSettingChanged" swapped="no"/>
@@ -18215,6 +18248,7 @@ typesetting for thin Bible paper as
 front-to-back registration is not
 enforced with Variable Line Spacing.</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="label" translatable="yes">Variable Line Spacing</property>
                                           </object>
                                           <packing>
@@ -18244,6 +18278,7 @@ end of columns. The setting
 automatically gets enabled when
 you choose this setting.</property>
                                             <property name="halign">end</property>
+                                            <property name="valign">center</property>
                                             <property name="margin-start">6</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onAllowUnbalancedClicked" swapped="no"/>
@@ -18257,7 +18292,7 @@ you choose this setting.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">6</property>
                                         <property name="width">7</property>
                                       </packing>
                                     </child>
@@ -18272,7 +18307,7 @@ you choose this setting.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">5</property>
                                         <property name="width">7</property>
                                       </packing>
                                     </child>
@@ -18347,12 +18382,124 @@ it is an odd or even page, then turn off this option.</property>
                                         <property name="margin-start">20</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onMirrorPagesClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
                                         <property name="top-attach">0</property>
                                         <property name="width">2</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_useMarginNotes">
+                                        <property name="label" translatable="yes">Margin Notes
+Col Width (mm):</property>
+                                        <property name="name">Place Footnotes, Cross-references and Headings in Margin</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Enabling this will allow Notes (footnotes and/or
+cross-references) and optionally Headings (and
+their corresponding Parallel Passage references)
+to be place in a wider margin area in a way that
+makes them easier to access by the reader.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">6</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onMarginNotesClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_marginNotesWidth">
+                                        <property name="name">Margin Notes Column Width</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="tooltip-text" translatable="yes">This is the width (mm) of the additional column 
+which contains the Margin Notes (Footnotes, 
+Cross-references and/or Section Headings).</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="width-chars">5</property>
+                                        <property name="text">5.0</property>
+                                        <property name="xalign">1</property>
+                                        <property name="caps-lock-warning">False</property>
+                                        <property name="progress-pulse-step">0</property>
+                                        <property name="placeholder-text">0.0</property>
+                                        <property name="input-purpose">number</property>
+                                        <property name="adjustment">a_marginNotesWidth</property>
+                                        <property name="climb-rate">1</property>
+                                        <property name="digits">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update-policy">if-valid</property>
+                                        <property name="value">40</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">4</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_marginNotesPosn">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Marginal verses are usually placed
+on the left of the text, but can be
+positioned elsewhere if needed.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">17</property>
+                                        <property name="margin-start">17</property>
+                                        <property name="label" translatable="yes">Position 
+on Page: </property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">4</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_marginNotesPosn">
+                                        <property name="name">Horizontal position of marginal notes and headings</property>
+                                        <property name="width-request">10</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="can-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Marginal Notes are usually placed
+on the outside of the text, but can 
+be positioned elsewhere if needed.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="model">ls_marginNotesPosn</property>
+                                        <property name="wrap-width">1</property>
+                                        <property name="has-entry">True</property>
+                                        <property name="entry-text-column">0</property>
+                                        <property name="id-column">1</property>
+                                        <property name="active-id">left</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="can-focus">True</property>
+                                            <property name="halign">start</property>
+                                            <property name="max-length">8</property>
+                                            <property name="width-chars">12</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">4</property>
+                                        <property name="top-attach">4</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
@@ -18383,7 +18530,7 @@ it is an odd or even page, then turn off this option.</property>
                                 <property name="hexpand">False</property>
                                 <property name="label-xalign">0.15000000596046448</property>
                                 <child>
-                                  <!-- n-columns=2 n-rows=6 -->
+                                  <!-- n-columns=2 n-rows=7 -->
                                   <object class="GtkGrid" id="gr_doubleColumn">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -18584,7 +18731,7 @@ increased to the default value of 3.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">5</property>
+                                        <property name="top-attach">6</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -18622,6 +18769,18 @@ of Rule (pt):</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">5</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="height-request">40</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
@@ -20471,67 +20630,6 @@ can grow to when necessary.</property>
                                             <property name="position">0</property>
                                           </packing>
                                         </child>
-                                        <child>
-                                          <!-- n-columns=3 n-rows=1 -->
-                                          <object class="GtkGrid">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">center</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-start">6</property>
-                                            <property name="margin-end">6</property>
-                                            <property name="margin-top">3</property>
-                                            <property name="margin-bottom">3</property>
-                                            <property name="column-spacing">12</property>
-                                            <child>
-                                              <object class="GtkButton" id="btn_editParaAdjList">
-                                                <property name="label" translatable="yes">Edit Adjust List...</property>
-                                                <property name="name">Adjust Layout by Shrinking or Expanding Paragraphs</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">Click to view or edit the Adj List in the Viewer tab.</property>
-                                                <signal name="clicked" handler="onEditAdjListClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">A Paragraph Adjust List needs to be in this format:
-MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
-MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
-%MARK 4.14 +1   (ignore this line - treat it as a comment)   
-MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines)
-MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph 
-                              which contains MRK 6.23 e.g. a heading.)
-etc.
-Note that adjusting paragraphs needs to be done right at the
-end when all other settings and picture placements have been 
-finalized. Otherwise you may need to re-do it all once again.</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">Adjust Layout by Shrinking
-or Expanding Paragraphs:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                          </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="fill">True</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
                                       </object>
                                     </child>
                                     <child type="label">
@@ -21178,7 +21276,7 @@ in a style is subject to this setting.</property>
                                         <property name="can-focus">False</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_sectionHeads">
-                                            <property name="label" translatable="yes">Section Headings</property>
+                                            <property name="label" translatable="yes">Headings</property>
                                             <property name="name">Enable section headings</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -21217,6 +21315,29 @@ uncheck the Parallel Passage Refs.</property>
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
                                             <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_headingInMargin">
+                                            <property name="label" translatable="yes">In Margin</property>
+                                            <property name="name">Show Section Headings in Margin</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">If Margin Notes has been enabled on
+the Layout Tab, it is possible to also 
+place the Section Headings in the margin.
+Note that Parallel Passage Refs (if used)
+will also be placed in the margin area. </property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">18</property>
+                                            <property name="draw-indicator">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -22074,7 +22195,7 @@ Also settings for special books.</property>
                                     <property name="halign">start</property>
                                     <property name="orientation">vertical</property>
                                     <child>
-                                      <!-- n-columns=4 n-rows=6 -->
+                                      <!-- n-columns=4 n-rows=7 -->
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -22104,7 +22225,7 @@ quickly find the footnote from the text.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -22129,7 +22250,7 @@ Print a second time before it applies.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -22231,7 +22352,7 @@ showing, then a default set will appear.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -22255,7 +22376,7 @@ has been specified within the text itself.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">2</property>
+                                            <property name="top-attach">3</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -22272,13 +22393,12 @@ require each footnote to start on its own new
 line then set this option.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <property name="margin-start">8</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">1</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -22303,7 +22423,7 @@ line then set this option.</property>
                                         </child>
                                         <child>
                                           <object class="GtkRadioButton" id="r_fnpos_endnote">
-                                            <property name="label" translatable="yes">End Notes</property>
+                                            <property name="label" translatable="yes">End of Book</property>
                                             <property name="name">Placement of footnotes: End notes</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -22312,7 +22432,7 @@ line then set this option.</property>
 on each page, but will gather them together
 and place them all at the end of the book.</property>
                                             <property name="halign">start</property>
-                                            <property name="valign">center</property>
+                                            <property name="valign">start</property>
                                             <property name="margin-start">24</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_fnpos_normal</property>
@@ -22321,7 +22441,7 @@ and place them all at the end of the book.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -22338,7 +22458,6 @@ of the 2nd column of text.</property>
                                             <property name="valign">center</property>
                                             <property name="margin-start">24</property>
                                             <property name="margin-end">6</property>
-                                            <property name="margin-top">8</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_fnpos_normal</property>
                                             <signal name="clicked" handler="onFnPosChanged" swapped="no"/>
@@ -22764,7 +22883,7 @@ and Parameters:</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">5</property>
+                                            <property name="top-attach">6</property>
                                             <property name="width">4</property>
                                           </packing>
                                         </child>
@@ -22824,9 +22943,42 @@ enable this option.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">1</property>
+                                            <property name="top-attach">2</property>
                                             <property name="width">2</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_fnpos_margin">
+                                            <property name="label" translatable="yes">Side Margin</property>
+                                            <property name="name">Placement of footnotes: Side Margin</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">This option will place footnotes (and optionally 
+also the Cross-references and Section Headings) 
+in a column next to the text and align them as
+closely as possible vertically to their caller. </property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">24</property>
+                                            <property name="draw-indicator">True</property>
+                                            <property name="group">r_fnpos_normal</property>
+                                            <signal name="clicked" handler="onFnPosChanged" swapped="no"/>
+                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <placeholder/>
@@ -23177,7 +23329,7 @@ Footnotes and xRefs (pt):</property>
                                     <property name="halign">start</property>
                                     <property name="orientation">vertical</property>
                                     <child>
-                                      <!-- n-columns=4 n-rows=6 -->
+                                      <!-- n-columns=4 n-rows=7 -->
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -23190,7 +23342,7 @@ Footnotes and xRefs (pt):</property>
                                         <property name="column-spacing">4</property>
                                         <child>
                                           <object class="GtkRadioButton" id="r_xrpos_endnote">
-                                            <property name="label" translatable="yes">End Notes</property>
+                                            <property name="label" translatable="yes">End of Book</property>
                                             <property name="name">Placement of cross-references: As End Notes</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -23199,7 +23351,7 @@ Footnotes and xRefs (pt):</property>
 on each page, but will gather them together
 and place them all at the end of the book.</property>
                                             <property name="halign">start</property>
-                                            <property name="valign">center</property>
+                                            <property name="valign">start</property>
                                             <property name="margin-start">24</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_xrpos_normal</property>
@@ -23208,7 +23360,7 @@ and place them all at the end of the book.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -23225,7 +23377,6 @@ of the 2nd column of text.</property>
                                             <property name="valign">center</property>
                                             <property name="margin-start">24</property>
                                             <property name="margin-end">6</property>
-                                            <property name="margin-top">8</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_xrpos_normal</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -23264,6 +23415,7 @@ at the end of each page.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
+                                            <property name="valign">center</property>
                                             <property name="margin-start">12</property>
                                             <property name="label" translatable="yes">Placement of Cross-References:</property>
                                           </object>
@@ -23286,13 +23438,12 @@ require each cross-reference to start on its own new
 line then set this option.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <property name="margin-start">8</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">2</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">1</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -23316,7 +23467,7 @@ has been specified within the text itself.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">2</property>
+                                            <property name="top-attach">3</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -23418,7 +23569,7 @@ showing, then a default set will appear.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">4</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -23441,7 +23592,7 @@ quickly find the cross-reference from the text.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -23466,7 +23617,7 @@ Print a second time before it applies.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">5</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -23528,7 +23679,6 @@ one type of caller (rather than a sequence)
 which must be specified above.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <property name="margin-top">8</property>
                                             <property name="xalign">0</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_xrpos_normal</property>
@@ -23594,7 +23744,7 @@ Reference Bibles in conjunction with the
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">5</property>
+                                            <property name="top-attach">6</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -23613,7 +23763,7 @@ along with other kinds of cross-references.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">5</property>
+                                            <property name="top-attach">6</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -23663,7 +23813,7 @@ enable this option.</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
-                                            <property name="top-attach">1</property>
+                                            <property name="top-attach">2</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
@@ -23676,6 +23826,41 @@ enable this option.</property>
                                             <property name="left-attach">3</property>
                                             <property name="top-attach">5</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_xrpos_margin">
+                                            <property name="label" translatable="yes">Side Margin</property>
+                                            <property name="name">Placement of cross-references: Side Margin</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">This option will place references (and optionally 
+also the Footnotes and Section Headings) 
+in a column next to the text and align them as
+closely as possible vertically to their caller. </property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-right">6</property>
+                                            <property name="margin-start">24</property>
+                                            <property name="margin-end">6</property>
+                                            <property name="draw-indicator">True</property>
+                                            <property name="group">r_xrpos_normal</property>
+                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                            <signal name="clicked" handler="onXrefLocnClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                       </object>
                                       <packing>
@@ -25530,6 +25715,7 @@ block at the end of each page. </property>
                                             <property name="valign">center</property>
                                             <property name="margin-start">2</property>
                                             <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onCollapsibleSectionClicked" swapped="no"/>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                         </child>
@@ -25791,6 +25977,7 @@ project can be located.</property>
                                             <property name="valign">center</property>
                                             <property name="margin-start">2</property>
                                             <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onCollapsibleSectionClicked" swapped="no"/>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
                                         </child>
