@@ -282,35 +282,20 @@ fr_spacingAdj gr_spacingAdj c_spacing c_letterSpacing s_minSpace s_maxSpace s_le
 s_letterStretch l_minSpace l_maxSpace c_linebreakon t_linebreaklocale
 c_RTLbookBinding c_prettyIntroOutline c_omitverseone c_glueredupwords c_firstParaIndent
 c_hangpoetry c_preventwidows lb_style_s c_headingInMargin c_parallelRefs lb_style_r lb_style_c lb_style__v
-c_useChapterLabel t_clBookList t_clHeading l_clHeading c_differentColLayout c_optimizePoetryLayout
-t_differentColBookList lb_style_w lb_style_zglm c_fnomitcaller c_fnpageresetcallers bx_fnCallers
+lb_style_w lb_style_zglm c_fnomitcaller c_fnpageresetcallers bx_fnCallers
 c_fnautocallers t_fncallers btn_resetFNcallers c_fnOverride lb_style_f r_fnpos_endnote
 r_fnpos_column r_fnpos_normal ex_footnotes gr_fnRuleSettings l_fnBelowSpace l_fnAboveSpace
-l_text2NotesSpace1 s_fnAboveSpace s_fnBelowSpace rule_footnote c_footnoterule gr_fnRulePosParms
-s_fnIndent s_fnLength s_fnThick fcb_fnHorizPosn l_fnRulePosParms lb_fnRuleSettings l_spacer1
-c_frVerseOnly r_fnpos_margin ex_miscFootnotes c_addColon c_keepBookWithRefs c_glossaryFootnotes
-l_spaceBetweenNotes s_notespacingmin s_notespacingmax l_min l_max s_internote l_internote
+l_text2NotesSpace1 s_fnAboveSpace s_fnBelowSpace rule_footnote c_footnoterule
+lb_fnRuleSettings l_spacer1
+c_frVerseOnly r_fnpos_margin
 lb_footnotes
 r_xrpos_endnote r_xrpos_column r_xrpos_normal c_xrOverride bx_xrCallers c_xrautocallers t_xrcallers
 btn_resetXRcallers c_xromitcaller c_xrpageresetcallers lb_style_x r_xrpos_below r_xrpos_blend
-r_xrpos_centre c_useXrefList c_extendedXrefs c_xoVerseOnly l_spacer2 r_xrpos_margin ex_xrListSettings
-tb_extXrefs gr_extXrefs l_colXRside1 fcb_xRefExtListSource btn_selectXrFile r_xrSource_standard
-r_xrSource_strongs r_xrSource_tsk r_xrSource_works r_xrSource_ubs r_xrSource_custom
-fr_strongs c_strongsShowInText c_strongsShowNums btn_strongsGenerate c_strongsShowAll lb_style_xts
-btn_infoXrefSource
-fr_colXrefs s_centreColWidth l_xrColWid l_xrColSpace s_xrGutterWidth l_colXRside fcb_colXRside
-c_xrColumnRule c_xrColumnBottom c_xrSideAlign l_colXrefs lb_extXRsource ex_xrefs gr_xrRuleSettings
+r_xrpos_centre c_xoVerseOnly l_spacer2 r_xrpos_margin
+ex_xrefs gr_xrRuleSettings
 l_xrBelowSpace l_xrAboveSpace c_xrefrule l_text2NotesSpace3 s_xrAboveSpace s_xrBelowSpace rule_xref
-gr_xrRulePosParms s_xrIndent s_xrLength s_xrThick fcb_xrHorizPosn lb_xrRuleSettings lb_xrefs
-fr_ef_Layout
-tb_efs gr_ef_layout s_ef_colgutterfactor l_ef_gutterWidth s_ef_bottomRag l_ef_bottomRag
-s_ef_internote l_ef_internoteSpace c_ef_verticalrule l_ef_colgutteroffset s_ef_colgutteroffset
-c_ef_showCallers ex_studynotes gr_snRuleSettings rule_studynote gr_fnRulePosParms2 s_snIndent
-s_snLength s_snThick fcb_snHorizPosn l_snRulePosParms c_studynoterule l_snBelowSpace l_snAboveSpace
-l_text2StudyNotesSpace s_snAboveSpace s_snBelowSpace lb_fnRuleSettings2 c_extendedFnotes c_sidebars
-lb_style_ef
-fr_filterCats gr_filterCats scr_sbCatList tv_sbCatEdit col_sbCatList_name col_sbCatListEF_value
-col_sbCatListEF_value1 btn_sb_rescanCats c_filterCats l_filterCats lb_studynotes
+lb_xrRuleSettings lb_xrefs c_sidebars
+lb_studynotes
 r_hdrLeft_Pri r_hdrLeft_Sec r_hdrCenter_Pri r_hdrRight_Pri r_hdrCenter_Sec r_hdrRight_Sec
 gr_HeaderAdvOptions c_rangeShowChapter c_rangeShowVerse r_CVsep_colon r_CVsep_period
 c_rangeShowBook l_chvsSep lb_style_h
@@ -370,14 +355,12 @@ t_NoteBlendInto ex_styTable l_tcVpos fcb_stytcVpos ex_stySB col_sb_backColor s_s
 btn_sbBorders btn_sbFGIDia btn_sbBGIDia l_sbWidth l_sb_backColor l_sbAlpha t_sbPgPos
 btn_sbSizePosition c_styTextProperties lb_StyleEditor
 tb_Advanced
-tb_AdvMain bx_AdvancedMain c_useModsTex c_processScript r_when2processScript_before
-r_when2processScript_after btn_selectScript c_usePrintDraftChanges btn_editChangesFile
-btn_editModsTeX btn_editModsSty c_useModsSty c_useCustomSty btn_editCustomSty btn_editScript
-btn_editModsPreTex c_usePreModsTex
-fr_AdvOther c_sensitive c_canonicalise c_interlinear t_interlinearLang c_ruby lb_style_rb
-lb_style_gloss|rb c_useEngLinks c_noInternet t_plugins c_usePunctuation c_autoTagHebGrk
-c_lockXeTeXLayout c_lockUI4Layout
-fr_testrecording c_testrecording l_advMain
+tb_AdvMain bx_AdvancedMain c_useModsTex
+c_usePrintDraftChanges btn_editChangesFile
+btn_editModsTeX
+fr_AdvOther c_sensitive c_canonicalise
+c_useEngLinks c_noInternet c_autoTagHebGrk
+l_advMain
 tb_advOther bx_AdvancedOther gr_texoptions l_advOther btn_texpertFilter lb_Advanced
 tb_Viewer gr_editableButtons btn_refreshViewerText l_examineBook ecb_examineBook btn_Generate
 btn_viewEdit btn_editZvars btn_infoViewEdit c_autoSave s_viewEditFontSize
@@ -401,15 +384,10 @@ tb_Publications l_pubHeading l_pubIntro bx_pubToolbar btn_pubAdd btn_pubDuplicat
 btn_pubExpandAll btn_pubCollapseAll scr_publications tv_publications col_pub_select col_pub_field
 col_pub_value bx_pubFooter l_pubStatus btn_pubPrint lb_Publications
 tb_Cover lb_Cover
-l_sheetsPerSignature c_scaleToFit l_foldCutMargin s_sheetsPerSignature s_foldCutMargin c_foldFirst
-c_coverSeparatePDF col_ndiffColor l_ndiffColor l_odiffColor col_odiffColor s_diffpages l_diffpages
-fr_pdfDetails fcb_outputFormat c_cropmarks s_keepVersions c_inclSettingsInPDF c_printArchive
-col_spotColor l_spotColor s_spotColorTolerance l_spotColorTolerance c_extractInserts c_extraxdvproc
+c_scaleToFit
+s_diffpages l_diffpages
+fr_pdfDetails fcb_outputFormat c_cropmarks s_keepVersions c_inclSettingsInPDF
 c_applyWatermark btn_selectWatermarkPDF lb_applyWatermark lb_Finishing
-tb_Printers bx_printersMain
-fr_prnJobSpec l_prn_thickness s_prn_pages l_prn_trimSize s_prn_copies fcb_prn_interior
-fcb_prn_binding fcb_prn_currency bx_printerSplit scr_printerList bx_prn_compareRow btn_prn_compare
-bx_prn_priceInfo lb_Printers
 l_prjdir l_settings_dir l_working_dir l_trainingVideos lb_trainingOnPTsite l_reportBugs
 lb_reportBugs rule_help l_techFAQ lb_techFAQ l_ptxprintdir lb_community l_community lb_working_dir
 lb_prjdir lb_settings_dir lb_ptxprintdir l_giveFeedback lb_giveFeeback l_generateReport
@@ -483,6 +461,39 @@ btn_slice_ok btn_slice_cancel t_sliceRef l_newAnchorMsg1 t_sliceWord t_sliceMkr 
 btn_sty_ok btn_sty_cancel t_styMarker textv_styDesc t_styName t_styEndMarker l_styType fcb_styType
 """.split()
 
+_ui_full = """
+c_useChapterLabel t_clBookList l_clHeading t_clHeading c_optimizePoetryLayout c_differentColLayout
+t_differentColBookList
+gr_fnRulePosParms s_fnIndent s_fnLength s_fnThick fcb_fnHorizPosn l_fnRulePosParms ex_miscFootnotes
+c_addColon c_keepBookWithRefs c_glossaryFootnotes l_spaceBetweenNotes s_notespacingmin
+s_notespacingmax l_min l_max s_internote l_internote
+c_useXrefList c_extendedXrefs ex_xrListSettings tb_extXrefs gr_extXrefs l_colXRside1
+fcb_xRefExtListSource btn_selectXrFile r_xrSource_standard r_xrSource_strongs r_xrSource_tsk
+r_xrSource_works r_xrSource_ubs r_xrSource_custom fr_strongs c_strongsShowInText c_strongsShowNums
+btn_strongsGenerate c_strongsShowAll lb_style_xts btn_infoXrefSource fr_colXrefs s_centreColWidth
+l_xrColWid l_xrColSpace s_xrGutterWidth l_colXRside fcb_colXRside c_xrColumnRule c_xrColumnBottom
+c_xrSideAlign l_colXrefs lb_extXRsource gr_xrRulePosParms s_xrIndent s_xrLength s_xrThick
+fcb_xrHorizPosn
+fr_ef_Layout tb_efs gr_ef_layout s_ef_colgutterfactor l_ef_gutterWidth s_ef_bottomRag
+l_ef_bottomRag s_ef_internote l_ef_internoteSpace c_ef_verticalrule l_ef_colgutteroffset
+s_ef_colgutteroffset c_ef_showCallers ex_studynotes gr_snRuleSettings rule_studynote
+gr_fnRulePosParms2 s_snIndent s_snLength s_snThick fcb_snHorizPosn l_snRulePosParms c_studynoterule
+l_snBelowSpace l_snAboveSpace l_text2StudyNotesSpace s_snAboveSpace s_snBelowSpace
+lb_fnRuleSettings2 c_extendedFnotes lb_style_ef ex_filterCats fr_filterCats
+gr_filterCats scr_sbCatList tv_sbCatEdit col_sbCatList_name col_sbCatListEF_value
+col_sbCatListEF_value1 btn_sb_rescanCats c_filterCats l_filterCats
+c_processScript r_when2processScript_before r_when2processScript_after btn_selectScript
+btn_editScript c_usePreModsTex btn_editModsPreTex c_useCustomSty btn_editCustomSty c_useModsSty
+btn_editModsSty c_lockXeTeXLayout c_lockUI4Layout c_interlinear t_interlinearLang c_ruby
+lb_style_rb lb_style_gloss|rb l_plugins t_plugins c_usePunctuation fr_testrecording c_testrecording
+l_sheetsPerSignature s_sheetsPerSignature c_coverSeparatePDF l_foldCutMargin s_foldCutMargin
+c_foldFirst l_odiffColor col_odiffColor l_ndiffColor col_ndiffColor c_extractInserts c_extraxdvproc
+l_spotColor col_spotColor l_spotColorTolerance s_spotColorTolerance c_printArchive
+tb_Printers bx_printersMain fr_prnJobSpec l_prn_thickness s_prn_pages l_prn_trimSize s_prn_copies
+fcb_prn_interior fcb_prn_binding fcb_prn_currency bx_printerSplit scr_printerList bx_prn_compareRow
+btn_prn_compare bx_prn_priceInfo lb_Printers
+""".split()
+
 _ui_experimental = """
 btn_layoutWizard
 """.split()
@@ -512,11 +523,13 @@ _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "t
                        "btn_layoutWizard") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover tb_Printers lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
+_ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
 
 _uiLevels = {
     2 : _ui_minimal,
     4 : _ui_basic,
+    5 : _ui_default,
+    6 : _ui_full,
 }
 
 _showActiveTabs = {
@@ -1312,7 +1325,7 @@ class GtkViewModel(ViewModel):
         self.lastUpdatetime = time.time() - 3600
         self.isDisplay = True
         self.searchWidget = []
-        self.uilevel = int(self.userconfig.get('init', 'userinterface', fallback='4'))
+        self.uilevel = int(self.userconfig.get('init', 'userinterface', fallback='5'))
         self.set("c_quickRun", self.userconfig.getboolean('init', 'quickrun', fallback=False))
         self.set("c_updatePDF", self.userconfig.getboolean('init', 'updatepdf', fallback=True))
         self.set("c_bkView", self.userconfig.getboolean('init', 'bkview', fallback=True))
@@ -2098,8 +2111,8 @@ class GtkViewModel(ViewModel):
             self.searchWidget.append(wid)
             ui = self.uilevel
             setLevel = 0
-            for i in range(2, 5):
-                if i in _uiLevels and wid in _uiLevels[i]:
+            for i in sorted(_uiLevels):
+                if wid in _uiLevels[i]:
                     if i > ui:
                         setLevel = i
                     break
