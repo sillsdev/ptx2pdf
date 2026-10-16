@@ -1184,3 +1184,36 @@ def bringParatextToForeground():
         user32.SetForegroundWindow(hwnd)
         user32.AttachThreadInput(our_tid, tgt_tid, False)
     return False
+
+# Paper weight (gsm) -> thickness (µm per sheet, approximate). Values below 60gsm
+# are for thin Bible paper (from Pretore's figures); 60gsm and up are typical
+# uncoated offset paper.
+GSM_TO_UM = {
+    36: 43, 40: 47, 50: 60,
+    60: 82, 70: 95, 75: 100, 80: 106, 90: 118, 100: 130,
+    110: 143, 120: 156, 130: 169, 140: 182, 150: 195,
+    160: 208, 170: 221, 180: 234, 200: 260, 250: 325, 300: 390,
+}
+
+def _interpolate(pairs, x):
+    """ Linear interpolation over sorted (x, y) pairs, clamping at both ends """
+    if x <= pairs[0][0]:
+        return pairs[0][1]
+    if x >= pairs[-1][0]:
+        return pairs[-1][1]
+    for (x0, y0), (x1, y1) in zip(pairs, pairs[1:]):
+        if x0 <= x <= x1:
+            return y0 + (x - x0) / (x1 - x0) * (y1 - y0)
+
+def gsmToUm(gsm: float) -> float:
+    """ Approximate paper thickness in µm from gsm """
+    return _interpolate(sorted(GSM_TO_UM.items()), gsm)
+
+def umToGsm(um: float) -> float:
+    """ Reverse: derive gsm from thickness µm """
+    return _interpolate(sorted((v, k) for k, v in GSM_TO_UM.items()), um)
+
+def spineWidthMm(pages, paper, units="weight", adjust=0.):
+    """ Spine width in mm for a page count. paper is gsm if units == 'weight', else µm """
+    um = gsmToUm(paper) if units == "weight" else paper
+    return pages / 2. * um / 1000. + adjust
