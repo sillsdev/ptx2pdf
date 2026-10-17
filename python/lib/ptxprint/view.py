@@ -777,7 +777,9 @@ class ViewModel:
             self.strongs = None
             self.onNumTabsChanged()
             self.readCopyrights(forced=True)
-            self.picChecksView.init(basepath=self.project.srcPath(self.cfgid))
+            # The shared folder, as writeCfg uses (picInfo.txt there, picChecks.txt in <cfg>/). Since a
+            # 2024 refactor this read from the config folder, so picture checks and notes never loaded.
+            self.picChecksView.init(basepath=self.project.srcPath())
             self.picinfos: Optional[Piclist] = None
             self.loadPics(mustLoad=False, force=True)
             self.hyphenation = None

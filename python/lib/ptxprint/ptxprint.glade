@@ -30253,8 +30253,8 @@ be used in:</property>
                                                             <property name="can-focus">False</property>
                                                             <property name="tooltip-text" translatable="yes">Use the notes area below to record anything 
 about this picture, or to dialog with the consultant.
-The notes entered here will be available and editable 
-in ALL publications of this project (not just THIS one).</property>
+The notes entered here are saved with this
+configuration only (other configurations have their own).</property>
                                                             <property name="halign">start</property>
                                                             <property name="label" translatable="yes">Notes About This Picture:</property>
                                                             <attributes>
