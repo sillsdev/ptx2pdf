@@ -909,7 +909,7 @@ class RunJob:
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
-                            self.printer.onIdle(self.printer.doStatus, chkmsg, warning=True)
+                            self.printer.onIdle(self.printer.doStatus, chkmsg, warning=smry["E"] > 0)   # underfilled pages are advice, not a warning
                             self.printer.onIdle(sl.set_tooltip_text, "" if msgs == chkmsg else msgs)
                             self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, "error" if smry["E"] > 0 else None)
                         else:
