@@ -5691,9 +5691,12 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         self.setPublishableTextBorder()
 
-    def onOpenTextBorderDialog(self, btn):
+    def onOpenTextBorderDialog(self, btn, *a):
+        # Like the other style links: open the textborder style on the Styles tab.
+        # (This used to call styleEditor.sidebarBorderDialog(), which doesn't exist.)
         self.setPublishableTextBorder()
-        self.styleEditor.sidebarBorderDialog()
+        self.onEditStyleClicked(btn)
+        return True     # handled: don't try to open the link's uri
 
     def setPublishableTextBorder(self):
         x = "" if self.get("c_useOrnaments") and self.get("c_inclPageBorder") \

@@ -31936,7 +31936,7 @@ the \textborder style on the Styles tab).</property>
                                                 <property name="valign">center</property>
                                                 <property name="relief">none</property>
                                                 <property name="uri">Click to Edit the Text Border settings (on the Styles tab)</property>
-                                                <signal name="clicked" handler="onOpenTextBorderDialog" swapped="no"/>
+                                                <signal name="activate-link" handler="onOpenTextBorderDialog" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">2</property>
