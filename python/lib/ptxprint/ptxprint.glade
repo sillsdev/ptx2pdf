@@ -357,7 +357,7 @@ THE SOFTWARE.
     <property name="can-focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: Create Hyphenation List</property>
+    <property name="title" translatable="yes">PTXprint: Create List</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window-position">center-on-parent</property>
@@ -1860,9 +1860,9 @@ Locate File:</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="tooltip-text" translatable="yes">PTXprint will create this project within a 
-subfolder called '_PTXprint'. Use 8 characters 
-or less for the new project name. Do not use
-the name of an existing Project.</property>
+subfolder called '_PTXprint'. Use a short name
+(8 characters or fewer is best) for the new project.
+Do not use the name of an existing Project.</property>
                     <property name="halign">end</property>
                     <property name="margin-top">6</property>
                     <property name="label" translatable="yes">&lt;b&gt;Step 3&lt;/b&gt;
@@ -1883,9 +1883,9 @@ for the Project:</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">PTXprint will create this project within a 
-subfolder called '_PTXprint'. Use 8 characters 
-or less for the new project name. Do not use
-the name of an existing Project.</property>
+subfolder called '_PTXprint'. Use a short name
+(8 characters or fewer is best) for the new project.
+Do not use the name of an existing Project.</property>
                     <property name="margin-top">12</property>
                     <property name="margin-bottom">6</property>
                     <property name="max-length">20</property>
@@ -7433,6 +7433,9 @@ parentheses, underscores and hyphens.</property>
                             <property name="name">Import: Entire PicList "as is" (overwrite existing PicList)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Replace the target's whole picture list with
+the source's. Pictures only in the target are
+removed. Use it when the source is the master list.</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
@@ -7452,6 +7455,8 @@ parentheses, underscores and hyphens.</property>
                             <property name="name">Import: Elements of PicList (preserving existing PicList)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Keep the target's picture list and copy only the
+parts ticked below, for pictures in both lists.</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
@@ -7479,6 +7484,9 @@ parentheses, underscores and hyphens.</property>
                                 <property name="label" translatable="yes">Captions</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">Copy the captions and the reference shown with
+each picture. Leave unticked if the target is in
+another language.</property>
                                 <property name="receives-default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
@@ -7494,6 +7502,8 @@ parentheses, underscores and hyphens.</property>
                                 <property name="label" translatable="yes">Size, Position, Mirror, Rotation settings</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">Copy the size, position, scale, mirroring
+and rotation of each picture.</property>
                                 <property name="receives-default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
@@ -7510,6 +7520,8 @@ parentheses, underscores and hyphens.</property>
                                 <property name="label" translatable="yes">Copyright Information</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">Copy the copyright (credit) information
+of each picture.</property>
                                 <property name="receives-default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
@@ -7598,6 +7610,8 @@ parentheses, underscores and hyphens.</property>
                             <property name="label" translatable="yes">Add Any New Pictures</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Add pictures that are in the source list
+but not yet in the target list.</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
@@ -7615,6 +7629,9 @@ parentheses, underscores and hyphens.</property>
                             <property name="label" translatable="yes">Remove Any Old Pictures</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Remove pictures from the target list that are
+not in the source list. Tick it when the source
+list is the complete, final list.</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
@@ -7777,7 +7794,7 @@ including fonts set within individual styles.</property>
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">15</property>
                         <property name="label" translatable="yes">This will selectively import any Styles which are different from the Default settings.
-This will also import styles from ptxprint-mods.sty, but not from custom.sty.
+Styles from ptxprint-mods.sty are imported with Other &gt; Advanced settings (custom.sty is never imported).
 Fonts set within styles are only imported if Fonts+Script is also ticked.
 You may also want to RESET the current configuration (see below) before importing styles.</property>
                         <property name="wrap">True</property>
@@ -20344,7 +20361,7 @@ to ensure that they are displayed properly.</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
                                             <property name="tooltip-text" translatable="yes">To hyphenate properly you need to first create a 
-Hyphenation List using the 'Import List...' button.
+Hyphenation List using the 'Create List...' button.
 This will create a XeTeX hyphenation list from the
 hyphenation list in Paratext.
 
@@ -20363,7 +20380,7 @@ to be disabled.</property>
                                         </child>
                                         <child>
                                           <object class="GtkButton" id="btn_generateHyphenationList">
-                                            <property name="label" translatable="yes">Import List...</property>
+                                            <property name="label" translatable="yes">Create List...</property>
                                             <property name="name">Create Hyphenation List</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -24270,7 +24287,7 @@ another project (in the .xrf file format) to be included here.
 There is also an .xre format (extended .xrf) and an .xml
 format which can be used as external cross-references.
 These formats are explained in the documentation.
-Search Google for "ptx2pdf/xrefs.md"</property>
+See the PTXprint documentation (xrefs.md).</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">center</property>
                                                         <property name="draw-indicator">True</property>
@@ -30741,9 +30758,10 @@ on the page(s).
 All of the texts listed in the table
 above must be mentioned. The
 comma represents the next page.
-A forward slash / indicates one
-text being under the other on the
-same page.</property>
+A forward slash / will put one
+text under the other on the same
+page (this is still to come and
+cannot be used yet).</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="max-length">12</property>
@@ -30897,9 +30915,10 @@ on the page(s).
 All of the texts listed in the table
 above must be mentioned. The
 comma represents the next page.
-A forward slash / indicates one
-text being under the other on the
-same page.</property>
+A forward slash / will put one
+text under the other on the same
+page (this is still to come and
+cannot be used yet).</property>
                                     <property name="halign">end</property>
                                     <property name="margin-left">20</property>
                                     <property name="margin-start">20</property>
@@ -36953,8 +36972,8 @@ cover using the online Canva.com tool.</property>
                                 <property name="tooltip-text" translatable="yes">This will automatically generate the Table of Contents
 for all the books included in the publication using one
 or more of the \toc1, \toc2 and \toc3 fields as specified.
-This option is ignored unless the "Multiple Books" 
-option has been set on the Basic tab.
+The 	oc1, 	oc2 and 	oc3 choices are only applied
+when "Multiple Books" is set on the Basic tab.
 
 NOTE: PTXprint typesets the text more than once
 to get the page numbers right, so printing takes
@@ -37948,7 +37967,7 @@ main scripture pages.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
-                            <property name="label" translatable="yes">Each publication prints this configuration with its own set of books and its own values for the \zvars marked 'Pub' on the Peripherals tab (such as the main title and subtitle). Tick the publications you want, then click 'Print Selected'. Click on any value to edit it.</property>
+                            <property name="label" translatable="yes">Each publication prints this configuration with its own set of books and its own values for the \zvars marked 'Pub' on the Peripherals tab (such as the main title and subtitle). Tick the publications you want, then click 'Print Selected'. Click a publication name, its books, or a field value to change it. Books shown in red cannot be understood – hold the mouse over them to see why.</property>
                             <property name="wrap">True</property>
                             <property name="max-width-chars">90</property>
                             <property name="xalign">0</property>
@@ -39896,12 +39915,8 @@ latest features available in PTXprint.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="no-show-all">True</property>
-                                        <property name="tooltip-text" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
-the User-Interface. The PDFs are produced by recently
-enhanced XeTeX macros with a long and reliable history.
-This is a work in progress, so when you come across
-bugs, annoyances or can't make it work right, please file
-an issue using this link.</property>
+                                        <property name="tooltip-text" translatable="yes">Found a bug? If you have a GitHub account, report it here.
+Otherwise email ptxprint_support@sil.org.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Report a Bug:</property>
                                         <property name="justify">right</property>
