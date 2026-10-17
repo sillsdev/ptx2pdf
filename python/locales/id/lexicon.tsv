@@ -1,0 +1,252 @@
+# Auto-built by buildLexicon.py from the existing id translations. Do not hand-edit:
+# put overrides in glossary.tsv (which wins). English<TAB>translation<TAB>note
+settings	Pengaturan	noun
+page	Halaman	
+text	Teks	
+show	Tampilkan	also: Tunjukkan; verb
+pdf	PDF	left in English
+image	Gambar	
+select	Pilih	verb
+list	Daftar	noun
+dialog	Dialog	also: Pemilihan (in Font Selection Dialog); often dropped or Bingkai
+books	Kitab	also: Kitab-kitab; Bible books
+cover	Sampul	noun
+ptxprint	PTXprint	product name, unchanged
+picture	Gambar	
+color	Warna	
+space	Ruang	also: Jarak; noun; Jarak for min/max spacing
+rule	Garis	also: Garis Pengukur, Pengukur, Aturan; noun; typographic line
+line	Baris	also: Garis; Baris for text line; Garis for drawn line
+project	Proyek	noun
+position	Posisi	noun
+verse	Ayat	
+font	Font	also: Huruf
+notes	Catatan	noun
+border	Batas	also: Bingkai, Garis Tepi, Perbatasan; noun
+sidebar	Kotak Info	also: Bilah samping; noun
+generate	Hasilkan	also: Buat; verb
+include	Sertakan	also: Disertakan; verb; passive form 'Disertakan' after 'to'
+set	Atur	also: Pilih; Kumpulan (noun, as in Image Set); verb; noun sense: collection
+diglot	Dua Bahasa	also: Diglot
+enable	Aktifkan	also: Mengaktifkan; Terapkan; verb
+edit	Sunting	also: Edit; verb
+file	File	also: Berkas
+borders	Bingkai	also: Garis Tepi; Batas
+column	Kolom	
+book	Kitab	also: Buku; Judul; Bible book; 'Buku' for generic book
+background	Latar Belakang	also: Latar
+configuration	Konfigurasi	
+chapter	Pasal	
+import	Impor	also: Mengimpor; verb
+pictures	Gambar	
+cross-references	Referensi Silang	also: Acuan Silang
+note	Catatan	
+layout	Tata Letak	
+strong's	Strong	also: Kamus Strong; Strong's concordance
+matter	Bagian	also: Informasi; in front/back matter
+words	Kata	
+end	Akhir	
+index	Indeks	
+front	Depan	also: Awal
+vertical	Vertikal	
+thickness	Tebal	also: Ketebalan; Tebalnya
+size	Ukuran	noun
+styles	Gaya	noun, plural
+folder	Folder	kept as loanword
+width	Lebar	also: Selebar; noun
+numbers	Nomor	plural
+footnote	Catatan Kaki	noun
+style	Gaya	noun
+header	Hulu	also: Judul Bagian Teks; page header; section header sense: Judul
+margin	Tepi	also: Margin, Tepi Halaman, Ruang kosong; noun
+number	Nomor	also: Jumlah, Beri Nomor; jumlah = count; verb: to number
+grid	Kisi	noun
+spacing	Jarak	also: Ruang, Skala Ukuran Baris Teks; noun
+add	Tambah	also: Tambahkan; verb
+adjust	Sesuaikan	also: Menyesuaikan, Mengatur, Penyesuaian; verb; noun: Penyesuaian
+front matter	Bagian Depan Buku	also: Informasi Awal Buku, FRT; noun
+top	Atas	noun/position
+create	Buat	also: Membuat; verb
+between	Antara	also: Di Antara; preposition
+scale	Skala	also: Sesuaikan besarnya; noun
+start	Mulai	also: Memulakan, Awal, Dimulai; verb; noun: Awal
+new	Baru	adjective
+tabs	Label	also: Tab; thumb tabs; plain Tabs kept as Tab
+lines	Baris	also: Garis; noun, plural
+indent	Inden	also: Indentasi, Masuk ke kanan, Geseran ke kanan; noun
+error	Kesalahan	noun
+footnotes	Catatan Kaki	noun
+config	Konfigurasi	also: Pengaturan; noun
+horizontal	Horisontal	also: Horizontal
+piclist	Daftar Gambar	also: PicList; noun
+generate cover	Hasilkan Sampul	also: Menghasilkan sampul, Menghasilkan penutup; verb phrase
+checklist	Daftar periksa	also: Daftar; noun
+spine	Jilid	also: Judul di Jilid; book spine
+left	Kiri	
+name	Nama	noun
+study	Studi	modifier, e.g. Catatan Studi
+strong's index	Indeks Kamus Strong	also: Indeks Strong
+pages	Halaman	noun
+reference	Referensi	noun
+footer	Suku Halaman	also: Suku, Footer; noun; page footer
+cross-reference	Referensi Silang	noun
+delete	Hapus	verb
+missing	Hilang	also: Tidak Ditemukan, Tidak ada; adjective
+view	Tampilan	also: Lihat; noun; verb: Lihat
+paragraph	Paragraf	noun
+bottom	Bawah	
+output	Keluaran	also: Hasil, yang dihasilkan, Cetak; noun; verb: menghasilkan
+marks	Tanda	also: Penanda; noun
+area	Area	also: Bagian, Tempat; noun
+remove	Hapus	also: Hilangkan; verb
+print	Print	also: Cetak, Ciptakan; verb
+existing	yang sudah ada	also: yang ada; relative clause after noun
+hyphenation	Pemenggalan kata	also: Pemenggalan; tanda hubung; tanda hubung used in penalty/threshold
+first	pertama	also: Baris Pertama; follows noun
+borders dialog	Bingkai	also: Dialog batas; used as prefix label
+apply	Terapkan	also: Aktifkan; verb
+paper	Kertas	noun
+picture checklist	Daftar periksa gambar	prefix label
+factor	Faktor	also: Pengali; Skala; multiplier
+thumb	Jempol	as in Label Jempol
+publication	Terbitan	noun
+right	Kanan	direction
+reset	Atur ulang	also: Setel ulang; Mulai ulang; verb
+section	Bagian	also: Bagian Teks; noun
+outer	Luar	position
+shrink	Kecilkan	also: Menyusut; Ciut; verb
+custom	yang disesuaikan	also: Khusus; Adat; adjective after noun
+decorative	yang dihiasi	also: dihias; Dihias; adjective after noun
+callers	Pemanggil Catatan	also: Pemanggil; note markers
+script	Sistem tulisan	also: Tulisan; Skrip; writing system sense
+thumb tabs	Label Jempol	noun
+entry	Entri	noun
+mm mm	mm mm	unit, left as is
+paratext	Paratext	product name, unchanged
+references	Referensi	also: Referensi Silang; noun
+tab	Tab	also: Label; Label used for thumb tabs
+inner	Dalam	position label
+mirror	Cerminkan	also: membalikkan, mencerminkan; verb
+contents	Isi	as in daftar isi
+table	Tabel	also: daftar (in 'daftar isi'); noun
+enter	Masukkan	verb: to type in
+selection	Pilihan	also: Pemilihan; Pemilihan for dialog; noun
+bold	Tebal	also: huruf tebal
+credit	Penghargaan	noun
+foreground	Latar Depan	also: Depan
+marker	Markah	noun
+gutter	Tepi Halaman Dekat Jilidan	also: Ruang Kosong; Tepi Halaman Di Dalam; noun
+pdfs	file PDF	also: PDF; plural
+anchor	Jangkar	also: Angker; noun
+code	Kode	noun
+verses	Ayat	also: Ayat-ayat; plural
+pdf file	file PDF	also: File PDF
+overwrite	Timpa	also: Menimpa, Ganti, Hapus; verb
+changes	perubahan	noun
+word	kata	noun
+center	Tengah	also: Di Tengah, Pusat; Pusat for grid center
+below	Di Bawah	preposition
+caption	Keterangan Gambar	also: Keterangan; noun
+above	Di Atas	preposition
+source	Sumber	noun
+how	Bagaimana	also: Bagaimana cara, Berapa banyak; Berapa for quantity, Jarak for how much
+placement	Penempatan	also: Tempatkan; noun; verb form 'Tempatkan' in sentences
+line spacing	Jarak antar baris	also: Jarak Baris; Ukuran Baris Teks
+found	ditemukan	passive: 'Tidak Ditemukan' = not found
+one	satu	also: 1
+compare	Bandingkan	also: Membandingkan; verb
+fill	Isi	also: Isian; Ditempatkan; verb/noun
+saved	disimpan	also: tersimpan; passive participle
+verse numbers	Nomor Ayat	
+image set	Kumpulan Gambar	also: Set Gambar
+font selection	Pemilihan Font	
+selection dialog	Pemilihan	also: Dialog; dialog word usually dropped
+title	Judul	
+guides	Penunjuk	also: Panduan
+caller	Pemanggil	also: Pemanggil Catatan; note caller
+study note	Catatan Studi	
+secondary	Sekunder	
+column layout	Tata Letak Kolom	e.g. 'tata letak dua kolom'
+type	Jenis	also: Tipe; Ketik; noun; verb: to type = Ketik
+horizontal position	Posisi Horisontal	also: Posisi horizontal
+maximum	Maksimum	
+underline	Garis bawah	also: Garisbawahi; noun; verb: Garisbawahi
+padding	Penambahan Ruang	also: Bantalan
+transparency	Transparansi	also: Tembus pandang
+download	Unduh	verb
+filter	Filter	also: Saring; Menyaring
+dialog show	tampilkan dialog	no examples; inferred, verb phrase
+foreground image	gambar latar depan	
+standard	standar	also: standard
+questions	pertanyaan	noun, plural
+characters	karakter	text characters
+primary	utama	also: primer
+more	lebih	also: lebih banyak; selengkapnya
+advanced	lanjutan	also: tingkat lanjut
+ref	referensi	also: Ref; abbreviation, often kept as Ref
+vertical position	posisi vertikal	
+max	maks	also: maksimum; maksimal; maks.; max; abbreviation
+beside	di samping	also: di sebelah
+allow	izinkan	verb
+length	panjang	also: panjangnya
+break	memutuskan	also: istirahat; dipisahkan; verb in line break; noun: istirahat
+default	standar	also: standard
+bible	Alkitab	
+dbl	DBL	kept in English
+current	saat ini	also: sekarang; arus
+copyright	hak cipta	
+italic	miring	
+place	tempatkan	also: menempatkan; tambahkan; verb
+reload	muat ulang	verb
+crop	pangkas	verb/noun
+background image	gambar latar belakang	
+standard list	Daftar standar	
+link	Tautan	noun
+slice	Irisan	noun
+base	Dasar	also: standar, basis; adjective-like modifier
+pagination	Pengaturan Halaman	also: Paginasi, penomoran halaman
+compare pdfs	Bandingkan file PDF	also: Membandingkan PDF, Bandingkan 2 file PDF; verb
+font size	Ukuran font	also: Ukuran huruf
+copy	Salin	verb
+chapters	Pasal	also: Bab
+character	Karakter	noun; style type
+peripheral	Sampingan	
+extended	Teliti	modifies notes/footnotes
+usfm	USFM	left in English
+previous	Sebelumnya	also: lama
+refs	Referensi	also: Acuan; abbreviation of references
+these books	Kitab-kitab Ini	also: Buku-buku ini, Kitab Ini
+these	Ini	also: ini; follows noun: Kitab-kitab Ini
+save	Simpan	verb
+back	Belakang	also: Akhir; as in Back Cover/Matter
+hyphenation list	Daftar Pemenggalan Kata	also: Daftar Pemenggalan
+spread	Sebaran	also: Penyebaran, Sebar, Lembar; noun; facing pages
+format	Format	also: bentukkan; noun; verb: bentukkan sebagai
+off	Menonaktifkan	also: Nonaktifkan; verb: turn off
+unbalanced	Tidak Seimbang	
+major	Utama	also: mayor
+penalty	Penalti	noun
+extra	Tambahan	also: Ekstra
+space between	Ruang antara	also: Jarak antara; Ruang di antara; Jarak di antara
+approved	Disetujui	also: Diakui; adjective/participle
+description	Deskripsi	also: Penjelasan
+lock	Kunci	also: Mengunci; verb in label
+single	Tunggal	also: Satu; Satu Baris; Polos
+line thickness	Tebal Garis	also: Ketebalan Garis; Tebalnya garis
+override	Abaikan	also: Mengesampingkan; Sampingkan; verb
+features	Ciri	also: Fitur; font/special features
+image credit	Penghargaan untuk Gambar	
+rotate	Putar	also: Putarkan; verb
+sidebar foreground	Gambar Latar Depan di Kotak Info	also: Gambar Depan; sidebar = Kotak Info
+index entry	Entri Indeks	also: Entri di Indeks
+add edit	Tambah/Edit	no examples; guessed
+columns	Kolom	
+omit	Hilangkan	also: Sembunyikan; Abaikan; Menghilangkan; verb
+cross-reference rule	Garis Referensi Silang	rule = Garis
+note rule	Garis Catatan	also: Garis Pengukur Catatan; e.g. Garis catatan studi
+sidebar settings	Pengaturan Kotak Info	
+matter pdf	PDF Bagian Buku	also: PDF Berisi Bagian Depan Buku; PDF materi belakang; front/back matter = bagian depan/belakang
+captions	Keterangan Gambar	also: Keterangan
+value	Nilai	also: Kode
+codes	Kode	
+special	Khusus	

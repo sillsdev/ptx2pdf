@@ -1,0 +1,251 @@
+# Auto-built by buildLexicon.py from the existing hu translations. Do not hand-edit:
+# put overrides in glossary.tsv (which wins). English<TAB>translation<TAB>note
+settings	beállítások	plural noun; compounded or separate word
+page	oldal	noun
+text	szöveg	also: szöveges; adjective form: szöveges
+show	megjelenítése	also: mutat, mutasd, mutasson; verb: to display
+pdf	PDF	left in English
+image	kép	noun
+select	kiválasztása	also: válassza ki; verb: to choose
+list	lista	noun
+dialog	párbeszédpanel	also: párbeszédablak; noun
+books	könyvek	plural noun
+picture	kép	also: tükörkép; noun
+ptxprint	PTXprint	product name, unchanged
+space	hely	also: tér, space; noun
+rule	szabály	noun; typographic rule line
+color	szín	also: színes; noun
+cover	borító	also: fedlap; noun
+project	projekt	noun
+position	pozíció	noun
+verse	vers	also: versszak; noun
+font	betűtípus	also: font, betűméret; noun
+line	vonal	also: sor; sor = line of text
+notes	megjegyzések	also: jegyzetek; plural noun; compounds -jegyzet
+border	határ	also: szegély, keret, Border; noun
+sidebar	oldalsáv	noun
+include	beleértve	also: tartalmazzon, tartalmazandó, felvenni; verb: to include
+generate	generálás	also: létrehozás; verb: Generálja / generálása
+diglot	Diglot	left in English
+set	beállít	also: készlet; verb: to set; noun: set (készlet)
+edit	szerkesztés	also: Edit; verb/noun: szerkeszt
+enable	engedélyezés	verb: engedélyezése
+borders	határok	also: keretek; noun, plural
+file	fájl	noun
+column	oszlop	noun
+book	könyv	noun
+chapter	fejezet	noun
+background	háttér	noun; compounds like háttérszín
+configuration	konfiguráció	noun
+pictures	képek	noun, plural
+cross-references	kereszthivatkozások	noun, plural
+words	szavak	noun, plural
+note	megjegyzés	also: jegyzet, Note; noun; footnote = lábjegyzet
+layout	elrendezés	noun
+strong's	Strong	possessive: Strong listája
+import	importálás	also: Import; verb: importálása
+matter	Matter	also: előlap, hátlap; Front Matter = Előlap; often left English
+end	vége	noun; Az oldal vége
+index	index	noun
+vertical	függőleges	adjective
+thickness	vastagság	noun
+size	méret	noun; used in compounds
+front	előlap	also: elülső, címlap; as in front matter; cover: elülső
+styles	Stílusok	plural noun
+width	szélesség	
+numbers	számok	also: -számok (compound); verse numbers: versszámok
+footnote	lábjegyzet	
+style	stílus	also: Style; sometimes left in English
+header	fejléc	
+margin	margó	
+number	szám	also: számozás; verb: számozása
+grid	rács	also: Grid
+spacing	távolság	also: sortávolság, közök
+add	hozzáadás	also: hozzáadása, Add; verb: to add
+folder	mappa	
+adjust	beállít	also: beállítás, Állítsa be; verb: to adjust
+top	felső	also: fent, Top
+between	között	also: közötti; postposition
+scale	méretarány	also: Skála, méretezés
+start	kezd	also: Start, indít; verb
+front matter	előlap	also: címlap, Front Matter
+create	létrehozása	also: Hozzon létre; verb: to create
+new	új	
+tabs	lapok	also: fülek; thumb tabs: hüvelykujjas fülek
+lines	sorok	also: vonalak
+indent	behúzás	
+error	hiba	
+footnotes	lábjegyzetek	noun, plural
+config	konfiguráció	also: Config; noun
+horizontal	vízszintes	adjective
+piclist	PicList	left in English
+checklist	ellenőrző lista	also: ellenőrzőlista; noun
+left	balra	also: bal; direction; 'bal' as adjective
+name	név	noun
+study	tanulmányi	also: tanulmányozás; adjective, as in study notes
+strong's index	Strong-index	also: Strong indexe; noun
+bottom	alul	also: alsó, lent; alsó as adjective
+pages	oldalak	noun, plural
+reference	hivatkozás	also: referencia; noun
+footer	lábléc	noun
+cross-reference	kereszthivatkozás	noun
+delete	törlés	also: törölni; verb: to delete
+missing	hiányzó	also: hiányzik; adjective; verb 'is missing'
+paragraph	bekezdés	noun
+generate cover	Fedezék létrehozása	verb phrase
+spine	gerinc	noun, book spine
+remove	eltávolítás	also: eltávolítani; verb: to remove
+view	nézet	also: megtekintése; noun; verb: to view
+existing	meglévő	adjective
+hyphenation	elválasztás	also: kötőjeles írásmód, kötőjel; noun
+output	kimeneti	also: kiadni; adjective; verb: to output
+marks	jelek	also: márkok; noun, plural
+borders dialog	Határok párbeszédpanel	
+area	terület	
+paper	papír	
+picture checklist	Képes ellenőrzőlista	
+print	Nyomtatás	also: Print; Print- compounds left in English
+factor	Factor	also: tényező
+first	első	also: először
+thumb	hüvelykujj	also: hüvelykujjas
+publication	kiadvány	also: kiadás
+apply	alkalmazni	also: vonatkozik; verb; noun form alkalmazása
+right	jobb	also: jobbra
+section	szakasz	also: szekció
+outer	külső	
+custom	egyéni	also: egyedi, Custom
+decorative	dekoratív	
+callers	hívók	also: Hívó
+script	szkript	also: Script, forgatókönyv
+thumb tabs	hüvelykujjas fülek	also: hüvelykujj lapok
+bold	Bold	also: félkövér, Merész
+entry	bejegyzés	
+mm mm	mm mm	no examples; unit left unchanged
+paratext	Paratext	product name
+references	hivatkozások	also: referenciák
+reset	visszaállítása	also: Reset; verb: to reset
+tab	Tab	also: fül, lap
+inner	belső	
+mirror	tükör	also: mirror; noun/verb; sometimes left in English
+contents	tartalom	also: tartalomjegyzék; in 'table of contents': tartalomjegyzék
+table	tartalomjegyzék	also: asztali; only in 'table of contents'; 'asztali' is a mistranslation
+enter	megadása	also: beírása, írja be, adja meg; verb: to enter/type in
+selection	kiválasztás	
+how	hogyan	also: mennyivel (how much), hány (how many)
+credit	képhitel	also: hitel, hitelfedezet; image credit; 'hitel' alone elsewhere
+foreground	előtér	also: előtérben lévő
+marker	jelölő	also: marker, jelzés; often left in English
+gutter	ereszcsatorna	also: eresz, záróvonal, rétegző; inconsistent; literal 'rain gutter'
+anchor	horgony	also: Anchor; sometimes left in English
+verses	versek	also: Verses; plural of vers; sometimes untranslated
+overwrite	felülírás	also: OVERWRITE; verb: felülírása/felülírás
+word	szó	
+center	középső	also: központ; 'középső' for header/footer positions
+below	alatt	also: alatti, alábbi
+shrink	zsugorítás	also: zsugorodik, szűkülés, kicsinyítés; verb: zsugorítani
+caption	felirat	also: képaláírás, Caption
+above	felett	also: fent, fenti, feletti
+source	forrás	
+placement	elhelyezés	
+pdfs	PDF-ek	plural with hyphen suffix
+code	kód	
+line spacing	sortávolság	also: vonaltávolság, sorok távolsága, alapvonal-távolság
+found	található	also: talált; 'not found' = nem található
+one	egy	also: első; egyik; numeral; 'first' for verse one
+changes	változások	also: változtatások; noun, plural
+compare	összehasonlítás	also: összehasonlítása; verb: to compare; noun form used
+fill	kitöltés	also: kitölt; töltse; verb: to fill; noun in labels
+saved	mentett	also: elmentett; mentve; adjective/participle
+verse numbers	versszámok	also: versek számai; noun, plural
+image set	képkészlet	noun
+font selection	betűtípus kiválasztása	noun phrase
+selection dialog	kiválasztása párbeszédpanel	also: párbeszédpanel; as in 'Betűtípus kiválasztása párbeszédpanel'
+guides	útmutatók	also: Guides; noun, plural; Marks & Guides sometimes 'Márkok'
+caller	hívó	noun; note caller
+study note	tanulmányi jegyzet	noun
+secondary	másodlagos	also: szekunder; adjective
+pdf file	PDF fájl	also: PDF; noun
+column layout	oszlopos elrendezés	e.g. két oszlopos elrendezés
+type	típus	also: Type; noun; often left in English
+horizontal position	vízszintes helyzet	also: vízszintes pozíció; noun
+maximum	maximális	adjective
+underline	aláhúzás	noun
+padding	kitöltés	also: kitömés; Padding; e.g. dobozkitöltés, szegélykitöltés
+transparency	átlátszóság	also: átláthatóság; noun
+download	letöltés	also: letöltése; noun/verb: letölt
+filter	szűrő	also: szűrése; noun; also verb 'szűrése'
+foreground image	előtérben lévő kép	also: előtérkép
+standard	Standard	also: Szabványos
+questions	kérdések	noun, plural
+characters	karakterek	text characters
+primary	elsődleges	
+more	további	also: tovább, több
+ref	Ref	also: hivatkozás; usually left in English
+vertical position	függőleges pozíció	also: függőleges helyzet
+max	max.	also: Max; abbreviation of maximum
+beside	mellett	also: mellette
+allow	engedélyezése	also: engedélyezze; verb: to allow/enable
+length	hosszúság	also: hossza; noun
+break	szünet	also: Break, zsinórváltás; line break: zsinórváltás
+default	alapértelmezett	adjective
+bible	Biblia	
+dbl	DBL	left in English
+copyright	szerzői jog	
+italic	Italic	also: dőlt; usually left in English
+place	elhelyezése	also: helyezze; verb: to place
+reload	újratöltése	also: újratöltés; verb: to reload
+title	cím	also: főcím
+standard list	Standard lista	also: Szabványos lista
+link	link	also: hivatkozás
+slice	szelet	noun
+base	alap	also: alapvonal; adjective/prefix
+pagination	oldalszámozás	noun
+compare pdfs	PDF-ek összehasonlítása	verb-noun: comparing PDFs
+font size	betűméret	
+copy	másolás	also: másolja; verb; noun form másolása
+chapters	fejezetek	plural noun
+character	karakter	text/style character
+peripheral	perifériás	adjective
+extended	kibővített	also: bővített, kiterjesztett; adjective
+usfm	USFM	left in English
+previous	előző	also: korábbi; korábbi for earlier PDFs
+advanced	speciális	also: haladó; adjective
+refs	hivatkozások	also: Refs; sometimes left in English
+these	ezek	also: ezekhez, ezeknél; inflected demonstrative
+these books	ezek a könyvek	also: ezekhez a könyvekhez, ezeknél a könyveknél; inflected by case
+save	mentés	also: mentése; verb/noun
+back	hátsó	also: hátlap, vissza, visszatérő; back cover/matter sense
+hyphenation list	elválasztási lista	also: kötőjeles lista, kötőjellista, kötőjel-lista
+spread	terjedelem	also: szórás; two-page spread
+format	formátum	noun
+off	kikapcsolás	also: ki; kikapcsolni; be/ki
+unbalanced	kiegyensúlyozatlan	also: kiegyenlítetlen, szimmetrizálatlan; adjective
+major	fő	also: nagy, főbb; adjective
+penalty	büntetés	noun
+extra	extra	left in English
+space between	közötti tér	also: közötti távolság; postposition phrase
+approved	jóváhagyott	also: jóváhagyva; adjective/participle; 'Jóváhagyva' as label
+description	leírás	
+current	jelenlegi	also: aktuális
+lock	zárolás	also: zár; Lock (left in English); verb: zárolni
+single	egyetlen	also: egy; egyszerű (szimpla)
+line thickness	vonalvastagság	also: vastagság
+override	felülírás	also: felülbírálás; verb: felülírni
+features	jellemzők	also: funkciók
+image credit	képhitel	
+rotate	forgatás	also: elforgatás; verb: forgatni
+crop	termés	also: vágás; mistranslated as harvest; 'vágási jelek' for crop marks
+sidebar foreground	oldalsáv előtér	
+background image	háttérkép	
+index entry	indexbejegyzés	
+add edit	hozzáadás/szerkesztés	no examples; guess
+columns	oszlopok	plural
+omit	kihagyás	also: elhagyás; verb: kihagyni
+cross-reference rule	kereszthivatkozási szabály	
+note rule	jegyzet szabály	as in 'Tanulmányi jegyzet szabály'
+sidebar settings	oldalsáv beállítások	
+matter pdf	PDF	also: előlap PDF; front matter = előlap; back matter inconsistent
+captions	feliratok	also: képaláírások; plural
+value	érték	
+codes	kódok	plural
+special	speciális	also: különleges

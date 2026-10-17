@@ -1,0 +1,252 @@
+# Auto-built by buildLexicon.py from the existing pt translations. Do not hand-edit:
+# put overrides in glossary.tsv (which wins). English<TAB>translation<TAB>note
+settings	Configurações	also: Definições; noun, plural
+page	Página	noun
+text	Texto	noun
+show	Mostrar	verb
+pdf	PDF	kept in English
+image	Imagem	noun
+select	Selecionar	verb
+ptxprint	PTXprint	product name, unchanged
+list	Lista	noun
+dialog	Diálogo	noun
+cover	Capa	noun
+space	Espaço	noun
+books	Livros	noun, plural
+picture	Imagem	noun
+line	Linha	noun
+project	Projeto	noun
+rule	Régua	also: Regra; noun: typographic rule
+color	Cor	noun
+position	Posição	noun
+verse	Versículo	noun
+notes	Notas	noun, plural
+border	Borda	also: Fronteira; noun
+font	Fonte	also: Tipo de Letra; noun
+include	Incluir	verb
+sidebar	Barra Lateral	noun
+book	Livro	
+layout	Layout	left in English
+generate	Gerar	verb
+set	Definir	also: Conjunto (noun); Papel de conjunto; verb; noun: Conjunto
+diglot	Bilíngue	also: Diglot
+borders	Bordas	also: Fronteiras
+file	Arquivo	noun
+edit	Editar	verb
+configuration	Configuração	
+enable	Ativar	also: Habilitar; verb
+chapter	Capítulo	
+column	Coluna	
+background	Fundo	also: Plano de fundo
+pictures	Imagens	plural
+note	Nota	noun
+cross-references	Referências Cruzadas	plural
+import	Importar	verb
+words	Palavras	plural
+width	Largura	
+strong's	Strong	de Strong; no possessive 's
+matter	Prefácio	also: Apêndice (back matter); front matter = Prefácio; back = Apêndice
+size	Tamanho	also: Dimensionar (verb: scale)
+add	Adicionar	verb
+front	Prefácio	also: Capa (cover); in 'Front Matter'; 'Front Cover' = capa
+end	Fim	also: Final; also adjective: Final
+vertical	Vertical	
+thickness	Espessura	
+index	Índice	also: Index; noun
+folder	Pasta	noun
+numbers	Números	plural noun
+styles	Estilos	plural noun
+spacing	Espaçamento	also: Espaço; noun
+style	Estilo	also: Style; noun
+margin	Margem	noun
+create	Criar	also: Gerar; verb
+footnote	Nota de Rodapé	noun
+adjust	Ajustar	also: Ajuste; verb; noun: ajuste
+header	Cabeçalho	noun
+number	Número	also: Numerar; noun; verb: to number
+error	Erro	noun
+scale	Escala	also: Escalonar; noun; verb: escalonar
+start	Iniciar	also: Início, começar; verb; noun: início
+front matter	Prefácio	also: Elemento Inicial; noun
+top	Superior	also: Topo; adjective
+new	Novo	also: Nova; adjective; gender agreement
+between	Entre	preposition
+grid	Grade	noun
+horizontal	Horizontal	
+delete	Excluir	verb
+tabs	Abas	also: Linguetas; plural noun
+pages	Páginas	noun, plural
+lines	Linhas	noun, plural
+indent	Recuo	also: Indent; noun
+left	Esquerda	also: Esquerdo; Esquerdo when modifying a noun
+name	Nome	noun
+footnotes	Notas de Rodapé	noun, plural
+reference	Referência	also: Ref.; noun
+spine	Lombada	also: coluna vertebral; book spine; 'coluna vertebral' is a literal mistranslation
+piclist	PicList	left in English
+paper	Papel	noun
+checklist	Lista de Verificação	noun
+paratext	Paratext	also: Paratexto; product name, left in English
+study	Estudo	noun, as in 'Notas de Estudo'
+strong's index	Índice de Strong	also: Índice Strong's; noun
+paragraph	Parágrafo	noun
+bottom	Inferior	adjective/label
+footer	Rodapé	noun
+cross-reference	Referência Cruzada	noun
+missing	Faltando	also: Ausente(s); Ausente(s) for fonts/characters
+config	Configuração	also: Config; noun, short form Config
+existing	Existente	adjective
+hyphenation	Hifenização	noun
+word	Palavra	noun
+generate cover	Gerar capa	also: Gerar tampa; verb phrase
+remove	Remover	verb
+print	Imprimir	also: Impressão; verb; noun: Impressão
+view	Visualização	also: Visualizar; noun; verb: Visualizar
+maximum	Máximo	also: Máxima, Máximo de; adjective, agrees with gender
+output	Saída	also: Gerar; noun; verb: gerar
+marks	Marcas	noun, plural
+borders dialog	Diálogo Bordas	also: Diálogo de fronteiras
+area	Área	
+publication	Publicação	
+picture checklist	Lista de verificação de imagem	
+right	Direita	also: Direito; Direito when modifying masculine noun
+factor	Fator	also: Factor
+custom	Personalizado	adjective
+first	Primeiro	also: Primeira; agrees with gender
+contents	Conteúdo	also: Conteúdos, Índice, Sumário; table of contents: Índice
+callers	Chamadores	also: Chamados; footnote markers
+thumb	Polegar	in 'Abas de Polegar'
+apply	Aplicar	verb
+entry	Entrada	noun
+marker	Marcador	
+line spacing	Espaçamento de linha	also: Espaçamento entre linhas
+references	Referências	noun, plural
+section	Seção	
+outer	Externo	
+shrink	Reduzir	verb
+image set	Conjunto de Imagens	
+decorative	decorativo	also: decorativa, decorativos, decorativas; adjective; agrees in gender/number
+gutter	medianiz	noun, feminine
+how	Como	also: Quanto, Quantas; Quanto for 'how much'; Quantas for 'how many'
+minimum	mínimo	also: mínima; adjective; agrees in gender
+script	Sistema de Escrita	also: Script; writing system; 'Script' for custom script
+thumb tabs	Abas de Polegar	
+bold	Negrito	noun
+mm mm	mm mm	unit abbreviation, unchanged
+code	Código	noun
+verses	Versículos	plural noun
+reset	Redefinir	verb
+tab	Aba	also: guia; noun; guia for UI tab
+inner	Interno	adjective
+mirror	Espelhar	also: Espelhamento; verb; noun: Espelhamento
+table	Tabela	also: índice, sumário; 'table of contents' is índice/sumário
+enter	Digitar	also: Inserir, Introduzir; verb
+selection	Seleção	noun
+credit	Crédito	also: créditos; noun
+foreground	Primeiro Plano	noun
+pdfs	PDFs	left in English
+fill	Preencher	also: Preenchimento; verb; noun: Preenchimento
+anchor	Âncora	noun
+overwrite	Sobrescrever	also: Substituir, sobreescrever; verb
+compare	Comparar	verb
+center	Centralizar	also: Central; verb; adjective: Central
+below	Abaixo	abaixo de/do/da
+caption	Legenda	noun
+download	Baixar	also: Download; Descarregar; Faça o download; verb; noun often left as Download
+verse numbers	Números de Versículos	also: números de versos
+link	Link	also: Ligação; noun
+above	Acima	acima de/do/da
+source	Origem	also: Fonte; noun
+placement	Posicionamento	noun
+copy	Copiar	verb
+ref	Ref.	abbreviation of Referência
+usfm	USFM	left in English
+base	Base	follows noun: Recuo Base
+found	encontrado	also: encontrada; participle; agrees in gender/number
+one	um	also: uma; numeral/article; feminine uma
+changes	Alterações	noun, plural
+copyright	Direitos Autorais	noun
+saved	salvo	also: salva; guardada; participle; agrees in gender
+locate	Localizar	verb
+length	Comprimento	noun
+underline	Sublinhado	also: Sublinhar; linha inferior; noun; verb: Sublinhar
+default	Padrão	noun/adjective
+padding	Preenchimento	also: Acolchoamento; noun
+standard	Padrão	adjective
+font selection	Seleção de Fonte	
+selection dialog	Diálogo de Seleção	Diálogo de Seleção de Fonte
+title	Título	noun
+guides	Guias	noun, plural
+caller	Chamador	note marker; noun
+study note	Nota de estudo	noun
+secondary	Secundário	also: secundária; adjective
+more	Mais	
+pdf file	Arquivo PDF	noun
+column layout	Layout de colunas	e.g. layout de duas colunas
+save	Salvar	also: Guardar; verb
+current	Atual	also: actual, corrente; adjective
+type	Tipo	also: Digitar; noun; verb: to type is Digite
+spread	Dupla	facing pages; noun
+horizontal position	Posição horizontal	
+transparency	Transparência	noun
+bible	Bíblia	also: bíblico; adjective: bíblico, as in módulo bíblico
+filter	Filtro	also: Filtrar; verb: to filter
+dialog show	Caixa de diálogo	also: Diálogo; no examples; guessed from other terms
+crop	Cortar	also: Corte; noun: corte (crop marks)
+foreground image	Imagem de primeiro plano	
+questions	Perguntas	noun, plural
+compare pdfs	Comparar PDFs	verb phrase
+characters	Caracteres	noun, plural
+primary	Primário	also: Principal, primária; adjective
+character	Caractere	noun
+version	Versão	noun
+previous	anterior	
+these	estes	also: estas; demonstrative, plural
+back	traseira	also: Apêndice (in Back Matter); Contracapa; Back Cover; Back Matter = Apêndice
+report	relatório	also: reportar; noun; verb: reportar
+variable	variável	noun and adjective
+vertical position	posição vertical	
+images	imagens	plural noun
+max	máx.	also: Máx; abbreviation of máximo
+beside	ao lado de	also: ao lado do
+allow	permitir	verb
+break	quebra	noun, as in line break
+links	links	left in English
+box	caixa	
+bleed	sangria	also: sangramento; print term
+dbl	DBL	acronym, kept
+italic	itálico	
+place	colocar	also: posicionar; verb
+reload	recarregar	verb
+background image	imagem de fundo	
+standard list	lista padrão	
+slice	Slice	left in English
+pagination	paginação	
+font size	tamanho da fonte	
+codes	códigos	plural noun
+chapters	capítulos	plural noun
+peripheral	periférico	adjective
+extended	estendido	also: avançado; avançado only in 'Extended Study Content'
+selected	selecionado	adjective/participle
+advanced	avançado	adjective
+refs	Refs	also: Ref.; abbreviation of references
+these books	estes livros	
+warning	aviso	also: atenção; noun; ATENÇÃO for capitalized WARNING
+please	por favor	often omitted, using imperative
+hyphenation list	lista de hifenização	
+both	ambos	
+format	formatar	also: formato; verb; noun is formato
+next	próximo	adjective
+off	desativar	verb: turn off; pair ativar/desativar
+unbalanced	desbalanceado	also: desequilibrado; adjective
+major	principal	also: majoritário; majoritário for major language
+penalty	penalidade	noun
+keep	manter	verb
+extra	extra	also: adicional
+space between	espaço entre	
+approved	aprovado	adjective
+scripture	bíblico	also: Escritura; adjective in 'texto bíblico'; Escritura once
+lock	bloquear	also: travar; verb
+single	único	adjective
+line thickness	espessura da linha	
+override	substituir	also: sobrescrever; verb

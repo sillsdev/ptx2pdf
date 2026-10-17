@@ -1,0 +1,252 @@
+# Auto-built by buildLexicon.py from the existing th translations. Do not hand-edit:
+# put overrides in glossary.tsv (which wins). English<TAB>translation<TAB>note
+settings	การตั้งค่า	noun
+text	ข้อความ	
+page	หน้า	also: หน้าหนังสือ; noun
+show	แสดง	verb
+image	ภาพ	also: รูป
+pdf	PDF	left in English
+select	เลือก	verb
+picture	ภาพ	also: รูป
+list	รายการ	noun
+rule	กฎ	also: กติกา, ข้อบังคับ, ข้อกําหนด; line/ruler sense also rendered as rule
+dialog	Dialog	also: ป้ายโต้ตอบ; usually left in English
+color	สี	
+font	Font	also: ตัวอักษร, โฟนต์; often left in English
+cover	หน้าปก	also: ปก, ผนัง; noun
+line	เส้น	also: สาย
+space	สเปซ	also: ช่องว่าง, พื้นที่; noun
+notes	หมายเหตุ	also: ข้อตกลง; noun
+verse	ข้อ	also: บท; noun
+books	หนังสือ	noun
+position	ตําแหน่ง	also: สถานที่; noun
+border	ขอบ	also: เขต; noun
+ptxprint	PTXprint	product name, not translated
+generate	สร้าง	verb
+sidebar	แท่นข้าง	also: แผ่นข้าง; noun
+include	รวม	also: รวมถึง; verb
+project	โครงการ	noun
+edit	แก้ไข	also: เอ็ดดิต; verb
+set	กำหนด	also: ตั้ง, ชุด (noun), เซต; verb: to set; noun: ชุด
+column	คอลัมน์	also: สาย; noun
+book	หนังสือ	noun
+note	หมายเหตุ	also: ข้อตักเตือน, ข้อเขียน; noun
+background	พื้นหลัง	also: เบื้องหลัง; noun
+enable	เปิด	also: ทำให้มี; verb
+layout	การจัดวาง	noun
+cross-references	อ้างอิง	also: อ้างอิงข้าม; noun
+borders	ขอบ	also: ชายแดน; noun
+styles	สไตล์	noun
+index	ดัชนี	also: อินเด็กซ์, รายการ; noun
+strong's	สตรองส์	also: Strong, ของสตรอง; proper name
+file	ไฟล์	noun
+pictures	ภาพ	also: รูป; noun
+matter	เรื่อง	also: Matter; as in front matter
+end	ปลาย	also: ท้าย; noun
+words	คำ	noun
+footnote	หมายเหตุ	also: คำระบุ, ข้อตักเตือน; noun
+size	ขนาด	noun
+configuration	การตั้งค่า	noun
+front	หน้า	also: หน้าแรก, แรก; as in front matter
+vertical	ตั้ง	also: แนวตั้ง; adjective
+width	ความกว้าง	noun
+import	นำเข้า	verb/noun
+between	ระหว่าง	preposition
+spacing	ระยะ	also: ระยะห่าง, ช่องว่าง; noun
+number	เลข	also: จำนวน, ตัวเลข, หมายเลข; noun; จำนวน for count
+add	เพิ่ม	verb
+chapter	บท	also: บทที่, หมวด, หมวดหมู่; noun
+thickness	ความหนา	noun
+diglot	ดิกลอต	also: ดิกล็อต, ดิกโลต, ไดกลอท, Diglot; transliterated
+front matter	เรื่องแรก	also: หน้าแรก, ด้านหน้าของเรื่อง; inconsistent rendering
+header	หัวข้อ	also: Header, หัวหน้า; noun
+top	ด้านบน	also: บน, ปลาย; direction
+create	สร้าง	verb
+new	ใหม่	adjective, follows noun
+numbers	เลข	also: ตัวเลข; plural noun
+grid	กรีด	also: เครือข่าย, Grid; transliterated
+checklist	รายการตรวจสอบ	noun
+footnotes	หมายเหตุ	also: ข้อตักเตือน; noun
+scale	ขนาด	also: สเกล; noun
+style	สไตล์	also: รูปแบบ; noun
+tabs	แท็บ	also: แทบ; transliterated
+adjust	ปรับ	verb
+horizontal	แนวราบ	adjective
+margin	ขอบ	also: ช่องทาง, ขอบเขต; noun
+reference	อ้างอิง	also: ส่งข้อมูล, รายงาน; noun
+strong's index	สตรองส์ อินเด็กซ์	also: ดัชนีของ Strong; transliterated
+folder	โฟลเดอร์	also: แฟ้ม; noun
+indent	ช่องลอก	also: ช่อง, การลด, เชิง; noun; inconsistent renderings
+generate cover	สร้างหน้าปก	also: สร้างปก; verb + noun
+cross-reference	การอ้างอิงข้าม	also: Cross-Reference, การสอดคล้อง; noun
+missing	หายไป	follows noun or count
+left	ซ้าย	also: ขวา (mistranslation); direction
+study	การศึกษา	also: บทเรียน; modifier of note
+existing	ที่มีอยู่	follows noun
+start	เริ่ม	also: เริ่มต้น; verb
+hyphenation	การใส่ยัติภังค์	also: การระบุเส้นดัก, ลิงก์; no stable rendering; inferred
+bottom	ด้านล่าง	position
+pages	หน้า	noun
+lines	เส้น	also: สาย; noun
+piclist	PicList	left in English
+picture checklist	รายการตรวจสอบภาพ	noun phrase
+delete	ลบ	verb
+error	ความผิดพลาด	also: ผิดพลาด; noun
+name	ชื่อ	noun
+first	แรก	also: ก่อน, ที่ 1; ordinal
+area	พื้นที่	also: บริเวณ; noun
+right	ขวา	also: ใช่; direction; 'ใช่' means correct
+config	Config	also: การตั้งค่า; often left in English
+callers	ผู้โทร	also: ผู้เรียก, คำเรียก; note callers
+borders dialog	ป้ายโต้ตอบ	also: ป้ายโต้ตอบขอบเขต; noun phrase
+footer	ขา	also: ขีดเท้า, ขอบ, Foot; noun
+thumb	นิ้วมือ	in 'thumb tabs'
+paratext	Paratext	left in English
+remove	ลบ	also: ถอด; verb
+print	พิมพ์	verb
+section	ส่วน	also: หมวด, หมวดหมู่; noun
+outer	ด้านนอก	also: ภายนอก, ผิวข้างนอก
+output	ออก	also: ผลิต; verb/noun, e.g. โฟลเดอร์ออก
+script	สคริปต์	also: Script; noun
+thumb tabs	แท็บนิ้วมือ	noun
+publication	หนังสือ	also: หนังสือพิมพ์, การตีพิมพ์; noun
+bold	ตัวหนา	also: bold, กล้า; font style
+credit	เครดิต	also: Credit; noun
+apply	ใช้	verb
+foreground	ด้านหน้า	also: ลักษณะหน้า, หน้า
+entry	รายการ	also: บันทึก; noun
+gutter	น้ำท่วม	also: ช่องน้ำ, น้ำท่อ, ถัง; mistranslation as water; binding margin
+view	ดู	also: มุมมอง, การดู, วิว; noun/verb
+tab	แท็บ	also: ตาราง; noun
+paragraph	ข้อ	also: ข้อที่; noun
+below	ใต้	also: ล่าง; preposition
+shrink	ลด	also: ลดลง; verb
+caption	คำบรรยาย	noun
+mirror	กระจก	noun/verb: mirror pages
+custom	ตามสั่ง	also: ที่กำหนดเอง, ประจำ; adjective
+table	ตาราง	noun; also in table of contents
+contents	เนื้อหา	also: รายการสารบรรจุ, รายการสาระ, ตารางเนื้อหา, รายละเอียด; table of contents; varies
+decorative	ตกแต่ง	also: ประดับ, ไม้ประดับ; adjective
+above	เหนือ	also: บน, ด้านบน; เหนือ used for space above
+enter	กรอก	verb: to input
+selection	การเลือก	also: เลือก; noun
+placement	การวาง	also: การจัดตั้ง; noun
+pdfs	PDF	also: PDFs; left in English
+code	รหัส	also: โค้ด; noun
+references	อ้างอิง	also: แหล่งที่อ้างอิง; noun
+factor	ตัวประกอบ	also: ค่า; multiplier; also ค่าคูณ
+reset	กําหนดใหม่	also: รีเซ็ต, เปลี่ยนแปลง, ซ่อมใหม่; verb
+compare	เปรียบเทียบ	verb
+fill	เติม	also: บรรจุ; verb: to fill
+word	คํา	noun
+center	กลาง	also: ศูนย์กลาง, ศูนย์; noun/adjective
+selection dialog	โต้ตอบการเลือก	also: สายดวงเลือก, สู่โต้ตอบการเลือก; dialog label
+font selection	การเลือกตัวอักษร	also: เลือกตัวอักษร; noun phrase
+marker	เครื่องหมาย	also: ป้าย, มาร์เกอร์; noun
+caller	ผู้เรียก	also: โทร; noun
+study note	ข้อความการศึกษา	also: บันทึกการศึกษา, บทความการศึกษา, บทเรียน; noun
+anchor	แอนเกอร์	also: อานกอร์, Anchor; transliterated
+line spacing	ระยะระหว่างเส้น	also: ระยะเส้น; noun
+overwrite	เขียนทับ	also: เขียนแทน, เขียนเกิน, เขียนกลับ, เขียนใหม่; verb
+inner	ด้านใน	also: ภายใน; adjective
+horizontal position	ตําแหน่งแนวราบ	also: สถานที่ตั้งแนวราบ; noun phrase
+verse numbers	เลขบท	also: เลขข้อ, ข้อ เลข; บท is used for verse here
+filter	ฟิลเตอร์	also: กรอง; noun; verb: การกรอง
+foreground image	ภาพด้านหน้า	also: ภาพลักษณะหน้า, ภาพล่าง
+spine	กระดูกสันหลัง	book spine
+characters	ตัวอักษร	text characters
+verses	ข้อ	also: บท, ข้อความ
+found	พบ	also: ไม่พบ (not found); verb: to find
+pdf file	ไฟล์ PDF	
+ref	Ref	also: อ้างอิง; often left in English
+maximum	สูงสุด	follows noun
+length	ความยาว	
+break	การตัด	also: การหยุด, ตัด; line break; also pause
+marks	เครื่องหมาย	also: สัญลักษณ์, ตรา, ป้าย
+transparency	ความโปร่งใส	also: โปร่งใส
+source	แหล่ง	also: แหล่งรวมข้อมูล, แหล่งที่อ้างอิง
+image set	ชุดภาพ	also: ภาพชุด, Image Set
+copyright	ลิขสิทธิ์	
+italic	Italic	also: อักษรโค้ง; often left in English
+paper	กระดาษ	
+questions	คำถาม	
+pagination	การจัดหน้า	also: การออกหน้า
+compare pdfs	เปรียบเทียบ PDF	also: เปรียบเทียบ PDFs
+font size	ขนาดตัวอักษร	
+copy	สำเนา	also: Copy; verb used as label
+character	ตัวอักษร	also: ลักษณะ; also style sense: ลักษณะ
+peripheral	ระยะ	also: ส่วนนอก, ด้านนอก; in 'variable' labels; inconsistent
+extended	ขยาย	also: ที่ขยาย; adjective
+previous	ก่อนหน้า	also: ก่อนหน้านี้
+column layout	การจัดวางคอลัมน์	also: การวางแผนคอลัมน์
+changes	การเปลี่ยนแปลง	noun
+hyphenation list	รายการลิงก์	also: รายการรหัสลิงก์; hyphenation rendered as 'ลิงก์'
+spread	แผ่น	also: แพร่, กระจาย, การแพร่กระจาย; page spread
+off	ปิด	verb: turn off
+major	หลัก	also: ใหญ่
+allow	ยอมให้	also: ให้; verb
+penalty	ค่าลงโทษ	also: ค่าโทษ
+extra	เพิ่มเติม	also: เสริม, เติม
+padding	การปู	also: การปรับ
+default	ปกติ	
+space between	ขนาดระหว่าง	also: สเปซระหว่าง, ขนาดของพื้นที่ระหว่าง
+bible	พระคัมภีร์	also: ไบเบิล, คัมภีร์ไบเบิล
+approved	อนุมัติ	also: ได้รับการอนุมัติ, ยินดีให้ใช้, ยอมรับ
+description	คำอธิบาย	noun
+line thickness	ความหนาของเส้น	
+features	ลักษณะ	also: คุณลักษณะ, คุณสมบัติ, Features
+image credit	ภาพเครดิต	also: Image Credit, เครดิตภาพ
+sidebar foreground	ภาพด้านหน้าแท่นข้าง	also: แผ่นข้างหน้า; sidebar = แท่นข้าง
+background image	ภาพพื้นหลัง	also: ภาพเบื้องหลัง
+index entry	รายการดัชนี	also: บันทึกในดัชนี
+title	ชื่อ	also: หัวข้อ; noun
+slice	สไลส์	also: ชิ้น, การตัด; noun; usually transliterated
+columns	คอลัมน์	noun
+cross-reference rule	กฎการอ้างอิงข้าม	also: กติกาของการอ้างอิงข้าม, กฎการสอดคล้อง; rule = printed line
+note rule	กฎบันทึก	also: กติกาในบันทึกการศึกษา, กฎข้อความการศึกษา; study note rule; rule = printed line
+paragraphs	ข้อ	also: ข้อความ, บทความ; noun
+headings	หัวข้อ	also: หัวหน้า, หมวดหมู่; noun
+more	เพิ่มเติม	also: มากกว่า; adjective/adverb
+refs	Refs	also: ผู้ตัดสิน, ความหมาย; abbrev. of references; often left in English
+one	หนึ่ง	also: เดียว; number; เดียว in 'single column'
+two	สอง	also: 2; number
+back	หลัง	also: หน้าหลัง, Back Matter; as in back matter/cover
+variable	ตัวแปร	also: ที่เปลี่ยนแปลง; noun; adjective: changing
+category	หมวดหมู่	noun
+about	เกี่ยวกับ	preposition
+vertical position	ตำแหน่งตั้ง	also: สภาพตั้ง; noun
+saved	บันทึกไว้	also: ที่บันทึก; verb: to save
+format	รูปแบบ	also: การจัดรูปแบบ; noun; verb: การจัดรูปแบบ
+last	สุดท้าย	also: ล่าสุด; adjective
+images	ภาพ	also: รูปภาพ; noun
+max	สูงสุด	abbrev. of maximum
+noteline	เส้นหมายเหตุ	also: เส้นหมาย; noun
+height	ความสูง	noun
+shading	การให้เงา	also: เงา, การเงา; noun
+click	คลิก	verb
+turn	เปิด	also: ปิด; in 'turn on/off'; turn off = ปิด
+lock	ล็อค	also: เปิดล็อค (unlock); verb/noun
+scripture	คัมภีร์	also: คัมภีร์ไบเบิล, ข้อความ
+single	เดียว	also: คนเดียว, แบบเดียว
+bleed	บลีด	also: เลือด, Bleed, การหลั่งเลือด; printing term; often mistranslated literally
+how	วิธี	also: อย่างไร, ทำไม
+find	ค้นหา	also: หา; verb
+place	วาง	also: สถานที่, ที่ตั้ง, ที่; verb: to put; noun: location
+reload	อัพโหลด	also: โหลดใหม่, อัพล็อต
+options	ตัวเลือก	noun
+standard	มาตรฐาน	also: แบบมาตรฐาน
+link	ลิงค์	noun
+vertical rule	กฎตั้ง	also: กติกาตั้ง; rule rendered as regulation
+omit	เลิก	also: ละ, ละลาย; verb
+hide	ซ่อน	verb
+notes area	พื้นที่หมายเหตุ	also: พื้นที่ข้อความ, พื้นที่คำระบุ, บริเวณข้อความ
+footnote rule	กติกาข้อตักเตือน	also: กฎข้อตัก, ข้อบังคับในคำระบุ; rule rendered as regulation
+formatting	การจัดรูป	noun
+sidebar settings	การตั้งค่าแท่นข้าง	
+tex	TeX	left in English
+spaces	ช่องว่าง	also: สเปซ, สถานที่; noun
+special	พิเศษ	adjective
+primary	หลัก	also: ประถม
+chapters	บท	noun
+syntax	การประกอบคำ	also: syntax; in 'ความผิดพลาดการประกอบคำ'
+processing	การประมวลผล	noun
