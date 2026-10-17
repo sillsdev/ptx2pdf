@@ -3761,7 +3761,7 @@ source project's setting will "win").</property>
             <property name="margin-bottom">6</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="btn_pw_cancel">
+              <object class="GtkButton" id="btn_pw_ok">
                 <property name="label">OK</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -3775,7 +3775,7 @@ source project's setting will "win").</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_pw_ok">
+              <object class="GtkButton" id="btn_pw_cancel">
                 <property name="label">Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -3869,8 +3869,8 @@ saved configuration.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">btn_pw_cancel</action-widget>
-      <action-widget response="-6">btn_pw_ok</action-widget>
+      <action-widget response="-5">btn_pw_ok</action-widget>
+      <action-widget response="-6">btn_pw_cancel</action-widget>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_saveAsMonoglot">
@@ -10299,7 +10299,7 @@ parameters at once: font, size and color. </property>
                     <property name="has-entry">True</property>
                     <property name="active-id">0</property>
                     <items>
-                      <item id="&lt;Enter ID&gt;">None</item>
+                      <item>None</item>
                       <item>Light</item>
                       <item>Dark</item>
                     </items>

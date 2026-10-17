@@ -137,7 +137,7 @@ class PolyglotSetup(Gtk.Box):
 
     def find_or_create_row(self, sfx, save=False):
         if len(self.ls_treeview) >= 9:
-            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.")
+            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.", warning=True)
             return -1  # Indicate failure to add a row
 
         # Check if row already exists
@@ -304,7 +304,7 @@ class PolyglotSetup(Gtk.Box):
         try:
             new_value = float(new_text)
         except ValueError:
-            self.view.doStatus(f"Invalid input: {new_text}")
+            self.view.doStatus(f"Invalid input: {new_text}", warning=True)
             return
 
         new_value = round(new_value, 2)
@@ -365,12 +365,12 @@ class PolyglotSetup(Gtk.Box):
         row_index = int(path)
         old_cfg = self.ls_treeview[row_index][m.cfg] if 0 <= row_index < len(self.ls_treeview) else None
         if row_index == 0 and col_id not in [m.pg, m.fraction]:  # Row 0 should not be editable for these columns
-            self.view.doStatus(_("Cannot edit that value for 'L' row"))
+            self.view.doStatus(_("Cannot edit that value for 'L' row"), warning=True)
             return
         
         if col_id == m.code:  # Code changed
             if text in {row[m.code] for row in self.ls_treeview if row[m.code]}:
-                self.view.doStatus(_("Duplicate Code not allowed"))
+                self.view.doStatus(_("Duplicate Code not allowed"), warning=True)
                 return
 
 
@@ -412,7 +412,7 @@ class PolyglotSetup(Gtk.Box):
             # Check for duplicated Project and Configuration names
             for i, row in enumerate(self.ls_treeview):
                 if i != row_index and row[m.prj] == prj and row[m.cfg] == cfg:
-                    self.view.doStatus(_("Duplicate Project+Configuration not allowed)"))
+                    self.view.doStatus(_("Duplicate Project+Configuration not allowed)"), warning=True)
                     return
 
             if polyglot is not None:
@@ -523,7 +523,7 @@ class PolyglotSetup(Gtk.Box):
         iter = model.get_iter(path)  # Get the iterator for the row
         current_value = model.get_value(iter, col_id)  # Read current state
         if row_index == 0:
-            self.view.doStatus(_("You cannot disable captions for the primary 'L' project in a diglot."))
+            self.view.doStatus(_("You cannot disable captions for the primary 'L' project in a diglot."), warning=True)
         else:
             model.set_value(iter, col_id, not current_value)  # Toggle it
         self.updateRow(row_index)
@@ -657,7 +657,7 @@ class PolyglotSetup(Gtk.Box):
 
     def add_row(self, widget):
         if len(self.ls_treeview) >= 9:
-            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.")
+            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.", warning=True)
             return  # Stop if the limit is reached
         available_codes = self.get_available_codes()
         next_code = str(available_codes[m.code]) if available_codes else ""  # Auto-assign next available code

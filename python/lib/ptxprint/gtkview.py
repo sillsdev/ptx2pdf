@@ -2415,6 +2415,7 @@ class GtkViewModel(ViewModel):
         if wid == "l_statusLine":
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
             sl = self.builder.get_object("l_statusLine")
+            self._setStatusColour(sl, warning=False)    # doStatus(warning=True) turns it orange afterwards
             if sl is not None and not value:
                 sl.set_tooltip_text("")
             if not value:
@@ -2536,7 +2537,15 @@ class GtkViewModel(ViewModel):
             doError(txt, **kw)
         self.pauseNoUpdate()
 
-    def doStatus(self, txt=""): 
+    def _setStatusColour(self, sl, warning=False):
+        # Same attributes as in the glade file; only the background changes (peachpuff for
+        # warnings, matching the .highlighted CSS class)
+        attrs = Pango.AttrList()
+        attrs.insert(Pango.attr_foreground_new(0x1212, 0x1212, 0x1212))
+        attrs.insert(Pango.attr_background_new(*((0xffff, 0xdada, 0xb9b9) if warning else (0xdd1f, 0xf2ba, 0xff24))))
+        sl.set_attributes(attrs)
+
+    def doStatus(self, txt="", warning=False):
         btn = self.builder.get_object("btn_dismissStatusLine")
         if txt.startswith(r"\u"): # i.e. the results of an Alt-X (show unicode chars)
             btn.set_label(_(" Copy to Clipboard "))
@@ -2544,6 +2553,8 @@ class GtkViewModel(ViewModel):
             btn.set_label(_("Dismiss"))
         sl = self.builder.get_object("l_statusLine")
         self.set("l_statusLine", txt)
+        if warning:
+            self._setStatusColour(sl, warning=True)
         status = len(self.get("l_statusLine"))
         sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
         
@@ -2566,7 +2577,7 @@ class GtkViewModel(ViewModel):
         else:
             self.printReason |= idnty
         if txt or not self.printReason:
-            self.doStatus(txt)
+            self.doStatus(txt, warning=bool(txt))   # any text here is a reason printing is blocked
         for b in ["b_print", "btn_saveConfig"]:
             self.builder.get_object(b).set_sensitive(not self.printReason)
         if self.gtkpolyglot is not None:    
@@ -2588,7 +2599,7 @@ class GtkViewModel(ViewModel):
             self.otherDiglot = None
             return
         if isLocked():
-            self.doStatus(_("Printing busy"))
+            self.doStatus(_("Printing busy"), warning=True)
             return
 
         self.builder.get_object("spin_preview").start()
@@ -2603,10 +2614,10 @@ class GtkViewModel(ViewModel):
 
         jobs = self.getBooks(files=True, errors=True)
         if not len(jobs) or jobs[0] == '':
-            self.doStatus(_("No books to print"))
+            self.doStatus(_("No books to print"), warning=True)
             return
         if self.checkFontsMissing():
-            self.doStatus(_("One of more fonts have not been set yet"))
+            self.doStatus(_("One of more fonts have not been set yet"), warning=True)
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_Viewer":
@@ -2639,7 +2650,7 @@ class GtkViewModel(ViewModel):
                         if self.msgQuestion(_("Cannot update PDF file while it is locked!"), question):
                             continue
                         else:
-                            self.doStatus(_("Close the old PDF file before you try again."))
+                            self.doStatus(_("Close the old PDF file before you try again."), warning=True)
                             self.finished()
                             return
                     fileLocked = False
@@ -2856,7 +2867,7 @@ class GtkViewModel(ViewModel):
             self.updateFonts()
             self.readConfig("Default")
             self.fillCopyrightDetails()
-            self.doStatus(_("The 'Default' config settings have been reset.") + sec)
+            self.doStatus(_("The 'Default' config settings have been reset.") + sec, warning=bool(sec))
             return
         else:
             dialog = self.builder.get_object("dlg_confirmDelete")
@@ -2871,7 +2882,7 @@ class GtkViewModel(ViewModel):
             msg = _("Deleted config: {}".format(cfg))
             
             if not cfg or not delCfgPath or not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
-                self.doStatus(_("Internal error occurred, trying to delete a directory tree") + _("Folder: ") + str(delCfgPath))
+                self.doStatus(_("Internal error occurred, trying to delete a directory tree") + _("Folder: ") + str(delCfgPath), warning=True)
                 return
             # Switch to Default first: reloading settings fires handlers that write into the
             # current config's folder (e.g. changes.txt), so the deleted config must not be current
@@ -2879,7 +2890,7 @@ class GtkViewModel(ViewModel):
             self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=False,
                                        configName="Default", readConfig=True)
             if self.cfgid != "Default":     # never delete the config we are still standing in
-                self.doStatus(_("Could not switch to the Default configuration, so nothing was deleted."))
+                self.doStatus(_("Could not switch to the Default configuration, so nothing was deleted."), warning=True)
                 return
             # Release the previewed PDF so Windows doesn't block deleting this config's output
             self.pdf_viewer.clear(widget=self.builder.get_object("dlg_preview"))
@@ -2900,7 +2911,7 @@ class GtkViewModel(ViewModel):
             self.project.configs.pop(cfg, None)
             self.updateDialogTitle()
             self.triggervcs = True
-            self.doStatus(msg)
+            self.doStatus(msg, warning=bool(leftovers))
             self.updateSavedConfigList()
         self.colorTabs()
         self.disableLayoutAnalysis()
@@ -3219,27 +3230,30 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         dialog = self.builder.get_object("dlg_password")
         response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            pw = self.get("t_password")
-        elif response == Gtk.ResponseType.CANCEL:
-            pw = ""
-        else:
+        pw = self.get("t_password")
+        # Tidy up on every exit path (Cancel, window X, Esc) - only OK may lock or unlock
+        self.builder.get_object("t_password").set_text("")
+        dialog.hide()
+        if response != Gtk.ResponseType.OK:
+            return
+        invPW = b64decode(self.get("t_invisiblePassword") or "")
+        if not len(invPW) and not pw:
+            self.doStatus(_("Please enter a password to lock this configuration."), warning=True)
             return
         m = hashlib.md5()
         m.update(pw.encode("utf-8"))
         pw = m.digest()
-        invPW = b64decode(self.get("t_invisiblePassword") or "")
         logger.debug(f"{pw=} {invPW=}")
-        if invPW == None or not len(invPW): # No existing PW, so set a new one
+        if not len(invPW): # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(b64encode(pw).decode("UTF-8"))
             self.onSaveConfig(None, force=True)     # Always save the config when locking
+            self.doStatus(_("The configuration is now locked."))
         else: # try to unlock the settings by removing the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
+                self.doStatus(_("Password correct - the configuration is now unlocked."))
             else: # Mismatching password - Don't do anything
-                pass
-        self.builder.get_object("t_password").set_text("")
-        dialog.hide()
+                self.doStatus(_("Incorrect password - the configuration is still locked."), warning=True)
 
     def onPasswordChanged(self, t_invisiblePassword):
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -4214,7 +4228,7 @@ class GtkViewModel(ViewModel):
             self.doStatus(_("PDF settings unpacked. That was easy, wasn't it!"))
             startfile(unpack2fldr.get_filename())
         except BadZipFile as e:
-            self.doStatus(_("Sorry, that PDF doesn't seem to be a valid PTXprint file with config settings included in it."))
+            self.doStatus(_("Sorry, that PDF doesn't seem to be a valid PTXprint file with config settings included in it."), warning=True)
 
     def setup_book_button_styles(self):
         """Generates and applies CSS for book button coloring. Call once at init."""
@@ -5142,7 +5156,7 @@ class GtkViewModel(ViewModel):
                 if self.get("l_statusLine") == busyMsg:
                     self.doStatus("")
         else:
-            self.doStatus(_("No Archive File Created"))
+            self.doStatus(_("No Archive File Created"), warning=True)
 
     def onSelectModuleClicked(self, btn):
         prjdir = self.project.path
@@ -5959,9 +5973,9 @@ class GtkViewModel(ViewModel):
             if len(t):
                 self.set("txbf_copyright", self.autoCorrectTidyUp(t))
             else:
-                self.doStatus(_("No copyright statement found in Paratext settings!"))
+                self.doStatus(_("No copyright statement found in Paratext settings!"), warning=True)
         else:
-            self.doStatus(_("Paratext settings not found!"))
+            self.doStatus(_("Paratext settings not found!"), warning=True)
 
     def copyrightTextBufferChanged(self, btn, x):
         orig = self.get("txbf_copyright", "")
@@ -6291,7 +6305,7 @@ class GtkViewModel(ViewModel):
             self.set("fcb_plCreditVpos", m[1], mod=False)
             self.set("fcb_plCreditHpos", m[2], mod=False)
             self.set("fcb_plCreditRotate", m[3], mod=False)
-            self.set("ecb_plCreditBoxStyle", m[4], mod=False)
+            self.set("ecb_plCreditBoxStyle", m[4] or "None", mod=False)   # empty box = "None"
         self.set("t_plCreditText", self.get("l_piccredit") if len(self.get("l_piccredit")) else "", mod=False)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -6299,6 +6313,8 @@ class GtkViewModel(ViewModel):
             hpos = self.get("fcb_plCreditHpos")
             rota = self.get("fcb_plCreditRotate")
             bbox = self.get("ecb_plCreditBoxStyle")
+            if bbox is None or bbox in ("None", "<Enter ID>"):
+                bbox = ""       # TeX treats an empty box as no box; anything else is a style name
             text = self.get("t_plCreditText")
             crParams = "{}{},{},{}".format(vpos, hpos, (rota if rota is not None else "0"), bbox)
             self.set("t_piccreditbox", crParams)

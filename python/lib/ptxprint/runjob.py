@@ -170,7 +170,7 @@ class RunJob:
         self.env = None
 
     def fail(self, txt):
-        self.printer.set("l_statusLine", txt)
+        self.printer.doStatus(txt, warning=True)
         self.printer.finished(False)
         self.busy = False
         unlockme()
@@ -909,11 +909,11 @@ class RunJob:
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
-                            self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
+                            self.printer.onIdle(self.printer.doStatus, chkmsg, warning=True)
                             self.printer.onIdle(sl.set_tooltip_text, "" if msgs == chkmsg else msgs)
                             self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, "error" if smry["E"] > 0 else None)
                         else:
-                            self.printer.onIdle(self.printer.set, "l_statusLine", summaryLine)
+                            self.printer.onIdle(self.printer.doStatus, summaryLine, warning=True)
                             self.printer.onIdle(sl.set_tooltip_text, "" if msgs == summaryLine else msgs)
                             self.printer.onIdle(self.printer._setPrvReportStatus, summaryLine, msgs, severity)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
@@ -960,7 +960,7 @@ class RunJob:
                 self.printer.onIdle(self.printer.showLogFile)
 
         if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
-            self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
+            self.printer.doStatus(_("Rerun to fix: ") + ", ".join(self.rerunReasons), warning=True)
         self.printer.finished(self.res == 0)
         self.busy = False
         if not self.noview and not self.args.print and self.printer.isDisplay:

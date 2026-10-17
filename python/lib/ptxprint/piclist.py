@@ -180,6 +180,9 @@ class PicChecks:
         res = None
         if text is not None:
             crstr = self.cfgShared.get(src, "piccreditbox", fallback="")
+            # Box style "None" (or "<Enter ID>", a stray glade id saved by older versions) means no box,
+            # which TeX expects as empty; "<Enter ID>" also stopped the whole regex below from matching
+            crstr = re.sub(r",(?:None|<Enter ID>)$", ",", crstr)
             m = re.match(r"^([tcb]?[lcrio]?),(-?9?0?|None),(\w*)$", crstr)
             if m:
                 #res = ["" if x.lower() == "none" else x for x in m.groups()]

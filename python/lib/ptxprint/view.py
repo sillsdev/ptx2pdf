@@ -178,7 +178,7 @@ class ViewModel:
         if secondary is not None:
             print(secondary)
 
-    def doStatus(self, txt=""):
+    def doStatus(self, txt="", warning=False):
         if txt:
             print("Status: ", txt)
 

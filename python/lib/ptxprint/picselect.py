@@ -679,7 +679,7 @@ class ImageSet:
                 with open(zfile, 'wb') as f:
                     f.write(urlfile.read())
             except urllib.error.URLError:
-                self.doStatus(_("ERROR: Download of '{}' failed. Check internet connection.".format(imgset_id)))
+                self.doStatus(_("ERROR: Download of '{}' failed. Check internet connection.".format(imgset_id)), warning=True)
                 while Gtk.events_pending():
                     Gtk.main_iteration()
                 continue
@@ -699,9 +699,9 @@ class ImageSet:
                     try:
                         if uddir and len(uddir):
                             rmtree(uddir)
-                            self.doStatus(_("Image Set '{}' removed — terms not accepted.".format(imgsetname)))
+                            self.doStatus(_("Image Set '{}' removed — terms not accepted.".format(imgsetname)), warning=True)
                     except OSError:
-                        self.doStatus(_("Cannot delete folder! Image Set: {}".format(imgsetname)))
+                        self.doStatus(_("Cannot delete folder! Image Set: {}".format(imgsetname)), warning=True)
                     continue
 
             self._registerInstalledImageset(imgsetname)
@@ -892,9 +892,9 @@ class ImageSet:
                 try:
                     if uddir and len(uddir):
                         rmtree(uddir)
-                        self.doStatus(_("Image Set '{}' removed — terms not accepted.".format(imgsetname)))
+                        self.doStatus(_("Image Set '{}' removed — terms not accepted.".format(imgsetname)), warning=True)
                 except OSError:
-                    self.doStatus(_("Cannot delete folder! Image Set: {}".format(imgsetname)))
+                    self.doStatus(_("Cannot delete folder! Image Set: {}".format(imgsetname)), warning=True)
                 return True
             self._registerInstalledImageset(imgsetname)
             self.doStatus(_("Installed Image Set: {}".format(imgsetname)))

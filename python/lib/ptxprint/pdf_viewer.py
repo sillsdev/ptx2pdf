@@ -372,7 +372,7 @@ class PDFViewer:
     def onSavePDFasClicked(self, btn): # Move me to pdf_viewer!
         srcpath = getattr(self,  "fname", None)
         if srcpath is None:
-            self.model.doStatus(_("No PDF is currently open to save"))
+            self.model.doStatus(_("No PDF is currently open to save"), warning=True)
             return
         dialog = Gtk.FileChooserDialog(
             title="Save PDF As...",
@@ -399,7 +399,7 @@ class PDFViewer:
             except Exception as e:
                 self.model.doError(_("Error saving PDF: ") + str(e), 
                     secondary=_("Unable to save the PDF in the new location:") + "\n" + new_file_path)
-                self.model.doStatus(_("Error saving PDF: ") + new_file_path)
+                self.model.doStatus(_("Error saving PDF: ") + new_file_path, warning=True)
         dialog.destroy()
       
     def onAnchorKeyRelease(self, btn, *a):
@@ -536,7 +536,7 @@ class PDFFileViewer:
                 self.document = Poppler.Document.new_from_file(file_uri, None)
                 self.numpages = self.document.get_n_pages()
             except Exception as e:
-                self.model.doStatus(_("Error opening PDF: ").format(e))
+                self.model.doStatus(_("Error opening PDF: ").format(e), warning=True)
                 self.document = None
                 return False
             self.hbox.show()
@@ -949,7 +949,7 @@ class PDFFileViewer:
         try:
             result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
         except Exception as e:
-            self.model.doStatus(_("An error occurred while printing: ").format(e))
+            self.model.doStatus(_("An error occurred while printing: ").format(e), warning=True)
         if result == Gtk.PrintOperationResult.APPLY:
             self.model.doStatus(_("Print job sent to printer."))
             if not self.model.userconfig.has_section("printer"):
@@ -957,7 +957,7 @@ class PDFFileViewer:
             settings = print_op.get_print_settings()
             settings.foreach(self._saveSetting)
         else:
-            self.model.doStatus(_("Print job canceled or failed."))
+            self.model.doStatus(_("Print job canceled or failed."), warning=True)
 
     def on_draw_page(self, operation, context, page_number):
         if not getattr(self, 'document', None):
@@ -1120,7 +1120,7 @@ class PDFContentViewer(PDFFileViewer):
             self.document = Poppler.Document.new_from_file(file_uri, None)
             self.numpages = self.document.get_n_pages()
         except Exception as e:
-            self.model.doStatus(_("Error opening PDF: ").format(e))
+            self.model.doStatus(_("Error opening PDF: ").format(e), warning=True)
             self.document = None
             return False
 
