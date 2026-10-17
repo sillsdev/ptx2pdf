@@ -41,49 +41,133 @@ class PolySolver(TypesetterSolver):
 
     balance_change_cost = 0.1   # cost of changing a paragraph at all, to prefer fewer changes
 
-    max_page_candidates = 60    # most combos generate_combos offers for a page
-    mixed_candidates = 5        # how many slice moves to also try with private fix ups
-    max_slices = 3              # most slices changed together by a slice move
+    # The first failing page matters most (the user fixes it, and maybe all that follows, by
+    # hand), so pages before any failure get more effort than pages after one.
+    page_budget = 24            # most layout runs spent filling one page (after a failure)
+    backtrack_budget = 12       # most layout runs spent on each earlier page when backtracking
+    refill_budget = 8           # most runs filling a page again from a start a backtrack gave it
+    early_max_budget = 80       # before any page has failed: most runs for a page,
+    early_backtrack_budget = 16 # per earlier page when backtracking,
+    early_refill_budget = 10    # and to refill from a new start
+    relax_caps = (2, 4)         # if a page runs out of candidates, try again allowing looser shapes
+    per_net = 3                 # combos kept for each net height change of a page's slices
+    per_dh = 3                  # outcomes kept for each height change of one slice (differing in which glots change)
+    budget_per_par = 2          # extra layout runs a page gets for each paragraph on it that can change
+    max_budget = 60
+    max_candidates = 2000       # most candidates listed for a page
     pull_lines = 2              # lines of space the next slice needs to start on a page
 
+    def solve(self, state, start_page=-1, stop=True, restart=False, book=None):
+        self.restarting = restart
+        if restart:
+            self._match_adjlist_ids(state)
+        return super().solve(state, start_page=start_page, stop=stop, restart=restart, book=book)
+
+    def _match_adjlist_ids(self, state):
+        """ The adjlist writes a paragraph without a parnum as [1], but its id here is [] """
+        known = set(self.paragraph_order)
+        def fix(pid):
+            if pid not in known and pid.endswith("[1]") and pid[:-3] + "[]" in known:
+                return pid[:-3] + "[]"
+            return pid
+        state.paragraph_params = {fix(k): v for k, v in state.paragraph_params.items()}
+        self.shape_cache = {(fix(k), d): v for (k, d), v in self.shape_cache.items()}
+        self.probe_cache = {fix(k): v for k, v in self.probe_cache.items()}
+
+    @property
+    def early(self):
+        """ Before the first failed page """
+        return not self.failed_pages
+
     def run_forward(self, state, page, start_page, stop):
-        """ Phase 1 (balance slices), then phase 2: fill pages using TypesetterSolver's
-            page by page search with the polyglot move generator. """
+        """ Fill pages in order (design section 4). Each page is tried with candidate combos,
+            ordered by a note free model and re-ordered by what each layout run measures, and
+            is committed full or, failing that, with the best layout measured for it. """
         printer = self.hooks.printer
         printer.report(state)
-        params, changed = self.balance_slices(state)
-        if changed:
-            layout = self.hooks.run_layout(self, params, state.float_anchors, -1, -1)
-            if layout is not None:
-                state = EngineState(params, state.float_anchors, layout, printer.parlocs, 0)
-                printer.report(state)
-                self.check_balance()
-        self.base_params = dict(state.paragraph_params)
-        self.init_state = state
-        self.numpages = state.numPages()
-        res = super().run_forward(state, page, start_page, stop)
-        final = res.state if isinstance(res, HumanFixRequest) else res
-        if int(printer.view.get("s_stopat") or 0):
-            # The last layout may have stopped early; the report, adjlist and PDF need the whole book
-            layout = self.hooks.run_layout(self, final.paragraph_params, final.float_anchors, -1, -1)
-            if layout is not None:
-                final.layout = layout
-                final.parlocs = printer.parlocs
-        printer.report(final)
-        return res
+        self.failed_pages = []
+        self.page_memo = {}     # (page, start key) -> {combo signature: gap measured}
+        cur = state
+        p = 0
+        self.floor = 0          # pages before this are not changed (on a restart, the user's)
+        if getattr(self, 'restarting', False) and cur.layout.first_failing_page is not None:
+            p = self.floor = cur.layout.first_failing_page
+            logger.log(15, f"{self.bk}: restarting at page {p+1}")
+        while True:
+            if p >= len(cur.layout.pages) - 1 and not cur.layout.complete:
+                more = self._layout(cur.paragraph_params, cur, p + 2)   # measure this page and the next
+                if more is None:
+                    break
+                cur = more
+            if p >= len(cur.layout.pages) - 1:
+                break           # the last page may be short
+            self.printbk(self.bk, p, total=len(cur.layout.pages))
+            if self._page_short(cur, p):
+                before = cur
+                cur = self.fill_page(cur, p)
+                if p in self.failed_pages and p > self.floor and p - 1 not in self.failed_pages:
+                    self.failed_pages.remove(p)     # still early while backtracking for it
+                    back = self.backtrack(before, p)
+                    self.failed_pages.append(p)
+                    if back is not None:
+                        self.failed_pages.remove(p)
+                        cur = back
+                        if self._page_short(cur, p):
+                            cur = self.fill_page(cur, p)
+                if stop and p in self.failed_pages:
+                    final = self._layout(cur.paragraph_params, cur, -1) or cur
+                    final.failures = self.failed_pages
+                    printer.report(final)
+                    return HumanFixRequest(final, p + 1, f"Cannot fill page {p+1}")
+            params = dict(cur.paragraph_params)
+            if self.balance_page(cur, p, params):
+                # Same height is not quite no change (breaks, notes), so check it: keep it only if
+                # no page done so far that was full has become short
+                checked = self._layout(params, cur, p + 2)
+                if checked is not None and not any(self._page_short(checked, q) for q in range(p + 1)
+                                                   if q not in self.failed_pages):
+                    cur = checked
+                else:
+                    logger.log(15, f"p{p+1}: balance changes undone, they made a page short")
+            p += 1
+            if self.hooks.cancelled:
+                return HumanFixRequest(cur, p, "Stopped")
+        cur.failures = self.failed_pages
+        # The report, adjlist and PDF need a layout of the whole book
+        final = self._layout(cur.paragraph_params, cur, -1)
+        if final is not None:
+            final.failures = self.failed_pages
+            cur = final
+        printer.report(cur)
+        return cur
 
-    def repair(self, state, page, start, avoid_key, floor=0):
-        """ Note which page the repair is for and what it needs, so earlier full pages
-            are only offered moves that push material the right way """
-        if getattr(self, 'repairing', None) is not None:
-            return super().repair(state, page, start, avoid_key, floor=floor)
-        failing = page + 1
-        free = state.layout.pages[failing].column_free_lines if failing < len(state.layout.pages) else None
-        self.repairing = (failing, free)
-        try:
-            return super().repair(state, page, start, avoid_key, floor=floor)
-        finally:
-            self.repairing = None
+    def _layout(self, params, state, last_page):
+        """ Run a layout with params as far as last_page (-1 for the whole book) """
+        layout = self.hooks.run_layout(self, params, state.float_anchors, -1, last_page)
+        if layout is None:
+            return None
+        self.itercount += 1
+        return EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, 0)
+
+    def _key(self, state, page):
+        """ Where page starts, per glot: (first paragraph, its lines on the page) """
+        return self.hooks.get_page_para_key(page, state=state)
+
+    def _tried(self, state, page):
+        """ {combo signature: gap measured} for page starting as it does in state """
+        return self.page_memo.setdefault((page, self._key(state, page)), {})
+
+    def _gap(self, state, page):
+        """ Lines short per glot on page (all 0 if full) """
+        glots = self.hooks.printer.glots
+        if page >= len(state.layout.pages):
+            return None
+        free = state.layout.pages[page].column_free_lines
+        return list(free) if free else [0] * len(glots)
+
+    def _page_short(self, state, page):
+        gap = self._gap(state, page)
+        return gap is not None and any(x > 0 for x in gap)
 
     def _combo(self, pids, assignment, params):
         """ The combo that sets paragraphs pids as in assignment (others unadjusted),
@@ -99,182 +183,283 @@ class PolySolver(TypesetterSolver):
             res[p] = d
         return res
 
-    def generate_combos(self, paragraphs, state, page):
-        """ Phase 2 candidate combos for page, best guess first. Notes make the effect of a
-            change unpredictable, so the predictions only order the candidates; each is judged
-            by its layout run. The slice data is taken now, since layouts run while we yield. """
-        yield {}
-        if page >= len(state.layout.pages):
-            return
-        free = state.layout.pages[page].column_free_lines
+    def page_candidates(self, state, page, gap=None):
+        """ All combos for page with their predicted effect.
+            Returns [(effects per glot (pt), net slice change (pt), change in badness, combo, desc)] """
         glots = self.hooks.printer.glots
-        if not free:
-            free = [0] * len(glots)     # a full page: backtracking wants it to end differently
         self.prepare_slices(state.parlocs)
         params = state.paragraph_params
-        b = self.baselines
-        maxb = max(b[g] for g in glots)
-        need = {g: free[i] for i, g in enumerate(glots)}       # lines short per glot
-        short = [g for g in glots if need[g] > 0]
-        full = not short
         on_page = {sl: pg for sl, pg in self.sliceheights.items() if page in pg}
         if not on_page:
-            return
-        last = max(on_page)     # slice ids increase down the page
-        complete = [sl for sl, pg in on_page.items() if set(pg) == {page} and sl != last]
-        cands = []      # (distance in lines, change in badness, effect, combo, description)
-
-        # Private moves: a short glot gets more (or fewer) lines in the last slice on the page,
-        # whether that slice crosses the bottom or not
-        private = {}    # glot -> [(change in lines, change in badness, combo)]
-        for sl in (last,):
-            for g in (glots if full else short):
-                pids = [p for p in self.slicepars.get(sl, {}).get(g, []) if page in self.parpages.get(p, ())]
-                cur = {p: self.current_delta(p, params) for p in pids}
-                curtot = sum(cur.values())
-                curcost = sum(self.shape_cost(p, d) or 0. for p, d in cur.items())
-                for tot, (cost, assign) in self._glot_options(pids).items():
-                    change = tot - curtot
-                    if change == 0:
-                        continue
-                    combo = self._combo(pids, assign, params)
-                    private.setdefault(g, []).append((change, cost - curcost, combo))
-                    if full or change >= need[g]:
-                        dist = change - need[g] if not full else 10 if (getattr(self, 'repairing', None) and change < 0) else 0
-                        cands.append((dist, cost - curcost, ("p", g, change), combo, f"{g} s{sl} {change:+d}"))
-
-        # Slice moves: slices wholly on the page change height, moving everything below them.
-        # Per slice, the cheapest outcome for each height change.
+            return []
+        last = max(on_page)
         crossing = page + 1 in on_page[last]
-        movable = complete + ([] if crossing or set(on_page[last]) != {page} else [last])
-        options = {}        # slice -> {height change (pt, rounded): (change in badness, combo, imbalance)}
-        for sl in movable:
-            cur = self.current_outcome(sl, params)
-            pids = [p for g in glots for p in self.slicepars.get(sl, {}).get(g, [])]
-            opts = options.setdefault(sl, {})
-            for o in self.slice_outcomes(sl, params):
-                dh = round(o.height - cur.height)
-                if dh == 0:
-                    continue
-                dbad = o.badness - cur.badness
-                combo = self._combo(pids, o.assignment, params)
-                if dh not in opts or dbad < opts[dh][0]:
-                    opts[dh] = (dbad, combo, o.imbalance)
-
-        # Combine up to max_slices slices, all growing or all shrinking (a page is a single column
-        # of slices, so doing both is unlikely to help): total height change -> (change in badness,
-        # combo, description)
-        totals = {0: (0., {}, ())}
-        for sign in (1, -1):
-            part = {0: (0., {}, ())}
-            for sl in movable:
-                if sl == last and sign > 0:
-                    continue    # growing the last slice only pushes its tallest glot off the page
-                new = dict(part)
-                for tot, (dbad, combo, desc) in part.items():
-                    if len(desc) >= self.max_slices:
+        # slices wholly on the page (the last too if it does not cross): every height change
+        whole = [sl for sl, pg in on_page.items() if set(pg) == {page} and (sl != last or not crossing)]
+        # a slice continuing from the previous page: its paragraphs wholly on this page can change
+        # without moving the break, changing this page's part of the slice
+        top = [sl for sl, pg in on_page.items() if min(pg) < page and sl != last]
+        totals = {0: [(0., {}, ())]}        # net change -> up to per_net (dbad, combo, desc), cheapest first
+        for sl in top + whole:
+            if sl in top:
+                opts = self._partial_options(sl, page, params)
+            else:
+                cur = self.current_outcome(sl, params)
+                pids = [p for g in glots for p in self.slicepars.get(sl, {}).get(g, [])]
+                best = {}       # (height change, per glot change) -> cheapest
+                for o in self.slice_outcomes(sl, params):
+                    dh = round(o.height - cur.height)
+                    if dh == 0:
                         continue
-                    for dh, (sbad, scombo, imb) in options.get(sl, {}).items():
-                        if dh * sign <= 0:
-                            continue
-                        k = tot + dh
-                        if k not in new or dbad + sbad < new[k][0]:
-                            new[k] = (dbad + sbad, {**combo, **scombo}, desc + (f"s{sl} {dh:+d}pt",))
-                part = new
-            totals.update({k: v for k, v in part.items() if k != 0})
-
-        repairing = getattr(self, 'repairing', None)
-        helped = None       # lines the page being repaired for is short, if this page is before it
-        if full and repairing is not None and page < repairing[0] and repairing[1] and any(repairing[1]):
-            helped = max(repairing[1]) * maxb
-        if full:
-            # Any change in where the page ends, cheapest first. When repairing for a later
-            # short page, growth usually helps (it pushes more material onto that page), so
-            # try that first; but notes and slice boundaries make it no rule.
-            for tot, (dbad, combo, desc) in totals.items():
-                if tot == 0:
-                    continue
-                dist = 0 if helped is None else abs(tot - helped) / maxb + (10 if tot < 0 else 0)
-                cands.append((dist, dbad, ("f", tot), combo, " + ".join(desc)))
-            totals = {}
-        # Growth: push the short glots' ends down; a full glot just spills more
-        target = min((need[g] * b[g] for g in short), default=0)
-        growth = []
-        for tot, (dbad, combo, desc) in totals.items():
-            if tot <= 0:
+                    sig = (dh, tuple(round(a - b) for a, b in zip(o.heights, cur.heights)))
+                    if sig not in best or o.badness - cur.badness < best[sig][0]:
+                        best[sig] = (o.badness - cur.badness, o)
+                opts = {}
+                for (dh, sig), (dbad, o) in sorted(best.items(), key=lambda x: x[1][0]):
+                    lst = opts.setdefault(dh, [])
+                    if len(lst) < self.per_dh:
+                        lst.append((dbad, self._combo(pids, o.assignment, params)))
+            new = {k: list(v) for k, v in totals.items()}
+            for tot, entries in totals.items():
+                for dh, slst in opts.items():
+                    for sbad, scombo in slst:
+                        lst = new.setdefault(tot + dh, [])
+                        for dbad, combo, desc in entries:
+                            lst.append((dbad + sbad, {**combo, **scombo}, desc + (f"s{sl}{dh:+d}",)))
+            for k in new:
+                new[k] = sorted(new[k], key=lambda x: (x[0], len(x[1])))[:self.per_net]
+            totals = new
+        # the last slice, per short glot: its lines on this page (a full glot's change only
+        # alters what spills to the next page)
+        private = {g: [(0, 0., {})] for g in glots}
+        for i, g in enumerate(glots):
+            if gap is not None and gap[i] <= 0:
                 continue
-            dist = abs(tot - target) / maxb
-            growth.append((dist, dbad, tot, combo, desc))
-            if tot >= target - 0.5 * maxb:
-                cands.append((dist, dbad, ("g", tot), combo, " + ".join(desc)))
+            pids = [p for p in self.slicepars.get(last, {}).get(g, []) if page in self.parpages.get(p, ())]
+            cur = {p: self.current_delta(p, params) for p in pids}
+            curtot = sum(cur.values())
+            curcost = sum(self.shape_cost(p, d) or 0. for p, d in cur.items())
+            for tot, (cost, assign) in self._glot_options(pids).items():
+                if tot != curtot:
+                    private[g].append((tot - curtot, cost - curcost, self._combo(pids, assign, params)))
+        b = self.baselines
+        res = []
+        for net, entries in totals.items():
+            for dbad, combo, desc in entries:
+                for choice in itertools.product(*[private[g] for g in glots]):
+                    effects = [net + ch[0] * b[g] for g, ch in zip(glots, choice)]
+                    c = dict(combo)
+                    pbad = dbad
+                    pdesc = list(desc)
+                    for g, ch in zip(glots, choice):
+                        c.update(ch[2])
+                        pbad += ch[1]
+                        if ch[0]:
+                            pdesc.append(f"{g}{ch[0]:+d}")
+                    if not c:
+                        continue
+                    res.append((effects, net, pbad, c, " ".join(pdesc), " ".join(desc)))
+                    if len(res) >= self.max_candidates:
+                        return res
+        return res
 
-        # Pull in: if the page ends at a slice boundary, shrink enough for the next slice to start
-        if not crossing and not full:
-            gap = min(need[g] * b[g] for g in glots)
-            pull = max(maxb, self.pull_lines * maxb - gap)
-            for tot, (dbad, combo, desc) in totals.items():
-                if tot >= 0:
-                    continue
-                dist = max(0., pull + tot) / maxb + 0.5 * max(0., -tot - pull) / maxb
-                cands.append((dist, dbad, ("u", tot), combo, "pull " + " + ".join(desc)))
-
-        # Mixed: growth plus private fix ups for what it leaves short
-        growth.sort(key=lambda m: (round(m[0]), m[1]))
-        for dist, dbad, dh, combo, desc in growth[:self.mixed_candidates]:
-            mixed = dict(combo)
-            err = 0.
-            desc = list(desc)
-            for g in short:
-                rest = round((need[g] * b[g] - dh) / b[g])
-                if rest <= 0 or g not in private:
-                    err += abs(min(rest, 0))
-                    continue
-                best = min(private[g], key=lambda x: (abs(x[0] - rest), x[1]))
-                mixed.update(best[2])
-                dbad += best[1]
-                err += abs(best[0] - rest)
-                desc.append(f"{g} {best[0]:+d}")
-            if len(desc) > 1 and err == 0:
-                cands.append((err, dbad, ("m",) + tuple(desc), mixed, " + ".join(desc)))
-
-        # Try the cheapest way to get each predicted effect first, then the dearer alternatives
-        # As monoglot: only the cheapest way to each predicted effect
-        cands.sort(key=lambda c: (round(c[0]), c[1]))
-        firsts, effects = [], set()
-        for c in cands:
-            if c[2] not in effects:
-                firsts.append(c)
-                effects.add(c[2])
-        seen = set()
-        n = 0
-        maxr = int(self.hooks.badness_maxr)
-        for dist, dbad, effect, combo, desc in firsts:
-            key = tuple(sorted(combo.items()))
-            if not combo or key in seen or len(combo) > maxr:
+    def _partial_options(self, sl, page, params):
+        """ For slice sl continuing onto page from the one before: {change in its height on this
+            page (pt): (change in badness, combo)}, using only its paragraphs wholly on this page """
+        glots = self.hooks.printer.glots
+        b = self.baselines
+        h = self.sliceheights.get(sl, {}).get(page, {})
+        per = []
+        for g in glots:
+            pids = [p for p in self.slicepars.get(sl, {}).get(g, []) if self.parpages.get(p) == {page}]
+            cur = {p: self.current_delta(p, params) for p in pids}
+            curtot = sum(cur.values())
+            curcost = sum(self.shape_cost(p, d) or 0. for p, d in cur.items())
+            per.append([(tot - curtot, cost - curcost, self._combo(pids, assign, params))
+                        for tot, (cost, assign) in self._glot_options(pids).items()])
+        base = max(h.get(g, 0) for g in glots)
+        best = {}
+        for choice in itertools.product(*per):
+            dh = round(max(h.get(g, 0) + ch[0] * b[g] for g, ch in zip(glots, choice)) - base)
+            if dh == 0:
                 continue
-            seen.add(key)
-            logger.log(15, f"p{page+1} candidate {desc}: dist {dist:.1f} dbad {dbad:.2f}")
-            yield combo
-            n += 1
-            if n >= self.max_page_candidates:
+            dbad = sum(ch[1] for ch in choice)
+            sig = (dh, tuple(ch[0] for ch in choice))
+            if sig not in best or dbad < best[sig][0]:
+                combo = {}
+                for ch in choice:
+                    combo.update(ch[2])
+                best[sig] = (dbad, combo)
+        opts = {}
+        for (dh, sig), v in sorted(best.items(), key=lambda x: x[1][0]):
+            lst = opts.setdefault(dh, [])
+            if len(lst) < self.per_dh:
+                lst.append(v)
+        return opts
+
+    def _priority(self, cand, gap, crossing, response):
+        """ How promising a candidate looks: distance from the nearer of growing to fill the
+            gap or shrinking enough to pull in more, then badness. response scales predicted
+            effects per glot by what layout runs on this page have measured. """
+        glots = self.hooks.printer.glots
+        b = self.baselines
+        maxb = max(b[g] for g in glots)
+        effects, net, dbad, combo, desc, slicedesc = cand
+        eff = [e * response[i] for i, e in enumerate(effects)]
+        grow = sum(abs(e - gap[i] * b[g]) / b[g] if gap[i] > 0 else max(0., -e) / b[g]
+                   for i, (g, e) in enumerate(zip(glots, eff)))
+        pull = self.pull_lines * maxb + max(gap[i] * b[g] for i, g in enumerate(glots))
+        shrink = max(0., net + pull) / maxb + 0.5 * max(0., -net - pull) / maxb if net < 0 else 1000.
+        # each try of the same slice changes moves its other variants down a step
+        return (round(min(grow, shrink) * 2) / 2 + self._slicetries.get(slicedesc, 0), dbad)
+
+    def fill_page(self, state, page):
+        """ Try combos on page until it is full or its budget is spent; commit the result """
+        self.prepare_slices(state.parlocs)
+        movable = sum(1 for sl, pg in self.sliceheights.items() if page in pg
+                      for g in self.hooks.printer.glots for p in self.slicepars.get(sl, {}).get(g, [])
+                      if page in self.parpages.get(p, ()) and self.shape_deltas.get(p))
+        budget = min(self.early_max_budget if self.early else self.max_budget,
+                     self.page_budget + self.budget_per_par * movable)
+        gap, dbad, new, desc = self.try_fill(state, page, budget)
+        if gap > 0:
+            self.failed_pages.append(page)
+        return new
+
+    def try_fill(self, state, page, budget):
+        """ Try combos on page, at most budget layout runs, until it is full.
+            Returns (lines short, change in badness, best state, description) """
+        glots = self.hooks.printer.glots
+        gap0 = self._gap(state, page)
+        memo = self._tried(state, page)
+        cands = [c for c in self.page_candidates(state, page, gap0) if frozenset(c[3].items()) not in memo]
+        self._slicetries = {}
+        on_page = [sl for sl, pg in self.sliceheights.items() if page in pg]
+        crossing = bool(on_page) and page + 1 in self.sliceheights[max(on_page)]
+        response = [1.] * len(glots)
+        observed = [[] for g in glots]
+        best = (sum(gap0), 0., state, "none")
+        tried = 0
+        logger.log(15, f"p{page+1}: gap {gap0}, {len(cands)} candidates ({len(memo)} tried before from this start)")
+        relax = list(self.relax_caps)
+        while tried < budget:
+            if not cands:
+                # Out of candidates: a looser paragraph is better than a failed page
+                if not relax or best[0] == 0:
+                    break
+                scale = self.cap_scale = relax.pop(0)
+                cands = [c for c in self.page_candidates(state, page, gap0) if frozenset(c[3].items()) not in memo]
+                self.cap_scale = 1
+                logger.log(15, f"p{page+1}: {len(cands)} more candidates with the shape cap x{scale}")
+                continue
+            cands.sort(key=lambda c: self._priority(c, gap0, crossing, response))
+            effects, net, dbad, combo, desc, slicedesc = cands.pop(0)
+            self._slicetries[slicedesc] = self._slicetries.get(slicedesc, 0) + 1
+            params = dict(state.paragraph_params)
+            for p, d in combo.items():
+                params[p] = self.shape_cache[(p, d)][:2]
+            new = self._layout(params, state, page + 2)
+            tried += 1
+            if new is None:
+                continue
+            gap = self._gap(new, page)
+            memo[frozenset(combo.items())] = gap
+            ffp = new.layout.first_failing_page
+            broke = ffp is not None and ffp < page and ffp not in self.failed_pages and not self._page_short(state, ffp)
+            logger.log(15, f"p{page+1} try {desc}: predicted {[round(e, 1) for e in effects]} -> gap {gap}{' breaks p%d' % (ffp+1) if broke else ''}")
+            if gap is None or broke:
+                continue
+            for i, g in enumerate(glots):           # measured response to predicted effects
+                if abs(effects[i]) >= 1:
+                    observed[i].append((gap0[i] - gap[i]) * self.baselines[g] / effects[i])
+                    response[i] = max(0., min(2., sum(observed[i]) / len(observed[i])))
+            score = (sum(gap), dbad)
+            if score < best[:2]:
+                best = (sum(gap), dbad, new, desc)
+            if sum(gap) == 0:
                 break
+        logger.log(15, f"p{page+1}: {'filled' if best[0] == 0 else 'failed, best gap %d' % best[0]} by {best[3]} after {tried} runs")
+        return best
 
-    def check_balance(self):
-        """ Log balanced slices whose measured imbalance differs from the prediction """
-        printer = self.hooks.printer
-        heights, baselines = printer.get_sliceheights()
-        glots = printer.glots
-        maxb = max(baselines[g] for g in glots)
-        for sl, pred in sorted(self.balance_predicted.items()):
-            pages = heights.get(sl, {})
-            if len(pages) != 1:
-                logger.log(15, f"balance slice {sl}: now crosses a page")
+    def backtrack(self, state, page):
+        """ page can't be filled from its own slices: change where an earlier page ends instead,
+            keeping the pages between full. Looks up to the backtrack setting back for a change
+            that fills page; failing that, takes the best improvement found one page back.
+            Each run measures all the pages involved. Returns a better state or None. """
+        glots = self.hooks.printer.glots
+        gap0 = self._gap(state, page)
+        need = max(gap0[i] * self.baselines[g] for i, g in enumerate(glots))
+        seen = {self._key(state, page)}     # starts of page already measured
+        improved = None
+        tried = 0
+        depth = int(self.backtrack_depth) if self.early else 1
+        for target in range(page - 1, max(self.floor - 1, page - 1 - depth), -1):
+            if target in self.failed_pages:
+                break
+            memo = self._tried(state, target)
+            cands = [c for c in self.page_candidates(state, target, [0] * len(glots))
+                     if c[1] != 0 and frozenset(c[3].items()) not in memo]
+            samestart = set()           # net changes that gave page a start already seen
+            def order(c):
+                # growth pushes material on towards the short page: try it first, nearest the need
+                return (c[1] in samestart, c[1] < 0, abs(abs(c[1]) - need), c[2])
+            n = 0
+            while cands and n < (self.early_backtrack_budget if self.early else self.backtrack_budget):
+                cands.sort(key=order)
+                effects, net, dbad, combo, desc, slicedesc = cands.pop(0)
+                params = dict(state.paragraph_params)
+                for p, d in combo.items():
+                    params[p] = self.shape_cache[(p, d)][:2]
+                new = self._layout(params, state, page + 2)
+                n += 1
+                tried += 1
+                if new is None:
+                    continue
+                memo[frozenset(combo.items())] = self._gap(new, target)
+                if any(self._page_short(new, q) for q in range(target, page)):
+                    continue
+                key = self._key(new, page)
+                if key in seen:
+                    samestart.add(net)
+                    continue
+                seen.add(key)
+                gap = self._gap(new, page)
+                logger.log(15, f"p{page+1} back on p{target+1} {desc}: gap {gap}")
+                if gap is None:
+                    continue
+                if sum(gap) > 0:
+                    # a new start for page: try filling it from there
+                    before = self.itercount
+                    rgap, rdbad, rnew, rdesc = self.try_fill(new, page,
+                                    self.early_refill_budget if self.early else self.refill_budget)
+                    tried += self.itercount - before
+                    if rgap < sum(gap):
+                        gap, new = [0] * len(glots) if rgap == 0 else self._gap(rnew, page), rnew
+                if sum(gap) == 0:
+                    logger.log(15, f"p{page+1}: backtrack to p{target+1} filled it after {tried} runs")
+                    return new
+                if target == page - 1 and sum(gap) < sum(gap0) and (improved is None or sum(gap) < improved[0]):
+                    improved = (sum(gap), new)
+        logger.log(15, f"p{page+1}: backtrack {'improved to gap %d' % improved[0] if improved else 'found nothing'} after {tried} runs")
+        return improved[1] if improved else None
+
+    def balance_page(self, state, page, params):
+        """ Give each slice wholly on page a same height outcome with less badness (better
+            balance at no cost to the page). Changes params; returns whether anything changed. """
+        glots = self.hooks.printer.glots
+        self.prepare_slices(state.parlocs)
+        changed = False
+        for sl, pg in self.sliceheights.items():
+            if set(pg) != {page}:
                 continue
-            h = list(pages.values())[0]
-            hts = [h.get(g, 0) for g in glots]
-            actual = round((max(hts) - min(hts)) / maxb)
-            if actual != pred:
-                logger.log(15, f"balance slice {sl}: predicted {pred} lines, measured {actual} ({hts})")
+            cur = self.current_outcome(sl, params)
+            for o in self.slice_outcomes(sl, params):
+                if abs(o.height - cur.height) < 0.5 and o.badness < cur.badness - 0.01:
+                    self.apply_outcome(o, params, [p for g in glots for p in self.slicepars.get(sl, {}).get(g, [])])
+                    logger.log(15, f"p{page+1} balance s{sl}: badness {cur.badness:.2f} -> {o.badness:.2f}")
+                    changed = True
+                    break
+        return changed
 
     def _glot_options(self, pids):
         """ Returns {total delta: (cost, ((pid, delta), ...))}, the cheapest way to change the
@@ -283,7 +468,7 @@ class PolySolver(TypesetterSolver):
         for p in pids:
             if self.hooks.is_header(p):
                 continue
-            opts = [(d, c) for d in (-2, -1, 1, 2) if (c := self.shape_cost(p, d)) is not None]
+            opts = [(d, c) for d in self.shape_deltas.get(p, ()) if (c := self.shape_cost(p, d)) is not None]
             if not opts:
                 continue
             new = dict(res)
@@ -307,7 +492,7 @@ class PolySolver(TypesetterSolver):
 
     def maxbad(self):
         """ Paragraph shapes worse than this are not used to change a slice """
-        return self.hooks.badness_balance_maxbad * self.maxbad_scale
+        return self.hooks.badness_balance_maxbad * self.maxbad_scale * getattr(self, 'cap_scale', 1)
 
     def imbalance_weight(self):
         """ Badness of one line of imbalance in a slice """
@@ -318,10 +503,11 @@ class PolySolver(TypesetterSolver):
         if d == 0:
             return 0.
         sc = self.shape_cache.get((pid, d))
-        if sc is None or sc[2] is None or sc[2] > self.maxbad():
-            return None
         base = self.shape_cache.get((pid, 0))
         b0 = base[2] if base is not None and base[2] is not None else 0.
+        # relative to its own unadjusted shape: in narrow columns everything starts loose
+        if sc is None or sc[2] is None or sc[2] - b0 > self.maxbad():
+            return None
         return max(0., sc[2] - b0) + self.balance_change_cost
 
     def current_outcome(self, sl, params):
@@ -391,37 +577,16 @@ class PolySolver(TypesetterSolver):
         if parlocs is None:
             parlocs = printer.parlocs
         self.sliceheights, self.baselines = printer.get_sliceheights(parlocs)
+        self.shape_deltas = {}      # pid -> line deltas it has shapes for
+        for (pid, d) in self.shape_cache:
+            if d:
+                self.shape_deltas.setdefault(pid, []).append(d)
         self.slicepars = {}
         self.parpages = {}      # pid -> set of pages (0 based) it is on
         for p in parlocs:
             if isinstance(p, ParInfo) and p.slice:
                 self.slicepars.setdefault(p.slice, {}).setdefault(p.glot, []).append(p.pid())
                 self.parpages[p.pid()] = set(r.pagenum - 1 for r in p.rects)
-
-    def balance_slices(self, state):
-        """ Phase 1: give each slice wholly on one page, with content in every glot, its lowest
-            badness outcome if that is better than how it is now.
-            Returns (params, number of slices changed). """
-        glots = self.hooks.printer.glots
-        self.prepare_slices()
-        params = dict(state.paragraph_params)
-        changed = 0
-        self.balance_predicted = {}     # slice -> predicted imbalance in lines
-        for sl, pages in sorted(self.sliceheights.items()):
-            if len(pages) != 1 or any(g not in list(pages.values())[0] for g in glots):
-                continue
-            now = self.current_outcome(sl, params)
-            best = self.slice_outcomes(sl, params)[0]
-            if best.badness >= now.badness:
-                continue
-            changed += 1
-            self.apply_outcome(best, params, [p for g in glots for p in self.slicepars.get(sl, {}).get(g, [])])
-            self.balance_predicted[sl] = best.imbalance
-            logger.log(15, f"balance slice {sl}: {now.imbalance} -> {best.imbalance} lines, "
-                           f"badness {now.badness:.2f} -> {best.badness:.2f}, "
-                           + ", ".join(f"{p}{d:+d}" for p, d in best.assignment))
-        logger.log(15, f"Phase 1 balanced {changed} slices")
-        return params, changed
 
 
 class PolyHooks(Hooks):

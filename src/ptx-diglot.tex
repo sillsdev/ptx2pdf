@@ -2699,7 +2699,11 @@
   \dimen0=\dimexpr \p@lytxtht - \p@lym@xcur + \csname @cur#1ht\endcsname\relax
   \dimen2=\dimexpr \textheight - \p@ly@insht - \p@ly@notesht{#1}\relax
   {\baselineskip=\csname b@selineskip#1\endcsname\relax
-   \underf@ll{\dimen0}{\dimen2}{#1}}%
+   % Used includes the last line's depth, so only a whole line of gap can be filled
+   % (monoglot's \underf@ll reports half a line)
+   \ifdim\dimen0<\dimexpr\dimen2 - .95\baselineskip\relax
+     \immediate\write\st@tusfile{\string\st@underfill{\the\pageno}{#1}{\the\dimen2}{\the\dimen0}{\the\baselineskip}}%
+   \fi}%
 }
 
 \def\@prep@writep@ge@simplecols{%

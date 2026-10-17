@@ -1,6 +1,7 @@
 # Polyglot Page Filler — Design
 
-Status: **draft design**. Nothing here is implemented yet.
+Status: section 4 (the second design) is implemented in patch 07; the first
+design (section 9) was patches 05 to 06b.
 
 This document describes how to extend the page filler
 (`python/lib/ptxprint/page_filler.py`) from monoglot (one and two column)
@@ -83,7 +84,7 @@ The filler reads the setting up front and must support both modes. At the bottom
 space from some glots and not others, so the glots of the last slice on the
 page have different available heights. Movement of notes between pages cannot
 be predicted, so it is not modelled; as in monoglot, layout runs measure its
-effect (see 4.2).
+effect (see 4.3).
 
 ### 2.4 Frames
 
@@ -141,83 +142,113 @@ Clarifications:
 
 ## 4. Algorithm
 
-### 4.1 Phase 1: balance slices
+This is the second design. The first (separate slice balancing and page
+filling phases, patches 05 to 06b) is kept in section 9, with why it was
+replaced.
 
-For a slice that does not cross a page boundary, each glot's height is the
-sum of its paragraphs' lines plus fixed spacing. Notes are handled elsewhere,
-and there are no `\vadjust` or `\nobreak` effects. Phase 1 can therefore be
-computed from probe data alone:
+The principles:
 
-* For each slice, choose paragraph deltas per glot (from `shape_cache`) that
-  bring the glots closest to equal at the lowest badness. This is a small
-  knapsack problem per slice and needs no layout runs.
-* Balancing is best effort. If a slice cannot balance, leave it.
-* One layout run checks the result. That run also shows which slices cross a
-  page boundary; those belong to phase 2.
+* Footnotes make the effect of a change on a page unpredictable. Notes may be
+  set as paragraphs, so moving one note across a page break can change the
+  height of the note area by almost anything. So predictions only *order*
+  candidate combos; they never exclude one. Only a layout run says whether a
+  combo works.
+* A page has few slices, so all combinations of their changes can be listed.
+  What matters is the order they are tried in and how many layout runs a page
+  may use.
+* More layout runs are better than trusting predictions: each run is measured
+  and the measurement chooses the next candidate.
+* Filling pages comes first and slice balance second, but every page is
+  balanced as well as it can be, including pages that cannot be filled.
 
-The result is the starting configuration for phase 2, replacing the
-all-default `base_params`. Phase 1 is cheap, so phase 2 can rerun it on the
-slices around a page it has just changed.
+### 4.1 Slices as units
 
-### 4.2 Phase 2: balance pages
+A slice is treated as a monoglot paragraph is. Paragraph probes give each
+glot's possible line changes; within a slice these are combined to give, for
+each change in slice height, the best way to set the slice's paragraphs: the
+lowest badness, counting both the shapes' badness and the slice's imbalance
+(the slice outcomes of patch 05b). A slice's height change is in points, not
+lines: with glots on different baselines it changes in uneven steps, which
+gives more options, and options are what is needed.
 
-Let `u_g` be glot `g`'s underfill at the bottom of the frame. The frame is
-balanced when `u_g` is less than one of glot `g`'s lines for every glot. A
-paragraph change is one of two kinds:
+Within a slice, gridding plays no part: a slice is its own small gridded
+world. Between slices the measured gap is a constant for a configuration (0,
+−1 or −3pt in the six test diglots), so slice positions on a page follow from
+slice heights.
 
-* **Private move:** a change to glot `g` within the slice that crosses the
-  bottom of the frame. It affects only glot `g` on this page (and its
-  leftover on the next page).
-* **Shared move:** a change to a slice wholly on the frame that changes the
-  slice's height by Δ. Everything below it moves by Δ in every glot. Glots
-  that carry on past the bottom are unaffected on this page apart from how
-  much spills over; glots that finish early lose or gain Δ of gap. A change
-  to a glot that does not set its slice's height has no page effect and only
-  changes slice balance.
+### 4.2 Page model
 
-A combo must satisfy, for every glot:
+How the diglot macros fill a page (`ptx-diglot.tex`), per glot at each sync
+point:
 
-```
-shared + private_g ≈ u_g
-```
+1. The glot's material is `\vsplit` to the space left for it
+   (`trialheight`, before notes), at the best break by the usual penalties
+   (club and widow lines, keep with next).
+2. The piece is put through the page builder with inserts on, so its notes go
+   in (`trialbox`).
+3. Space left = `availht − ht(trialbox)` (less its depth if that is over half
+   a baseline). If this is the glot's last material and no break is allowed
+   after it, 2 more lines must be left. If the result is overfull by more
+   than 0.2 baseline, `trialheight` is reduced by one baseline and the trial
+   is run again; under one baseline left, the trial fails and the page is
+   full.
+4. The page is full when the joint space left is under
+   `\DiglotPageFullTest` (by default the largest baseline), counting all
+   glots' notes, or when `\vsplit` has already rejected what would fit.
 
-This generalises the monoglot per-column test (`col_deltas` against
-`collengths`), with one column per glot plus a shared component.
+The model used to order candidates follows this, without notes: per glot,
+whole lines into the space above the note area measured in the last run; a
+slice crossing the page breaks only with at least 2 lines each side; the next
+slice starts only if the joint space is at least the largest baseline. Notes
+are not modelled at all.
 
-Starting from balanced slices, moves are tried in this order:
+### 4.3 Filling a page
 
-1. **Private moves.** Cheap, independent per glot, and aimed directly at each
-   glot's gap.
-2. **Shared moves that keep balance:** change every glot of a slice by the
-   same amount, so the slice grows or shrinks and stays balanced. Its cost is
-   the sum of the paragraph badnesses.
-3. **Shared moves that break balance:** grow one glot of a balanced slice.
-   This is a last resort because it undoes phase 1 work.
+Pages are filled in order. A page's candidates are all combinations of:
 
-The effect of each combo is confirmed by a layout run, which also accounts
-for notes moving and slice-start gridding.
+* height changes of the slices wholly on the page, in either direction and
+  mixed (a +15pt and a −12pt can move where the break falls, and so which
+  notes go with it);
+* for the slice at the bottom of the page (crossing to the next page or not),
+  changes to each glot separately.
 
-#### Footnotes
+Nothing is excluded. Candidates are ordered by how close their net height
+change comes to one of two targets, then by badness:
 
-Footnotes make the equation above approximate at best. Only text that crosses
-the page boundary changes where notes go, but when it does, its notes move
-with it, and how much note text moves cannot be predicted (notes may split
-across pages, and note breaking depends on the whole note area). So:
+* **grow** by about the page's gap, so that the short glots reach the
+  bottom; or
+* **shrink** enough to take more from the next page: room for the next slice
+  to start (about two of its lines) if the page ends at a slice boundary, or
+  more of the crossing slice if one crosses the bottom. Less can be more: a
+  shorter page can end up fuller.
 
-* A private move's effect on `u_g` may be less than, more than, or opposite
-  to its text delta.
-* A shared move of Δ affects each glot differently (Δ_g), depending on the
-  notes attached to the lines each glot pushes across the boundary.
-* With full-width notes all glots share one note area, so every move is
-  effectively shared. In this mode the move generator does not rely on the
-  private/shared distinction for page effects; it still prefers private
-  moves for their lower cost to slice balance.
+Mixed combos are ranked by their net change; their badness, the sum of both
+parts, puts them after simpler combos with the same net effect.
 
-The equation is therefore used only to generate and rank candidate combos,
-ignoring notes. Note effects are never precalculated: each candidate is
-judged by its layout run, as in monoglot. A combo whose measured effect
-differs from the model shows that glot's boundary is note-sensitive on this
-page, which can be used to reorder the remaining candidates for that page.
+After each layout run the measured gap per glot re-orders the remaining
+candidates: the next one tried is the one expected to close what is still
+missing, and a move that changed a glot by a different amount than expected
+scales the expectation for similar moves on this page. A page stops when
+every glot is full (less than one of its lines short) or when its budget of
+layout runs is used up.
+
+### 4.4 Balance
+
+There is no separate balancing pass over the book: in the first design that
+made page filling worse before page filling could start. Instead, once a page
+is committed, each of its slices takes any outcome with the same height and
+lower badness (better balance at no page cost, since slice positions follow
+from heights). This applies to every page, full or not.
+
+### 4.5 Failure and backtracking
+
+If a page cannot be filled within its budget, it is committed with the best
+layout measured for it: least underfill first, then best balance. Filling
+continues from there, so later pages are still filled and balanced.
+
+Backtracking is the exception: at most one page back, and only when no
+change on the failing page itself could help, for example when the gap is
+set by what starts the page.
 
 ## 5. Class structure
 
@@ -240,9 +271,9 @@ page, which can be used to reorder the remaining candidates for that page.
   the probe and shape caches.
 * A combo stays `paragraph -> delta`. Paragraph ids include the glot
   (e.g. `GENR1:1[2]`), not just C:V.
-* New `balance_slices()` (phase 1), called from `solve` before
+* *(First design, section 9.)* New `balance_slices()` (phase 1), called from `solve` before
   `run_forward`.
-* `generate_combos` is replaced by a move generator in the order of 4.2.
+* `generate_combos` is replaced by a move generator (first design: the order of 9.2; second: 4.3).
 * `run_forward`, `attempt_page` and `repair` are kept. They work with pages,
   start keys and combos and do not depend on what a combo contains. They
   count in frames rather than physical pages.
@@ -250,6 +281,84 @@ page, which can be used to reorder the remaining candidates for that page.
   implementation details.
 
 ### 5.3 Status
+
+*(Patch 07)* The second design (section 4) replaces the first. `PolySolver`
+has its own `run_forward` (it no longer uses `TypesetterSolver`'s page
+search, `attempt_page` or `repair`): `fill_page` with `page_candidates` and
+`_priority`, `backtrack` and `balance_page`. Points learnt while building it:
+
+* The shape cap is relative to a paragraph's own unadjusted badness: in
+  narrow columns (aArp, A5) many paragraphs start at badness 20 to 30, and an
+  absolute cap left whole pages with no candidates.
+* A slice continuing from the previous page can still change on this page,
+  through its paragraphs wholly on this page; that does not move the break.
+* Per glot changes to the last slice are only offered for glots that are
+  short; a full glot's change only alters what spills to the next page and
+  wasted layout runs.
+* Each try of a set of slice changes moves its other variants down the order,
+  so the budget is spread over different slice changes.
+* Pages are keyed by where they start per glot (first paragraph and its lines
+  on the page, `PolyHooks.get_page_para_key`). For each (page, start) the
+  combos tried and their measured gaps are kept, so a page reached again with
+  the same start skips them.
+* Backtracking is a two level search. It goes back up to `s_pbbacktrack`
+  pages; each change to an earlier page that keeps the pages between full and
+  gives the failing page a new start is followed by trying to fill the
+  failing page from there (`refill_budget` runs). A change that fills the page
+  is taken; failing that, the best improvement found one page back. Changes
+  giving a start already seen move down the order. (Going back further and
+  accepting improvements made aArp grow by two pages; accepting only a page
+  that was full straight away found too little.)
+* Budgets: 24 runs to fill a page plus 2 for each paragraph on it that can
+  change (up to 60), 12 per earlier page when backtracking, 8 to refill from
+  a new start. Not failing matters more than run count.
+* Each slice offers up to 3 outcomes for each height change, differing in
+  which glots change (so unbalanced expansions are offered, not only the
+  cheapest way to a height), and paragraphs use every line delta their probes
+  found, not just ±1 and ±2.
+
+Six test diglots (BSB_1 JAS, aArp TestDiglotA5 JAS, WSGlatin, fr_diglot,
+my_judson and HEBWLen RUT): 7 lines short in all (aArp 3, WSGlatin 4) in
+about 226 layout runs, against 27 lines in about 480 runs for the first
+design. Over 18 books (adding BSB_1 HEB, ROM, MRK and WSGlatin, fr_diglot,
+my_judson JON, EST, PHP): about 130 underfilled pages at neutral, 54 lines
+short after filling with one outcome per height change and fixed budgets,
+39 lines (in about 27% more runs) with several outcomes and budgets scaled
+by the paragraphs on a page, mostly 1 or 2 lines of one glot. Some cannot be filled: a big slice
+whose glots differ by more lines than shapes can change (my_judson EST, L 9
+lines short). Pages that fail take most of the runs (BSB_1 MRK, 57 pages,
+about 570 runs; two failing pages about 145 each).
+
+Further changes, for what matters to a user (the first failing page, since
+the user fixes it, and maybe all that follows, by hand) and for restarting:
+
+* Balance changes at a page commit are checked with a layout: a same height
+  outcome still changes paragraphs, which can move a break or a note. If a
+  page done so far that was full becomes short, the changes are undone. This
+  moved first failures later (BSB_1 MRK page 2 → 8, aArp JAS none).
+* Pages before the first failure get more: up to 80 runs a page, backtracking
+  up to `s_pbbacktrack` pages with 16 runs each, 10 to refill. After a
+  failure: 24 runs a page and one page back.
+* A page that runs out of candidates gets new ones with the shape cap doubled,
+  then quadrupled: a looser paragraph is better than a failed page.
+* Restart (`--restart`, or Resume in the GUI) starts at the first page that
+  is not full and never changes pages before it (no balancing, no
+  backtracking into them), so a user's fixes there stay. Adjlist ids for a
+  paragraph without a parnum (`X[1]`) are matched to the solver's (`X[]`).
+  Tested: after a stopped fill, a restart left all 72 paragraph rows on pages
+  before the failure unchanged.
+* `--stop` ends at the first page that cannot be filled (`HumanFixRequest`).
+* TeX writes a polyglot underfill record only for a gap of at least 0.95 of
+  the glot's baseline (the filler's measure, since "used" includes the last
+  line's depth). With monoglot's half a baseline, a print reported gaps of
+  0.5 to 0.9 line as underfilled pages (BSB_1 HEB: 20 pages, really 1).
+
+18 books: first failing pages BSB_1 HEB 24/26, MRK 8/57, ROM 17/35, fr_diglot
+PHP 4/10, my_judson EST 2/16 (a structural L imbalance), WSGlatin EST 2/29,
+RUT 14/15; the other 11 books fill completely. 27 lines short in all, about
+2100 runs.
+
+The notes below describe the first design's code (patches 05 to 06b).
 
 Patch 04 adds both classes in `python/lib/ptxprint/poly_filler.py`.
 `PTXFiller.solver_class` names the solver `PTXFiller.solve` creates.
@@ -485,8 +594,11 @@ Before the solver work:
 
 * Confirm that the slice stack is shared across both pages of a two-page
   frame.
-* Whether phase 2 needs safeguards against repeatedly undoing phase 1 work,
-  for example a cap on balance-breaking moves per frame.
+* *(First design)* Whether phase 2 needs safeguards against repeatedly
+  undoing phase 1 work, for example a cap on balance-breaking moves per
+  frame. (The second design has no separate phase 1.)
+* How big a page's budget of layout runs should be, and whether it should
+  depend on how short the page is.
 * With `limits(pid)` the limits are per paragraph. Users could set them for
   individual paragraphs, perhaps by extending the adjlist (e.g. min/max
   expansion alongside `expand=`), and the filler would keep to them when
@@ -497,3 +609,99 @@ Before the solver work:
   file, taken from the primary, so a glot whose default expansion differs
   gets `expand=` written on every one of its rows. Per-glot (or
   per-paragraph) defaults in the adjlist would remove that noise.
+
+## 9. History: the first algorithm
+
+The first design (patches 05 to 06b) had two phases. Its text is kept here.
+
+### 9.1 Phase 1: balance slices (first design)
+
+For a slice that does not cross a page boundary, each glot's height is the
+sum of its paragraphs' lines plus fixed spacing. Notes are handled elsewhere,
+and there are no `\vadjust` or `\nobreak` effects. Phase 1 can therefore be
+computed from probe data alone:
+
+* For each slice, choose paragraph deltas per glot (from `shape_cache`) that
+  bring the glots closest to equal at the lowest badness. This is a small
+  knapsack problem per slice and needs no layout runs.
+* Balancing is best effort. If a slice cannot balance, leave it.
+* One layout run checks the result. That run also shows which slices cross a
+  page boundary; those belong to phase 2.
+
+The result is the starting configuration for phase 2, replacing the
+all-default `base_params`. Phase 1 is cheap, so phase 2 can rerun it on the
+slices around a page it has just changed.
+
+### 9.2 Phase 2: balance pages (first design)
+
+Let `u_g` be glot `g`'s underfill at the bottom of the frame. The frame is
+balanced when `u_g` is less than one of glot `g`'s lines for every glot. A
+paragraph change is one of two kinds:
+
+* **Private move:** a change to glot `g` within the slice that crosses the
+  bottom of the frame. It affects only glot `g` on this page (and its
+  leftover on the next page).
+* **Shared move:** a change to a slice wholly on the frame that changes the
+  slice's height by Δ. Everything below it moves by Δ in every glot. Glots
+  that carry on past the bottom are unaffected on this page apart from how
+  much spills over; glots that finish early lose or gain Δ of gap. A change
+  to a glot that does not set its slice's height has no page effect and only
+  changes slice balance.
+
+A combo must satisfy, for every glot:
+
+```
+shared + private_g ≈ u_g
+```
+
+This generalises the monoglot per-column test (`col_deltas` against
+`collengths`), with one column per glot plus a shared component.
+
+Starting from balanced slices, moves are tried in this order:
+
+1. **Private moves.** Cheap, independent per glot, and aimed directly at each
+   glot's gap.
+2. **Shared moves that keep balance:** change every glot of a slice by the
+   same amount, so the slice grows or shrinks and stays balanced. Its cost is
+   the sum of the paragraph badnesses.
+3. **Shared moves that break balance:** grow one glot of a balanced slice.
+   This is a last resort because it undoes phase 1 work.
+
+The effect of each combo is confirmed by a layout run, which also accounts
+for notes moving and slice-start gridding.
+
+#### Footnotes
+
+Footnotes make the equation above approximate at best. Only text that crosses
+the page boundary changes where notes go, but when it does, its notes move
+with it, and how much note text moves cannot be predicted (notes may split
+across pages, and note breaking depends on the whole note area). So:
+
+* A private move's effect on `u_g` may be less than, more than, or opposite
+  to its text delta.
+* A shared move of Δ affects each glot differently (Δ_g), depending on the
+  notes attached to the lines each glot pushes across the boundary.
+* With full-width notes all glots share one note area, so every move is
+  effectively shared. In this mode the move generator does not rely on the
+  private/shared distinction for page effects; it still prefers private
+  moves for their lower cost to slice balance.
+
+The equation is therefore used only to generate and rank candidate combos,
+ignoring notes. Note effects are never precalculated: each candidate is
+judged by its layout run, as in monoglot. A combo whose measured effect
+differs from the model shows that glot's boundary is note-sensitive on this
+page, which can be used to reorder the remaining candidates for that page.
+
+### 9.3 Why it was replaced
+
+* Phase 1 balanced slices without knowing where pages break, which made page
+  filling worse (BSB_1 JHN: 27 underfilled pages before it, 40 after), and
+  phase 2 then spent layout runs undoing it.
+* Phase 2 predicted each move's effect from line deltas and then filtered
+  candidates by the prediction. The predictions miss TeX's page decisions
+  (the one baseline back off, the two line rule, the full page threshold) and
+  notes, so pages failed and the search backtracked between neighbouring
+  pages: on six test diglots everything filled except three WSGlatin pages,
+  but BSB_1 and aArp JAS took 136 and 239 layout runs (monoglot JAS takes
+  about 12). Filtering, capping and ordering changes moved the cost between
+  books rather than removing it.
