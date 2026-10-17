@@ -620,6 +620,7 @@ headermappings = {
     "<Enter ID>":                r"\hrsmins",   # old configs saved this (stray glade item id); must precede the next line
     "Time (HH:MM)":              r"\hrsmins",
     "Date (YYYY-MM-DD)":         r"\isodate",
+    "Date and Time":             r"\isodate\ \hrsmins",
     "Printed on YYYY-MM-DD":     r"Printed\ on\ \isodate",
     "-empty-":                   r"\empty"
 }
@@ -634,6 +635,7 @@ def localhdrmappings():
         _(r"Book Alt (\h1)"):           r"\bookalt",
         _("Time (HH:MM)"):              r"\hrsmins",
         _("Date (YYYY-MM-DD)"):         r"\isodate",
+        _("Date and Time"):             r"\isodate\ \hrsmins",
         _("Printed on YYYY-MM-DD"):     r"Printed\ on\ \isodate",
         _("-empty-"):                   r"\empty"
     }

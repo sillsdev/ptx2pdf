@@ -26522,6 +26522,10 @@ you would need to enter:
                                           <item translatable="yes">Reference Range</item>
                                           <item translatable="yes">Book (\h)</item>
                                           <item translatable="yes">Book Alt (\h1)</item>
+                                          <item translatable="yes">Time (HH:MM)</item>
+                                          <item translatable="yes">Date (YYYY-MM-DD)</item>
+                                          <item translatable="yes">Date and Time</item>
+                                          <item translatable="yes">Printed on YYYY-MM-DD</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -26576,6 +26580,10 @@ you would need to enter:
                                           <item translatable="yes">Reference Range</item>
                                           <item translatable="yes">Book (\h)</item>
                                           <item translatable="yes">Book Alt (\h1)</item>
+                                          <item translatable="yes">Time (HH:MM)</item>
+                                          <item translatable="yes">Date (YYYY-MM-DD)</item>
+                                          <item translatable="yes">Date and Time</item>
+                                          <item translatable="yes">Printed on YYYY-MM-DD</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -26632,6 +26640,7 @@ you would need to enter:
                                           <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
                                           <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
                                           <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
                                           <item id="Printed on \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
                                         </items>
                                         <child internal-child="entry">
@@ -27263,6 +27272,7 @@ these can be set in the ptxprint-mods.tex file.</property>
                                       <item translatable="yes">DRAFT</item>
                                       <item translatable="yes">Time (HH:MM)</item>
                                       <item translatable="yes">Date (YYYY-MM-DD)</item>
+                                      <item translatable="yes">Date and Time</item>
                                       <item translatable="yes">Printed on YYYY-MM-DD</item>
                                     </items>
                                     <child internal-child="entry">
