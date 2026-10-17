@@ -621,6 +621,7 @@ headermappings = {
     "Time (HH:MM)":              r"\hrsmins",
     "Date (YYYY-MM-DD)":         r"\isodate",
     "Date and Time":             r"\isodate\ \hrsmins",
+    r"Printed on \isodate":      r"Printed\ on\ \isodate",  # old left-header id (unescaped spaces); must precede the next line
     "Printed on YYYY-MM-DD":     r"Printed\ on\ \isodate",
     "-empty-":                   r"\empty"
 }

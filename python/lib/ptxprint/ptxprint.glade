@@ -8241,8 +8241,8 @@ boxes on the Other tab are used.</property>
                         <property name="margin-end">20</property>
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">15</property>
-                        <property name="label" translatable="yes">This option is automatically enabled when the target 
-Project or Configuration does not already exist; or
+                        <property name="label" translatable="yes">This option is automatically enabled when the target
+Configuration does not already exist; or
 when exporting to an external folder of settings.</property>
                         <property name="wrap">True</property>
                       </object>
@@ -12742,6 +12742,7 @@ being too large for a given sidebar.</property>
                         <child>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">False</property>
                             <property name="halign">end</property>
                             <property name="valign">center</property>
@@ -12756,8 +12757,11 @@ being too large for a given sidebar.</property>
                           <object class="GtkEntry" id="t_sbiBgCropOfs">
                             <property name="name">Sidebar background image: Crop offset (XxY)</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">Crop offset in the format XxY (e.g. 10x20).
+                            <property name="tooltip-text" translatable="yes">(Not available yet: cropping is still to be implemented.)
+
+Crop offset in the format XxY (e.g. 10x20).
 Only used when Oversize is set to Crop.
 Shifts the cropped region by X points horizontally
 and Y points vertically.</property>
@@ -26550,17 +26554,17 @@ you would need to enter:
                                         <property name="active">1</property>
                                         <property name="has-entry">True</property>
                                         <items>
-                                          <item translatable="yes">-empty-</item>
-                                          <item translatable="yes">Page Number</item>
-                                          <item translatable="yes">First Reference</item>
-                                          <item translatable="yes">Last Reference</item>
-                                          <item translatable="yes">Reference Range</item>
-                                          <item translatable="yes">Book (\h)</item>
-                                          <item translatable="yes">Book Alt (\h1)</item>
-                                          <item translatable="yes">Time (HH:MM)</item>
-                                          <item translatable="yes">Date (YYYY-MM-DD)</item>
-                                          <item translatable="yes">Date and Time</item>
-                                          <item translatable="yes">Printed on YYYY-MM-DD</item>
+                                          <item id="\empty" translatable="yes">-empty-</item>
+                                          <item id="\pagenumber" translatable="yes">Page Number</item>
+                                          <item id="\firstref" translatable="yes">First Reference</item>
+                                          <item id="\lastref" translatable="yes">Last Reference</item>
+                                          <item id="\rangeref" translatable="yes">Reference Range</item>
+                                          <item id="\book" translatable="yes">Book (\h)</item>
+                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                          <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -26608,17 +26612,17 @@ you would need to enter:
                                         <property name="active">4</property>
                                         <property name="has-entry">True</property>
                                         <items>
-                                          <item translatable="yes">-empty-</item>
-                                          <item translatable="yes">Page Number</item>
-                                          <item translatable="yes">First Reference</item>
-                                          <item translatable="yes">Last Reference</item>
-                                          <item translatable="yes">Reference Range</item>
-                                          <item translatable="yes">Book (\h)</item>
-                                          <item translatable="yes">Book Alt (\h1)</item>
-                                          <item translatable="yes">Time (HH:MM)</item>
-                                          <item translatable="yes">Date (YYYY-MM-DD)</item>
-                                          <item translatable="yes">Date and Time</item>
-                                          <item translatable="yes">Printed on YYYY-MM-DD</item>
+                                          <item id="\empty" translatable="yes">-empty-</item>
+                                          <item id="\pagenumber" translatable="yes">Page Number</item>
+                                          <item id="\firstref" translatable="yes">First Reference</item>
+                                          <item id="\lastref" translatable="yes">Last Reference</item>
+                                          <item id="\rangeref" translatable="yes">Reference Range</item>
+                                          <item id="\book" translatable="yes">Book (\h)</item>
+                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                          <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -26676,7 +26680,7 @@ you would need to enter:
                                           <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
                                           <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
                                           <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
-                                          <item id="Printed on \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
+                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
                                         </items>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -27287,14 +27291,14 @@ these can be set in the ptxprint-mods.tex file.</property>
                                     <property name="active">0</property>
                                     <property name="has-entry">True</property>
                                     <items>
-                                      <item translatable="yes">-empty-</item>
-                                      <item translatable="yes">Page Number</item>
-                                      <item translatable="yes">Reference Range</item>
-                                      <item translatable="yes">DRAFT</item>
-                                      <item translatable="yes">Time (HH:MM)</item>
-                                      <item translatable="yes">Date (YYYY-MM-DD)</item>
-                                      <item translatable="yes">Date and Time</item>
-                                      <item translatable="yes">Printed on YYYY-MM-DD</item>
+                                      <item id="\empty" translatable="yes">-empty-</item>
+                                      <item id="\pagenumber" translatable="yes">Page Number</item>
+                                      <item id="\rangeref" translatable="yes">Reference Range</item>
+                                      <item id="DRAFT" translatable="yes">DRAFT</item>
+                                      <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                      <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                      <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                      <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
                                     </items>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">

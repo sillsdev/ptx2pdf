@@ -580,7 +580,11 @@ _sensitivities = {
         
     "noGrid" :                 ["c_variableLineSpacing"],
     "c_mainBodyText" :         ["gr_mainBodyText"],
-    "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
+    # Not the whole gr_doubleColumn grid: Rule Thickness (s/l_ruleThickness) also sets the header and
+    # study-notes rules, so it stays available in one-column layouts. "Adjust Top" (s/l_colgutteroffset)
+    # depends on the vertical rule too, so it is handled by updateGutterOffset().
+    "c_doublecolumn" :         ["s_colgutterfactor", "l_colgutterfactor", "c_verticalrule", "c_allowUnbalanced",
+                                "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     "c_includeFootnotes" :     ["c_fneachnewline", "c_fnOverride", "c_fnautocallers", "t_fncallers", 
                                 "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers",
@@ -596,7 +600,7 @@ _sensitivities = {
     "c_useOrnaments" :         ["gr_borders"],
 
     "c_pagegutter" :           ["s_pagegutter", "c_outerGutter"],
-    "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
+    # (c_verticalrule's "Adjust Top" controls: see updateGutterOffset)
     "c_rhrule" :               ["s_rhruleposition"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
     # "c_ch1pagebreak" :         ["c_pagebreakAllChs"],
@@ -3002,6 +3006,7 @@ class GtkViewModel(ViewModel):
                     obj = self.builder.get_object(w)
                     if obj is not None:
                         obj.set_sensitive(state)
+            self.updateGutterOffset()
         self.updateMarginNotesInner(mod=False)
         self.updateHeadingInMargin()
         self.pubView.load(self.publications)
@@ -3185,10 +3190,18 @@ class GtkViewModel(ViewModel):
     
     def onVertRuleClicked(self, btn):
         self.onSimpleClicked(btn)
+        self.updateGutterOffset()
         self.updateMarginGraphics()
-        
+
+    def updateGutterOffset(self):
+        # "Adjust Top" of the gutter rule needs two columns AND the vertical rule
+        state = bool(self.get("c_doublecolumn") and self.get("c_verticalrule"))
+        for w in ("l_colgutteroffset", "s_colgutteroffset"):
+            self.builder.get_object(w).set_sensitive(state)
+
     def on2colClicked(self, btn):
         self.onSimpleClicked(btn)
+        self.updateGutterOffset()
         self.updateMarginGraphics()
         self.updateMarginNotesInner(mod=not self.loadingConfig)
         self.updateDialogTitle()
@@ -5252,9 +5265,18 @@ class GtkViewModel(ViewModel):
         
         # Also turn on Everything setting under certain conditions:
         somethingON = False
-        turnONall = (self.get('r_impTarget') == 'folder' and self.get('lb_tgtFolder') != "")
-        if turnONall: # Or IF a new project/config combo is selected. MH please help FIX ME!
-            self.set("c_impEverything", turnONall)
+        # ...an external folder, or a target config that doesn't exist yet: a new config starts from
+        # defaults, so importing only some groups would leave the rest at default (as the tab text says)
+        tgtPrj = self._getProject('ecb_targetProject') if self.get('r_impTarget') == 'prjcfg' else None
+        tgtCfg = self.get('ecb_targetConfig') or ""
+        newTarget = tgtPrj is not None and len(tgtCfg) > 0 and tgtCfg not in tgtPrj.configs
+        turnONall = (self.get('r_impTarget') == 'folder' and self.get('lb_tgtFolder') != "") or newTarget
+        if turnONall:
+            self.set("c_impEverything", True)
+            self._impAutoEverything = True
+        elif getattr(self, "_impAutoEverything", False):   # only ticked automatically: undo it
+            self.set("c_impEverything", False)
+            self._impAutoEverything = False
         for c in ['Pictures', 'Layout', 'FontsScript', 'Styles', 'Other', 'Everything']:
             somethingON = somethingON or self.get("c_imp"+c, False)
             self.builder.get_object("c_imp"+c).set_sensitive(not turnONall)
