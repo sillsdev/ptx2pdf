@@ -2446,6 +2446,8 @@ class GtkViewModel(ViewModel):
             super(GtkViewModel, self).set(wid, value)
             return
         setWidgetVal(wid, w, value, useMarkup=useMarkup, sub=sub)
+        if wid in ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI") and not getattr(self, "loadingConfig", False):
+            self.checkFontsMissing()    # keep the Print button in step however the fonts get set
         if mod and wid not in _ui_unchanged and not any(wid.startswith(x) for x in ("lb_", "nbk_")):
             self.changed()
 
@@ -2844,7 +2846,8 @@ class GtkViewModel(ViewModel):
             self.resetToInitValues()
             self.set_uiChangeLevel(ui)
             try:
-                rmtree(delCfgPath)
+                if os.path.isdir(delCfgPath):   # a project may not have a Default folder yet
+                    rmtree(delCfgPath)
             except OSError:
                 sec = _("But the 'Default' folder could not be erased completely:") + "\n" + delCfgPath
 
@@ -2857,33 +2860,47 @@ class GtkViewModel(ViewModel):
             return
         else:
             dialog = self.builder.get_object("dlg_confirmDelete")
+            dialog.set_property("text", _("You are about to REMOVE the '{}' configuration").format(cfg))
+            dialog.format_secondary_text(_("Its settings and working files will be deleted.\n"
+                    "Any PDFs already created from it will NOT be deleted.\n\n"
+                    "Are you sure you want to DELETE it?"))
             response = dialog.run()
             dialog.hide()
             if response != Gtk.ResponseType.YES:
                 return # Don't delete anything!
             msg = _("Deleted config: {}".format(cfg))
             
-            if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
-                self.doStatus(_("Internal error occurred, trying to delete a directory tree") + _("Folder: ") + delCfgPath)
+            if not cfg or not delCfgPath or not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
+                self.doStatus(_("Internal error occurred, trying to delete a directory tree") + _("Folder: ") + str(delCfgPath))
                 return
-            try: # Delete the entire settings folder
-                rmtree(delCfgPath)
-            except OSError:
-                msg = _("Cannot delete folder from disk!") + _("Folder: ") + delCfgPath
-
-            try: # Delete the entire output folder
-                rmtree(self.project.printPath(None))
-            except FileNotFoundError:
-                pass
-            except OSError:
-                msg = _("Cannot delete folder from disk!") + _("Folder: ") + self.project.printPath(self.cfgid)
-
+            # Switch to Default first: reloading settings fires handlers that write into the
+            # current config's folder (e.g. changes.txt), so the deleted config must not be current
             self.set("t_savedConfig", "Default")
-            self.readConfig("Default")
+            self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=False,
+                                       configName="Default", readConfig=True)
+            if self.cfgid != "Default":     # never delete the config we are still standing in
+                self.doStatus(_("Could not switch to the Default configuration, so nothing was deleted."))
+                return
+            # Release the previewed PDF so Windows doesn't block deleting this config's output
+            self.pdf_viewer.clear(widget=self.builder.get_object("dlg_preview"))
+            # Only this config's working folder; its PDFs in local/ptxprint are deliberately kept
+            outPath = self.project.printPath(cfg, noext=True)
+            # A print run chdirs into outPath, and Windows won't remove a process's current folder
+            cwd, outAbs = (os.path.normcase(os.path.abspath(p)) for p in (os.getcwd(), outPath))
+            if cwd == outAbs or cwd.startswith(outAbs + os.sep):
+                os.chdir(self.project.printPath(None))
+            leftovers = []
+            for p in (delCfgPath, outPath):
+                rmtree(p, ignore_errors=True)
+                if os.path.exists(p):
+                    leftovers.append(p)
+            if len(leftovers):
+                msg += "\n" + _("Some files could not be deleted (they may be open in another program):") \
+                        + "\n" + "\n".join(leftovers)
+            self.project.configs.pop(cfg, None)
             self.updateDialogTitle()
             self.triggervcs = True
             self.doStatus(msg)
-            self.project.configs.pop(cfg, None)
             self.updateSavedConfigList()
         self.colorTabs()
         self.disableLayoutAnalysis()
@@ -3822,6 +3839,8 @@ class GtkViewModel(ViewModel):
         text2save = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         if text2save is None or text2save == "":
             return
+        if os.path.dirname(fpath):
+            os.makedirs(os.path.dirname(fpath), exist_ok=True)    # config may not be saved yet
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
         openfile.close()
@@ -4691,6 +4710,7 @@ class GtkViewModel(ViewModel):
         self.loadPolyglotSettings()
         self.enableTXLoption()
         self.onBodyHeightChanged(None)
+        self.updateFonts()      # no font yet (e.g. a fresh Default): use the Paratext project's default font
         self.checkFontsMissing()
         self.clearEditableBuffers()
         self.updateViewNedit()
@@ -4975,6 +4995,7 @@ class GtkViewModel(ViewModel):
     def _editProcFile(self, fname, loc, intro=""):
         fpath = self._locFile(fname, loc)
         if intro != "" and not os.path.exists(fpath):
+            os.makedirs(os.path.dirname(fpath), exist_ok=True)    # config may not be saved yet
             openfile = open(fpath,"w", encoding="utf-8")
             openfile.write(intro)
             openfile.close()
@@ -5042,7 +5063,10 @@ class GtkViewModel(ViewModel):
         self.onExtraFileClicked(btn)
         if self.project is None:
             return
-        cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
+        cpath = self.project.srcPath(self.cfgid)
+        if not os.path.isdir(cpath):    # config not saved yet (or gone): don't create folders from a toggle
+            return
+        cfile = os.path.join(cpath, "changes.txt")
         logger.debug(f"in onChangesFileClicked: {self.loadingConfig=} {cfile=}")
         if not os.path.exists(cfile):
             try:
@@ -7380,6 +7404,7 @@ Thank you,
             else:
                 # 2. If it does not exist, create it
                 title = "Maps"
+                os.makedirs(os.path.dirname(outfile), exist_ok=True)    # config may not be saved yet
                 with open(outfile, "w", encoding="utf-8") as outf:
                     outf.write("\\id {0} Maps index\n\\h {1}\n\\toc3 {1}\n\\mt1 {1}\n".format(mapbkid, title))
                     outf.write(new_map_usfm)

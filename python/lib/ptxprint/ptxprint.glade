@@ -27247,7 +27247,7 @@ these can be set in the ptxprint-mods.tex file.</property>
                                       <item translatable="yes">Page Number</item>
                                       <item translatable="yes">Reference Range</item>
                                       <item translatable="yes">DRAFT</item>
-                                      <item id="&lt;Enter ID&gt;" translatable="yes">Time (HH:MM)</item>
+                                      <item translatable="yes">Time (HH:MM)</item>
                                       <item translatable="yes">Date (YYYY-MM-DD)</item>
                                       <item translatable="yes">Printed on YYYY-MM-DD</item>
                                     </items>

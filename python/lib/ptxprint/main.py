@@ -479,8 +479,11 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             print(f"Can't find project {args.pid} in {prjTree.treedirs}")
             args.pid = None     # keep going anyway, just with no pid specified.
         if args.config:
-            if project is None or project.srcPath(args.config) is None:
+            if project is None:
                 args.config = None
+            elif args.config != "Default" and args.config not in project.configs:
+                # Keep going with it (as before), but say so: a mistyped name otherwise goes unnoticed
+                print(f"Can't find config {args.config} in project {args.pid} ({project.srcPath(None)})")
     if args.test is not None:
         exit_code = runtest(prjTree, config, macrosdir, project, doit, args)
     elif args.print or args.cmd is not None or retview:

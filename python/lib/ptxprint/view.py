@@ -750,10 +750,19 @@ class ViewModel:
                 self.resetToInitValues(updatebklist=False)
             logger.debug(f"Reading config {configName} in the config context of {self.cfgid}")
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
-            if float(oldVersion) >= 0 or forceConfig:
+            # Default must always be a valid place to land (e.g. after deleting the only config):
+            # if its folder exists (applyConfig creates it) but has no ptxprint.cfg yet, start it
+            # from the initial values and save it.
+            freshDefault = float(oldVersion) < 0 and configName == "Default" \
+                            and "Default" in self.project.configs
+            if float(oldVersion) >= 0 or forceConfig or freshDefault:
                 logger.debug(f"Switching config from {self.cfgid} to {configName}")
                 self.cfgid = configName
-            if float(oldVersion) < 0:
+            if freshDefault:
+                logger.debug("No Default config found; creating one from initial values")
+                self.setPrintBtnStatus(2)   # loadConfig normally clears any diglot problem; it doesn't run here
+                self.writeConfig(cfgname="Default", force=True)
+            elif float(oldVersion) < 0:
                 return False
             self.styleEditor.reset(os.path.join(self.scriptsdir, "usfm_sb.sty"))
             self.styleEditor.load(self.getStyleSheets(configName))
@@ -783,7 +792,7 @@ class ViewModel:
                 scr = self.analyse_script()
                 if scr is not None:
                     self.set("fcb_script", scr)
-            return float(oldVersion) >= 0
+            return float(oldVersion) >= 0 or freshDefault
         else:
             return True
 
@@ -1779,7 +1788,8 @@ class ViewModel:
             srcp = self.getBookSrcPath("FRT", self.project.prjid)
             if srcp is None:
                 return False
-            
+
+        os.makedirs(os.path.dirname(destp), exist_ok=True)    # config may not be saved yet
         copyfile(srcp, destp)
         return True
 
@@ -1810,6 +1820,7 @@ class ViewModel:
             if k not in usedperiphs:
                 fcontent.append(v.strip())
         self.periphs = {}
+        os.makedirs(os.path.dirname(fpath), exist_ok=True)    # config may not be saved yet
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write("\n".join(fcontent))
 
@@ -2414,6 +2425,8 @@ set stack_size=32768""".format(self.cfgid)
                 self.project = view.project
         else:
             view = self
+        if view.cfgid:      # files below are written straight into the config folder
+            view.project.createConfigDir(view.cfgid)
         # assemble list of categories to import from ptxprint.cfg
         impAll = self.get("c_impEverything", False)
         hasOther = self.get("c_impOther")

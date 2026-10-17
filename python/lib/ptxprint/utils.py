@@ -617,6 +617,7 @@ headermappings = {
     "Page Number":               r"\pagenumber",
     r"Book (\h)":                r"\book",
     r"Book Alt (\h1)":           r"\bookalt",
+    "<Enter ID>":                r"\hrsmins",   # old configs saved this (stray glade item id); must precede the next line
     "Time (HH:MM)":              r"\hrsmins",
     "Date (YYYY-MM-DD)":         r"\isodate",
     "Printed on YYYY-MM-DD":     r"Printed\ on\ \isodate",

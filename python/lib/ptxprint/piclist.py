@@ -728,6 +728,8 @@ class Piclist:
         elif len(lines):
             logger.debug(f"Saving pics to {fpath} with {len(lines)} lines")
             dat = "\n".join(lines)+"\n"
+            if os.path.dirname(fpath):
+                os.makedirs(os.path.dirname(fpath), exist_ok=True)    # config may not be saved yet
             with open(fpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
         elif os.path.exists(fpath):

@@ -745,6 +745,8 @@ class StyleEditorView(StyleEditor):
         for w in ["s_styFontSize", "s_styLineSpacing", "c_styAbsoluteLineSpacing"]:
             widget = self.builder.get_object(w)
             widget.set_sensitive(self.marker != "p")
+        # Reset falls back to the underlying stylesheets, so it means nothing for user-created markers
+        self.builder.get_object("btn_styReset").set_sensitive(self.marker in self.basesheet)
         self.isLoading = oldisLoading
         if self.model.testing is not None:
             if not ispaused:
@@ -1067,8 +1069,9 @@ class StyleEditorView(StyleEditor):
             self.onSelected(selection)
 
     def onStyleRefresh(self, *a):
-        if self.marker in self.sheet:
-            self.sheet[self.marker] = {k: v for k,v in self.sheet[self.marker].items() if k in dialogKeys}
+        if self.marker in self.sheet and self.marker in self.basesheet:
+            keep = {k.lower() for k in dialogKeys}      # sheet keys are stored lowercase
+            self.sheet[self.marker] = {k: v for k,v in self.sheet[self.marker].items() if k in keep}
             self.editMarker()
         
     def resetParam(self, label):

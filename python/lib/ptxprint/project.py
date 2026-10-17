@@ -202,11 +202,12 @@ class Project:
     def srcPath(self, cfgid=None, makepath=False):
         if cfgid is None:
             return os.path.join(self.path, self.shareddir)
-        res = self.configs.get(cfgid, NullConfigDir).path
-        if makepath and res is None:
-            if self.createConfigDir(cfgid):
-                return self.configs.get(cfgid, NullConfigDir).path
-        return res
+        if cfgid and cfgid not in self.configs:
+            if makepath:
+                return self.createConfigDir(cfgid)
+            # Where the config would live, not "": os.path.join("", x) silently means the cwd
+            return os.path.join(self.path, self.shareddir, cfgid)
+        return self.configs.get(cfgid, NullConfigDir).path
 
     def printPath(self, cfgid, ext=None, noext=False):
         if cfgid is None:
@@ -233,13 +234,14 @@ class Project:
         return True
 
     def createConfigDir(self, cfgid, shared=True, test=False):
-        testres = False
+        cdir = self.configs.get(cfgid, None)
+        if cdir is not None and os.path.isdir(cdir.path):
+            # keep an existing config where it is; a local one must not be moved to shared
+            return (cdir.path, False) if test else cdir.path
         ddir = os.path.join(self.path, self.shareddir if shared else self.localdir, cfgid)
-        if cfgid not in self.configs or not os.path.exists(ddir):
-            testres = not os.path.exists(ddir)
-            os.makedirs(ddir, exist_ok=True)
-            self.configs[cfgid] = ConfigDir(cfgid, ddir)
-        res = self.configs[cfgid].path
-        return (res, testres) if test else res 
+        testres = not os.path.exists(ddir)
+        os.makedirs(ddir, exist_ok=True)
+        self.configs[cfgid] = ConfigDir(cfgid, ddir)
+        return (ddir, testres) if test else ddir
 
 

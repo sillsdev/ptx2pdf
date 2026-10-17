@@ -582,6 +582,7 @@ class RunJob:
         self.env['TEXINPUTS'] = pathjoiner.join(texinputs)
         # if os.system == "win32":
         #     os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
+        prevcwd = os.getcwd()
         os.chdir(self.tmpdir)
         outpath = os.path.join(self.tmpdir, '..', self.outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
@@ -603,17 +604,24 @@ class RunJob:
                         copystat(ipdffile, opdffile)
                     except OSError as e:
                         log.error(f"Failed to copy: {ipdffile} to {opdffile}")
-        if self.norun:
+        if self.norun:      # the page filler runs xetex itself later, relying on cwd being tmpdir
             return genfiles
-        elif self.nothreads:
-            self.run_xetex(self.outfname, self.pdffile)
-        else:
-            self.thread = Thread(target=self.run_xetex, args=(self.outfname, self.pdffile))
-            self.busy = True
-            logger.debug("sharedjob: Starting thread to run xetex")
-            self.thread.start()
-            self.info.printer.waitThread(self.thread)
-        self.done_job(self.outfname, self.pdffile)
+        try:
+            if self.nothreads:
+                self.run_xetex(self.outfname, self.pdffile)
+            else:
+                self.thread = Thread(target=self.run_xetex, args=(self.outfname, self.pdffile))
+                self.busy = True
+                logger.debug("sharedjob: Starting thread to run xetex")
+                self.thread.start()
+                self.info.printer.waitThread(self.thread)
+            self.done_job(self.outfname, self.pdffile)
+        finally:
+            # Don't stay in the config's output folder: Windows then won't let it be deleted
+            try:
+                os.chdir(prevcwd)
+            except OSError:
+                pass
         return genfiles
 
     def wait(self):
