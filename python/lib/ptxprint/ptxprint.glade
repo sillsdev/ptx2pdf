@@ -36972,7 +36972,7 @@ cover using the online Canva.com tool.</property>
                                 <property name="tooltip-text" translatable="yes">This will automatically generate the Table of Contents
 for all the books included in the publication using one
 or more of the \toc1, \toc2 and \toc3 fields as specified.
-The 	oc1, 	oc2 and 	oc3 choices are only applied
+The \toc1, \toc2 and \toc3 choices are only applied
 when "Multiple Books" is set on the Basic tab.
 
 NOTE: PTXprint typesets the text more than once
