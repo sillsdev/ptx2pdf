@@ -5248,7 +5248,8 @@ class GtkViewModel(ViewModel):
                  (self.get('r_impSource') == 'config' and ((self.get('fcb_impProject') is None or self.get('ecb_impConfig') is None) or \
                  (str(self.get('fcb_impProject')) == str(self.get("ecb_targetProject")) and \
                   str(self.get('ecb_impConfig'))  == str(self.get('ecb_targetConfig'))))) or \
-                 (self.get('r_impTarget') == 'prjcfg' and (not len(self.get('ecb_targetProject')) or not len(self.get('ecb_targetConfig'))))
+                 (self.get('r_impTarget') == 'prjcfg' and (not len(self.get('ecb_targetProject')) or not len(self.get('ecb_targetConfig')))) or \
+                 (self.get('r_impTarget') == 'prjcfg' and self._getProject('ecb_targetProject') is None)  # typed name of no existing project
                  # (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
                  #  str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig'))) or \
         
@@ -5336,6 +5337,11 @@ class GtkViewModel(ViewModel):
                         statMsg = _("Exported Settings to: {}").format(outdir)
                     else:
                         statMsg = _("Undefined target folder. Could not export settings!")
+                elif self._getProject('ecb_targetProject') is None:
+                    # A typed name that matches no project used to crash in importConfig (tgtPrj.guid)
+                    statMsg = None
+                    self.doStatus(_("There is no project called '{}', so nothing was imported.").format(
+                                    self.get('ecb_targetProject')), warning=True)
                 else:
                     tp = self._getProject('ecb_targetProject')
                     tc = self.get('ecb_targetConfig',  None)
@@ -6231,6 +6237,11 @@ class GtkViewModel(ViewModel):
                          secondary=_("This locale is not supported on your system, you may need to install it"))
             return
         self.lang = lang
+        # The window is rebuilt from the saved config (main.py), so save first or unsaved changes are
+        # lost. (saveConfig leaves a locked config alone.)
+        if self.project is not None:
+            self.saveConfig()
+        self.langChanged = True     # tells main.py to reopen the window rather than exit
         self.builder.get_object("ptxprint").destroy()
         self.builder.get_object("dlg_preview").destroy()
         self.onDestroy(None)

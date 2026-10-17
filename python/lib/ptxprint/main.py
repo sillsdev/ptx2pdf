@@ -625,7 +625,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 if not sys.platform.startswith("win"):
                     mainw.lang += ".UTF-8"
                 config.set("init", "lang", mainw.lang)
-                if args.lang is not None:
+                # Reopen in the new language. Without langChanged, a user with no language set at
+                # startup (args.lang None) was dropped out of PTXprint instead.
+                if args.lang is not None or getattr(mainw, "langChanged", False):
                     args.lang = mainw.lang
                     print(f"{args.lang}")
                     project = mainw.project
