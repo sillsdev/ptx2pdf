@@ -216,7 +216,7 @@ class BookProgressDialog:
         vbox.pack_start(button_box, False, False, 0)
 
         # Start Fill, Resume Fill buttons
-        start_tip = _("Restart filling from the beginning of each book.\n\nWarning: CPU-hungry. Go to lunch!")
+        start_tip = _("Restart filling from the beginning of each book.\nAll existing adjustments, including manual ones, are thrown away.\n\nWarning: CPU-hungry. Go to lunch!")
         resume_tip = _("Resume filling from the first underfilled page in each book.\n\nWarning: CPU-hungry. Go to lunch!")
         self.restart_button = Gtk.Button(label=_("Start Fill"))
         self.restart_button.set_tooltip_text(start_tip)

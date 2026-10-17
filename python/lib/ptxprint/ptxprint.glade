@@ -23149,8 +23149,8 @@ elements visually distinct.</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">This option inserts a No-Break Space (\u00A0)
-between the book name and the Ch:Vs refs
+                                                <property name="tooltip-text" translatable="yes">This option inserts a space that discourages line
+breaks between the book name and the Ch:Vs refs
 so that they don't get split across lines.
 
 It also prevents single letters being left at
@@ -27127,14 +27127,7 @@ uncheck this option.</property>
 to be appended to another, you can
 start the page numbering from where
 the previous document ends by entering
-the subsequent page number here.
-
-If you want front matter pages to be numbered 
-with roman numerals (i, ii, iii, iv, v, etc) then 
-add this line to the front matter to trigger it:
-       \resetpagenums -1
-and normal page numbering will restart as
-soon as the first scripture book is encountered.</property>
+the subsequent page number here.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Starting Page Number
 (for Scripture Books):</property>
@@ -27155,14 +27148,7 @@ start the page numbering from where
 the previous document ends by entering
 the subsequent page number here. (If the front
 matter already uses normal page numbers, the
-numbering just continues instead.)
-
-If you want front matter pages to be numbered 
-with roman numerals (i, ii, iii, iv, v, etc) then 
-add this line to the front matter to trigger it:
-       \resetpagenums -1
-and normal page numbering will restart as
-soon as the first scripture book is encountered.</property>
+numbering just continues instead.)</property>
                                         <property name="opacity">0.80</property>
                                         <property name="halign">start</property>
                                         <property name="max-length">4</property>

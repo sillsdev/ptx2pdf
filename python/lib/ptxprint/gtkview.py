@@ -2318,7 +2318,7 @@ class GtkViewModel(ViewModel):
         else:
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
-        for w in "l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split():
+        for w in "l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split():
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
