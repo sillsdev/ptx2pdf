@@ -42,7 +42,8 @@ class Hyphenation:
                         # print(f"Skipped: {l}")
                         z += 1
                     else:
-                        if l.index("-") >= minaffix and l.rindex("-") >= minaffix and len(l) > minword:
+                        # at least minaffix letters before the first break and after the last one
+                        if l.index("-") >= minaffix and len(l) - l.rindex("-") - 1 >= minaffix and len(l) > minword:
                             hyphenatedWords.append(l)
                 elif len(l) > minblock:
                     # print(f"No hyphen data for long word: {l}")

@@ -491,6 +491,7 @@ _map = {
     "strongsndx/transliterate": ("c_strongsTranslit", "strongs", None),
     "strongsndx/renderings":    ("c_strongsRenderings", "strongs", None),
     "strongsndx/definitions":   ("c_strongsDefn", "strongs", None),
+    "strongsndx/notes":         ("c_strongsNotes", "strongs", None),   # was not saved, so reset every session
     "strongsndx/keyvrsrefs":    ("c_strongsKeyVref", "strongs", None),
     "strongsndx/fallbackprj":   ("fcb_strongsFallbackProj", "strongs", None),
     "strongsndx/majorlang":     ("fcb_strongsMajorLg", "strongs", None),

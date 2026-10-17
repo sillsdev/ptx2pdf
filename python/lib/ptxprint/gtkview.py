@@ -664,7 +664,7 @@ _sensitivities = {
     "c_impOther":              ["gr_impOther"],
     "c_oth_FrontMatter":       ["c_oth_OverwriteFrtMatter"],
     "c_oth_Cover":             ["c_oth_OverwriteFrtMatter"],
-    "c_impEverything":         ["c_impPictures", "c_impLayout", "c_impFontsScript", "c_impStyles", "c_impOther"],
+    # (no "c_impEverything" entry: it was inverted, and setImportButtonOKsensitivity decides these)
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -2027,10 +2027,10 @@ class GtkViewModel(ViewModel):
         self.onFindClicked(entry, Gtk.EntryIconPosition.PRIMARY, None)
 
     def onFindKey(self, entry, ev):
-        if ev.keyval == Gdk.KEY_Escape:
+        if ev.keyval == Gdk.KEY_Escape:     # Esc clears the search (now connected in glade)
             self.onFindClicked(entry, Gtk.EntryIconPosition.SECONDARY, ev)
-        else:
-            return False
+            return True
+        return False                        # let all other keys through for normal typing
 
     def onFindClicked(self, entry, which, event):
         txt = self.get("t_find").lower()
@@ -2549,8 +2549,10 @@ class GtkViewModel(ViewModel):
         btn = self.builder.get_object("btn_dismissStatusLine")
         if txt.startswith(r"\u"): # i.e. the results of an Alt-X (show unicode chars)
             btn.set_label(_(" Copy to Clipboard "))
+            btn.set_tooltip_text(_("Copy these codes to the clipboard and hide the message."))
         else:
             btn.set_label(_("Dismiss"))
+            btn.set_tooltip_text(_("Hide this message."))
         sl = self.builder.get_object("l_statusLine")
         self.set("l_statusLine", txt)
         if warning:
@@ -4464,15 +4466,7 @@ class GtkViewModel(ViewModel):
     def onTocClicked(self, btn):
         if not self.get("c_usetoc1") and not self.get("c_usetoc2") and not self.get("c_usetoc3"):
             self.set("c_usetoc1", True)
-        if self.get("c_autoToC"):
-            if self.get("c_thumbtabs"):
-                if not self.get("c_usetoc3"):
-                    self.set("r_thumbText", "zthumbtab") # c_thumbIsZthumb", True)
-                self.builder.get_object("r_thumbText_toc3").set_sensitive(self.get("c_usetoc3"))
-                self.builder.get_object("r_thumbText_zthumbtab").set_sensitive(self.get("c_usetoc3"))
-        else:
-            self.builder.get_object("r_thumbText_toc3").set_sensitive(True)
-            self.builder.get_object("r_thumbText_zthumbtab").set_sensitive(True)
+        self.updateThumbTextChoice()
         
     def filter_numbers(self, wid):
         w = Gtk.Buildable.get_name(wid)
@@ -5138,7 +5132,8 @@ class GtkViewModel(ViewModel):
                 multiple=False, folder=False, save=True,
                 basedir=os.path.join(self.project.printPath(self.cfgid), '..'), defaultSaveName=zfname)
         if archiveZipFile is not None:
-            btn_createZipArchive.set_tooltip_text(str(archiveZipFile[0]))
+            # (the help tooltip used to be replaced here by the archive path for the rest of the session;
+            #  the folder is opened afterwards, so the path isn't needed)
             btn_createZipArchive.set_sensitive(False)
             busyMsg = _("Creating archive...")
             self.doStatus(busyMsg)
@@ -5225,6 +5220,8 @@ class GtkViewModel(ViewModel):
                 btn.set_tooltip_text(str(vals[0]))
                 self.set("lb_"+ident, pdfre.sub(r"\1", str(vals[0])))
             else:
+                # included in alphabetical order (as the tooltips say), not the file chooser's order
+                vals = sorted(vals, key=lambda p: os.path.basename(str(p)).lower())
                 setattr(self, attr, vals)
                 btn.set_tooltip_text("\n".join(str(s) for s in vals))
                 self.set("lb_"+ident, ", ".join(pdfre.sub(r"\1", str(s)) for s in vals))
@@ -5795,12 +5792,16 @@ class GtkViewModel(ViewModel):
         self._updateSectionVisibility("c_thumbtabs")
         self.colorTabs()
         self.onNumTabsChanged()
-        status = self.get("c_thumbtabs")
-        if status:
-            if not self.get("c_usetoc3"):
-                self.set("r_thumbText", "zthumbtab")
-            self.builder.get_object("r_thumbText_toc3").set_sensitive(self.get("c_usetoc3"))
-            self.builder.get_object("r_thumbText_zthumbtab").set_sensitive(self.get("c_usetoc3"))
+        self.updateThumbTextChoice()
+
+    def updateThumbTextChoice(self):
+        # Thumb tab text: \toc3 can only be used if the ToC includes \toc3. When the ToC is on without
+        # it, use \zthumbtab and grey out the choice. (onTabsClicked and onTocClicked used to disagree.)
+        noToc3 = self.get("c_autoToC") and not self.get("c_usetoc3")
+        if noToc3 and self.get("c_thumbtabs"):
+            self.set("r_thumbText", "zthumbtab")
+        for w in ("r_thumbText_toc3", "r_thumbText_zthumbtab"):
+            self.builder.get_object(w).set_sensitive(not noToc3)
 
     def onNumTabsChanged(self, *a):
         if not super().onNumTabsChanged(*a):

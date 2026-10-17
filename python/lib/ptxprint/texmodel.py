@@ -1248,7 +1248,11 @@ class TexModel:
             clabel = self.dict["document/clabel"]
             clbooks = self.dict["document/clabelbooks"].split()
             if len(clabel) and (not len(clbooks) or bk in clbooks):
-                self.localChanges.append(makeChange(r"(\\c )", r"\\cl {}\n\1".format(clabel), flags=regex.S))
+                # Insert the label literally: it used to be a regex template, so \ZWNBSP gave "bad escape \Z".
+                # "\\" (the old advice for one backslash) is still accepted.
+                cltext = clabel.replace("\\\\", "\\")
+                self.localChanges.append(makeChange(r"(\\c )", lambda rc, m, t=cltext: "\\cl " + t + "\n" + m.group(1),
+                                                    flags=regex.S))
                 
         # If each chapter needs to start on a new page
         if self.asBool("document/pagebreakallchs"):

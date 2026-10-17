@@ -1371,6 +1371,10 @@ class ViewModel:
             except ValueError:
                 pass
 
+        # The border list offered "c86out", which no stylesheet defines; the border is "v86out"
+        if config.get("covergen", "borderstyle", fallback=None) == "c86out":
+            self._configset(config, "covergen/borderstyle", "v86out")
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
