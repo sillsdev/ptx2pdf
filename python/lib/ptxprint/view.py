@@ -2427,6 +2427,16 @@ set stack_size=32768""".format(self.cfgid)
             view = self
         if view.cfgid:      # files below are written straight into the config folder
             view.project.createConfigDir(view.cfgid)
+        # The import sets view.loadingConfig while it works. Always put it back: importing into the
+        # current config is not followed by a reload, and a stuck flag silently disables every
+        # handler that checks it (e.g. the Ornamental Decorations controls never appear).
+        wasLoading = getattr(view, "loadingConfig", False)
+        try:
+            self._importConfigInto(view, fzip, prefix)
+        finally:
+            view.loadingConfig = wasLoading
+
+    def _importConfigInto(self, view, fzip, prefix):
         # assemble list of categories to import from ptxprint.cfg
         impAll = self.get("c_impEverything", False)
         hasOther = self.get("c_impOther")
@@ -2436,9 +2446,9 @@ set stack_size=32768""".format(self.cfgid)
                 continue
             if self.get(k):
                 useCats.add(v)
-        if self.get("c_impVariables", False):
+        if hasOther and self.get("c_oth_Variables", False):
             useCats.add("variables")
-            useCats.add("meta")
+            useCats.add("pubinfo")     # copyright, licence, colophon, notes - not the whole "meta" category
         logger.debug(f"Importing Categories: {useCats}")
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
@@ -2458,12 +2468,19 @@ set stack_size=32768""".format(self.cfgid)
         grabfront = False
         if config.get("fancy", "enableOrnaments", fallback=False):
             view.set("c_useOrnaments", True)
-        exclfields = None if impAll or self.get("c_impFontsScripts") else \
-                ('fontname', 'ztexfontfeatures', 'ztexfontgrspace') # 'fontsize'
+        # Fonts set within styles come with Fonts+Script (or Everything), whether or not Styles is ticked
+        styfontfields = ('fontname', 'ztexfontfeatures', 'ztexfontgrspace') # 'fontsize'
+        impFonts = impAll or self.get("c_impFontsScript")
+        exclfields = None if impFonts else styfontfields
 
         # import pictures according to import settings
         if impAll or self.get("c_impPictures"):
-            otherpics = Piclist(view.picinfos.model)        # will this work for a new view?
+            if view.picinfos is None:
+                # Not loaded yet (e.g. a new or just-switched config; loadPics is a no-op while
+                # loadingConfig is set): load the target's current pictures to merge into
+                view.picinfos = Piclist(view, diglot=len(view.diglotViews) != 0)
+                view.picinfos.load_files(view)
+            otherpics = Piclist(view)
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile, prefix=prefix) as inf:
@@ -2484,7 +2501,7 @@ set stack_size=32768""".format(self.cfgid)
             view.picinfos.out(os.path.join(view.project.srcPath(view.cfgid), "{}-{}.piclist".format(view.project.prjid, view.cfgid)))
 
         # merge ptxprint.sty adding missing
-        if impAll or self.get("c_impStyles") or self.get("c_oth_Cover"):
+        if impAll or self.get("c_impStyles") or impFonts or self.get("c_oth_Cover"):
             newse = StyleEditor(view, os.path.join(self.scriptsdir, "usfm_sb.sty"))
             try:
                 with zipopentext(fzip, "ptxprint.sty", prefix=prefix) as inf:
@@ -2493,6 +2510,8 @@ set stack_size=32768""".format(self.cfgid)
                 pass
             if impAll or self.get("c_impStyles"):
                 view.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
+            elif impFonts:      # Fonts+Script without Styles: just the font fields of existing styles
+                view.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), onlyfields=styfontfields)
 
         if impAll or self.get("c_oth_Advanced"):
             # merge ptxprint-mods.sty
@@ -2538,7 +2557,8 @@ set stack_size=32768""".format(self.cfgid)
                     outf.write(dat)
                 zipmod.close()
 
-            # handle the script
+        # the custom script has its own checkbox (it is not stored in a settings PDF, so it is greyed out then)
+        if impAll or (hasOther and self.get("c_oth_customScript")):
             if config.getboolean("project", "processscript", fallback=False):
                 fname = config.get("project", "selectscript", fallback=None)
                 try:
@@ -2553,8 +2573,7 @@ set stack_size=32768""".format(self.cfgid)
                         outf.write(dat)
                     view.set(ModelMap["project/processscript"].widget, True)
                     view.set(ModelMap["project/selectscript"].widget, localscript)
-                    view.set(ModelMap["project/whentoprocessscript"].widget,
-                            config.getboolean("project", "whentoprocessscript", fallback=False))
+                    # when2processscript comes in with the 'customscript' category via loadConfig
 
         # merge cover and import has cover
         if (impAll or self.get("c_oth_Cover")) and config.getboolean("cover", "makecoverpage", fallback=False):
@@ -2567,7 +2586,7 @@ set stack_size=32768""".format(self.cfgid)
                     if k not in allstyles:
                         view.styleEditor.addMarker(k, v['Name'])
                     for a in v.keys():
-                        if exclfields is None or k not in exclfields:
+                        if exclfields is None or a not in exclfields:   # a = field, k = marker
                             view.styleEditor.setval(k, a, newse.getval(k, a), mapin=False)
             grabfront = True
             
@@ -2600,7 +2619,7 @@ set stack_size=32768""".format(self.cfgid)
                                 periphcapture.append(l)
                         if periphcapture is not None:
                             view.periphs[periphid] = "".join(periphcapture)
-                view.updateFrontMatter(force=(impAll or self.get("c_oth_OverwriteFrontMatter")), forcenames=forcenames)
+                view.updateFrontMatter(force=(impAll or self.get("c_oth_OverwriteFrtMatter")), forcenames=forcenames)
             except (KeyError, FileNotFoundError):
                 pass
 

@@ -5343,6 +5343,12 @@ class GtkViewModel(ViewModel):
                     if tp.prjid == self.project.prjid:
                         self.updateAllConfigLists()
                     self.setPrjConfig(tp.prjid, tp.guid, tc)
+                    # Importing into the current config doesn't reload it, and the import's own changes
+                    # (e.g. ticking Ornamental Decorations) skip their handlers, so refresh what they'd do
+                    for f, g, key, d in _collapsibleSections:
+                        self.sensiVisible(key)
+                        self._updateSectionVisibility(key)
+                    self.colorTabs()
                     statMsg = _("Imported Settings into: {}::{}").format(tp.prjid, tc)
                 zipdata.close()
             if zipinf is not None:

@@ -585,14 +585,19 @@ class StyleEditor:
                 res.append(k)
         return res
 
-    def mergein(self, newse, force=False, exclfields=None):
+    def mergein(self, newse, force=False, exclfields=None, onlyfields=None):
+        ''' onlyfields: merge just these fields (e.g. fonts), and only into markers we already have '''
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
+                if onlyfields is not None:
+                    continue
                 self.addMarker(str(m), str(newse.getval(m, 'name', "")))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 if exclfields is not None and k in exclfields:
+                    continue
+                if onlyfields is not None and k not in onlyfields:
                     continue
                 nv = newse.getval(m, k)
                 bv = self.getval(m, k, baseonly=True)

@@ -7725,8 +7725,8 @@ line spacing and related settings.</property>
                         <property name="margin-end">20</property>
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">15</property>
-                        <property name="label" translatable="yes">Enabling this option will import the major font and script settings, spacing and hyphenation
-settings. (Note: It will not alter any fonts that have been directly set within Styles.)</property>
+                        <property name="label" translatable="yes">Enabling this option will import the main font and script settings (Fonts+Scripts tab), including text direction, line breaking and spacing.
+Fonts that have been set within individual Styles are also updated to match the source. (Hyphenation settings are imported with Other &gt; Body Tab settings.)</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
@@ -7746,6 +7746,8 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                     <property name="name">Import Fonts and Script Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">Import the font and script settings (Fonts+Scripts tab),
+including fonts set within individual styles.</property>
                     <property name="receives-default">False</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
@@ -7776,6 +7778,7 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                         <property name="margin-bottom">15</property>
                         <property name="label" translatable="yes">This will selectively import any Styles which are different from the Default settings.
 This will also import styles from ptxprint-mods.sty, but not from custom.sty.
+Fonts set within styles are only imported if Fonts+Script is also ticked.
 You may also want to RESET the current configuration (see below) before importing styles.</property>
                         <property name="wrap">True</property>
                       </object>
@@ -7795,7 +7798,9 @@ You may also want to RESET the current configuration (see below) before importin
 in the receiving configuration will be imported.
 But if you require ALL styles to be updated
 regardless of whether they have already been
-modified locally, then enable this option.</property>
+modified locally, then enable this option.
+(This also applies to fonts in styles imported
+with Fonts+Script.)</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="margin-start">20</property>
@@ -7939,6 +7944,8 @@ Header+Footer tab.</property>
                             <property name="label" translatable="yes">Thumb Tabs settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Import the thumb tab settings
+(Tabs+Borders tab).</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
@@ -7954,6 +7961,9 @@ Header+Footer tab.</property>
                             <property name="label" translatable="yes">Overwrite Front Matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Replace the front matter in the target with
+the source's, instead of only adding the
+parts that are missing.</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
@@ -8090,6 +8100,10 @@ and verse number decorators.</property>
                             <property name="label" translatable="yes">Variables + Meta Data</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Import the variables (Peripherals tab) and the
+publication details: copyright statement,
+licence, colophon and configuration notes.
+The book selection and any password are not imported.</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
