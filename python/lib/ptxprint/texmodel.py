@@ -763,7 +763,9 @@ class TexModel:
                     res.append(r"\internoteskip={}pt plus {}pt minus {}pt".format(f2s(tgts), f2s(plus), f2s(minus)))
                 elif l.startswith(r"%\optimizepoetry"):
                     bks = self.dict["document/clabelbooks"]
-                    if self.dict["document/ifchaplabels"] == "%" and len(bks):
+                    # "Optimize Layout for Poetry Books" was never checked here, so it couldn't be turned off
+                    if self.dict["document/ifchaplabels"] == "%" and len(bks) \
+                            and self.asBool("document/cloptimizepoetry"):
                         for bk in bks.split(" "):
                             if bk in self.dict['project/bookids']:
                                 res.append((r"\setbookhook{{start}}{{{}}}{{\xdef\lBalThresh{{\BalanceThreshold}}\gdef\BalanceThreshold{{3}}\clubpenalty=50"

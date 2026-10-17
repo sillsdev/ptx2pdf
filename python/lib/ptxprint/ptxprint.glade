@@ -21977,7 +21977,8 @@ creates all sorts of unforeseen issues and unwanted
 whitespace. This option allows columns to be 
 unbalanced, which might improve the overall look.
 But note that it also allows Widow and Orphan 
-lines to occur, which is a negative side-effect.</property>
+lines to occur, which is a negative side-effect.
+It applies only to the books listed above.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="active">True</property>
@@ -24816,7 +24817,10 @@ the edge of the main text?</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
                                                 <property name="tooltip-text" translatable="yes">This is the horizontal rule separating the
-body text from the cross-reference area.</property>
+body text from the cross-reference area.
+(Used only when footnotes or cross-references are
+placed at the End of Book. Otherwise the Footnote
+rule settings apply.)</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
                                                 <property name="margin-start">12</property>
@@ -24854,7 +24858,10 @@ Text From xRefs:</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="tooltip-text" translatable="yes">The vertical space between the main
-text body and the cross-reference rule.</property>
+text body and the cross-reference rule.
+(Used only when footnotes or cross-references are
+placed at the End of Book. Otherwise the Footnote
+rule settings apply.)</property>
                                                 <property name="halign">end</property>
                                                 <property name="text">6.0</property>
                                                 <property name="input-purpose">number</property>
@@ -24876,7 +24883,10 @@ text body and the cross-reference rule.</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="tooltip-text" translatable="yes">This is the vertical space/gap (pts) between
-the rule and the cross-references. </property>
+the rule and the cross-references.
+(Used only when footnotes or cross-references are
+placed at the End of Book. Otherwise the Footnote
+rule settings apply.)</property>
                                                 <property name="halign">end</property>
                                                 <property name="text">2.0</property>
                                                 <property name="input-purpose">number</property>
@@ -24926,7 +24936,10 @@ the rule and the cross-references. </property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="tooltip-text" translatable="yes">Distance (mm) to move the rule in from the side
-chosen in Horizontal Position.</property>
+chosen in Horizontal Position.
+(Used only when footnotes or cross-references are
+placed at the End of Book. Otherwise the Footnote
+rule settings apply.)</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">start</property>
                                                         <property name="text">0</property>
@@ -24947,7 +24960,10 @@ chosen in Horizontal Position.</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="tooltip-text" translatable="yes">The length of the rule as a percentage
-of the column/page width.</property>
+of the column/page width.
+(Used only when footnotes or cross-references are
+placed at the End of Book. Otherwise the Footnote
+rule settings apply.)</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">start</property>
                                                         <property name="text">100</property>
@@ -24968,7 +24984,10 @@ of the column/page width.</property>
                                                         <property name="name">Cross-reference rule: Thickness</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
-                                                        <property name="tooltip-text" translatable="yes">The thickness of the rule.</property>
+                                                        <property name="tooltip-text" translatable="yes">The thickness of the rule.
+(Used only when footnotes or cross-references are
+placed at the End of Book. Otherwise the Footnote
+rule settings apply.)</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">start</property>
                                                         <property name="text">0.5</property>
@@ -24994,7 +25013,10 @@ of the column/page width.</property>
                                                         <property name="tooltip-text" translatable="yes">Which side of the column the rule is aligned to:
 Left, Right, Center, Inner (spine side) or Outer.
 Inner and Outer swap sides on odd and even pages.
-This only matters when the Length is less than 100%.</property>
+This only matters when the Length is less than 100%.
+(Used only when footnotes or cross-references are
+placed at the End of Book. Otherwise the Footnote
+rule settings apply.)</property>
                                                         <property name="can-default">True</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">start</property>
