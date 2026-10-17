@@ -1253,12 +1253,16 @@ class PolyglotSetup(Gtk.Box):
                 Gtk.main_iteration_do(False)
             runres = runjob.res
             return 20000 if runres else xdvigetpages(xdvname)
-        mid = self.get_fraction()
-        res = brent(0., 1., mid, score, 0.001)
-        self.set_fraction(res)
-        self.isDiglotMeasuring = False
+        try:
+            mid = self.get_fraction()
+            res = brent(0., 1., mid, score, 0.001)
+            self.set_fraction(res)
+        finally:
+            # The flag lives on the view (checked at the top); leaving it set made the button
+            # re-activate and do nothing on every later click, until PTXprint was restarted
+            self.view.isDiglotMeasuring = False
+            btn.set_active(False)
         self.view.callback(self.view)
-        btn.set_active(False)
 
     def update_diglot_polyglot_UI(self):
         dglt = True if len(self.ls_treeview) < 3 else False

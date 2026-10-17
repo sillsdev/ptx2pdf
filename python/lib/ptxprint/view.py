@@ -1647,7 +1647,10 @@ class ViewModel:
         return
 
     def mergeCaptions(self, bk):
-        return bk not in self.get("s_diglotSerialBooks", "FRT BAK GLO")
+        # Serial books (printed one after the other, not side by side) keep separate captions.
+        # Parsed as runjob does; this used to read a non-existent widget, so was always "FRT BAK GLO".
+        serial = {b for b in re.split(r"[\s,]+", (self.get("t_diglotSerialBooks") or "").strip()) if b}
+        return bk not in serial
 
     def generatePicList(self, procbks=None, doclear=True):
         ab = self.getAllBooks()
