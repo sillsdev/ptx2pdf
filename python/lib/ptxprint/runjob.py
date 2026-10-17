@@ -41,7 +41,8 @@ _errmsghelp = {
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
 "! Dimension too large":                 _("Uh oh! You may have too many paragraphed footnotes on the page.\n" +\
                                            "Try starting each footnote on a new line (Notes+Refs tab)."),
-"! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists."),
+"! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists.") + "\n" +\
+                                         _("Try turning off the ptxprint-mods stylesheet"),
 "! Unable to load picture":              _("Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
                                            "specified folder. Also try the option 'Omit Missing Pictures'"),
 "! Unable to load picture or PDF file":  _("Check if image/PDF file is available on the system.\n" +
@@ -66,7 +67,6 @@ _errmsghelp = {
                                            "* Also check that you haven't inadvertently left certain settings on\n" +\
                                            "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
                                            "  in blue if these features are currently enabled)."),
-"! Paratext stylesheet":                 _("Try turning off the ptxprint-mods stylesheet"),
 "! File ended while scanning use of \\iotableleader.": _("Problem with Formatting Intro Outline\n" +\
                                            "Try disabling option 'Right-Align \\ior with tabbed leaders' on the Body tab"),
 "! Emergency stop.":                     _("Probably a TeX macro problem - contact support, or post a bug report"),
