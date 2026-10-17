@@ -148,7 +148,8 @@ _map = {
     "fancy/sectionheaderpdf":   ("btn_selectSectionHeaderPDF", "decorate", lambda w,v: w.sectionheader.as_posix() \
                                             if (w.sectionheader is not None and w.sectionheader != 'None') \
                                             else get("/ptxprintlibpath")+"/A5 section head border.pdf"),
-    "fancy/sectionheadershift": ("s_inclSectionShift", "decorate", lambda w,v: float(v or "0")),
+    # + moves the image up (like the verse decorator); TeX \kern in this vbox moves it down, hence the minus
+    "fancy/sectionheadershift": ("s_inclSectionShift", "decorate", lambda w,v: -float(v or "0")),
     "fancy/sectionheaderscale": ("s_inclSectionScale", "decorate", lambda w,v: int(float(v or "1.0")*1000)),
     "fancy/booktitleborder":    ("c_inclTitleBorders", "decorate", lambda w,v: "" if v else "%"),
     "fancy/endofbook":          ("c_inclEndOfBook", "decorate", lambda w,v: "" if v else "%"),

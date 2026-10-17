@@ -1363,6 +1363,14 @@ class ViewModel:
             if config.get("document", "diglotmergemode", fallback=None) == "doc":
                 self._configset(config, "document/diglotmergemode", "scores")
 
+        if v < 3.03: # Section heading image shift: + now moves it up (as for the verse decorator), so flip old values
+            old = config.get("fancy", "sectionheadershift", fallback=None)
+            try:
+                if old not in (None, ""):
+                    self._configset(config, "fancy/sectionheadershift", str(0.0 - float(old)))  # 0.0 - avoids "-0.0"
+            except ValueError:
+                pass
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")

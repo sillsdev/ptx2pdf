@@ -31712,8 +31712,8 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="tooltip-text" translatable="yes">Vertical shift in pts of the section box image.
-  - values shift the box upwards
-  + values shift the box downwards</property>
+  + values shift the box upwards
+  - values shift the box downwards</property>
                                                 <property name="halign">end</property>
                                                 <property name="label" translatable="yes">Shift:</property>
                                                 <property name="xalign">1</property>
@@ -31729,8 +31729,8 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="tooltip-text" translatable="yes">Vertical shift in pts of the section box image.
-  - values shift the box upwards
-  + values shift the box downwards</property>
+  + values shift the box upwards
+  - values shift the box downwards</property>
                                                 <property name="text">0.0</property>
                                                 <property name="xalign">1</property>
                                                 <property name="adjustment">a_inclSectionShift</property>
