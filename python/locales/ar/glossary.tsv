@@ -1,0 +1,16 @@
+# English<TAB>Arabic<TAB>note (optional). Hand-written; overrides everything else. Starting set, to be extended after native review.
+Book	سفر	Bible book
+Chapter	إصحاح	Bible chapter
+Verse	آية	Bible verse
+Border	إطار	decorative frame (NOT حدود)
+Underline	تسطير	text formatting (NOT أسفل)
+Thumb tabs	علامات فهرسة جانبية	index tabs on the page edge
+Spine	كعب الكتاب	book spine
+Font	خط
+Margin	هامش
+File	ملف
+Folder	مجلد
+Tab	علامة تبويب	UI tab
+Sidebar	شريط جانبي
+Footnote	حاشية سفلية
+Cross-reference	إحالة مرجعية

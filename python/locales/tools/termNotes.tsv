@@ -1,0 +1,34 @@
+# English term<TAB>what it means in PTXprint. Shared by every language: sent to the model (in English) whenever the
+# term appears in a batch, so ambiguous words are translated by meaning. Earlier crowd translations got these wrong.
+Border	a decorative frame or outline drawn around a page, a box or a sidebar. NOT a margin, a limit or a country boundary.
+Thumb tab	an index tab printed on the outer edge of the page showing a book's name, so readers can find that book quickly (like the thumb index of a dictionary). NOT a thumbnail picture and NOT a thumb.
+Book in focus	the Scripture book currently selected/displayed in the Paratext editor (or viewer). "Book" here is a Bible book, e.g. Mark.
+Noteline	one of the ruled horizontal lines in a wide outer margin that give readers room to write personal notes (as in a "journaling Bible"). NOT a line of footnotes.
+Tolerance	how far (in %) a text colour may differ from the chosen spot colour and still be treated as that colour.
+Spine	the bound edge of a book where the pages are joined, shown on the cover. NOT a backbone.
+Space after	the vertical space left after a paragraph (paragraph spacing). NOT a space character.
+Space before	the vertical space left before a paragraph (paragraph spacing). NOT a space character.
+Underline	text formatting: a line drawn under the text.
+Padding	the inner space between a box's contents and its border.
+Gutter	the extra inner margin next to the binding, where the pages are bound together.
+Bleed	extra printed area beyond the trim edge of the page so that colour reaches the cut edge.
+Tofu	the empty rectangle (a missing-character box) shown when a font lacks a character.
+Slice	a chosen part of a book (a range of chapters or verses) that is typeset.
+Caller	the small symbol or letter in the text (such as a, b, † or *) that points to a footnote or cross-reference.
+Adjust list	a list of paragraph adjustments (expand or shrink a paragraph by one line at a given verse) used to balance columns and fix page endings.
+Peripherals	the front matter and back matter of a publication: title page, copyright page, table of contents, maps, etc.
+Rule	a straight horizontal line used as a separator or decoration (footnote rule, header rule). NOT a regulation.
+Marker	a USFM code that starts with a backslash (such as \toc3 or \m) and tags the kind of text. Keep the code itself unchanged.
+Diglot	two translations printed side by side on the same page.
+Polyglot	three or more translations printed side by side.
+Ornamental	decorative graphics (flourishes, patterned borders).
+Sidebar	a boxed panel of text or graphics placed beside or inside the text columns (for example a study-note panel).
+Versification	the system of numbering chapters and verses, which differs between Bible versions.
+Hyphenation	breaking a word with a hyphen at the end of a line.
+Justify	align text flush with both the left and the right margin.
+Configuration	a named, saved set of PTXprint settings for a project.
+Mirror pages	a layout where facing pages are mirror images, using inner and outer margins instead of left and right.
+Front matter	the pages before the Scripture text (title, copyright, contents).
+Back matter	the pages after the Scripture text (glossary, maps, indexes).
+Fallback font	a second font used for characters that the main font does not contain.
+Cross-reference	a pointer in the text to a related Bible passage elsewhere.

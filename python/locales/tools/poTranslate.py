@@ -52,6 +52,7 @@ requires.
 
 {style}
 {glossary}
+{notes}
 {extra}
 Reply with ONLY a JSON array, one object per item, in this form: [{{"id": 12, "msgstr": "..."}}, ...]
 
@@ -94,9 +95,13 @@ class Glossary:
         low = ' \n '.join(t.lower() for t in texts)
         return [r for r in self.rows if re.search(r'(?<![a-z])' + re.escape(r[0].lower()) + r'(?![a-z])', low)]
 
-    def render(self, rows):
+    def render(self, rows, notes=False):
         if not rows:
             return ''
+        if notes:
+            out = ["Meaning of PTXprint terms (translate the MEANING into the target language, not these English words):"]
+            out.extend("- {}: {}".format(en, tr) for en, tr, _ in rows)
+            return '\n'.join(out) + '\n'
         out = ["Glossary (English -> required translation):"]
         for en, tr, note in rows:
             out.append("- {} -> {}{}".format(en, tr, " ({})".format(note) if note else ""))
@@ -120,6 +125,7 @@ class Job:
         self.poDir = os.path.join(self.langDir, 'LC_MESSAGES')
         self.style = readOptional(os.path.join(self.langDir, 'style.md'))
         self.glossary = Glossary(os.path.join(self.langDir, 'glossary.tsv'), os.path.join(self.langDir, 'lexicon.tsv'))
+        self.notes = Glossary(os.path.join(here, 'termNotes.tsv'))
         self.reuse = lc.get('reuseExisting', d.get('reuseExisting', False))
         self.replacements = lc.get('replace', [])      # [[from, to], ...] applied to every model answer
         self.previous = {}      # msgid -> (oldEnglish, oldTranslation, ratio) for strings whose English was edited
@@ -158,6 +164,8 @@ class Job:
                 continue
             cur = self.existing.get(e.msgid)
             if cur:
+                for a, b in self.replacements:
+                    cur = cur.replace(a, b)
                 self.progress[e.msgid] = {'msgstr': cur, 'status': 'ok', 'provider': 'kept'}
                 kept += 1
                 if checkTranslation(e.msgid, cur):
@@ -214,6 +222,7 @@ class Job:
         return PROMPT.format(lang=self.langName,
                              style=("Style guide:\n" + self.style + "\n") if self.style else '',
                              glossary=self.glossary.render(self.glossary.forBatch(texts)),
+                             notes=self.notes.render(self.notes.forBatch(texts), notes=True),
                              extra=extra,
                              items=json.dumps(items, ensure_ascii=False, indent=1))
 
@@ -354,14 +363,15 @@ def runLang(args, cfg, lang):
     print("[{}] wrote {}".format(lang, outPath))
 
 
-REVIEW_PROMPT = """You are a careful reviewer of {lang} translations of the PTXprint user interface. PTXprint is desktop software that typesets Bible translations. Many of these translations were polished by hand, so be conservative: reply "keep" unless there is a real problem.
+REVIEW_PROMPT = """You are a careful reviewer of {lang} translations of the PTXprint user interface. PTXprint is desktop software that typesets Bible translations. Some were polished by hand and some came from a crowd-translation platform, so do not change mere style or synonym choices, but do fix real problems.
 
 For each item decide:
 - "keep": the translation is accurate and communicates clearly (do not change style or synonyms).
-- "change": only if it is wrong, misleading, unclear, untranslated by mistake, damages a placeholder, or clearly contradicts the glossary below. Then give the improved "msgstr" (changing as little as possible) and a short "reason".
+- "change": if it is wrong, misleading, hard to understand, reads like word-by-word machine translation, was left in English by mistake, damages a placeholder, or breaks the glossary or the style guide below (register, spelling, punctuation rules). Use the term meanings to judge the sense. Give the improved "msgstr" (changing as little as needed) and a short "reason".
 
 {style}
 {glossary}
+{notes}
 Reply with ONLY a JSON array: [{{"id": 12, "verdict": "keep"}}, {{"id": 13, "verdict": "change", "msgstr": "...", "reason": "..."}}]
 
 <items>
@@ -371,51 +381,81 @@ Reply with ONLY a JSON array: [{{"id": 12, "verdict": "keep"}}, {{"id": 13, "ver
 
 def runReview(args, cfg, lang):
     """Ask the model whether existing translations are good. Writes work/review.tsv; changes are applied to the
-    progress file (and so to the output .po) only with --applyReview."""
+    progress file (and so to the output .po) only with --applyReview. Resumable: reviewed strings are remembered
+    in work/reviewed.json (use --redo to start again)."""
     job = Job(args, cfg, lang)
     glade = GladeIndex(os.path.join(pythonDir, 'lib', 'ptxprint', 'ptxprint.glade'))
     code = CodeContext(pythonDir)
     job.loadEntries(glade)
     job.useExisting = True
+    if job.reuse:
+        job.preload()
+    reviewedPath = os.path.join(job.langDir, 'work', 'reviewed.json')
+    reviewed = set()
+    if os.path.exists(reviewedPath) and not args.redo:
+        with open(reviewedPath, encoding='utf-8') as f:
+            reviewed = set(json.load(f))
     todo = [(i, e) for i, e in enumerate(job.potEntries) if e.msgid in job.existing and isTranslatable(e.msgid)
-            and (args.match is None or re.search(args.match, e.msgid))][args.offset:]
+            and e.msgid not in reviewed and (args.match is None or re.search(args.match, e.msgid))][args.offset:]
     if args.limit:
         todo = todo[:args.limit]
-    print("[{}] reviewing {} existing translations with '{}'".format(lang, len(todo), job.provider.name))
+    print("[{}] reviewing {} existing translations ({} already reviewed) with '{}'".format(
+        lang, len(todo), len(reviewed), job.provider.name))
     reportPath = os.path.join(job.langDir, 'work', 'review.tsv')
     os.makedirs(os.path.dirname(reportPath), exist_ok=True)
-    changes = 0
-    with open(reportPath, 'w', encoding='utf-8', newline='\n') as rep:
-        rep.write("english" + chr(9) + "current" + chr(9) + "suggested" + chr(9) + "reason" + chr(10))
+    fresh = not os.path.exists(reportPath) or args.redo or not reviewed
+    outPath = args.out or os.path.join(job.poDir, 'ptxprint.new.po')
+    changes = failed = 0
+    with open(reportPath, 'w' if fresh else 'a', encoding='utf-8', newline='\n') as rep:
+        if fresh:
+            rep.write("english\tcurrent\tsuggested\treason\n")
         for n in range(0, len(todo), job.batchSize):
             batch = todo[n:n + job.batchSize]
             byId = {i: e for i, e in batch}
             items = [job.itemFor(i, e, glade, code) for i, e in batch]
+            texts = [e.msgid for _, e in batch]
             prompt = REVIEW_PROMPT.format(lang=job.langName, items=json.dumps(items, ensure_ascii=False, indent=1),
-                                          style=("Style guide:" + chr(10) + job.style + chr(10)) if job.style else '',
-                                          glossary=job.glossary.render(job.glossary.forBatch([e.msgid for _, e in batch])))
-            try:
-                arr = json.loads(re.search(r'\[.*\]', job.provider.complete(prompt), re.S).group(0))
-            except Exception as ex:
-                print("    batch failed:", str(ex)[:150])
+                                          style=("Style guide:\n" + job.style + "\n") if job.style else '',
+                                          glossary=job.glossary.render(job.glossary.forBatch(texts)),
+                                          notes=job.notes.render(job.notes.forBatch(texts), notes=True))
+            arr = None
+            for attempt in range(3):
+                try:
+                    arr = json.loads(re.search(r'\[.*\]', job.provider.complete(prompt), re.S).group(0))
+                    break
+                except Exception as ex:
+                    print("    batch attempt {} failed: {}".format(attempt + 1, str(ex)[:200]))
+                    time.sleep(20 * (attempt + 1))
+            if arr is None:
+                failed += 1
                 continue
             for o in arr:
                 e = byId.get(int(o.get('id', -1)))
                 if e is None or o.get('verdict') != 'change' or not o.get('msgstr'):
                     continue
-                new = fixWhitespace(e.msgid, o['msgstr'])
+                new = o['msgstr']
+                for a, b in job.replacements:
+                    new = new.replace(a, b)
+                new = fixWhitespace(e.msgid, new)
                 if checkTranslation(e.msgid, new) or new == job.existing[e.msgid]:
                     continue
                 changes += 1
-                flat = lambda t: t.replace(chr(10), '" "').replace(chr(9), ' ')
-                rep.write(chr(9).join([flat(e.msgid), flat(job.existing[e.msgid]), flat(new), o.get('reason', '')]) + chr(10))
+                flat = lambda t: t.replace('\n', '" "').replace('\t', ' ')
+                rep.write('\t'.join([flat(e.msgid), flat(job.existing[e.msgid]), flat(new), o.get('reason', '')]) + '\n')
                 if args.applyReview:
                     job.progress[e.msgid] = {'msgstr': new, 'status': 'ok', 'provider': 'review'}
-            print("  {}/{} reviewed, {} suggested changes".format(min(n + job.batchSize, len(todo)), len(todo), changes))
+            reviewed.update(texts)
+            rep.flush()
+            with open(reviewedPath, 'w', encoding='utf-8') as f:
+                json.dump(sorted(reviewed), f, ensure_ascii=False)
+            if args.applyReview:
+                job.saveProgress()
+                job.writeOutput(outPath, False)
+            print("  {}/{} reviewed, {} suggested changes, {} batches failed".format(
+                min(n + job.batchSize, len(todo)), len(todo), changes, failed))
     if args.applyReview:
-        job.saveProgress()
-    print("[{}] report: {}".format(lang, reportPath))
-
+        print("[{}] applied {} changes -> {}".format(lang, changes, outPath))
+    print("[{}] report: {}{}".format(lang, reportPath, "  (" + str(failed) + " batches failed: rerun to retry)" if failed else ""))
 
 
 def main():

@@ -6,6 +6,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 import urllib.request
 
 
@@ -36,12 +37,15 @@ class ClaudeCliProvider(Provider):
         if self.cfg.get('model'):
             args += ['--model', self.cfg['model']]
         args += list(self.cfg.get('extraArgs', []))
-        with tempfile.TemporaryDirectory() as td:
-            r = subprocess.run(args, input=prompt, capture_output=True, text=True, encoding='utf-8',
-                               cwd=td, timeout=self.cfg.get('timeout', 900))
-        if r.returncode != 0:
-            raise ProviderError("claude exited {}: {}".format(r.returncode, (r.stderr or r.stdout)[:500]))
-        return r.stdout
+        for attempt in range(self.cfg.get('retries', 2)):
+            with tempfile.TemporaryDirectory() as td:
+                r = subprocess.run(args, input=prompt, capture_output=True, text=True, encoding='utf-8',
+                                   cwd=td, timeout=self.cfg.get('timeout', 900))
+            if r.returncode == 0:
+                return r.stdout
+            time.sleep(30 * (attempt + 1))      # transient service/rate-limit errors: wait and try again
+        # stderr may start with harmless settings warnings; show the tail where the real error is
+        raise ProviderError("claude exited {}: {} {}".format(r.returncode, (r.stderr or '')[-400:], (r.stdout or '')[-200:]))
 
 
 class OpenAiProvider(Provider):

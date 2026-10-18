@@ -60,6 +60,8 @@ name = "Portuguese"
 reuseExisting = true       # hand-polished: never overwrite what is already translated
 [languages.ro]
 name = "Romanian"
+reuseExisting = true       # keep existing, fill gaps, then --review --applyReview
+replace = [["ş", "ș"], ["ţ", "ț"], ["Ş", "Ș"], ["Ţ", "Ț"]]   # cedilla -> comma-below (also applied to kept entries)
 [languages.ru]
 name = "Russian"
 script = "[\\u0400-\\u04FF]"
@@ -72,4 +74,5 @@ script = "[\\u0E00-\\u0E7F]"
 name = "Tok Pisin"
 [languages.zh]
 name = "Simplified Chinese"
+reuseExisting = true       # keep existing, fill gaps, then --review --applyReview
 script = "[\\u4E00-\\u9FFF]"
