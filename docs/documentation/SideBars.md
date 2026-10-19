@@ -23,7 +23,7 @@ Opening the group both starts styling entries for `cat:people|esb`and also inter
 ## Automatic sidebars
 As well as sidebars specified in the input, PTXprint provides a number of automatic or implicit sidebars, which while they do not need to be begun and ended nevertheless exist and affect styling. These include the 4 main parts of covers (whole, front, spine and back) and (if enabled) automatic sidebars for headings and titles. 
 
-To enable headings to be wrapped in a sidebar, the style `cat:headingsbox|esb` (or see further) must be set to `\TextMode publishable` (the default is `nonpublishable`). In the user interface this control is 'Hide/exclude contents of marker'.  Similarly `cat:titlebox|esb` controls title blocks such as those started `\mt1`.
+To enable headings to be wrapped in a sidebar, the style `cat:headingsbox|esb` (or see further) must be set to `\TextMode publishable` (the default is `nonpublishable`). In the user interface (Styles tab) this is the 'Include Contents of Marker' checkbox, which must be ticked.  Similarly `cat:titlebox|esb` controls title blocks such as those started `\mt1`.
 
 If it is desired to specify styling for e.g. a block that starts with an `\s2` differently to one that starts with `\s1`, this is also possible. If a style exists for `cat:s1box|esb`, then when `\s1` starts a headings block the styling (and publishability) of that are obeyed, and `cat:headingsbox|esb` is entirely ignored.
 

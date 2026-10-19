@@ -11,6 +11,7 @@ from ptxprint.changes import readChanges
 from ptxprint.ptsettings import PTEnvironment
 from ptxprint.unicode.ucd import get_ucd
 from copy import deepcopy
+from collections import Counter
 
 logger = logging.getLogger(__name__)
 
@@ -96,14 +97,14 @@ class PTXTag(Tag):
         return res
 
 class PTXEmitter(Emitter):
-    def tag(self, e, sep=" "):
+    def tag(self, e, sep=" ", prefix=""):
         s = e.get('style', '')
         if s is not None and len(s):
             if 'stretch' in e.attrib:
                 s = "{}^{}".format(s, int(float(e.get("stretch")) * 100))
             if "colspan" in e.attrib:
                 s = "{}-{}".format(s, e.get('colspan'))
-            self("\\{0}{1}".format(s, sep))
+            self("\\{0}{1}".format(prefix+s, sep))
 
 
 class Sheets(dict):
@@ -234,7 +235,7 @@ class UsfmCollection:
 
     def reload(self, cfile):
         if os.path.exists(cfile):
-            allchanges = readChanges(cfile, None, grammar=self.grammar)
+            allchanges = readChanges(cfile, None, grammar=self.grammar, prjdir=self.basedir)
             self.changes = allchanges.get('initial', None)
         else:
             self.changes = None
@@ -714,6 +715,68 @@ class Usfm:
             if ellipsis and i < j + offset - 1:
                 addellipsis(root, i - 1)
         return
+
+    # marker categories (usfmtc Grammar.marker_categories) whose text is not main vernacular text
+    _hiddencats = {"attribute", "crossreference", "crossreferencechar", "footnote",
+                   "footnotechar", "header", "internal", "milestone"}
+
+    def visibleText(self, root=None, hidden=None):
+        """ Yields the strings of main text a reader would see. Elements whose
+            marker category is in hidden (default _hiddencats) are skipped,
+            e.g. notes, figures, remarks and headers. Tails of skipped elements
+            are kept. """
+        if root is None:
+            root = self.getroot()
+        if hidden is None:
+            hidden = self._hiddencats
+        grammar = self.grammar if self.grammar is not None else Grammar()
+        cats = grammar.marker_categories
+        def category(e):
+            s = e.get("style", None)
+            if s is None:
+                return ""
+            return cats.get(grammar.parsetag(s), "")
+        def walk(e):
+            if category(e) not in hidden:
+                if e.text:
+                    yield e.text
+                for c in e:
+                    yield from walk(c)
+                    if c.tail:
+                        yield c.tail
+        for c in root:
+            yield from walk(c)
+            if c.tail:
+                yield c.tail
+
+    def collectClusters(self, counter=None, words=None):
+        """ Counts the grapheme clusters in the visible text (see visibleText).
+            Whitespace is skipped. If words is a set, the casefolded words are
+            added to it. """
+        if counter is None:
+            counter = Counter()
+        for t in self.visibleText():
+            for g in regex.findall(r"\X", t):
+                if not g.isspace():
+                    counter[g] += 1
+            if words is not None:
+                words.update(w.casefold() for w in regex.findall(r"\w+", t))
+        return counter
+
+    # word separators: whitespace, ZWSP and the / used as a visible word break in some SE Asian texts
+    _wordsep = re.compile(r"[\s​/]+")
+
+    def collectWords(self, counter=None):
+        """ Counts the words in the visible text (see visibleText), splitting
+            on whitespace, ZWSP and / and stripping surrounding punctuation. """
+        if counter is None:
+            counter = Counter()
+        for t in self.visibleText():
+            for w in self._wordsep.split(t):
+                w = regex.sub(r"^[\p{P}\p{S}]+|[\p{P}\p{S}]+$", "", w)
+                if w:
+                    counter[w] += 1
+        return counter
 
     def findScript(self):
         stats = {}

@@ -46,9 +46,10 @@ fontconfig_template_nofc = """<?xml version="1.0"?>
 </fontconfig>
 """
 
-def writefontsconf(extras, archivedir=None, testsuite=None):
-    inf = {}
+def fontsconf_dirs(extras, archivedir=None, testsuite=None):
+    """ Returns (font directories, fonts.conf path) for writefontsconf """
     dirs = []
+    fname = None
     if sys.platform.startswith("win") or archivedir is not None:
         dirs.append(os.path.join(os.getenv("LOCALAPPDATA", "/"), "Microsoft", "Windows", "Fonts"))
         dirs.append(os.path.abspath(os.path.join(os.getenv("WINDIR", "/"), "Fonts")))
@@ -88,18 +89,25 @@ def writefontsconf(extras, archivedir=None, testsuite=None):
             abse = os.path.abspath(e)
             if os.path.exists(abse):
                 dirs.append(abse)
-    os.makedirs(os.path.dirname(fname), exist_ok=True)
-    inf['fontsdirs'] = "\n    ".join('<dir prefix="cwd">{}</dir>'.format(d) for d in dirs)
-    if testsuite:
-      res = fontconfig_template_nofc.format(**inf)
-    else:
-      res = fontconfig_template.format(**inf)
+    return dirs, fname
+
+def fontsconf_text(dirs, testsuite=None):
+    fontsdirs = "\n    ".join('<dir prefix="cwd">{}</dir>'.format(d) for d in dirs)
+    template = fontconfig_template_nofc if testsuite else fontconfig_template
+    return template.format(fontsdirs=fontsdirs)
+
+def writefontsconf(extras, archivedir=None, testsuite=None):
+    dirs, fname = fontsconf_dirs(extras, archivedir=archivedir, testsuite=testsuite)
+    res = fontsconf_text(dirs, testsuite=testsuite)
     if archivedir is not None:
         return res
-    else:
-        with open(fname, "w", encoding="utf=8") as outf:
-            outf.write(res)
-        return fname
+    os.makedirs(os.path.dirname(fname), exist_ok=True)
+    # Write it whole, since another ptxprint may be reading it. Each job also writes its own.
+    tmpname = f"{fname}.{os.getpid()}"
+    with open(tmpname, "w", encoding="utf=8") as outf:
+        outf.write(res)
+    os.replace(tmpname, fname)
+    return fname
 
 #pango_styles = {Pango.Style.ITALIC: "italic",
 #    Pango.Style.NORMAL: "",
@@ -679,17 +687,26 @@ class TTFont:
                 numc = struct.unpack(">L", dat[8:])[0]
                 ttcdat = inf.read(numc * 4)
                 if ttcindex is None:
+                    firstdir = None
                     for i in range(numc):
                         offset = struct.unpack(">L", ttcdat[4*i:4*(i+1)])[0]
                         inf.seek(offset)
                         dat = inf.read(12)
                         numtables = struct.unpack(">H", dat[4:6])[0]
                         thisdir = self._read_dir(inf, numtables)
-                        thisnames = self.readNames(inf, dirdic=thisdir)
+                        thisnames = self.readNames(inf, dirdic=thisdir) or {}
+                        if firstdir is None:
+                            firstdir = thisdir
                         if thisnames.get(1, "") == self.family:     # Mac fonts don't obey standards?
                             self.dict = thisdir
                             ttcindex = i
                             break
+                    else:
+                        # Collections such as macOS Arial or Courier have no US English
+                        # family name to match against, so fall back to the first font
+                        if firstdir is not None:
+                            self.dict = firstdir
+                            ttcindex = 0
                 else:
                     offset = struct.unpack(">L", ttcdat[4*ttcindex:4*(ttcindex+1)])[0]
                     inf.seek(offset)
@@ -698,7 +715,9 @@ class TTFont:
                     self.dict = self.read_dir(inf, numtables)
             else:
                 self.dict = self._read_dir(inf, numtables)
-            self.names = self.readNames(inf)
+            if not len(self.dict):
+                return False
+            self.names = self.readNames(inf) or {}
             self.readFeat(inf)
             self.readSill(inf)
             self.readOTFeats(inf)

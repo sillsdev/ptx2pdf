@@ -1,6 +1,7 @@
 import os, argparse
 import logging
 import time
+import traceback
 from configparser import ConfigParser
 from dataclasses import dataclass
 from typing import Union, Any, Optional
@@ -8,20 +9,24 @@ from concurrent.futures import ProcessPoolExecutor, Future, as_completed
 from concurrent.futures import wait as wait_futures
 import multiprocessing as mp
 import threading, queue, psutil
-from ptxprint.page_filler import PTXFiller
+from ptxprint.page_filler import PTXFiller, make_filler_view
+from ptxprint.poly_filler import PolyFiller
 from ptxprint.project import ProjectList
 from ptxprint.utils import BuildParams, ProgressEvent, f_
+from ptxprint.view import ViewModel
+from ptxprint.runjob import RunJob
 from usfmtc.reference import chaps, RefList
 
 
 class ViewPrinter:
     """Printer wrapper for view-based rendering jobs, mirroring PTXFiller's interface."""
-    def __init__(self, build_params, nid: str, progress_q=None):
+    def __init__(self, build_params, nid: str, progress_q=None, cpu_q=None, cancel_event=None):
         self.build_params = build_params
         self.nid = nid
         self.progress_q = progress_q
+        self.cpu_q = cpu_q
+        self.cancel_event = cancel_event    # shared mp.Value set by MultiPrint.cancel()
         self.timedout = False
-        self.cancelled = False
 
         self.view = ViewModel(
             build_params.prjtree,
@@ -31,12 +36,40 @@ class ViewPrinter:
         )
         self.view.setup_ini()
         self.view.setPrjid(build_params.pid, build_params.guid, loadConfig=False, startup=True)
+        self.view.setConfigId(build_params.cfgid)
+        self.rtl = self.view.get("fcb_textDirection", "") == "rtl"
+        self.macrosdir = build_params.scriptsdir
+        self.view.project.ext = None
+        if nid is not None:
+            self.view.project.ext = f"pbuild{nid}"
+            d = self.view.project.printPath(self.view.cfgid)
+            if os.path.exists(d):
+                import time as _time
+                for f in os.listdir(d):
+                    fp = os.path.join(d, f)
+                    if not os.path.isfile(fp):
+                        continue
+                    for attempt in range(4):
+                        try:
+                            os.unlink(fp)
+                            break
+                        except PermissionError:
+                            if attempt < 3:
+                                _time.sleep(0.5)
+                            else:
+                                logger.warning(f"Cannot delete {fp} — file still locked; skipping")
 
-    def solve(self, books: list[str], cfgid_override: Optional[str] = None):
-        cfgid = cfgid_override or self.build_params.cfgid
-        self.view.setConfigId(cfgid)
-        self.view.set("ecb_booklist", books)
-        self.view.set("r_book", "multiple")
+    @property
+    def cancelled(self):
+        return self.cancel_event is not None and bool(self.cancel_event.value)
+
+    def solve(self, books: RefList|str, cfgid_override: Optional[str] = None):
+        if isinstance(books, str):
+            self.moduleFile = books
+            self.view.set("r_book", "module")
+        else:
+            self.view.set("ecb_booklist", str(books))
+            self.view.set("r_book", "multiple")
 
         runjob = RunJob(
             self.view,
@@ -46,6 +79,15 @@ class ViewPrinter:
         )
         runjob.nothreads = True
         runjob.silent = True
+        if self.build_params.pubid:
+            bks = self.build_params.pubid
+        elif isinstance(books, str):
+            bks = re.sub(r"^(.*/)?(.*)(\..*)?$", r"\2", books.replace(" ", "_"))
+        else:
+            bks = books.first.book + ("-"+books.last.book) if books.first.book != books.last.book else ""
+        runjob.outfname = f"{self.build_params.pid}_{self.build_params.cfgid}_{bks}_ptxp.tex"
+        runjob.pdffile = os.path.join(self.view.project.printPath(self.build_params.cfgid),
+                               '..', '..', runjob.outfname[:-4]) + ".pdf"
         res = runjob.doit(noview=True, noaction=False)
         if self.build_params.resultfn is not None:
             res = self.build_params.resultfn(self.view)
@@ -118,9 +160,10 @@ class GLibCompatQueue:
 
 class WorkerContext:
     """Manages worker lifecycle, cached printer instance, and job watchdog execution."""
-    def __init__(self, nid: str, progress_q, cancel_event):
+    def __init__(self, nid: str, progress_q, cpu_q, cancel_event):
         self.nid = nid
         self.progress_q = progress_q
+        self.cpu_q = cpu_q
         self.cancel_event = cancel_event
 
         self.last_job: Optional[Job] = None
@@ -140,10 +183,14 @@ class WorkerContext:
         """Returns the active printer, creating a new instance if job configuration changed."""
         if not self.matches_last_job(job):
             if job.action == 'fill':
-                self.current_printer = PTXFiller(job.build_params, self.nid, progress_q=self.progress_q)
+                view = make_filler_view(job.build_params, self.nid)
+                fillerClass = PolyFiller if view.get("c_diglot") else PTXFiller
+                self.current_printer = fillerClass(job.build_params, self.nid, progress_q=self.progress_q,
+                                                 cpu_q=self.cpu_q, cancel_event=self.cancel_event, view=view)
                 logging.debug(f"{self.current_printer=}")
             elif job.action == 'print':
-                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q)
+                self.current_printer = ViewPrinter(job.build_params, self.nid, progress_q=self.progress_q,
+                                                   cpu_q=self.cpu_q, cancel_event=self.cancel_event)
             else:
                 raise ValueError(f"Unknown job action: {job.action}")
             self.last_job = job
@@ -151,7 +198,7 @@ class WorkerContext:
             logging.debug("new job matches old job, using that")
         # always set up the view even if same as before
         if job.action == 'print' and job.build_params.setupfn is not None:
-            job.build_params.setupfn(self.current_printer.view, job.build_params.setup_args)
+            job.build_params.setupfn(self.current_printer.view, job.build_params.setupargs)
 
         return self.current_printer
 
@@ -172,10 +219,12 @@ class WorkerContext:
 
     def execute_job(self, job: Job):
         """Unified execution handler with shared watchdog timer and logger setup."""
-        target_id = job.books[0] if job.action == 'fill' else "_".join(job.books)
+        target_id = job.books[0] if job.action == 'fill' else "_".join([job.books.first.book, job.books.last.book])
 
         logging.debug(f"Executing for {target_id}")
         if self.cancel_event and self.cancel_event.value:
+            if self.progress_q:
+                self.progress_q.put(ProgressEvent(target_id, 0, "failed", msg="Stopped"))
             return (target_id, self.nid, False, "Cancelled")
 
         if job.log_config:
@@ -183,7 +232,6 @@ class WorkerContext:
 
         printer = self.get_printer(job)
         printer.timedout = False
-        printer.cancelled = False
 
         # Shared Watchdog Timer for both Fill and Print jobs
         watchdog = None
@@ -204,10 +252,11 @@ class WorkerContext:
                     restart=job.build_params.args.restart
                 )
             else:
-                res = printer.solve(job.books, cfgid_override=job.cfgid)
+                res = printer.solve(job.books)
         except Exception as e:
             print(f"Exception {job.books[0]}: {e}")
-            logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n{f_('Traceback: ')}")
+            logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n"
+                         f"{f_('Traceback: ')}{traceback.format_exc()}")
             if watchdog:
                 watchdog.cancel()
             if self.progress_q:
@@ -227,10 +276,10 @@ class WorkerContext:
 
 _worker_ctx: Optional[WorkerContext] = None
 
-def _init_worker(progress_q, cancel_event):
+def _init_worker(progress_q, cpu_q, cancel_event):
     global _worker_ctx
     nid = mp.current_process().name
-    _worker_ctx = WorkerContext(nid, progress_q, cancel_event)
+    _worker_ctx = WorkerContext(nid, progress_q, cpu_q, cancel_event)
 
 def _worker_dispatch(job: Job):
     global _worker_ctx
@@ -245,6 +294,7 @@ class MultiPrint:
         self.ctx = mp.get_context('spawn')
         self.numproc = numproc or max(1, mp.cpu_count() - 2)
         self.progress_q = GLibCompatQueue(self.ctx) if progress else None
+        self.cpu_q = GLibCompatQueue(self.ctx)
         self.cancel_event = self.ctx.Value('b', False)
 
         self.executor: Optional[ProcessPoolExecutor] = None
@@ -254,14 +304,14 @@ class MultiPrint:
     def start(self):
         """Start the worker pool."""
         if self.numproc == 1:
-            _init_worker(self.progress_q, self.cancel_event)
+            _init_worker(self.progress_q, self.cpu_q, self.cancel_event)
             return
         self.cancel_event.value = False
         self.executor = ProcessPoolExecutor(
             mp_context=self.ctx,
             max_workers=self.numproc,
             initializer=_init_worker,
-            initargs=(self.progress_q, self.cancel_event)
+            initargs=(self.progress_q, self.cpu_q, self.cancel_event)
         )
 
     def _dispatch_job(self, job: Job):
@@ -291,14 +341,13 @@ class MultiPrint:
             job = Job(action='fill', books=[bk], build_params=build_params, log_config=log_config, stop=stop)
             self._dispatch_job(job)
 
-    def submit_print_job(self, books: list[str], build_params: BuildParams, cfgid: Optional[str] = None, log_config: Optional[dict] = None) -> Future:
+    def submit_print_job(self, books: RefList|str, build_params: BuildParams, log_config: Optional[dict] = None) -> Future:
         """Enqueues a print job and returns the Future handle immediately."""
         if not self.executor:
             self.start()
 
-        job = Job(action='print', books=books, build_params=build_params, cfgid=cfgid, log_config=log_config)
-        self._dispatch_job(job)
-        return fut
+        job = Job(action='print', books=books, build_params=build_params, log_config=log_config)
+        return self._dispatch_job(job)
 
     def is_finished(self) -> bool:
         """Non-blocking check to determine if all submitted futures are complete."""
@@ -316,6 +365,7 @@ class MultiPrint:
             try:
                 results.append(future.result())
             except Exception as exc:
+                logging.warning(f"Job failed for {job.books}: {exc}\n{traceback.format_exc()}")
                 results.append((job.books, None, False, str(exc)))
 
         self.pending_futures.clear()
@@ -345,6 +395,12 @@ class MultiPrint:
                     self.prev_cpu_times[pid] = total_proc_cpu
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     continue
+        while True:
+            try:
+                pid, child_cpu = self.cpu_q.get_nowait()
+            except queue.Empty:
+                break
+            tick_cpu_seconds += child_cpu
         self.total_gops += tick_cpu_seconds * current_ghz
         return self.total_gops
 

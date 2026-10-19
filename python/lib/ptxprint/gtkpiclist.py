@@ -112,8 +112,15 @@ def getLocnKey(cols, frSize, pgposLocn):
     return locnKey
 
 class PicList:
+
+    _methods = """onPlAddClicked onPlDelClicked
+               """.split()
+
     def __init__(self, view, builder, parent):
         self.view = view
+        self.builder = builder
+        self.parent = parent
+        parent.register(self, self._methods)
         self.loading = False
         self.checkinv = False
         self.checkfilt = 0
@@ -121,8 +128,6 @@ class PicList:
         self.model = self.coremodel.filter_new()
         self.model.set_visible_func(self.checkfilter)
         self.view.set_model(self.model)
-        self.builder = builder
-        self.parent = parent
         self.picinfo: Optional[Piclist] = None
         self.selection = view.get_selection()
         self.picrect = None
@@ -865,3 +870,36 @@ class PicList:
             return
         lines = [self._buildFigString(row, usfm3=usfm3) for row in self.currows]
         Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).set_text('\n'.join(lines), -1)
+
+### View Methods
+
+    def onPlAddClicked(self, btn):
+        picroot = self.parent.project.path
+        for a in ("figures", "Figures", "FIGURES"):
+            picdir = os.path.join(picroot, a)
+            if os.path.exists(picdir):
+                break
+        else:
+            picdir = picroot
+        def update_preview(dialog):
+            picpath = dialog.get_preview_filename()
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(picpath, 200, 300)
+            except Exception as e:
+                pixbuf = None
+
+            return pixbuf
+        picfile = self.parent.fileChooser(_("Choose Image"),
+                                  filters={"Images": {"patterns": ['*.tif', '*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
+                                   multiple=False, basedir=picdir, preview=update_preview)
+        if picfile is not None:
+            self.parent.set("nbk_PicList", 1)
+            self.add_row()
+            for w in ["t_plAnchor", "t_plFilename", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"]: 
+                self.parent.set(w, "", mod=False)
+            self.set_src(os.path.basename(picfile[0]))
+
+    def onPlDelClicked(self, btn):
+        self.del_row()
+
+

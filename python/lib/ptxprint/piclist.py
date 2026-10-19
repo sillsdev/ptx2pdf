@@ -180,6 +180,9 @@ class PicChecks:
         res = None
         if text is not None:
             crstr = self.cfgShared.get(src, "piccreditbox", fallback="")
+            # Box style "None" (or "<Enter ID>", a stray glade id saved by older versions) means no box,
+            # which TeX expects as empty; "<Enter ID>" also stopped the whole regex below from matching
+            crstr = re.sub(r",(?:None|<Enter ID>)$", ",", crstr)
             m = re.match(r"^([tcb]?[lcrio]?),(-?9?0?|None),(\w*)$", crstr)
             if m:
                 #res = ["" if x.lower() == "none" else x for x in m.groups()]
@@ -623,6 +626,10 @@ class Piclist:
     def build_searchlist(self, figFolder=None, exclusive=False, imgorder="", lowres=True, append=False):
         if not append:
             self.srchlist = []
+            self.srchexclusive = exclusive    # used by getFigureSources unless it is told otherwise
+        else:
+            # appending a diglot's folders: only stay exclusive if every view asked for it
+            self.srchexclusive = getattr(self, 'srchexclusive', False) and exclusive
         if figFolder:
             self.srchlist.append(figFolder)
         chkpaths = []
@@ -642,6 +649,7 @@ class Piclist:
         if append:
             return
         uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
+        self.imagesetsdir = uddir
         if os.path.isdir(uddir):
             self.srchlist.append(uddir)
         self.extensions = []
@@ -655,13 +663,15 @@ class Piclist:
                 self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
         logger.debug(f"{self.srchlist=} {self.extensions=}")
 
-    def getFigureSources(self, filt=newBase, key='srcpath', keys=None, exclusive=False,
+    def getFigureSources(self, filt=newBase, key='srcpath', keys=None, exclusive=None,
                                data=None, mode=None, figFolder=None, imgorder="", lowres=False):
         ''' Add source filename information to each figinfo, stored with the key '''
         if data is None:
             data = self.pics.values()
         if self.srchlist is None or not len(self.srchlist):
-            self.build_searchlist(figFolder=figFolder, exclusive=exclusive, imgorder=imgorder, lowres=lowres)
+            self.build_searchlist(figFolder=figFolder, exclusive=bool(exclusive), imgorder=imgorder, lowres=lowres)
+        if exclusive is None:   # "Exclude Subfolders", as given when the search list was built
+            exclusive = getattr(self, 'srchexclusive', False)
         res = {}
         newfigs = {}
         for f in data:
@@ -675,7 +685,8 @@ class Piclist:
         for srchdir in self.srchlist:
             if srchdir is None or not os.path.exists(srchdir):
                 continue
-            if exclusive:
+            # The image sets library keeps each set in its own subfolder, so always search it fully
+            if exclusive and srchdir != getattr(self, 'imagesetsdir', None):
                 search = [(srchdir, [], os.listdir(srchdir))]
             else:
                 search = os.walk(srchdir, followlinks=True, topdown=True)
@@ -728,6 +739,8 @@ class Piclist:
         elif len(lines):
             logger.debug(f"Saving pics to {fpath} with {len(lines)} lines")
             dat = "\n".join(lines)+"\n"
+            if os.path.dirname(fpath):
+                os.makedirs(os.path.dirname(fpath), exist_ok=True)    # config may not be saved yet
             with open(fpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
         elif os.path.exists(fpath):

@@ -1,6 +1,6 @@
 ; Inno Setup Script
 #define MyAppName "PTXprint"
-#define MyAppVersion "3.0.38"
+#define MyAppVersion "3.1.3"
 #define MyAppPublisher "SIL Global"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -50,7 +50,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [InstallDelete]
 Type: filesandordirs; Name: "{app}\xetex"
 Type: filesandordirs; Name: "{app}\ptx2pdf"
-Type: filesandordirs; Name: "{app}\ptxprint\xetex\bin\windows"
+; Wipe the whole bundled XeTeX tree so files from older layouts can't shadow the new ones
+; (e.g. a stale texmf-var\web2c\xetex\xetex.fmt is found before bin\<arch>\web2c\xetex\xetex.fmt
+; and gives "made by different executable version")
+Type: filesandordirs; Name: "{app}\ptxprint\xetex"
 ; Older installs put each font in its own like-named folder (e.g. fonts\Charis-Bold.ttf\Charis-Bold.ttf).
 ; Fonts are now installed flat (fonts\Charis-Bold.ttf), so remove any leftover folders that would
 ; otherwise collide with the new files during the [Files] copy step.

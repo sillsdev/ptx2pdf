@@ -1,0 +1,78 @@
+# Configuration for poTranslate.py.
+# Pick the back end per language with `provider`. Per-language style rules and glossary live in
+# locales/<code>/style.md and locales/<code>/glossary.tsv (both optional).
+
+[providers.claude]
+type = "claudeCli"          # Claude Code CLI in print mode (uses your Claude login, no API key)
+command = "claude"          # full path if it is not on PATH
+model = "sonnet"            # alias or full model id; remove the line to use the CLI default
+extraArgs = []
+timeout = 900
+
+[providers.lmstudio]
+type = "openai"             # LM Studio local server (Developer tab -> Start Server)
+baseUrl = "http://localhost:1234/v1"
+model = "local-model"       # the model id shown by LM Studio
+temperature = 0.2
+timeout = 1800
+
+[providers.mock]
+type = "mock"               # offline pipeline test only
+
+[defaults]
+provider = "claude"
+batchSize = 40              # strings per request; use 10-20 for small local models
+maxRetries = 2              # re-asks (with the error list) before an item is flagged fuzzy
+useExisting = false         # show the current .po translation to the model as a hint
+reuseExisting = false       # keep existing translations, recover old ones from git history, only fill gaps
+
+# One table per language. `name` is used in the prompt; `script` is a regex of the expected
+# writing system (used only for a warning when a translation contains none of it).
+[languages.ar]
+name = "Arabic"
+script = "[\\u0600-\\u06FF]"
+[languages.es]
+name = "Spanish"
+reuseExisting = true       # hand-polished: never overwrite what is already translated
+[languages.fr]
+name = "French"
+reuseExisting = true       # hand-polished: never overwrite what is already translated
+[languages.hi]
+name = "Hindi"
+script = "[\\u0900-\\u097F]"
+[languages.hu]
+name = "Hungarian"
+reuseExisting = true       # keep existing translations; only fill gaps
+[languages.id]
+name = "Indonesian"
+reuseExisting = true       # keep existing translations; only fill gaps
+[languages.ko]
+name = "Korean"
+script = "[\\uAC00-\\uD7AF]"
+[languages.ml]
+name = "Malayalam"
+script = "[\\u0D00-\\u0D7F]"
+[languages.my]
+name = "Burmese"           # the 'my' folder is Burmese (my_MM), not Malay
+script = "[\\u1000-\\u109F]"
+[languages.pt]
+name = "Portuguese"
+reuseExisting = true       # hand-polished: never overwrite what is already translated
+[languages.ro]
+name = "Romanian"
+reuseExisting = true       # keep existing, fill gaps, then --review --applyReview
+replace = [["ş", "ș"], ["ţ", "ț"], ["Ş", "Ș"], ["Ţ", "Ț"]]   # cedilla -> comma-below (also applied to kept entries)
+[languages.ru]
+name = "Russian"
+script = "[\\u0400-\\u04FF]"
+[languages.th]
+name = "Thai"
+reuseExisting = true       # keep existing translations; only fill gaps
+replace = [["ํา", "ำ"]]   # decomposed sara am -> precomposed
+script = "[\\u0E00-\\u0E7F]"
+[languages.tpi]
+name = "Tok Pisin"
+[languages.zh]
+name = "Simplified Chinese"
+reuseExisting = true       # keep existing, fill gaps, then --review --applyReview
+script = "[\\u4E00-\\u9FFF]"

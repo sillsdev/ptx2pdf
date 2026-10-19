@@ -9,7 +9,7 @@ from ptxprint.module import Module
 from ptxprint.markdown import MarkDown
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
-                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect
+                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect, spineWidthMm
 from ptxprint.dimension import Dimension
 from ptxprint.interlinear import Interlinear
 from usfmtc.reference import Ref, RefRange, RefList
@@ -25,7 +25,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, ParaLabelling
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, ParaLabelling, MarginalNotes
 
 def loosint(x):
     try:
@@ -120,6 +120,7 @@ class TexModel:
         "cc": r"\\+zglm \u231e\\+zglm*\1\\+zglm \u231f\\+zglm*",    # "with ⌞corner⌟ characters":
         "sb": r"*\1",               # "star *before word":
         "sa": r"\1*",               # "star after* word":
+        "sw": r"*\1*",              # "star *before and after*":
         "cb": r"^\1",               # "circumflex ^before word": 
         "ca":  r"\1^",              # "circumflex after^ word":  
         "gb": r"\u2020\1",               # "dagger †before word":
@@ -135,7 +136,8 @@ class TexModel:
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
         "snippets/grid":                  ("c_gridLines", None, Grid),
-        "texpert/showusfmcodes":          ("c_showusfmcodes", None, ParaLabelling)
+        "texpert/showusfmcodes":          ("c_showusfmcodes", None, ParaLabelling),
+        "paper/ifmarginalnotes":          ("c_useMarginNotes", None, MarginalNotes)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
@@ -161,7 +163,7 @@ class TexModel:
     }
         # '|': 'pipe'
 
-    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None):
+    def __init__(self, printer, ptsettings, prjid=None, inArchive=False, diglotbinfo=None, digcfg=None, notracing=False):
         from ptxprint.version import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
         self.GitVersionStr = GitVersionStr
@@ -186,7 +188,8 @@ class TexModel:
                      "/ptxprintlibpath": libpath.replace("\\","/"),
                      "/iccfpath": os.path.join(libpath, "default_cmyk.icc").replace("\\","/"),
                      "/ptx2pdf": self.printer.scriptsdir.replace("\\", "/"),
-                     "/ptxdocpath": printpath.replace("\\", "/")}
+                     "/ptxdocpath": printpath.replace("\\", "/"),
+                     "/notracing": "" if notracing else "%"}
         self.prjid = prjid
         if self.prjid is not None:
             self.dict['project/id'] = self.prjid
@@ -298,6 +301,15 @@ class TexModel:
             if a not in self.dict:
                 self.dict[a] = ''
 
+        # marginal verses
+        if self.dict["paper/ifmarginnotes"] == "":
+            width = self.dict["paper/marginnoteswidth"]     # a float already
+            gap = float(self.dict["texpert/marginnotesgap"])
+            ncols = int(self.dict["paper/columns"])
+            margins = float(self.dict["paper/margins"])
+            margins += (width + gap * 72. / 25.4) * ncols / 2.
+            self.dict["paper/margins"] = "{:.2f}".format(margins)
+
         # handle diglot fractions
         # if self.dict['poly/fraction']:
             # self.dict['poly/fraction1'] = str(float(self.dict['poly/fraction']) / 100.)
@@ -319,6 +331,22 @@ class TexModel:
         self.calcRuleParameters()
         if self.asBool('cover/includespine'):
             self.dict['cover/spinewidth_'] = float((self.dict.get("cover/spinewidth") or "0mm").replace("mm", ""))
+            # A publication may give its own page count, from which we calculate its spine width
+            pages = self.printer.getvar("pagecount", "") if self.printer is not None else ""
+            try:
+                pages = int(float(pages or 0))
+            except ValueError:
+                pages = 0
+            if pages > 0:
+                try:
+                    paper = float(self.dict.get('cover/weightorthick') or 0)
+                    adjust = float(self.dict.get('cover/coveradjust') or 0)
+                except ValueError:
+                    paper = 0
+                if paper > 0:
+                    self.dict['cover/spinewidth_'] = round(spineWidthMm(pages, paper,
+                            self.dict.get('cover/papercalcunits') or "weight", adjust), 3)
+                    logger.info(f"Spine width {self.dict['cover/spinewidth_']:.3f}mm calculated from {pages} pages")
         else:
             if self.asBool('cover/covercropmarks'):
                 self.dict['cover/spinewidth_'] = 0
@@ -735,7 +763,9 @@ class TexModel:
                     res.append(r"\internoteskip={}pt plus {}pt minus {}pt".format(f2s(tgts), f2s(plus), f2s(minus)))
                 elif l.startswith(r"%\optimizepoetry"):
                     bks = self.dict["document/clabelbooks"]
-                    if self.dict["document/ifchaplabels"] == "%" and len(bks):
+                    # "Optimize Layout for Poetry Books" was never checked here, so it couldn't be turned off
+                    if self.dict["document/ifchaplabels"] == "%" and len(bks) \
+                            and self.asBool("document/cloptimizepoetry"):
                         for bk in bks.split(" "):
                             if bk in self.dict['project/bookids']:
                                 res.append((r"\setbookhook{{start}}{{{}}}{{\xdef\lBalThresh{{\BalanceThreshold}}\gdef\BalanceThreshold{{3}}\clubpenalty=50"
@@ -968,7 +998,8 @@ class TexModel:
                 def printError(msg, **kw):
                     self.printer.doError(msg, show=not self.printer.get("c_quickRun"))
                 self.changes = readChanges(os.path.join(printer.project.srcPath(printer.cfgid), 'changes.txt'),
-                                            bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar)
+                                            bk, doError=self.printer.doError, grammar=self.printer.usfms.grammar,
+                                            prjdir=printer.project.path)
         draft = "-" + (printer.cfgid or "draft")
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
@@ -1031,7 +1062,7 @@ class TexModel:
                                      Ref(book=bk, chapter=int(float(self.dict["document/chapto"])), verse=200)), ))
 
             if chaprange is None or not isbk or not len(chaprange) or chaprange[0].first.chapter is None \
-                or chaprange[0].last.chapter is None or \
+                or chaprange[0].last.chapter is None or chaps.get(bk) == "999" or \
                 (chaprange[0].first.chapter < 2 and len(chaprange) == 1 and \
                     (chaprange[0].last.chapter >= int(chaps[bk]) or chaprange[0].last.chapter == 0)):
                 if dat is None:
@@ -1217,7 +1248,11 @@ class TexModel:
             clabel = self.dict["document/clabel"]
             clbooks = self.dict["document/clabelbooks"].split()
             if len(clabel) and (not len(clbooks) or bk in clbooks):
-                self.localChanges.append(makeChange(r"(\\c )", r"\\cl {}\n\1".format(clabel), flags=regex.S))
+                # Insert the label literally: it used to be a regex template, so \ZWNBSP gave "bad escape \Z".
+                # "\\" (the old advice for one backslash) is still accepted.
+                cltext = clabel.replace("\\\\", "\\")
+                self.localChanges.append(makeChange(r"(\\c )", lambda rc, m, t=cltext: "\\cl " + t + "\n" + m.group(1),
+                                                    flags=regex.S))
                 
         # If each chapter needs to start on a new page
         if self.asBool("document/pagebreakallchs"):

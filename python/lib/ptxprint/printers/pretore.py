@@ -71,7 +71,7 @@ class Pretore(PrinterBase):
             ("",    "None"),
         ], default="475"),
         Spin("s_prnl_ribbons", "Ribbons:", lower=0, upper=3, default=0, width=2,
-             tip="Number of marker ribbons (Hardback only)"),
+             tip="Number of marker ribbons (Hardcover only)"),
     ]
 
     outputs = []

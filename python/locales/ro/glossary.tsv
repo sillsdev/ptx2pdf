@@ -1,0 +1,20 @@
+# English<TAB>Romanian<TAB>note (optional). Hand-written; overrides lexicon.tsv. Starting set, to be extended after native review.
+Border	chenar	decorative frame (NOT margine = margin)
+Book	carte	Bible book
+Book in focus	cartea selectată	the book shown in the editor
+Chapter	capitol
+Verse	verset
+Spine	cotor	book spine (NOT coloană vertebrală)
+Noteline	linie de note	ruled line for personal notes
+Thumb tab	filă de indexare	index tab on the page edge
+Thumb tabs	file de indexare
+Space after	spațiu după	paragraph spacing
+Space before	spațiu înainte	paragraph spacing
+Underline	subliniere
+Tolerance	toleranță
+File	fișier
+Folder	dosar
+Tab	filă	UI tab
+Sidebar	bară laterală
+Footnote	notă de subsol
+Cross-reference	trimitere

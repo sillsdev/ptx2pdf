@@ -8,7 +8,7 @@ from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontca
 from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
-                            zipopentext, xdvigetfonts, calledme
+                            zipopentext, xdvigetfonts, calledme, parseBookList
 from ptxprint.usxutils import UsfmCollection, Usfm, Sheets, simple_parse, merge_sty, out_sty
 from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
@@ -132,6 +132,7 @@ class ViewModel:
         self.copyrightInfo = None
         self.pubvars = {}
         self.pubvars_publishable = {}
+        self.publications = {}          # dict per pubid
         self.strongsvars = {}
         self.font2baselineRatio = 1.
         self.docreatediff = False
@@ -177,7 +178,7 @@ class ViewModel:
         if secondary is not None:
             print(secondary)
 
-    def doStatus(self, txt=""):
+    def doStatus(self, txt="", warning=False):
         if txt:
             print("Status: ", txt)
 
@@ -243,7 +244,7 @@ class ViewModel:
 
     def allvars(self, dest=None):
         if dest is None:
-            return self.pubvars.keys()
+            return [k for k in self.pubvars.keys() if not k.startswith("__")]
         elif dest == "strongs":
             return self.strongsvars.keys()
 
@@ -312,12 +313,13 @@ class ViewModel:
         elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         # This is where it is broken - it isn't coming back from RefList
-        try:
-            bl = RefList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False, bookranges=True)
-        except SyntaxError as e:
+        bl, err = parseBookList(self.get("ecb_booklist", "").strip(), sep=" ", strict=False)
+        if err is not None:
             if errors:
-                self.doError(str(e),
-                             secondary=_("Book codes must be 3-letter USFM codes (e.g. GEN, MAT, JHN, REV)."))
+                self.doError(_("Invalid book list or reference"),
+                             secondary=err + "\n\n" + _("Book codes must be 3-letter USFM codes "
+                                                        "(e.g. GEN, MAT, JHN, REV), optionally followed "
+                                                        "by chapters and verses (e.g. MAT 5:3-7:29)."))
             return []
         bl.simplify(sort=False)
         # print(f"==> {scope=}  Booklist:{self.get("ecb_booklist", "")}\n{bl=}")
@@ -748,10 +750,19 @@ class ViewModel:
                 self.resetToInitValues(updatebklist=False)
             logger.debug(f"Reading config {configName} in the config context of {self.cfgid}")
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
-            if float(oldVersion) >= 0 or forceConfig:
+            # Default must always be a valid place to land (e.g. after deleting the only config):
+            # if its folder exists (applyConfig creates it) but has no ptxprint.cfg yet, start it
+            # from the initial values and save it.
+            freshDefault = float(oldVersion) < 0 and configName == "Default" \
+                            and "Default" in self.project.configs
+            if float(oldVersion) >= 0 or forceConfig or freshDefault:
                 logger.debug(f"Switching config from {self.cfgid} to {configName}")
                 self.cfgid = configName
-            if float(oldVersion) < 0:
+            if freshDefault:
+                logger.debug("No Default config found; creating one from initial values")
+                self.setPrintBtnStatus(2)   # loadConfig normally clears any diglot problem; it doesn't run here
+                self.writeConfig(cfgname="Default", force=True)
+            elif float(oldVersion) < 0:
                 return False
             self.styleEditor.reset(os.path.join(self.scriptsdir, "usfm_sb.sty"))
             self.styleEditor.load(self.getStyleSheets(configName))
@@ -766,7 +777,9 @@ class ViewModel:
             self.strongs = None
             self.onNumTabsChanged()
             self.readCopyrights(forced=True)
-            self.picChecksView.init(basepath=self.project.srcPath(self.cfgid))
+            # The shared folder, as writeCfg uses (picInfo.txt there, picChecks.txt in <cfg>/). Since a
+            # 2024 refactor this read from the config folder, so picture checks and notes never loaded.
+            self.picChecksView.init(basepath=self.project.srcPath())
             self.picinfos: Optional[Piclist] = None
             self.loadPics(mustLoad=False, force=True)
             self.hyphenation = None
@@ -781,7 +794,7 @@ class ViewModel:
                 scr = self.analyse_script()
                 if scr is not None:
                     self.set("fcb_script", scr)
-            return float(oldVersion) >= 0
+            return float(oldVersion) >= 0 or freshDefault
         else:
             return True
 
@@ -919,6 +932,8 @@ class ViewModel:
         self.localiseConfig(config)
         self.diglotViews = {}
         self.polyglots = {}
+        self.publications = {}
+        self.pubvars_publishable = {}
         self.loadConfig(config, updatebklist=updatebklist)
         for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
                                (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
@@ -1025,7 +1040,7 @@ class ViewModel:
                     if isinstance(val, list):
                         val = "\n".join(x.withvars(self, relto=self.project.path) for x in val)
                     else:
-                        val = re.sub(r"\s*,\s*", "\n", val)
+                        val = re.sub(r"\s*,\s*", "\n", str(val))
                 else:
                     val = val.withvars(self, relto=self.project.path)
             elif v.widget.startswith("bl_"):
@@ -1046,6 +1061,11 @@ class ViewModel:
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False, diff=diff)
             if self.pubvars_publishable.get(k, False):
                 self._configset(config, f"vars.publishable/{k}", True, update=False, diff=diff)
+        for pubid, pubv in self.publications.items():
+            for k, v in pubv.items():
+                if k == "":
+                    k = "__books"
+                self._configset(config, f"publication.{pubid}/{k}", v, update=False, diff=diff)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False, diff=diff)
         # for attribute, value in vars(self.polyglots).items():
@@ -1341,6 +1361,22 @@ class ViewModel:
                 val = "top" if self._config_bool("texpert", "vhyphenup", config, fallback=False) else "bottom"
                 self._configset(config, "texpert/vhyphenmode", val)
 
+        if v < 3.02: # "Document based" diglot merge mode removed; use "Scored" instead
+            if config.get("document", "diglotmergemode", fallback=None) == "doc":
+                self._configset(config, "document/diglotmergemode", "scores")
+
+        if v < 3.03: # Section heading image shift: + now moves it up (as for the verse decorator), so flip old values
+            old = config.get("fancy", "sectionheadershift", fallback=None)
+            try:
+                if old not in (None, ""):
+                    self._configset(config, "fancy/sectionheadershift", str(0.0 - float(old)))  # 0.0 - avoids "-0.0"
+            except ValueError:
+                pass
+
+        # The border list offered "c86out", which no stylesheet defines; the border is "v86out"
+        if config.get("covergen", "borderstyle", fallback=None) == "c86out":
+            self._configset(config, "covergen/borderstyle", "v86out")
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
@@ -1428,6 +1464,10 @@ class ViewModel:
                 editableOverride = len(opt) != len(opt.strip("*"))
                 key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
+                if sect.startswith("publication."):
+                    pubid = sect[12:]
+                    self.publications.setdefault(pubid, {})[opt]=val
+                    continue
                 if key in ModelMap:
                     v = ModelMap[key]
                     if categories is not None and v.category not in categories:
@@ -1487,7 +1527,7 @@ class ViewModel:
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
         if categories is None or 'texpert' in categories:
-            TeXpert.loadConfig(config, self)
+            TeXpert.loadConfig(config, self, defaults=clearvars)
         for k, v in self._settingmappings.items():
             if categories is not None and ModelMap[k].category not in categories:
                 continue
@@ -1591,15 +1631,40 @@ class ViewModel:
         if not force and self.configLocked():
             return
         fname = os.path.join(self.project.createConfigDir(self.cfgid), "ptxprint.sty")
+        buf = StringIO()
+        self.styleEditor.output_diffile(buf)
+        newdat = buf.getvalue()
+        # Other processes (e.g. parallel page filler workers) may be reading this file,
+        # so never truncate it in place: skip if unchanged, else write a temp file and swap it in.
+        if os.path.exists(fname):
+            try:
+                with open(fname, encoding="Utf-8") as inf:
+                    if inf.read() == newdat:
+                        return
+            except OSError:
+                pass
         logger.debug(f"Writing stylefile {fname}")
-        with open(fname, "w", encoding="Utf-8") as outf:
-            self.styleEditor.output_diffile(outf)
+        tmpname = f"{fname}.{os.getpid()}.tmp"
+        with open(tmpname, "w", encoding="Utf-8") as outf:
+            outf.write(newdat)
+        for attempt in range(10):
+            try:
+                os.replace(tmpname, fname)
+                break
+            except PermissionError:     # Windows: target held open by a reader
+                if attempt == 9:
+                    os.remove(tmpname)
+                    raise
+                time.sleep(0.2)
 
     def updatePicList(self, bks=None, priority="Both", output=False):
         return
 
     def mergeCaptions(self, bk):
-        return bk not in self.get("s_diglotSerialBooks", "FRT BAK GLO")
+        # Serial books (printed one after the other, not side by side) keep separate captions.
+        # Parsed as runjob does; this used to read a non-existent widget, so was always "FRT BAK GLO".
+        serial = {b for b in re.split(r"[\s,]+", (self.get("t_diglotSerialBooks") or "").strip()) if b}
+        return bk not in serial
 
     def generatePicList(self, procbks=None, doclear=True):
         ab = self.getAllBooks()
@@ -1708,8 +1773,21 @@ class ViewModel:
         tname = self.getLocalTriggerFilename(bk)
         tpath = os.path.join(self.project.printPath(self.cfgid), tname)
         # get expansion of regular font
+        font_info = self.get("bl_fontR")
+        try:
+            expand = float(font_info.feats.get('extend', "1"))
+        except (ValueError, AttributeError):
+            expand = 1
+        try:
+            minexp = float(self.get("s_shrinktextlimit", "95")) / 100 * expand
+        except ValueError:
+            minexp = 0.95 * self.expand
+        try:
+            maxexp = float(self.get("s_maxtextlimit", "105")) / 100 * expand
+        except ValueError:
+            maxexp = 1.05 * self.expand
         centre = 100
-        adj = AdjList(centre, centre * 0.95, centre * 1.05, gtk=gtk, fname=fpath, tname=tpath)
+        adj = AdjList(int(expand * 100), int(minexp * 100), int(maxexp * 100), gtk=gtk, fname=fpath, tname=tpath)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj
@@ -1727,7 +1805,8 @@ class ViewModel:
             srcp = self.getBookSrcPath("FRT", self.project.prjid)
             if srcp is None:
                 return False
-            
+
+        os.makedirs(os.path.dirname(destp), exist_ok=True)    # config may not be saved yet
         copyfile(srcp, destp)
         return True
 
@@ -1758,6 +1837,7 @@ class ViewModel:
             if k not in usedperiphs:
                 fcontent.append(v.strip())
         self.periphs = {}
+        os.makedirs(os.path.dirname(fpath), exist_ok=True)    # config may not be saved yet
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write("\n".join(fcontent))
 
@@ -1924,10 +2004,10 @@ class ViewModel:
             self.digSuffix = suffix
             self.diglotViews[suffix] = digview
             if inserting and self.picinfos:
-                if digView.picinfos is None:
-                    digView.picinfos = PicList(digView)
-                    digView.picinfos.load_files(digView)
-                self.picinfos.merge(v.picinfos, suffix, mergeCaptions=self.mergeCaptions)
+                if digview.picinfos is None:
+                    digview.picinfos = Piclist(digview)
+                    digview.picinfos.load_files(digview)
+                self.picinfos.merge(digview.picinfos, suffix, mergeCaptions=self.mergeCaptions)
         return digview
 
     def removeDiglotView(self, suffix):
@@ -2067,8 +2147,6 @@ class ViewModel:
 
         # fonts
         allfonts.update(self.getallfonts())
-        if xdv is not None:
-            cfgchanges["c_usesysfonts"] = (False, None)
 
         for v in allfonts:
             # res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
@@ -2214,7 +2292,8 @@ class ViewModel:
 
     def _writearchive(self, zf, ifile, fname, for_test=False):
         if for_test:
-            if pathlib.Path(fname).parts[1] == 'local':
+            p = pathlib.Path(fname).parts
+            if len(p) > 1 and p[1] == 'local':
                 return  # we can exclude the local subdirectory from the test archive
         try:
             zinfo = zf.getinfo(fname)
@@ -2363,6 +2442,18 @@ set stack_size=32768""".format(self.cfgid)
                 self.project = view.project
         else:
             view = self
+        if view.cfgid:      # files below are written straight into the config folder
+            view.project.createConfigDir(view.cfgid)
+        # The import sets view.loadingConfig while it works. Always put it back: importing into the
+        # current config is not followed by a reload, and a stuck flag silently disables every
+        # handler that checks it (e.g. the Ornamental Decorations controls never appear).
+        wasLoading = getattr(view, "loadingConfig", False)
+        try:
+            self._importConfigInto(view, fzip, prefix)
+        finally:
+            view.loadingConfig = wasLoading
+
+    def _importConfigInto(self, view, fzip, prefix):
         # assemble list of categories to import from ptxprint.cfg
         impAll = self.get("c_impEverything", False)
         hasOther = self.get("c_impOther")
@@ -2372,9 +2463,9 @@ set stack_size=32768""".format(self.cfgid)
                 continue
             if self.get(k):
                 useCats.add(v)
-        if self.get("c_impVariables", False):
+        if hasOther and self.get("c_oth_Variables", False):
             useCats.add("variables")
-            useCats.add("meta")
+            useCats.add("pubinfo")     # copyright, licence, colophon, notes - not the whole "meta" category
         logger.debug(f"Importing Categories: {useCats}")
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
@@ -2394,12 +2485,19 @@ set stack_size=32768""".format(self.cfgid)
         grabfront = False
         if config.get("fancy", "enableOrnaments", fallback=False):
             view.set("c_useOrnaments", True)
-        exclfields = None if impAll or self.get("c_impFontsScripts") else \
-                ('fontname', 'ztexfontfeatures', 'ztexfontgrspace') # 'fontsize'
+        # Fonts set within styles come with Fonts+Script (or Everything), whether or not Styles is ticked
+        styfontfields = ('fontname', 'ztexfontfeatures', 'ztexfontgrspace') # 'fontsize'
+        impFonts = impAll or self.get("c_impFontsScript")
+        exclfields = None if impFonts else styfontfields
 
         # import pictures according to import settings
         if impAll or self.get("c_impPictures"):
-            otherpics = Piclist(view.picinfos.model)        # will this work for a new view?
+            if view.picinfos is None:
+                # Not loaded yet (e.g. a new or just-switched config; loadPics is a no-op while
+                # loadingConfig is set): load the target's current pictures to merge into
+                view.picinfos = Piclist(view, diglot=len(view.diglotViews) != 0)
+                view.picinfos.load_files(view)
+            otherpics = Piclist(view)
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile, prefix=prefix) as inf:
@@ -2420,7 +2518,7 @@ set stack_size=32768""".format(self.cfgid)
             view.picinfos.out(os.path.join(view.project.srcPath(view.cfgid), "{}-{}.piclist".format(view.project.prjid, view.cfgid)))
 
         # merge ptxprint.sty adding missing
-        if impAll or self.get("c_impStyles") or self.get("c_oth_Cover"):
+        if impAll or self.get("c_impStyles") or impFonts or self.get("c_oth_Cover"):
             newse = StyleEditor(view, os.path.join(self.scriptsdir, "usfm_sb.sty"))
             try:
                 with zipopentext(fzip, "ptxprint.sty", prefix=prefix) as inf:
@@ -2429,6 +2527,8 @@ set stack_size=32768""".format(self.cfgid)
                 pass
             if impAll or self.get("c_impStyles"):
                 view.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
+            elif impFonts:      # Fonts+Script without Styles: just the font fields of existing styles
+                view.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), onlyfields=styfontfields)
 
         if impAll or self.get("c_oth_Advanced"):
             # merge ptxprint-mods.sty
@@ -2474,7 +2574,8 @@ set stack_size=32768""".format(self.cfgid)
                     outf.write(dat)
                 zipmod.close()
 
-            # handle the script
+        # the custom script has its own checkbox (it is not stored in a settings PDF, so it is greyed out then)
+        if impAll or (hasOther and self.get("c_oth_customScript")):
             if config.getboolean("project", "processscript", fallback=False):
                 fname = config.get("project", "selectscript", fallback=None)
                 try:
@@ -2489,8 +2590,7 @@ set stack_size=32768""".format(self.cfgid)
                         outf.write(dat)
                     view.set(ModelMap["project/processscript"].widget, True)
                     view.set(ModelMap["project/selectscript"].widget, localscript)
-                    view.set(ModelMap["project/whentoprocessscript"].widget,
-                            config.getboolean("project", "whentoprocessscript", fallback=False))
+                    # when2processscript comes in with the 'customscript' category via loadConfig
 
         # merge cover and import has cover
         if (impAll or self.get("c_oth_Cover")) and config.getboolean("cover", "makecoverpage", fallback=False):
@@ -2503,7 +2603,7 @@ set stack_size=32768""".format(self.cfgid)
                     if k not in allstyles:
                         view.styleEditor.addMarker(k, v['Name'])
                     for a in v.keys():
-                        if exclfields is None or k not in exclfields:
+                        if exclfields is None or a not in exclfields:   # a = field, k = marker
                             view.styleEditor.setval(k, a, newse.getval(k, a), mapin=False)
             grabfront = True
             
@@ -2536,7 +2636,7 @@ set stack_size=32768""".format(self.cfgid)
                                 periphcapture.append(l)
                         if periphcapture is not None:
                             view.periphs[periphid] = "".join(periphcapture)
-                view.updateFrontMatter(force=(impAll or self.get("c_oth_OverwriteFrontMatter")), forcenames=forcenames)
+                view.updateFrontMatter(force=(impAll or self.get("c_oth_OverwriteFrtMatter")), forcenames=forcenames)
             except (KeyError, FileNotFoundError):
                 pass
 
@@ -2608,7 +2708,7 @@ set stack_size=32768""".format(self.cfgid)
         return fpath
 
     def createPrinterZip(self, fname):
-        with zipfile.ZipFile(fname, "w") as ozip:
+        with ZipFile(fname, "w") as ozip:
             for k, v in self.pdfFiles.items():
                 with open(v, "rb") as inf:
                     d = inf.read()

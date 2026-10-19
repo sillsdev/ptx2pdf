@@ -132,6 +132,36 @@ booknumbers = {k: booknum(v) for k, v in bookcodes.items()}
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
+def parseBookList(text, **kw):
+    """ Parses a list of books/references (e.g. 'RUT JON', 'MAT 5:3-7:29').
+        Returns (RefList, None) on success or (None, error message) on failure,
+        so callers can warn the user rather than crash on a bad reference. """
+    from usfmtc.reference import RefList
+    kw.setdefault("bookranges", True)
+    try:
+        res = RefList(text, **kw)
+    except SyntaxError as e:
+        return (None, str(e))
+    except ValueError as e:
+        refs = re.findall(r"Ref\('([^']*)'\)", str(e))
+        if len(refs) == 2:
+            return (None, _("The range from {} to {} goes backwards. "
+                            "The start of a range must come before its end.").format(*refs))
+        return (None, str(e))
+    bad = []
+    for r in res:
+        for ref in (r.first, r.last):
+            if ref.book not in bookcodes:
+                bad.append(_("Unknown book code: {}").format(ref.book))
+                continue
+            maxch = int(chaps.get(ref.book, "0"))
+            ch = ref.chapter
+            if maxch > 0 and ch is not None and ch > maxch:
+                bad.append(_("{} only has {} chapters").format(ref.book, maxch))
+    if len(bad):
+        return (None, "\n".join(dict.fromkeys(bad)))
+    return (res, None)
+
 APP = 'ptxprint'
 
 chgsHeader = """# This (changes.txt) file is for configuration-specific changes (not affecting other configs).
@@ -150,11 +180,12 @@ class BuildParams:
     guid: str
     cfgid: str
     scriptsdir: str
-    timeout: Optional[int]
-    loglevel: Optional[int]
+    timeout: Optional[int] = 0
+    loglevel: Optional[int] = 0
     setupfn: Optional[Callable] = None
     setupargs: Optional[Any] = field(default=None, compare=False)
     resultfn: Optional[Callable] = None
+    pubid: Optional[str] = None
 
 @dataclass
 class ProgressEvent:
@@ -212,7 +243,7 @@ def putenv(k, v):
         from ctypes import cdll
         from ctypes.util import find_msvcrt
         cdll.msvcrt._putenv('{}={}'.format(k, v))
-    os.putenv(k, v)
+    os.environ[k] = v
     
 def getlang():
     global lang
@@ -586,8 +617,11 @@ headermappings = {
     "Page Number":               r"\pagenumber",
     r"Book (\h)":                r"\book",
     r"Book Alt (\h1)":           r"\bookalt",
+    "<Enter ID>":                r"\hrsmins",   # old configs saved this (stray glade item id); must precede the next line
     "Time (HH:MM)":              r"\hrsmins",
     "Date (YYYY-MM-DD)":         r"\isodate",
+    "Date and Time":             r"\isodate\ \hrsmins",
+    r"Printed on \isodate":      r"Printed\ on\ \isodate",  # old left-header id (unescaped spaces); must precede the next line
     "Printed on YYYY-MM-DD":     r"Printed\ on\ \isodate",
     "-empty-":                   r"\empty"
 }
@@ -602,6 +636,7 @@ def localhdrmappings():
         _(r"Book Alt (\h1)"):           r"\bookalt",
         _("Time (HH:MM)"):              r"\hrsmins",
         _("Date (YYYY-MM-DD)"):         r"\isodate",
+        _("Date and Time"):             r"\isodate\ \hrsmins",
         _("Printed on YYYY-MM-DD"):     r"Printed\ on\ \isodate",
         _("-empty-"):                   r"\empty"
     }
@@ -1153,3 +1188,36 @@ def bringParatextToForeground():
         user32.SetForegroundWindow(hwnd)
         user32.AttachThreadInput(our_tid, tgt_tid, False)
     return False
+
+# Paper weight (gsm) -> thickness (µm per sheet, approximate). Values below 60gsm
+# are for thin Bible paper (from Pretore's figures); 60gsm and up are typical
+# uncoated offset paper.
+GSM_TO_UM = {
+    36: 43, 40: 47, 50: 60,
+    60: 82, 70: 95, 75: 100, 80: 106, 90: 118, 100: 130,
+    110: 143, 120: 156, 130: 169, 140: 182, 150: 195,
+    160: 208, 170: 221, 180: 234, 200: 260, 250: 325, 300: 390,
+}
+
+def _interpolate(pairs, x):
+    """ Linear interpolation over sorted (x, y) pairs, clamping at both ends """
+    if x <= pairs[0][0]:
+        return pairs[0][1]
+    if x >= pairs[-1][0]:
+        return pairs[-1][1]
+    for (x0, y0), (x1, y1) in zip(pairs, pairs[1:]):
+        if x0 <= x <= x1:
+            return y0 + (x - x0) / (x1 - x0) * (y1 - y0)
+
+def gsmToUm(gsm: float) -> float:
+    """ Approximate paper thickness in µm from gsm """
+    return _interpolate(sorted(GSM_TO_UM.items()), gsm)
+
+def umToGsm(um: float) -> float:
+    """ Reverse: derive gsm from thickness µm """
+    return _interpolate(sorted((v, k) for k, v in GSM_TO_UM.items()), um)
+
+def spineWidthMm(pages, paper, units="weight", adjust=0.):
+    """ Spine width in mm for a page count. paper is gsm if units == 'weight', else µm """
+    um = gsmToUm(paper) if units == "weight" else paper
+    return pages / 2. * um / 1000. + adjust

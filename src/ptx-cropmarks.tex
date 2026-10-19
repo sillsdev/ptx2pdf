@@ -956,13 +956,16 @@
   %\pdfpageheight=0.99626401\pdfpageheight
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
     \bgroup
-      \dimen1=0.99626401\PaperWidth
-      \dimen2=0.99626401\PaperHeight
-      \dimen0=0.99626401\dimen0 %convert to bp
-      \trace{cov}{trimbox: \the\dimen0, \the\dimen0, \the\dimen1, \the\dimen2. MediaBox: 0, 0, \the\pdfcropwidth, \the\pdfcropheight. offset = \the\hoffset \space x \the\voffset}%
+      % TrimBox is [llx lly urx ury] in bp: the trimmed cover starts after the cropmark margin and bleed
+      \dimen0=0.99626401\dimexpr \dimen0 + #4\relax %convert to bp
+      \dimen1=\dimexpr 0.99626401\PaperWidth + \dimen0\relax
+      \dimen2=\dimexpr 0.99626401\PaperHeight + \dimen0\relax
+      \dimen3=0.99626401\pdfpagewidth
+      \dimen4=0.99626401\pdfpageheight
+      \trace{cov}{trimbox: \the\dimen0, \the\dimen0, \the\dimen1, \the\dimen2. MediaBox: 0, 0, \the\dimen3, \the\dimen4. offset = \the\hoffset \space x \the\voffset}%
       \special {pdf:put @thispage <</TrimBox [\strip@pt{\dimen0} \strip@pt{\dimen0} \strip@pt{\dimen1} \space
-        \strip@pt{\dimen2} ] /MediaBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] >>}%
+        \strip@pt{\dimen2} ] /MediaBox [0 0 \strip@pt{\dimen3} \space
+        \strip@pt{\dimen4} ] >>}%
     \egroup
     \special {pdf:put @thispage <</PieceInfo <</ptxprint 
         <</LastModified /D:20221126103720Z /Private <</Insertion /#1>> >>

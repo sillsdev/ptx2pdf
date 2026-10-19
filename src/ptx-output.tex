@@ -33,12 +33,17 @@
 %+c_onecol
 \global\output={\onecol}
 \global\holdinginserts=1
+\newwrite\st@tusfile
+\def\st@underfill#1#2#3#4#5{}
 \def\underf@ll#1#2#3{%
   \ifdim#1<\dimexpr #2 - .5 \baselineskip\relax
-    \immediate\write-1{Underfill[#3]: [\the\pageno] ht=\the #1, space=\the #2, baseline=\the\baselineskip}%
+    \immediate\write\st@tusfile{\string\st@underfill{\the\pageno}{#3}{\the #2}{\the #1}{\the\baselineskip}}%
   \fi
 }
+\addtoendhooks{\immediate\closeout\st@tusfile}
+
 \newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
+\def\m@rginstacks#1{} % Draws held margin notes at the top of column #1 (see marginnotes.tex)
 \def\onecol{%
   \global\setbox\galley=\copy255                                        %(1)
   \setbox255\vbox{\unvbox255}%\showbox255%
@@ -115,7 +120,7 @@
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox\colA=\vbox \ifNoGrid to \availht\fi {\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
-      \@@onecolp@gects{\ifdim\ht\colA>1\onel@neunit
+      \@@onecolp@gects{\m@rginstacks{0}\ifdim\ht\colA>1\onel@neunit
           \trace{et}{Apply border from onecoltrial (shipout)}%
           \doTextB@rder{\colA}%3
         \fi
@@ -381,9 +386,13 @@
     \fi
     % reset parameters for 2-column formatting
     \global\hsize=\colwidth\trace{o}{doublecolumn vsize doubles}%
+    \dimen1=\vsize
     \global\vsize=2\textheight % in 2 col mode you can put twice the height of text
 	\global\advance\vsize by -2\ht\partial % subtract height of 1 column material
 	\global\advance\vsize by 2\baselineskip % don't get caught short by 1/2 line or so
+    % a page already started (e.g. holding only inserts) keeps its goal, so grow it to match.
+    % Otherwise output fires early, and text the trial gathers beyond \galley is lost if it backs up.
+    \ifdim\pagegoal<\maxdimen \pagegoal=\dimexpr\pagegoal + \vsize - \dimen1\relax\fi
 	% make a macro reset vsize for remaining pages which do not have 1 column material
     \trace{o}{Going to 2 col, textheight \the\textheight - \the\ht\partial}%
     \gdef\resetvsize{\global\vsize=2\textheight \global\advance\vsize by \baselineskip\trace{o}{resetvsize2 vsize=\the\vsize}} 
@@ -535,7 +544,7 @@
       \ifvoid\partial\else \vbox{\hbox to \dimen1{%
         \box\partial}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
-      \@@onecolp@gects{\unvbox\colA\vfil%\special{"testme2"}%
+      \@@onecolp@gects{\m@rginstacks{0}\unvbox\colA\vfil%\special{"testme2"}%
        }%
       \ifvoid\bottomins\else%
         \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\bottomins \unvbox\bottomins \fi
@@ -1615,13 +1624,13 @@
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
       \setbox\colA=\vbox{\hbox to \dimen5{\noindent
           % No \beginR does not result in the boxes coming out in document order
-          \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB\vfil}\rshiftc@lumn{1}%
+          \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\m@rginstacks{1}\unvbox\colB\vfil}\rshiftc@lumn{1}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-            \vbox to \dimen3{\unvbox\colA\vfil}\rshiftc@lumn{0}%
+            \vbox to \dimen3{\m@rginstacks{0}\unvbox\colA\vfil}\rshiftc@lumn{0}%
           \else 
-            \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA\ifNoGrid\else\vfil\fi}\rshiftc@lumn{0}%
+            \lshiftc@lumn{0}\vbox to \dimen3{\m@rginstacks{0}\unvbox\colA\ifNoGrid\else\vfil\fi}\rshiftc@lumn{0}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-            \vbox to \dimen3{\unvbox\colB\ifNoGrid\else\vfil\fi}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+            \vbox to \dimen3{\m@rginstacks{1}\unvbox\colB\ifNoGrid\else\vfil\fi}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
         \kern\lastd@pth}%
       \trace{et}{Apply border from savepartialpaged (writing partial)}%
       \doTextB@rder{\colA}%
@@ -1807,12 +1816,12 @@
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3, htA=\the\ht\colA+\the\dp\colA, htb=\the\ht\colB+\the\dp\colB, avail=\the\availht \space from \the\dimen3, baselineskip=\the\baselineskip}%
       \setbox\colA\hbox to \dimen1{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\unvbox\colB}\rshiftc@lumn{1}%
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\m@rginstacks{1}\unvbox\colB}\rshiftc@lumn{1}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen3{\unvbox\colA}\rshiftc@lumn{0}%
+          \vbox to \dimen3{\m@rginstacks{0}\unvbox\colA}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\m@rginstacks{0}\unvbox\colA}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen3{\unvbox\colB}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \vbox to \dimen3{\m@rginstacks{1}\unvbox\colB}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \trace{et}{Apply border from twocoltrial (shipout)}%
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 
@@ -2788,11 +2797,11 @@
     \else %c@rrentcols=2
       \ifdim\dimen0 > \PageFullFactor\textheight
         \trace{o}{Triggering 2col output}%
-        \global\output={\twocol}%
-        \loop\ifdim\dimen0>\textheigh \advance\dimen0-\textheight\repeat
+        \global\output={\twocols}%
+        \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
         \box\partial
-        \ifdim\dimen0>\PageFullFactor\textheigh \vfill\penalty-10103
-        \else \holdinginserts=0 \global\output-{\sagepartialpaged}\penalty-10101
+        \ifdim\dimen0>\PageFullFactor\textheight \vfill\penalty-10103
+        \else \holdinginserts=0 \global\output={\savepartialpaged}\penalty-10101
           \holdinginserts=1
         \fi
         \vfill\eject
@@ -2801,9 +2810,12 @@
     % reset parameters for 2-column formatting
     %\global\hsize=0.33 \textwidth\trace{o}{threecolumn vsize x3 = \the\hsize}%
     \threecolwidth{\hsize}%
+    \dimen1=\vsize
     \global\vsize=3 \textheight % in 2 col mode you can put twice the height of text
 	\global\advance\vsize by -3 \ht\partial % subtract height of 1 column material
 	\global\advance\vsize by 3 \baselineskip % don't get caught short by 1/2 line or so
+    % grow a started page's goal to match, as in \doublecolumns
+    \ifdim\pagegoal<\maxdimen \pagegoal=\dimexpr\pagegoal + \vsize - \dimen1\relax\fi
 	% make a macro reset vsize for remaining pages which do not have 1 column material
     \trace{o}{Going to 3 col, textheight \the\textheight - \the\ht\partial, vsizez=\the\vsize}%
     \gdef\resetvsize{\global\vsize=3 \textheight \global\advance\vsize by \baselineskip\trace{o}{resetvsize3 vsize=\the\vsize}} 

@@ -44,7 +44,7 @@ def user_fmt(obj, isinstance=isinstance, float=float, str=str,
     return str(obj)
 
 
-def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
+def FormatObjects(f, trailer, version=None, compress=True, killobj=(),
                   user_fmt=user_fmt, do_compress=do_compress,
                   convert_store=convert_store, iteritems=iteritems,
                   id=id, isinstance=isinstance, getattr=getattr, len=len,
@@ -187,6 +187,22 @@ def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
     for objid in killobj:
         assert swapobj(objid) is not None
 
+    # Work out the header version before the trailer gets formatted into a
+    # string. Never go below what the document itself claims to be (the
+    # reader stores the source header version in trailer.Version, and the
+    # catalog may carry an explicit /Version override).
+    versions = [v for v in (version, trailer.Version, trailer.Root.Version)
+                if v is not None]
+    def _vnum(v):
+        try:
+            return float(str(v).lstrip('/'))
+        except ValueError:
+            return 0.
+    version = str(max(versions, key=_vnum)).lstrip('/') if versions else '1.3'
+    # /Version is not a valid trailer key, don't write it out
+    origversion = trailer.Version
+    trailer.Version = None
+
     # The first format of trailer gets all the information,
     # but we throw away the actual trailer formatting.
     format_obj(trailer)
@@ -197,7 +213,9 @@ def FormatObjects(f, trailer, version='1.3', compress=True, killobj=(),
     # Now we know the size, so we update the trailer dict
     # and get the formatted data.
     trailer.Size = PdfObject(len(objlist) + 1)
+    trailerobj = trailer
     trailer = format_obj(trailer)
+    trailerobj.Version = origversion
 
     # Now we have all the pieces to write out to the file.
     # Keep careful track of the counts while we do it so
@@ -227,7 +245,7 @@ class PdfWriter(object):
     canonicalize = False
     fname = None
 
-    def __init__(self, fname=None, version='1.3', compress=False, **kwargs):
+    def __init__(self, fname=None, version=None, compress=False, **kwargs):
         """
             Parameters:
                 fname -- Output file name, or file-like binary object
@@ -245,9 +263,6 @@ class PdfWriter(object):
             except (ValueError, TypeError):
                 pass
             else:
-                if version != '1.3':
-                    assert compress == False
-                    compress = version
                 version = fname
                 fname = None
 

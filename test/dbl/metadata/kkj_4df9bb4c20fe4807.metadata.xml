@@ -1,0 +1,335 @@
+<DBLMetadata version="2.2.1" id="4df9bb4c20fe4807" revision="3">
+  <identification>
+    <systemId type="gbc">
+      <id>5956ba2f5117ad0f706a614e</id>
+    </systemId>
+    <systemId type="paratext">
+      <id>4df9bb4c20fe4807af04137e868517b787a4b3a4</id>
+      <csetId>3381bdcca6fa4d5f82691fc070915c98478ff12c</csetId>
+      <name>KKJNT</name>
+      <fullName>Kako New Testament</fullName>
+    </systemId>
+    <name>Kako NT</name>
+    <nameLocal>Kako</nameLocal>
+    <abbreviation>kkj</abbreviation>
+    <abbreviationLocal>kkj</abbreviationLocal>
+    <description>Kako: Mɛlɛpi mɛ Njambiyɛ Jɔnja Mbon New Testament</description>
+    <descriptionLocal>Le Nouveau Testament en langue kakɔ (kakɔ-est) Cameroun et RCA</descriptionLocal>
+    <scope>New Testament</scope>
+    <dateCompleted>1999-09-30</dateCompleted>
+    <bundleProducer>nathanael/0.60.4</bundleProducer>
+    <canonSpec type="NT">
+      <component>westernNT</component>
+    </canonSpec>
+  </identification>
+  <relationships/>
+  <agencies>
+    <rightsHolder>
+      <abbr>WBT</abbr>
+      <url>http://www.wycliffe.org</url>
+      <nameLocal>Wycliffe Bible Translators, Inc.</nameLocal>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </rightsHolder>
+    <contributor>
+      <content>true</content>
+      <publication>true</publication>
+      <management>true</management>
+      <qa>false</qa>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </contributor>
+  </agencies>
+  <language>
+    <iso>kkj</iso>
+    <name>Kako</name>
+    <nameLocal>Kako</nameLocal>
+    <scriptCode>Latn</scriptCode>
+    <script>Latin</script>
+    <scriptDirection>LTR</scriptDirection>
+    <numerals>Arabic</numerals>
+    <ldml>kkj-Latn-TD</ldml>
+  </language>
+  <countries>
+    <country>
+      <iso>CM</iso>
+      <name>Cameroon</name>
+    </country>
+  </countries>
+  <type>
+    <medium>text</medium>
+    <hasCharacters>true</hasCharacters>
+    <isTranslation>true</isTranslation>
+    <isExpression>true</isExpression>
+    <translationType>First</translationType>
+    <audience>Common</audience>
+    <isConfidential>false</isConfidential>
+  </type>
+  <format>
+    <versedParagraphs>false</versedParagraphs>
+  </format>
+  <manifest>
+    <resource checksum="bc9a60753c90140bcd24d4132d2a36ea" mimeType="application/octet-stream" size="872" uri="release/Mkako.lds"/>
+    <resource checksum="f313ac2374f1facc8dd3ce181bc4263c" mimeType="application/xml" size="102381" uri="release/USX_1/1CO.usx"/>
+    <resource checksum="b5355070da6c4e7022d241b4891f795f" mimeType="application/xml" size="28631" uri="release/USX_1/1JN.usx"/>
+    <resource checksum="b4720a0eba866890087fc3a121bb2e32" mimeType="application/xml" size="32250" uri="release/USX_1/1PE.usx"/>
+    <resource checksum="07f9bc911b070e3b2ab38c92e8d755ca" mimeType="application/xml" size="22780" uri="release/USX_1/1TH.usx"/>
+    <resource checksum="13bd770de42e780046773b0c2faea831" mimeType="application/xml" size="31450" uri="release/USX_1/1TI.usx"/>
+    <resource checksum="16f2a5c8963af570ffedc8a73bda4819" mimeType="application/xml" size="75474" uri="release/USX_1/2CO.usx"/>
+    <resource checksum="e31c9fec83c8291b474aa60e71229183" mimeType="application/xml" size="4694" uri="release/USX_1/2JN.usx"/>
+    <resource checksum="7d19b571116eeb6847596469faedbcb8" mimeType="application/xml" size="21320" uri="release/USX_1/2PE.usx"/>
+    <resource checksum="ad196bf60bc3beea6e2706aa90da6d17" mimeType="application/xml" size="14182" uri="release/USX_1/2TH.usx"/>
+    <resource checksum="220c9729e46c78610fa0bdbfcc455be7" mimeType="application/xml" size="20974" uri="release/USX_1/2TI.usx"/>
+    <resource checksum="0482565271ce4d31e9bcf118cbba86f0" mimeType="application/xml" size="5298" uri="release/USX_1/3JN.usx"/>
+    <resource checksum="8eafa8bfc99a9fbc22c0d610df742e96" mimeType="application/xml" size="234556" uri="release/USX_1/ACT.usx"/>
+    <resource checksum="b1842d6d63b4fb46bc1313816d906f61" mimeType="application/xml" size="25751" uri="release/USX_1/COL.usx"/>
+    <resource checksum="48ba8b400bb16ebd7e3ec78c205e59f9" mimeType="application/xml" size="40122" uri="release/USX_1/EPH.usx"/>
+    <resource checksum="558b5bf671e89036510b8c94567248ab" mimeType="application/xml" size="41466" uri="release/USX_1/GAL.usx"/>
+    <resource checksum="ba84efbb15c7d86643d6304635dd2487" mimeType="application/xml" size="84285" uri="release/USX_1/HEB.usx"/>
+    <resource checksum="975b8367c028a712b5618ca6c68a74e1" mimeType="application/xml" size="27801" uri="release/USX_1/JAS.usx"/>
+    <resource checksum="af418a220ea6b963f25dd2604c0b0d0b" mimeType="application/xml" size="188464" uri="release/USX_1/JHN.usx"/>
+    <resource checksum="a55a4ac5825612010b439676893cd5c8" mimeType="application/xml" size="9682" uri="release/USX_1/JUD.usx"/>
+    <resource checksum="b106c5278c5869987a06c3f01351f642" mimeType="application/xml" size="248637" uri="release/USX_1/LUK.usx"/>
+    <resource checksum="d5413ee5779a82b9f4b917d261bdd84f" mimeType="application/xml" size="238330" uri="release/USX_1/MAT.usx"/>
+    <resource checksum="e98fac39af03ca6ea256f24b7bca5322" mimeType="application/xml" size="151018" uri="release/USX_1/MRK.usx"/>
+    <resource checksum="69fa1bd1c8f6f3e835263e8db7cf1f80" mimeType="application/xml" size="6336" uri="release/USX_1/PHM.usx"/>
+    <resource checksum="a02ca5a19978cd86e42fea7546a143a6" mimeType="application/xml" size="27356" uri="release/USX_1/PHP.usx"/>
+    <resource checksum="378f20b7a3841a8a1f8049cea42c5dc8" mimeType="application/xml" size="116998" uri="release/USX_1/REV.usx"/>
+    <resource checksum="a091a3248cabeb1d332ccd454ab5585c" mimeType="application/xml" size="113968" uri="release/USX_1/ROM.usx"/>
+    <resource checksum="339facea56ff7a9f3a83c827391e37a8" mimeType="application/xml" size="13632" uri="release/USX_1/TIT.usx"/>
+    <resource checksum="51f45848ef8d08ff3bfab7d03baa11e6" mimeType="application/octet-stream" size="2940" uri="release/kkj-Latn-TD.ldml"/>
+    <resource checksum="889fec31e4cd60a30252cc3973449014" mimeType="application/xml" size="78093" uri="release/styles.xml"/>
+    <resource checksum="8721b27731fcd51a69823875fa446ef9" mimeType="application/octet-stream" size="13092" uri="release/versification.vrs"/>
+    <resource checksum="c807a8973be9406c9e35f9cd7a0ec482" mimeType="application/zip" size="1016649" uri="source/source.zip"/>
+  </manifest>
+  <names>
+    <name id="book-mat">
+      <abbr>Mt</abbr>
+      <short>MATIYO</short>
+      <long>Kimɔ Tom Yesus Krist te yi Matiyo kɛtima</long>
+    </name>
+    <name id="book-mrk">
+      <abbr>Mk</abbr>
+      <short>MARK</short>
+      <long>Kimɔ Tom Yesus Krist te yi Mark kɛtima</long>
+    </name>
+    <name id="book-luk">
+      <abbr>Lk</abbr>
+      <short>LUKAS</short>
+      <long>Kimɔ Tom Yesus Krist te yi Lukas kɛtima</long>
+    </name>
+    <name id="book-jhn">
+      <abbr>Jŋ</abbr>
+      <short>JAŊ</short>
+      <long>Kimɔ Tom Yesus Krist te yi Jaŋ kɛtima</long>
+    </name>
+    <name id="book-act">
+      <abbr>Bt</abbr>
+      <short>ƁOTU ƁE TOMUN</short>
+      <long>Mɛsay mɛte yi Ɓotu ɓe Tomun ɓe Yesus kelma</long>
+    </name>
+    <name id="book-rom">
+      <short>ROM</short>
+      <long>Mɛkana mɛte yi Pol kɛtima kɛnjɛ ɓotu ɓe Rom</long>
+    </name>
+    <name id="book-1co">
+      <abbr>1Kt</abbr>
+      <short>1 KƆRƐŊT</short>
+      <long>Bosa Mɛkana mɛte yi Pol kɛtima kɛnjɛ ɓotu ɓe Kɔrɛŋt</long>
+    </name>
+    <name id="book-2co">
+      <abbr>2Kt</abbr>
+      <short>2 KƆRƐŊT</short>
+      <long>Mɛkana Yiɓate yi Pol kɛtima kɛnjɛ ɓotu ɓe Kɔrɛŋt</long>
+    </name>
+    <name id="book-gal">
+      <short>GALASI</short>
+      <long>Mɛkana mɛte yi Pol kɛtima kɛnjɛ ɓotu ɓe Galasi</long>
+    </name>
+    <name id="book-eph">
+      <short>EFƐS</short>
+      <long>Mɛkana mɛte yi Pol kɛtima kɛnjɛ ɓotu ɓe Efɛs</long>
+    </name>
+    <name id="book-php">
+      <short>FILIPI</short>
+      <long>Mɛkana mɛte yi Pol kɛtima kɛnjɛ ɓotu ɓe Filipi</long>
+    </name>
+    <name id="book-col">
+      <short>KOLOS</short>
+      <long>Mɛkana mɛte yi Pol kɛtima kɛnjɛ ɓotu ɓe Kolos</long>
+    </name>
+    <name id="book-1th">
+      <short>1 TESALONIK</short>
+      <long>Bosa Mɛkana mɛte yi Pol kɛtima kɛnjɛ ɓotu ɓe Tesalonik</long>
+    </name>
+    <name id="book-2th">
+      <short>2 TESALONIK</short>
+      <long>Mɛkana Yiɓate yi Pol kɛtima kɛnjɛ ɓotu ɓe Tesalonik</long>
+    </name>
+    <name id="book-1ti">
+      <short>1 TIMƆTE</short>
+      <long>Bosa Mɛkana mɛte yi Pol kɛtima kɛnjɛ Timɔte</long>
+    </name>
+    <name id="book-2ti">
+      <short>2 TIMƆTE</short>
+      <long>Mɛkana Yiɓate yi Pol kɛtima kɛnjɛ Timɔte</long>
+    </name>
+    <name id="book-tit">
+      <short>TIT</short>
+      <long>Mɛkana mɛte yi Pol kɛtima kɛnjɛ Tit</long>
+    </name>
+    <name id="book-phm">
+      <short>FILEMƆŊ</short>
+      <long>Mɛkana mɛte yi Pol kɛtima kɛnjɛ Filemɔŋ</long>
+    </name>
+    <name id="book-heb">
+      <short>ƁEHEBERE</short>
+      <long>Mɛkana mɛte yi ɓo kɛtima kɛnjɛ Ɓehebere</long>
+    </name>
+    <name id="book-jas">
+      <short>JAK</short>
+      <long>Mɛkana mɛte yi Jak kɛtima</long>
+    </name>
+    <name id="book-1pe">
+      <short>1 PIYƐR</short>
+      <long>Bosa Mɛkana mɛte yi Piyɛr kɛtima</long>
+    </name>
+    <name id="book-2pe">
+      <short>2 PIYƐR</short>
+      <long>Mɛkana Yiɓate yi Piyɛr kɛtima</long>
+    </name>
+    <name id="book-1jn">
+      <short>1 JAŊ</short>
+      <long>Bosa Mɛkana mɛte yi Jaŋ kɛtima</long>
+    </name>
+    <name id="book-2jn">
+      <short>2 JAŊ</short>
+      <long>Mɛkana Yiɓate yi Jaŋ kɛtima</long>
+    </name>
+    <name id="book-3jn">
+      <short>3 JAŊ</short>
+      <long>Mɛkana Yitatite yi Jaŋ kɛtima</long>
+    </name>
+    <name id="book-jud">
+      <short>YUDE</short>
+      <long>Mɛkana mɛte yi Yude kɛtima</long>
+    </name>
+    <name id="book-rev">
+      <short>PUNJA MƐYASI</short>
+      <long>Punja Mɛyasi mɛte yi Yesus Krist teɗya</long>
+    </name>
+  </names>
+  <source>
+    <canonicalContent>
+      <book code="1CO"/>
+      <book code="1JN"/>
+      <book code="1PE"/>
+      <book code="1TH"/>
+      <book code="1TI"/>
+      <book code="2CO"/>
+      <book code="2JN"/>
+      <book code="2PE"/>
+      <book code="2TH"/>
+      <book code="2TI"/>
+      <book code="3JN"/>
+      <book code="ACT"/>
+      <book code="COL"/>
+      <book code="EPH"/>
+      <book code="GAL"/>
+      <book code="HEB"/>
+      <book code="JAS"/>
+      <book code="JHN"/>
+      <book code="JUD"/>
+      <book code="LUK"/>
+      <book code="MAT"/>
+      <book code="MRK"/>
+      <book code="PHM"/>
+      <book code="PHP"/>
+      <book code="REV"/>
+      <book code="ROM"/>
+      <book code="TIT"/>
+    </canonicalContent>
+    <structure>
+      <content src="source/source.zip" role="sourceZip"/>
+    </structure>
+  </source>
+  <publications>
+    <publication id="p1" default="true">
+      <description>The Kako NT (Cameroon)</description>
+      <descriptionLocal>Mɛlɛpi mɛ Njambiyɛ KJɔnja Mbon</descriptionLocal>
+      <canonicalContent>
+        <book code="1CO"/>
+        <book code="1JN"/>
+        <book code="1PE"/>
+        <book code="1TH"/>
+        <book code="1TI"/>
+        <book code="2CO"/>
+        <book code="2JN"/>
+        <book code="2PE"/>
+        <book code="2TH"/>
+        <book code="2TI"/>
+        <book code="3JN"/>
+        <book code="ACT"/>
+        <book code="COL"/>
+        <book code="EPH"/>
+        <book code="GAL"/>
+        <book code="HEB"/>
+        <book code="JAS"/>
+        <book code="JHN"/>
+        <book code="JUD"/>
+        <book code="LUK"/>
+        <book code="MAT"/>
+        <book code="MRK"/>
+        <book code="PHM"/>
+        <book code="PHP"/>
+        <book code="REV"/>
+        <book code="ROM"/>
+        <book code="TIT"/>
+      </canonicalContent>
+      <structure>
+        <content name="book-mat" src="release/USX_1/MAT.usx" role="MAT"/>
+        <content name="book-mrk" src="release/USX_1/MRK.usx" role="MRK"/>
+        <content name="book-luk" src="release/USX_1/LUK.usx" role="LUK"/>
+        <content name="book-jhn" src="release/USX_1/JHN.usx" role="JHN"/>
+        <content name="book-act" src="release/USX_1/ACT.usx" role="ACT"/>
+        <content name="book-rom" src="release/USX_1/ROM.usx" role="ROM"/>
+        <content name="book-1co" src="release/USX_1/1CO.usx" role="1CO"/>
+        <content name="book-2co" src="release/USX_1/2CO.usx" role="2CO"/>
+        <content name="book-gal" src="release/USX_1/GAL.usx" role="GAL"/>
+        <content name="book-eph" src="release/USX_1/EPH.usx" role="EPH"/>
+        <content name="book-php" src="release/USX_1/PHP.usx" role="PHP"/>
+        <content name="book-col" src="release/USX_1/COL.usx" role="COL"/>
+        <content name="book-1th" src="release/USX_1/1TH.usx" role="1TH"/>
+        <content name="book-2th" src="release/USX_1/2TH.usx" role="2TH"/>
+        <content name="book-1ti" src="release/USX_1/1TI.usx" role="1TI"/>
+        <content name="book-2ti" src="release/USX_1/2TI.usx" role="2TI"/>
+        <content name="book-tit" src="release/USX_1/TIT.usx" role="TIT"/>
+        <content name="book-phm" src="release/USX_1/PHM.usx" role="PHM"/>
+        <content name="book-heb" src="release/USX_1/HEB.usx" role="HEB"/>
+        <content name="book-jas" src="release/USX_1/JAS.usx" role="JAS"/>
+        <content name="book-1pe" src="release/USX_1/1PE.usx" role="1PE"/>
+        <content name="book-2pe" src="release/USX_1/2PE.usx" role="2PE"/>
+        <content name="book-1jn" src="release/USX_1/1JN.usx" role="1JN"/>
+        <content name="book-2jn" src="release/USX_1/2JN.usx" role="2JN"/>
+        <content name="book-3jn" src="release/USX_1/3JN.usx" role="3JN"/>
+        <content name="book-jud" src="release/USX_1/JUD.usx" role="JUD"/>
+        <content name="book-rev" src="release/USX_1/REV.usx" role="REV"/>
+      </structure>
+    </publication>
+  </publications>
+  <archiveStatus>
+    <dateArchived>2017-06-30T20:54:31.481396</dateArchived>
+    <dateUpdated>2022-05-17T18:40:05.882731</dateUpdated>
+    <bundleCreatorName>Lois Gourley</bundleCreatorName>
+    <archivistName>Lois Gourley</archivistName>
+    <comments>Metadata updated</comments>
+  </archiveStatus>
+  <copyright>
+    <fullStatement>
+      <statementContent type="xhtml">
+        <p>© 1999,  Wycliffe Bible Translators, Inc. All rights reserved.</p>
+      </statementContent>
+    </fullStatement>
+  </copyright>
+  <promotion/>
+</DBLMetadata>

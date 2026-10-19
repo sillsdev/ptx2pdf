@@ -54,6 +54,8 @@
 \OuterGutter{paper/ifoutergutter}
 \def\DefaultSpaceBeside{{{texpert/cutouterpadding} pt}}
 \noinkinmargin{footer/noinkinmargin}
+\marginnoteswidth = \dimexpr {paper/marginnoteswidth}mm + {texpert/marginnotesgap}pt \relax
+\def\MarginNotesSide{{{paper/marginnotespos}}}
 
 %% Columns
 \TitleColumns=1
@@ -145,6 +147,8 @@
 {notes/fnresetcallers}\PageResetCallers{{f}}
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fneachnewline}\ParagraphedNotes{{f}}
+{notes/fnmarginal_}\marginaln@te{{f}}
+{notes/xrmarginal_}\marginaln@te{{x}}
 %\NumericCallers{{f}}
 {document/ifndiglot}{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
 %%%{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
@@ -298,6 +302,7 @@
 {project/ifcolophon}\zcolophon\csname beenb@dyfalse\endcsname}}
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
 {project/ifusemodstex}\includeifpresent{{{/modspath}}}% adjust/override setup parameters here
+{/notracing}\DisableTracing
 
 %\defzvar
 
@@ -317,7 +322,7 @@
 {frontincludes_}
 {document/ifdiglot}\diglotfalse
 \StoreAllPeriphstrue\addInt\StoreAllPeriphsfalse
-\ptxfile{{{project/frontfile}}}
+{project/iffrontmatter}\ptxfile{{{project/frontfile}}}
 {document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
 {document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
 \BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text

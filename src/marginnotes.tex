@@ -56,6 +56,69 @@
   \trace{M}{defining marginnote-#1@#2:pageno = #5, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1 (smf=\SideMarginFactor x\the\MarginUnit, tw=\the\textwidth, bg=\the\BindingGutter)}%
 }
 
+% Pushed notes (see docs/dev/marginnotes_overflow.md). A note with a push line
+% is held in \m@rginpending and drawn at the top of its target column, one stack
+% per side, at the first output for its target page.
+\def\@marginnotepush#1#2#3#4#5{%
+% #1 = reference, #2 = marker, #3 = target page, #4 = target column, #5 = side
+  \x@\xdef\csname marginnote-#1@#2:push\endcsname{{#3}{#4}{#5}}%
+  % write the push line back, so Python can see it has been carried out
+  \xdef\m@rginpushes{\m@rginpushes\write\m@rginnotes{\string\@marginnotepush{#1}{#2}{#3}{#4}{#5}}}%
+}
+\def\m@rginpushes{}
+\newif\ifm@rginheld
+\newcount\m@rginserial
+\newbox\m@rginpending       % held notes: \penalty<serial> then the lapped note box
+\newbox\m@rginnewpending
+\x@\newbox\csname m@rginstack@0@left\endcsname \x@\newbox\csname m@rginstack@0@right\endcsname
+\x@\newbox\csname m@rginstack@1@left\endcsname \x@\newbox\csname m@rginstack@1@right\endcsname
+\def\m@rginstack#1{\csname m@rginstack@#1\endcsname}
+\def\m@rginreleasedpage{}
+
+\def\m@rginhold{% box0 = lapped note
+  \global\advance\m@rginserial by 1
+  \global\setbox\m@rginpending=\vbox{\unvbox\m@rginpending\penalty\m@rginserial\nointerlineskip\box0}%
+  \x@\xdef\csname mnheld@\the\m@rginserial\endcsname{{\m@rginkey}\csname marginnote-\m@rginkey:push\endcsname}%
+  \x@\xdef\csname mnlatest@\m@rginkey\endcsname{\the\m@rginserial}% a paragraph set twice holds its notes twice
+}
+
+% At the first output for a page, move held notes due by this page into the
+% stacks. Walking from the bottom and prepending keeps the original order.
+\def\m@rginovfout{%
+  \ifnum\pageno=0\m@rginreleasedpage\else
+    \xdef\m@rginreleasedpage{\the\pageno}%
+    \setbox0=\vbox{\unvbox\m@rginpending\m@rginw@lk}%
+    \global\setbox\m@rginpending=\box\m@rginnewpending
+  \fi
+}
+\def\m@rginw@lk{%
+  \setbox0=\lastbox
+  \ifvoid0 \else
+    \count255=\lastpenalty \unpenalty
+    \x@\x@\x@\m@rginrele@se\csname mnheld@\the\count255\endcsname
+    \x@\m@rginw@lk
+  \fi
+}
+\def\m@rginrele@se#1#2#3#4{% #1 = key, #2 = page, #3 = column, #4 = side; box0 = note, \count255 = serial
+  \x@\ifnum\csname mnlatest@#1\endcsname=\count255
+    \ifnum#2>\pageno
+      \global\setbox\m@rginnewpending=\vbox{\penalty\count255\nointerlineskip\box0\unvbox\m@rginnewpending}%
+    \else
+      \global\setbox\m@rginstack{#3@#4}=\vbox{\box0\unvbox\m@rginstack{#3@#4}}%
+    \fi
+  \fi
+}
+
+% Draw the held notes at the top of column #1, called at the start of the
+% column's vbox in each output routine.
+\def\m@rginstacks#1{%
+  \m@rginovfout
+  \ifnum0\ifvoid\m@rginstack{#1@left}\else1\fi\ifvoid\m@rginstack{#1@right}\else1\fi>0
+    \vbox to 0pt{\vbox to 0pt{\unvbox\m@rginstack{#1@left}\vss}\nointerlineskip
+      \vbox to 0pt{\unvbox\m@rginstack{#1@right}\vss}\vss}\nointerlineskip
+  \fi
+}
+
 \newbox\m@rginboxes
 \def\m@rgincollect#1{\setbox1=\vbox{#1}\trace{e}{vadj adding box \the\ht1+\the\dp1*\the\wd1}\global\setbox\m@rginboxes=\vbox{\box1\unvbox\m@rginboxes}\trace{e}{Adding vadj for \the\wd\m@rginboxes}}
 \def\m@rginvadj{\ifnum\currentgrouptype=0 \ifvoid\m@rginboxes\else\trace{e}{vadjusting boxes in mode \the\currentgrouptype}\loop
@@ -70,7 +133,16 @@
   \dimen9=\ht#1
   \trace{M}{\t@mpv, \t@mp \space kerns: pstrut=\the\dp\pstr@t, x-shift=\the#5, y-shift=\the#6,
             text = \the#4, side = #2, valign = #3, ht=\the\dimen9+\the\dp#1*\the\wd#1, hsize=\the\hsize}%
-  \ifx\t@mp\size@SPAN\vadjust{\box #1}\else
+  \ifx\t@mp\size@SPAN\vadjust{\box #1}\else\ifm@rginheld
+    % lap the note against the column, keeping its natural height and depth
+    \begingroup
+    \setbox0=\hbox to \hsize{\ifx\t@mp\l@ft\llap{\box #1\kern #5\kern #4}\hfil
+      \else\hfil\rlap{\kern #5\kern #4\box #1}\fi}%
+    \m@rginhold
+    \x@\let\x@\do@djust\ifx\t@mpv\@inline\m@rgincollect\else\vadjust\fi
+    \do@djust{\kern -\dimen9\kern #6\writem@rginnote\kern-#6\kern\dimen9}%
+    \endgroup
+  \else
     \begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
     \dimen8=\lastdepth \dimen7=\dp#1
     \x@\let\x@\do@djust\ifx\t@mpv\@inline\m@rgincollect\else\vadjust\fi
@@ -86,10 +158,11 @@
       \kern -\dimen9\kern #6\writem@rginnote\box0\kern-#6\kern\dimen9
     }%
     \endgroup
-  \fi
+  \fi\fi
 }
 
-\def\finishm@rginnotes "#1"{\immediate\closeout\m@rginnotes\m@rginnotesopenfalse}
+\def\finishm@rginnotes "#1"{\immediate\closeout\m@rginnotes\m@rginnotesopenfalse
+  \ifvoid\m@rginpending\else\MSG{*** marginnotes: some pushed margin notes were never drawn}\fi}
 
 \def\openm@rginnotes "#1"{
   \ifm@rginnotesopen\else
@@ -99,6 +172,7 @@
     \openout\m@rginnotes="#1"
     \m@rginnotesopentrue
     \write\m@rginnotes{\percent\string\@marginnote{ref}{marker}{side}{valign}{gap}{width}{height}{depth}{xshift}{yshift}{pageno}{xpos}{ypos}}%
+    \m@rginpushes
     \addtoendhooks{\finishm@rginnotes "#1"}
     \addtoeveryparhooks{\m@rginvadj}
   \fi
@@ -112,23 +186,59 @@
 
 \newdimen\marginnotesgap     % distance from edge of text to start of notes. Not enforced here
 \newdimen\marginnoteswidth   % width of marginal notes allocation - marginnotesgap
-\def\d@marginnote#1#2#3#4#5#6#7{%
-% #1 = vbox, #2 = reference, #3 = marker #4 = side #5 = valign #6 = x-shift #7 = y-shift
-  \edef\p@s{#4}%
+\def\m@rginnoteref#1#2{% #1 = reference, #2 = marker. Sets \mn@ref
+  \edef\mn@ref{#1}%
+  \x@\ifx\csname mn-lastref-#2\endcsname\mn@ref
+    \x@\xdef\csname mn-refcount-#2\endcsname{\the\numexpr\csname mn-refcount-#2\endcsname+1\relax}%
+    \edef\mn@ref{\mn@ref[\csname mn-refcount-#2\endcsname]}%
+  \else
+    \x@\global\x@\let\csname mn-lastref-#2\endcsname\mn@ref
+    \x@\gdef\csname mn-refcount-#2\endcsname{0}%
+  \fi
+}
+
+\def\m@rginside#1#2#3{% #1 = reference (from \m@rginnoteref), #2 = marker, #3 = style side. Sets \p@s, \p@geno, \s@de, \m@rginkey, \ifm@rginheld
+  \edef\p@s{#3}%
   \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
-  \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else
-    \ifm@rginalnotesw@rn\else\MSG{*** marginnotes: no marginal note for #2-#3; re-run for accurate note positions}\global\m@rginalnotesw@rntrue\fi
+  \ifcsname marginnote-#1@#2:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#1@#2:\t@mpa no\endcsname}\else
+    \ifm@rginalnotesw@rn\else\MSG{*** marginnotes: no marginal note for #1-#2; re-run for accurate note positions}\global\m@rginalnotesw@rntrue\fi
     \edef\p@geno{\the\pageno}\fi
   \ifx\p@s\@uter \ifodd\p@geno \ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi \else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
   \else\ifx\p@s\@nner\ifodd\p@geno \ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi \else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
+  \edef\m@rginkey{#1@#2}%
+  \ifcsname marginnote-\m@rginkey:push\endcsname % pushed notes take their side from the push line
+    \m@rginheldtrue\def\t@mp##1##2##3{\def\s@de{##3}}\x@\x@\x@\t@mp\csname marginnote-\m@rginkey:push\endcsname
+  \else\m@rginheldfalse\fi
+}
+
+% Called by \n@test@rt inside a margin note's box, before its text is set.
+% Works out the reference \m@rginnoteref will give the note, without counting
+% it, and the side it will be drawn on, including any push. Defines \m@rginc@l,
+% which \s@tsideskips uses for inner/outer justification in place of the page
+% or column parity: 1 for the right margin (left in RTL), as on an odd page.
+\def\m@rginc@lset#1{% #1 = note class
+  \begingroup
+    \edef\mn@ref{\csname nm-ref-#1\endcsname}%
+    \x@\ifx\csname mn-lastref-#1\endcsname\mn@ref
+      \edef\mn@ref{\mn@ref[\the\numexpr\csname mn-refcount-#1\endcsname+1\relax]}\fi
+    \m@rginside{\mn@ref}{#1}{\MarginNoteSide}%
+    \xdef\m@rginc@lg{\ifx\s@de\r@ght\ifRTL0\else1\fi\else\ifRTL1\else0\fi\fi}%
+  \endgroup
+  \let\m@rginc@l\m@rginc@lg
+}
+
+\def\d@marginnote#1#2#3#4#5#6#7{%
+% #1 = vbox, #2 = reference, #3 = marker #4 = side #5 = valign #6 = x-shift #7 = y-shift
+  \m@rginnoteref{#2}{#3}%
+  \m@rginside{\mn@ref}{#3}{#4}%
   \dimen0 = #6%
   \dimen3 = #7%
-  \trace{M}{marginnote (#1) #2 #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-#2@#3:colno\endcsname, col=\csname marginnote-#2@#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
+  \trace{M}{marginnote (#1) \mn@ref \space #3, pageno=\p@geno, side=\s@de, was #4 \ifcsname marginnote-\mn@ref @#3:colno\endcsname, col=\csname marginnote-\mn@ref @#3:colno\endcsname\fi, yshift=\the\dimen3, text offset=\the\dimen0, stystack=\styst@k}%
   %\dimen0=0pt
-  \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname \else\dimen1=0pt \fi
-  \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname \else\dimen2=0pt \fi
-  \xdef\wr@tet@mp{\string\@marginnote{#2}{#3}{\p@s}{#5}{\the\dimen0}{\the\wd#1}{\the\ht#1}{\the\dp#1}{\the\dimen1}{\the\dimen2}}%
+  \ifcsname marginnote-\mn@ref @#3:xshift\endcsname\dimen1=\csname marginnote-\mn@ref @#3:xshift\endcsname \else\dimen1=0pt \fi
+  \ifcsname marginnote-\mn@ref @#3:yshift\endcsname\dimen2=\csname marginnote-\mn@ref @#3:yshift\endcsname \else\dimen2=0pt \fi
+  \xdef\wr@tet@mp{\string\@marginnote{\mn@ref}{#3}{\p@s}{#5}{\the\dimen0}{\the\wd#1}{\the\ht#1}{\the\dp#1}{\the\dimen1}{\the\dimen2}}%
   \advance\dimen2 by \dimen3%
   %\showbox#1
   \pl@cemnote{#1}{\s@de}{#5}{\dimen0}{\dimen1}{\dimen2}%

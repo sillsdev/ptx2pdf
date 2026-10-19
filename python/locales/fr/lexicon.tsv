@@ -1,0 +1,252 @@
+# Auto-built by buildLexicon.py from the existing fr translations. Do not hand-edit:
+# put overrides in glossary.tsv (which wins). English<TAB>translation<TAB>note
+settings	Paramètres	also: Réglages; noun, plural
+page	Page	
+text	Texte	
+show	Afficher	verb
+pdf	PDF	kept in English; masculine
+image	Image	
+select	Sélectionner	also: Choisir; verb
+ptxprint	PTXprint	product name, unchanged
+cover	Couverture	noun
+list	Liste	noun
+dialog	Dialogue	noun
+line	Ligne	
+books	Livres	plural
+space	Espace	noun, feminine in typography
+picture	Image	
+project	Projet	
+color	Couleur	
+rule	Règle	typographic line
+position	Position	
+verse	Verset	
+notes	Notes	also: Remarques; Remarques used for some labels
+border	Bordure	
+include	Inclure	verb
+font	Police	typeface
+sidebar	Barre latérale	also: Encadré; noun
+generate	Générer	verb
+file	Fichier	noun
+book	Livre	noun
+set	Définir	also: Jeu (noun, as in image set); verb: to set
+layout	Mise en page	also: Disposition; noun
+diglot	Diglot	left as in English
+borders	Bordures	plural noun
+edit	Modifier	also: Editer; verb
+configuration	Configuration	noun
+enable	Activer	verb
+background	Arrière-plan	noun
+chapter	Chapitre	noun
+column	Colonne	noun
+import	Importer	verb
+note	Note	noun
+pictures	Images	plural noun
+folder	Dossier	noun
+width	Largeur	noun
+cross-references	Références croisées	also: Renvois; plural noun
+matter	Pages liminaires	also: Annexes (back matter); in front/back matter
+words	Mots	plural noun
+strong's	Strong	also: Strongs; proper name, Strong's numbers
+front	Pages liminaires	also: Avant (front cover); in Front Matter; adjective otherwise
+size	Taille	noun
+add	Ajouter	verb
+end	fin	noun
+vertical	vertical	also: verticale; adjective, agrees with noun
+create	Créer	also: Générer; verb
+thickness	Épaisseur	noun
+index	index	noun
+numbers	numéros	plural noun
+styles	Styles	plural noun
+spacing	espacement	also: interligne, interlignage; noun
+style	style	noun
+margin	marge	noun
+footnote	note de bas de page	noun
+adjust	Ajuster	also: réglage, ajustement; verb; noun use: réglage/ajustements
+front matter	pages liminaires	plural noun
+header	en-tête	noun
+new	nouveau	also: nouvelle, nouveaux; adjective, agrees with noun
+number	numéro	also: nombre; verb: numéroter; 'nombre' for count
+grid	grille	also: quadrillage; noun
+error	erreur	noun
+scale	échelle	also: redimensionner, mettre à l'échelle; noun; verb: to resize
+start	début	also: commencer, démarrer; noun; verb: to begin
+top	haut	also: supérieur; noun/adjective
+between	entre	preposition
+horizontal	horizontal	also: horizontale; adjective, agrees with noun
+spine	dos	also: dos de livre; noun
+delete	Supprimer	verb
+tabs	Onglets	noun, plural
+pages	Pages	noun, plural
+lines	Lignes	noun, plural
+indent	Retrait	also: retraite; noun
+piclist	PicList	also: liste de photos; usually kept in English
+paper	Papier	
+left	Gauche	also: à gauche
+name	Nom	noun
+footnotes	Notes de bas de page	noun, plural
+config	Configuration	also: Config.; abbreviated in short strings
+reference	Référence	also: Renvoi (cross reference); noun
+generate cover	Générer la couverture	verb phrase
+footer	Pied de page	also: Bas de page; noun
+checklist	Liste de contrôle	noun
+paratext	Paratext	product name, unchanged
+print	Imprimer	also: Impression; verb; noun: impression
+study	étude	also: d'étude; as in notes d'étude
+strong's index	Index Strongs	also: Index de Strong, index du Strong; noun
+existing	existant	adjective, agrees in gender
+paragraph	Paragraphe	noun
+bottom	Bas	noun
+cross-reference	Référence croisée	also: Renvoi; noun
+missing	Manquant	adjective, agrees in gender
+view	Affichage	also: Vue, Voir, Visualisation; noun; verb: voir
+hyphenation	Césure	also: Césure de mots; noun
+word	mot	
+shrink	réduire	also: rétrécir; verb
+output	sortie	also: créer; mettre (as verb); noun; verb: to output
+marks	marques	noun, plural
+area	zone	
+remove	supprimer	also: enlever; verb
+first	premier	also: première; d'abord; adjective; adverb: d'abord
+maximum	maximum	also: maximal; maximale; maximales; adjective
+borders dialog	dialogue des bordures	
+publication	publication	
+apply	appliquer	verb
+picture checklist	liste de contrôle des images	
+right	droite	also: droit; direction
+factor	facteur	
+custom	personnalisé	also: personnalisée; personnalisés; adjective
+contents	contenu	also: matières (table des matières)
+callers	appelants	also: rappels; note callers
+thumb	pouce	in 'onglets de pouce'
+entry	entrée	also: saisie
+marker	marqueur	
+pdfs	PDF	also: PDFs
+code	code	
+line spacing	espacement des lignes	also: interligne; espacement de ligne
+references	références	also: renvois; Cross-References: renvois
+pdf file	fichier PDF	
+reset	Réinitialiser	verb
+section	section	
+outer	Extérieur	also: extérieure; adjective
+image set	Jeu d'images	
+decorative	décoratif	also: décorative, décoratifs; adjective
+gutter	Gouttière	noun
+how	Comment	also: Combien, De combien; for quantity: Combien
+minimum	minimum	also: minimale; adjective
+script	Écriture	also: Script; writing system; 'script' also used for code
+thumb tabs	Onglets de pouce	also: Onglets du pouce
+bold	Gras	also: mise en gras
+mm mm	mm mm	unit; unchanged
+verses	Versets	plural noun
+found	trouvé	also: trouvée, trouvés; past participle
+tab	Onglet	noun
+inner	Intérieur	also: intérieure; adjective
+mirror	Miroir	also: en miroir; noun/verb
+table	Tableau	also: table (des matières); table of contents: table
+enter	Entrer	verb; imperative 'Entrez'
+selection	Sélection	noun
+credit	Crédit	also: droits d'auteur; noun
+foreground	Premier plan	noun
+title	Titre	noun
+fill	Remplir	also: remplissage; verb; noun: remplissage
+anchor	Ancre	noun
+overwrite	Écraser	also: Remplacer; verb
+changes	changements	also: modifications; noun, plural
+compare	Comparer	verb
+center	Centre	also: central, au centre; noun/adjective
+below	sous	also: au-dessous, en dessous, en-dessous; preposition
+caption	Légende	noun
+download	Télécharger	also: téléchargement; verb; noun: téléchargement
+verse numbers	Numéros de verset	also: Numéros de versets; noun, plural
+link	Lien	noun
+above	au-dessus	also: ci-dessus
+source	Source	noun
+placement	Emplacement	also: Placement; noun
+copy	Copier	verb
+ref	Réf.	also: Ref, Réf, Référence; abbreviation of reference
+usfm	USFM	left in English
+base	de base	adjective, follows noun
+one	un	also: une, au moins un; number/pronoun
+current	actuel	also: actuelle; adjective
+copyright	Droit d'auteur	also: Droits d'auteur; noun
+saved	enregistré	also: sauvegardé; past participle/adjective
+locate	Localiser	verb
+length	Longueur	noun
+underline	Souligner	also: Soulignement, Souligné; verb; noun: soulignement
+default	Par défaut	
+padding	Rembourrage	also: Remplissage; noun
+standard	standard	adjective, invariable
+selection dialog	dialogue de sélection	e.g. dialogue de sélection de police
+font selection	sélection de police	
+crop	rogner	also: rognage; verb; noun: rognage
+guides	guides	noun, plural
+caller	appel	also: appelant; note call marker; adjective: appelant
+study note	note d'étude	
+secondary	secondaire	
+more	plus	also: plus de
+version	version	
+previous	précédent	also: précédente; agrees with gender
+column layout	mise en page en colonnes	also: mise en page à deux colonnes; e.g. à 2 colonnes
+save	enregistrer	verb
+report	rapport	also: signaler; noun; verb: signaler (a bug/issue)
+type	type	noun; verb 'type' = saisir
+spread	étendue	also: étendu, tableau, feuille; inconsistent; two-page spread
+horizontal position	position horizontale	
+transparency	transparence	
+bible	Bible	also: biblique; adjective: biblique
+filter	filtre	also: filtrer; noun; verb: filtrer
+dialog show	afficher le dialogue	no examples; guessed
+foreground image	image de premier plan	
+background image	image d'arrière-plan	
+questions	questions	
+compare pdfs	comparer les PDF	also: comparer les PDFs
+characters	caractères	plural of caractère
+primary	principal	also: primaire; primaire used for text/diglot and as noun
+character	caractère	noun
+advanced	avancé	also: complet; complet for view option
+these	ces	demonstrative plural
+archive	archive	noun, feminine
+back	arrière	also: annexes; back matter: annexes
+variable	variable	noun or adjective
+vertical position	position verticale	
+images	images	plural noun
+max	max	also: maximum; abbreviation
+noteline	ligne de note	plural: lignes de notes
+major	principal	also: majeur; majoritaire; majoritaire for language
+beside	à côté de	preposition
+allow	autoriser	verb
+break	coupure	also: saut; insécable; saut de ligne; no-break: insécable
+box	boîte	also: encadré; noun
+links	liens	plural noun
+bleed	fond perdu	noun
+dbl	BBN	acronym, Bibliothèque numérique
+open	ouvrir	also: ouvert; verb; ouvert as adjective
+italic	italique	
+place	placer	verb
+reload	recharger	verb
+standard list	liste standard	
+slice	découpage	also: découpe; Slice (left in English); noun
+pagination	pagination	
+font size	taille de la police	also: taille de police
+codes	codes	plural noun
+chapters	chapitres	
+peripheral	périphérique	adjective
+extended	étendu	adjective, agrees in gender/number
+selected	sélectionné	also: sélection; adjective; 'Use Selected' → la sélection
+refs	Références	also: Réfs; Réfs used as short label
+these books	ces livres	
+warning	Attention	also: Avertissement; Attention in dialogs; Avertissement for noun
+change	modifier	also: changer; changement; verb; noun: changement
+minor	mineur	also: mineure; adjective
+please	veuillez	used with infinitive verb
+hyphenation list	liste de césure	also: liste de césures
+both	les deux	also: tous les deux
+format	format	noun; used as-is in labels
+next	suivant	also: prochain; adjective, follows noun
+off	désactiver	verb: turn off; opposite activer
+unbalanced	déséquilibré	also: asymétrique; non équilibré; adjective
+penalty	pénalité	noun
+keep	garder	also: conserver; verb
+extra	supplémentaire	also: supplément; adjective; noun: supplément
+space between	espace entre	also: espacement
+approved	approuvé	also: approuvée; adjective, agrees

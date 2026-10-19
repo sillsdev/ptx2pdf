@@ -1,10 +1,13 @@
 
 import xml.etree.ElementTree as et
-import re, os, shutil, io
+import re, os, shutil, io, logging
+from dataclasses import dataclass, field
 from zipfile import ZipFile
 from ptxprint.ptsettings import books, allbooks, bookcodes
 from ptxprint.utils import get_ptsettings, booknumbers
 import usfmtc
+
+logger = logging.getLogger(__name__)
 
 class BundleZip(ZipFile):
     def __init__(self, *a, **kw):
@@ -159,28 +162,74 @@ def UnpackBundle(dblfile, prjid, prjdir):
         else:
             return UnpackBooks(dblzip, prjid, prjdir)
 
+def guessBookFile(fname):
+    """ Returns (bookid or None, filetype) for a scripture file name, or (None, None) if
+        it isn't a scripture file """
+    fbase = os.path.basename(fname)
+    (fbk, fext) = os.path.splitext(fbase)
+    ftype = usfmtc._filetypes.get(fext.lower(), None)
+    if ftype is None:
+        return (None, None)
+    bk = None
+    if (m := re.match(r"^[0-9A-Z]\d([0-9A-Z]{3})", fbk, re.I)) and m.group(1).upper() in bookcodes:
+        bk = m.group(1)         # Paratext style 41MATxxx
+    elif fbk[:3].upper() in bookcodes:
+        bk = fbk[:3]
+    elif fbk[-3:].upper() in bookcodes:
+        bk = fbk[-3:]
+    elif (m := re.match(r".*?([a-z]{3}|\d[a-z]{2})", fbk)):
+        if m.group(1).upper() in bookcodes:
+            bk = m.group(1)
+    return (bk.upper() if bk is not None else None, ftype)
+
 def UnpackBooks(inzip, prjid, prjdir, subdir=None):
     for f in inzip.namelist():
         if subdir is not None and not f.startswith(subdir+"/"):
             continue
-        fbase = os.path.basename(f)
-        (fbk, fext) = os.path.splitext(fbase)
-        ftype = usfmtc._filetypes.get(fext.lower(), None)
+        bk, ftype = guessBookFile(f)
         if ftype is None:
             continue
-        bk = None
-        if fbk[:3].upper() in bookcodes:
-            bk = fbk[:3]
-        elif fbk[-3:].upper() in bookcodes:
-            bk = fbk[-3:]
-        elif (m := re.match(r".*?([a-z]{3}|\d[a-z]{2})", fbk)):
-            if m.group(1).upper() in bookcodes:
-                bk = m.group(1)
         indoc = unpackBook(inzip, f, bk, ftype, prjid, prjdir)
         inzip.collectBookNames(indoc)
     if not inzip.hasbooknames:
         inzip.outBookNames(os.path.join(prjdir, prjid))
     return os.path.exists(os.path.join(prjdir, prjid))
+
+class _DirZip:
+    """ Presents a directory of files with enough of the ZipFile interface for unpackBook """
+    def __init__(self, path):
+        self.path = path
+    def open(self, name):
+        return open(os.path.join(self.path, name), "rb")
+
+def UnpackBooksDir(srcdir, prjid, prjdir):
+    """ Converts a directory of USFM/USX/USJ files into a project """
+    namer = BundleZip.__new__(BundleZip)
+    namer.hasbooknames = any(f.lower() == "booknames.xml" for f in os.listdir(srcdir))
+    namer.booknames = {}
+    dz = _DirZip(srcdir)
+    found = False
+    for f in sorted(os.listdir(srcdir)):
+        if not os.path.isfile(os.path.join(srcdir, f)):
+            continue
+        bk, ftype = guessBookFile(f)
+        if ftype is None:
+            continue
+        try:
+            indoc = unpackBook(dz, f, bk, ftype, prjid, prjdir)
+        except Exception as e:
+            logger.warning(f"Failed to read {f}: {e}")
+            continue
+        found = True
+        BundleZip.collectBookNames(namer, indoc)
+    prjpath = os.path.join(prjdir, prjid)
+    if namer.hasbooknames:
+        for f in os.listdir(srcdir):
+            if f.lower() == "booknames.xml":
+                shutil.copy(os.path.join(srcdir, f), os.path.join(prjpath, "BookNames.xml"))
+    elif found:
+        BundleZip.outBookNames(namer, prjpath)
+    return found
 
 def unpackBook(inzip, inname, bkid, informat, prjid, prjdir):
     prjpath = os.path.join(prjdir, prjid)
@@ -204,61 +253,164 @@ def UnpackPTX(inzip, prjid, prjdir):
         inzip.outBookNames(path)
     return True
 
-def UnpackDBL(inzip, prjid, prjdir):
-    info = {'prjid': prjid}
-    bookshere = [0] * len(allbooks)
-    subFolder = ""
+@dataclass
+class DBLInfo:
+    """ Parsed contents of a DBL bundle's metadata.xml plus the locations of
+        interesting support files inside the bundle zip. """
+    meta: et.Element
+    subfolder: str = ""
+    iso: str = ""
+    langtag: str = ""
+    scriptcode: str = ""
+    direction: str = ""
+    numerals: str = ""
+    langname: str = ""
+    langnameLocal: str = ""
+    books: list = field(default_factory=list)       # [(bookid, zip path)]
+    booknames: dict = field(default_factory=dict)   # bookid: (long, short, abbr)
+    ldmlfile: str = None
+    stylesfile: str = None
+    vrsfile: str = None
+    sourcezip: str = None
+    fontfiles: list = field(default_factory=list)
+
+    def get(self, path, default=""):
+        return (self.meta.findtext(path) or default).strip()
+
+def _findMetadata(inzip):
     for name in inzip.namelist():
         if name == "metadata.xml":
-            break
+            return ""
+        if name.endswith("/metadata.xml") and name.count("/") == 1:
+            return name[:-12]
+    for name in inzip.namelist():
         if name.endswith("/metadata.xml"):
-            subFolder = name[:-12]
-            break
+            return name[:-12]
+    return None
+
+def _findLdml(names, sub, iso, ldml):
+    """ Bundles name their ldml file in all sorts of ways. Try the common ones
+        and then anything that looks like it is for this language (rather than
+        a national language, e.g. azz_es.ldml) """
+    cands = []
+    if ldml:
+        cands.append(ldml + ".ldml")
+    if iso and ldml:
+        cands.append("{}_{}.ldml".format(iso, ldml))
+    cands.append("ldml.xml")
+    for c in cands:
+        for d in ("", "release/"):
+            if sub + d + c in names:
+                return sub + d + c
+    for n in names:
+        b = os.path.basename(n)
+        if not b.endswith(".ldml") or not n.startswith(sub):
+            continue
+        if iso and b.lower().startswith(iso.lower()) and not re.search(r"_[a-z]{2,3}\.ldml$", b):
+            return n
+    return None
+
+def readDBLMetadata(inzip):
+    """ Returns a DBLInfo for a bundle zip or None if it isn't a DBL bundle """
+    sub = _findMetadata(inzip)
+    if sub is None:
+        return None
+    with inzip.open(sub + "metadata.xml") as inmeta:
+        meta = et.parse(inmeta).getroot()
+    names = set(inzip.namelist())
+    info = DBLInfo(meta=meta, subfolder=sub)
+    info.iso = info.get("language/iso")
+    ldml = info.get("language/ldml")
+    info.scriptcode = info.get("language/scriptCode")
+    if ldml:
+        info.langtag = ldml
+    elif info.iso:
+        info.langtag = info.iso + ("-" + info.scriptcode if info.scriptcode else "")
+    info.direction = info.get("language/scriptDirection").lower()
+    info.numerals = info.get("language/numerals")
+    info.langname = info.get("language/name")
+    info.langnameLocal = info.get("language/nameLocal")
+
+    pub = meta.find('publications/publication[@default="true"]')
+    if pub is None:
+        pub = meta.find('publications/publication')
+    structure = pub.find('structure') if pub is not None else None
+    if structure is not None:
+        for c in structure.iter('content'):
+            if c.get("src") and c.get("role"):
+                info.books.append((c.get("role").split()[0], sub + c.get("src")))
     else:
+        bks = meta.find('contents/bookList[@default="true"]/books')
+        if bks is not None:
+            for b in bks.findall('book'):
+                info.books.append((b.get('code'), sub + 'USX_1/{}.usx'.format(b.get('code'))))
+    for n in meta.findall('names/name'):
+        nid = n.get('id', '')
+        if not nid.startswith('book-'):
+            continue
+        info.booknames[nid[5:].upper()] = tuple((n.findtext(k) or "").strip() for k in ("long", "short", "abbr"))
+
+    info.ldmlfile = _findLdml(names, sub, info.iso, ldml)
+    for f in ('styles.xml', 'release/styles.xml'):
+        if sub + f in names:
+            info.stylesfile = sub + f
+            break
+    for n in sorted(names):
+        if not n.startswith(sub):
+            continue
+        l = n.lower()
+        if l.endswith(".vrs") and info.vrsfile is None:
+            info.vrsfile = n
+        elif l.endswith((".ttf", ".otf")):
+            info.fontfiles.append(n)
+        elif l.endswith("source/source.zip"):
+            info.sourcezip = n
+    return info
+
+def UnpackDBL(inzip, prjid, prjdir, info=None):
+    if info is None:
+        info = readDBLMetadata(inzip)
+    if info is None:
         return False
-    with inzip.open(subFolder + "metadata.xml") as inmeta:
-        metadoc = et.parse(inmeta)
-        meta = metadoc.getroot()
+    meta = info.meta
     if prjid is None:
         prjid = meta.findtext('identification/abbreviation')
     prjpath = os.path.join(prjdir, prjid)
     os.makedirs(prjpath, exist_ok=True)
-    for f in ('styles.xml', 'release/styles.xml'):
-        try:
-            with inzip.open(subFolder + f) as instyle:
-                style = et.parse(instyle)
-            break
-        except KeyError:
-            pass
+    style = None
+    if info.stylesfile is not None:
+        with inzip.open(info.stylesfile) as instyle:
+            style = et.parse(instyle)
 
-    ldmlname = "{}_{}.ldml".format(meta.findtext('language/iso'), meta.findtext('language/ldml'))
-    for f in (ldmlname, 'release/'+ldmlname):
-        try:
-            with inzip.open(subFolder + f) as source, \
-                 open(os.path.join(prjpath, ldmlname), "wb") as target:
+    langid = info.langtag or "unk"
+    if info.ldmlfile is not None:
+        with inzip.open(info.ldmlfile) as source, \
+                open(os.path.join(prjpath, langid + ".ldml"), "wb") as target:
+            shutil.copyfileobj(source, target)
+    if info.vrsfile is not None:
+        with inzip.open(info.vrsfile) as source, \
+                open(os.path.join(prjpath, "custom.vrs"), "wb") as target:
+            shutil.copyfileobj(source, target)
+    if len(info.fontfiles):
+        fontdir = os.path.join(prjpath, "shared", "fonts")
+        os.makedirs(fontdir, exist_ok=True)
+        for f in info.fontfiles:
+            with inzip.open(f) as source, \
+                    open(os.path.join(fontdir, os.path.basename(f)), "wb") as target:
                 shutil.copyfileobj(source, target)
-            break
+
+    bookshere = [0] * len(allbooks)
+    for bkid, infname in info.books:
+        try:
+            inbook = unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
         except KeyError:
-            pass
+            logger.warning(f"Missing book {infname} in bundle")
+            continue
+        inzip.collectBookNames(inbook)
+        if bkid in books:
+            bookshere[books[bkid]] = 1
 
-    metacontents = meta.find('publications/publication[@default="true"]/structure')
-    if metacontents is not None:
-        for contentel in metacontents.findall('content'):
-            bkid = contentel.get("role")
-            infname = contentel.get("src")
-            inbook = unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
-            inzip.collectBookNames(inbook)
-    else:
-        metacontents = meta.find('contents/bookList[@default="true"]/books')
-        for contentel in metacontents.findall('book'):
-            bkid = contentel.get('code')
-            infname = 'USX_1/{}.usx'.format(bkid)
-            inbook = unpackBook(inzip, infname, bkid, "usx", prjid, prjdir)
-            inzip.collectBookNames(inbook)
-    bkindex = books.get(bkid)+1
-    bookshere[bkindex-1] = 1
-
-    info['bookspresent'] = "".join(str(x) for x in bookshere)
+    binfo = {'prjid': prjid, 'bookspresent': "".join(str(x) for x in bookshere)}
     settings = et.Element('ScriptureText')
     settings.tail = "\n    "
     for k, v in _dblMapping.items():
@@ -268,17 +420,24 @@ def UnpackDBL(inzip, prjid, prjdir):
         elif t == 'metamulti':
             val = "//".join(innertext(meta, s))
         elif t == 'styles':
-            val = style.findtext(s)
+            val = style.findtext(s) if style is not None else None
         elif t == 'eval':
-            val = s(info)
+            val = s(binfo)
         elif t == 'string':
             val = s
         n = et.SubElement(settings, k)
         n.text = val
         n.tail = "\n    "
+    for k, v in (('LanguageIsoCode', langid), ('Versification', '4')):
+        n = et.SubElement(settings, k)
+        n.text = v
+        n.tail = "\n    "
     n.tail = "\n"
     with open(os.path.join(prjpath, "ptxSettings.xml"), "wb") as outf:
         outf.write(et.tostring(settings, encoding="utf-8"))
-    if not inzip.hasbooknames:
+    if len(info.booknames):
+        inzip.booknames = {k: [v[0] or None, v[1] or None, v[2] or None] for k, v in info.booknames.items()}
+        inzip.outBookNames(prjpath)
+    elif not inzip.hasbooknames:
         inzip.outBookNames(prjpath)
     return True

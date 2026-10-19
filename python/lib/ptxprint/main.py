@@ -150,6 +150,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-c', '--config', help="Path to a configuration file")
     parser.add_argument('-R', '--runs', type=int, default=0, help="Limit XeTeX runs")
     parser.add_argument('-P', '--print', action='store_true', help="Run print operation")
+    parser.add_argument('-B', '--pub', action='append', default=[], help="Publication id to print (repeatable), requires -P")
 
     # Core Configuration
     parser.add_argument('-p', '--projects', action='append', default=[], help="Path(s) to project directories (repeatable)")
@@ -170,6 +171,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     
     # Performance & Debugging
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
+    parser.add_argument("--restart", action="store_true", default=False, help="fill: start from the current adjustments")
+    parser.add_argument("--stop", action="store_true", default=False, help="fill: stop each book at its first unfixable page")
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
     parser.add_argument('-l', '--logging', help="Logging level [DEBUG, INFO, WARN, ERROR, number]")
     parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
@@ -281,7 +284,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     attach_console()
     if viewClass is None:
-        viewClass = MultiView if args.cmd == "fill" else ViewModel
+        viewClass = ViewModel
     savetreedirs = False
     ptxdir = None
     # necessary for the side effect of setting pt_bindir :(
@@ -476,8 +479,11 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             print(f"Can't find project {args.pid} in {prjTree.treedirs}")
             args.pid = None     # keep going anyway, just with no pid specified.
         if args.config:
-            if project is None or project.srcPath(args.config) is None:
+            if project is None:
                 args.config = None
+            elif args.config != "Default" and args.config not in project.configs:
+                # Keep going with it (as before), but say so: a mistyped name otherwise goes unnoticed
+                print(f"Can't find config {args.config} in project {args.pid} ({project.srcPath(None)})")
     if args.test is not None:
         exit_code = runtest(prjTree, config, macrosdir, project, doit, args)
     elif args.print or args.cmd is not None or retview:
@@ -486,11 +492,39 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         if args.pid:
             mainw.setPrjid(args.pid, project.guid, loadConfig=False, startup=True)
             mainw.setConfigId(args.config or "Default")
+        if args.zip:
+            mainw.set("c_usesysfonts", False)
         res = 0
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
         if args.print or retview or args.cmd in ("print", "fill"):
+            if args.pub:
+                from ptxprint.publications import printSetup
+                from ptxprint.utils import BuildParams
+                from ptxprint.multiprint import MultiPrint
+                from usfmtc.reference import RefList
+
+                mprint = MultiPrint(numproc=args.jobs or None)
+                for pub in args.pub:
+                    pvars = mainw.publications.get(pub, {})
+                    books = pvars.get("__books", "")
+                    bparms = BuildParams(
+                        prjtree = mainw.prjTree,
+                        config = mainw.userconfig,
+                        macrosdir = mainw.scriptsdir,
+                        scriptsdir = mainw.scriptsdir,
+                        args = mainw.args,
+                        restart = False,
+                        pid = mainw.project.prjid,
+                        guid = mainw.project.guid,
+                        cfgid = mainw.cfgid,
+                        setupfn = printSetup,       # must be module global
+                        setupargs = pvars,
+                        pubid = pub)
+                    mprint.submit_print_job(RefList(books), bparms)
+                mprint.wait()
+                sys.exit(0)
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)
@@ -517,8 +551,25 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             if not args.enablescripts:
                 mainw.set("c_processScript", False)
             if args.cmd == "fill":
-                mainw.initScheduler(args.jobs, None)
-                results = mainw.run_all(False)
+                from ptxprint.utils import BuildParams
+                from ptxprint.multiprint import MultiPrint
+                tout = float(mainw.get("s_pbtimeout") or 0) * 60
+                bparms = BuildParams(
+                    prjtree = mainw.prjTree,
+                    config = mainw.userconfig,
+                    macrosdir = mainw.scriptsdir,
+                    scriptsdir = mainw.scriptsdir,
+                    args = mainw.args,
+                    restart = args.restart,
+                    pid = mainw.project.prjid,
+                    guid = mainw.project.guid,
+                    cfgid = mainw.cfgid,
+                    timeout = tout if tout >= 1 else None,
+                    loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
+                mprint = MultiPrint(numproc=args.jobs or None)
+                mprint.submit_fill_jobs(mainw.getBooks(), bparms, stop=args.stop)
+                results = mprint.wait()
+                mprint.teardown()
                 print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))
             else:
                 job = doit(mainw, noview=True, nothreads=True)
@@ -555,6 +606,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                     mainw.splash.terminate()
                 print("Failed to open project directory")
                 sys.exit(1)
+            if args.zip:
+                mainw.set("c_usesysfonts", False)
             if args.nointernet:
                 mainw.set('c_noInternet', True)
                 mainw.noInt = True
@@ -572,7 +625,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 if not sys.platform.startswith("win"):
                     mainw.lang += ".UTF-8"
                 config.set("init", "lang", mainw.lang)
-                if args.lang is not None:
+                # Reopen in the new language. Without langChanged, a user with no language set at
+                # startup (args.lang None) was dropped out of PTXprint instead.
+                if args.lang is not None or getattr(mainw, "langChanged", False):
                     args.lang = mainw.lang
                     print(f"{args.lang}")
                     project = mainw.project

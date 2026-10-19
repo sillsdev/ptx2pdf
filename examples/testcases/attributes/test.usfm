@@ -33,6 +33,7 @@ So is this bit, after a non-matching break.
 \p  We're \rb outside|above\rb* the clever stuff and ought to be back to normal now. But let's do some nesting.
 \esb\cat testing this\cat*
 \s A sidebar
+\global\tracingifs=\csname @ne\endcsname
 \qt3-s|Jim\*
 \p
 \v 3 James said \qt1-s|who="James"\* "Fred said \qt2-s|Fred\* 'quisquam est,'\qt2-e\* menacingly"\qt1-e\*, But really Fred

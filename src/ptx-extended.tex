@@ -217,6 +217,7 @@
 \def\sb@leftedge{}\def\sb@rightedge{}% Contents of left/right edge boxes
 \edef\sb@leftshift{0pt}\edef\sb@rightshift{0pt}%
 \def\fig@lskip{0pt}\def\fig@rskip{0pt}%
+\let\crop@fig@pre\empty\let\crop@fig@post\empty\let\crop@fig@after\empty% Defaults for deferred (edge) images
 \newif\ifsbar@rotated
 \newdimen\sb@rwidth
 \def\@@setsbp@cinswid{% get the width of the insert (or column) that the figure will go into

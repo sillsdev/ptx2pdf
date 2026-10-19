@@ -1,17 +1,17 @@
 import os, sys, re, subprocess, time, traceback
-import zipfile
+import zipfile, io
 from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree, copy2, copystat
 from threading import Thread
-from ptxprint.runner import call, checkoutput
+from ptxprint.runner import call, checkoutput, child_cpu_time
 from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.version import VersionStr
 from ptxprint.view import ViewModel
-from ptxprint.font import getfontcache, fontconfig_template_nofc
+from ptxprint.font import getfontcache, fontconfig_template_nofc, fontsconf_dirs, fontsconf_text
 from ptxprint.usfmerge import usfmerge2
-from ptxprint.texlog import summarizeTexLog
+from ptxprint.texlog import summarizeTexLog, readUnderfills
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
         saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, \
         runChanges, swapext, refKey
@@ -30,6 +30,7 @@ from ptxprint.xdv.colouring import procxdv
 from ptxprint.report import Report
 from usfmtc.versification import Versification
 import numpy as np
+import psutil
 from datetime import datetime
 import logging
 
@@ -40,7 +41,8 @@ _errmsghelp = {
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
 "! Dimension too large":                 _("Uh oh! You may have too many paragraphed footnotes on the page.\n" +\
                                            "Try starting each footnote on a new line (Notes+Refs tab)."),
-"! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists."),
+"! Paratext stylesheet":                 _("Check if the stylesheet specified on the Advanced tab exists.") + "\n" +\
+                                         _("Try turning off the ptxprint-mods stylesheet"),
 "! Unable to load picture":              _("Check if picture file is located in 'Figures', 'local\\figures' or a\n" +\
                                            "specified folder. Also try the option 'Omit Missing Pictures'"),
 "! Unable to load picture or PDF file":  _("Check if image/PDF file is available on the system.\n" +
@@ -65,7 +67,6 @@ _errmsghelp = {
                                            "* Also check that you haven't inadvertently left certain settings on\n" +\
                                            "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
                                            "  in blue if these features are currently enabled)."),
-"! Paratext stylesheet":                 _("Try turning off the ptxprint-mods stylesheet"),
 "! File ended while scanning use of \\iotableleader.": _("Problem with Formatting Intro Outline\n" +\
                                            "Try disabling option 'Right-Align \\ior with tabbed leaders' on the Body tab"),
 "! Emergency stop.":                     _("Probably a TeX macro problem - contact support, or post a bug report"),
@@ -153,6 +154,7 @@ class RunJob:
         self.norun = False
         self.nothreads = False
         self.nopdf = False
+        self.notracing = False
         self.silent = False
         self.forcedlooseness = None
         # self.oldversions = 1
@@ -164,9 +166,11 @@ class RunJob:
         self.extrafiles = {}
         self.piclist = None
         self.outfname = None
+        self.pdffile = None
+        self.env = None
 
     def fail(self, txt):
-        self.printer.set("l_statusLine", txt)
+        self.printer.doStatus(txt, warning=True)
         self.printer.finished(False)
         self.busy = False
         unlockme()
@@ -182,7 +186,8 @@ class RunJob:
             return
         self.printer.loadHyphenation()
         self.printer.incrementProgress(True, stage="pr")
-        self.info = TexModel(self.printer, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
+        self.info = TexModel(self.printer, self.printer.ptsettings, self.printer.prjid,
+                    inArchive=self.inArchive, notracing=self.notracing)
         self.info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = self.info.dict["project/id"]
@@ -248,7 +253,8 @@ class RunJob:
                     captions.append(k)
                 digprjdir = dv.project.path
                 digptsettings = ParatextSettings(digprjdir)
-                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive, diglotbinfo=self.info, digcfg=digcfg)
+                diginfos[k] = TexModel(dv, digptsettings, dv.prjid, inArchive=self.inArchive,
+                            diglotbinfo=self.info, digcfg=digcfg, notracing=self.notracing)
                 reasons = diginfos[k].prePrintChecks()
                 if len(reasons):
                     self.fail(", ".join(reasons) + " in diglot secondary")
@@ -333,7 +339,8 @@ class RunJob:
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
         sheets = {}
         keyarr = ["L"]
-        self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        if self.outfname is None:
+            self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.dict.setdefault("diglots_", {})
         for k, diginfo in diginfos.items():
             texfiles = []
@@ -423,8 +430,8 @@ class RunJob:
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
 
                 mode = self.info["document/diglotmergemode"]
-                if mode in ('True', 'False') or not mode:
-                    mode = "doc"
+                if mode in ('True', 'False', 'doc') or not mode:
+                    mode = "scores"     # 'Document Based' (doc) merge mode has been removed
                 sync = "normal"
                 if "-" in mode:
                     (mode, sync) = mode.split("-")
@@ -468,7 +475,8 @@ class RunJob:
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
+        if self.outfname is None:
+            self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.update(None)
         if self.info['project/iffrontmatter'] != '%':
             frtfname = os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext="_FRT.SFM"))
@@ -493,19 +501,21 @@ class RunJob:
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(jobs, prjdir, diglots=diglots)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        filedir = self.printer.project.printPath(self.info.dict["config/name"], noext=True)
+        # filedir = self.printer.project.printPath(self.info.dict["config/name"], noext=True)
+        filedir = self.printer.project.printPath(self.info.dict["config/name"])
         texfiledat = self.info.asTex(filedir=filedir, jobname=swapext(self.outfname, ext=".tex"), extra=extra, diglots=diglots)
         with open(os.path.join(self.tmpdir, self.outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, swapext(self.outfname, ext=".tex", withext=x)) for x in (".tex", ".xdv")]
         if self.inArchive:
             return genfiles
-        os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
+        self.env = dict(os.environ)
+        self.env["hyph_size"] = "65521"     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
         # os.putenv("extra_mem_bot", "5000000")    # extra main memory on top of 5M
-        os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
+        self.env["stack_size"] = "32768"    # extra input stack space (up from 5000)
         # os.putenv("save_size", "1000000")    # extra increase save stack from 80000
-        os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
-        os.putenv("max_print_line", "32767")    # Allow long error messages
+        self.env["pool_size"] = "12500000"  # Double conventional pool size for big jobs (Full Bible with xrefs)
+        self.env["max_print_line"] = "32767"    # Allow long error messages
         ptxmacrospath = os.path.abspath(self.macrosdir)
         ptxmacrobase = os.path.join(pycodedir(), 'ptx2pdf')
         if not os.path.exists(ptxmacrobase):
@@ -524,10 +534,10 @@ class RunJob:
                     break
 
         pathjoiner = (";" if sys.platform.startswith("win") else ":")
-        envtexinputs = os.getenv("TEXINPUTS")
+        envtexinputs = self.env.get("TEXINPUTS")
         texinputs = envtexinputs.split(pathjoiner) if envtexinputs is not None and len(envtexinputs) else []
         for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
-            if a not in texinputs:
+            if a+"//" not in texinputs:
                 texinputs.append(a+"//")
         miscfonts = getfontcache().fontpaths[:]
         if sys.platform.startswith("darwin") and not nosysfonts:
@@ -547,22 +557,38 @@ class RunJob:
                 fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
                 with open(os.path.join(self.tmpdir, 'fonts.conf'), "w") as outf:
                     outf.write(fontconfig_template_nofc.format(fontsdirs=fcs))
-                os.putenv("FONTCONFIG_FILE", os.path.join(self.tmpdir, "fonts.conf"))
+                self.env["FONTCONFIG_FILE"] = os.path.join(self.tmpdir, "fonts.conf")
                 logger.debug(f"FONTCONFIG_FILE={os.path.join(self.tmpdir, 'fonts.conf')}")
-                os.putenv("MISCFONTS", pathjoiner.join((ptxmacrospath, sfonts)))
+                self.env["MISCFONTS"] = pathjoiner.join((ptxmacrospath, sfonts))
             else:
-                os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
+                # This job's own fonts.conf, with absolute directories: the shared one can be
+                # rewritten by another ptxprint at any time, and its relative project fonts
+                # directory only works three levels below the project.
+                testsuite = getattr(self.args, 'testsuite', False)
+                dirs, _ = fontsconf_dirs(getattr(self.args, 'fontpath', None), testsuite=testsuite)
+                dirs = [d for d in dirs if os.path.isabs(d)]
+                for d in miscfonts:
+                    d = os.path.abspath(d)
+                    if d not in dirs:
+                        dirs.append(d)
+                with open(os.path.join(self.tmpdir, 'fonts.conf'), "w", encoding="utf-8") as outf:
+                    outf.write(fontsconf_text(dirs, testsuite=testsuite))
+                self.env["FONTCONFIG_FILE"] = os.path.join(self.tmpdir, "fonts.conf")
+                logger.debug(f"FONTCONFIG_FILE={self.env['FONTCONFIG_FILE']}")
+                self.env["MISCFONTS"] = pathjoiner.join(miscfonts)
         logger.debug(f"MISCFONTS={pathjoiner.join(miscfonts)}")
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
-        os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
+        self.env['TEXINPUTS'] = pathjoiner.join(texinputs)
         # if os.system == "win32":
         #     os.putenv('TEXMFCNF', os.path.join(pt_bindir(), "xetex", "texmf_dist", "web2c"))
+        prevcwd = os.getcwd()
         os.chdir(self.tmpdir)
         outpath = os.path.join(self.tmpdir, '..', self.outfname[:-4])
         pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
         pdfext = "_" + pdfext if len(pdfext) else ""
-        self.pdffile = outpath + f"{pdfext}.pdf"
+        if self.pdffile is None:
+            self.pdffile = outpath + f"{pdfext}.pdf"
         logger.debug(f"{self.pdffile} exists({os.path.exists(self.pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:
@@ -578,17 +604,24 @@ class RunJob:
                         copystat(ipdffile, opdffile)
                     except OSError as e:
                         log.error(f"Failed to copy: {ipdffile} to {opdffile}")
-        if self.norun:
+        if self.norun:      # the page filler runs xetex itself later, relying on cwd being tmpdir
             return genfiles
-        elif self.nothreads:
-            self.run_xetex(self.outfname, self.pdffile)
-        else:
-            self.thread = Thread(target=self.run_xetex, args=(self.outfname, self.pdffile))
-            self.busy = True
-            logger.debug("sharedjob: Starting thread to run xetex")
-            self.thread.start()
-            self.info.printer.waitThread(self.thread)
-        self.done_job(self.outfname, self.pdffile)
+        try:
+            if self.nothreads:
+                self.run_xetex(self.outfname, self.pdffile)
+            else:
+                self.thread = Thread(target=self.run_xetex, args=(self.outfname, self.pdffile))
+                self.busy = True
+                logger.debug("sharedjob: Starting thread to run xetex")
+                self.thread.start()
+                self.info.printer.waitThread(self.thread)
+            self.done_job(self.outfname, self.pdffile)
+        finally:
+            # Don't stay in the config's output folder: Windows then won't let it be deleted
+            try:
+                os.chdir(prevcwd)
+            except OSError:
+                pass
         return genfiles
 
     def wait(self):
@@ -611,10 +644,41 @@ class RunJob:
     def run_xetex(self, outfname, pdffile):
         numruns = 0
         cachedata = {}
-        cacheexts = {"toc":         (_("table of contents"), True), 
-                    "picpages":     (_("image copyrights"), False), 
-                    "parlocs":      (_("chapter positions"), True),
-                    "marginnotes":  (_("margin note positions"), True)}
+        texspfields = { "marginnote":  (11, 12),
+                        "noteid":      (4, 5),
+                        "parnote":     (4, 5),
+                        "parpageend":  (0, 1),
+                        "colstart":    (3, 4),
+                        "parend":      (1, 2),
+                        "parstart":    (4, 5) }
+        retexspfns = re.compile(r"^\\@("+"|".join(texspfields.keys())+r")\s*\{")
+        def cmptexfiles(data, datb):
+            linesa = data.splitlines()
+            linesb = datb.splitlines()
+            if len(linesa) != len(linesb):
+                return False
+            for la, lb in zip(linesa, linesb):
+                if not (m := retexspfns.match(la)):
+                    if la != lb:
+                        return False
+                    continue
+                if not lb.startswith("\\@"+m.group(1)):
+                    return False
+                va = la[m.end():-1].split("}{")
+                vb = lb[m.end():-1].split("}{")
+                for i in texspfields[m.group(1)]:
+                    if (int(va[i]) - int(vb[i])) ** 2 > 10:
+                        return False
+            return True
+
+        def cmpdat(data, datb):
+            return data == datb
+
+        cacheexts = {"toc":          (_("table of contents"), True, cmpdat), 
+                     "picpages":     (_("image copyrights"), False, cmpdat), 
+                     "parlocs":      (_("chapter positions"), True, cmptexfiles),
+                     "marginnotes":  (_("margin note positions"), True, cmptexfiles)}
+
         marginnotesfname = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".marginnotes"))
         if os.path.exists(marginnotesfname):
             for _attempt in range(4):
@@ -628,6 +692,8 @@ class RunJob:
                         logger.warning(f"Cannot delete marginnotes file — still locked, skipping: {marginnotesfname}")
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a)))
+        if self.maxRuns == 0:
+            numruns = -1
         while numruns < self.maxRuns:
             self.printer.incrementProgress(stage="lo", run=numruns)
             commentstr = " ".join([
@@ -651,14 +717,22 @@ class RunJob:
             callkw = {}
             if self.silent:
                 callkw['stdout'] = subprocess.DEVNULL
-            self.runner = call(cmd + [action], cwd=self.tmpdir, **callkw)
+            self.cpu_seconds = child_cpu_time(None)
+            self.runner = call(cmd + [action], cwd=self.tmpdir, env=self.env, **callkw)
             if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+                procout = None
                 try:
-                    #runner.wait(self.args.timeout)
-                    self.runner.wait()
+                    # must use communicate() not wait(): if stdout is a pipe, the child
+                    # blocks once the pipe buffer fills and we deadlock waiting for it
+                    (procout, procerr) = self.runner.communicate()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
+                    self.runner.kill()
+                    (procout, procerr) = self.runner.communicate()
+                self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
                 self.res = self.runner.returncode
+                if procout:
+                    logger.debug(procout.decode("UTF-8", errors="ignore") if isinstance(procout, bytes) else procout)
             elif isinstance(self.runner, subprocess.CompletedProcess):
                 self.res = self.runner.returncode
                 if self.runner.stdout not in (None, subprocess.DEVNULL):
@@ -681,21 +755,23 @@ class RunJob:
             rererun = rerun
             if os.path.exists(marginnotesfname):
                 (tsize, ttop, tbot) = self.info.getTextBlockSize()
-                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot):
+                mncols = 2 if self.info.dict.get("paper/columns", "1") == "2" or self.info.asBool("document/diffcolayout") else 1
+                if tidymarginnotes(marginnotesfname, psize=tsize, top=ttop, bot=tbot, quiet=self.silent,
+                                   rtl=self.info.dict.get("document/ifrtl", "false") == "true", ncols=mncols):
                     rererun = True
                     if self.maxRuns == 1:
                         self.maxRuns = 2
-            for a in cacheexts.keys():
+            for a, v in cacheexts.items():
                 testdata = cachedata[a]
                 fpath = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a))
                 cachedata[a] = self.readfile(fpath)
-                if testdata != cachedata[a]:
+                # logging.log(11, f"{a} =\n{cachedata[a]}")
+                if not v[2](testdata, cachedata[a]):
                     if numruns >= self.maxRuns or not cacheexts[a][1]:
                         self.rerunReasons.append(cacheexts[a][0])
                     else:
-                        print(_("Rerunning because the {} changed").format(cacheexts[a][0]))
+                        print(_("Rerunning because the {} changed").format(v[0]))
                         rererun = True
-                        break
             delayed = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".delayed"))
             if not rerun and os.path.exists(delayed):
                 with open(delayed, encoding="utf-8") as inf:
@@ -715,6 +791,9 @@ class RunJob:
                     outf.write(newtoc)
             if not rererun:
                 break
+        else:
+            print(_("Maximum runs exceeded"))
+        logging.info(f"It took {numruns} runs to get here")
 
         if not self.res and not self.nopdf:
             self.printer.incrementProgress(stage="xp")
@@ -726,24 +805,32 @@ class RunJob:
         tmppdf = self.procpdfFile(outfname, pdffile)
         if self.info["finishing/extraxdvproc"]:
             self.processxdv(swapext(outfname, ext=".tex", withext=".xdv"), self.getxdvname(outfname))
-        cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
+        pdfv = 2.0 if self.info["document/printarchive"] else self.args.pdfversion / 10
+        cmd = ["xdvipdfmx", "-E", "-V", str(pdfv), "-C", "16", "-v", "-o", pdffile]       # was tmppdf
         #if self.ispdfxa == "PDF/A-1":
         #    cmd += ["-z", "0"]
         if self.args.extras & 7:
             cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
+        self.cpu_seconds = child_cpu_time(None)
         with open(swapext(outfname, ext=".tex", withext=".xdvi_log"), "w") as outf:
-            self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir, stdout=outf, stderr=outf)
+            self.runner = call(cmd + [self.getxdvname(outfname)], cwd=self.tmpdir,
+                                env=self.env, stdout=outf, stderr=outf)
         logger.debug(f"Running: {cmd} for {outfname}")
         if self.args.extras & 1:
             print(f"Subprocess return value: {self.runner}")
         if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
+            procout = None
             try:
-                self.runner.wait()
-                #runner.wait(self.args.timeout)
+                # communicate() rather than wait(), so a piped stdout can't deadlock us
+                (procout, procerr) = self.runner.communicate()
             except subprocess.TimeoutExpired:
                 print("Timed out!")
+                self.runner.kill()
+                (procout, procerr) = self.runner.communicate()
+            self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
             self.res = 4 if self.runner.returncode else 0
-            logger.debug(f"{runner.stdout.decode('UTF-8')}")
+            if procout:
+                logger.debug(procout.decode("UTF-8", errors="ignore") if isinstance(procout, bytes) else procout)
         elif isinstance(self.runner, subprocess.CompletedProcess):
             self.res = 4 if self.runner.returncode else 0
             logger.debug(f"{self.runner.stdout}")
@@ -798,13 +885,14 @@ class RunJob:
 
             fname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".log"))
             logger.debug(f"Testing log file {fname}")
-            if os.path.exists(fname):
+            if os.path.exists(fname) and not self.notracing:
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                     p = logfile.seek(0, 2)
                     p = max(p - 60000, 0)
                     logfile.seek(p, 0)
                     log = logfile.read(60000)
-                smry, msgList, ufPages = summarizeTexLog(log)
+                statusfname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".status"))
+                smry, msgList, ufPages = summarizeTexLog(log, readUnderfills(statusfname))
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
@@ -821,11 +909,11 @@ class RunJob:
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
-                            self.printer.onIdle(self.printer.set, "l_statusLine", chkmsg)
+                            self.printer.onIdle(self.printer.doStatus, chkmsg, warning=smry["E"] > 0)   # underfilled pages are advice, not a warning
                             self.printer.onIdle(sl.set_tooltip_text, "" if msgs == chkmsg else msgs)
                             self.printer.onIdle(self.printer._setPrvReportStatus, chkmsg, msgs, "error" if smry["E"] > 0 else None)
                         else:
-                            self.printer.onIdle(self.printer.set, "l_statusLine", summaryLine)
+                            self.printer.onIdle(self.printer.doStatus, summaryLine, warning=True)
                             self.printer.onIdle(sl.set_tooltip_text, "" if msgs == summaryLine else msgs)
                             self.printer.onIdle(self.printer._setPrvReportStatus, summaryLine, msgs, severity)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
@@ -872,7 +960,7 @@ class RunJob:
                 self.printer.onIdle(self.printer.showLogFile)
 
         if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
-            self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
+            self.printer.doStatus(_("Rerun to fix: ") + ", ".join(self.rerunReasons), warning=True)
         self.printer.finished(self.res == 0)
         self.busy = False
         if not self.noview and not self.args.print and self.printer.isDisplay:
@@ -1007,6 +1095,7 @@ class RunJob:
             else:
                 kw[a] = self.info['finishing/'+a]
         kw['date'] = self.info["pdfdate_"]
+        kw['stripinfo'] = bool(self.info["document/printarchive"])
 
         def doSettingsZip(zio):
             z = zipfile.ZipFile(zio, "w", compression=zipfile.ZIP_DEFLATED)

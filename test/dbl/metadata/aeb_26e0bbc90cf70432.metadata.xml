@@ -1,0 +1,367 @@
+<DBLMetadata version="2.2.1" id="26e0bbc90cf70432" revision="16">
+    <identification>
+      <name>Tunisian Arabic New Testament</name>
+      <nameLocal>العهد الجديد بالدارجة التونسية 2022</nameLocal>
+      <description>Arabic, Tunisian Spoken: العهد الجديد بالدارجة التونسية 2022 (New Testament)</description>
+      <descriptionLocal>ترجمة جديدة للعهد الجديد باللهجة التونسية</descriptionLocal>
+      <abbreviation>TANT2022</abbreviation>
+      <abbreviationLocal>بالتونسي</abbreviationLocal>
+      <scope>New Testament</scope>
+      <bundleProducer>Paratext/9.4.53.5</bundleProducer>
+      <systemId type="paratext">
+        <id>d80528cf66366228f66522f9487ecb27356fead2</id>
+        <csetId>a9f0587c9ffe52134ac9fbbfaf7d749633f1a340</csetId>
+        <name>AEB2</name>
+        <fullName>Tunisian Arabic New Testament</fullName>
+      </systemId>
+      <systemId type="ptreg">
+        <id>BsCrGXYeymZwCwj2z</id>
+      </systemId>
+    </identification>
+    <type>
+      <medium>text</medium>
+      <isConfidential>false</isConfidential>
+      <hasCharacters>true</hasCharacters>
+      <isTranslation>true</isTranslation>
+      <isExpression>true</isExpression>
+      <translationType>Revision</translationType>
+      <audience>Common</audience>
+      <projectType>Standard</projectType>
+    </type>
+    <relationships/>
+    <agencies>
+      <rightsHolder>
+        <abbr>WBT</abbr>
+        <url>http://www.wycliffe.org</url>
+        <nameLocal>Wycliffe Bible Translators, Inc.</nameLocal>
+        <uid>545d2cb00be06579ca809b57</uid>
+        <name>Wycliffe Bible Translators, Inc.</name>
+      </rightsHolder>
+      <rightsAdmin>
+        <url>http://www.wycliffe.org</url>
+        <uid>545d2cb00be06579ca809b57</uid>
+        <name>Wycliffe Bible Translators, Inc.</name>
+      </rightsAdmin>
+      <contributor>
+        <content>true</content>
+        <publication>true</publication>
+        <management>true</management>
+        <qa>true</qa>
+        <uid>545d2cb00be06579ca809b57</uid>
+        <name>Wycliffe Bible Translators, Inc.</name>
+      </contributor>
+    </agencies>
+    <language>
+      <iso>aeb</iso>
+      <name>Arabic, Tunisian Spoken</name>
+      <script>Arabic</script>
+      <scriptCode>Arab</scriptCode>
+      <scriptDirection>RTL</scriptDirection>
+      <ldml>aeb-Arab-TN</ldml>
+      <numerals>Arabic</numerals>
+    </language>
+    <countries>
+      <country>
+        <iso>TN</iso>
+        <name>Tunisia</name>
+      </country>
+    </countries>
+    <format>
+      <usxVersion>3.0</usxVersion>
+      <versedParagraphs>false</versedParagraphs>
+    </format>
+    <names>
+      <name id="book-mat">
+        <abbr>مَتَّى</abbr>
+        <short>مَتَّى</short>
+        <long>بْشَارِةْ مَتَّى</long>
+      </name>
+      <name id="book-mrk">
+        <abbr>مُرْقُسْ</abbr>
+        <short>مُرْقُسْ</short>
+        <long>بْشَارِةْ مُرْقُسْ</long>
+      </name>
+      <name id="book-luk">
+        <abbr>لُوقَا</abbr>
+        <short>لُوقَا</short>
+        <long>بْشَارِةْ لُوقَا</long>
+      </name>
+      <name id="book-jhn">
+        <abbr>يُوحَنَّا</abbr>
+        <short>يُوحَنَّا</short>
+        <long>بْشَارِةْ يُوحَنَّا</long>
+      </name>
+      <name id="book-act">
+        <abbr>أَعْمَالْ</abbr>
+        <short>أَعْمَالْ</short>
+        <long>كْتَابْ أَعْمَالْ الرُّسُلْ</long>
+      </name>
+      <name id="book-rom">
+        <abbr>رُومَا</abbr>
+        <short>رُومَا</short>
+        <long>رِسَالِةْ بُولِسْ لِلْمُؤْمْنِينْ الِّي فِي رُومَا</long>
+      </name>
+      <name id="book-1co">
+        <abbr>كُورِنْثُوسْ الأُولَى</abbr>
+        <short>كُورِنْثُوسْ الأُولَى</short>
+        <long>رِسَالِةْ بُولِسْ الأُولَى لِلْمُؤْمْنِينْ الِّي فِي كُورِنْثُوسْ</long>
+      </name>
+      <name id="book-2co">
+        <abbr>كُورِنْثُوسْ الثَّانْيَة</abbr>
+        <short>كُورِنْثُوسْ الثَّانْيَة</short>
+        <long>رِسَالِةْ بُولِسْ الثَّانْيَة لِلْمُؤْمْنِينْ الِّي فِي كُورِنْثُوسْ</long>
+      </name>
+      <name id="book-gal">
+        <abbr>غَلَاطْيَة</abbr>
+        <short>غَلَاطْيَة</short>
+        <long>رِسَالِةْ بُولِسْ لِلْمُؤْمْنِينْ الِّي فِي غَلَاطْيَة</long>
+      </name>
+      <name id="book-eph">
+        <abbr>أَفَسُسْ</abbr>
+        <short>أَفَسُسْ</short>
+        <long>رِسَالِةْ بُولِسْ لِلْمُؤْمْنِينْ الِّي فِي أَفَسُسْ</long>
+      </name>
+      <name id="book-php">
+        <abbr>فِيلِپِّي</abbr>
+        <short>فِيلِپِّي</short>
+        <long>رِسَالِةْ بُولِسْ لِلْمُؤْمْنِينْ الِّي فِي فِيلِپِّي</long>
+      </name>
+      <name id="book-col">
+        <abbr>كُولُوسِي</abbr>
+        <short>كُولُوسِي</short>
+        <long>رِسَالِةْ بُولِسْ لِلْمُؤْمْنِينْ الِّي فِي كُولُوسِي</long>
+      </name>
+      <name id="book-1th">
+        <abbr>تْسَالُونِيكِي الأُولَى</abbr>
+        <short>تْسَالُونِيكِي الأُولَى</short>
+        <long>رِسَالِةْ بُولِسْ الأُولَى لِلْمُؤْمْنِينْ الِّي فِي تْسَالُونِيكِي</long>
+      </name>
+      <name id="book-2th">
+        <abbr>تْسَالُونِيكِي الثَّانْيَة</abbr>
+        <short>تْسَالُونِيكِي الثَّانْيَة</short>
+        <long>رِسَالِةْ بُولِسْ الثَّانْيَة لِلْمُؤْمْنِينْ الِّي فِي تْسَالُونِيكِي</long>
+      </name>
+      <name id="book-1ti">
+        <abbr>تِيمُوثَاوُسْ الأُولَى</abbr>
+        <short>تِيمُوثَاوُسْ الأُولَى</short>
+        <long>رِسَالِةْ بُولِسْ الأُولَى لْتِيمُوثَاوُسْ</long>
+      </name>
+      <name id="book-2ti">
+        <abbr>تِيمُوثَاوُسْ الثَّانْيَة</abbr>
+        <short>تِيمُوثَاوُسْ الثَّانْيَة</short>
+        <long>رِسَالِةْ بُولِسْ الثَّانْيَة لْتِيمُوثَاوُسْ</long>
+      </name>
+      <name id="book-tit">
+        <abbr>تِيطُسْ</abbr>
+        <short>تِيطُسْ</short>
+        <long>رِسَالِةْ بُولِسْ لْتِيطُسْ</long>
+      </name>
+      <name id="book-phm">
+        <abbr>فِلِيمُونْ</abbr>
+        <short>فِلِيمُونْ</short>
+        <long>رِسَالِةْ بُولِسْ لْفِلِيمُونْ</long>
+      </name>
+      <name id="book-heb">
+        <abbr>العِبْرَانِيِّينْ</abbr>
+        <short>العِبْرَانِيِّينْ</short>
+        <long>الرِّسَالَة لِلعِبْرَانِيِّينْ</long>
+      </name>
+      <name id="book-jas">
+        <abbr>يَعْقُوبْ</abbr>
+        <short>يَعْقُوبْ</short>
+        <long>رِسَالِةْ يَعْقُوبْ</long>
+      </name>
+      <name id="book-1pe">
+        <abbr>بُطْرُسْ الأُولَى</abbr>
+        <short>بُطْرُسْ الأُولَى</short>
+        <long>رِسَالِةْ بُطْرُسْ الأُولَى</long>
+      </name>
+      <name id="book-2pe">
+        <abbr>بُطْرُسْ الثَّانْيَة</abbr>
+        <short>بُطْرُسْ الثَّانْيَة</short>
+        <long>رِسَالِةْ بُطْرُسْ الثَّانْيَة</long>
+      </name>
+      <name id="book-1jn">
+        <abbr>يُوحَنَّا الأُولَى</abbr>
+        <short>يُوحَنَّا الأُولَى</short>
+        <long>رِسَالِةْ يُوحَنَّا الأُولَى</long>
+      </name>
+      <name id="book-2jn">
+        <abbr>يُوحَنَّا الثَّانْيَة</abbr>
+        <short>يُوحَنَّا الثَّانْيَة</short>
+        <long>رِسَالِةْ يُوحَنَّا الثَّانْيَة</long>
+      </name>
+      <name id="book-3jn">
+        <abbr>يُوحَنَّا الثَّالْثَة</abbr>
+        <short>يُوحَنَّا الثَّالْثَة</short>
+        <long>رِسَالِةْ يُوحَنَّا الثَّالْثَة</long>
+      </name>
+      <name id="book-jud">
+        <abbr>يَهُوذَا</abbr>
+        <short>يَهُوذَا</short>
+        <long>رِسَالِةْ يَهُوذَا</long>
+      </name>
+      <name id="book-rev">
+        <abbr>الرُّؤْيَا</abbr>
+        <short>الرُّؤْيَا</short>
+        <long>كْتَابْ الرُّؤْيَا</long>
+      </name>
+    </names>
+    <manifest>
+      <resource checksum="d2413266a230c71816e28fd45a94c40e" mimeType="application/xml" size="150524" uri="release/USX_1/1CO.usx"/>
+      <resource checksum="bbc25dd3ce3fe3125ab653cc4e5b4aa5" mimeType="application/xml" size="39406" uri="release/USX_1/1JN.usx"/>
+      <resource checksum="ac02656ea0902ffdd8d1cabd6d91e085" mimeType="application/xml" size="41944" uri="release/USX_1/1PE.usx"/>
+      <resource checksum="5144002d9a71849a494d9933c135b154" mimeType="application/xml" size="30632" uri="release/USX_1/1TH.usx"/>
+      <resource checksum="79268c7fd4ade54141d8a483a3a3e9c6" mimeType="application/xml" size="40281" uri="release/USX_1/1TI.usx"/>
+      <resource checksum="e3237d62a125561cc6b58d22e57e61da" mimeType="application/xml" size="97669" uri="release/USX_1/2CO.usx"/>
+      <resource checksum="1ae726634f614e10a6f4a753a2095139" mimeType="application/xml" size="5092" uri="release/USX_1/2JN.usx"/>
+      <resource checksum="dc4fc56b074bfb12f3723992028b29f8" mimeType="application/xml" size="25237" uri="release/USX_1/2PE.usx"/>
+      <resource checksum="a110944b23db830fb340a665d1d0427d" mimeType="application/xml" size="17002" uri="release/USX_1/2TH.usx"/>
+      <resource checksum="064e3e532c4b28c27eb4049fc4841001" mimeType="application/xml" size="28915" uri="release/USX_1/2TI.usx"/>
+      <resource checksum="4228d2d7a0d67b53c7d4409e46861135" mimeType="application/xml" size="5612" uri="release/USX_1/3JN.usx"/>
+      <resource checksum="b78ed3160bdda1ea2b03c672b6f487a3" mimeType="application/xml" size="355457" uri="release/USX_1/ACT.usx"/>
+      <resource checksum="b975d6810fa34ee83bca696a27c62d9b" mimeType="application/xml" size="33995" uri="release/USX_1/COL.usx"/>
+      <resource checksum="17d81caa9a081ba0e8a888af13f59970" mimeType="application/xml" size="48649" uri="release/USX_1/EPH.usx"/>
+      <resource checksum="e9384afce4caeb56b03f4d68ca2a2271" mimeType="application/xml" size="53050" uri="release/USX_1/GAL.usx"/>
+      <resource checksum="17d6dd01965d54b04f378c89fd6b781c" mimeType="application/xml" size="116389" uri="release/USX_1/HEB.usx"/>
+      <resource checksum="c226227e9c144d4fc2d3f440c6d27734" mimeType="application/xml" size="37478" uri="release/USX_1/JAS.usx"/>
+      <resource checksum="fc11166ab55eedab823b7ead6d310785" mimeType="application/xml" size="277479" uri="release/USX_1/JHN.usx"/>
+      <resource checksum="c0461f913e5a7527aa4a6690cb0f6d0b" mimeType="application/xml" size="11007" uri="release/USX_1/JUD.usx"/>
+      <resource checksum="6130777d8b380310de520802a04b6bda" mimeType="application/xml" size="374973" uri="release/USX_1/LUK.usx"/>
+      <resource checksum="9967240fd790712c085daf342f687db2" mimeType="application/xml" size="348582" uri="release/USX_1/MAT.usx"/>
+      <resource checksum="fb0fceca9a88f65028d419b83e2bb729" mimeType="application/xml" size="214505" uri="release/USX_1/MRK.usx"/>
+      <resource checksum="4c3dd150cf46874577444990e1291ba8" mimeType="application/xml" size="8030" uri="release/USX_1/PHM.usx"/>
+      <resource checksum="f0a99029561747e43a1e9d43276d9441" mimeType="application/xml" size="35895" uri="release/USX_1/PHP.usx"/>
+      <resource checksum="bd762ee0a6580e14af019758ae9fe407" mimeType="application/xml" size="159877" uri="release/USX_1/REV.usx"/>
+      <resource checksum="c1c768a53382947798152fba46e419d0" mimeType="application/xml" size="157539" uri="release/USX_1/ROM.usx"/>
+      <resource checksum="7e6d2b5b448f536e794744d79c1cec17" mimeType="application/xml" size="16950" uri="release/USX_1/TIT.usx"/>
+      <resource checksum="6d10f150305e00d4bfc758c333729d12" mimeType="application/xml" size="5136" uri="release/aeb-Arab-TN.ldml"/>
+      <resource checksum="8bec105749547a5baa7b9653bbe319a3" mimeType="application/x-font-ttf" size="589712" uri="release/ScheherazadeNew-Bold.ttf"/>
+      <resource checksum="76e14113dec24f311c484025b490ddde" mimeType="application/x-font-ttf" size="316528" uri="release/ScheherazadeNew-Regular.ttf"/>
+      <resource checksum="3cbefb59f5d839456ae25676e8901929" mimeType="application/xml" size="104524" uri="release/styles.xml"/>
+      <resource checksum="ad829a7d2ac2acbed7a573364ce818df" mimeType="text/plain" size="15359" uri="release/versification.vrs"/>
+      <resource checksum="629ebacdbf6284eb397a9766be4a3eac" mimeType="application/zip" size="814143" uri="source/source.zip"/>
+    </manifest>
+    <source>
+      <canonicalContent>
+        <book code="1CO"/>
+        <book code="1JN"/>
+        <book code="1PE"/>
+        <book code="1TH"/>
+        <book code="1TI"/>
+        <book code="2CO"/>
+        <book code="2JN"/>
+        <book code="2PE"/>
+        <book code="2TH"/>
+        <book code="2TI"/>
+        <book code="3JN"/>
+        <book code="ACT"/>
+        <book code="COL"/>
+        <book code="EPH"/>
+        <book code="GAL"/>
+        <book code="HEB"/>
+        <book code="JAS"/>
+        <book code="JHN"/>
+        <book code="JUD"/>
+        <book code="LUK"/>
+        <book code="MAT"/>
+        <book code="MRK"/>
+        <book code="PHM"/>
+        <book code="PHP"/>
+        <book code="REV"/>
+        <book code="ROM"/>
+        <book code="TIT"/>
+      </canonicalContent>
+      <structure>
+        <content src="source/source.zip" role="sourceZip"/>
+      </structure>
+    </source>
+    <publications>
+      <publication id="p1" default="true">
+        <name>Tunisian Arabic New Testament</name>
+        <nameLocal>العهد الجديد بالدارجة التونسية 2022</nameLocal>
+        <description>Protestant Tunisian Arabic: The revision published in 2021 (DBL 2022)</description>
+        <descriptionLocal>ترجمة جديدة للعهد الجديد باللهجة التونسية</descriptionLocal>
+        <abbreviation>TANT2022</abbreviation>
+        <abbreviationLocal>بالتونسي</abbreviationLocal>
+        <canonicalContent>
+          <book code="1CO"/>
+          <book code="1JN"/>
+          <book code="1PE"/>
+          <book code="1TH"/>
+          <book code="1TI"/>
+          <book code="2CO"/>
+          <book code="2JN"/>
+          <book code="2PE"/>
+          <book code="2TH"/>
+          <book code="2TI"/>
+          <book code="3JN"/>
+          <book code="ACT"/>
+          <book code="COL"/>
+          <book code="EPH"/>
+          <book code="GAL"/>
+          <book code="HEB"/>
+          <book code="JAS"/>
+          <book code="JHN"/>
+          <book code="JUD"/>
+          <book code="LUK"/>
+          <book code="MAT"/>
+          <book code="MRK"/>
+          <book code="PHM"/>
+          <book code="PHP"/>
+          <book code="REV"/>
+          <book code="ROM"/>
+          <book code="TIT"/>
+        </canonicalContent>
+        <structure>
+          <content name="book-mat" src="release/USX_1/MAT.usx" role="MAT"/>
+          <content name="book-mrk" src="release/USX_1/MRK.usx" role="MRK"/>
+          <content name="book-luk" src="release/USX_1/LUK.usx" role="LUK"/>
+          <content name="book-jhn" src="release/USX_1/JHN.usx" role="JHN"/>
+          <content name="book-act" src="release/USX_1/ACT.usx" role="ACT"/>
+          <content name="book-rom" src="release/USX_1/ROM.usx" role="ROM"/>
+          <content name="book-1co" src="release/USX_1/1CO.usx" role="1CO"/>
+          <content name="book-2co" src="release/USX_1/2CO.usx" role="2CO"/>
+          <content name="book-gal" src="release/USX_1/GAL.usx" role="GAL"/>
+          <content name="book-eph" src="release/USX_1/EPH.usx" role="EPH"/>
+          <content name="book-php" src="release/USX_1/PHP.usx" role="PHP"/>
+          <content name="book-col" src="release/USX_1/COL.usx" role="COL"/>
+          <content name="book-1th" src="release/USX_1/1TH.usx" role="1TH"/>
+          <content name="book-2th" src="release/USX_1/2TH.usx" role="2TH"/>
+          <content name="book-1ti" src="release/USX_1/1TI.usx" role="1TI"/>
+          <content name="book-2ti" src="release/USX_1/2TI.usx" role="2TI"/>
+          <content name="book-tit" src="release/USX_1/TIT.usx" role="TIT"/>
+          <content name="book-phm" src="release/USX_1/PHM.usx" role="PHM"/>
+          <content name="book-heb" src="release/USX_1/HEB.usx" role="HEB"/>
+          <content name="book-jas" src="release/USX_1/JAS.usx" role="JAS"/>
+          <content name="book-1pe" src="release/USX_1/1PE.usx" role="1PE"/>
+          <content name="book-2pe" src="release/USX_1/2PE.usx" role="2PE"/>
+          <content name="book-1jn" src="release/USX_1/1JN.usx" role="1JN"/>
+          <content name="book-2jn" src="release/USX_1/2JN.usx" role="2JN"/>
+          <content name="book-3jn" src="release/USX_1/3JN.usx" role="3JN"/>
+          <content name="book-jud" src="release/USX_1/JUD.usx" role="JUD"/>
+          <content name="book-rev" src="release/USX_1/REV.usx" role="REV"/>
+        </structure>
+      </publication>
+    </publications>
+    <copyright>
+      <fullStatement>
+        <statementContent type="xhtml">
+          <p>Text copyright © United Bible Societies, 2011, 2018, 2022.</p>
+        </statementContent>
+      </fullStatement>
+    </copyright>
+    <promotion>
+      <promoVersionInfo contentType="xhtml">
+        <p>Text copyright © United Bible Societies, 2011, 2018, 2022.</p>
+        <p>The Tunisian Arabic New Testament by <a href="https://unitedbiblesocieties.org/">United Bible Societies</a> is licensed under a <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.</p>
+        <p>If you need permissions not granted by this license, contact <a href="https://unitedbiblesocieties.org/">United Bible Societies</a>.</p>
+      </promoVersionInfo>
+    </promotion>
+    <archiveStatus>
+      <archivistName>Lois Gourley</archivistName>
+      <dateArchived>2023-10-04T20:33:38.648015</dateArchived>
+      <dateUpdated>2024-01-08T19:12:58.605015</dateUpdated>
+      <comments>Seven verses updated</comments>
+    </archiveStatus>
+  </DBLMetadata>

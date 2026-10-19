@@ -1,0 +1,22 @@
+# English<TAB>Thai<TAB>note (optional). Hand-written: overrides lexicon.tsv, which was learned from earlier translations that contain errors.
+Verse	ข้อ	Bible verse (NOT เพลง)
+Chapter	บท	Bible chapter
+Book	หนังสือ	Bible book
+Border	ขอบ	page/box border (NOT ภูมิภาค)
+Sidebar	แถบด้านข้าง
+Embolden	ทำตัวหนา	make text bold
+Section Headings	หัวข้อส่วน
+Configuration	การกำหนดค่า	saved set of settings
+Settings	การตั้งค่า
+Picture	ภาพ
+Page	หน้า
+Font	ฟอนต์
+Margin	ขอบกระดาษ
+File	ไฟล์
+Folder	โฟลเดอร์
+Project	โครงการ
+Tab	แท็บ	UI tab
+Spine	สันปก	spine of a book (NOT กระดูกสันหลัง)
+Verse numbers	เลขข้อ	NOT เลขบท
+Sidebar settings	การตั้งค่าแถบด้านข้าง
+Sidebar foreground	ภาพส่วนหน้าของแถบด้านข้าง

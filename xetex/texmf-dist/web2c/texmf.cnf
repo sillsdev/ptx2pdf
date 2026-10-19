@@ -1,13 +1,13 @@
 % original texmf.cnf -- runtime path configuration file for kpathsea.
 % Public domain.
-% 
+%
 % If you modify this original file, YOUR CHANGES WILL BE LOST when it is
 % updated.  Instead, put your changes -- and only your changes, not an
 % entire copy! -- in ../../texmf.cnf.  That is, if this file is
-% installed in /some/path/to/texlive/2023/texmf-dist/web2c/texmf.cnf,
-% put your custom settings in /some/path/to/texlive/2023/texmf.cnf.
+% installed in /some/path/to/texlive/2026/texmf-dist/web2c/texmf.cnf,
+% put your custom settings in /some/path/to/texlive/2026/texmf.cnf.
 % (Below, we use YYYY in place of the specific year.)
-% 
+%
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
 %
@@ -55,7 +55,7 @@
 % Redistributors will probably want $SELFAUTODIR/share, i.e., /usr/share.
 % Kpathsea sets (in kpathsea/progname.c):
 % SELFAUTOLOC (directory of the binary=/usr/local/texlive/YYYY/bin/i386-linux),
-% SELFAUTODIR (its parent = /usr/local/texlive/YYYY/bin), 
+% SELFAUTODIR (its parent = /usr/local/texlive/YYYY/bin),
 % SELFAUTOPARENT (its grandparent = /usr/local/texlive/YYYY), and
 % SELFAUTOGRANDPARENT (its great-grandparent = /usr/local/texlive).
 % Sorry for the off-by-one-generation names.
@@ -74,23 +74,27 @@ TEXMFMAIN = $TEXMFDIST
 % Local additions to the distribution trees.
 TEXMFLOCAL = $SELFAUTOGRANDPARENT/texmf-local
 
-% TEXMFSYSVAR, where *-sys store cached runtime data.
+% TEXMFSYSVAR, for system-wide cached runtime data that can be regenerated.
 TEXMFSYSVAR = $TEXMFROOT/texmf-var
 
-% TEXMFSYSCONFIG, where *-sys store configuration data.
+% TEXMFSYSCONFIG, for system-wide configuration data, such as paper size.
 TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 
-% Per-user texmf tree(s) -- organized per the TDS, as usual.  To define
-% more than one per-user tree, set this to a list of directories in
-% braces, as described above.  (This used to be HOMETEXMF.)  ~ expands
-% to %USERPROFILE% on Windows, $HOME otherwise.
+% Per-user texmf tree(s) -- must be organized per the TDS, as usual.
+% To define more than one per-user tree, set this to a list of
+% directories in braces, as described above. (This used to be HOMETEXMF.)
+%
+% ~ expands to %USERPROFILE% on Windows, $HOME otherwise.
+%
+% The portable option in install-tl overwrites these three trees
+% (TEXMFHOME, TEXMFVAR, TEXMFCONFIG) to keep everything in one place.
 TEXMFHOME = ~/texmf
 
-% TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.
-TEXMFVAR = ~/.texlive2023/texmf-var
+% TEXMFVAR, for per-user cached runtime data that can be regenerated.
+TEXMFVAR = ~/.texlive2026/texmf-var
 
-% TEXMFCONFIG, where texconfig/updmap/fmtutil store configuration data.
-TEXMFCONFIG = ~/.texlive2023/texmf-config
+% TEXMFCONFIG, for per-user configuration data, such as tlmgr options.
+TEXMFCONFIG = ~/.texlive2026/texmf-config
 
 % This is the value manipulated by tlmgr's auxtrees subcommand in the
 % root texmf.cnf. Kpathsea warns about a literally empty string for a
@@ -102,12 +106,12 @@ TEXMFAUXTREES = {}
 %
 % For texconfig to work properly, TEXMFCONFIG and TEXMFVAR should be named
 % explicitly and before other trees.
-% 
+%
 % TEXMFLOCAL precedes TEXMFDIST because locally-installed versions
 % should take precedence over distribution files -- although it is
 % generally a source of confusion to have different versions of a
 % package installed, whatever the trees, so try to avoid it.
-% 
+%
 % The odd-looking $TEXMFAUXTREES$TEXMF... construct is so that if no auxtree
 % is defined (99% common case), no extra elements will be added to
 % the search paths. tlmgr takes care to end any value with a trailing comma.
@@ -456,13 +460,16 @@ MIMELIBDIR = $TEXMFROOT/etc
 MAILCAPLIBDIR = $TEXMFROOT/etc
 
 % Default settings for the fontconfig library as used by the Windows
-% versions of xetex/xdvipdfmx.  Not used by xetex on Unixish systems.
-% ConTeXT MkIV (all platforms) also use these values.
-% 
+% versions of xetex/xdvipdfmx.  Not used by xetex itself on Unixish systems,
+% but the postaction for xetex uses all of these on all systems.
+%
 FONTCONFIG_FILE = fonts.conf
 FONTCONFIG_PATH = $TEXMFSYSVAR/fonts/conf
 % FC_CACHEDIR = $TEXMFSYSVAR/fonts/cache
 FC_CACHEDIR = $LOCALAPPDATA/SIL/ptxprint/fontcache
+XE_FONTCONFIG_PATH = $TEXMFSYSVAR/fonts/conf
+XE_FC_CACHEDIR = $LOCALAPPDATA/SIL/ptxprint/fontcache
+
 % TeX documentation and source files, for use with texdoc and kpsewhich.
 TEXDOCS = $TEXMF/doc//
 TEXSOURCES = $TEXMFDOTDIR;$TEXMF/source//
@@ -505,12 +512,12 @@ TTF2TFMINPUTS = $TEXMFDOTDIR;$TEXMF/ttf2pk//
 DVIPDFMXINPUTS = $TEXMF/dvipdfmx
 
 % Lua needs to look in TEXINPUTS for lua scripts distributed with packages.
-% 
+%
 % But we can't simply use $TEXINPUTS, since then if TEXINPUTS is set in
 % the environment with a colon, say, TEXINPUTS=/some/dir:, the intended
 % default expansion of TEXINPUTS will not happen and .lua files under
 % the /tex/ tree will not be found.
-% 
+%
 % So, duplicate the TEXINPUTS.*lualatex values as LUAINPUTS.*lualatex.
 % The default LUAINPUTS suffices for luatex and dviluatex.
 %
@@ -548,14 +555,14 @@ RUBYINPUTS   = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/ruby//
 % paradoxical), but the compile-time default in paths.h is built from it.
 % The SELFAUTO* variables are set automatically from the location of
 % argv[0], in kpse_set_program_name.
-% 
+%
 % This main texmf.cnf file is installed, for a release YYYY, in a
 % directory such as /usr/local/texlive/YYYY/texmf-dist/web2c/texmf.cnf.
 % Since this file is subject to future updates, the TeX Live installer
 % or human administrator may also create a file
 % /usr/local/texlive/YYYY/texmf.cnf; any settings in this latter file
 % will take precedence over the distributed one.
-% 
+%
 % For security reasons, it is best not to include . in this path.
 %
 % The idea behind this lengthy definition: for each of
@@ -564,13 +571,13 @@ RUBYINPUTS   = $TEXMFDOTDIR;$TEXMF/scripts/{$progname,$engine,}/ruby//
 % then the subdirectories ./texmf-local, texmf-dist, ./texmf.
 % At any given installation, most of these directories will not exist,
 % but they all turn out to be useful somewhere.
-% 
+%
 % Special addition -- we want to include one more directory: the
 % great-grandparent's texmf-local, because that is how TL is installed
 % by default.  That is, given a binary
 % /usr/local/texlive/YYYY/bin/PLATFORM/kpsewhich, it should find
 % /usr/local/texlive/texmf-local/web2c/texmf.cnf.  I.e., not under YYYY.
-% 
+%
 % As a result, we cannot use actual brace expansion in the definition,
 % since we don't want to scatter ../'s throughout the value.  Hence we
 % explicitly list every directory.  Arguably more understandable anyway.
@@ -640,25 +647,33 @@ try_std_extension_first = t
 shell_escape = p
 
 % No spaces in this command list.
-% 
+%
 % The programs listed here are as safe as any we know: they either do
 % not write any output files, respect openout_any, or have hard-coded
-% restrictions similar to or higher than openout_any=p.  They also have
-% no features to invoke arbitrary other programs, and no known
-% exploitable bugs.  All to the best of our knowledge.  They also have
-% practical use for being called from TeX.
-% 
+% restrictions similar to or higher than openout_any=p.  The output file
+% location is determined according to
+% https://tug.org/texinfohtml/web2c.html#Output-file-location.
+%
+% They also have no features to invoke arbitrary other programs, and no
+% known exploitable bugs, to the best of our knowledge.
+%
+% Finally, they also have practical use for being called from TeX.
+%
 shell_escape_commands = \
 bibtex,bibtex8,\
 extractbb,\
 gregorio,\
 kpsewhich,\
+l3sys-query,\
+latexminted,\
 makeindex,\
+memoize-extract.pl,\
+memoize-extract.py,\
 repstopdf,\
 r-mpost,\
 texosquery-jre8,\
 
-% we'd like to allow:
+% other programs considered:
 % dvips - but external commands can be executed, need at least -R1.
 % epspdf, ps2pdf, pstopdf - need to respect openout_any,
 %   and gs -dSAFER must be used and check for shell injection with filenames.
@@ -679,18 +694,45 @@ shell_escape.initex = f
 TEXMF_RESTRICTED_SCRIPTS = \
   {!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$progname,$engine,}//
 
-% Do we allow TeX \input or \openin (openin_any), or \openout
-% (openout_any) on filenames starting with `.' (e.g., .rhosts) or
-% outside the current tree (e.g., /etc/passwd)?
+% The openout_any parameter says whether to allow TeX \openout, etc. on
+% filenames starting with `.' (e.g., .rhosts) or outside the current
+% tree (e.g., /etc/passwd). Not likely,
 % a (any)        : any file can be opened.
 % r (restricted) : disallow opening dot files
 % p (paranoid)   : as `r' and disallow going to parent directories, and
 %                  restrict absolute paths to be under $TEXMFOUTPUT.
-openin_any = a
 openout_any = p
 
-% Write .log/.dvi/.aux/etc. files here, if the current directory is unwritable.
+% On the other hand, as of 2026, openin_any no longer has any effect;
+% the underlying kpse_in_name_ok and related functions always return
+% true. It used to be analogous to openout_any, but in practice, normal
+% (La)TeXruns would fail with anything but `a', e.g., luaotfload uses
+% absolute paths. Meanwhile, there were obscure ways to inject arbitrary
+% input from the supposedly-forbidden areas, so it gave a false sense of
+% security. Since it apparently has no practical use, seems best to
+% simply declare it a no-op.
+%
+% We leave the openin_any variable in place despite being a no-op, so that any
+% workflows that might depend on retrieving it, e.g., with kpsewhich,
+% don't gratuitously fail, but it has no effect.  Similarly, the
+% underlying functions remain in the library to avoid linking failures.
+% Thread: https://tug.org/pipermail/tex-live/2025-December/051965.html
+openin_any = a
+
+% Write .log/.dvi/.aux/etc. files here, if they can't be written in the
+% current directory.
+%
+% Best to use this only when a particular job requires it, not set
+% globally in a configuration file or the environment. We recommend
+% using it transiently for particular jobs, not making a permanent setting.
 %TEXMFOUTPUT = /tmp
+
+% As of TeX Live 2024, a related environment variable is
+% TEXMF_OUTPUT_DIRECTORY. It overrides the current directory for all
+% output files in TeX and the other engines. It cannot be set in a
+% configuration file. And it's even more important to use it only
+% temporarily, when required, to avoid massive confusion about where the
+% output files are ending up.
 
 % If a dynamic file creation fails, log the command to this file, in
 % either the current directory or TEXMFOUTPUT.  Set to the
@@ -724,21 +766,21 @@ log_openout.initex = f
 file_line_error_style = f
 
 % Enable the mktex... scripts by default?  These must be set to 0 or 1.
-% Particular programs can and do override these settings, for example
-% dvips's -M option.  Your first chance to specify whether the scripts
-% are invoked by default is at configure time.
+% The values shown here are the compile-time defaults for original TeX Live;
+% they can be overridden at compile time with configure options,
+% or at runtime with environment variables or program options.
 %
 % These values are ignored if the script names are changed; e.g., if you
 % set DVIPSMAKEPK to `foo', what counts is the value of the environment
 % variable/config value `FOO', not the `MKTEXPK' value.
 %
 %MKTEXTEX = 0
-%MKTEXPK = 0
-%MKTEXMF = 0
-%MKTEXTFM = 0
-%MKTEXFMT = 0
-%MKOCP = 0
-%MKOFM = 0
+%MKTEXPK = 1
+%MKTEXMF = 1
+%MKTEXTFM = 1
+%MKTEXFMT = 1
+%MKOCP = 1
+%MKOFM = 1
 
 % Used by makempx to run TeX.  We use "etex" because MetaPost is
 % expecting DVI, and not "tex" because we want first line parsing.
@@ -762,10 +804,20 @@ BIBTEX_CSFILE = 88591lat.csf
 
 % This variable is specific to Unix, to fall back to case-insensitive
 % search in non-system directories if there is no exact match. It is
-% enabled by default in texmf.cnf, but not enabled by default at
+% enabled by default here in texmf.cnf, but not enabled by default at
 % compile-time.
+% See https://tug.org/texinfohtml/kpathsea.html#Casefolding-search.
 %
 texmf_casefold_search = 1
+
+% This variable is specific to Unix, to enable or disable the check
+% for st_nlink=2 to determine if a directory is a leaf.  The check is
+% disabled by default, since it's relevant only for non-!!
+% trees, such as TEXMFHOME and TEXMF[SYS]VAR, which are almost always tiny,
+% and new filesystems tend to break the longstanding semantics.
+% See https://tug.org/texinfohtml/kpathsea.html#Subdirectory-expansion.
+%
+texmf_nlink_for_leaf = 0 % set to 1 to enable st_nlink check in non-!! trees
 
 % This variable is specific to Windows.  It must be set to 0 or 1.  The
 % default is 0.  Setting it to 1 tells the Windows script wrappers to
@@ -844,7 +896,7 @@ hyph_size = 8191        % prime number of hyphenation exceptions, >610, <65535
                         % http://primes.utm.edu/curios/page.php/8191.html
                         % dynamically increased as necessary, so not important.
 nest_size = 1000        % simultaneous semantic levels (e.g., groups)
-max_in_open = 15        % simultaneous input files and error insertions, 
+max_in_open = 15        % simultaneous input files and error insertions,
                         % also applies to MetaPost
 param_size = 20000      % simultaneous macro parameters, also applies to MP
 save_size  = 200000     % for saving values outside current group
@@ -912,8 +964,9 @@ guess_input_kanji_encoding.mendex = 1
 % This variable is used on Windows only, and affects 4 TeX engines:
 % uptex, euptex, pdftex, xetex, and 2 drivers: dvips, [x]dvipdfmx.
 % Several applications also are affected by the variable:
-% dvi2tty.exe, disdvi.exe, dvibook.exe, dviconcat.exe, dviselect.exe,
-% dvitodvi.exe, and dvidvi.exe.
+% bibtex8.exe, bibtexu.exe, dvi2tty.exe, disdvi.exe, dvibook.exe,
+% dviconcat.exe, dviselect.exe, dvitodvi.exe, dvidvi.exe, dvispc.exe,
+% and chkdvifont.exe.
 % Only values utf8 or utf-8 are meaningful. Other values are simply
 % ignored. If file names in sources and DVI or XDV files are ASCII
 % only, the value of command_line_encoding is irrelevant.
@@ -927,3 +980,11 @@ guess_input_kanji_encoding.mendex = 1
 % command_line_encoding = none
 % in a texmf.cnf prefered, for example $TEXMFLOCAL/web2c/texmf.cnf.
 command_line_encoding = utf-8
+
+% As of TeX Live 2024, the engine for ptex, eptex, platex, and
+% platex-dev is euptex. Therefore the function should be switched off
+% for ptex, eptex, platex and platex-dev.
+command_line_encoding.ptex = none
+command_line_encoding.eptex = none
+command_line_encoding.platex = none
+command_line_encoding.platex-dev = none

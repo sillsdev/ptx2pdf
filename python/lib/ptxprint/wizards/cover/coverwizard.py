@@ -14,49 +14,13 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
 import cairo
 
-from ptxprint.utils import coltoonemax, coltotex
+from ptxprint.utils import coltoonemax, coltotex, gsmToUm, umToGsm
 from PIL import Image
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # State
 # ─────────────────────────────────────────────────────────────────────────────
-
-# Standard paper weight → thickness lookup (µm per sheet, approximate)
-# Based on typical uncoated offset paper densities.
-GSM_TO_UM = {
-    60: 82, 70: 95, 75: 100, 80: 106, 90: 118, 100: 130,
-    110: 143, 120: 156, 130: 169, 140: 182, 150: 195,
-    160: 208, 170: 221, 180: 234, 200: 260, 250: 325, 300: 390,
-}
-
-def gsmToUm(gsm: float) -> float:
-    """Approximate paper thickness in µm from gsm."""
-    keys = sorted(GSM_TO_UM.keys())
-    if gsm <= keys[0]:  return GSM_TO_UM[keys[0]]
-    if gsm >= keys[-1]: return GSM_TO_UM[keys[-1]]
-    # linear interpolation between nearest two entries
-    for i in range(len(keys)-1):
-        if keys[i] <= gsm <= keys[i+1]:
-            lo, hi = keys[i], keys[i+1]
-            t = (gsm - lo) / (hi - lo)
-            return GSM_TO_UM[lo] + t * (GSM_TO_UM[hi] - GSM_TO_UM[lo])
-    return 100.0
-
-def umToGsm(um: float) -> float:
-    """Reverse: derive gsm from thickness µm."""
-    # Invert the table
-    pairs = sorted((v, k) for k, v in GSM_TO_UM.items())
-    if um <= pairs[0][0]:  return pairs[0][1]
-    if um >= pairs[-1][0]: return pairs[-1][1]
-    for i in range(len(pairs)-1):
-        if pairs[i][0] <= um <= pairs[i+1][0]:
-            lo_um, lo_g = pairs[i]
-            hi_um, hi_g = pairs[i+1]
-            t = (um - lo_um) / (hi_um - lo_um)
-            return lo_g + t * (hi_g - lo_g)
-    return 80.0
-
 
 class WorkingCoverState:
     modelmap = {

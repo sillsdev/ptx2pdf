@@ -293,7 +293,7 @@ class XDViPositionedReader(XDViReader):
 
     def pre(self, opcode, parm, data):
         (i, n, d, m, x) = super().pre(opcode, parm, data)
-        self.dviratio = m * n / d / 1000. / 10000 / 25.4 * 72      # map to pt not .0001mm
+        self.dviratio = m * n / d / 1000. / 10000 / 25.4 * 72.27      # map to pt not .0001mm
         return (i, n, d, m, x)
 
     def parmop(self, opcode, parm, data):
@@ -330,7 +330,7 @@ class XDViPositionedReader(XDViReader):
 
     def bop(self, opcode, parm, data):
         for a in "hvwxyz":
-            setattr(self, a, 72 if a in "hv" else 0.)
+            setattr(self, a, 72.27 if a in "hv" else 0.)
         return (opcode, parm, data)
 
     def xfontdef(self, opcode, parm, data):

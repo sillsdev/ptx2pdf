@@ -51,6 +51,7 @@ class AdjList:
         self.changed = False
         self.adjfile = fname
         self.trigfile = tname
+        logger.log(15, f"{self.adjfile} ({self.centre}, +{self.highdiff}, -{self.lowdiff})")
         self.ftime = None
         self.db = []
 
@@ -81,6 +82,7 @@ class AdjList:
         allvals = [[*r] for r in self.liststore]
         alldb = self.db[:]
         self.liststore.clear()
+        self.db = []
         for a in sorted(range(len(allvals)), key=lambda x:self.calckey(allvals[x])):
             self.liststore.append(allvals[a])
             self.db.append(alldb[a])
@@ -349,7 +351,7 @@ class AdjList:
         probes = {}
         found = set()
         ckeyre = re.compile(r"([pm])(\d)")
-        cvalre = re.compile(r"(\d+)([+-]\d+)?")
+        cvalre = re.compile(r"(\d+)([+-]\d+)?(?:@(-?[\d.]+))?")
         for i, r in enumerate(self.liststore):
             rk = f"{r[0]}{r[1].replace(':', '.')}[{r[2]}]"
             for k, v in self.db[i].items():
@@ -359,7 +361,7 @@ class AdjList:
                 if n is None: continue
                 e = int(n.group(1)) / 100
                 s = int(n.group(2)) if n.group(2) else 0
-                shapes[(rk, d)] = (e, s, None)
+                shapes[(rk, d)] = (e, s, float(n.group(3)) if n.group(3) else None)
                 probes.setdefault(rk, {})[(e, s)] = d
         return shapes, probes
 

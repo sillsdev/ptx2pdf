@@ -1,0 +1,357 @@
+<DBLMetadata version="2.2.1" id="3cb7495b5419a9c7" revision="5">
+  <identification>
+    <systemId type="paratext">
+      <id>3cb7495b5419a9c7e69bc40c05c9e07aca375ac7</id>
+      <csetId>74e70ceefd309e15bba745cc71a9cd53cf995595</csetId>
+      <name>TDB1</name>
+      <fullName>Tai Dam NT+</fullName>
+    </systemId>
+    <systemId type="ptreg">
+      <id>4uDSCZm2uCc4KrCxt</id>
+    </systemId>
+    <canonSpec type="OT, NT">
+      <component>westernOT</component>
+      <component>westernNT</component>
+    </canonSpec>
+    <name>Tai Dam NT+</name>
+    <nameLocal>Tai Dam</nameLocal>
+    <abbreviation>blt</abbreviation>
+    <abbreviationLocal>bltTDM</abbreviationLocal>
+    <description>Tai Dam: Tai Dam (New Testament+)</description>
+    <descriptionLocal>Tai Dam</descriptionLocal>
+    <scope>New Testament+</scope>
+    <bundleProducer>nathanael/0.61.1</bundleProducer>
+  </identification>
+  <relationships/>
+  <agencies>
+    <rightsHolder>
+      <abbr>WBT</abbr>
+      <url>http://www.wycliffe.org</url>
+      <nameLocal>Wycliffe Bible Translators, Inc.</nameLocal>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </rightsHolder>
+    <rightsAdmin>
+      <url>http://www.wycliffe.org</url>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </rightsAdmin>
+    <contributor>
+      <content>true</content>
+      <publication>true</publication>
+      <management>true</management>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </contributor>
+  </agencies>
+  <language>
+    <iso>blt</iso>
+    <name>Tai Dam</name>
+    <nameLocal>Thai Den</nameLocal>
+    <script>Latin</script>
+    <scriptCode>Latn</scriptCode>
+    <scriptDirection>LTR</scriptDirection>
+    <ldml>blt</ldml>
+    <numerals>Arabic</numerals>
+  </language>
+  <countries>
+    <country>
+      <iso>VN</iso>
+      <name>Viet Nam</name>
+    </country>
+    <country>
+      <iso>LA</iso>
+      <name>Lao People's Democratic Republic</name>
+    </country>
+  </countries>
+  <type>
+    <medium>text</medium>
+    <hasCharacters>true</hasCharacters>
+    <isTranslation>true</isTranslation>
+    <isExpression>true</isExpression>
+    <projectType>Standard</projectType>
+    <translationType>First</translationType>
+    <audience>Common</audience>
+    <isConfidential>true</isConfidential>
+  </type>
+  <format>
+    <usxVersion>3.0</usxVersion>
+    <versedParagraphs>false</versedParagraphs>
+  </format>
+  <manifest>
+    <resource checksum="175dc878c89deebbb13791f26d91dff9" mimeType="application/xml" size="156562" uri="release/USX_1/1CO.usx"/>
+    <resource checksum="2ad4488a6d15d560fed56a5292d93bce" mimeType="application/xml" size="40229" uri="release/USX_1/1JN.usx"/>
+    <resource checksum="64e10cd66db84cf4c1fdc681bac989e7" mimeType="application/xml" size="44383" uri="release/USX_1/1PE.usx"/>
+    <resource checksum="24f6b62d6bf0cab8e5fad957d958e5df" mimeType="application/xml" size="33861" uri="release/USX_1/1TH.usx"/>
+    <resource checksum="d15c141ab8f3cfc4cbd92dfee574b199" mimeType="application/xml" size="39769" uri="release/USX_1/1TI.usx"/>
+    <resource checksum="2eb9b9c6552637bf477e7f1d804a7df8" mimeType="application/xml" size="96457" uri="release/USX_1/2CO.usx"/>
+    <resource checksum="ceeb50c53116d7d75cdeca0af333e167" mimeType="application/xml" size="5271" uri="release/USX_1/2JN.usx"/>
+    <resource checksum="f479ede579d525b2b4a66e2117c15a87" mimeType="application/xml" size="26866" uri="release/USX_1/2PE.usx"/>
+    <resource checksum="4097d57e664c5c0dc1a6ca1cc88eeee9" mimeType="application/xml" size="18831" uri="release/USX_1/2TH.usx"/>
+    <resource checksum="5b8534a323a469576caeeba28142508d" mimeType="application/xml" size="31220" uri="release/USX_1/2TI.usx"/>
+    <resource checksum="5edca44c498d9a198a0f2e74a7aa22b1" mimeType="application/xml" size="5886" uri="release/USX_1/3JN.usx"/>
+    <resource checksum="ccacf7f3b3f1b79add6d7734cee3dbeb" mimeType="application/xml" size="386468" uri="release/USX_1/ACT.usx"/>
+    <resource checksum="ad86fd09bff81aed0f16204ed8da2231" mimeType="application/xml" size="36749" uri="release/USX_1/COL.usx"/>
+    <resource checksum="ec59a3fc404f94d6316d9e7e7bd85772" mimeType="application/xml" size="53876" uri="release/USX_1/EPH.usx"/>
+    <resource checksum="5a3585dd1327edad82822ac517441b93" mimeType="application/xml" size="206684" uri="release/USX_1/EXO.usx"/>
+    <resource checksum="7f6fc28d26b6b80049a1cae0508a09ed" mimeType="application/xml" size="54862" uri="release/USX_1/GAL.usx"/>
+    <resource checksum="13764bed5293bf302fec2350736b8a10" mimeType="application/xml" size="114363" uri="release/USX_1/HEB.usx"/>
+    <resource checksum="0e312f783a63cfef41a8f8f94511f1fc" mimeType="application/xml" size="38571" uri="release/USX_1/JAS.usx"/>
+    <resource checksum="af0bb795e91dff55793e5b0cb50baffd" mimeType="application/xml" size="298576" uri="release/USX_1/JHN.usx"/>
+    <resource checksum="616d3c0ef7b322bdbf84aa5d0a176345" mimeType="application/xml" size="11487" uri="release/USX_1/JUD.usx"/>
+    <resource checksum="8ac8b47ef8250e9f74c076ee50cab462" mimeType="application/xml" size="398678" uri="release/USX_1/LUK.usx"/>
+    <resource checksum="83442046b217f89c1ccdfe256c98df27" mimeType="application/xml" size="385221" uri="release/USX_1/MAT.usx"/>
+    <resource checksum="e50aabc6c238dcae9ef5c51e377dc861" mimeType="application/xml" size="233738" uri="release/USX_1/MRK.usx"/>
+    <resource checksum="6bc0913bcbca3bb280cd6e2a8adba937" mimeType="application/xml" size="8604" uri="release/USX_1/PHM.usx"/>
+    <resource checksum="750e709475ef4d771da001e809726693" mimeType="application/xml" size="38403" uri="release/USX_1/PHP.usx"/>
+    <resource checksum="1abf887b2b36e4c2e80b24695f1a1c31" mimeType="application/xml" size="167440" uri="release/USX_1/REV.usx"/>
+    <resource checksum="8f3d2f1892028068f8f49e26bb7a1502" mimeType="application/xml" size="165818" uri="release/USX_1/ROM.usx"/>
+    <resource checksum="eff37cb255e32f33dced99487b31623f" mimeType="application/xml" size="36122" uri="release/USX_1/RUT.usx"/>
+    <resource checksum="5b9854a8b5d6b1b711f3a11e400e1f0f" mimeType="application/xml" size="18188" uri="release/USX_1/TIT.usx"/>
+    <resource checksum="c17755b07b52dd904f73ddfc5b028d1a" mimeType="application/xml" size="4961" uri="release/blt.ldml"/>
+    <resource checksum="f31135cbe7dc1234927ba2f65fcc6a0a" mimeType="application/xml" size="92698" uri="release/styles.xml"/>
+    <resource checksum="ad829a7d2ac2acbed7a573364ce818df" mimeType="text/plain" size="15359" uri="release/versification.vrs"/>
+    <resource checksum="cdda6ebb516e29f9e8c1a16d9256e0ae" mimeType="application/zip" size="500684" uri="source/source.zip"/>
+  </manifest>
+  <names>
+    <name id="book-exo">
+      <short>ꞌPai sia ꞌmướng</short>
+      <long>ꞌPhắn ꞌcốn ꞌI‑ꞌsa‑ên ꞌpai sia phén đin ꞌmướng Ê‑díp</long>
+    </name>
+    <name id="book-rut">
+      <short>ꞌLụt</short>
+      <long>ꞌQuám ꞌTố ꞌNáng ꞌLụt</long>
+    </name>
+    <name id="book-mat">
+      <short>ꞌMặt‑ꞌthai</short>
+      <long>ꞌMặt‑ꞌthai</long>
+    </name>
+    <name id="book-mrk">
+      <short>ꞌMa‑ꞌla‑cô</short>
+      <long>ꞌMa‑ꞌla‑cô</long>
+    </name>
+    <name id="book-luk">
+      <short>ꞌLu‑ca</short>
+      <long>ꞌLu‑ca</long>
+    </name>
+    <name id="book-jhn">
+      <short>Dô‑ꞌhăn</short>
+      <long>Dô‑ꞌhăn</long>
+    </name>
+    <name id="book-act">
+      <short>Nả ꞌviạk ꞌpứng ꞌlam ꞌchạư</short>
+      <long>Nả ꞌviạk ꞌpứng ꞌlam ꞌchạư</long>
+    </name>
+    <name id="book-rom">
+      <short>Lôm</short>
+      <long>Lôm</long>
+    </name>
+    <name id="book-1co">
+      <short>1 Cô‑ꞌlin‑ꞌthô</short>
+      <long>1 Cô‑ꞌlin‑ꞌthô</long>
+    </name>
+    <name id="book-2co">
+      <short>2 Cô‑ꞌlin‑ꞌthô</short>
+      <long>2 Cô‑ꞌlin‑ꞌthô</long>
+    </name>
+    <name id="book-gal">
+      <short>ꞌKha‑ꞌla‑tia</short>
+      <long>ꞌKha‑ꞌla‑tia</long>
+    </name>
+    <name id="book-eph">
+      <short>Ê‑ꞌphê‑ꞌsô</short>
+      <long>Ê‑ꞌphê‑ꞌsô</long>
+    </name>
+    <name id="book-php">
+      <short>ꞌPhi‑ꞌlịp‑poi</short>
+      <long>ꞌPhi‑ꞌlịp‑poi</long>
+    </name>
+    <name id="book-col">
+      <short>Cô‑ꞌlô‑ꞌsai</short>
+      <long>Cô‑ꞌlô‑ꞌsai</long>
+    </name>
+    <name id="book-1th">
+      <short>1 ꞌThê‑ꞌsa‑ꞌlôn</short>
+      <long>1 ꞌThê‑ꞌsa‑ꞌlôn</long>
+    </name>
+    <name id="book-2th">
+      <short>2 ꞌThê‑ꞌsa‑ꞌlôn</short>
+      <long>2 ꞌThê‑ꞌsa‑ꞌlôn</long>
+    </name>
+    <name id="book-1ti">
+      <short>1 Ti‑ꞌmô‑ꞌthiêu</short>
+      <long>1 Ti‑ꞌmô‑ꞌthiêu</long>
+    </name>
+    <name id="book-2ti">
+      <short>2 Ti‑ꞌmô‑ꞌthiêu</short>
+      <long>2 Ti‑ꞌmô‑ꞌthiêu</long>
+    </name>
+    <name id="book-tit">
+      <short>Ti‑tô</short>
+      <long>Ti‑tô</long>
+    </name>
+    <name id="book-phm">
+      <short>ꞌPhi‑ꞌlê‑ꞌmôn</short>
+      <long>ꞌPhi‑ꞌlê‑ꞌmôn</long>
+    </name>
+    <name id="book-heb">
+      <short>ꞌHệp‑ꞌlơ</short>
+      <long>ꞌHệp‑ꞌlơ</long>
+    </name>
+    <name id="book-jas">
+      <short>Da‑cô‑bô</short>
+      <long>Da‑cô‑bô</long>
+    </name>
+    <name id="book-1pe">
+      <short>1 Pê‑tô</short>
+      <long>1 Pê‑tô</long>
+    </name>
+    <name id="book-2pe">
+      <short>2 Pê‑tô</short>
+      <long>2 Pê‑tô</long>
+    </name>
+    <name id="book-1jn">
+      <short>1 Dô‑ꞌhăn</short>
+      <long>1 Dô‑ꞌhăn</long>
+    </name>
+    <name id="book-2jn">
+      <short>2 Dô‑ꞌhăn</short>
+      <long>2 Dô‑ꞌhăn</long>
+    </name>
+    <name id="book-3jn">
+      <short>3 Dô‑ꞌhăn</short>
+      <long>3 Dô‑ꞌhăn</long>
+    </name>
+    <name id="book-jud">
+      <short>Du‑đe</short>
+      <long>Du‑đe</long>
+    </name>
+    <name id="book-rev">
+      <short>Nả ꞌviạk ꞌchí ꞌchọ pên ók</short>
+      <long>Nả ꞌviạk ꞌchí ꞌchọ pên ók</long>
+    </name>
+  </names>
+  <source>
+    <canonicalContent>
+      <book code="1CO"/>
+      <book code="1JN"/>
+      <book code="1PE"/>
+      <book code="1TH"/>
+      <book code="1TI"/>
+      <book code="2CO"/>
+      <book code="2JN"/>
+      <book code="2PE"/>
+      <book code="2TH"/>
+      <book code="2TI"/>
+      <book code="3JN"/>
+      <book code="ACT"/>
+      <book code="COL"/>
+      <book code="EPH"/>
+      <book code="EXO"/>
+      <book code="GAL"/>
+      <book code="HEB"/>
+      <book code="JAS"/>
+      <book code="JHN"/>
+      <book code="JUD"/>
+      <book code="LUK"/>
+      <book code="MAT"/>
+      <book code="MRK"/>
+      <book code="PHM"/>
+      <book code="PHP"/>
+      <book code="REV"/>
+      <book code="ROM"/>
+      <book code="RUT"/>
+      <book code="TIT"/>
+    </canonicalContent>
+    <structure>
+      <content src="source/source.zip" role="sourceZip"/>
+    </structure>
+  </source>
+  <publications>
+    <publication id="p1" default="true">
+      <name>Tai Dam</name>
+      <nameLocal>Tai Dam</nameLocal>
+      <description>Protestant</description>
+      <descriptionLocal>Protestant</descriptionLocal>
+      <abbreviation>blt</abbreviation>
+      <abbreviationLocal>bltTDM</abbreviationLocal>
+      <canonicalContent>
+        <book code="1CO"/>
+        <book code="1JN"/>
+        <book code="1PE"/>
+        <book code="1TH"/>
+        <book code="1TI"/>
+        <book code="2CO"/>
+        <book code="2JN"/>
+        <book code="2PE"/>
+        <book code="2TH"/>
+        <book code="2TI"/>
+        <book code="3JN"/>
+        <book code="ACT"/>
+        <book code="COL"/>
+        <book code="EPH"/>
+        <book code="EXO"/>
+        <book code="GAL"/>
+        <book code="HEB"/>
+        <book code="JAS"/>
+        <book code="JHN"/>
+        <book code="JUD"/>
+        <book code="LUK"/>
+        <book code="MAT"/>
+        <book code="MRK"/>
+        <book code="PHM"/>
+        <book code="PHP"/>
+        <book code="REV"/>
+        <book code="ROM"/>
+        <book code="RUT"/>
+        <book code="TIT"/>
+      </canonicalContent>
+      <structure>
+        <content name="book-exo" src="release/USX_1/EXO.usx" role="EXO"/>
+        <content name="book-rut" src="release/USX_1/RUT.usx" role="RUT"/>
+        <content name="book-mat" src="release/USX_1/MAT.usx" role="MAT"/>
+        <content name="book-mrk" src="release/USX_1/MRK.usx" role="MRK"/>
+        <content name="book-luk" src="release/USX_1/LUK.usx" role="LUK"/>
+        <content name="book-jhn" src="release/USX_1/JHN.usx" role="JHN"/>
+        <content name="book-act" src="release/USX_1/ACT.usx" role="ACT"/>
+        <content name="book-rom" src="release/USX_1/ROM.usx" role="ROM"/>
+        <content name="book-1co" src="release/USX_1/1CO.usx" role="1CO"/>
+        <content name="book-2co" src="release/USX_1/2CO.usx" role="2CO"/>
+        <content name="book-gal" src="release/USX_1/GAL.usx" role="GAL"/>
+        <content name="book-eph" src="release/USX_1/EPH.usx" role="EPH"/>
+        <content name="book-php" src="release/USX_1/PHP.usx" role="PHP"/>
+        <content name="book-col" src="release/USX_1/COL.usx" role="COL"/>
+        <content name="book-1th" src="release/USX_1/1TH.usx" role="1TH"/>
+        <content name="book-2th" src="release/USX_1/2TH.usx" role="2TH"/>
+        <content name="book-1ti" src="release/USX_1/1TI.usx" role="1TI"/>
+        <content name="book-2ti" src="release/USX_1/2TI.usx" role="2TI"/>
+        <content name="book-tit" src="release/USX_1/TIT.usx" role="TIT"/>
+        <content name="book-phm" src="release/USX_1/PHM.usx" role="PHM"/>
+        <content name="book-heb" src="release/USX_1/HEB.usx" role="HEB"/>
+        <content name="book-jas" src="release/USX_1/JAS.usx" role="JAS"/>
+        <content name="book-1pe" src="release/USX_1/1PE.usx" role="1PE"/>
+        <content name="book-2pe" src="release/USX_1/2PE.usx" role="2PE"/>
+        <content name="book-1jn" src="release/USX_1/1JN.usx" role="1JN"/>
+        <content name="book-2jn" src="release/USX_1/2JN.usx" role="2JN"/>
+        <content name="book-3jn" src="release/USX_1/3JN.usx" role="3JN"/>
+        <content name="book-jud" src="release/USX_1/JUD.usx" role="JUD"/>
+        <content name="book-rev" src="release/USX_1/REV.usx" role="REV"/>
+      </structure>
+    </publication>
+  </publications>
+  <archiveStatus>
+    <dateArchived>2021-02-08T15:45:27.303098</dateArchived>
+    <dateUpdated>2022-08-17T17:49:04.270282</dateUpdated>
+    <bundleCreatorName>Lois Gourley</bundleCreatorName>
+    <archivistName>Lois Gourley</archivistName>
+    <comments>Confidential</comments>
+  </archiveStatus>
+  <copyright>
+    <fullStatement>
+      <statementContent type="xhtml">
+        <p>© (Active), Wycliffe Bible Translators, Inc. All rights reserved.</p>
+      </statementContent>
+    </fullStatement>
+  </copyright>
+  <promotion/>
+</DBLMetadata>

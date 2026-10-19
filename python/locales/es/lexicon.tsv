@@ -1,0 +1,252 @@
+# Auto-built by buildLexicon.py from the existing es translations. Do not hand-edit:
+# put overrides in glossary.tsv (which wins). English<TAB>translation<TAB>note
+settings	Configuración	also: Ajustes; noun
+page	página	noun
+text	texto	noun
+show	Mostrar	verb
+pdf	PDF	left in English
+image	imagen	also: ilustración; noun
+select	Seleccionar	also: Elegir; verb
+ptxprint	PTXprint	product name, unchanged
+list	lista	noun
+dialog	diálogo	noun
+cover	portada	also: cubierta; noun; back cover: contraportada
+line	línea	noun
+books	libros	noun, plural
+space	espacio	noun
+picture	ilustración	also: imagen; noun; also cuadro
+project	proyecto	noun
+color	color	noun
+rule	regla	also: línea de regla; noun, typographic rule
+position	posición	noun
+verse	versículo	noun
+border	borde	noun
+font	fuente	also: tipo de letra; noun
+notes	notas	noun, plural
+include	incluir	also: usar; verb
+sidebar	barra lateral	noun
+book	Libro	
+layout	Diseño	
+diglot	Bilingüe	also: Diglot; Proyecto bilingüe
+generate	Generar	verb
+set	Establecer	also: Definir; Seleccionar; Conjunto (noun); verb; noun: Conjunto
+file	Archivo	noun
+borders	Bordes	
+edit	Editar	verb
+configuration	Configuración	
+enable	Activar	also: Habilitar; verb
+background	Fondo	
+chapter	Capítulo	
+column	Columna	
+note	Nota	footnote/study note sense
+pictures	Ilustraciones	also: Imágenes
+import	Importar	verb
+width	Ancho	
+cross-references	Referencias cruzadas	
+words	Palabras	
+strong's	Strong's	also: Strong; kept as proper name
+matter	Páginas	also: Material; Anverso/Reverso; Front Matter = Páginas iniciales
+size	Tamaño	
+add	Añadir	also: Agregar; verb
+folder	Carpeta	
+front	Iniciales	also: Anverso; Portada; Front Matter = Páginas iniciales; cover = portada
+end	fin	also: final; noun; 'Final de' also used
+vertical	vertical	adjective
+thickness	grosor	noun
+index	índice	noun
+numbers	números	plural noun
+styles	estilos	plural noun
+spacing	espaciado	also: espacio, distancia; noun
+style	estilo	noun
+margin	margen	noun
+create	crear	verb
+footnote	nota al pie	also: nota a pie de página, nota de pie, pie de página; noun
+adjust	ajustar	also: ajuste; verb; noun: ajuste
+header	encabezado	also: cabecera; noun
+new	nuevo	also: nueva; adjective; agrees in gender
+number	número	also: numerar; noun; verb: to number
+grid	cuadrícula	noun
+error	error	noun
+scale	escala	also: escalar; noun; verb: to scale
+start	inicio	also: empezar, comenzar; noun; verb: empezar
+front matter	páginas iniciales	also: anverso
+top	superior	also: arriba; arriba used in compounds
+between	entre	preposition
+horizontal	horizontal	adjective
+spine	lomo	book spine
+delete	eliminar	also: borrar; verb
+tabs	Pestañas	noun
+pages	páginas	noun, plural
+lines	líneas	noun, plural
+indent	sangría	also: indentación; noun
+piclist	PicList	left in English
+paper	papel	
+left	izquierda	also: izquierdo; direction
+name	nombre	noun
+footnotes	notas al pie	also: notas a pie de página, notas a pie; noun, plural
+config	configuración	noun
+reference	referencia	noun
+checklist	lista de control	also: lista, lista de preguntas; noun
+paratext	Paratext	product name, left in English
+strong's index	índice de Strong	also: índice de números de Strong; noun
+existing	existente	adjective
+paragraph	párrafo	noun
+bottom	inferior	also: abajo, fondo; abajo in compounds
+footer	pie de página	noun
+missing	faltante	also: falta, que faltan; adjective; verb: faltar
+print	imprimir	also: impresión; verb
+study	estudio	noun, as in study notes
+hyphenation	división de palabras	also: separación silábica; noun
+word	palabra	noun
+shrink	reducir	also: contraer; verb
+output	salida	also: imprimir, mostrar; noun; verb: imprimir/mostrar
+generate cover	Generar portada	also: Generar cubierta; verb phrase
+cross-reference	referencia cruzada	noun
+remove	Eliminar	verb
+view	Vista	also: Ver; noun; verb: Ver
+first	primero	also: primer, primera; agrees with gender
+maximum	máximo	also: máxima, Número máximo de; adjective
+marks	Marcas	crop marks: marcas de recorte/corte
+borders dialog	Diálogo de bordes	also: Diálogo sobre los bordes
+area	área	noun
+publication	publicación	noun
+picture checklist	Lista de control de imágenes	
+right	derecha	also: derecho; direction; derecho for masculine
+factor	factor	noun
+custom	personalizado	also: personalizada; adjective
+contents	contenido	also: índice de contenidos, índice, Tabla de Contenido; table of contents: índice
+callers	llamadores	also: llamadas; noun
+thumb	pulgar	as in pestañas de pulgar
+apply	Aplicar	verb
+entry	entrada	noun
+marker	marcador	noun
+line spacing	espaciado de línea	also: espacio entre líneas, interlineado, distancia entre líneas
+references	referencias	noun, plural
+reset	Restablecer	also: Reiniciar; verb
+section	sección	noun
+outer	exterior	also: externa, afuera
+image set	conjunto de ilustraciones	also: conjunto de imágenes; noun phrase
+decorative	decorativo	adjective
+gutter	canalón	noun; binding gutter: canalón de encuadernación
+how	cómo	also: cuánto (how much), cuántos (how many); interrogative
+minimum	mínimo	adjective, agrees in gender
+script	escritura	also: script, secuencia de comandos; writing system; also computer script
+thumb tabs	pestañas de pulgar	plural noun
+bold	negrita	noun
+pdfs	PDFs	also: archivos PDF; kept in English
+mm mm	mm mm	units; no examples given
+code	código	noun
+verses	versículos	plural noun
+found	encontrado	also: se ha encontrado, se encontró; participle: not found
+tab	pestaña	noun
+inner	interior	also: interno/interna; adjective
+mirror	reflejar	verb
+table	tabla	also: índice (in table of contents); noun
+enter	introducir	verb; imperative: introduzca
+selection	selección	noun
+credit	crédito	noun
+foreground	primer plano	noun
+title	título	noun
+fill	rellenar	also: relleno; verb; noun: relleno
+anchor	anclaje	also: ancla; noun
+pdf file	archivo PDF	also: PDF; noun
+overwrite	Sobrescribir	also: Sobreescribir; verb
+compare	Comparar	verb
+center	Centro	also: central; noun; adjective in headers/footers
+below	Debajo de	also: por debajo de, Abajo de, abajo
+caption	Leyenda	also: título; noun
+download	Descargar	also: descarga; verb; noun: descarga
+verse numbers	Números de versículo	also: Números de los versículos
+link	Enlace	noun
+above	Arriba	also: por encima de, sobre
+source	Fuente	also: Procedencia; noun
+placement	Colocación	noun
+copy	Copiar	verb
+ref	Ref.	also: Referencia; abbreviation of reference
+usfm	USFM	left in English
+base	Base	also: de base; adjective/noun
+changes	Cambios	noun
+current	Actual	adjective
+copyright	Derechos de autor	also: Copyright; noun
+saved	Guardado	also: guardada; participle; agrees with gender
+locate	Localizar	verb
+length	Longitud	noun
+underline	Subrayar	also: Subrayado; verb; noun: subrayado
+default	Predeterminado	also: Por defecto; adjective
+padding	Relleno	also: Acolchado; noun
+standard	Estándar	adjective
+selection dialog	Diálogo de selección	noun phrase
+font selection	selección de fuentes	also: selección de fuente
+guides	guías	plural noun
+caller	llamador	also: llamada; footnote caller symbol
+study note	nota de estudio	
+secondary	secundario	also: secundaria; adjective, as in secondary project
+more	más	
+version	versión	noun
+previous	anterior	
+column layout	diseño de columnas	e.g. diseño de dos columnas
+one	uno	also: una; numeral; gender agrees with noun
+save	guardar	verb
+type	tipo	noun; also verb: escribir
+spread	pliego	noun, facing pages
+horizontal position	posición horizontal	
+transparency	transparencia	
+filter	filtro	also: filtrar; noun; verb: filtrar
+dialog show	Diálogo de	no examples; guessed from pattern
+crop	recortar	also: corte; verb; marks: marcas de recorte/corte
+foreground image	imagen en primer plano	also: imagen de primer plano
+background image	imagen de fondo	
+questions	preguntas	plural noun
+compare pdfs	Comparar PDFs	also: comparar archivos PDF; verb phrase
+characters	caracteres	plural noun
+primary	primario	also: principal, primaria; principal for DBL site
+character	carácter	also: caracter; plural: caracteres
+these	estos	demonstrative, masculine plural
+back	contraportada	also: reverso; páginas finales; fondo; back cover; back matter
+report	informe	also: reportar; noun; verb: to report
+variable	variable	noun/adjective
+vertical position	posición vertical	
+images	ilustraciones	also: imágenes; plural
+max	máximo	also: máx.; Max; abbreviated máx.
+noteline	línea de nota	
+major	principal	also: mayor
+beside	junto a	also: al lado de
+allow	permitir	verb
+break	salto	also: pausa; interrupción; separación; line break: salto de línea
+links	enlaces	plural
+box	caja	also: cuadro
+bleed	sangrado	also: sangrar; noun; verb: sangrar
+bible	Biblia	also: bíblico; adjective: bíblico
+dbl	DBL	left in English
+italic	cursiva	
+place	colocar	verb
+reload	recargar	also: recarga; verb
+standard list	lista estándar	
+slice	Slice	left in English
+pagination	paginación	
+font size	tamaño de fuente	also: tamaño de letra
+codes	códigos	noun, plural
+chapters	capítulos	noun, plural
+peripheral	periférico	adjective; periférica/periféricos/periféricas
+extended	extendido	also: ampliado; adjective; extendida/extendidas
+selected	seleccionado	adjective/participle; seleccionada
+advanced	avanzado	adjective; avanzada
+refs	referencias	also: Refs; abbreviation; 'ref.' also used
+these books	estos libros	
+warning	advertencia	noun
+change	cambiar	also: cambio; verb; noun: cambio
+minor	menor	adjective
+please	por favor	sometimes omitted
+hyphenation list	lista de división de palabras	also: lista de separación silábica
+both	ambos	
+format	formato	noun
+next	siguiente	also: próximo
+off	desactivar	also: DESACTIVAR; verb: turn off
+unbalanced	desequilibrado	also: no equilibrado, no balanceado; adjective; desequilibradas
+penalty	penalización	also: pena, penalidad; noun
+keep	mantener	also: guardar; verb
+extra	extra	also: adicional; adjective
+space between	espacio entre	
+approved	aprobado	adjective/participle
+scripture	Escritura	also: bíblico, escrituras; noun; adjective: bíblico
+description	descripción	noun

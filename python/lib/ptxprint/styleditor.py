@@ -91,7 +91,9 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'BorderMargin', 'BorderVMargin', 'BorderHMargin', 
                 'BorderStyle', 'BorderStyleExtra', 'BorderRef', 'NonJustifiedFill',
                 'SidebarGridding','SpaceBeside', 'VerticalAlign',
-                'BorderPatternLeft','BorderPatternRight', 'BorderPatternTop','BorderPatternBot','OrnamentScaleRef')}
+                'BorderPatternLeft','BorderPatternRight', 'BorderPatternTop','BorderPatternBot','OrnamentScaleRef',
+                'ShadowColour', 'ShadowColor', 'OutlineColour', 'OutlineColor', 'SpaceBetween',
+                'FontScale', 'OccursUnder', 'NotRepeatable', 'SmallCaps')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
@@ -305,7 +307,7 @@ _fieldmap = {
 
 class StyleEditor:
 
-    def __init__(self, model, basepath=None):
+    def __init__(self, model, basepath=None, copy=False):
         self.model = model
         self.sheet = {}
         self.marker = None
@@ -313,7 +315,7 @@ class StyleEditor:
         self.reset(basepath=basepath)
 
     def copy(self):
-        res = self.__class__(self.model)
+        res = self.__class__(self.model,copy=True)
         res.sheet = Sheets(base=self.sheet)
         res.basesheet = Sheets(base=self.basesheet)
         res.marker = self.marker
@@ -583,14 +585,19 @@ class StyleEditor:
                 res.append(k)
         return res
 
-    def mergein(self, newse, force=False, exclfields=None):
+    def mergein(self, newse, force=False, exclfields=None, onlyfields=None):
+        ''' onlyfields: merge just these fields (e.g. fonts), and only into markers we already have '''
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
+                if onlyfields is not None:
+                    continue
                 self.addMarker(str(m), str(newse.getval(m, 'name', "")))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 if exclfields is not None and k in exclfields:
+                    continue
+                if onlyfields is not None and k not in onlyfields:
                     continue
                 nv = newse.getval(m, k)
                 bv = self.getval(m, k, baseonly=True)

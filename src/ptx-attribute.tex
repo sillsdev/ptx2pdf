@@ -261,11 +261,6 @@
 
 %\def\foo#1{Thatsit "#1"}
 
-\def\oddc@tcodes{\xdef\sl@shcode{\the\catcode`\/}\catcode`"=11 \catcode`==11
-\catcode`\ =11 \catcode`|=0\catcode`\/=12\catcode`\\=12}
-\def\normalc@tcodes{\catcode`"=12 \catcode`==12
-\catcode`\ =10\catcode`\\=0\catcode`\/=\sl@shcode\catcode`\|=12}
-\trace{A}{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 
 
 \xdef\attribsus@d{}% List of used attributes.
@@ -291,9 +286,9 @@
 	\let\c@ntinue\end@ttributegrab\fi%\fi
 	\c@ntinue}%
 }
+%\trace{A}{CATCODES: "\the\catcode`",  =\the\catcode`=,  \the\catcode`\ , *\the\catcode`\*,  \the\catcode`\\,  \the\catcode`\|}%
 \oddc@tcodes%NO SPACES until |normalc@tcodes is called.
 |gdef|isitslash{|let|c@ntinue|store@ttributes|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes|fi|c@ntinue}%
-|def|zap@slash#1\#2{#1|ifx#2|empty|else|expandafter|zap@slash|fi#2}%
 |def|deslash#1{|edef|tmp{|zap@slash#1\|empty}}%
 |normalc@tcodes%
 %
@@ -391,20 +386,6 @@
 
 % Parse a space-separated list.
 \def\relax@tem#1\E{}
-
-\def\zap@space#1 #2{%borrowed from latex.ltx. Eats all spaces in arg, including mid-space
-  #1%
-  \ifx#2\empty\else\expandafter\zap@space\fi
-  #2}
-\def\zap@plus#1+#2{%borrowed from latex.ltx. Eats all pluses in arg, including mid-space
-  #1%
-  \ifx#2\empty\else\expandafter\zap@plus\fi
-  #2}
-\def\zap@comma#1,#2{%borrowed from latex.ltx. Eats all commas in arg, including mid-space
-  #1%
-  \ifx#2\empty\else\expandafter\zap@comma\fi
-  #2}
-
 
 \def\geton@item #1 #2\E{% Parse space separated list
   \edef\it@m{#1}%

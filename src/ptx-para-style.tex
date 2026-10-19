@@ -147,7 +147,7 @@
     \global\let\tmppcl@ss\thisp@rclass %pass out the heading group class
   \fi
   \edef\tmp{\the\s@vedm@rks}\ifx\tmp\empty\else
-    \global\setbox\he@dingnotes\vbox{\unvbox\he@dingbox\the\s@vedm@rks}%
+    \global\setbox\he@dingnotes\vbox{\unvbox\he@dingnotes\the\s@vedm@rks}%
     \global\s@vedm@rks{}%
   \fi
   \egroup %\showbox\he@dingbox
@@ -538,7 +538,7 @@
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
    \ifRTL\beginR\fi
-   \def\c@l{0}\ifnum\c@rrentcols>1 \relax
+   \def\c@l{0}\ifdefined\m@rginc@l \let\c@l\m@rginc@l\else\ifnum\c@rrentcols>1 \relax
      \ifcsname startx:#1-\c@rref\endcsname
        \dimen0=\csname startx:#1-\c@rref\endcsname sp
      \else \ifcsname marginnote-\c@rref @#1:xshift\endcsname
@@ -550,7 +550,7 @@
      \let\p@num\pageno \ifcsname pnum:#1-\c@rref\endcsname \x@\let\x@\p@num\csname pnum:#1-\c@rref\endcsname
      \else\ifcsname marginnote-\c@rref @#1:pageno\endcsname \x@\let\x@\p@num\csname marginnote-\c@rref @#1:pageno\endcsname\fi\fi
      \ifodd\p@num \def\c@l{1}\fi
-   \fi
+   \fi\fi
    \getp@ram{justification}{#1}{\tmpstyst@k}%
    \ifx\p@ram\@nner \ifnum\c@l=0 \let\p@ram\r@ght\else\let\p@ram\l@ft\fi
    \else\ifx\p@ram\@uter \ifnum\c@l=0 \let\p@ram\l@ft\else\let\p@ram\r@ght\fi\fi\fi
@@ -1198,15 +1198,27 @@
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
 
+% Paragraphs can nest in the parlocs file (e.g. a heading set as a margin note
+% inside a body paragraph). Only the outermost paragraph (per \c@rrdstat) is
+% used for the line counting; nested ones just record their position.
+\def\p@rdepthcs{p@rdepth-\c@rrdstat}
+\def\p@rdepthinit{\ifcsname\p@rdepthcs\endcsname\else\x@\xdef\csname\p@rdepthcs\endcsname{0}\fi}
+
 \def\@parstart#1#2#3#4#5#6{%
 % #1 curref, #2 type, #3 mrkr, #4 baselineskip, #5 xstart, #6 ystart
-  \prev@y=#6\relax
-  \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
-  \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
-  \edef\@@parlocsref{#1}%
-  \trace{C}{@parstart #3 \tot@col@ht - \the\dimen1 = \prev@col@ht}%
-  \csname inp@r-\c@rrdstat true\endcsname
-  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty
+  \p@rdepthinit
+  \x@\xdef\csname\p@rdepthcs\endcsname{\the\numexpr\csname\p@rdepthcs\endcsname+1\relax}%
+  \ifnum\csname\p@rdepthcs\endcsname=1 \relax
+    \prev@y=#6\relax
+    \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
+    \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
+    \edef\@@parlocsref{#1}%
+    \trace{C}{@parstart #3 \tot@col@ht - \the\dimen1 = \prev@col@ht}%
+    \csname inp@r-\c@rrdstat true\endcsname
+    \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#4}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty
+  \else
+    \trace{C}{@parstart #3 (#1) nested at depth \csname\p@rdepthcs\endcsname, not counted}%
+  \fi
   \getp@ram{justification}{#3}{#3}%
   \ifnum \ifx\p@ram\@nner 1\else\ifx\p@ram\@uter 1\else 0\fi\fi =1
     \immediate\write\delayf@le{\string\ParPos{#3}{#1}{\this@pgno}{#5}}\fi
@@ -1220,15 +1232,23 @@
 }
 
 \def\@parend#1#2#3#4{%
-  \this@y=#3\relax
-  \ifnum\this@y=\prev@y 
-    \x@\ifdim\x@ 0pt\x@=\csname baselineskip@\c@rrdstat\endcsname
-      \advance\p@rlinesgone by 1
+  \p@rdepthinit
+  \ifnum\csname\p@rdepthcs\endcsname>1 \relax
+    \trace{C}{@parend nested at depth \csname\p@rdepthcs\endcsname, not counted}%
+  \else % outermost paragraph (or an unmatched @parend)
+    \this@y=#3\relax
+    \ifnum\this@y=\prev@y
+      \x@\ifdim\x@ 0pt\x@=\csname baselineskip@\c@rrdstat\endcsname
+        \advance\p@rlinesgone by 1
+      \fi
+    \else
+      \relax\calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
     \fi
-  \else
-    \relax\calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
+    \csname inp@r-\c@rrdstat false\endcsname
   \fi
-  \csname inp@r-\c@rrdstat false\endcsname
+  \ifnum\csname\p@rdepthcs\endcsname>0
+    \x@\xdef\csname\p@rdepthcs\endcsname{\the\numexpr\csname\p@rdepthcs\endcsname-1\relax}%
+  \fi
 }
 
 \def\@parlen#1#2#3#4#5#6{}

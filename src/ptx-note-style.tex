@@ -1353,12 +1353,20 @@
 }
 \newcount\tracingonce \tracingonce=0
 \def\flyflag{\trace{M}{6. group=\the\currentgrouplevel, \ifcsname endnote-no-insert-x\endcsname fndefined\fi}}
+\def\m@rginc@lset#1{} % defines \m@rginc@l for \s@tsideskips, from marginnotes.tex
 \def\n@test@rt#1{\n@tewidth=\dimexpr \marginnoteswidth - \marginnotesgap\relax
   %\ifnum\tracingonce > 0 \tracingmacros=0\tracinggroups=0\tracingcommands=0\else\tracingmacros=1\tracinggroups=1\tracingcommands=1\fi \advance \tracingonce by 1
   \trace{M}{n@testart #1, starting with n@tewidth=\the\n@tewidth, group=\the\currentgrouplevel}%
   \traceifset{n@test@rt}%
+  % work out the note's reference now, so the side and alignment can be known before the box is built
+  \x@\ifx\csname nm-cref-#1\endcsname\c@rref
+    \x@\advance\csname nm-count-#1\endcsname 1%
+  \else \csname nm-count-#1\endcsname=0 \x@\xdef\csname nm-cref-#1\endcsname{\c@rref}\fi
+  \x@\ifnum\csname nm-count-#1\endcsname=0\relax \edef\t@@mp{\c@rref}\else \edef\t@@mp{\c@rref!#1[\x@\the\csname nm-count-#1\endcsname]}\fi
+  \x@\global\x@\let\csname nm-ref-#1\endcsname\t@@mp
   \x@\setbox\csname nm-box-#1\endcsname\vtop\bgroup%\aftergroup\flyflag\usespacebeforefalse
     \global\p@ranotesfalse
+    \m@rginc@lset{#1}%
     \s@tsideskips{#1}{-1pt}%
     \ifXrefSideAlign\testXrefSideL\getp@ram{justification}{#1}{#1}%
       \ifnum\tmp=1 % right align
@@ -1378,10 +1386,7 @@
 }
 \def\n@te@nd#1{%
   \egroup\trace{M}{group=\the\currentgrouplevel}%
-  \x@\ifx\csname nm-cref-#1\endcsname\c@rref
-    \x@\advance\csname nm-count-#1\endcsname 1%
-  \else \csname nm-count-#1\endcsname=0 \x@\xdef\csname nm-cref-#1\endcsname{\c@rref}\fi
-  \x@\ifnum\csname nm-count-#1\endcsname=0\relax \edef\t@@mp{\c@rref}\else \edef\t@@mp{\c@rref!#1[\x@\the\csname nm-count-#1\endcsname]}\fi
+  \x@\let\x@\t@@mp\csname nm-ref-#1\endcsname
   \skip1=\baselineskip \s@tbaseline{#1}{#1}%
   \getp@ram{spacebeside}{#1}{#1}\ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram pt\fi
   \advance\dimen0 \marginnotesgap

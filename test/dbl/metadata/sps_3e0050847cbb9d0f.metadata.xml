@@ -1,0 +1,378 @@
+<DBLMetadata version="2.2.1" id="3e0050847cbb9d0f" revision="3">
+  <identification>
+    <systemId type="paratext">
+      <id>3e0050847cbb9d0fe6fa853705b741b5761de5e2</id>
+      <name>spsDBL</name>
+      <fullName>Saposa New Testament + Genesis &amp; Joshua [sps] -Papua New Guinea 2001 (DBL 2014)</fullName>
+    </systemId>
+    <systemId type="reap">
+      <id>http://www.reap.insitehome.org/handle/9284745/21203</id>
+    </systemId>
+    <systemId type="gbc">
+      <id>544a69ee5117ad10277be54a</id>
+    </systemId>
+    <name>Saposa NT</name>
+    <nameLocal>Saposa</nameLocal>
+    <abbreviation>sps</abbreviation>
+    <abbreviationLocal>sps</abbreviationLocal>
+    <description>Saposa: New Testament</description>
+    <descriptionLocal>Saposa: U Vurungan Rof Foun Ten Gov Nane Jisas Krais</descriptionLocal>
+    <scope>New Testament</scope>
+    <dateCompleted>2001</dateCompleted>
+    <bundleProducer>nathanael/0.61.1</bundleProducer>
+    <canonSpec type="NT">
+      <component>westernNT</component>
+    </canonSpec>
+  </identification>
+  <relationships/>
+  <agencies>
+    <rightsHolder>
+      <abbr>WBT</abbr>
+      <url>http://www.wycliffe.org</url>
+      <nameLocal>Wycliffe Bible Translators, Inc.</nameLocal>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </rightsHolder>
+    <contributor>
+      <content>true</content>
+      <publication>true</publication>
+      <management>true</management>
+      <qa>false</qa>
+      <uid>545d2cb00be06579ca809b57</uid>
+      <name>Wycliffe Bible Translators, Inc.</name>
+    </contributor>
+  </agencies>
+  <language>
+    <iso>sps</iso>
+    <name>Saposa</name>
+    <nameLocal>Saposa</nameLocal>
+    <scriptCode>Latn</scriptCode>
+    <script>Latin</script>
+    <scriptDirection>LTR</scriptDirection>
+    <numerals>Arabic</numerals>
+    <ldml>sps</ldml>
+  </language>
+  <countries>
+    <country>
+      <iso>PG</iso>
+      <name>Papua New Guinea</name>
+    </country>
+  </countries>
+  <type>
+    <medium>text</medium>
+    <hasCharacters>true</hasCharacters>
+    <isTranslation>true</isTranslation>
+    <isExpression>true</isExpression>
+    <translationType>First</translationType>
+    <audience>Common</audience>
+    <isConfidential>false</isConfidential>
+  </type>
+  <format>
+    <versedParagraphs>false</versedParagraphs>
+  </format>
+  <manifest>
+    <resource checksum="a6f65effdb9b82f1f85f5687c38595ff" mimeType="application/xml" size="149291" uri="release/USX_1/1CO.usx"/>
+    <resource checksum="91cbf9473183b0bbf3432d8f2f5200e1" mimeType="application/xml" size="26350" uri="release/USX_1/1JN.usx"/>
+    <resource checksum="df0123d11f82a1c1bf3aca727571322b" mimeType="application/xml" size="28765" uri="release/USX_1/1PE.usx"/>
+    <resource checksum="f1a8d27040238afe75dab41fbdf8c541" mimeType="application/xml" size="21019" uri="release/USX_1/1TH.usx"/>
+    <resource checksum="d3e6990a8086a2d4f07b373ec92ee47f" mimeType="application/xml" size="30743" uri="release/USX_1/1TI.usx"/>
+    <resource checksum="2bad52db5715a7b6f05f069b79028aa2" mimeType="application/xml" size="75374" uri="release/USX_1/2CO.usx"/>
+    <resource checksum="682cd154cee0e869a897232cfb620442" mimeType="application/xml" size="4041" uri="release/USX_1/2JN.usx"/>
+    <resource checksum="b58fabb94e68749b25b2718d515a0331" mimeType="application/xml" size="19160" uri="release/USX_1/2PE.usx"/>
+    <resource checksum="e544bacfe0515fdfa2a614f566251e26" mimeType="application/xml" size="11668" uri="release/USX_1/2TH.usx"/>
+    <resource checksum="e39d03cff9faa1aa1f3c3033ceceee0d" mimeType="application/xml" size="21353" uri="release/USX_1/2TI.usx"/>
+    <resource checksum="e035a91a4c1817ac8c54ecc68f3954fe" mimeType="application/xml" size="4549" uri="release/USX_1/3JN.usx"/>
+    <resource checksum="419f559e44e21bb4d2939d5970514375" mimeType="application/xml" size="227797" uri="release/USX_1/ACT.usx"/>
+    <resource checksum="d795e89e5f915ded36536e38c94176f2" mimeType="application/xml" size="32330" uri="release/USX_1/COL.usx"/>
+    <resource checksum="307d8e8ec3a78a72beb2e25d76dd66b0" mimeType="application/xml" size="39500" uri="release/USX_1/EPH.usx"/>
+    <resource checksum="671bf3595e3b97613067e18c4903a9c6" mimeType="application/xml" size="43589" uri="release/USX_1/GAL.usx"/>
+    <resource checksum="4a0376c271a382b34bfb7fc9c20aaadf" mimeType="application/xml" size="31404" uri="release/USX_1/GEN.usx"/>
+    <resource checksum="a4c973f470b7001c8e46347f922eeb9b" mimeType="application/xml" size="89262" uri="release/USX_1/HEB.usx"/>
+    <resource checksum="fdf7a1a4432d48ac241d04e6e12c04bc" mimeType="application/xml" size="28278" uri="release/USX_1/JAS.usx"/>
+    <resource checksum="c3a01a14f7466194d8ae243a3fc2e9ef" mimeType="application/xml" size="186488" uri="release/USX_1/JHN.usx"/>
+    <resource checksum="c3db304561d6d93b7bf0989228cf5a00" mimeType="application/xml" size="31610" uri="release/USX_1/JOS.usx"/>
+    <resource checksum="d350612033de7b39d4507b2070315dbb" mimeType="application/xml" size="9569" uri="release/USX_1/JUD.usx"/>
+    <resource checksum="69d8c7e6c45487937f0545aef4050c4f" mimeType="application/xml" size="246616" uri="release/USX_1/LUK.usx"/>
+    <resource checksum="84009582964886a27efd1c378e3dbe29" mimeType="application/xml" size="234150" uri="release/USX_1/MAT.usx"/>
+    <resource checksum="7dd33a4551476b5b18239e1e896d6c4c" mimeType="application/xml" size="143281" uri="release/USX_1/MRK.usx"/>
+    <resource checksum="10f0d75ff66bfa087929c78ea08645f7" mimeType="application/xml" size="7317" uri="release/USX_1/PHM.usx"/>
+    <resource checksum="d7b56473a8d7e0df2a1d83bf7af60484" mimeType="application/xml" size="32311" uri="release/USX_1/PHP.usx"/>
+    <resource checksum="8901990c3bc0a07076f45ea7ceab79e4" mimeType="application/xml" size="118570" uri="release/USX_1/REV.usx"/>
+    <resource checksum="56c15effbe01105ba2e77383016386a0" mimeType="application/xml" size="166745" uri="release/USX_1/ROM.usx"/>
+    <resource checksum="1d6f67fa382391691a0fa49747d7518d" mimeType="application/xml" size="14204" uri="release/USX_1/TIT.usx"/>
+    <resource checksum="f041a78ad204aab54d1dba6649cbf2c6" mimeType="application/octet-stream" size="4217" uri="release/sps.ldml"/>
+    <resource checksum="13db88c963531dff44edf7565e0bdbe8" mimeType="application/octet-stream" size="455" uri="release/sps.lds"/>
+    <resource checksum="a22a09db697b95d2e0005c2c6040f2ae" mimeType="application/xml" size="78089" uri="release/styles.xml"/>
+    <resource checksum="2bed9d945808683b8df9acebabe23429" mimeType="application/octet-stream" size="13138" uri="release/versification.vrs"/>
+    <resource checksum="2be1ed041dd2ba9381ab2795ccbc2713" mimeType="application/zip" size="8322414" uri="source/source.zip"/>
+  </manifest>
+  <names>
+    <name id="book-gen">
+      <abbr>Jen</abbr>
+      <short>Jenesis</short>
+      <long>Jenesis</long>
+    </name>
+    <name id="book-jos">
+      <abbr>Jos</abbr>
+      <short>Josua</short>
+      <long>Josua</long>
+    </name>
+    <name id="book-mat">
+      <abbr>Mt</abbr>
+      <short>Matiu</short>
+      <long>Vurungan Rof Nane Jisas Krais Te Kirkir Iny E Matiu</long>
+    </name>
+    <name id="book-mrk">
+      <abbr>Mk</abbr>
+      <short>Mak</short>
+      <long>U Vurungan Rof Nane Jisas Krais Te Kirkir Iny E Mak</long>
+    </name>
+    <name id="book-luk">
+      <abbr>Lk</abbr>
+      <short>Luke</short>
+      <long>Vurungan Rof Nane Jisas Krais Te Kirkir Iny E Luke</long>
+    </name>
+    <name id="book-jhn">
+      <abbr>Jn</abbr>
+      <short>Jon</short>
+      <long>Vurungan Rof Nane Jisas Krais Te Kirkir Iny E Jon</long>
+    </name>
+    <name id="book-act">
+      <abbr>Am</abbr>
+      <short>Binun Tan Amaraav</short>
+      <long>Binun Tan Amaraav</long>
+    </name>
+    <name id="book-rom">
+      <abbr>Rm</abbr>
+      <short>Roum</short>
+      <long>Noun Kirkir Fi Naa Pol Tana Taa Roum</long>
+    </name>
+    <name id="book-1co">
+      <abbr>1Ko</abbr>
+      <short>1 Korin</short>
+      <long>VAAMUAN Nan Kots Noun Ten Pol Naa Fi Non Tana Taa KORIN</long>
+    </name>
+    <name id="book-2co">
+      <abbr>2Ko</abbr>
+      <short>2 Korin</short>
+      <long>FAFUAN Nan Kots Noun Ten Pol Naa Fi Non Tana Taa KORIN</long>
+    </name>
+    <name id="book-gal">
+      <abbr>Ga</abbr>
+      <short>Galesia</short>
+      <long>Noun Kirkir Fi Naa Pol Tana Taa Galesia</long>
+    </name>
+    <name id="book-eph">
+      <abbr>Ef</abbr>
+      <short>Efeses</short>
+      <long>Noun Kirkir Fi Naa Pol Tana Taa Efeses</long>
+    </name>
+    <name id="book-php">
+      <abbr>Fp</abbr>
+      <short>Filipai</short>
+      <long>Noun Kirkir Fi Naa Pol Tana Taa Filipai</long>
+    </name>
+    <name id="book-col">
+      <abbr>Kol</abbr>
+      <short>Kolosi</short>
+      <long>Noun Kirkir Fi Naa Pol Tana Taa Kolosi</long>
+    </name>
+    <name id="book-1th">
+      <abbr>1Te</abbr>
+      <short>Vaamuan Tesalonaika</short>
+      <long>VAAMUAN Nan Kots Noun Ten Pol Naa Fi Non Tana Taa TESALONAIKA</long>
+    </name>
+    <name id="book-2th">
+      <abbr>2Te</abbr>
+      <short>Fafuan Tesalonaika</short>
+      <long>FAFUAN Nan Kots Noun Ten Pol Naa Fi Non Tana Taa TESALONAIKA</long>
+    </name>
+    <name id="book-1ti">
+      <abbr>1Ti</abbr>
+      <short>Vaamuan Timoti</short>
+      <long>VAAMUAN Nan Kots Noun Ten Pol Naa Fi Non Ten TIMOTI</long>
+    </name>
+    <name id="book-2ti">
+      <abbr>2Ti</abbr>
+      <short>Fafuan Timoti</short>
+      <long>FAFUAN Nan Kots Noun Ten Pol Naa Fi Non Ten TIMOTI</long>
+    </name>
+    <name id="book-tit">
+      <abbr>Tai</abbr>
+      <short>Taitus</short>
+      <long>Noun Ten Pol Naa Fi Non Ten Taitus</long>
+    </name>
+    <name id="book-phm">
+      <abbr>Fm</abbr>
+      <short>Filimon</short>
+      <long>Noun Ten Pol Naa Fi Non Ten Filimon</long>
+    </name>
+    <name id="book-heb">
+      <abbr>Hi</abbr>
+      <short>Hiburu</short>
+      <long>U Noun Te Naa Fi Naa Non Tan Vainy Fafaaman Tana Taa Hiburu</long>
+    </name>
+    <name id="book-jas">
+      <abbr>Je</abbr>
+      <short>Jemis</short>
+      <long>Noun Te Kirkir E JEMIS</long>
+    </name>
+    <name id="book-1pe">
+      <abbr>1Pi</abbr>
+      <short>1 Pita</short>
+      <long>VAAMUAN Nan Kots Noun Ten PITA</long>
+    </name>
+    <name id="book-2pe">
+      <abbr>2Pi</abbr>
+      <short>2 Pita</short>
+      <long>FAFUAN Nan Kots Noun Ten PITA</long>
+    </name>
+    <name id="book-1jn">
+      <abbr>1Jn</abbr>
+      <short>Vaamuan Jon</short>
+      <long>VAAMUAN Nan Kots Noun Ten JON</long>
+    </name>
+    <name id="book-2jn">
+      <abbr>2Jn</abbr>
+      <short>Fafuan Jon</short>
+      <long>FAFUAN Nan Kots Noun Ten JON</long>
+    </name>
+    <name id="book-3jn">
+      <abbr>3Jn</abbr>
+      <short>Fafofopis Jon</short>
+      <long>FAFOFOPIS Nan Kots Noun Ten JON</long>
+    </name>
+    <name id="book-jud">
+      <abbr>Jut</abbr>
+      <short>Jut</short>
+      <long>Noun Te Kirkir E JUT</long>
+    </name>
+    <name id="book-rev">
+      <abbr>VT</abbr>
+      <short>Vegiaun Tapokaa</short>
+      <long>Vegiaun Tapokaa</long>
+    </name>
+  </names>
+  <source>
+    <canonicalContent>
+      <book code="1CO"/>
+      <book code="1JN"/>
+      <book code="1PE"/>
+      <book code="1TH"/>
+      <book code="1TI"/>
+      <book code="2CO"/>
+      <book code="2JN"/>
+      <book code="2PE"/>
+      <book code="2TH"/>
+      <book code="2TI"/>
+      <book code="3JN"/>
+      <book code="ACT"/>
+      <book code="COL"/>
+      <book code="EPH"/>
+      <book code="GAL"/>
+      <book code="GEN"/>
+      <book code="HEB"/>
+      <book code="JAS"/>
+      <book code="JHN"/>
+      <book code="JOS"/>
+      <book code="JUD"/>
+      <book code="LUK"/>
+      <book code="MAT"/>
+      <book code="MRK"/>
+      <book code="PHM"/>
+      <book code="PHP"/>
+      <book code="REV"/>
+      <book code="ROM"/>
+      <book code="TIT"/>
+    </canonicalContent>
+    <structure>
+      <content src="source/source.zip" role="sourceZip"/>
+    </structure>
+  </source>
+  <publications>
+    <publication id="p1" default="true">
+      <name>U Vurungan Rof Foun Ten Gov Nane Jisas Krais</name>
+      <description>New Testament and Shorter Old Testament</description>
+      <descriptionLocal>New Testament and Shorter Old Testament</descriptionLocal>
+      <abbreviation>spsNTpo</abbreviation>
+      <abbreviationLocal>spsNTpo</abbreviationLocal>
+      <canonicalContent>
+        <book code="1CO"/>
+        <book code="1JN"/>
+        <book code="1PE"/>
+        <book code="1TH"/>
+        <book code="1TI"/>
+        <book code="2CO"/>
+        <book code="2JN"/>
+        <book code="2PE"/>
+        <book code="2TH"/>
+        <book code="2TI"/>
+        <book code="3JN"/>
+        <book code="ACT"/>
+        <book code="COL"/>
+        <book code="EPH"/>
+        <book code="GAL"/>
+        <book code="GEN"/>
+        <book code="HEB"/>
+        <book code="JAS"/>
+        <book code="JHN"/>
+        <book code="JOS"/>
+        <book code="JUD"/>
+        <book code="LUK"/>
+        <book code="MAT"/>
+        <book code="MRK"/>
+        <book code="PHM"/>
+        <book code="PHP"/>
+        <book code="REV"/>
+        <book code="ROM"/>
+        <book code="TIT"/>
+      </canonicalContent>
+      <structure>
+        <content name="book-gen" src="release/USX_1/GEN.usx" role="GEN"/>
+        <content name="book-jos" src="release/USX_1/JOS.usx" role="JOS"/>
+        <content name="book-mat" src="release/USX_1/MAT.usx" role="MAT"/>
+        <content name="book-mrk" src="release/USX_1/MRK.usx" role="MRK"/>
+        <content name="book-luk" src="release/USX_1/LUK.usx" role="LUK"/>
+        <content name="book-jhn" src="release/USX_1/JHN.usx" role="JHN"/>
+        <content name="book-act" src="release/USX_1/ACT.usx" role="ACT"/>
+        <content name="book-rom" src="release/USX_1/ROM.usx" role="ROM"/>
+        <content name="book-1co" src="release/USX_1/1CO.usx" role="1CO"/>
+        <content name="book-2co" src="release/USX_1/2CO.usx" role="2CO"/>
+        <content name="book-gal" src="release/USX_1/GAL.usx" role="GAL"/>
+        <content name="book-eph" src="release/USX_1/EPH.usx" role="EPH"/>
+        <content name="book-php" src="release/USX_1/PHP.usx" role="PHP"/>
+        <content name="book-col" src="release/USX_1/COL.usx" role="COL"/>
+        <content name="book-1th" src="release/USX_1/1TH.usx" role="1TH"/>
+        <content name="book-2th" src="release/USX_1/2TH.usx" role="2TH"/>
+        <content name="book-1ti" src="release/USX_1/1TI.usx" role="1TI"/>
+        <content name="book-2ti" src="release/USX_1/2TI.usx" role="2TI"/>
+        <content name="book-tit" src="release/USX_1/TIT.usx" role="TIT"/>
+        <content name="book-phm" src="release/USX_1/PHM.usx" role="PHM"/>
+        <content name="book-heb" src="release/USX_1/HEB.usx" role="HEB"/>
+        <content name="book-jas" src="release/USX_1/JAS.usx" role="JAS"/>
+        <content name="book-1pe" src="release/USX_1/1PE.usx" role="1PE"/>
+        <content name="book-2pe" src="release/USX_1/2PE.usx" role="2PE"/>
+        <content name="book-1jn" src="release/USX_1/1JN.usx" role="1JN"/>
+        <content name="book-2jn" src="release/USX_1/2JN.usx" role="2JN"/>
+        <content name="book-3jn" src="release/USX_1/3JN.usx" role="3JN"/>
+        <content name="book-jud" src="release/USX_1/JUD.usx" role="JUD"/>
+        <content name="book-rev" src="release/USX_1/REV.usx" role="REV"/>
+      </structure>
+    </publication>
+  </publications>
+  <archiveStatus>
+    <dateArchived>2014-09-19T21:56:58.160232</dateArchived>
+    <dateUpdated>2022-07-05T22:11:11.202683</dateUpdated>
+    <bundleCreatorName>Lois Gourley</bundleCreatorName>
+    <archivistName>Lois Gourley</archivistName>
+    <comments>Metadata updated</comments>
+  </archiveStatus>
+  <copyright>
+    <fullStatement>
+      <statementContent type="xhtml">
+        <p>© 2001, Wycliffe Bible Translators, Inc. All rights reserved.  </p>
+      </statementContent>
+    </fullStatement>
+  </copyright>
+  <promotion/>
+</DBLMetadata>

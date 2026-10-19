@@ -19,23 +19,14 @@ class PDFx1aOutput(Snippet):
 \bgroup
 \catcode`\#=12 
 \catcode`\@=11 \catcode`\^^M=10 \activ@tecustomch@rs\deactiv@tecustomch@rs
-\special{{pdf:docinfo<<
-/Title({document/title})%
-/Subject({document/subject})%
-/Author({document/author})%
-/Creator(PTXprint {/ptxprint_gitversion} ({config/name}))%
-/CreationDate(D:{pdfdate_})%
-/ModDate(D:{pdfdate_})%
-/Producer(XeTeX)%
-/Trapped /False
-{_gtspdfx}>> }}
 \message{{snippet 1}}%
+{_docinfo}
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N {_iccnumcols}>>}}
 %\special{{pdf:close @OBJCVR}}
-\special{{pdf:stream @OBJCMR (
+\special{{pdf:stream @OBJCMR (<?xpacket begin="^^^^feff" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
-  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-ref-syntax-ns#"
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
        xmlns:xmp="http://ns.adobe.com/xap/1.0/"
        xmlns:dc="http://purl.org/dc/elements/1.1/"
        xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
@@ -183,12 +174,25 @@ class PDFx1aOutput(Snippet):
             extras['_iccnumcols'] = "1"
         else:
             extras['_iccnumcols'] = "4"
-        extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
         extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['cover/rtlbookbinding'] == "true" else ""
         for a in ('author', 'title', 'subject'):
             extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
         if model['document/printarchive']:
+            extras['_gtspdfaid'] = "      <pdfaid:part>4</pdfaid:part>\n        <pdfaid:rev>2020</pdfaid:rev>\n"
             res += "\\XeTeXgenerateactualtext=1\n"
+            extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-6)%\n"
+            extras['_docinfo'] = r'\special{pdf:docinfo << >>}'
+        else:
+            extras['_docinfo'] = r"""\special{{pdf:docinfo<<
+/Title({document/title})%
+/Subject({document/subject})%
+/Author({document/author})%
+/Creator(PTXprint {/ptxprint_gitversion} ({config/name}))%
+/CreationDate(D:{pdfdate_})%
+/ModDate(D:{pdfdate_})%
+/Producer(XeTeX)%
+/Trapped /False
+{_gtspdfx}>> }}""".format(**{**model.dict, **extras})
         return res.format(**{**model.dict, **extras}) + "\n"
     
 class FancyIntro(Snippet):
@@ -488,3 +492,27 @@ class ParaLabelling(Snippet):
 \activ@tecustomch@rs
 '''
 
+class MarginalNotes(Snippet):
+    processTex = False
+    texCode = r'''
+\catcode`\@=11
+\newbox\m@rginheadingbox
+\def\endheadingshook{\ifb@dy\setbox\myheadingbox=\vtop{\vbox to \dp\pstr@t{}\box\he@dingbox}\he@dingsfalse\fi}
+\def\insertm@rginheadingbox{\ifvoid\m@rginheadingbox\else\d@marginnote{\the\m@rginheadingbox}{\c@rref}{s}{outer}{bottom}{6pt}{\dimexpr -\baselineskip - \dp\pstr@t}\setbox\m@rginheadingbox=\box\voidb@x\fi}
+\addtoeveryparhooks{\insertm@rginheadingbox}
+'''
+    def generateTex(self, model):
+        if model.dict["paper/ifmarginnotes"] == "%":
+            return ""
+        mwidth = model.dict["paper/marginnoteswidth"]
+        if mwidth < 1:
+            return ""
+        res = [self.texCode]
+        # find all used heading styles
+        se = model.printer.styleEditor
+        usfms = self.printer.get_usfms()
+        mrkrset = usfms.get_markers(self.printer.getBooks())
+        for m in mrkrset:
+            if usfms.grammar.marker_categories(m, "") == "sectionpara":
+                res.append(fr"\sethook{{before}}{{{m}}}{{\hsize={mwidth}mm}}")
+        return res

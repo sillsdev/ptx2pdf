@@ -1,0 +1,26 @@
+# English<TAB>Simplified Chinese<TAB>note (optional). Hand-written; overrides lexicon.tsv. Starting set, to be extended after native review.
+Book	卷	Bible book
+Chapter	章
+Verse	节	Bible verse
+Border	边框
+Thumb tab	拇指索引标签	index tab on the page edge (NOT 缩略图)
+Thumb tabs	拇指索引标签
+Space after	段后间距	paragraph spacing
+Space before	段前间距	paragraph spacing
+Tolerance	容差
+Spine	书脊
+Underline	下划线
+Padding	内边距
+Noteline	笔记线	ruled line for personal notes
+Gutter	装订线边距
+Bleed	出血
+Tofu	豆腐块	missing-character box
+Font	字体
+Margin	页边距
+File	文件
+Folder	文件夹
+Tab	选项卡	UI tab
+Sidebar	侧边栏
+Footnote	脚注
+Cross-reference	交叉引用
+Diglot	双语对照

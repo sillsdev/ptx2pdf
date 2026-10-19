@@ -6,23 +6,24 @@ build-backend = "setuptools.build_meta"
 name = "ptxprint"
 authors = [{name = "SIL", email = "fonts@sil.org"}]
 readme = "README.md"
+license = "MIT"
 description = "USFM based Bible typesetting (Xe)TeX based application"
 classifiers = [
    "Environment :: X11 Applications :: GTK",
    "Programming Language :: Python :: 3.8",
    "Intended Audience :: End Users/Desktop",
-   "License :: OSI Approved :: MIT License",
    "Topic :: Text Processing :: General"
    ]
 requires-python = ">=3.8"
 # commented out dynamic versioning for now
 # dynamic = ["version"]
-version = "3.0.38"
+version = "3.1.3"
 
 dependencies = [
 "usfmtc @ https://github.com/usfm-bible/usfmtc/archive/main.zip",
 "regex",
 "fonttools",
+# "uharfbuzz",
 "platformdirs",
 "Pillow",
 "numpy",

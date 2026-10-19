@@ -40,6 +40,14 @@
 \def\b@xbotmark{}
 \newcount\r@a@trialdepth
 \r@a@trialdepth=0
+% \topins and \bottomins have \count=1000, so if a trial is too short for one of their inserts, TeX's page
+% builder holds the insert over to the next page. The trial is then discarded, but the held-over copy survives
+% alongside the copy still in the saved galley, so the picture appears twice. Trials compute availht from the
+% actual insert box heights, so zero the counts while a trial runs, which stops TeX holding them over.
+\def\z@roTrialInsCounts{%
+  \xdef\r@storeTrialInsCounts{\global\count\topins=\the\count\topins\relax \global\count\bottomins=\the\count\bottomins\relax}%
+  \global\count\topins=0 \global\count\bottomins=0 }
+\let\r@storeTrialInsCounts\relax
 
 \xdef\f@rstb@dy{0pt}%
 \def\TextBorderColumns{} % If unset, then border all scripture. If set, only border the ones set. E.g. for when a 
@@ -728,6 +736,7 @@
     \global\output{\diglot@any@trial}%
     \trace{D}{TRIAL! \the\ht\galley+\the\dp\galley}%
     \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
+    \ifnum\r@a@trialdepth=1 \z@roTrialInsCounts\fi
     \unvcopy\galley
     \unpenalty
     \traceifset{run@a@trial\the\r@a@trialdepth}%
@@ -737,6 +746,7 @@
     %\iflate@stage@reflow \showlists\fi
     \traceifcheck{run@a@trial\the\r@a@trialdepth}%
     \advance\r@a@trialdepth by -1
+    \ifnum\r@a@trialdepth=0 \r@storeTrialInsCounts\fi
     \relax\relax
     \let\after@run@a@trial=\relax
   \else
@@ -1441,7 +1451,9 @@
   \the\diglotRho@ks
 }
 
+\newcount\p@lysl@ce % Slice (sync group) number, written to parlocs on every column start/stop
 \def\polyglotendcols{%
+  \global\advance\p@lysl@ce by 1 % Everything output from here on in this call (even across pages) belongs to this slice. Not a node.
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
   \pr@sideswitch{endcols}{\empty}% MUST precede any write/trace nodes
   \trace{D}{t@tle is \ift@tle set\else  not set\fi}%
@@ -2310,22 +2322,27 @@
 }
 
 %write column start and stop information
-\def\@@simple@colstart#1#2{%
-    \x@\xdef\csname dc@ref@rgs#2\endcsname{\string\@Poly@colstart{\the\ht#1}{\the\dp#1}{\the\wd#1}}%
+% #1 box, #2 column, #3 where the alignment space goes (t=top for headings, b=bottom)
+% Writes: ht, dp, wd, x, y, column, slice, baselineskip, alignment
+% Everything except the position is expanded now, since \write expands at shipout.
+\def\@@simple@colstart#1#2#3{%
     \pdfsavepos
-    \x@\write\x@\p@rlocs\x@{\csname dc@ref@rgs#2\endcsname{\the\pdflastxpos}{\the\pdflastypos}{#2}}%
+    \edef\p@lyc@lwrite{\noexpand\write\p@rlocs{\string\@Poly@colstart{\the\ht#1}{\the\dp#1}{\the\wd#1}%
+      {\noexpand\the\pdflastxpos}{\noexpand\the\pdflastypos}{#2}{\the\p@lysl@ce}{\csname b@selineskip#2\endcsname}{#3}}}%
+    \p@lyc@lwrite
 }
-\xdef\dc@ref@rgse{\string\@Poly@colstop}%
+% Writes: x, y, column, slice
 \def\@@simple@colstop#1{%
     \pdfsavepos
-    \write\p@rlocs{\dc@ref@rgse{\the\pdflastxpos}{\the\pdflastypos}{#1}}%
+    \edef\p@lyc@lwrite{\noexpand\write\p@rlocs{\string\@Poly@colstop{\noexpand\the\pdflastxpos}{\noexpand\the\pdflastypos}{#1}{\the\p@lysl@ce}}}%
+    \p@lyc@lwrite
 }
 
-\def\@Poly@colstart#1#2#3#4#5#6{\edef\c@rrdstat{#6}\relax
+\def\@Poly@colstart#1#2#3#4#5#6#7#8#9{\edef\c@rrdstat{#6}\relax
   \x@\let\x@\p@rlinesgone\csname p@rlinesgone-\c@rrdstat\endcsname
   \@@colstart{#1}{#2}{#3}{#4}{#5}%
 }
-\def\@Poly@colstop#1#2#3{\edef\c@rrdstat{#3}\relax\@@colstop{#1}{#2}}
+\def\@Poly@colstop#1#2#3#4{\edef\c@rrdstat{#3}\relax\@@colstop{#1}{#2}}
 
 \def\@prepare@upd@tep@rtial@simplecols{%
   \trace{dP}{columns with contents: \cts@list (\the\curactivecols)}%
@@ -2337,11 +2354,11 @@
     \iftemp
       \let\b@xtype\vbox
       \trace{D}{Un vtopping headings}%
-      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vbox{\@@simple@colstart{\csname ##1box\endcsname}{##1}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}%
+      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vbox{\@@simple@colstart{\csname ##1box\endcsname}{##1}{t}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}%
       \x@\each@col\cts@list\E
     \else
       \trace{D}{marking column start and stop}%
-      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vtop{\@@simple@colstart{\csname ##1box\endcsname}{##1}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}%
+      \def\col@do##1{\x@\setbox\csname ##1box\endcsname\vtop{\@@simple@colstart{\csname ##1box\endcsname}{##1}{b}\unvbox\csname ##1box\endcsname\@@simple@colstop{##1}}}%
       \x@\each@col\cts@list\E
     \fi
   \fi
@@ -2656,14 +2673,50 @@
   \traceifcheck{@writep@ge-b}%
 }
 
+% Underfill report, one \st@underfill per column (glot) per page, in the .status file.
+% Text height of a column = text on the page up to the last sync point + that column's
+% content since then (@curXht). Must be called before notes are added to \partial.
+\def\p@ly@saveheights{%
+  \xdef\p@lytxtht{\the\dimexpr\ht\partial+\dp\partial\relax}%
+  \def\v@lpfx{@cur}\def\v@lsfx{ht}%
+  \let\col@do=\max@val\dimen1=0pt
+  \x@\each@col\diglot@list\E
+  \xdef\p@lym@xcur{\the\dimen1}%
+}
+\def\p@ly@insht{\dimexpr \ht\topchunk + \ht\botchunk
+  \ifvoid\topins\else + \ht\topins + \skip\topins\fi
+  \ifvoid\bottomins\else + \ht\bottomins + \skip\bottomins\fi
+  \ifvoid\verybottomins\else + \ht\verybottomins + \skip\verybottomins\fi\relax}
+\def\p@ly@notesht#1{\dimexpr
+  \ifdiglotSepNotes
+    \ifdim\dimexpr\csname @uf#1ht\endcsname + \csname @uf#1dp\endcsname\relax>0pt
+      \csname @uf#1ht\endcsname + \csname @uf#1dp\endcsname + \AboveNoteSpace
+    \else 0pt\fi
+  \else
+    \ifvoid\notechunk 0pt\else \ht\notechunk + \dp\notechunk\fi
+  \fi\relax}
+\def\p@ly@underfill#1{%
+  \dimen0=\dimexpr \p@lytxtht - \p@lym@xcur + \csname @cur#1ht\endcsname\relax
+  \dimen2=\dimexpr \textheight - \p@ly@insht - \p@ly@notesht{#1}\relax
+  {\baselineskip=\csname b@selineskip#1\endcsname\relax
+   % Used includes the last line's depth, so only a whole line of gap can be filled
+   % (monoglot's \underf@ll reports half a line)
+   \ifdim\dimen0<\dimexpr\dimen2 - .95\baselineskip\relax
+     \immediate\write\st@tusfile{\string\st@underfill{\the\pageno}{#1}{\the\dimen2}{\the\dimen0}{\the\baselineskip}}%
+   \fi}%
+}
+
 \def\@prep@writep@ge@simplecols{%
   \traceifset{@prep@writep@ge@simplecols}%
+  \p@ly@saveheights
   \ifdiglotSepNotes%
     \trace{D}{Sep notes}%
     \LRf@@tnotesfalse%
     %Arrange Left and Right footnotes
     \let\col@do=\diglot@fill@sep@note@box
-    \x@\each@col\diglot@list\E% 
+    \x@\each@col\diglot@list\E%
+    \def\v@lpfx{@uf}\let\col@do=\save@boxdim % Save @ufXht @ufXdp of each column's notes, for the underfill report
+    \x@\each@col\diglot@list\E%
     \setLRspecific % c@rrdstat is restored by diglot@fill@sep@note@box.
     \ifLRf@@tnotes% Are there notes?
       \ifdiglotBalNotes%
@@ -2810,9 +2863,15 @@
   \traceifcheck{@do@writep@ge@simplecols-c}%
   \traceifset{@do@writep@ge@simplecols-d}%
   %\tracing{I}%
-  \ifunprintable 
+  \ifunprintable
     \abortpage
   \else
+    \ifinendbook\else % As monoglot, the end of a book is not underfilled
+      \ifdim\p@lytxtht>0pt % End of book can flush an empty page
+        \let\col@do=\p@ly@underfill
+        \x@\each@col\diglot@list\E
+      \fi
+    \fi
     \let\tmpwrite\diglot@writeparpageend
     \@@setppagecontents@simplecols
     \holdinginserts=1
@@ -3712,6 +3771,7 @@
   \let\nxt\relax
   \ifx\cts@list\empty\else\let\nxt\diglot@run@trials\let\digl@tc@ntentlist\cts@list
     \trace{d}{Eh? Why is there still content? Will rerun}%
+    \r@storeinserts{chunk}% The rerun trials the same material again, so drop the inserts the earlier trials added or they get added twice.
   \fi
   \trace{d}{end of diglot@run@trials, \cts@list(\the\curactivecols)}%
   \nxt
