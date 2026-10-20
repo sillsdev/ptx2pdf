@@ -120,6 +120,10 @@ class WorkingCoverState:
         self.isbn: str = ""
         self.isbn_hpos: str = "inner"   # inner | centre | outer
 
+        # Summary of the cover styles and periphs as the wizard left them (see ViewModel.coverFingerprint).
+        # If they no longer match, something else has changed the cover since.
+        self.fingerprint: str = ""
+
     def saveConfig(self, config):
         if not config.has_section("coverwiz"):
             config.add_section("coverwiz")
@@ -418,7 +422,15 @@ class WorkingCoverState:
                 pos_rev = {"hr": "inner", "hl": "outer", "hc": "centre"}
                 self.isbn_hpos = pos_rev.get(isbn_m.group(1), "inner")
 
+    # The style settings the wizard writes. They are cleared on every cover marker before being applied,
+    # so nothing from an earlier layout (e.g. another coverage pattern) is left behind.
+    managedStyleKeys = ("Alpha", "BgColor", "BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha",
+                        "Border", "BorderStyle", "BorderRef", "BorderColor", "BorderFillColor",
+                        "BorderMargin", "BorderWidth")
+
     def updateView(self, view):
+        for part in ("whole", "front", "spine", "back"):
+            view.styleEditor.clearUserKeys(f"cat:cover{part}|esb", self.managedStyleKeys)
         def setfront(k, v, all=False):
             view.styleEditor.setval("cat:coverwhole|esb" if all else "cat:coverfront|esb", k, v)
         if self.border_enabled:
@@ -798,6 +810,13 @@ class CoverWizardApp:
         self.window.set_position(Gtk.WindowPosition.CENTER)
         self.window.set_default_size(1180, 760)
         self.window.connect("destroy", self.onWindowDestroy)
+        # Closing the window is a Cancel, but the window must survive for the next time the wizard opens
+        self.window.connect("delete-event", self.onWindowDeleted)
+
+        # What has actually been applied to the styles and periphs (set at Finish, or when loaded from
+        # the config). The state the user is editing is only saved in the config once it is applied.
+        self.applied = None
+        self._openSnapshot = None
 
         bx_root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.window.add(bx_root)
@@ -912,7 +931,25 @@ class CoverWizardApp:
         self._buildPage6()
         self._buildPage7()
 
+    def markApplied(self):
+        self.applied = dict(vars(self.state))
+
+    def loadConfig(self, config):
+        found = self.state.loadConfig(config)
+        if found:
+            self.markApplied()
+        return found
+
+    def saveConfig(self, config):
+        ''' Save only what has been applied, so the config never describes a cover that was not made '''
+        if self.applied is None:
+            return
+        tmp = WorkingCoverState()
+        vars(tmp).update(self.applied)
+        tmp.saveConfig(config)
+
     def run(self):
+        self._openSnapshot = dict(vars(self.state))   # what Cancel goes back to
         # Pre-fill page count from the view's PDF if not already set
         if self.state.pagecount == 0 and self.view is not None:
             pc = self._getViewPageCount()
@@ -2421,7 +2458,20 @@ class CoverWizardApp:
 
     def onBackClicked(self, widget):    self._goToStep(self._stepIndex - 1)
     def onNextClicked(self, widget):    self._goToStep(self._stepIndex + 1)
-    def onCancelClicked(self, widget):  self.window.destroy()
+    def onCancelClicked(self, widget):
+        self.discardChanges()
+        self.window.hide()
+
+    def onWindowDeleted(self, widget, event):
+        self.discardChanges()
+        self.window.hide()
+        return True     # stop GTK destroying the window
+
+    def discardChanges(self):
+        if self._openSnapshot is not None:
+            vars(self.state).update(self._openSnapshot)
+            self._openSnapshot = None
+            self._pixbufCache.clear()
 
     def onAdvancedClicked(self, widget):
         dlg = Gtk.MessageDialog(transient_for=self.window,
@@ -2434,6 +2484,9 @@ class CoverWizardApp:
     def onFinishClicked(self, widget):
         if self.view is not None:
             self.state.updateView(self.view)
+            self.state.fingerprint = self.view.coverFingerprint()
+        self.markApplied()
+        self._openSnapshot = None
         self.onWindowDestroy(self.window)
 
     def onWindowDestroy(self, widget):

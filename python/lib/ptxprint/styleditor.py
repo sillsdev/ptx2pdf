@@ -1,5 +1,5 @@
 
-import re, os
+import re, os, io
 from ptxprint.usxutils import Sheets, typesFromMrk
 from ptxprint.font import FontRef
 from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path, saferelpath, asfloat
@@ -417,6 +417,38 @@ class StyleEditor:
         elif key.lower() in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key.lower()]
             self.model.changed()
+
+    def coverStyles(self):
+        ''' The user's own styles (in ptxprint.sty) that belong to the cover, e.g. cat:coverfront|esb '''
+        return [m for m in self.sheet if m.startswith("cat:cover")]
+
+    def removeCoverStyles(self):
+        ''' The Cover Wizard owns these: drop them all so none of an old cover's settings survives '''
+        mkrs = self.coverStyles()
+        for m in mkrs:
+            del self.sheet[m]
+        if len(mkrs):
+            self.model.changed()
+        return mkrs
+
+    def coverStyleText(self):
+        ''' The cover styles exactly as they are written to ptxprint.sty, so it comes out the same
+            before saving and after loading them again. Used to tell whether they have been changed. '''
+        out = io.StringIO()
+        self.output_diffile(out, sheet={m: self.sheet[m] for m in self.coverStyles()})
+        return out.getvalue()
+
+    def clearUserKeys(self, mrk, keys):
+        ''' Remove these keys from the user's own settings for a style. Unlike setval(..., None)
+            this never touches the underlying stylesheets. '''
+        sty = self.sheet.get(mrk, None)
+        if sty is None:
+            return
+        for k in keys:
+            if sty.pop(k.lower(), None) is not None:
+                self.model.changed()
+        if not len(sty):
+            del self.sheet[mrk]
 
     def haskey(self, mrk, key):
         if key.lower() in self.sheet.get(mrk, {}) or key.lower() in self.basesheet.get(mrk, {}):

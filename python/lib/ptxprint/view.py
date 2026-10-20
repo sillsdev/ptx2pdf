@@ -1,5 +1,5 @@
 
-import configparser, os, re, regex, random, collections, sys, glob, copy
+import configparser, os, re, regex, random, collections, sys, glob, copy, hashlib
 from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
@@ -1844,6 +1844,84 @@ class ViewModel:
         os.makedirs(os.path.dirname(fpath), exist_ok=True)    # config may not be saved yet
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write("\n".join(fcontent))
+
+    @staticmethod
+    def _coverPeriphId(line):
+        ''' The id of a cover periph (including the old "cover" and "spine" names) if line starts one, else None '''
+        line = line.strip()
+        if not line.startswith(r"\periph"):
+            return None
+        m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', line)
+        if not m:
+            return None
+        fullname = m.group(1).strip().lower()
+        periphid = m.group(2) or _periphids.get(fullname, fullname)
+        return periphid if periphid.startswith("cover") or periphid == "spine" else None
+
+    def coverPeriphsInFrontMatter(self, fpath=None):
+        ''' The ids of any cover periphs in the local front matter '''
+        if fpath is None:
+            fpath = self.configFRT()
+        res = []
+        if fpath is not None and os.path.exists(fpath):
+            with open(fpath, encoding="utf-8") as inf:
+                for l in inf.readlines():
+                    pid = self._coverPeriphId(l)
+                    if pid is not None:
+                        res.append(pid)
+        return res
+
+    def coverPeriphText(self, fpath=None):
+        ''' The cover periphs from the local front matter, without blank lines or the wizard's separator '''
+        if fpath is None:
+            fpath = self.configFRT()
+        res = []
+        if fpath is not None and os.path.exists(fpath):
+            collecting = False
+            with open(fpath, encoding="utf-8") as inf:
+                for l in inf.readlines():
+                    s = l.strip()
+                    if s == coverSeparator:
+                        continue
+                    if s.startswith(r"\periph"):
+                        collecting = self._coverPeriphId(s) is not None
+                    if collecting and len(s):
+                        res.append(s)
+        return "\n".join(res)
+
+    def coverFingerprint(self):
+        ''' A short summary of the cover styles and periphs, to spot changes made outside the Cover Wizard '''
+        txt = self.styleEditor.coverStyleText() + "\n--\n" + self.coverPeriphText()
+        return hashlib.sha256(txt.encode("utf-8")).hexdigest()[:16]
+
+    def removeCoverPeriphs(self, fpath=None):
+        ''' Take the cover periphs (and the Cover Wizard's separator) out of the local front matter '''
+        if fpath is None:
+            fpath = self.configFRT()
+        if fpath is None or not os.path.exists(fpath):
+            return []
+        with open(fpath, encoding="utf-8") as inf:
+            lines = inf.read().splitlines()
+        res = []
+        removed = []
+        skipping = False
+        for l in lines:
+            if l.strip() == coverSeparator:
+                removed.append("separator")
+                continue
+            if l.strip().startswith(r"\periph"):
+                pid = self._coverPeriphId(l)
+                skipping = pid is not None
+                if skipping:
+                    removed.append(pid)
+            if not skipping:
+                res.append(l)
+        if len(removed):
+            while len(res) and not res[-1].strip():
+                res.pop()
+            with open(fpath, "w", encoding="utf-8") as outf:
+                outf.write("\n".join(res) + "\n")
+        return removed
 
     def isPeriphInFrontMatter(self, fpath=None, periphnames=[]):
         if fpath is None:

@@ -2844,7 +2844,7 @@ class GtkViewModel(ViewModel):
         self.publications = self.pubView.save()
         config = super().createConfig(diff=diff)
         if self.coverwiz is not None:
-            self.coverwiz.state.saveConfig(config)
+            self.coverwiz.saveConfig(config)
         elif self._coverwiz_cfg_stash is not None and \
                 self._coverwiz_cfg_stash.has_section("coverwiz"):
             if not config.has_section("coverwiz"):
@@ -3025,9 +3025,16 @@ class GtkViewModel(ViewModel):
             self._updateSectionVisibility(key)
         if config.has_section("coverwiz"):
             if self.coverwiz is not None:
-                self.coverwiz.state.loadConfig(config)
+                self.coverwiz.loadConfig(config)
             else:
                 self._coverwiz_cfg_stash = config
+        else:
+            # This config has no cover wizard settings: forget the previous config's, or they would
+            # be saved into this one and the wizard would not know it is being used for the first time
+            if self.coverwiz is not None:
+                self.coverwiz.window.hide()
+            self.coverwiz = None
+            self._coverwiz_cfg_stash = None
         self.unpauseNoUpdate()
 
     def colorTabs(self):
@@ -6473,13 +6480,78 @@ class GtkViewModel(ViewModel):
                 startfile(fpath)
         dialog.hide()
         
+    def hasLegacyCover(self):
+        ''' Cover settings in this config that the Cover Wizard did not make '''
+        return len(self.styleEditor.coverStyles()) > 0 or len(self.coverPeriphsInFrontMatter()) > 0
+
+    def confirmWipeLegacyCover(self, why="legacy"):
+        win = getattr(self.mainapp, "win", None)
+        if win and not isinstance(win, Gtk.Window):
+            win = win.get_toplevel() if hasattr(win, "get_toplevel") else None
+        dialog = Gtk.MessageDialog(parent=win, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.WARNING,
+                                   buttons=Gtk.ButtonsType.NONE,
+                                   message_format=_("Existing cover settings found"))
+        if why == "changed":
+            what = _("The cover settings in this configuration (in the styles and/or the local Front Matter) "
+                     "have been changed since the Cover Wizard made them, so it no longer knows what they are.")
+        else:
+            what = _("This configuration already has cover settings (in the styles and/or the local Front Matter) "
+                     "that were not made by the Cover Wizard.")
+        dialog.format_secondary_text(what + "\n\n" + _(
+            "The Cover Wizard can't build on them: you can't put new wine into old wineskins! "
+            "To use it, PTXprint must DELETE those old cover settings and start the cover from scratch.\n\n"
+            "Delete the old cover settings and open the Cover Wizard?"))
+        dialog.add_button(_("Cancel (keep my settings)"), Gtk.ResponseType.CANCEL)
+        dialog.add_button(_("Delete and Continue"), Gtk.ResponseType.OK)
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        response = dialog.run()
+        dialog.destroy()
+        return response == Gtk.ResponseType.OK
+
+    def wipeLegacyCover(self):
+        mkrs = self.styleEditor.removeCoverStyles()
+        removed = self.removeCoverPeriphs()
+        logger.info(f"Removed old cover settings: styles {mkrs}, front matter {removed}")
+        self.styleEditor.editMarker()       # in case a cover style is on show
+        self.onViewerChangePage(None, None, 0, forced=True)     # reload the Front Matter tab
+
+    def coverWizardFingerprint(self):
+        ''' What the Cover Wizard last left behind for this config, or None if it has never made a cover here '''
+        if self.coverwiz is not None:
+            return None if self.coverwiz.applied is None else self.coverwiz.applied.get("fingerprint", "")
+        if self._coverwiz_cfg_stash is not None:
+            return self._coverwiz_cfg_stash.get("coverwiz", "fingerprint", fallback="")
+        return None
+
+    def coverNeedsWiping(self):
+        ''' "legacy" if the cover was not made by the wizard, "changed" if it was but has been altered since
+            (or was made before PTXprint recorded fingerprints), None if there is nothing in the way '''
+        if not self.hasLegacyCover():
+            return None
+        fp = self.coverWizardFingerprint()
+        if fp is None:
+            return "legacy"
+        return None if fp == self.coverFingerprint() else "changed"
+
     def onCoverWizardClicked(self, btn):
+        if self.coverwiz is not None and self.coverwiz.window.get_visible():
+            self.coverwiz.window.present()
+            return
+        fresh = False
+        why = self.coverNeedsWiping()
+        if why is not None:
+            if not self.confirmWipeLegacyCover(why):
+                return
+            self.wipeLegacyCover()
+            self.coverwiz = None            # start from scratch, and save nothing of the old cover
+            self._coverwiz_cfg_stash = None
+            fresh = True
         if self.coverwiz is None:
             self.coverwiz = CoverWizardApp(view=self)
             if self._coverwiz_cfg_stash is not None:
-                self.coverwiz.state.loadConfig(self._coverwiz_cfg_stash)
+                self.coverwiz.loadConfig(self._coverwiz_cfg_stash)
                 self._coverwiz_cfg_stash = None
-            else:
+            elif not fresh:
                 self.coverwiz.state.readFromView(self)
         self.coverwiz.run()
     
