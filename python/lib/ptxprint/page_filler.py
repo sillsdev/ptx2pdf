@@ -1102,7 +1102,7 @@ class TypesetterSolver:
                     goagain = False
                     break
                 count += 1
-                delta_lists = sorted(by_para[p] for p in pars)
+                delta_lists = [by_para[p] for p in pars]
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, d in choice) + 0.1 * len(choice)
                     combo = {p: d for p, (s, d) in zip(pars, choice)}
