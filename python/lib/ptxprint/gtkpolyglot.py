@@ -14,6 +14,7 @@ m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
 class PolyglotSetup(Gtk.Box):
 
     _methods = """onDiglotClicked loadPolyglotSettings onDiglotAutoAdjust update_diglot_polyglot_UI
+                  switchToDiglot
                """.split()
 
     def __init__(self, builder, view, tv):
@@ -1206,7 +1207,7 @@ class PolyglotSetup(Gtk.Box):
             dv = self.view.diglotViews.get(pref, None)
         if dv is None:
             if self.view.otherDiglot is not None:
-                dvprj, dvcfg = self.otherDiglot[:2]
+                dvprj, dvcfg = self.view.otherDiglot[:2]
             else:
                 return False
         elif dv:
