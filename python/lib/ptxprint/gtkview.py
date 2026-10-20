@@ -3154,7 +3154,10 @@ class GtkViewModel(ViewModel):
         if self.loadingConfig:
             return
         byUser = w is not None
+        coverOffMsg = _("The Cover is disabled because Local Front Matter is turned off.")
         if self.get('c_frontmatter'):
+            if self.get("l_statusLine") == coverOffMsg:
+                self.doStatus("")       # Local Front Matter is on again, so that is no longer true
             if byUser:
                 self.set('c_colophon', False)
             frtpath = self.configFRT()
@@ -3168,7 +3171,7 @@ class GtkViewModel(ViewModel):
             if byUser:
                 self.set('c_colophon', True)
             if self.get('c_makeCoverPage'):
-                self.doStatus(_("The Cover is disabled because Local Front Matter is turned off."))
+                self.doStatus(coverOffMsg)
                 self.set('c_makeCoverPage', False)
     
     def onFnPosChanged(self, btn):
