@@ -14,7 +14,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
 import cairo
 
-from ptxprint.utils import coltoonemax, coltotex, gsmToUm, umToGsm
+from ptxprint.utils import coltoonemax, coltotex, gsmToUm, umToGsm, coverSeparator
 from PIL import Image
 
 
@@ -509,6 +509,8 @@ class WorkingCoverState:
             if a == "spine" and not self.spine_enabled:
                 continue
             res = []
+            if a == 'front':
+                res.append(coverSeparator)      # the cover periphs follow in FRTlocal.sfm
             res.append(fr'\periph {a}|id="cover{a}"')
             if a == 'front':
                 bits = []

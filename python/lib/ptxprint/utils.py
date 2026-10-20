@@ -1189,6 +1189,9 @@ def bringParatextToForeground():
         user32.AttachThreadInput(our_tid, tgt_tid, False)
     return False
 
+# Marks where the Cover Wizard's periphs start in FRTlocal.sfm, so the user can find them
+coverSeparator = r"\rem ============= Cover Page Settings ============="
+
 # Paper weight (gsm) -> thickness (µm per sheet, approximate). Values below 60gsm
 # are for thin Bible paper (from Pretore's figures); 60gsm and up are typical
 # uncoated offset paper.

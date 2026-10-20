@@ -8,7 +8,7 @@ from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontca
 from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
-                            zipopentext, xdvigetfonts, calledme, parseBookList
+                            zipopentext, xdvigetfonts, calledme, parseBookList, coverSeparator
 from ptxprint.usxutils import UsfmCollection, Usfm, Sheets, simple_parse, merge_sty, out_sty
 from ptxprint.module import Module
 from ptxprint.piclist import Piclist, PicChecks
@@ -1816,10 +1816,14 @@ class ViewModel:
         fcontent = []
         usedperiphs = set()
         logging.debug(f"Process {fpath}, ensuring peripherals: {self.periphs.keys()}")
+        # a periph that brings its own separator replaces the one already in the file, not duplicates it
+        newsep = any(v.lstrip().startswith(coverSeparator) for v in self.periphs.values())
         if os.path.exists(fpath):
             with open(fpath, encoding="utf-8") as inf:
                 skipping = False
                 for l in inf.readlines():
+                    if newsep and l.strip() == coverSeparator:
+                        continue
                     if l.strip().startswith(r"\periph"):
                         m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
                         if m:
