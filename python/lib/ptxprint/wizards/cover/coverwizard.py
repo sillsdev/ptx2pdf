@@ -363,7 +363,7 @@ class WorkingCoverState:
                     self.langname_enabled = True
                     self.langname_position_pct = max(0, min(100,
                         int(round(cum_mm / pheight * 100))))
-                elif r'\fig|' in line and 'pgpos="pc"' in line:
+                elif re.search(r'\\fig ?\|', line) and 'pgpos="pc"' in line:
                     self.fgimage_enabled = True
                     self.fgimage_position_pct = max(0, min(100,
                         int(round(cum_mm / pheight * 100))))
@@ -384,7 +384,7 @@ class WorkingCoverState:
 
             # Logo figure
             logo_m = re.search(
-                r'\\fig\|src="([^"]+)"[^\n]*?pgpos="([^"]*)"[^\n]*?'
+                r'\\fig ?\|src="([^"]+)"[^\n]*?pgpos="([^"]*)"[^\n]*?'
                 r'(?:scale="([^"]*)")?[^\n]*?\\fig\*',
                 back)
             if logo_m:
@@ -406,7 +406,7 @@ class WorkingCoverState:
                     m2 = re.match(r'\\zgap\|([0-9.]+)(mm|pt|in|)\\?\*', bl)
                     if m2:
                         last_back_zgap_mm = _mm_from_zgap(m2.group(1), m2.group(2) or "mm")
-                    elif r'\fig|' in bl and 'pgpos=' in bl:
+                    elif re.search(r'\\fig ?\|', bl) and 'pgpos=' in bl:
                         if pheight > 0:
                             self.logo_vpos_pct = max(0, min(100,
                                 int(round(last_back_zgap_mm / pheight * 100))))
@@ -531,7 +531,7 @@ class WorkingCoverState:
                     bits.append((theight * self.langname_position_pct / 100, langname_height * linefactor, r"\mt3 \zvar|languagename\*"))
                 if self.fgimage_enabled:
                     fgimage_height = self.get_image_height(self.fgimage_path, twidth, theight)
-                    bits.append((theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig|src="{self.fgimage_path}" size="col", pgpos="pc"\fig*'))
+                    bits.append((theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig |src="{texPath(self.fgimage_path)}" size="col" pgpos="pc"\fig*'))
                 basepos = 0
                 for b in sorted(bits):
                     if b[0] > basepos:
@@ -553,7 +553,7 @@ class WorkingCoverState:
                 res.append(rf"\m {self.backtext}")
                 if self.logo_enabled:
                     res.append(rf"\zgap|{self.logo_vpos_pct / 100 * pheight}mm\*")
-                    res.append(rf'\fig|src="{self.logo_path}" pgpos="{positions[self.logo_hpos]}" size="col" scale="{self.logo_scale / 100}"\fig*')
+                    res.append(rf'\fig |src="{texPath(self.logo_path)}" size="col" pgpos="{positions[self.logo_hpos]}" scale="{self.logo_scale / 100}"\fig*')
                 res.append(r"\vfill")
                 if self.isbn_enabled:
                     res.append(r'\ztruetext')
@@ -718,6 +718,10 @@ def makeSpinner(val, lo, hi, step=1.0, digits=0):
     sp.set_numeric(True)
     sp.show()
     return sp
+
+def texPath(path):
+    """Paths in \\fig src= must use forward slashes: TeX would read backslashes as control sequences."""
+    return path.replace("\\", "/")
 
 def openImageChooser(parent, title="Choose image"):
     dlg = Gtk.FileChooserDialog(title=title, parent=parent,

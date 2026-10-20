@@ -873,7 +873,7 @@ class TexModel:
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \
                                      + '.jpg" copy="None" ' + m.group(2)+ r'\fig*', l)
-                    l = re.sub(r'(\\fig .*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
+                    l = re.sub(r'(\\fig[ |].*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
