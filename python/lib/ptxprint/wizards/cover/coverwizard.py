@@ -416,11 +416,14 @@ class WorkingCoverState:
                                 int(round(last_back_zgap_mm / pheight * 100))))
                         break
 
-            # ISBN horizontal position
-            isbn_m = re.search(r'\\esb\s*\\cat ISBNbox\\cat\*\s*\\(\w+)', back)
-            if isbn_m:
-                pos_rev = {"hr": "inner", "hl": "outer", "hc": "centre"}
-                self.isbn_hpos = pos_rev.get(isbn_m.group(1), "inner")
+            # ISBN horizontal position comes from the style of the ISBN box
+            if re.search(r'\\cat ISBNbox\\cat\*', back):
+                code = str(view.styleEditor.getval("cat:ISBNbox|esb", "Position", "hc", includebase=True))
+                if code == "hc":
+                    self.isbn_hpos = "centre"
+                else:
+                    inner = "hl" if self.rtl_binding else "hr"
+                    self.isbn_hpos = "inner" if code == inner else "outer"
 
     # The style settings the wizard writes. They are cleared on every cover marker before being applied,
     # so nothing from an earlier layout (e.g. another coverage pattern) is left behind.
@@ -428,9 +431,18 @@ class WorkingCoverState:
                         "Border", "BorderStyle", "BorderRef", "BorderColor", "BorderFillColor",
                         "BorderMargin", "BorderWidth")
 
+    def isbnPosition(self):
+        """The Position of the ISBN box on the back cover. Inner is the spine side: the right of the
+        back cover for a left-to-right binding, the left for a right-to-left one."""
+        if self.isbn_hpos == "centre":
+            return "hc"
+        inner, outer = ("hl", "hr") if self.rtl_binding else ("hr", "hl")
+        return inner if self.isbn_hpos == "inner" else outer
+
     def updateView(self, view):
         for part in ("whole", "front", "spine", "back"):
             view.styleEditor.clearUserKeys(f"cat:cover{part}|esb", self.managedStyleKeys)
+        view.styleEditor.clearUserKeys("cat:ISBNbox|esb", ("Position",))
         def setfront(k, v, all=False):
             view.styleEditor.setval("cat:coverwhole|esb" if all else "cat:coverfront|esb", k, v)
         if self.border_enabled:
@@ -488,8 +500,8 @@ class WorkingCoverState:
         if self.langname_enabled:
             view.setvar('languagename', self.langname)
         if self.isbn_enabled:
-            positions = {"inner": "hr", "outer": "hl", "centre": "hc"}
             view.setvar('isbn', self.isbn)
+            view.styleEditor.setval("cat:ISBNbox|esb", "Position", self.isbnPosition())
         if self.spine_enabled and self.spine_width_computed_mm > 0.:
             view.set("l_spineWidth", str(self.spine_width_computed_mm))
             view.set("c_inclSpine", True)
@@ -559,7 +571,14 @@ class WorkingCoverState:
             elif a == 'spine':
                 theight = self.spine_width_computed_mm
                 text_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
-                res.append(rf"\mt2 \zvar|maintitle\* - \zvar|subtitle\*")
+                parts = []
+                if self.spine_title:
+                    parts.append(r"\zvar|maintitle\*")
+                if self.spine_subtitle and self.subtitle_enabled:
+                    parts.append(r"\zvar|subtitle\*")
+                if self.spine_langname and self.langname_enabled:
+                    parts.append(r"\zvar|languagename\*")
+                res.append(r"\mt2 " + " - ".join(parts) if parts else r"\p")
             elif a == "back":
                 back_height = view.styleEditor.getval(f"cat:cover{a}|m", "LineSpacing", 1.0)
                 positions = {"inner": "qr", "centre": "pc", "outer": "p"}
@@ -571,7 +590,10 @@ class WorkingCoverState:
                 res.append(r"\vfill")
                 if self.isbn_enabled:
                     res.append(r'\ztruetext')
-                    res.append(fr'\esb\cat ISBNbox\cat*\{positions[self.isbn_hpos]} \zISBNbarcode|var="isbn" height="medium"\*\esbe')
+                    # where it sits across the cover is the Position of the ISBNbox style (see updateView)
+                    res.append(r'\esb \cat ISBNbox\cat*')
+                    res.append(r'\zISBNbarcode|var="isbn" height="medium"\*')
+                    res.append(r'\esbe')
                     res.append(r'\zgap|10pt\*')
                     res.append(r'\ztruetext*')
             view.periphs['cover'+a] = "\n".join(res)
