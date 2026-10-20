@@ -509,6 +509,10 @@ class WorkingCoverState:
         else:
             view.set("c_inclSpine", False)
             view.set("s_coverBleed", 0)
+        # The cover periphs live in the local front matter, so that has to be switched on
+        if not view.get("c_frontmatter"):
+            view.set("c_frontmatter", True)
+            view.sensiVisible("c_frontmatter")
         self.createCoverPeriphs(view)
 
     def getBorderVal(self, view, mkr, vh, key):
