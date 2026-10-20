@@ -719,13 +719,18 @@ def makeSpinner(val, lo, hi, step=1.0, digits=0):
     sp.show()
     return sp
 
+_lastImageDir = None
+
 def texPath(path):
     """Paths in \\fig src= must use forward slashes: TeX would read backslashes as control sequences."""
     return path.replace("\\", "/")
 
 def openImageChooser(parent, title="Choose image"):
+    global _lastImageDir
     dlg = Gtk.FileChooserDialog(title=title, parent=parent,
                                 action=Gtk.FileChooserAction.OPEN)
+    if _lastImageDir and os.path.isdir(_lastImageDir):
+        dlg.set_current_folder(_lastImageDir)
     dlg.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                     Gtk.STOCK_OPEN,   Gtk.ResponseType.OK)
     ff = Gtk.FileFilter()
@@ -736,6 +741,8 @@ def openImageChooser(parent, title="Choose image"):
     path = ""
     if dlg.run() == Gtk.ResponseType.OK:
         path = dlg.get_filename() or ""
+        if path:
+            _lastImageDir = os.path.dirname(path)
     dlg.destroy()
     return path
 
