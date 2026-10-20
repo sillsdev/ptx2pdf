@@ -855,8 +855,10 @@ class StyleEditorView(StyleEditor):
             # print(f"{key=}[{isset=}=>{newv[3](isset)}]: {val=}")
             key = newv[3](isset)
             other = newv[3](not isset)
-            if other in data:
-                super(self.__class__, self).setval(mkr, key, None)
+            # style keys are stored lowercase, so compare that way or the other form (e.g. BaseLine
+            # when switching to LineSpacing) is never removed and wins again when the style is reloaded
+            if other.lower() in self.sheet.get(mkr, {}):
+                super(self.__class__, self).setval(mkr, other, None)
             value = val if isset or v[3] is None else v[3](val) # v[4 if isset else 3] is None else v[4 if isset else 3](val)
         elif v[0].startswith("col_"):
             value = coltotex(val)
@@ -874,7 +876,7 @@ class StyleEditorView(StyleEditor):
                 newlabel = self.stylediverts[controlk][2 if val else 1]
                 controlw = stylemap[controlk][1]
                 self.set(controlw, newlabel)
-                if otherkey in data:
+                if otherkey.lower() in self.sheet.get(mkr, {}):
                     super(self.__class__, self).setval(mkr, otherkey, None)
             value = val
             # value = val if newv[3] is None else newv[3](val)
