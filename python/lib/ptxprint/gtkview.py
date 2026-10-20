@@ -3149,10 +3149,14 @@ class GtkViewModel(ViewModel):
             self.pauseNoUpdate()
 
     def onLocalFRTclicked(self, w):
+        # w is None when PTXprint calls this itself (e.g. the Cover Wizard after writing the cover periphs).
+        # Only a click by the user may switch the Colophon: a user may want both, and has chosen so earlier.
         if self.loadingConfig:
             return
+        byUser = w is not None
         if self.get('c_frontmatter'):
-            self.set('c_colophon', False)
+            if byUser:
+                self.set('c_colophon', False)
             frtpath = self.configFRT()
             # when FRT doesn't even exist yet, or is empty:
             if not os.path.exists(frtpath) or \
@@ -3161,7 +3165,8 @@ class GtkViewModel(ViewModel):
                 self.rescanFRTvarsClicked(None, autosave=False)
                 self.onViewerChangePage(None, None, 0, forced=True)
         else:
-            self.set('c_colophon', True)
+            if byUser:
+                self.set('c_colophon', True)
             if self.get('c_makeCoverPage'):
                 self.doStatus(_("The Cover is disabled because Local Front Matter is turned off."))
                 self.set('c_makeCoverPage', False)
