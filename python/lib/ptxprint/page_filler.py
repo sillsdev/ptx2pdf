@@ -172,6 +172,8 @@ class SolveResult:
 
 class Hooks:
 
+    badness_balance_maxbad = 1.0    # polyglot: scales the worst paragraph shape used to change a slice
+
     def __init__(self, printer, state):
         self.printer = printer
         self.basestate = state
@@ -181,7 +183,7 @@ class Hooks:
                   ("contrast_factor", "pbcontrast"),
                   ("backtrack", "pbbacktrack"),
                   ("maxr", "pbmaxr"),
-                  ("imbalance_weigth", "pbpolyimbalance")):
+                  ("imbalance_weight", "pbpolyimbalance")):
             val = float(printer.view.get("s_"+a[1], default="1.0"))
             logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
