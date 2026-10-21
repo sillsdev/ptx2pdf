@@ -256,6 +256,31 @@ class TexModel:
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
         if self.dict["project/interlinear"] != "%" and self.dict["project/interlang"]:
             self.interlinear = Interlinear(self.dict["project/interlang"], self.dict["/ptxpath"])
+
+        # marginal verses
+        if self.dict["paper/ifmarginnotes"] == "":
+            width = self.dict["paper/marginnoteswidth"]     # a float already
+            gap = float(self.dict["texpert/marginnotesgap"])
+            ncols = int(self.dict["paper/columns"])
+            margins = float(self.dict["paper/margins"])
+            mwidth = width + (gap * 25.4 / 72.27)
+            if ncols == 1:
+                ml = "paper/gutter"
+                if self.dict["document/marginnotesinner"]:
+                    self.dict["paper/ifoutergutter"] = "false"
+                else:
+                    if self.dict["paper/ifaddgutter"] == "true":
+                        gw = float(self.dict[ml])
+                        margins += gw
+                        mwidth -= gw
+                        self.dict["paper/margins"] = str(margins)
+                    self.dict["paper/ifoutergutter"] = "true"
+                    self.dict[ml] = "0"
+                self.dict["paper/ifaddgutter"] = "true"
+            else:
+                ml = "paper/margins"
+            self.dict[ml] = str(float(self.dict[ml]) + mwidth)
+
         regfont = self.printer.get("bl_fontR")
         if regfont is not None:
             if regfont.isCtxtSpace:
@@ -306,30 +331,6 @@ class TexModel:
             for k, c in self._snippets.items():
                 v = self.printer.get(c[0])
                 self.dict[k] = ("true" if v else "false") if c[1] is None else v
-
-        # marginal verses
-        if self.dict["paper/ifmarginnotes"] == "":
-            width = self.dict["paper/marginnoteswidth"]     # a float already
-            gap = float(self.dict["texpert/marginnotesgap"])
-            ncols = int(self.dict["paper/columns"])
-            margins = float(self.dict["paper/margins"])
-            mwidth = width + (gap * 25.4 / 72.27)
-            if ncols == 1:
-                ml = "paper/gutter"
-                if self.dict["document/marginnotesinner"]:
-                    self.dict["paper/ifoutergutter"] = "false"
-                else:
-                    if self.dict["paper/ifaddgutter"] == "true":
-                        gw = float(self.dict[ml])
-                        margins += gw
-                        mwidth -= gw
-                        self.dict["paper/margins"] = str(margins)
-                    self.dict["paper/ifoutergutter"] = "true"
-                    self.dict[ml] = "0"
-                self.dict["paper/ifaddgutter"] = "true"
-            else:
-                ml = "paper/margins"
-            self.dict[ml] = str(float(self.dict[ml]) + mwidth)
 
         # handle diglot fractions
         # if self.dict['poly/fraction']:
@@ -578,6 +579,7 @@ class TexModel:
     def calculateMargins(self):
         (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms,
          ruleposmms, headerlabel, footerlabel, hfontsizemms) = self.printer.getMargins()
+        marginmms = float(self.dict["paper/margins"])
         self.dict["paper/topmarginfactor"] = f2s(topmarginmms / marginmms)
         self.dict["paper/bottommarginfactor"] = f2s(bottommarginmms / marginmms)
         self.dict["paper/headerposition"] = f2s(headerposmms / marginmms)
