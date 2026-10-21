@@ -301,14 +301,35 @@ class TexModel:
             if a not in self.dict:
                 self.dict[a] = ''
 
+        # Set snippet flags here, not in makelocalChanges, which "Layout only" skips
+        if self.printer is not None:
+            for k, c in self._snippets.items():
+                v = self.printer.get(c[0])
+                self.dict[k] = ("true" if v else "false") if c[1] is None else v
+
         # marginal verses
         if self.dict["paper/ifmarginnotes"] == "":
             width = self.dict["paper/marginnoteswidth"]     # a float already
             gap = float(self.dict["texpert/marginnotesgap"])
             ncols = int(self.dict["paper/columns"])
             margins = float(self.dict["paper/margins"])
-            margins += (width + gap * 72. / 25.4) * ncols / 2.
-            self.dict["paper/margins"] = "{:.2f}".format(margins)
+            mwidth = width + (gap * 25.4 / 72.27)
+            if ncols == 1:
+                ml = "paper/gutter"
+                if self.dict["document/marginnotesinner"]:
+                    self.dict["paper/ifoutergutter"] = "false"
+                else:
+                    if self.dict["paper/ifaddgutter"] == "true":
+                        gw = float(self.dict[ml])
+                        margins += gw
+                        mwidth -= gw
+                        self.dict["paper/margins"] = str(margins)
+                    self.dict["paper/ifoutergutter"] = "true"
+                    self.dict[ml] = "0"
+                self.dict["paper/ifaddgutter"] = "true"
+            else:
+                ml = "paper/margins"
+            self.dict[ml] = str(float(self.dict[ml]) + mwidth)
 
         # handle diglot fractions
         # if self.dict['poly/fraction']:
@@ -783,7 +804,7 @@ class TexModel:
                         if v:
                             fn = getattr(c[2], 'generateTex', None)
                             if fn is not None:
-                                res.append(fn(v, self))
+                                res.append(fn(self))
                             elif c[2].processTex:
                                 res.append(c[2].texCode.format(**self.dict))
                             else:
@@ -1438,14 +1459,7 @@ class TexModel:
 
         # Apply any changes specified in snippets
         for k, c in sorted(self._snippets.items(), key=lambda x: x[1][2].order):
-            if self.printer is None:
-                v = self.asBool(k) if c[1] is None else c[1](self.dict[k])
-            elif c[1] is None:
-                v = self.printer.get(c[0])
-                self.dict[k] = "true" if v else "false"
-            else:
-                self.dict[k] = self.printer.get(c[0])
-                v = c[1](self.dict[k])
+            v = self.asBool(k) if c[1] is None else c[1](self.dict[k])
             if v: # if the c_checkbox is true then extend the list with those changes
                 if k == "snippets/fancyintro" and bk in nonScriptureBooks: # Only allow fancyIntros for scripture books
                     pass

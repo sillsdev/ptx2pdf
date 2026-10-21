@@ -13,6 +13,7 @@ class Snippet:
 
 class PDFx1aOutput(Snippet):
 
+    @classmethod
     def generateTex(self, model, diglotSide=""):
         docdir,docdirbase=model.docdir()
         res = r"""
@@ -205,6 +206,7 @@ class Diglot(Snippet):
     processTex = True
 
 # \diglotSwap{document/diglotswapside}
+    @classmethod
     def generateTex(self, model, diglotSide=""):
         baseCode = r"""
 \def\DiglotLFraction{{{poly/fraction}}}
@@ -271,6 +273,7 @@ class Diglot(Snippet):
 
 class FancyBorders(Snippet):
     takesDiglot = True
+    @classmethod
     def generateTex(self, texmodel, diglotSide=""):
         res = r"""
 % Define this to add a border to all pages, from a PDF file containing the graphic
@@ -391,7 +394,8 @@ def parsecol(s):
     return " ".join("{:.3f}".format(float(v)/255) for v in vals)
 
 class ThumbTabs(Snippet):
-    def generateTex(self, model):
+    @classmethod
+    def generateTex(self, model, diglotSide=""):
         numtabs = int(float(model["thumbtabs/numtabs"]))
         texlines = ["\\NumTabs={}".format(numtabs)]
 
@@ -497,22 +501,24 @@ class MarginalNotes(Snippet):
     texCode = r'''
 \catcode`\@=11
 \newbox\m@rginheadingbox
-\def\endheadingshook{\ifb@dy\setbox\myheadingbox=\vtop{\vbox to \dp\pstr@t{}\box\he@dingbox}\he@dingsfalse\fi}
+\def\endheadingshook{\ifb@dy\setbox\m@rginheadingbox=\vtop{\vbox to \dp\pstr@t{}\box\he@dingbox}\he@dingsfalse\fi}
 \def\insertm@rginheadingbox{\ifvoid\m@rginheadingbox\else\d@marginnote{\the\m@rginheadingbox}{\c@rref}{s}{outer}{bottom}{6pt}{\dimexpr -\baselineskip - \dp\pstr@t}\setbox\m@rginheadingbox=\box\voidb@x\fi}
 \addtoeveryparhooks{\insertm@rginheadingbox}
 '''
-    def generateTex(self, model):
+    @classmethod
+    def generateTex(cls, model, diglotSide=""):
         if model.dict["paper/ifmarginnotes"] == "%":
             return ""
-        mwidth = model.dict["paper/marginnoteswidth"]
+        mwidth = float(model.dict["paper/marginnoteswidth"])
+        print(f"{mwidth=}")
         if mwidth < 1:
             return ""
-        res = [self.texCode]
+        res = [cls.texCode]
         # find all used heading styles
         se = model.printer.styleEditor
-        usfms = self.printer.get_usfms()
-        mrkrset = usfms.get_markers(self.printer.getBooks())
+        usfms = model.printer.get_usfms()
+        mrkrset = usfms.get_markers(model.printer.getBooks())
         for m in mrkrset:
-            if usfms.grammar.marker_categories(m, "") == "sectionpara":
+            if usfms.grammar.marker_categories.get(m, "") == "sectionpara":
                 res.append(fr"\sethook{{before}}{{{m}}}{{\hsize={mwidth}mm}}")
-        return res
+        return "\n".join(res)
