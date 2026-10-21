@@ -27,7 +27,8 @@ dependencies = [
 "platformdirs",
 "Pillow",
 "numpy",
-"markdown_it-py"
+"markdown_it-py",
+"psutil"
 ]
 
 [project.optional-dependencies]
