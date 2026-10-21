@@ -172,18 +172,6 @@ class SolveResult:
 
 class Hooks:
 
-    badness_stretch_tolerance   = 80   # avoid ±2
-    badness_spacing_tolerance   = 20   # paragraph spacing distortion
-    badness_shrink_preference   = 10   # + = prefer shrink, - = prefer stretch
-    badness_header_aversion     = 60   # avoid headers
-    badness_justification       = 20   # cost of being justified
-    badness_line_density_factor = 1.0  # wide vs narrow text
-    badness_line_weight         = 12
-    badness_lastline_weight     = 20
-    badness_tex_weight          = 12
-    badness_balance_maxbad      = 1.0  # polyglot: scales the worst paragraph shape used to change a slice
-    badness_imbalance_weight    = 1.0  # polyglot: scales the badness of a line of slice imbalance
-
     def __init__(self, printer, state):
         self.printer = printer
         self.basestate = state
@@ -192,8 +180,9 @@ class Hooks:
                   ("expansion_cost", "pbexpcost"),
                   ("contrast_factor", "pbcontrast"),
                   ("backtrack", "pbbacktrack"),
-                  ("maxr", "pbmaxr")):
-            val = float(printer.view.get("s_"+a[1]))
+                  ("maxr", "pbmaxr"),
+                  ("imbalance_weigth", "pbpolyimbalance")):
+            val = float(printer.view.get("s_"+a[1], default="1.0"))
             logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
         # setattr(self, "strictness", printer.view.get("c_pbstrict", False))
@@ -1102,7 +1091,7 @@ class TypesetterSolver:
                     goagain = False
                     break
                 count += 1
-                delta_lists = sorted(by_para[p] for p in pars)
+                delta_lists = [by_para[p] for p in pars]
                 for choice in itertools.product(*delta_lists):
                     score = sum(s for s, d in choice) + 0.1 * len(choice)
                     combo = {p: d for p, (s, d) in zip(pars, choice)}
