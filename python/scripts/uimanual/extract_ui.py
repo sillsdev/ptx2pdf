@@ -428,14 +428,14 @@ def flattenSens(d):
 
 # ---------- main extraction ----------
 
-levelNames = {2: "Mini", 4: "Basic", 5: "Default", 6: "Full"}
+levelNames = {2: "Mini", 4: "Basic", 5: "Regular", 6: "Full"}
 
 
 def extract(repo):
     lib = os.path.join(repo, "python", "lib", "ptxprint")
     g = Glade(os.path.join(lib, "ptxprint.glade"))
     gv = moduleLiterals(os.path.join(lib, "gtkview.py"),
-                        {"_ui_minimal", "_ui_basic", "_ui_default", "_ui_full", "_ui_experimental",
+                        {"_ui_minimal", "_ui_basic", "_ui_regular", "_ui_full", "_ui_experimental",
                          "_ui_keepHidden", "_showActiveTabs", "_collapsibleSections", "_sensitivities",
                          "_nonsensitivities"})
     mm = readModelMap(os.path.join(lib, "modelmap.py"))
@@ -446,7 +446,7 @@ def extract(repo):
                    "scr", "t", "tb", "textv", "tv", "rule", "img")
     shown = {}
     cumulative = set()
-    for lvl, name in ((2, "_ui_minimal"), (4, "_ui_basic"), (5, "_ui_default"), (6, "_ui_full")):
+    for lvl, name in ((2, "_ui_minimal"), (4, "_ui_basic"), (5, "_ui_regular"), (6, "_ui_full")):
         cumulative |= set(gv.get(name, []))
         shown[lvl] = set(cumulative)
     experimental = set(gv.get("_ui_experimental", []))

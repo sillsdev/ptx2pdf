@@ -265,7 +265,7 @@ btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 # tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
 # lpolyfraction_ spolyfraction_ tb_diglotSwitch btn_diglotSwitch
 
-_ui_default = """
+_ui_regular = """
 ex_copyright ecb_licenseText textv_copyright btn_resetCopyright btn_copyToTargetProj
 btn_resetDefaults btn_editModule s_indentUnit l_linesOnPage l_linesOnPageLabel btn_adjust_spacing
 c_useMarginNotes s_marginNotesWidth c_marginNotesInner
@@ -528,7 +528,7 @@ _ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging
 _uiLevels = {
     2 : _ui_minimal,
     4 : _ui_basic,
-    5 : _ui_default,
+    5 : _ui_regular,
     6 : _ui_full,
 }
 

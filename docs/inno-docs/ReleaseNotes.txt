@@ -1,7 +1,57 @@
-PTXprint 3.1.3 Release Notes
-12 Oct 2026
+PTXprint 3.1.4 Release Notes
+21 Oct 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.4 - (21 Oct 2026)
+
+  * New features
+    - Margin notes layout: new UI controls (inner/outer placement)
+    - Excess margin notes are pushed onto the next page/column
+    - New Regular UI view level
+    - Header/footer: new "Date and Time" item, offered in every slot
+    - Glossary words can be marked with "star *before and after*"
+    - Publications are cleared when switching configurations
+
+  * Cover wizard
+    - An old cover's settings no longer override the wizard's
+    - Cover periphs in FRTlocal.sfm are marked with a separator
+    - Local Front Matter is switched on at Finish; only a user click 
+      on it switches the Colophon
+    - The image chooser reopens in the last-used folder
+    - Fixed fig markup; fixed the cover TrimBox
+    - Spine text options and ISBN box placement are now honoured
+    - Spine width is now calculated from the publication's page count
+
+  * Automatic Page Filler (experimental)
+    - New diglot/polyglot filler with slice balancing and page filling
+    - Fixed pbcontrast; new user control for pbpolyimbalance
+
+  * UI and usability
+    - Tooltips and labels corrected
+    - Config delete/reset made robust
+    - Import Settings: fixed options that did nothing
+    - Optimize Poetry Layout and Exclude Subfolders now work
+    - Section heading image shift: + now moves up (ConfigVersion 3.03)
+    - More helpful hints for the "! Paratext stylesheet" XeTeX error
+    - Localization: .po gaps filled for several languages (experimental)
+
+  * Bug fixes
+    - Right-click "Edit Style" no longer fails with AttributeError (#1274)
+    - Style editor: switching Absolute/Relative line spacing (#1273, #1275)
+    - Picture checks and notes (picInfo.txt, picChecks.txt) now load
+    - Table rows no longer cache their baseline under the preceding
+      paragraph style
+    - Nested paragraphs (margin notes) are read back correctly from parlocs
+    - Fixed Margin notes prevent convergence on 1 sp rounding jitter (#1258)
+    - Fixed 11 minor UI bugs (chapter label, hyphenation, Strong's notes, ...)
+
+  * Build
+    - Unicode data updated to 17; 
+    - psutil added as a dependency; 
+    - pytest-3 can be run from the repository root
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.1.3 - (12 Oct 2026)
