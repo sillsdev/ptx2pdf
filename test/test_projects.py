@@ -183,7 +183,7 @@ class TestXetex:
                 pass
             ptxcmd = self.pdf.ptxcmd
             # ptxprint -p basedir ... <project>
-            ptxcmd = ptxcmd[:2] + ["tmp"] + ptxcmd[3:-1] + ["-Z", self.pdf.arcpath, "-F", self.pdf.pdfpath,
+            ptxcmd = ptxcmd[:2] + [os.path.join(os.path.dirname(os.path.abspath(__file__)), "tmp")] + ptxcmd[3:-1] + ["-Z", self.pdf.arcpath, "-F", self.pdf.pdfpath,
                                     "--diffpages=50", "--diffoutfile="+outfname, "-P"] + ptxcmd[-1:]
             print(f"exists({os.path.dirname(self.pdf.arcpath)}) = {os.path.exists(os.path.dirname(self.pdf.arcpath))}")
             res = call(ptxcmd)

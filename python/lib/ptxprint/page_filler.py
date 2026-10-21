@@ -795,7 +795,11 @@ class TypesetterSolver:
                         target_delta = get_target_delta(g_low, g_high)
 
                     is_target_in_cache = (pid, target_delta) in self.shape_cache if target_delta is not None else False
-                    pri = 1 if (is_target_in_cache or (high - low) < 0.02) else 2
+                    # Finding +2 is not good enough while there is no +1 (nor -2 without -1): the
+                    # smaller step is the one usually wanted, so keep hunting for it
+                    missing_step = any((pid, d) not in self.shape_cache
+                                       for d in range(dir_sign, achieved_delta, dir_sign))
+                    pri = 2 if missing_step else 1 if (is_target_in_cache or (high - low) < 0.02) else 2
                     return (mid, strch, pri)
 
             cached_vals = [p_probes[mid, s] for s in stretch_sequence if p_probes.get((mid, s)) is not None]

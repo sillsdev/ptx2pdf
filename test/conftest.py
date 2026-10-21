@@ -17,11 +17,7 @@ def logging(pytestconfig):
 def starttime(pytestconfig):
     return time.time()
 
-def pytest_addoption(parser):
-    parser.addoption("--dir", help="Project root directory to test")
-    parser.addoption("-U","--update", action="store_true", default=False)
-    parser.addoption("-S","--maxsize", type=float, default=10, help="Auto pass tests with > xMB regression pdf")
-    parser.addoption("--logging")
+# Command line options are in ../conftest.py, so they work from the repo root too.
 
 def pytest_generate_tests(metafunc):
     jobs = []

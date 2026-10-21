@@ -63,3 +63,7 @@ ptxprint = "ptxprint.main:main"
 pdfdiff = "ptxprint.pdf.pdfdiff:main"
 xdvitype = "ptxprint.xdv.xdvtype:main"
 pdfinish = "ptxprint.pdf.pdfinish:main"
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+norecursedirs = ["msys64", "dev", ".wine", ".ptx2pdf_wine", ".git", "*.egg-info"]
