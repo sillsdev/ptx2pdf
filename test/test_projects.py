@@ -190,10 +190,14 @@ class TestXetex:
             except FileNotFoundError:
                 pass
             ptxcmd = self.pdf.ptxcmd
-            # Unpack into an empty tree, so files left by earlier runs can't hide what the archive is missing
-            shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "tmp", self.pdf.project), ignore_errors=True)
+            # Unpack into an empty tree of its own, so files left by earlier runs can't hide what the
+            # archive is missing, and parallel tests (xdist) of the same project don't share it
+            tmpdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tmp",
+                                  "{}-{}".format(self.pdf.project, self.pdf.config or "Default"))
+            shutil.rmtree(tmpdir, ignore_errors=True)
+            os.makedirs(tmpdir)
             # ptxprint -p basedir ... <project>
-            ptxcmd = ptxcmd[:2] + [os.path.join(os.path.dirname(os.path.abspath(__file__)), "tmp")] + ptxcmd[3:-1] + ["-Z", self.pdf.arcpath, "-F", self.pdf.pdfpath,
+            ptxcmd = ptxcmd[:2] + [tmpdir] + ptxcmd[3:-1] + ["-Z", self.pdf.arcpath, "-F", self.pdf.pdfpath,
                                     "--diffpages=50", "--diffoutfile="+outfname, "-P"] + ptxcmd[-1:]
             print(f"exists({os.path.dirname(self.pdf.arcpath)}) = {os.path.exists(os.path.dirname(self.pdf.arcpath))}")
             res = call(ptxcmd)

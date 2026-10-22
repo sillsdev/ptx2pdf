@@ -16,7 +16,7 @@ def getdef(v):
     return dget
 
 # https://en.wikipedia.org/wiki/SRGB#The_sRGB_transfer_function_.28.22gamma.22.29
-_xyz2rgb = np.matrix([[3.2404542, -1.5371385, -0.4985314], [-0.969266, 1.8760108, 0.041556], [0.0556434, -0.2040259, 1.0572252]])
+_xyz2rgb = np.array([[3.2404542, -1.5371385, -0.4985314], [-0.969266, 1.8760108, 0.041556], [0.0556434, -0.2040259, 1.0572252]])
 
 def calgray_vecto_rgb(img, parms):
     wp = [float(x) for x in parms['/WhitePoint']]
