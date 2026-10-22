@@ -1705,11 +1705,11 @@ class PDFContentViewer(PDFFileViewer):
                 locatelastPage  = self.all_pages[-1]
 
                 if is_rtl:  # Fix later to include Arabic UI detection
-                    hide_prev = pnumpg >= locatelastPage or pnumpg == num_pages
-                    hide_next = pnumpg <= locatefirstPage or pnumpg == 1
+                    hide_prev = pnumpg >= locatelastPage or pg == num_pages
+                    hide_next = pnumpg <= locatefirstPage or pg == 1
                 else:
-                    hide_prev = pnumpg <= locatefirstPage or pnumpg == 1
-                    hide_next = pnumpg >= locatelastPage or pnumpg == num_pages
+                    hide_prev = pnumpg <= locatefirstPage or pg == 1
+                    hide_next = pnumpg >= locatelastPage or pg == num_pages
 
                 seekPrevBtn.set_sensitive(not hide_prev)
                 seekNextBtn.set_sensitive(not hide_next)

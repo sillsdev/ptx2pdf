@@ -34,7 +34,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246) | Slight change in footnote spacing – observation | Likely same cause as #1038. | |
 | [#1058](https://github.com/sillsdev/ptx2pdf/issues/1058) | Final page footnote misalignment | `\FinalNotesDowntrue` works around it; needs default or auto-detect. | |
 | [#1170](https://github.com/sillsdev/ptx2pdf/issues/1170) | Wishlist: automatically check usfmtc version | Small startup check. | |
-| [#1180](https://github.com/sillsdev/ptx2pdf/issues/1180) | Save a Named Custom Page Size | | |
+| ~~[#1180](https://github.com/sillsdev/ptx2pdf/issues/1180)~~ | ~~Save a Named Custom Page Size~~ | **DONE** 2026-10-23: typed sizes are saved (whole string) to `customPageSizes` in the user config and added to the dropdown; right-click the entry to remove one. | |
 | [#1193](https://github.com/sillsdev/ptx2pdf/issues/1193) | Push Config — Option to Skip Language-Specific Variables | | |
 | [#1207](https://github.com/sillsdev/ptx2pdf/issues/1207) | First _diff is hard to produce | Automatic diff filename. | |
 | [#1217](https://github.com/sillsdev/ptx2pdf/issues/1217) | Flaky behaviour on right-click for polyglot style settings | Stale state on repeat use. | |
@@ -42,7 +42,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | [#1239](https://github.com/sillsdev/ptx2pdf/issues/1239) | Missing ending verse in a cross-ref range | | |
 | [#1271](https://github.com/sillsdev/ptx2pdf/issues/1271) | v3.1.3 Picture captions can't be moved away from the picture | Needs a quick look; may be a missing hook. | |
 | [#1119](https://github.com/sillsdev/ptx2pdf/issues/1119) | Table alignment broken in RTL books | | |
-| [#1028](https://github.com/sillsdev/ptx2pdf/issues/1028) | Issue Page and Displayed page mismatched if Front Matter included | Previous Issue button is easy; page numbering mismatch is more. | |
+| ~~[#1028](https://github.com/sillsdev/ptx2pdf/issues/1028)~~ | ~~Issue Page and Displayed page mismatched if Front Matter included~~ | ~~Previous Issue button is easy; page numbering mismatch is more.~~ **DONE Fixed?** 2026-10-23: could not reproduce with a front PDF (page offset, paragraph lookup and arrows all correct); fixed a related arrow bug when the start page number isn't 1 (`updatePageNavigation` compared a folio with the PDF page count). Awaiting David's confirmation. | |
 | [#1137](https://github.com/sillsdev/ptx2pdf/issues/1137) | Foreground/background figures in stylesheet not included in archive | Archive code; use relative paths. | |
 | [#1260](https://github.com/sillsdev/ptx2pdf/issues/1260) | Old Coverpage configs break with newer versions of the TeX macros | A `\global` def masks the error; David suspects a deeper definition-order problem. | 🔺 |
 
@@ -151,13 +151,13 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#997](https://github.com/sillsdev/ptx2pdf/issues/997) | Picture Media settings not remembered | S | |
 | [#998](https://github.com/sillsdev/ptx2pdf/issues/998) | Covers and diglots | M | |
 | [#999](https://github.com/sillsdev/ptx2pdf/issues/999) | Random changes in Strong's numbering | M | 🔺 |
-| [#1028](https://github.com/sillsdev/ptx2pdf/issues/1028) | Issue page vs displayed page mismatch | S | |
+| ~~[#1028](https://github.com/sillsdev/ptx2pdf/issues/1028)~~ | ~~Issue page vs displayed page mismatch~~ | ~~S~~ **DONE Fixed?** | |
 | [#1049](https://github.com/sillsdev/ptx2pdf/issues/1049) | Disappearing image copyrights | S | |
 | [#1051](https://github.com/sillsdev/ptx2pdf/issues/1051) | `\w`→footnote makes nested footnotes | M | |
 | [#1094](https://github.com/sillsdev/ptx2pdf/issues/1094) | Settings not stable after restart / upgrade | L | 🔺 |
 | [#1137](https://github.com/sillsdev/ptx2pdf/issues/1137) | Stylesheet figures not archived / absolute paths | S | |
 | [#1170](https://github.com/sillsdev/ptx2pdf/issues/1170) | Auto-check usfmtc version | S | |
-| [#1180](https://github.com/sillsdev/ptx2pdf/issues/1180) | Save a named custom page size | S | |
+| ~~[#1180](https://github.com/sillsdev/ptx2pdf/issues/1180)~~ | ~~Save a named custom page size~~ | ~~S~~ **DONE** | |
 | [#1181](https://github.com/sillsdev/ptx2pdf/issues/1181) | Config diff viewer | L | |
 | [#1184](https://github.com/sillsdev/ptx2pdf/issues/1184) | Colour-code AdjList rows by diglot shading | M | |
 | [#1185](https://github.com/sillsdev/ptx2pdf/issues/1185) | Lock/rename a known-good PDF | L | |

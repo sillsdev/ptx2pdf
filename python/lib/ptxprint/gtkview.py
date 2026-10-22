@@ -1439,6 +1439,8 @@ class GtkViewModel(ViewModel):
             for m in self.mruCopyTargets:
                 mrucopy.append(None, m)
 
+        self.setupCustomPageSizes()
+
         imsets = self.builder.get_object("ecb_artPictureSet")
         imsets.remove_all()
         ims = getImageSets()
@@ -2806,6 +2808,53 @@ class GtkViewModel(ViewModel):
         self.userconfig.set('init', 'mruBooks', "\n".join(self.mruBookList))
         self.showmybook()
 
+    pageSizeRe = re.compile(r'^[\d.]+\s*(?:mm|cm|in|")\s*[,xX]\s*[\d.]+\s*(?:mm|cm|in|")(?:\s*\(.*\))?$')
+
+    def setupCustomPageSizes(self):
+        """ Add the user's saved custom page sizes to the page size list, and let one be removed """
+        self.customPageSizes = [x for x in self.userconfig.get('init', 'customPageSizes', fallback='').split('\n') if x]
+        self.declinedPageSizes = set()
+        for s in self.customPageSizes:
+            self.addCustomPageSize(s, persist=False)
+        combo = self.builder.get_object("ecb_pagesize")
+        entry = combo.get_child() if combo is not None else None
+        if entry is not None:
+            entry.connect("populate-popup", self.onPageSizePopup)
+
+    def addCustomPageSize(self, text, persist=True):
+        """ Make a size that is not already in the list available to all projects. Matches the whole string. """
+        text = (text or "").strip()
+        combo = self.builder.get_object("ecb_pagesize")
+        if combo is None or not self.pageSizeRe.match(text) or text in self.declinedPageSizes:
+            return
+        if any(row[0] == text for row in combo.get_model()):
+            return
+        combo.append_text(text)
+        if persist and text not in self.customPageSizes:
+            self.customPageSizes.append(text)
+            self.userconfig.set('init', 'customPageSizes', "\n".join(self.customPageSizes))
+
+    def onPageSizePopup(self, entry, menu):
+        text = entry.get_text().strip()
+        if text not in self.customPageSizes:
+            return
+        sep = Gtk.SeparatorMenuItem()
+        item = Gtk.MenuItem(label=_("Remove '{}' from saved sizes").format(text))
+        item.connect("activate", self.onRemoveCustomPageSize, text)
+        for w in (sep, item):
+            menu.append(w)
+            w.show()
+
+    def onRemoveCustomPageSize(self, item, text):
+        self.customPageSizes.remove(text)
+        self.userconfig.set('init', 'customPageSizes', "\n".join(self.customPageSizes))
+        self.declinedPageSizes.add(text)     # the entry still holds it: don't save it again this session
+        combo = self.builder.get_object("ecb_pagesize")
+        for i, row in enumerate(combo.get_model()):
+            if row[0] == text:
+                combo.remove(i)
+                break
+
     def onSaveConfig(self, btn, force=False):
         """ Save the view """
         if self.project.prjid is None or (not force and self.configLocked()):
@@ -2825,6 +2874,7 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "updatepdf",  "true" if self.get("c_updatePDF")  else "false")
         self.userconfig.set("init", "bkview",     "true" if self.get("c_bkView")     else "false")
         self.noInt = self.get("c_noInternet")
+        self.addCustomPageSize(self.get("ecb_pagesize"))
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
         if sys.platform.startswith("win"):
             self.saveWindowGeometry()
@@ -2989,6 +3039,7 @@ class GtkViewModel(ViewModel):
         if clearvars:
             self.unpaintUnlock()
         super(GtkViewModel, self).loadConfig(config, clearvars=clearvars, **kw)
+        self.addCustomPageSize(self.get("ecb_pagesize"), persist=False)
         if clearvars:
             for k, v in _sensitivities.items():
                 if k.startswith("r_"):
