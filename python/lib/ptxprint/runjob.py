@@ -1226,6 +1226,8 @@ class RunJob:
         except OSError:
             return im
         box = im.getbbox()
+        if box is None:     # a blank image
+            return im
         cbox = []
         cbox.append(self.getBorder(box, 0, 2, lambda x, y: bwim[x, y]))
         cbox.append(self.getBorder(box, 1, 3, lambda y, x: bwim[x, y]))     # top is 0
@@ -1304,33 +1306,37 @@ class RunJob:
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         if os.path.splitext(srcpath)[1].lower().startswith(".pdf"):
             log.setLevel(logging.CRITICAL)
-            trailer = PdfReader(srcpath)
-            writer = PdfWriter(tgtpath)
-            writer.trailer = trailer
-            writer.write()
+            try:
+                trailer = PdfReader(srcpath)
+                writer = PdfWriter(tgtpath)
+                writer.trailer = trailer
+                writer.write()
+            except (PdfError, OSError, ValueError) as e:
+                print(_("Error: Unable to read PDF image {}: {}").format(srcpath, e))
             return os.path.basename(tgtpath)
         try:
             im = Image.open(srcpath)
             iw = im.size[0]
             ih = im.size[1]
-        except OSError:
+        except OSError:     # not an image we can read, so treat it as missing
             print(("Failed to get size of (image) file:"), srcpath)
+            return os.path.basename(tgtpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or (ratio is not None and iw/ih < ratio) \
+        if cropme or (ratio is not None and ih and iw/ih < ratio) \
                   or os.path.splitext(srcpath)[1].lower() in (".tif", ".tiff", ".png"):
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
-            #try:
-            self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
-            #except: # MH: Which exception should I try to catch?
-            #    print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
-            #    return os.path.basename(tgtpath)
-        else:
             try:
-                copyfile(srcpath, tgtpath)
-            except OSError:
-                print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
-                return os.path.basename(tgtpath)
+                self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
+            except (OSError, ValueError, SyntaxError) as e:     # e.g. a truncated image; treat it as missing
+                print(_("Error: Unable to convert/resize image {}: {}").format(srcpath, e))
+                if os.path.exists(tgtpath):
+                    os.remove(tgtpath)
+            return os.path.basename(tgtpath)
+        try:
+            copyfile(srcpath, tgtpath)
+        except OSError:
+            print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
         return os.path.basename(tgtpath)
 
     def usablePageRatios(self):

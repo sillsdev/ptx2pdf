@@ -1280,6 +1280,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
         chunks[colkey] = {c.ident: c for c in colls[colkey].acc}
         chunklocs[colkey] = ["_".join(str(x) for x in c.ident) for c in colls[colkey].acc]
 
+    if mode not in modes:
+        logger.warning(f"Unknown diglot merge mode {mode}, using scores")
+        mode = "scores"
     f = modes[mode]
     pairs = f(*((colls[k], chunklocs[k]) for k in keyarr))
 

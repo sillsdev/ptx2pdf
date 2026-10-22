@@ -35,8 +35,9 @@ class Interlinear:
         self.lang = lang
         self.prjdir = prjdir
         self.fails = []
+        self.lexicon = {}
         lexpath = os.path.join(prjdir, "Lexicon.xml")
-        if os.path.exists:
+        if os.path.exists(lexpath):
             self.read_lexicon(lexpath)
 
     def read_lexicon(self, fname):

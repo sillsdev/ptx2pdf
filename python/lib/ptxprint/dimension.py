@@ -11,6 +11,8 @@ class Dimension:
         if m:
             val = float(m.group(1))
             units = m.group(2) or units
+        elif not isinstance(val, (int, float)):
+            val = 0.         # can't read it
         if units is None:
             units = "pt"
         self.val = val * _units.get(units, 1.)

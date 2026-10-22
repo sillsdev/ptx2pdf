@@ -193,8 +193,8 @@ _map = {
     "document/usetoc2":         ("c_usetoc2", "front", lambda w,v: "true" if v else "false"),
     "document/usetoc3":         ("c_usetoc3", "front", lambda w,v: "true" if v else "false"),
     "document/tocleaders":      ("fcb_leaderStyle", "front", None),
-    "document/chapfrom":        ("t_chapfrom", "meta", lambda w,v: str(round(float(v))) if v else "1"),
-    "document/chapto":          ("t_chapto", "meta", lambda w,v: str(round(float(v))) if v else "999"),
+    "document/chapfrom":        ("t_chapfrom", "meta", lambda w,v: str(round(asfloat(v, 1))) if v else "1"),
+    "document/chapto":          ("t_chapto", "meta", lambda w,v: str(round(asfloat(v, 999))) if v else "999"),
     "document/fastend":         ("s_stopat", "meta", lambda w,v: int(v) if v else 0),
     "document/colgutterfactor": ("s_colgutterfactor", "layout", lambda w,v: round(float(v or 4)*3)), # Hack to be fixed
     "document/ifrtl":           ("fcb_textDirection", "fontscript", lambda w,v:"true" if v == "rtl" else "false"),
@@ -264,7 +264,7 @@ _map = {
 
     "document/ifdiglot":            ("c_diglot", "diglot", lambda w,v : "" if v else "%"),
     "document/ifndiglot":           ("c_diglot", "diglot", lambda w,v : "%" if v else ""),
-    "poly/fraction":                ("polyfraction_", "diglot", lambda w,v: str(float(v or 0.) / 100)),
+    "poly/fraction":                ("polyfraction_", "diglot", lambda w,v: str(asfloat(v, 0.) / 100)),
     "document/diglotlayout":        ("t_layout", "diglot", None),
     "document/diglotserialbooks":   ("t_diglotSerialBooks", "diglot", None),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", "diglot", lambda w,v: "true" if v else "false"),
@@ -325,7 +325,7 @@ _map = {
     "document/keepversions":    ("s_keepVersions", "finish", None),
     "document/settingsinpdf":   ("c_inclSettingsInPDF", "finish", None),
     
-    "finishing/pgsperspread":   ("fcb_pagesPerSpread", "finish", None),
+    "finishing/pgsperspread":   ("fcb_pagesPerSpread", "finish", lambda w,v: str(int(asfloat(v, 1)) or 1)),
     "finishing/rtlpagination":  ("c_RTLpagination", "finish", None),
     "finishing/foldfirst":      ("c_foldFirst", "finish", None),
     "finishing/scaletofit":     ("c_scaleToFit", "finish", None),

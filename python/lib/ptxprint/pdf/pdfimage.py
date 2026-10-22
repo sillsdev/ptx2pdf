@@ -121,7 +121,6 @@ class PDFImage:
         self.bits = int(xobj['/BitsPerComponent'])
         if self.filt in ("/DCTDecode", "/JPXDecode"):
             self.img = DCTDecode(xobj.stream)
-            logger.debug(f"{self.img.getpixel((100, 100))=}")
             logger.debug(f"{self.filt=}, {self.cs=}, {self.img.mode=}, {self.colorspace=}")
         elif self.filt == "/FlateDecode":
             uncompress([xobj])

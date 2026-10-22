@@ -56,6 +56,73 @@ FontModelMap = {
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
+_gladedefaults = None
+_gladebounds = {}       # spin button: (lower, upper)
+def gladeDefaults():
+    """ The values the UI's controls start with, from the glade file, for those in the ModelMap.
+        Headless, they stand in for settings a config doesn't have, as the controls do in the UI. """
+    global _gladedefaults
+    if _gladedefaults is not None:
+        return _gladedefaults
+    _gladedefaults = {}
+    try:
+        import xml.etree.ElementTree as et
+        root = et.parse(os.path.join(os.path.dirname(__file__), "ptxprint.glade")).getroot()
+    except (OSError, et.ParseError) as e:
+        logger.warning(f"Can't read UI defaults: {e}")
+        return _gladedefaults
+    objs = {o.get("id"): o for o in root.iter("object") if o.get("id")}
+    def prop(o, name, default=None):
+        for p in o.findall("property"):
+            if p.get("name") == name:
+                return p.text
+        return default
+    widgets = {v.widget for v in ModelMap.values() if v.widget}
+    radios = {}
+    for wid, o in objs.items():
+        if wid.startswith("r_") and wid.count("_") > 1:
+            (_, grp, val) = wid.split("_", 2)
+            if "r_"+grp in widgets and (prop(o, "active") == "True" or prop(o, "group") is None):
+                radios.setdefault("r_"+grp, []).append((prop(o, "active") == "True", val))
+    for k, v in radios.items():
+        _gladedefaults[k] = max(v, key=lambda x:x[0])[1]
+    for w in widgets:
+        o = objs.get(w)
+        if o is None:
+            continue
+        if w.startswith("c_"):
+            _gladedefaults[w] = prop(o, "active") == "True"
+        elif w.startswith("s_"):
+            adj = objs.get(prop(o, "adjustment"))
+            if adj is None:
+                continue
+            try:
+                _gladedefaults[w] = f2s(float(prop(adj, "value", 0)))
+                _gladebounds[w] = (float(prop(adj, "lower", "-inf")), float(prop(adj, "upper", "inf")))
+            except (TypeError, ValueError):
+                pass
+        elif w.startswith("fcb_"):
+            val = prop(o, "active-id")
+            if prop(o, "model") in objs:
+                # As GTK does, ignore an active-id that isn't in the model and fall back to active
+                col = int(prop(o, "id-column", 0))
+                ids = [([c.text for c in r.findall("col") if int(c.get("id")) == col] or [None])[0]
+                            for r in objs[prop(o, "model")].iter("row")]
+                if val not in ids:
+                    try:
+                        val = ids[int(prop(o, "active"))]
+                    except (IndexError, ValueError, TypeError):
+                        val = None
+            if val is not None:
+                _gladedefaults[w] = val
+        elif w.startswith("t_"):
+            _gladedefaults[w] = prop(o, "text", "")
+        elif w.startswith("col_"):
+            val = prop(o, "rgba")
+            if val is not None:
+                _gladedefaults[w] = val
+    return _gladedefaults
+
 _outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent", "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
 
 def doError(txt, secondary=None, **kw):
@@ -145,7 +212,7 @@ class ViewModel:
         self.zf = None
 
         # private to this implementation
-        self.dict = {}
+        self.dict = dict(gladeDefaults())
 
 
     def __eq__(self, other):
@@ -221,7 +288,10 @@ class ViewModel:
         if sub >= 0:
             wid += "[" + str(sub) + "]"
         if wid.startswith("s_"):
-            self.dict[wid] = f2s(float(value))
+            value = float(value)
+            if wid in _gladebounds:     # clamp as the UI's spin button does
+                value = min(max(value, _gladebounds[wid][0]), _gladebounds[wid][1])
+            self.dict[wid] = f2s(value)
             return
         elif wid.startswith("r_"):
             bits = wid.split("_")[1:]
@@ -328,8 +398,8 @@ class ViewModel:
             if bk:
                 bname = self.getBookSrcPath(bk, self.project.prjid)
                 if bname is not None and os.path.exists(bname):
-                    fromchap = round(float(self.get("t_chapfrom") or "0"))
-                    tochap = round(float(self.get("t_chapto") or "200"))
+                    fromchap = round(asfloat(self.get("t_chapfrom"), 0))
+                    tochap = round(asfloat(self.get("t_chapto"), 200))
                     try:
                         res = RefList((RefRange(Ref(book=bk, chapter=fromchap, verse=0), Ref(book=bk, chapter=tochap, verse=200)), ))
                     except ValueError as e:
@@ -922,10 +992,14 @@ class ViewModel:
         path = self.project.srcPath(cfgname)
         if path is None or not os.path.exists(os.path.join(path, 'ptxprint.cfg')):
             return -1
-        config = configparser.ConfigParser(interpolation=None)
+        config = configparser.ConfigParser(interpolation=None, strict=False)  # a hand edit may repeat a setting
         logger.debug(f"Opening {os.path.join(path, 'ptxprint.cfg')}")
-        with open(os.path.join(path, "ptxprint.cfg"), encoding="utf-8", errors="ignore") as inf:
-            config.read_file(inf)
+        with open(os.path.join(path, "ptxprint.cfg"), encoding="utf-8-sig", errors="ignore") as inf:
+            try:
+                config.read_file(inf)
+            except configparser.Error as e:
+                self.doError(_("Can't read config {}").format(os.path.join(path, "ptxprint.cfg")), secondary=str(e))
+                config = configparser.ConfigParser(interpolation=None)
         cp = self.project.srcPath(cfgname)
         (oldversion, forcerewrite) = self.versionFwdConfig(config, cp)
         self.loadingConfig = True
@@ -940,7 +1014,11 @@ class ViewModel:
             if not os.path.exists(opath):
                 continue
             oconfig = configparser.ConfigParser(interpolation=None)
-            oconfig.read(opath, encoding="utf-8")
+            try:
+                oconfig.read(opath, encoding="utf-8")
+            except configparser.Error as e:
+                self.doError(f"Can't read {opath}", secondary=str(e))
+                continue
             self.versionFwdConfig(oconfig, cp)
             self.localiseConfig(oconfig)
             self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
@@ -1092,7 +1170,12 @@ class ViewModel:
             return v
         if v == "" and fallback is not _UNSET:
             return fallback
-        return conv(v)
+        try:
+            return conv(v)
+        except ValueError:
+            if fallback is _UNSET:
+                raise
+            return fallback
 
     def _config_bool(self, section, option, config, fallback=_UNSET, **kw):
         try:
@@ -1333,7 +1416,7 @@ class ViewModel:
                 for k, a in {"page": "1", "weight": "50"}.items():
                     self._configset(config, f"diglot_L/{k}", a)
                     self._configset(config, f"diglot_R/{k}", a)
-                val = config.get("document", "diglotprifraction", fallback=50)
+                val = f2s(asfloat(config.get("document", "diglotprifraction", fallback=50), 50))
                 self._configset(config, f"poly/fraction", val)
                 self._configset(config, f"diglot_L/fraction", val)
                 self._configset(config, f"diglot_R/fraction", f2s(100 - float(val)))
@@ -2392,7 +2475,10 @@ class ViewModel:
         for k,v in cfgchanges.items():
             if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
                 tv = getattr(self, v[1])
-                setattr(self, v[1], v[0])
+                val = v[0]
+                if isinstance(val, Path) and val.as_posix().startswith("${"):
+                    val = Path(val.as_posix(), self)    # expand ${prjdir} etc. so it is written back correctly
+                setattr(self, v[1], val)
                 self.set(k, str(v[0]))
             else:
                 tv = None

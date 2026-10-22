@@ -2,7 +2,7 @@ import os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib, Pango
-from ptxprint.utils import BuildParams, parseBookList, startfile, chaps, _
+from ptxprint.utils import BuildParams, parseBookList, startfile, chaps, asfloat, _
 from ptxprint.multiprint import MultiPrint
 
 def printSetup(view, args):
@@ -176,8 +176,8 @@ class PublicationsView:
         if not bk:
             return ""
         try:
-            fromch = round(float(self.view.get("t_chapfrom") or "1"))
-            toch = round(float(self.view.get("t_chapto") or "0"))
+            fromch = round(asfloat(self.view.get("t_chapfrom"), 1))
+            toch = round(asfloat(self.view.get("t_chapto"), 0))
         except ValueError:
             return bk
         maxch = int(chaps.get(bk, "0"))

@@ -408,15 +408,17 @@ class Usfm:
         def get_ref(bk, currc, currv):
             try:
                 curr = Ref(f"{bk} {currc}:{currv}")
-            except SyntaxError:
+            except (SyntaxError, ValueError):
                 currv = re.sub(r"[^0-9-]", "", currv)
                 if not len(currv):
                     currv = "0"
                 try:
                     curr = Ref(f"{bk} {currc}:{currv}")
-                except SyntaxError:
-                    currv = "0"
-                    curr = Ref(f"{bk} {currc}:{currv}")
+                except (SyntaxError, ValueError):       # e.g. a backwards bridge (3-2) or an odd chapter
+                    try:
+                        curr = Ref(f"{bk} {currc}:{re.sub(r'-.*$', '', currv) or '0'}")
+                    except (SyntaxError, ValueError):
+                        curr = Ref(f"{bk} 0:0")
             return curr
 
         root = self.getroot()

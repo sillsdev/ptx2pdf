@@ -390,8 +390,11 @@ class FancyBorders(Snippet):
 """
 
 def parsecol(s):
-    vals = s[s.find("(")+1:-1].split(",")
-    return " ".join("{:.3f}".format(float(v)/255) for v in vals)
+    vals = (s or "")[(s or "").find("(")+1:-1].split(",")
+    try:
+        return " ".join("{:.3f}".format(float(v)/255) for v in vals)
+    except ValueError:
+        return "0.800 0.800 0.800"
 
 class ThumbTabs(Snippet):
     @classmethod
@@ -448,7 +451,10 @@ class ThumbTabs(Snippet):
         texlines.append("\\TabRotationNormal{}".format("false" if rotate else "true"))
         texlines.append("\\TabsOddOnly{}".format("true" if model["thumbtabs/tabsoddonly"] else "false"))
         if rotate:
-            rottype = int(model["thumbtabs/rotatetype"]) - 1
+            try:
+                rottype = int(model["thumbtabs/rotatetype"]) - 1
+            except (ValueError, TypeError):
+                rottype = 0
             texlines.append("\\TabTopToEdgeOdd{}".format("true" if rottype & 1 else "false"))
             texlines.append("\\TabTopToEdgeEven{}".format("true" if 0 < rottype < 3 else "false"))
         texlines.append("\\tab{}={:.2f}mm".format("width" if rotate else "height", height))

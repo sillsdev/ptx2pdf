@@ -46,7 +46,11 @@ class ParatextSettings:
         for a in ("Settings.xml", "ptxSettings.xml"):
             path = os.path.join(self.prjdir, a)
             if os.path.exists(path):
-                doc = et.parse(path)
+                try:
+                    doc = et.parse(path)
+                except et.ParseError as e:
+                    logger.error(f"Can't read {path}: {e}")
+                    continue
                 for c in doc.getroot():
                     self.dict[c.tag] = c.text or ""
                 self.calcbookspresent()
@@ -86,7 +90,12 @@ class ParatextSettings:
         fname = os.path.join(self.prjdir, self.langid+".ldml")
         silns = "{urn://www.sil.org/ldml/0.1}"
         if os.path.exists(fname):
-            self.ldml = et.parse(fname)
+            try:
+                self.ldml = et.parse(fname)
+            except et.ParseError as e:
+                logger.error(f"Can't read {fname}: {e}")
+                self.ldml = None
+                return
             for k in ['footnotes', 'crossrefs']:
                 d = self.ldml.find('.//characters/special/{1}exemplarCharacters[@type="{0}"]'.format(k, silns))
                 if d is not None:
@@ -123,7 +132,11 @@ class ParatextSettings:
     def read_bookNames(self, fpath):
         bkstrs = {}
         self.bookStrs = {}
-        doc = et.parse(fpath)
+        try:
+            doc = et.parse(fpath)
+        except et.ParseError as e:
+            logger.error(f"Can't read {fpath}: {e}")
+            return
         for b in doc.findall(".//book"):
             bkid = b.get("code")
             tocs = [b.get(a, "") for a in ("long", "short", "abbr")]

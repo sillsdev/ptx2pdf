@@ -1,4 +1,4 @@
-from ptxprint.utils import coltoonemax, _
+from ptxprint.utils import coltoonemax, asfloat, _
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
@@ -117,14 +117,14 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
         else:
             paper.append(0.)
 
-    nums = int(kw.get('pgsperspread', 1))
+    nums = int(asfloat(kw.get('pgsperspread', 1), 1)) or 1
     if nums > 1:
         if ext is None:
             ext = "_{}up".format(nums)
         else:
             ext = "{}_{}up".format(ext, nums)
-        sigsheets = int(kw.get('sheetsinsigntr', 0))
-        foldmargin = int(kw.get('foldcutmargin', 0)) * _unitpts['mm']
+        sigsheets = int(asfloat(kw.get('sheetsinsigntr', 0), 0))
+        foldmargin = int(asfloat(kw.get('foldcutmargin', 0), 0)) * _unitpts['mm']
         logger.debug(f"Impositioning onto {nums} pages. {sigsheets=}, {foldmargin=} from {paper[0]} to {paper[1]}")
         try:
             outpdfobj = make_signatures((outpdfobj._trailer if outpdfobj else opath),

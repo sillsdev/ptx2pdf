@@ -2,7 +2,7 @@
 import argparse, sys, os, re, configparser, shlex
 import site, logging, time, socket, multiprocessing
 from shutil import rmtree
-from zipfile import ZipFile
+from zipfile import ZipFile, is_zipfile
 
 import ptxprint
 from ptxprint.utils import saferelpath, appdirs, bookcodes
@@ -30,7 +30,9 @@ class DictAction(argparse.Action):
         if vals is None:
             vals = {}
             setattr(namespace, self.dest, vals)
-        (k, v) = values.split("=")
+        if "=" not in values:
+            parser.error(f"{option_string} needs component=value, not {values}")
+        (k, v) = values.split("=", 1)
         vals[k] = v
 
 class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/questions/19425736/how-to-redirect-stdout-and-stderr-to-logger-in-python
@@ -462,7 +464,10 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     if args.zip:
         print(f"{args.projects=} {args.pid=} {args.config=}")
-        if not args.testsuite and len(args.projects[0]) and len(args.pid):
+        if not os.path.isfile(args.zip) or not is_zipfile(args.zip):
+            print(f"Can't read archive {args.zip}. Quitting")
+            sys.exit(1)
+        if not args.testsuite and len(args.projects[0]) and args.pid:
             rmtree(os.path.join(args.projects[0], args.pid), ignore_errors = True)
         zf = ZipFile(args.zip)
         zf.extractall(args.projects[0])
@@ -498,6 +503,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
+        if not retview and mainw.project is None and (args.print or args.cmd is not None):
+            print("No project to work on. Quitting")
+            sys.exit(1)
         if args.print or retview or args.cmd in ("print", "fill"):
             if args.pub:
                 from ptxprint.publications import printSetup
@@ -507,8 +515,14 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
                 mprint = MultiPrint(numproc=args.jobs or None)
                 for pub in args.pub:
-                    pvars = mainw.publications.get(pub, {})
+                    if pub not in mainw.publications:
+                        print(f"Can't find publication {pub} in config {mainw.cfgid}")
+                        continue
+                    pvars = mainw.publications[pub]
                     books = pvars.get("__books", "")
+                    if not len(RefList(books)):
+                        print(f"No books to print for publication {pub}")
+                        continue
                     bparms = BuildParams(
                         prjtree = mainw.prjTree,
                         config = mainw.userconfig,
@@ -534,7 +548,12 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 mainw.moduleFile = Path(args.module)
             if args.define is not None:
                 for k, v in args.define.items():
-                    mainw.set(k, v)
+                    if k.startswith("c_"):      # a checkbox wants a bool, not the string "False"
+                        v = v.strip().lower() in ("true", "1", "yes", "on")
+                    try:
+                        mainw.set(k, v)
+                    except ValueError as e:     # e.g. a spin button given a word
+                        print(f"Can't set {k} to {v}: {e}")
             if args.difffile:
                 mainw.set("btn_selectDiffPDF", None if args.difffile.lower() == 'last' else os.path.abspath(args.difffile))
                 mainw.set("c_onlyDiffs", True)
@@ -576,7 +595,11 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 res = 0 if job is None else job.res
                 print(f"{res=}")
         if args.action:
-            print(getattr(mainw, args.action)())
+            actionfn = getattr(mainw, args.action, None)
+            if not callable(actionfn):
+                print(f"Unknown action {args.action}")
+                sys.exit(1)
+            print(actionfn())
         elif args.cmd == "archive":
             mainw.createArchive(args.output, nobuild=True)
         sys.exit(res)
@@ -618,7 +641,12 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 mainw.setFallbackProject()
             if args.define is not None:
                 for k, v in args.define.items():
-                    mainw.set(k, v)
+                    if k.startswith("c_"):      # a checkbox wants a bool, not the string "False"
+                        v = v.strip().lower() in ("true", "1", "yes", "on")
+                    try:
+                        mainw.set(k, v)
+                    except ValueError as e:     # e.g. a spin button given a word
+                        print(f"Can't set {k} to {v}: {e}")
             log.debug(f"Created gtkview for {args.projects}")
             mainw.run(doit)
             if mainw.lang != args.lang:

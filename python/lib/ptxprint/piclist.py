@@ -1,5 +1,5 @@
 
-from ptxprint.utils import refSort, universalopen, print_traceback, nonScriptureBooks, appdirs
+from ptxprint.utils import refSort, universalopen, print_traceback, nonScriptureBooks, appdirs, asfloat
 from threading import Thread
 import configparser
 import regex, re, logging
@@ -69,10 +69,13 @@ class PicChecks:
     def init(self, basepath):
         if basepath is None:
             return
-        self.cfgShared.read(os.path.join(basepath, self.sharedfname), encoding="utf-8")
-        self._init_default(self.cfgShared, "pic")
-        self.cfgProject.read(os.path.join(basepath, self.parent.cfgid, self.pubfname), encoding="utf-8")
-        self._init_default(self.cfgProject, "pub")
+        for cfg, fname, prefix in ((self.cfgShared, os.path.join(basepath, self.sharedfname), "pic"),
+                                   (self.cfgProject, os.path.join(basepath, self.parent.cfgid or "", self.pubfname), "pub")):
+            try:
+                cfg.read(fname, encoding="utf-8")
+            except (configparser.Error, UnicodeError) as e:
+                logger.warning(f"Can't read {fname}: {e}")
+            self._init_default(cfg, prefix)
 
     def writeCfg(self, basepath, configid):
         if len(self.cfgShared) < 2 or configid is None:     # always a default
@@ -283,7 +286,7 @@ class Picture:
                 continue
             elif usedest and hiderefs and x == "ref":
                 continue
-            elif x == "scale" and float(self.get(x, 1.0)) == 1.0:
+            elif x == "scale" and asfloat(self.get(x, 1.0), 1.0) == 1.0:
                 continue
             elif x == "media":
                 val = mediaval
@@ -484,6 +487,9 @@ class Piclist:
                 continue
             m = l.split("|")
             r = m[0].split(" ", 2)
+            if len(r) < 2:
+                logger.warning(f"Skipping bad piclist line in {fname}: {l}")
+                continue
             pic = {'anchor': "{} {}".format(r[0] if self.isdiglot else r[0][:3], r[1]), 'caption': r[2] if len(r) > 2 else ""}
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
                 for i, f in enumerate(m[1:]):

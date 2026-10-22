@@ -15,6 +15,7 @@ from ptxprint.project import ProjectList
 from ptxprint.utils import BuildParams, ProgressEvent, f_
 from ptxprint.view import ViewModel
 from ptxprint.runjob import RunJob
+from ptxprint.font import cachepath
 from usfmtc.reference import chaps, RefList
 
 
@@ -182,6 +183,11 @@ class WorkerContext:
     def get_printer(self, job: Job):
         """Returns the active printer, creating a new instance if job configuration changed."""
         if not self.matches_last_job(job):
+            # A spawned worker has its own font cache, without main's -f font directories
+            args = job.build_params.args
+            for p in (getattr(args, 'fontpath', None) or []):
+                if os.path.exists(p):
+                    cachepath(p, nofclist=getattr(args, 'nofontcache', False))
             if job.action == 'fill':
                 view = make_filler_view(job.build_params, self.nid)
                 fillerClass = PolyFiller if view.get("c_diglot") else PTXFiller

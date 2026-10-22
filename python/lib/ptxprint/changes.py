@@ -220,29 +220,32 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
                     atref = []
                     atcontexts = [None]
                     doError("at reference error: {} in changes file at line {}: {}".format(str(e), i+1, l))
-                for r in atref:
-                    if getattr(r.first, 'chapter', None) in (None, 0):
-                        atcontexts.append((r.book, None))
-                        continue
-                    for cr in r.allchaps():
-                        if cr.first.verse is None:
-                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\c\s)".format(r.chapter), flags=regex.S)))
-                        elif cr.first.verse == 0:
-                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
-                        else:
-                            for cv in r:
-                                v = None
-                                if cv.first != cv.last:
-                                    v = cv
-                                elif usfm is not None:
-                                    v = usfm.bridges.get(cv, cv)
-                                    if v.first == v.last:
-                                        v = None
-                                if v is None:
-                                    outv = '{}{}'.format(cv.verse, cv.subverse or "")
-                                else:
-                                    outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
-                                atcontexts.append((cv.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(cv.chapter, outv), flags=regex.S|regex.V1)))
+                try:
+                    for r in atref:
+                        if getattr(r.first, 'chapter', None) in (None, 0):
+                            atcontexts.append((r.book, None))
+                            continue
+                        for cr in r.allchaps():
+                            if cr.first.verse is None:
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\c\s)".format(r.chapter), flags=regex.S)))
+                            elif cr.first.verse == 0:
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
+                            else:
+                                for cv in r:
+                                    v = None
+                                    if cv.first != cv.last:
+                                        v = cv
+                                    elif usfm is not None:
+                                        v = usfm.bridges.get(cv, cv)
+                                        if v.first == v.last:
+                                            v = None
+                                    if v is None:
+                                        outv = '{}{}'.format(cv.verse, cv.subverse or "")
+                                    else:
+                                        outv = "{}{}-{}{}".format(v.first.verse, v.first.subverse or "", v.last.verse, v.last.subverse or "")
+                                    atcontexts.append((cv.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(cv.chapter, outv), flags=regex.S|regex.V1)))
+                except (TypeError, ValueError, AttributeError) as e:     # a reference we can't expand
+                    doError("at reference error: {} in changes file at line {}: {}".format(str(e), i+1, l))
                 l = l[m.end():].strip()
             else:
                 atcontexts = [None]
@@ -252,15 +255,19 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
                 if not m:
                     break
                 try:
-                    contexts.append(regex.compile(m.group(1) or m.group(2), flags=regex.M | regex.S))
-                except re.error as e:
+                    contexts.append(regex.compile(m.group(1) or m.group(2) or "", flags=regex.M | regex.S))
+                except (re.error, regex.error) as e:
                     doError("Regular expression error: {} in changes file at line {}: {}".format(str(e), i+1, l))
                     break
                 l = l[m.end():].strip()
             # capture the actual change
             m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
             if m:
-                s = _transreg(m.group(1) or m.group(2), cats)
+                s = m.group(1) or m.group(2)
+                if not s:
+                    doError("Empty search string in changes file at line {}: {}".format(i+1, l))
+                    continue
+                s = _transreg(s, cats)
                 try:
                     r = regex.compile(s, flags=regex.M)
                     # t = regex.template(m.group(3) or m.group(4) or "")
