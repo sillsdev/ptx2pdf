@@ -984,9 +984,7 @@ class StyleEditorView(StyleEditor):
             name = self.model.get(dialogKeys['Name'], '')
             if key.lower() not in self.sheet:
                 selecti = self.addMarker(key, name)
-                for k, v in stylemap.items():
-                    if not k.startswith("_"):
-                        self.setval(key, k, self.getval(self.marker, k), mapin=False)
+                self.copyMarkerValues(self.marker, key)
             else:
                 self.treestore.set_value(selecti, 1, name)
             for k, v in dialogKeys.items():
@@ -995,6 +993,8 @@ class StyleEditorView(StyleEditor):
                 val = self.model.get(v)
                 if val is not None:
                     val = val.replace("\\","")
+                if k == 'EndMarker' and not val:
+                    continue    # don't write an empty \Endmarker
                 # print(f"{k=} {v=} -> {val=}")
                 if k != "mrktype" or Grammar.marker_categories.get(key, '') == '':
                     self.setval(key, k, val)

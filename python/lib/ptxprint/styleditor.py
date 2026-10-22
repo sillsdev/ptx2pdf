@@ -307,6 +307,8 @@ _fieldmap = {
 
 class StyleEditor:
 
+    identityKeys = ('name', 'description', 'endmarker', 'mrktype', 'styletype', 'texttype')
+
     def __init__(self, model, basepath=None, copy=False):
         self.model = model
         self.sheet = {}
@@ -457,6 +459,16 @@ class StyleEditor:
 
     def addMarker(self, mrk, name):
         self.sheet[mrk] = {" deletable": True, "name": name}
+
+    def copyMarkerValues(self, src, dest):
+        ''' Copy the formatting of style src (base and user sheets merged) into the user's style dest,
+            including settings that have no widget in the editor, such as Border and Padding.
+            What identifies the style (name, description, type, end marker) belongs to the new style
+            and is set from the dialog, so it is not copied. '''
+        for k, v in self.asStyle(src).items():
+            if k.startswith(" ") or k in self.identityKeys:
+                continue
+            self.setval(dest, k, v, mapin=False)
 
     def set_legacy_types(self, mrk):
         mtype = self.getval(mrk, 'mrktype', None)

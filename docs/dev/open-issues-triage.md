@@ -3,6 +3,8 @@
 Snapshot: 2026-10-22. Source: <https://github.com/sillsdev/ptx2pdf/issues>, filter
 `is:issue state:open -label:Fixed? -label:Documentation -label:"No action" -label:delayed -label:duplicate -label:enhancement -label:wontfix` (62 issues).
 
+Struck-through rows (~~like this~~) are done; skip them.
+
 Sizes are rough estimates made from each issue's title and text, without reading the code.
 
 - **S**: under half a day, with a clear fix.
@@ -23,7 +25,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 |---|---|---|---|
 | [#601](https://github.com/sillsdev/ptx2pdf/issues/601) | Crash if hyphenation patterns include characters from fallback-font | Cause identified: patterns load while chars are still active. Catcode fix in `\liter@lspecials`. | |
 | [#785](https://github.com/sillsdev/ptx2pdf/issues/785) | Column cross references affects GLO book layout | Non-scripture books should revert to full width; XXS already does. | |
-| [#789](https://github.com/sillsdev/ptx2pdf/issues/789) | Copying setting from an old style (Borders) | Borders not copied when adding a style based on `cat:box\|esb`. | |
+| ~~[#789](https://github.com/sillsdev/ptx2pdf/issues/789)~~ | ~~Copying setting from an old style (Borders)~~ | ~~Borders not copied when adding a style based on `cat:box\|esb`.~~ **DONE** 2026-10-23: new `copyMarkerValues` copies all keys (base + user sheets); test in `test/test_styleditor.py`. | |
 | [#991](https://github.com/sillsdev/ptx2pdf/issues/991) | Problem removing footnote from module | Notes checkbox should also strip the `\f` content. | |
 | [#997](https://github.com/sillsdev/ptx2pdf/issues/997) | Picture Details tab doesn't remember Media settings | Persistence bug; see grouping above. | |
 | [#1049](https://github.com/sillsdev/ptx2pdf/issues/1049) | Disappearing image copyrights | Probably same cause as #997. | |
@@ -141,7 +143,7 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 
 | Issue | Title | Size | Senior |
 |---|---|---|---|
-| [#789](https://github.com/sillsdev/ptx2pdf/issues/789) | Copying setting from an old style (Borders) | S | |
+| ~~[#789](https://github.com/sillsdev/ptx2pdf/issues/789)~~ | ~~Copying setting from an old style (Borders)~~ | ~~S~~ **DONE** | |
 | [#917](https://github.com/sillsdev/ptx2pdf/issues/917) | Import settings from ZIP with custom .py script | M | |
 | [#991](https://github.com/sillsdev/ptx2pdf/issues/991) | Problem removing footnote from module | S | |
 | [#992](https://github.com/sillsdev/ptx2pdf/issues/992) | Copyright overlay per piclist entry | M | |
