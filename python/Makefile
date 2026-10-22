@@ -6,7 +6,7 @@ SRC_FILES = $(foreach l,${LANGUAGES},locales/${l}/LC_MESSAGES/ptxprint.po)
 CROWDIN_FILES = $(foreach l,${LANGUAGES},locales/${l}/LC_MESSAGES/ptxprint.po)
 MO_FILES = $(foreach l,${LANGUAGES},lib/ptxprint/mo/${l}/LC_MESSAGES/ptxprint.mo)
 
-.PHONY: download
+.PHONY: download upload
 
 all : locales/ptxprint.pot download ${MO_FILES}
 	@- echo done ${LANGUAGES}
@@ -39,3 +39,12 @@ $(foreach l,${LANGUAGES},$(eval $(call LANGRULES,${l})))
 
 download:
 	$(CROWDIN) download
+
+# Push the local .po files up to Crowdin as translations. This deliberately has NO prerequisites and never
+# runs "download" (or the .pot/xgettext rule): Crowdin must receive what is on disk, not replace it.
+# --auto-approve-imported makes the uploaded text the approved translation, so a later "make download"
+# returns it. Override with: make upload CROWDIN_UPLOAD_OPTS=
+CROWDIN_UPLOAD_OPTS ?= --auto-approve-imported
+
+upload:
+	$(CROWDIN) upload translations $(CROWDIN_UPLOAD_OPTS)
