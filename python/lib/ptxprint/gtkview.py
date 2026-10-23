@@ -1970,6 +1970,8 @@ class GtkViewModel(ViewModel):
         It hooks the save-on-exit mechanism and restores the previous session's
         window geometry.
         """
+        # win.show_all() in do_startup has just re-shown everything the UI level hides, so apply it again
+        self.set_uiChangeLevel(self.uilevel)
         self.doConfigNameChange(None)
         logger.debug(f"Main width={self.mainapp.win.get_size().width}")
         # Hook the save-on-exit event BEFORE restoring. This ensures that

@@ -37974,6 +37974,7 @@ main scripture pages.</property>
                     <child>
                       <object class="GtkBox" id="tb_Publications">
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <property name="margin-start">12</property>
                         <property name="margin-end">12</property>
                         <property name="margin-top">12</property>
@@ -38261,6 +38262,7 @@ are finished.</property>
                     <child type="tab">
                       <object class="GtkLabel" id="lb_Publications">
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <property name="tooltip-text" translatable="yes">Define several publications (each with
 its own books, titles and other variables)
 from this one configuration, and print
