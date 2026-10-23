@@ -1125,7 +1125,9 @@ class RunJob:
         othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
         logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)}) to {outname}")
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
-        if res == 2:
+        if res == 2 and (self.noview or self.args.print):
+            # Nothing to compare with: tell the command line (exit code) and the tests. In the GUI this
+            # is not a failed print, and treating it as one makes finished() clear the preview.
             self.res = 2
         if not str(res).endswith('_diff.pdf'):
             outname = pdfname
