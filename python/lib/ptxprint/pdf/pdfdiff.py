@@ -1,16 +1,20 @@
-import os, argparse
-from PIL import Image, ImageChops, ImageEnhance, ImageOps
+import os, re, argparse
+from PIL import Image, ImageChops, ImageEnhance, ImageOps, ImageDraw
 from ptxprint.utils import _
 import logging
 logger = logging.getLogger(__name__)
 
 def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, 
-                maxdiff=False, oldcolor=None, limit=0, dpi=0, boxmode="auto", offset=0, **kw):
+                maxdiff=False, oldcolor=None, limit=0, dpi=0, boxmode="auto", offset=0, ignore=(), geometry=None, **kw):
     """ boxmode "auto" compares the TrimBox of each page, so that a PDF with crop marks (whose MediaBox is
         bigger than the page) lines up with one without. Any other value compares what Poppler renders by
         default: the CropBox, which is the MediaBox when there is no CropBox.
         offset pairs page i of pdfname with page i+offset of othername: positive skips that many pages at
-        the start of othername (the old PDF), negative skips that many at the start of pdfname. """
+        the start of othername (the old PDF), negative skips that many at the start of pdfname.
+        ignore is a collection of "topbottom" (headers, footers, page numbers) and "sides" (margin notes,
+        thumb tabs). Those parts of the page are blanked in both PDFs before comparing and shaded in the
+        result. Where they are comes from geometry, which describes the *new* PDF (pdfname):
+            {"top": mm of margin above the text, "bottom": mm below, "sides": columnExtents(parlocs)} """
     if color is None or not len(color):
         color = (240, 0, 0)
     if oldcolor is None or not len(oldcolor):
@@ -32,10 +36,17 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
             doError(_("Page sizes differ between output and base. Cannot create a difference."),
                 threaded=True, title=_("Difference Error"))
             return 3
+        info = iimg.info
         if oimg.size != iimg.size:      # rounding of the trim box to whole pixels
             size = (min(oimg.size[0], iimg.size[0]), min(oimg.size[1], iimg.size[1]))
             oimg = oimg.crop((0, 0) + size)
             iimg = iimg.crop((0, 0) + size)
+        zones = zoneRects(info, iimg.size, ignore, geometry)
+        if len(zones):
+            for im in (oimg, iimg):
+                draw = ImageDraw.Draw(im)
+                for r in zones:
+                    draw.rectangle(r, fill=(255, 255, 255))
         dmask = ImageChops.difference(oimg, iimg).convert("L")
         dval = sum([i * x / 256. for i, x in enumerate(dmask.histogram()) if i > 12])
         logger.debug(f"Difference val = {dval} size({dmask.getbbox()})")
@@ -53,6 +64,12 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         enhanceb = ImageEnhance.Brightness(enhancec.enhance(0.7))
         nimg = enhanceb.enhance(1.5)
         nimg.paste(overlay, (0, 0), dmask)
+        if len(zones):
+            shade = Image.new("L", nimg.size, 0)
+            draw = ImageDraw.Draw(shade)
+            for r in zones:
+                draw.rectangle(r, fill=90)
+            nimg.paste(Image.new("RGB", nimg.size, (120, 120, 120)), (0, 0), shade)
         results.append(nimg)
         if limit > 0 and len(results) >= limit:
             break
@@ -66,6 +83,59 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
             logger.warn(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."))
             return 4
     return 0
+
+def zoneRects(info, size, ignore, geometry):
+    """ Pixel rectangles (x0, y0, x1, y1) of a rendered page that are to be ignored. info is the .info of the
+        image from pdfimages: the PDF box that was rendered, the pixels per point, and the page index. """
+    rects = []
+    if not len(ignore) or not geometry or "box" not in info:
+        return rects
+    w, h = size
+    box, scale = info["box"], info["scale"]
+    if "topbottom" in ignore:
+        top = int(round(float(geometry.get("top", 0)) * 72 / 25.4 * scale))
+        bottom = int(round(float(geometry.get("bottom", 0)) * 72 / 25.4 * scale))
+        if top > 0:
+            rects.append((0, 0, w - 1, min(top, h) - 1))
+        if bottom > 0:
+            rects.append((0, max(h - bottom, 0), w - 1, h - 1))
+    if "sides" in ignore:
+        cols = geometry.get("sides", {}).get(info["page"])
+        if cols is not None:
+            left = int(round((cols[0] - box[0]) * scale))
+            right = int(round((cols[1] - box[0]) * scale))
+            if left > 0:
+                rects.append((0, 0, min(left, w) - 1, h - 1))
+            if right < w:
+                rects.append((max(right, 0), 0, w - 1, h - 1))
+    return rects
+
+def columnExtents(parlocsfile):
+    """ Reads the .parlocs file that came with a PDF and returns {page index: (xmin, xmax)}: the horizontal
+        extent of the text columns on that page, in PDF points, measured in the page's own coordinates. Pages
+        without any text column are missing. The extent allows for mirrored pages, gutters, margin notes
+        and so on, because it is where the text was actually put. """
+    from ptxprint.parlocs import readpts
+    res = {}
+    if parlocsfile is None or not os.path.exists(parlocsfile):
+        return res
+    tobp = 72. / 72.27       # TeX points to PDF points
+    page = -1
+    with open(parlocsfile, encoding="utf-8") as inf:
+        for l in inf:
+            m = re.match(r"^\\@(pgstart|colstart|Poly@colstart)\s*\{(.*)\}\s*$", l)
+            if m is None:
+                continue
+            if m.group(1) == "pgstart":
+                page += 1
+                continue
+            p = m.group(2).split("}{")
+            if len(p) < 5 or page < 0:
+                continue
+            x = readpts(p[3]) * tobp
+            e = res.get(page, (x, x))
+            res[page] = (min(e[0], x), max(e[1], x + readpts(p[2]) * tobp))
+    return res
 
 def trimBoxes(infile):
     """ Returns a list, one per page, of the TrimBox [llx, lly, urx, ury] in PDF points, or None for a
@@ -100,11 +170,13 @@ def pdfimages(infile, dpi=0, boxmode="auto", start=0):
         # what lands on the surface: whatever is outside it (crop marks, bleed) is clipped by the surface.
         shiftx = shifty = 0.
         trim = trims[i] if i < len(trims) else None
+        crop = page.get_crop_box()
+        box = (crop.x1, crop.y1, crop.x2, crop.y2)
         if trim is not None:
-            crop = page.get_crop_box()
             shiftx = trim[0] - crop.x1
             shifty = crop.y2 - trim[3]
             w, h = (int(round((trim[2] - trim[0]) * dpi)), int(round((trim[3] - trim[1]) * dpi)))
+            box = tuple(trim)
         surface = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
         ctx = cairo.Context(surface)
         ctx.set_source_rgba(1., 1., 1., 1.)
@@ -119,6 +191,7 @@ def pdfimages(infile, dpi=0, boxmode="auto", start=0):
             img = Image.merge('RGB', (r, g, b))
         except MemoryError:
             return
+        img.info.update(box=box, scale=dpi, page=i)
         yield img
 
 def main():

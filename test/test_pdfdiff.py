@@ -12,7 +12,7 @@ except (ValueError, ImportError):
     pytest.skip("Poppler not available", allow_module_level=True)
 
 from pypdf.generic import RectangleObject, DecodedStreamObject, NameObject
-from ptxprint.pdf.pdfdiff import createDiff
+from ptxprint.pdf.pdfdiff import createDiff, columnExtents
 
 
 def makePDF(path, margin, extra=""):
@@ -82,3 +82,66 @@ def test_offsetStillFindsChanges(tmp_path):
     old = makeBook(tmp_path / "old.pdf", [200, 20, 80, 140])
     out = str(tmp_path / "d.pdf")
     assert createDiff(new, old, out, noError, offset=1) == out
+
+
+def makeZoned(path, header, left):
+    """ A 300x400 page (about 106x141mm) with body text in the middle, plus optional marks in the top
+        margin (header) and in the left margin. """
+    w = pypdf.PdfWriter()
+    page = w.add_blank_page(300, 400)
+    s = DecodedStreamObject()
+    ops = "100 150 50 50 re f "
+    if header:
+        ops += "100 385 40 8 re f "
+    if left:
+        ops += "5 200 12 40 re f "
+    s.set_data(ops.encode())
+    page[NameObject("/Contents")] = w._add_object(s)
+    w.write(str(path))
+    return str(path)
+
+
+# 10mm top and bottom margins (28pt); the text is between x=40 and x=260
+geometry = {"top": 10, "bottom": 10, "sides": {0: (40., 260.)}}
+
+
+def test_headerChangeIgnored(tmp_path):
+    new = makeZoned(tmp_path / "new.pdf", True, False)
+    old = makeZoned(tmp_path / "old.pdf", False, False)
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError) != 0
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, ignore=("topbottom",), geometry=geometry) == 0
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, ignore=("sides",), geometry=geometry) != 0
+
+
+def test_sideChangeIgnored(tmp_path):
+    new = makeZoned(tmp_path / "new.pdf", False, True)
+    old = makeZoned(tmp_path / "old.pdf", False, False)
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError) != 0
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, ignore=("sides",), geometry=geometry) == 0
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, ignore=("topbottom",), geometry=geometry) != 0
+
+
+def test_bodyChangeNeverIgnored(tmp_path):
+    new = makeBook(tmp_path / "new.pdf", [100])
+    old = makeBook(tmp_path / "old.pdf", [150])
+    out = str(tmp_path / "d.pdf")
+    assert createDiff(new, old, out, noError, ignore=("topbottom", "sides"), geometry=geometry) == out
+
+
+def test_columnExtents(tmp_path):
+    bs = chr(92)
+    sp = lambda pts: str(int(pts * 65536))        # scaled points: 65536 to the point
+    lines = ["@pgstart{1}{400.0pt}{300.0pt}{400.0pt}",
+             "@colstart{100.0pt}{0.0pt}{200.0pt}{" + sp(50) + "}{" + sp(380) + "}",
+             "@pgstart{2}{0.0pt}{300.0pt}{400.0pt}",                    # no text columns
+             "@pgstart{3}{400.0pt}{300.0pt}{400.0pt}",                  # two columns
+             "@colstart{100.0pt}{0.0pt}{90.0pt}{" + sp(30) + "}{" + sp(380) + "}",
+             "@colstart{100.0pt}{0.0pt}{90.0pt}{" + sp(150) + "}{" + sp(380) + "}"]
+    f = tmp_path / "x.parlocs"
+    f.write_text("".join(bs + l + chr(10) for l in lines), encoding="utf-8")
+    ext = columnExtents(str(f))
+    assert sorted(ext) == [0, 2]
+    tobp = 72. / 72.27
+    assert ext[0] == pytest.approx((50 * tobp, 250 * tobp))
+    assert ext[2] == pytest.approx((30 * tobp, 240 * tobp))
+    assert columnExtents(str(tmp_path / "missing.parlocs")) == {}

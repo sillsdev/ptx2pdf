@@ -631,6 +631,16 @@ class ViewModel:
         rulerposmms = asmm(float(self.get("s_headerposition")) - float(self.get("s_rhruleposition")))
         return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel, hfontsizemms)
 
+    def getDiffGeometry(self, parlocsfile=None):
+        """ Where the text of a page is, for ignoring everything else when comparing PDFs (see createDiff).
+            top and bottom are mm from the edges of the page: the margins. (A footer kept within the
+            margins is inside the text area, so it is compared like any other text.) The sides come
+            from where the text columns were actually put on each page, as recorded in the parlocs. """
+        from ptxprint.pdf.pdfdiff import columnExtents
+        return {"top": float(self.get("s_topmargin")),
+                "bottom": float(self.get("s_bottommargin")),
+                "sides": columnExtents(parlocsfile)}
+
     def updateSavedConfigList(self):
         pass
 
