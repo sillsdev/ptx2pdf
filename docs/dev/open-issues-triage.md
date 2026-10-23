@@ -37,8 +37,8 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | ~~[#1180](https://github.com/sillsdev/ptx2pdf/issues/1180)~~ | ~~Save a Named Custom Page Size~~ | **DONE** 2026-10-23: typed sizes are saved (whole string) to `customPageSizes` in the user config and added to the dropdown; right-click the entry to remove one. | |
 | ~~[#1193](https://github.com/sillsdev/ptx2pdf/issues/1193)~~ | ~~Push Config — Option to Skip Language-Specific Variables~~ | **DONE** 2026-10-23: new checkbox (on by default) in the copy-to-other-projects dialog keeps each target's `[vars]` and `[strongsvars]`; a new config there starts without them. | |
 | ~~[#1207](https://github.com/sillsdev/ptx2pdf/issues/1207)~~ | ~~First _diff is hard to produce~~ | ~~Automatic diff filename.~~ **DONE Fixed?** 2026-10-23: the automatic filename already worked (print, change, print again). Improved: Compare now keeps the previous PDF even if "keep versions" is 0; the first print says "Nothing to compare with yet" instead of "No differences found"; `--diffoutfile` was ignored (wrong keyword) and now works. Awaiting a failing procedure from the reporter. | |
-| [#1217](https://github.com/sillsdev/ptx2pdf/issues/1217) | Flaky behaviour on right-click for polyglot style settings | Stale state on repeat use. | |
-| [#1238](https://github.com/sillsdev/ptx2pdf/issues/1238) | Need non-breaking glue between Strong's number and following word | | |
+| [#1217](https://github.com/sillsdev/ptx2pdf/issues/1217) | Flaky behaviour on right-click for polyglot style settings | **PARKED 2026-10-23, needs more testing; not fixed.** Not reproduced yet. At the model level the real `switchToDiglot`, project/config reload and "Return to Primary" were repeated on `Triglot2JN` (R = other project, A = same project other config) and always switched correctly, with `diglotViews` rebuilt each time. Not tested: the real GTK window (polyglot tree view, dropdown signals), or leaving the secondary project by another route than "Return to Primary". The one path that gives the reported symptom: `switchToDiglot` returns False when `otherDiglot` is None and `diglotViews` has no entry for the column. | |
+| ~~[#1238](https://github.com/sillsdev/ptx2pdf/issues/1238)~~ | ~~Need non-breaking glue between Strong's number and following word~~ | **DONE Fixed?** 2026-10-23: not a bug with the default `\HAIRSPACE` (non-breaking): 0 line-end numbers. It only happened when a config's `ptxprint-mods.tex` replaced it with plain glue (the WSG/Strongs test project has `\def\HAIRSPACE{\hskip 0.1em}`: 33 numbers ended a line, 0 after the fix). `\dostr@ngs` now adds `\nobreak` after the number box, so the join holds whatever `\HAIRSPACE` is. The WSG/Strongs standard PDF will change; refresh it with `-u`. | |
 | [#1239](https://github.com/sillsdev/ptx2pdf/issues/1239) | Missing ending verse in a cross-ref range | | |
 | [#1271](https://github.com/sillsdev/ptx2pdf/issues/1271) | v3.1.3 Picture captions can't be moved away from the picture | Needs a quick look; may be a missing hook. | |
 | [#1119](https://github.com/sillsdev/ptx2pdf/issues/1119) | Table alignment broken in RTL books | | |
@@ -168,11 +168,11 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#1204](https://github.com/sillsdev/ptx2pdf/issues/1204) | Handle diglot/polyglot piclists (duplicate of #1202) | L | 🔺 |
 | ~~[#1207](https://github.com/sillsdev/ptx2pdf/issues/1207)~~ | ~~First `_diff` is hard to produce~~ | ~~S~~ **DONE Fixed?** | |
 | [#1210](https://github.com/sillsdev/ptx2pdf/issues/1210) | Multi-project push fine-grained control | L | 🔺 |
-| [#1217](https://github.com/sillsdev/ptx2pdf/issues/1217) | Right-click polyglot style settings flaky | S | |
+| [#1217](https://github.com/sillsdev/ptx2pdf/issues/1217) | Right-click polyglot style settings flaky | S **(PARKED: see above)** | |
 | [#1229](https://github.com/sillsdev/ptx2pdf/issues/1229) | Archive woe list | M | |
 | [#1232](https://github.com/sillsdev/ptx2pdf/issues/1232) | Sidebar options missing from the UI | M | |
 | [#1233](https://github.com/sillsdev/ptx2pdf/issues/1233) | Testing framework | L | |
-| [#1238](https://github.com/sillsdev/ptx2pdf/issues/1238) | Non-breaking glue after Strong's number | S | |
+| ~~[#1238](https://github.com/sillsdev/ptx2pdf/issues/1238)~~ | ~~Non-breaking glue after Strong's number~~ | ~~S~~ **DONE Fixed?** | |
 | [#1239](https://github.com/sillsdev/ptx2pdf/issues/1239) | Missing ending verse in cross-ref range | S | |
 | [#1247](https://github.com/sillsdev/ptx2pdf/issues/1247) | Publications tab | L | 🔺 |
 | [#1248](https://github.com/sillsdev/ptx2pdf/issues/1248) | Figure not printing in module | M | |
