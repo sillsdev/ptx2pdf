@@ -221,8 +221,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
     parser.add_argument('-T', '--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
     parser.add_argument('-C', '--capture', metavar='FILE', help="Capture interaction events from UI session to zip file")
-    parser.add_argument('-t', '--test',help="test file to run interactive test against")
+    parser.add_argument('-t', '--test',help="test file (.zip) to replay and check, or a tutorial (.json) to step through on the project")
     parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
+    parser.add_argument('--tutorial', metavar='FILE', help="Start stepping through a tutorial (.json) on the project")
     parser.add_argument('--teststep', type=float, nargs='?', const=0., metavar='SECONDS',
                         help="Watch a test (-t) being replayed: one event every SECONDS, or with no value, "
                              "on each press of Step (or Space) in the replay window. Implies --testwithgui")
@@ -301,6 +302,10 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             args.cmd = "archive"
 
     testserver = None
+    if args.test is not None and os.path.isfile(args.test) and not is_zipfile(args.test):
+        # a tutorial (.json): step through it on the project given, nothing to compare
+        args.tutorial = args.test
+        args.test = None
     if args.teststep is not None:
         args.testwithgui = True
     if args.test is not None and not args.testwithgui:
@@ -750,6 +755,10 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                     except ValueError as e:     # e.g. a spin button given a word
                         print(f"Can't set {k} to {v}: {e}")
             log.debug(f"Created gtkview for {args.projects}")
+            if args.tutorial and not loops:
+                from ptxprint.gtktesting import GtkTester
+                from gi.repository import GLib
+                GLib.idle_add(lambda: GtkTester.runTutorial(mainw, args.tutorial) and False)
             mainw.run(doit)
             if mainw.lang != args.lang:
                 if not sys.platform.startswith("win"):

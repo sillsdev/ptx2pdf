@@ -213,6 +213,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
+btn_runTutorial
 t_configName l_configNameMsg c_overwriteConfig l_projectNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_locateDBLbundle t_DBLprojName 
@@ -492,7 +493,6 @@ btn_prn_compare bx_prn_priceInfo lb_Printers
 """.split()
 
 _ui_experimental = """
-btn_layoutWizard
 """.split()
 
 _processing_needed = """ecb_savedConfig c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after t_chapfrom t_chapto r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang btn_chooseBibleModule""".split()
@@ -516,8 +516,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
         "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
 
 _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist",
-                       "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks",
-                       "btn_layoutWizard") # toggling these causes a crash
+                       "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
@@ -2495,7 +2494,7 @@ class GtkViewModel(ViewModel):
             self.testing.finalise()
         replayer = getattr(self, 'replayer', None)
         if replayer is not None:
-            replayer.finishReplay()
+            replayer.closing()
         mprint = getattr(self, 'mprint', None)
         if mprint is not None:
             mprint.terminate()
@@ -4896,8 +4895,18 @@ class GtkViewModel(ViewModel):
         elif not len(cfg):
             pass
         elif cpath is not None and os.path.exists(cpath):
-            if cfg in ("Default", self.cfgid):
-                msg = _("That Configuration already exists.\nUse another name.")
+            if cfg == self.cfgid:
+                if self.get("c_overwriteConfig"):
+                    src = self.configSource(cfg)
+                    if src is not None:
+                        msg = _("That is the configuration you are in.\nIt will be made again from {}.").format(src)
+                    else:
+                        msg = _("That is the configuration you are in.\nIts current settings will be saved.")
+                    self.builder.get_object("btn_cfg_ok").set_sensitive(True)
+                else:
+                    msg = _("That is the configuration you are in.\nUse another name, or tick Replace.")
+            elif cfg == "Default":
+                msg = _("The Default configuration can't be replaced.\nUse another name.")
             elif self.get("c_overwriteConfig"):
                 msg = _("That Configuration already exists\nand will be replaced.")
                 self.builder.get_object("btn_cfg_ok").set_sensitive(True)
@@ -4907,15 +4916,52 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_cfg_ok").set_sensitive(True) 
         self.builder.get_object("l_configNameMsg").set_text(msg) 
 
+    def configSource(self, cfg):
+        """ The config that cfg was copied from, if PTXprint recorded it (in cfg's base/) and it
+            still exists; otherwise None """
+        cpath = self.project.srcPath(cfg) if cfg else None
+        if cpath is None:
+            return None
+        basecfg = os.path.join(cpath, "base", "ptxprint.cfg")
+        if not os.path.exists(basecfg):
+            return None
+        config = configparser.ConfigParser(interpolation=None)
+        try:
+            config.read(basecfg, encoding="utf-8")
+        except configparser.Error:
+            return None
+        src = config.get("config", "name", fallback=None)
+        if not src or src == cfg:
+            return None
+        spath = self.project.srcPath(src)
+        if spath is None or not os.path.exists(os.path.join(spath, "ptxprint.cfg")):
+            return None
+        return src
+
     def replaceConfigFor(self, cfg):
         """ Before saving the current settings as a new config called cfg: if one exists,
             remove it when the user chose to replace it. Returns whether to go ahead. """
         cpath = self.project.srcPath(cfg) if cfg else None
         if cpath is None or not os.path.exists(cpath):
             return True
-        if not self.get("c_overwriteConfig") or cfg in ("Default", self.cfgid):
+        if not self.get("c_overwriteConfig"):
             # saving would load the existing config instead of copying the current settings
             self.doStatus(_("The configuration {} already exists, so nothing was saved.").format(cfg), warning=True)
+            return False
+        if cfg == self.cfgid:
+            # Replacing the config we are in: make it again from the config it was copied from
+            # (as recorded in its base/), as deleting it and copying again would. Without that,
+            # all we can do is save its current settings.
+            src = self.configSource(cfg)
+            if src is None:
+                return True
+            self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=False,
+                                       configName=src, readConfig=True)
+            if self.cfgid != src:
+                self.doStatus(_("Could not switch to {} to make {} again, so nothing was saved.").format(src, cfg), warning=True)
+                return False
+        if cfg == "Default":
+            self.doStatus(_("The Default configuration can't be replaced, so nothing was saved."), warning=True)
             return False
         try:
             rmtree(cpath)
@@ -7892,6 +7938,9 @@ Thank you,
             self.bkProgressDlg.show()
         else:
             self.bkProgressDlg.hide()
+
+    def onRunTutorial(self, btn):
+        GtkTester.tutorialFromUser(self)
 
     def onConfigWizardClicked(self, widget):
         launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),

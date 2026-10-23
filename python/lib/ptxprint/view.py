@@ -2527,8 +2527,8 @@ class ViewModel:
                     continue
                 ref = m.group(3)
                 incpath = os.path.abspath(os.path.join(os.path.dirname(fpath), ref.replace("$PRJDIR", prjpath)))
-                if not os.path.isfile(incpath):
-                    logger.warning(f"Can't find {ref} included from {fpath} to archive")
+                if not os.path.isfile(incpath):     # e.g. the PrintDraftChanges.txt every changes.txt includes
+                    logger.info(f"Can't find {ref} included from {fpath} to archive")
                     continue
                 increl, moved = placefile(incpath)
                 archivechanges(incpath, seen)
