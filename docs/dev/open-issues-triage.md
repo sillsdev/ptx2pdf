@@ -93,7 +93,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | [#1233](https://github.com/sillsdev/ptx2pdf/issues/1233) | Developing a testing framework | Mostly done; remaining items are packaging and recording. | |
 | [#1237](https://github.com/sillsdev/ptx2pdf/issues/1237) | Rare column miscalculation? | None of the usual fixes work; deep balancing investigation. | 🔺 |
 | [#1243](https://github.com/sillsdev/ptx2pdf/issues/1243) | `\polyglotpages{RL}` is not the same as `\diglotSwaptrue` | Merge, processing, layout and header orders to untangle. | 🔺 |
-| [#1247](https://github.com/sillsdev/ptx2pdf/issues/1247) | Publications Tab | New feature with parallel printing. | 🔺 |
+| [#1247](https://github.com/sillsdev/ptx2pdf/issues/1247) | Publications Tab | New feature with parallel printing. **PARTLY DONE 2026-10-23** (not struck through): view-level rule from the latest comments is in: the Publications tab and the Pub checkbox column on Peripherals now show only in Full view. The rest of the feature is not covered here. | 🔺 |
 | [#1267](https://github.com/sillsdev/ptx2pdf/issues/1267) | Add font fallback for symbols | XeTeX `\iffontchar` fallback mechanism. | 🔺 |
 
 ## Senior-developer list (🔺, 16)
@@ -174,7 +174,7 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#1233](https://github.com/sillsdev/ptx2pdf/issues/1233) | Testing framework | L | |
 | ~~[#1238](https://github.com/sillsdev/ptx2pdf/issues/1238)~~ | ~~Non-breaking glue after Strong's number~~ | ~~S~~ **DONE Fixed?** | |
 | ~~[#1239](https://github.com/sillsdev/ptx2pdf/issues/1239)~~ | ~~Missing ending verse in cross-ref range~~ | ~~S~~ **DONE** | |
-| [#1247](https://github.com/sillsdev/ptx2pdf/issues/1247) | Publications tab | L | 🔺 |
+| [#1247](https://github.com/sillsdev/ptx2pdf/issues/1247) | Publications tab | L **(view-level part done, rest open)** | 🔺 |
 | [#1248](https://github.com/sillsdev/ptx2pdf/issues/1248) | Figure not printing in module | M | |
 
 ### Python + TeX (8)
