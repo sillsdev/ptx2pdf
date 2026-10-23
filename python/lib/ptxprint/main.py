@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 import argparse, sys, os, re, configparser, shlex
-import site, logging, time, socket, multiprocessing
+import site, logging, time, socket, multiprocessing, subprocess
 from shutil import rmtree
 from zipfile import ZipFile, is_zipfile
 
 import ptxprint
 from ptxprint.utils import saferelpath, appdirs, bookcodes
-from ptxprint.gtktesting import load_project_from_archive
 from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
@@ -57,31 +56,77 @@ def testport(host, port, timeout=10):
             pass
     return False
 
-def run_broadway(wnum):
-    pnum = 8880 + wnum
-    if testport("127.0.0.1", pnum, timeout=0.5):
-        # logger.info("Broadway is already running")
+def broadway_socket(wnum):
+    """ GTK3 broadway on posix talks over a Unix socket named after display+1. On Linux it is
+        in the abstract namespace, so there is no file to look for: connect to it instead. """
+    if sys.platform in ("win32", "cygwin"):
         return None
-    else:
-        bwname = "broadwayd.exe" if sys.platform in ("win32", "cygwin") else "broadwayd"
-        server = popen([bwname, "-p", str(pnum), ":"+str(wnum)])
-    if testport("127.0.0.1", pnum):
-        return server
-    elif server is not None and server.poll() is None:
-        server.terminate()
+    rundir = os.environ.get("XDG_RUNTIME_DIR")
+    if not rundir:
+        from gi.repository import GLib
+        rundir = GLib.get_user_runtime_dir()
+    res = os.path.join(rundir, "broadway{}.socket".format(wnum + 1))
+    return "\0" + res if sys.platform.startswith("linux") else res
+
+def broadway_listening(wnum):
+    sockpath = broadway_socket(wnum)
+    if sockpath is None:
+        return testport("127.0.0.1", 8880 + wnum, timeout=0.1)
+    try:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+            s.connect(sockpath)
+            return True
+    except OSError:
+        return False
+
+def broadway_ready(wnum, server, timeout=10):
+    start = time.time()
+    while time.time() - start < timeout:
+        if server is not None and server.poll() is not None:
+            return False        # the daemon died
+        if broadway_listening(wnum):
+            return True
+        time.sleep(0.1)
+    return False
+
+def run_broadway(wnum=None):
+    """ Start a broadwayd on a free display (or on wnum). Returns (server, display) or (None, None) """
+    bwname = "broadwayd.exe" if sys.platform in ("win32", "cygwin") else "broadwayd"
+    for d in ([wnum] if wnum is not None else range(5, 64)):
+        if broadway_listening(d) or testport("127.0.0.1", 8880 + d, timeout=0.1):
+            continue        # someone else has this display
+        try:
+            server = popen([bwname, "-p", str(8880 + d), ":"+str(d)],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except OSError as e:
+            print(f"Can't run {bwname}: {e}")
+            return (None, None)
+        if broadway_ready(d, server):
+            return (server, d)
+        if server.poll() is None:
+            server.terminate()
         server.wait()
-    return None
+        if wnum is None and d >= 8:
+            break           # something is wrong with broadwayd, not just a busy display
+    return (None, None)
+
+def start_test_display():
+    """ Start a broadway server and point GTK at it. This must happen before anything imports Gtk
+        (ptxprint.view does), since GTK opens its display on import. Returns the server or None. """
+    server, broadway_display = run_broadway()
+    if server is None:
+        return None
+    os.environ['GDK_BACKEND'] = "broadway"
+    os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
+    for v in ("DISPLAY", "WAYLAND_DISPLAY"):    # never fall back to a real screen
+        os.environ.pop(v, None)
+    return server
 
 def runtest(prjTree, config, macrosdir, project, doit, args):
     args.quiet = True
-    server = None
-    if not args.testwithgui:
-        broadway_display = 5
-        server = run_broadway(broadway_display)
-        os.environ['GDK_BACKEND'] = "broadway"
-        os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
-    #else:
-    #    setup_wm(args.nox11)
+    return _runtest(prjTree, config, macrosdir, project, doit, args)
+
+def _runtest(prjTree, config, macrosdir, project, doit, args):
     from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
     from ptxprint.gtktesting import GtkTester
     from ptxprint.utils import setup_i18n
@@ -93,45 +138,50 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     if args.nointernet:
         mainw.set('c_noInternet', True)
         mainw.noInt = True
-    tester = None
-    if args.test is not None:
-        # copy files before loading config
-        tester = GtkTester(None, mainw)
-        tester.project = project
-        tester.setuprun(args.test, mainw)
+    # copy files before loading config
+    tester = GtkTester(None, mainw)
+    mainw.replayer = tester
+    tester.project = project
+    tester.setuprun(args.test, mainw)
     if args.pid:
         mainw.setPrjid(args.pid, project.guid)
         mainw.setConfigId(args.config or "Default")
     else:
-        mainw.setFallbackProject()
+        print("No project found to run the test on")
+        return 2
 
-    if tester is not None:
-        GLib.idle_add(tester.run_action, args.testwithgui)
+    GLib.idle_add(tester.run_action, args.testwithgui, args.teststep)
     mainw.run(doit)
-    if tester is not None:
-        test_result = tester.run_finalise()
-        if not any(test_result.values()):
-            exit_code = 0
-            print('Test result: PASS. No differences found to test data.')
-        else:
-            exit_code = 1
-            print('Test result: FAIL. The following differences to test data were found:')
-            if test_result['cfg']:
-                cfg_str = '\n\t'.join(['', *test_result['cfg']])
-                print(f"The following differences were found in the cfg:{cfg_str}")
-            if test_result['sty']:
-                sty_str = '\n\t'.join(['', *test_result['sty']])
-                print(f"The following differences were found in the sty:{sty_str}")
-            if test_result['ref']:
-                print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
-            #if test_result['test']:
-            #    print(f"The following files were found only in the test run: {', '.join(test_result['test'])}")
-            if test_result['diff']:
-                print(f"The following files were not identical: {', '.join([f'{a} and {b}' for a, b in test_result['diff']])}")
-    if server is not None:
-        server.terminate()
-        server.wait()
-    return exit_code
+    test_result = tester.run_finalise()
+    if args.testing:
+        resname = os.path.splitext(args.test)[0] + "_result.zip"
+        tester.saveSnapshot(resname)
+        print(f"Replay result saved in {resname}")
+    # Files only in the test run's archive come from archiving more than when the test was
+    # recorded, so they don't fail it, but say what they are.
+    if test_result['test']:
+        print(f"These files are only in the test run's archive: {', '.join(test_result['test'])}")
+    if test_result['skipped']:
+        skip_str = '\n\t'.join(['', *test_result['skipped']])
+        print(f"These events were skipped:{skip_str}")
+    if not any(v for k, v in test_result.items() if k not in ('test', 'skipped')):
+        print('Test result: PASS. No differences found to test data.')
+        return 0
+    print('Test result: FAIL. The following differences to test data were found:')
+    if test_result['errors']:
+        err_str = '\n\t'.join(['', *test_result['errors']])
+        print(f"The following events could not be replayed:{err_str}")
+    if test_result['cfg']:
+        cfg_str = '\n\t'.join(['', *test_result['cfg']])
+        print(f"The following differences were found in the cfg:{cfg_str}")
+    if test_result['sty']:
+        sty_str = '\n\t'.join(['', *test_result['sty']])
+        print(f"The following differences were found in the sty:{sty_str}")
+    if test_result['ref']:
+        print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
+    if test_result['diff']:
+        print(f"The following files were not identical: {', '.join(test_result['diff'])}")
+    return 1
 
 commands = {
     'print': (),
@@ -170,6 +220,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-C', '--capture', metavar='FILE', help="Capture interaction events from UI session to zip file")
     parser.add_argument('-t', '--test',help="test file to run interactive test against")
     parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
+    parser.add_argument('--teststep', type=float, nargs='?', const=0., metavar='SECONDS',
+                        help="Watch a test (-t) being replayed: one event every SECONDS, or with no value, "
+                             "on each press of Step (or Space) in the replay window. Implies --testwithgui")
     
     # Performance & Debugging
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
@@ -237,6 +290,24 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         elif args.action == "createArchive":
             args.cmd = "archive"
 
+    testserver = None
+    if args.teststep is not None:
+        args.testwithgui = True
+    if args.test is not None and not args.testwithgui:
+        testserver = start_test_display()
+        if testserver is None:
+            print("Can't start a broadway server to run the test on. Is broadwayd installed?")
+            return 2
+        args.nox11 = True
+    try:
+        return _main(args, config, conffile, doitfn, retview, viewClass)
+    finally:
+        if testserver is not None:
+            testserver.terminate()
+            testserver.wait()
+
+def _main(args, config, conffile, doitfn, retview, viewClass):
+    exit_code = 0
     # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
     # setup_i18n()
 
@@ -296,17 +367,23 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             args.projects.append(pdir)
         savetreedirs = True
 
+    testtree = None
     if args.test:
-        with ZipFile(args.test) as zf:
-            zip_contains_full_archive = any(
-                Path(name).match("*/ptxSettings.xml")
-                for name in zf.namelist()
-            )
-            if zip_contains_full_archive:
+        savetreedirs = False
+        from ptxprint.gtktesting import load_project_from_archive
+        # A test runs only on the project in its archive, never on the user's own projects
+        try:
+            with ZipFile(args.test) as zf:
                 test_project = load_project_from_archive(zf)
-                args.pid = test_project.prjid
-                conffile = '{}/ptxprint_user.cfg'.format(test_project.path)
-                args.projects.append(test_project.path)
+        except Exception as e:
+            print(f"Can't use {args.test} as a test: {e}")
+            return 2
+        args.pid = test_project.prjid
+        args.projects = []
+        conffile = '{}/ptxprint_user.cfg'.format(test_project.path)
+        # the tree that holds the project, not the project itself
+        testtree = os.path.dirname(test_project.path)
+        args.projects.append(testtree)
 
     if (args.extras & 16) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
@@ -379,10 +456,12 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         args.projects = [os.path.abspath(p.replace("\\", "/")) for p in args.projects if p is not None]
         args.projects = [p[:-1] if p.endswith("/") else p for p in args.projects]
 
-    config.remove_section("projectdirs")
-    config.add_section("projectdirs")
-    for i, p in enumerate(args.projects, 1):
-        config.set("projectdirs", str(i), str(p))
+    # Only remember project folders the user chose, not ones given with -p or a test's temporary tree
+    if savetreedirs:
+        config.remove_section("projectdirs")
+        config.add_section("projectdirs")
+        for i, p in enumerate(args.projects, 1):
+            config.set("projectdirs", str(i), str(p))
 
     # handle being passed a .zip
     if not args.zip and args.pid is not None and args.pid.lower().endswith(".zip"):
@@ -478,6 +557,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         prjTree.addTreedir(p)
         log.debug(f"Adding project tree: {p}")
 
+    project = None
     if args.pid:
         project = prjTree.findProject(args.pid)
         if project is None:
@@ -490,7 +570,11 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 # Keep going with it (as before), but say so: a mistyped name otherwise goes unnoticed
                 print(f"Can't find config {args.config} in project {args.pid} ({project.srcPath(None)})")
     if args.test is not None:
-        exit_code = runtest(prjTree, config, macrosdir, project, doit, args)
+        try:
+            exit_code = runtest(prjTree, config, macrosdir, project, doit, args)
+        finally:
+            if testtree is not None and not args.testing:
+                rmtree(testtree, ignore_errors=True)
     elif args.print or args.cmd is not None or retview:
         mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()

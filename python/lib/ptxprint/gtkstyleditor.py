@@ -417,7 +417,9 @@ class StyleEditorView(StyleEditor):
         it = self._searchMarker(self.treestore, root, marker)
         if it is None:
             return
-        path = self.treestore.get_path(it)
+        path = self.filter.convert_child_path_to_path(self.treestore.get_path(it))
+        if path is None:        # filtered out
+            return
         self.treeview.expand_to_path(path)
         self.treeview.get_selection().select_path(path)
         self.treeview.scroll_to_cell(path, None, False, 0, 0)

@@ -2239,7 +2239,7 @@ class ViewModel:
             lowres    = v.get("r_pictureRes") == "Low"
             picinfos.build_searchlist(figFolder=fldr, exclusive=exclusive, imgorder=imgorder, lowres=lowres, append=i!=0)
 
-    def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None):
+    def _getArchiveFiles(self, books, project=None, cfgid=None, xdv=None, fontprjid=None):
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
                   'c_usePrintDraftChanges': "PrintDraftChanges.txt",
@@ -2297,27 +2297,16 @@ class ViewModel:
         if self.get("c_useCustomFolder"): # What is happening here? and why? (shouldn't it happen above before we getFigureSources?)
             cfgchanges["btn_selectFigureFolder"] = (Path("figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
-        pathkey = 'src path'
+        pathkey = 'srcpath'
         if self.picinfos is not None:
             for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
                     res[f] = bname(f, prjid+"/local/figures")
-        xrfile = self.get("btn_selectXrFile")
-        if xrfile is not None:
-            res[xrfile] = bname(xrfile, baseprjid)
-            cfgchanges["btn_selectXrFile"] = Path(bname(xrfile, "${prjdir}"))
+        xrfile = self.customXRfile
+        if xrfile is not None and os.path.isfile(str(xrfile)):
+            res[str(xrfile)] = bname(str(xrfile), baseprjid)
+            cfgchanges["btn_selectXrFile"] = (Path(bname(str(xrfile), "${prjdir}")), "customXRfile")
 
-        # piclists
-        piclstpath = os.path.join(basecfpath, "PicLists")
-        picbks = set(self.getDraftFilename(bk) for x in books)
-        if os.path.exists(piclstpath):
-            for pic in os.listdir(piclstpath):
-                if pic.endswith(".piclist") and pic in picbks:
-                    res[os.path.join(piclstpath, pic)] = basecfpath + "PicLists/" + pic
-        jobpiclistfs = ["{}-{}.piclist".format(baseprjid, self.cfgid), "picChecks.txt"]
-        for jobpiclistf in jobpiclistfs:
-            jobpiclist = os.path.join(basecfpath, jobpiclistf)
-            if os.path.exists(jobpiclist):
-                res[jobpiclist] = basecfpath + jobpiclistf
+        # piclists (PicLists/, the job piclist and picChecks.txt) are in the config tree, taken below
 
         if xdv is not None and os.path.exists(xdv):
             allfonts, extrapics = procxdv(xdv)
@@ -2332,21 +2321,41 @@ class ViewModel:
             if self.get(k):
                 islist = v[2].startswith("\\")
                 fname = getattr(self, v[0], (None if islist else v[2]))
-                if v[0] == "watermark" and fname is None:
+                if v[0] == "watermarks" and fname is None:
                     fname = "A5-CopyrightWatermark.pdf"
                 if fname is None: continue
-                if not isinstance(fname, (list, tuple)):
-                    fname = [fname]
-                for f in fname:
+                multiple = isinstance(fname, (list, tuple))
+                newnames = []
+                for f in (fname if multiple else [fname]):
+                    if isinstance(f, str):
+                        f = Path(f)
+                    if not saferelpath(f.as_posix(), os.path.join(pycodedir(), "PDFassets")).startswith(".."):
+                        newnames.append(f)      # ${pdfassets} comes with PTXprint
+                        continue
                     res[f.as_posix()] = baseprjid + "/shared/ptxprint/" + f.name
-                    cfgchanges[v[3]] = (Path("${prjdir}/shared/ptxprint/" + f.name), v[0])
+                    newnames.append(Path("${prjdir}/shared/ptxprint/" + f.name))
+                # FrontPDFs and BackPDFs are lists, and must stay so
+                cfgchanges[v[3]] = (newnames if multiple else newnames[0], v[0])
 
-        # fonts
+        # fonts. They all go where the archive's fonts.conf looks: the main project's shared/fonts,
+        # even those of a diglot's other project.
+        fontprjid = fontprjid or prjid
         allfonts.update(self.getallfonts())
+        # Stylesheets other than ours (custom.sty, ptxprint-mods.sty) can ask for fonts too.
+        for sty in self.getStyleSheets()[:-1]:
+            if saferelpath(sty, self.scriptsdir).startswith(".."):
+                for k, v in self.styleEditor._read_styfile(sty).items():
+                    if v.get('font', None) is None:
+                        continue
+                    f = v['font'].getTtfont()
+                    if f is None or f.filename is None:
+                        logger.warning(f"Can't find font {v.get('fontname')} for {k} in {sty} to archive")
+                        continue
+                    allfonts.add(f.filename)
 
         for v in allfonts:
             # res[v] = bname(v, prjid + "/local/ptxprint/" + cfgid + "/fonts")
-            res[v] = bname(v, prjid + "/shared/fonts")
+            res[v] = bname(v, fontprjid + "/shared/fonts")
 
         if baseprjid:
             mdir = os.path.join(self.project.path, "shared", "fonts", "mappings")
@@ -2354,16 +2363,85 @@ class ViewModel:
                 for f in os.listdir(mdir):
                     if f == ".uuid":
                         continue
-                    res[os.path.join(mdir, f)] = prjid + "shared/fonts/mappings/" + f
+                    res[os.path.join(mdir, f)] = fontprjid + "/shared/fonts/mappings/" + f
 
-        # sidebar images
+        # Files that TeX and the changes reader find from references in other files. Those inside
+        # the project keep their place. Those outside it are moved into the config's external/
+        # and the reference to them is rewritten.
+        prjpath = os.path.abspath(baseprj.path)
+        workdir = os.path.abspath(baseprj.printPath(self.cfgid))
+        extdir = "shared/ptxprint/" + self.cfgid + "/external"
+        placed = {}
+        stylechanges = []
+        def placefile(fpath):
+            """ Returns (path relative to the project, whether it moved) and adds it to the archive """
+            fpath = os.path.abspath(fpath)
+            if fpath in placed:
+                return placed[fpath]
+            rel = saferelpath(fpath, prjpath).replace("\\", "/")
+            if not rel.startswith("..") and not os.path.isabs(rel):
+                result = (rel, False)
+            else:
+                name = os.path.basename(fpath)
+                used = set(r for r, m in placed.values() if m)
+                rel = extdir + "/" + name
+                i = 1
+                while rel in used:
+                    rel = "{}/{}_{}".format(extdir, i, name)
+                    i += 1
+                result = (rel, True)
+            placed[fpath] = result
+            res[fpath] = baseprjid + "/" + result[0]
+            return result
+
+        def replacefile(fpath, text):
+            """ Archive this text in place of fpath's contents """
+            dest = baseprjid + "/" + placefile(fpath)[0]
+            for k in [k for k, v in res.items() if v == dest]:
+                del res[k]
+            tmpf = tempfile.NamedTemporaryFile("w", encoding="utf-8", newline="", delete=False)
+            tmpf.write(text)
+            tmpf.close()
+            res[tmpf.name] = dest
+            tmpfiles.append(tmpf.name)
+
+        # sidebar and cover images. TeX looks for them from the working directory.
+        def archiveimage(val, where):
+            """ Returns the new reference to the image, or None if it needn't change """
+            if val is None or not len(val):
+                return None
+            ipath = os.path.abspath(os.path.join(workdir, val))
+            if not os.path.isfile(ipath):
+                logger.warning(f"Can't find {val} for {where} to archive")
+                return None
+            rel, moved = placefile(ipath)
+            return "../../../" + rel if moved or os.path.isabs(val) else None
+
+        # in our stylesheet (keys are held lower case)
         mystyles = self.styleEditor.copy()
         for k, v in mystyles.sheet.items():
-            for a in ('BgImage', 'FgImage'):
-                val = v.get(a, mystyles.basesheet.get(k, {}).get(a, None))
-                if val is not None:
-                    res[val] = bname(val, baseprjid + "/figures")
-                    mystyles.setval(k, a, bname(val, "../../../figures"))
+            for a in ('bgimage', 'fgimage'):
+                newval = archiveimage(v.get(a, None), k)
+                if newval is not None:
+                    mystyles.setval(k, a, newval)
+
+        # in the other stylesheets we use that are archived: custom.sty, ptxprint-mods.sty
+        imgre = re.compile(r'^(\s*\\(?:BgImage|FgImage)\s+)("?)(.*?)\2\s*$')
+        for sty in self.getStyleSheets()[:-1]:
+            if not saferelpath(sty, self.scriptsdir).startswith("..") or not os.path.isfile(sty):
+                continue
+            with open(sty, encoding="utf-8", errors="replace") as inf:
+                lines = inf.readlines()
+            changed = False
+            for i, l in enumerate(lines):
+                m = imgre.match(l)
+                if m:
+                    newval = archiveimage(m.group(3).replace("\\ ", " "), sty)
+                    if newval is not None:
+                        lines[i] = '{}"{}"\n'.format(m.group(1), newval)
+                        changed = True
+            if changed:
+                stylechanges.append((sty, "".join(lines)))
 
 
         tmpfile = tempfile.NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
@@ -2400,12 +2478,97 @@ class ViewModel:
         script = self.customScript
         if script: # is not None and len(script):
             res[script] = bname(script, baseprjid)
-            cfgchanges["btn_selectScript"] = bname(script, "${prjdir}")
+            cfgchanges["btn_selectScript"] = (Path(bname(script, "${prjdir}")), "customScript")
+            # and the modules it imports from beside it
+            try:
+                with open(script, encoding="utf-8") as inf:
+                    scripttext = inf.read()
+            except OSError:
+                scripttext = ""
+            sdir = os.path.dirname(str(script))
+            for m in re.finditer(r"^\s*(?:from\s+(\w+)|import\s+([\w \t,]+))", scripttext, flags=re.M):
+                for mod in (m.group(1) or m.group(2)).split(","):
+                    mpath = os.path.join(sdir, mod.strip() + ".py")
+                    if mod.strip() and os.path.isfile(mpath):
+                        res[mpath] = baseprjid + "/" + mod.strip() + ".py"
 
         pts = self._getPtSettings(prjid=baseprjid)
         ptres = pts.getArchiveFiles()
         for k, v in ptres.items():
             res[k] = baseprjid + "/" + v
+
+        for sty, text in stylechanges:
+            replacefile(sty, text)
+
+        # changes.txt include chain. Includes are relative to the including file, and $PRJDIR works.
+        cfgdir = self.project.srcPath(self.cfgid)
+        incre = re.compile(r"^(\s*include\s+)(['\"])(.*?)\2")
+        def archivechanges(fpath, seen):
+            if fpath in seen or not os.path.isfile(fpath):
+                return
+            seen.add(fpath)
+            frommoved = placefile(fpath)[1]
+            with open(fpath, encoding="utf-8", errors="replace") as inf:
+                lines = inf.readlines()
+            changed = False
+            for i, l in enumerate(lines):
+                m = incre.match(l)
+                if not m:
+                    continue
+                ref = m.group(3)
+                incpath = os.path.abspath(os.path.join(os.path.dirname(fpath), ref.replace("$PRJDIR", prjpath)))
+                if not os.path.isfile(incpath):
+                    logger.warning(f"Can't find {ref} included from {fpath} to archive")
+                    continue
+                increl, moved = placefile(incpath)
+                archivechanges(incpath, seen)
+                if moved or frommoved or (os.path.isabs(ref) and "$PRJDIR" not in ref):
+                    lines[i] = l[:m.start(3)] + "$PRJDIR/" + increl + l[m.end(3):]
+                    changed = True
+            if changed:
+                replacefile(fpath, "".join(lines))
+        if cfgdir is not None:
+            archivechanges(os.path.join(cfgdir, "changes.txt"), set())
+
+        # Files the TeX in ptxprint-mods.tex and ptxprint-premods.tex pulls in, from the working directory
+        texre = re.compile(r'\\(input|includeifpresent|XeTeXpicfile|XeTeXpdffile|includepdf)(?![A-Za-z@])\s*'
+                           r'(?:\{\s*"?([^}"]*?)"?\s*\}|"([^"]*)"|([^\s{}"\\%]+))')
+        def archivetex(fpath, seen):
+            if fpath in seen or not os.path.isfile(fpath):
+                return
+            seen.add(fpath)
+            frommoved = placefile(fpath)[1]
+            with open(fpath, encoding="utf-8", errors="replace") as inf:
+                lines = inf.readlines()
+            changed = False
+            for i, l in enumerate(lines):
+                c = re.search(r"(?<!\\)%", l)
+                code = l[:c.start()] if c else l
+                for m in reversed(list(texre.finditer(code))):
+                    g = next(j for j in (2, 3, 4) if m.group(j) is not None)
+                    ref = m.group(g)
+                    tpath = os.path.abspath(os.path.join(workdir, ref))
+                    if not os.path.isfile(tpath) and os.path.isfile(tpath + ".tex"):
+                        tpath += ".tex"
+                    if not os.path.isfile(tpath):
+                        continue        # on TEXINPUTS, i.e. ours, or missing anyway
+                    if not saferelpath(tpath, self.scriptsdir).startswith(".."):
+                        continue
+                    trel, moved = placefile(tpath)
+                    if tpath.lower().endswith(".tex"):
+                        archivetex(tpath, seen)
+                    if moved or os.path.isabs(ref):
+                        newref = "../../../" + trel
+                        if g == 4 and " " in newref:
+                            newref = '"' + newref + '"'
+                        l = l[:m.start(g)] + newref + l[m.end(g):]
+                        changed = True
+                lines[i] = l
+            if changed:
+                replacefile(fpath, "".join(lines))
+        if cfgdir is not None:
+            for t in ("ptxprint-premods.tex", "ptxprint-mods.tex"):
+                archivetex(os.path.join(cfgdir, t), set())
         return (res, cfgchanges, tmpfiles)
 
     def createArchive(self, filename=None, nobuild=False, for_test=False, in_memory=False):
@@ -2416,6 +2579,7 @@ class ViewModel:
                 filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
             if not filename.lower().endswith(".zip"):
                 filename += ".zip"
+        self._archiveForTest = for_test
         try:
             self.zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
         except OSError:
@@ -2449,7 +2613,9 @@ class ViewModel:
                 if v is None:
                     v = self.createDiglotView(k)
                 if v is not None:
-                    v._archiveAdd(self.zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid)
+                    v._archiveForTest = for_test
+                    v._archiveAdd(self.zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid,
+                                  fontprjid=self.project.prjid)
                 ipf = os.path.join(working_dir, f"diglot{k}.sty")
                 if os.path.exists(ipf):
                     self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"), for_test=True)
@@ -2487,7 +2653,8 @@ class ViewModel:
             return filename
 
     def _writearchive(self, zf, ifile, fname, for_test=False):
-        if for_test:
+        # for_test is unused: only an archive made for a GUI test leaves out local/
+        if getattr(self, '_archiveForTest', False):
             p = pathlib.Path(fname).parts
             if len(p) > 1 and p[1] == 'local':
                 return  # we can exclude the local subdirectory from the test archive
@@ -2496,8 +2663,9 @@ class ViewModel:
         except KeyError:
             zf.write(ifile, fname)
 
-    def _archiveAdd(self, zf, books, parent=None, parentcfg=None, xdv=None):
-        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, project=parent, cfgid=parentcfg, xdv=xdv)
+    def _archiveAdd(self, zf, books, parent=None, parentcfg=None, xdv=None, fontprjid=None):
+        entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, project=parent, cfgid=parentcfg, xdv=xdv,
+                                                               fontprjid=fontprjid)
         logger.debug(f"{entries=}, {cfgchanges=}, {tmpfiles=}")
         for k, v in entries.items():
             if os.path.exists(k):
@@ -2506,9 +2674,11 @@ class ViewModel:
         for k,v in cfgchanges.items():
             if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
                 tv = getattr(self, v[1])
-                val = v[0]
-                if isinstance(val, Path) and val.as_posix().startswith("${"):
-                    val = Path(val.as_posix(), self)    # expand ${prjdir} etc. so it is written back correctly
+                def expand(val):    # expand ${prjdir} etc. so it is written back correctly
+                    if isinstance(val, Path) and val.as_posix().startswith("${"):
+                        return Path(val.as_posix(), self)
+                    return val
+                val = [expand(x) for x in v[0]] if isinstance(v[0], list) else expand(v[0])
                 setattr(self, v[1], val)
                 self.set(k, str(v[0]))
             else:

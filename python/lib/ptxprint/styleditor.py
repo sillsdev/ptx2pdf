@@ -317,7 +317,9 @@ class StyleEditor:
         self.reset(basepath=basepath)
 
     def copy(self):
-        res = self.__class__(self.model,copy=True)
+        # A plain data copy: a GtkStyleEditor's constructor wires up the UI (again), and its setval
+        # would write the copy's values into the live widgets.
+        res = StyleEditor(self.model, copy=True)
         res.sheet = Sheets(base=self.sheet)
         res.basesheet = Sheets(base=self.basesheet)
         res.marker = self.marker

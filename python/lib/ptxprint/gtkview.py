@@ -776,16 +776,6 @@ _vertical_thumb = {
     "4" : (270, 270),
 }
 
-_signals = {
-    'clicked': ("Button",),
-    'changed': ("ComboBox", "Entry"),
-    'color-set': ("ColorButton",),
-    'change-current-page': ("Notebook",),
-    'value-changed': ("SpinButton",),
-    # 'state-set': ("Switch",),
-    'row-activated': ("TreeView",),
-}
-
 _olst = ["fr_savedLayout", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_Viewer", 
          "tb_Peripherals", "tb_Cover", "tb_Finishing", "tb_Printers"]  # "tb_Help"
@@ -1933,13 +1923,7 @@ class GtkViewModel(ViewModel):
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
             self.testing = GtkTester(self.args.capture, self, full_archive=True)
-            self.starttime = time.time()
-            for k, v in _signals.items():
-                for w in v:
-                    # print(f"{k=} {w=}")
-                    o = getattr(Gtk, w)
-                    sigid = GObject.signal_lookup(k, o)
-                    GObject.add_emission_hook(o, k, self.emission_hook, k)
+            self.testing.startRecording()
         el = self.userconfig.getboolean('init', 'englinks', fallback=False)
         self.set("c_useEngLinks", el)
         # expert = self.userconfig.getboolean('init', 'expert', fallback=False)
@@ -2006,16 +1990,6 @@ class GtkViewModel(ViewModel):
         if self.pdf_viewer is not None:
             self.pdf_viewer.hide_unused()
         logger.debug(f"Main width={self.mainapp.win.get_size().width}")
-
-    def emission_hook(self, w, *a):     # sigid, detail, self, *a):
-        if self.testing is None or self.testing.paused:
-            return True
-        sigid = a[-1]
-        name = Gtk.Buildable.get_name(w)
-        val = self.get(name, skipmissing=True) if name is not None else None
-        t = time.time()-self.starttime
-        self.testing.addEvent(name, sigid, t, val, a[:-1])
-        return True
 
     def pause_logging(self):
         self.logactive = False
@@ -2520,6 +2494,9 @@ class GtkViewModel(ViewModel):
     def onDestroy(self, btn, *a):
         if self.testing is not None:
             self.testing.finalise()
+        replayer = getattr(self, 'replayer', None)
+        if replayer is not None:
+            replayer.finishReplay()
         mprint = getattr(self, 'mprint', None)
         if mprint is not None:
             mprint.terminate()
@@ -7874,34 +7851,18 @@ Thank you,
         if self.args.capture:
             raise Exception("--capture was specified on the command line, so test recording is already in progress.")
 
-        testing_active = btn.get_active()
-        if testing_active:  # testing has just been turned on
-            zip_file = self.fileChooser(_("Select the location and name for the test archive file"),
-                    filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
-                    multiple=False, folder=False, save=True,
-                    basedir=os.path.join(self.project.printPath(self.cfgid), '..'))
-            if zip_file is not None:
-                zip_file = str(zip_file[0])
-                print(zip_file)
-                self.emission_hook_ids = []
-                for k, v in _signals.items():
-                    for w in v:
-                        o = getattr(Gtk, w)
-                        sigid = GObject.signal_lookup(k, o)
-                        hook_id = GObject.add_emission_hook(o, k, self.emission_hook, k)
-                        self.emission_hook_ids.append((o, k, hook_id))
-                self.testing = GtkTester(zip_file, self, full_archive=True)
-                self.starttime = time.time()
+        if btn.get_active():    # testing has just been turned on
+            if self.testing is None:
+                self.testing = GtkTester.recordFromUser(self)
+                if self.testing is None:        # no file chosen
+                    btn.set_active(False)
         else:  # testing has just been turned off
             self.finalise_testing()
 
     def finalise_testing(self):
         if self.testing is None:
             return
-        if hasattr(self, 'emission_hook_ids'):
-            for obj, signal_name, hook_id in self.emission_hook_ids:
-                GObject.remove_emission_hook(obj, signal_name, hook_id)
-            self.emission_hook_ids = []
+        self.testing.stopRecording()
         self.testing.setid(self.project, self.cfgid)
         self.testing.finalise()
         self.testing = None
