@@ -655,7 +655,33 @@ class ViewModel:
     def setConfigId(self, configid, saveCurrConfig=False, force=True, loadConfig=True):
         return self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
-    def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None, nobase=False):
+    langVarSections = ("vars", "strongsvars")
+
+    def _readLangVars(self, cfgpath):
+        """ The language-specific variable values (titles, language name, etc.) of a ptxprint.cfg """
+        config = configparser.ConfigParser(interpolation=None)
+        if os.path.exists(cfgpath):
+            with open(cfgpath, encoding="utf-8", errors="ignore") as inf:
+                config.read_file(inf)
+        return {s: dict(config.items(s)) for s in self.langVarSections if config.has_section(s)}
+
+    def _writeLangVars(self, cfgpath, langvars):
+        """ Make the language-specific variable values of a ptxprint.cfg exactly langvars """
+        config = configparser.ConfigParser(interpolation=None)
+        with open(cfgpath, encoding="utf-8", errors="ignore") as inf:
+            config.read_file(inf)
+        for s in self.langVarSections:
+            config.remove_section(s)
+            if s in langvars:
+                config.add_section(s)
+                for k, v in langvars[s].items():
+                    config.set(s, k, v)
+        with open(cfgpath, "w", encoding="utf-8") as outf:
+            config.write(outf)
+
+    def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None, nobase=False, skipvars=False):
+        """ skipvars: when copying to another project, leave that project's own language-specific
+            variable values alone (a new config there gets none, rather than ours) """
         oldp = self.project.srcPath(oldcfg) if oldcfg is not None else None
         if newprj is not None:
             (newp, created) = newprj.createConfigDir(newcfg, test=True)
@@ -689,7 +715,12 @@ class ViewModel:
             mergep = os.path.join(newp, 'base', a[2] if len(a) > 2 else f)
             os.makedirs(os.path.dirname(mergep), exist_ok=True)
             if os.path.exists(srcp):
+                keepvars = skipvars and newprj is not None and f == 'ptxprint.cfg'
+                if keepvars:
+                    langvars = self._readLangVars(destp)
                 a[action](srcp, destp, mergep, moving=moving, oldcfg=oldcfg, newcfg=newcfg, newprj=newprj, nobase=nobase)
+                if keepvars:
+                    self._writeLangVars(destp, langvars)
         return True
 
     def _copyfile(self, srcp, destp, mergep, moving=False, nobase=False, **kw):

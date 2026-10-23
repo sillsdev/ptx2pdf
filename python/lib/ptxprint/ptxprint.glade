@@ -3720,6 +3720,33 @@ source project's setting will "win").</property>
                 <property name="position">3</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkCheckButton" id="c_copyConfig_skipVars">
+                <property name="label" translatable="yes">Keep each project's own language-specific variables</property>
+                <property name="name">Copy Config: Keep target project's own variables</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">When checked, the variable values (such as the
+main title, subtitle and language name, and the
+Strong's index titles) are NOT copied, so each
+target project keeps its own. A configuration
+that is new to a target project starts without
+them, rather than with the source project's values.
+
+Uncheck this to copy these values as well.</property>
+                <property name="halign">end</property>
+                <property name="margin-end">12</property>
+                <property name="margin-bottom">6</property>
+                <property name="active">True</property>
+                <property name="draw-indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>

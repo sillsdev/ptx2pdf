@@ -405,7 +405,7 @@ r_generateFRT_diglot r_generateFRT_paratext
 btn_gnr8pl_ok btn_gnr8pl_cancel c_protectPicList l_picListWarn1 l_picListWarn2
 btn_mbs_ok btn_mbs_cancel
 btn_mps_ok btn_mps_cancel l_copy2otherProjects ecb_mpsTargets r_copyConfig_noReplace
-r_copyConfig_merge r_copyConfig_overwrite
+r_copyConfig_merge r_copyConfig_overwrite c_copyConfig_skipVars
 btn_pw_cancel btn_pw_ok
 btn_disableDiglot_ok btn_disableDiglot_cancel l_warningDiglot2Mono t_newMonoglotConfigName
 l_diableDiglotNewCfgMsg
@@ -4392,6 +4392,8 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def onChooseTargetProjectsClicked(self, btn):
+        if (self.cfgid or "Default") == "Default":      # the button is disabled for Default; don't allow it by any other route
+            return
         dialog = self.builder.get_object("dlg_multiProjSelector")
         mps_grid = self.builder.get_object("mps_grid")
         mps_grid.forall(mps_grid.remove)
@@ -4426,12 +4428,13 @@ class GtkViewModel(ViewModel):
                     pass
             for p in projlist:
                 try:
+                    skipvars = self.get("c_copyConfig_skipVars")
                     if self.get("r_copyConfig") == "noReplace":
-                        self.applyConfig(cfg, cfg, newprj=p)
+                        self.applyConfig(cfg, cfg, newprj=p, skipvars=skipvars)
                     elif self.get("r_copyConfig") == "merge":
-                        self.applyConfig(cfg, cfg, action=1, newprj=p)
+                        self.applyConfig(cfg, cfg, action=1, newprj=p, skipvars=skipvars)
                     elif self.get("r_copyConfig") == "overwrite":
-                        self.applyConfig(cfg, cfg, action=0, newprj=p)
+                        self.applyConfig(cfg, cfg, action=0, newprj=p, skipvars=skipvars)
                     with open(os.path.join(p.path, "unique.id"), "w") as outf:
                         outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
                 except FileNotFoundError as e:
@@ -4863,6 +4866,13 @@ class GtkViewModel(ViewModel):
         lockBtn.set_sensitive(not isDefault)
         self.builder.get_object("btn_deleteConfig").set_visible(not isDefault)
         self.builder.get_object("btn_resetDefaults").set_visible(isDefault)
+        # The Default configuration is never copied to other projects
+        copyBtn = self.builder.get_object("btn_copyToTargetProj")
+        if not hasattr(self, "_copyBtnTooltip"):
+            self._copyBtnTooltip = copyBtn.get_tooltip_text()
+        copyBtn.set_sensitive(not isDefault)
+        copyBtn.set_tooltip_text(_("The Default configuration cannot be copied to other projects.\n"
+                                   "Save it under another name first.") if isDefault else self._copyBtnTooltip)
 
     def doConfigNameChange(self, w):
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
