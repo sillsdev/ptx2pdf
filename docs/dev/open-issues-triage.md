@@ -36,7 +36,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | [#1170](https://github.com/sillsdev/ptx2pdf/issues/1170) | Wishlist: automatically check usfmtc version | Small startup check. | |
 | ~~[#1180](https://github.com/sillsdev/ptx2pdf/issues/1180)~~ | ~~Save a Named Custom Page Size~~ | **DONE** 2026-10-23: typed sizes are saved (whole string) to `customPageSizes` in the user config and added to the dropdown; right-click the entry to remove one. | |
 | ~~[#1193](https://github.com/sillsdev/ptx2pdf/issues/1193)~~ | ~~Push Config — Option to Skip Language-Specific Variables~~ | **DONE** 2026-10-23: new checkbox (on by default) in the copy-to-other-projects dialog keeps each target's `[vars]` and `[strongsvars]`; a new config there starts without them. | |
-| [#1207](https://github.com/sillsdev/ptx2pdf/issues/1207) | First _diff is hard to produce | Automatic diff filename. | |
+| ~~[#1207](https://github.com/sillsdev/ptx2pdf/issues/1207)~~ | ~~First _diff is hard to produce~~ | ~~Automatic diff filename.~~ **DONE Fixed?** 2026-10-23: the automatic filename already worked (print, change, print again). Improved: Compare now keeps the previous PDF even if "keep versions" is 0; the first print says "Nothing to compare with yet" instead of "No differences found"; `--diffoutfile` was ignored (wrong keyword) and now works. Awaiting a failing procedure from the reporter. | |
 | [#1217](https://github.com/sillsdev/ptx2pdf/issues/1217) | Flaky behaviour on right-click for polyglot style settings | Stale state on repeat use. | |
 | [#1238](https://github.com/sillsdev/ptx2pdf/issues/1238) | Need non-breaking glue between Strong's number and following word | | |
 | [#1239](https://github.com/sillsdev/ptx2pdf/issues/1239) | Missing ending verse in a cross-ref range | | |
@@ -166,7 +166,7 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#1194](https://github.com/sillsdev/ptx2pdf/issues/1194) | Request only unmerged L-side books | M | |
 | [#1202](https://github.com/sillsdev/ptx2pdf/issues/1202) | Polyglot picture handling | L | 🔺 |
 | [#1204](https://github.com/sillsdev/ptx2pdf/issues/1204) | Handle diglot/polyglot piclists (duplicate of #1202) | L | 🔺 |
-| [#1207](https://github.com/sillsdev/ptx2pdf/issues/1207) | First `_diff` is hard to produce | S | |
+| ~~[#1207](https://github.com/sillsdev/ptx2pdf/issues/1207)~~ | ~~First `_diff` is hard to produce~~ | ~~S~~ **DONE Fixed?** | |
 | [#1210](https://github.com/sillsdev/ptx2pdf/issues/1210) | Multi-project push fine-grained control | L | 🔺 |
 | [#1217](https://github.com/sillsdev/ptx2pdf/issues/1217) | Right-click polyglot style settings flaky | S | |
 | [#1229](https://github.com/sillsdev/ptx2pdf/issues/1229) | Archive woe list | M | |

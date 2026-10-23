@@ -591,6 +591,8 @@ class RunJob:
             self.pdffile = outpath + f"{pdfext}.pdf"
         logger.debug(f"{self.pdffile} exists({os.path.exists(self.pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
+        if self.printer.docreatediff and oldversions < 1:
+            oldversions = 1     # comparing with the previous PDF needs that PDF to be kept
         if oldversions > 0:
             for c in range(oldversions, 0, -1):
                 opdffile = self.pdffile[:-4] + "_{}.pdf".format(c)
@@ -872,12 +874,17 @@ class RunJob:
                 diffpages = int(self.printer.get("s_diffpages") or 0)
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
+                    othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
+                    diffname = self.createDiff(pdfname, basename, outname=self.args.diffoutfile, dpi=self.args.diffdpi,
                                 color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         self.printer.onIdle(self.printer.onShowPDF, path=diffname)
                         if diffname == pdfname:
-                            self.printer.onIdle(self.printer.set, "l_statusLine", _("No differences found"))
+                            if os.path.exists(othername):
+                                self.printer.onIdle(self.printer.set, "l_statusLine", _("No differences found"))
+                            else:
+                                self.printer.onIdle(self.printer.set, "l_statusLine",
+                                        _("Nothing to compare with yet: make a change and print again"))
                 self.printer.docreatediff = False
                 startname = pdfname
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
