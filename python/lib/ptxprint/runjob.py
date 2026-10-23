@@ -874,6 +874,7 @@ class RunJob:
                 onlydiffs = self.printer.get("c_onlyDiffs")
                 diffpages = int(self.printer.get("s_diffpages") or 0)
                 diffoffset = int(self.printer.get("s_diffOffset") or 0)
+                smart = bool(self.printer.get("c_diffSmart"))
                 ignore = []
                 if self.printer.get("c_diffIgnoreHeadFoot"):
                     ignore.append("topbottom")
@@ -893,7 +894,7 @@ class RunJob:
                     othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
                     diffname = self.createDiff(pdfname, basename, outname=self.args.diffoutfile, dpi=self.args.diffdpi,
                                 color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages,
-                                offset=diffoffset, ignore=ignore, geometry=geometry)
+                                offset=diffoffset, ignore=ignore, geometry=geometry, smart=smart)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         self.printer.onIdle(self.printer.onShowPDF, path=diffname)
                         if diffname == pdfname:

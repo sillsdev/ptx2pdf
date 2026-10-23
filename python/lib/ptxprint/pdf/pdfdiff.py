@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, 
-                maxdiff=False, oldcolor=None, limit=0, dpi=0, boxmode="auto", offset=0, ignore=(), geometry=None, **kw):
+                maxdiff=False, oldcolor=None, limit=0, dpi=0, boxmode="auto", offset=0, ignore=(), geometry=None, smart=False, **kw):
     """ boxmode "auto" compares the TrimBox of each page, so that a PDF with crop marks (whose MediaBox is
         bigger than the page) lines up with one without. Any other value compares what Poppler renders by
         default: the CropBox, which is the MediaBox when there is no CropBox.
@@ -14,7 +14,9 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         ignore is a collection of "topbottom" (headers, footers, page numbers) and "sides" (margin notes,
         thumb tabs). Those parts of the page are blanked in both PDFs before comparing and shaded in the
         result. Where they are comes from geometry, which describes the *new* PDF (pdfname):
-            {"top": mm of margin above the text, "bottom": mm below, "sides": columnExtents(parlocs)} """
+            {"top": mm of margin above the text, "bottom": mm below, "sides": columnExtents(parlocs)}
+        smart lines up each page of the old PDF with the new one before comparing, so that moving the text
+        block on the page (changed margins or gutter) is not reported when the text itself is unchanged. """
     if color is None or not len(color):
         color = (240, 0, 0)
     if oldcolor is None or not len(oldcolor):
@@ -29,6 +31,7 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
     results = []
     hasdiffs = False
     compared = 0
+    aligner = Aligner() if smart else None
     for iimg, oimg in pagePairs(ingen, ogen):
         compared += 1
         if abs(oimg.size[0] - iimg.size[0]) > 2 or abs(oimg.size[1] - iimg.size[1]) > 2:
@@ -40,13 +43,25 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
             size = (min(oimg.size[0], iimg.size[0]), min(oimg.size[1], iimg.size[1]))
             oimg = oimg.crop((0, 0) + size)
             iimg = iimg.crop((0, 0) + size)
+        unmoved = None
+        if aligner is not None:
+            shift = aligner.shift(oimg, iimg, info.get("page", compared), info.get("scale", 3))
+            if shift != (0, 0):
+                logger.debug(f"Page {compared}: moving the old page by {shift} to line it up")
+                unmoved = (oimg, shift)
+                oimg = shiftImage(oimg, *shift)
         zones = zoneRects(info, iimg.size, ignore, geometry)
         if len(zones):
-            for im in (oimg, iimg):
+            for im in (oimg, iimg) if unmoved is None else (oimg, iimg, unmoved[0]):
                 draw = ImageDraw.Draw(im)
                 for r in zones:
                     draw.rectangle(r, fill=(255, 255, 255))
-        dmask, changed = realDifference(oimg, iimg, info.get("scale", 3))
+        # What did not move with the text (page numbers, running headers) matches the old page where it was
+        dmask, changed = realDifference(oimg, iimg, info.get("scale", 3), alternative=unmoved[0] if unmoved else None,
+                                        shift=unmoved[1] if unmoved else (0, 0),
+                                        # A moved page has more noise, so it takes a bigger change to count. A
+                                        # normal compare notices as little as a comma where a full stop was.
+                                        minchanged=45 if unmoved else 14)
         logger.debug(f"Changed pixels = {changed}")
         if not changed:
             if onlydiffs:
@@ -82,6 +97,85 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
             return 4
     return 0
 
+def shiftImage(img, dx, dy, fill=None):
+    """ A copy of img moved by dx, dy pixels, with white (or fill) where there was nothing. """
+    if fill is None:
+        fill = (255, 255, 255) if img.mode == "RGB" else 255
+    res = Image.new(img.mode, img.size, fill)
+    res.paste(img, (dx, dy))
+    return res
+
+
+def inkProfile(img, axis, factor=1):
+    """ How much ink there is in each column (axis 0) or row (axis 1), averaged over groups of factor pixels. """
+    grey = img.convert("L")
+    w, h = grey.size
+    if axis == 0:
+        prof = grey.resize((max(w // factor, 1), 1), Image.BOX)
+    else:
+        prof = grey.resize((1, max(h // factor, 1)), Image.BOX)
+    return [255 - v for v in prof.getdata()]
+
+
+def profileError(old, new, shift):
+    """ Mean difference between new and old when old is moved by shift (in profile steps). """
+    n = len(old)
+    if shift >= n or -shift >= n:
+        return None
+    if shift >= 0:
+        o, nw = old[:n - shift], new[shift:]
+    else:
+        o, nw = old[-shift:], new[:n + shift]
+    return sum(abs(a - b) for a, b in zip(o, nw)) / len(o)
+
+
+def bestShift(old, new, limit, factor):
+    """ The movement of old (in steps of the profile) that makes it most like new, within limit steps. """
+    best, besterr = 0, None
+    for s in range(-limit, limit + 1):
+        err = profileError(old, new, s)
+        if err is not None and (besterr is None or err < besterr):
+            best, besterr = s, err
+    return best
+
+
+class Aligner:
+    """ Works out how far the text on a page has moved between two PDFs. Changing the margins or adding a
+        gutter moves the whole text block without changing it, and (with facing pages) it moves opposite ways
+        on left and right pages. So the movement is worked out for each page, from the ink in each column and
+        row. A page with hardly any ink gives no clue, so it takes what the last page of the same sort needed. """
+    maxmm = 30          # the furthest the text block is expected to have moved
+    minink = 0.5        # average darkness below which a page is taken to be empty
+
+    def __init__(self):
+        self.last = {}
+
+    def shift(self, oimg, iimg, page, scale=3):
+        parity = page % 2
+        px = int(round(self.maxmm / 25.4 * 72 * scale))
+        res = []
+        for axis in (0, 1):
+            # coarse, on a blurred profile, then fine on the real one
+            coarse = 3
+            o3, n3 = inkProfile(oimg, axis, coarse), inkProfile(iimg, axis, coarse)
+            if sum(n3) / len(n3) < self.minink or sum(o3) / len(o3) < self.minink:
+                self.last.setdefault(parity, [0, 0])
+                return tuple(self.last[parity])
+            s = bestShift(o3, n3, px // coarse, coarse) * coarse
+            o1, n1 = inkProfile(oimg, axis), inkProfile(iimg, axis)
+            lo = [s + k for k in range(-coarse, coarse + 1)]
+            errs = [(profileError(o1, n1, t), t) for t in lo]
+            errs = [e for e in errs if e[0] is not None]
+            err0 = profileError(o1, n1, 0)
+            best = min(errs)[1] if len(errs) else 0
+            # only move the page if that is clearly better than leaving it where it is
+            if err0 is not None and len(errs) and min(errs)[0] > 0.6 * err0:
+                best = 0
+            res.append(best)
+        self.last[parity] = res
+        return tuple(res)
+
+
 def pagePairs(ingen, ogen):
     """ Pairs up the pages of the new and old PDFs. A page that only one of them has is paired with a blank page,
         so that the extra pages show up as differences instead of being silently left out. """
@@ -101,20 +195,34 @@ def pagePairs(ingen, ogen):
         yield iimg, oimg
 
 
-def realDifference(oimg, iimg, scale=3):
+def realDifference(oimg, iimg, scale=3, alternative=None, shift=(0, 0), minchanged=14):
     """ Returns (mask, changed) where mask marks the parts of the page that really differ and changed says
         whether there are enough of them to count. Two renderings of the same text rarely agree to the
         pixel: glyphs and marks land on slightly different fractions of a pixel (e.g. when the page sits at
         a different offset in the PDF, as with crop marks). So a pixel only differs if one page has ink
-        with no ink within a pixel or so of it on the other, and a few such pixels are not a change. """
+        with no ink within a pixel or so of it on the other, and a few such pixels are not a change.
+        alternative is the old page before it was moved to line up with the new one. """
     radius = max(1, int(round(scale / 3.)))
     size = 2 * radius + 1
-    ol, il = oimg.convert("L"), iimg.convert("L")
-    added = ImageChops.subtract(ol.filter(ImageFilter.MinFilter(size)), il)     # ink in new, none near it in old
-    removed = ImageChops.subtract(il.filter(ImageFilter.MinFilter(size)), ol)
-    mask = ImageChops.lighter(added, removed).point(lambda x: 255 if x > 40 else 0)
+    il = iimg.convert("L")
+
+    def rawMasks(old):
+        ol = old.convert("L")
+        added = ImageChops.subtract(ol.filter(ImageFilter.MinFilter(size)), il)     # ink in new, none near it in old
+        removed = ImageChops.subtract(il.filter(ImageFilter.MinFilter(size)), ol)   # ink in old, none near it in new
+        return added.point(lambda x: 255 if x > 40 else 0), removed.point(lambda x: 255 if x > 40 else 0)
+
+    added, removed = rawMasks(oimg)
+    if alternative is not None:
+        # The old page was moved to line it up. Things that did not move with the text (page numbers, running
+        # headers) match the old page where it was, so they are not differences. New ink needs to be new
+        # either way; old ink needs to be unmatched where it was, which is where it was before it was moved.
+        altadded, altremoved = rawMasks(alternative)
+        added = ImageChops.darker(added, altadded)
+        removed = ImageChops.darker(removed, shiftImage(altremoved, shift[0], shift[1], fill=0))
+    mask = ImageChops.lighter(added, removed)
     changed = mask.histogram()[255]
-    if changed < 20 * (radius ** 2):
+    if changed < minchanged * (radius ** 2):
         return mask, 0
     return mask.filter(ImageFilter.MaxFilter(5)), changed
 

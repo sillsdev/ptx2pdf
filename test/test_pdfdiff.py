@@ -168,11 +168,74 @@ def test_subPixelShiftAndSpecksAreNotDifferences(tmp_path):
         s = DecodedStreamObject()
         ops = f"{100 + dx} 150 50 50 re f "
         if speck:
-            ops += "200 300 1 2 re f "
+            ops += "200 300 0.4 0.8 re f "
         s.set_data(ops.encode())
         page[NameObject("/Contents")] = w._add_object(s)
         w.write(str(path))
         return str(path)
-    new = make(tmp_path / "new.pdf", 0.2, True)      # 0.2pt is well under a pixel; a speck is not a change
+    new = make(tmp_path / "new.pdf", 0.2, True)      # 0.2pt is well under a pixel; a one-pixel speck is not a change
     old = make(tmp_path / "old.pdf", 0., False)
     assert createDiff(new, old, str(tmp_path / "d.pdf"), noError) == 0
+
+
+def makeLines(path, dx=0., dy=0., drop=None, pages=2):
+    """ Pages of 25 short 'lines of text' (varied widths, so that they are not all alike), the whole block
+        moved by dx, dy. drop removes one line, as if the text had changed. """
+    w = pypdf.PdfWriter()
+    for pg in range(pages):
+        page = w.add_blank_page(300, 400)
+        s = DecodedStreamObject()
+        ops = []
+        for i in range(25):
+            if i == drop:
+                continue
+            width = 120 + (i * 37 + pg * 11) % 90
+            ops.append(f"{40 + dx} {60 + i * 12 + dy} {width} 5 re f")
+        s.set_data(" ".join(ops).encode())
+        page[NameObject("/Contents")] = w._add_object(s)
+    w.write(str(path))
+    return str(path)
+
+
+def test_smartCheckIgnoresAMovedTextBlock(tmp_path):
+    old = makeLines(tmp_path / "old.pdf")
+    new = makeLines(tmp_path / "new.pdf", dx=12, dy=-7)
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError) != 0              # off by default
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, smart=True) == 0
+
+
+def test_smartCheckFollowsFacingPagesMovingOppositeWays(tmp_path):
+    # a gutter moves the text of left and right pages in opposite directions
+    old = makeLines(tmp_path / "old.pdf", pages=4)
+    w = pypdf.PdfWriter()
+    for i, dx in enumerate((12, -12, 12, -12)):
+        w.append(makeLines(tmp_path / f"p{i}.pdf", dx=dx, pages=4), pages=(i, i + 1))
+    new = str(tmp_path / "new.pdf")
+    w.write(new)
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError) != 0
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, smart=True) == 0
+
+
+def test_smartCheckStillFindsRealChanges(tmp_path):
+    old = makeLines(tmp_path / "old.pdf")
+    new = makeLines(tmp_path / "new.pdf", dx=12, dy=-7, drop=10)      # moved, and a line has gone
+    out = str(tmp_path / "d.pdf")
+    assert createDiff(new, old, out, noError, smart=True) == out
+
+
+def test_aFullStopBecomingACommaIsFound(tmp_path):
+    def make(path, tail):
+        w = pypdf.PdfWriter()
+        page = w.add_blank_page(300, 400)
+        s = DecodedStreamObject()
+        ops = "100 150 2 14 re f 120 150 1.8 1.8 re f "      # a letter stem and a full stop
+        if tail:
+            ops += "120.3 147.3 1.2 2.7 re f "               # the tail of a comma
+        s.set_data(ops.encode())
+        page[NameObject("/Contents")] = w._add_object(s)
+        w.write(str(path))
+        return str(path)
+    stop = make(tmp_path / "stop.pdf", False)
+    comma = make(tmp_path / "comma.pdf", True)
+    out = str(tmp_path / "d.pdf")
+    assert createDiff(comma, stop, out, noError) == out

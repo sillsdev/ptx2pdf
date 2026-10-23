@@ -247,6 +247,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('--diffpages', type=int, default=0, help="Max pages to insert in diff file")
     parser.add_argument('--diffignore', help="Comma separated parts of the page to ignore when comparing: "
                         "headfoot (headers and footers), sides (margin notes, thumb tabs)")
+    parser.add_argument('--diffsmart', action='store_true',
+                        help="When comparing, line up each page first so that a moved text block is not a difference")
     parser.add_argument('--diffoffset', type=int, default=0,
                         help="Page offset when comparing: positive skips pages at the start of the old PDF, "
                              "negative skips pages at the start of the new PDF")
@@ -655,6 +657,8 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                     ignores = [x.strip().lower() for x in args.diffignore.split(",")]
                     mainw.set("c_diffIgnoreHeadFoot", "headfoot" in ignores)
                     mainw.set("c_diffIgnoreSides", "sides" in ignores)
+                if args.diffsmart:
+                    mainw.set("c_diffSmart", True)
                 if args.diffoffset:
                     mainw.set("s_diffOffset", str(args.diffoffset))
                 mainw.docreatediff = True
