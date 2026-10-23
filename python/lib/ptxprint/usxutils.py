@@ -820,7 +820,7 @@ class Usfm:
             if r is not None and r != currstate[0]:
                 currstate = [r, set(strongs.getstrongs(r))]
                 found = {}
-            for st in list(currstate[1]):
+            for st in sorted(currstate[1]):     # a set of strings iterates in a different order every run
                 regs = strongs.regexes[st] if st in strongs.regexes else strongs.addregexes(st, script=script)
                 if not len(regs):
                     currstate[1].remove(st)
