@@ -27,7 +27,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | [#785](https://github.com/sillsdev/ptx2pdf/issues/785) | Column cross references affects GLO book layout | Non-scripture books should revert to full width; XXS already does. | |
 | ~~[#789](https://github.com/sillsdev/ptx2pdf/issues/789)~~ | ~~Copying setting from an old style (Borders)~~ | ~~Borders not copied when adding a style based on `cat:box\|esb`.~~ **DONE** 2026-10-23: new `copyMarkerValues` copies all keys (base + user sheets); test in `test/test_styleditor.py`. | |
 | [#991](https://github.com/sillsdev/ptx2pdf/issues/991) | Problem removing footnote from module | Notes checkbox should also strip the `\f` content. | |
-| [#997](https://github.com/sillsdev/ptx2pdf/issues/997) | Picture Details tab doesn't remember Media settings | Persistence bug; see grouping above. | |
+| ~~[#997](https://github.com/sillsdev/ptx2pdf/issues/997)~~ | ~~Picture Details tab doesn't remember Media settings~~ | ~~Persistence bug; see grouping above.~~ **DONE** 2026-10-23: unchecking all of Print/App/Web saved `media="x"`, but reloading filtered the `x` away and fell back to the default (all active). `_loadrow` now keeps `x`. Not yet checked whether this also explains #1049. | |
 | [#1049](https://github.com/sillsdev/ptx2pdf/issues/1049) | Disappearing image copyrights | Probably same cause as #997. | |
 | [#1114](https://github.com/sillsdev/ptx2pdf/issues/1114) | diglot: text blocks ending with an end-title should be set as text | Fix described in the issue (vtop vs vbox). | |
 | [#1038](https://github.com/sillsdev/ptx2pdf/issues/1038) | Start each Footnote on a new line moves the footnote bottom down | Known workaround (±0.25 space) to bake in. | |
@@ -148,7 +148,7 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#991](https://github.com/sillsdev/ptx2pdf/issues/991) | Problem removing footnote from module | S | |
 | [#992](https://github.com/sillsdev/ptx2pdf/issues/992) | Copyright overlay per piclist entry | M | |
 | [#994](https://github.com/sillsdev/ptx2pdf/issues/994) | Compare PDFs with cropmarks / page offset | M | |
-| [#997](https://github.com/sillsdev/ptx2pdf/issues/997) | Picture Media settings not remembered | S | |
+| ~~[#997](https://github.com/sillsdev/ptx2pdf/issues/997)~~ | ~~Picture Media settings not remembered~~ | ~~S~~ **DONE** | |
 | [#998](https://github.com/sillsdev/ptx2pdf/issues/998) | Covers and diglots | M | |
 | [#999](https://github.com/sillsdev/ptx2pdf/issues/999) | Random changes in Strong's numbering | M | 🔺 |
 | ~~[#1028](https://github.com/sillsdev/ptx2pdf/issues/1028)~~ | ~~Issue page vs displayed page mismatch~~ | ~~S~~ **DONE Fixed?** | |
