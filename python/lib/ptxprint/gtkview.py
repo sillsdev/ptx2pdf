@@ -213,7 +213,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-t_configName l_configNameMsg l_projectNameMsg btn_cfg_ok btn_cfg_cancel
+t_configName l_configNameMsg c_overwriteConfig l_projectNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
@@ -2859,8 +2859,6 @@ class GtkViewModel(ViewModel):
             self.userconfig.set("init", "config", self.cfgid)
         self.saveConfig(force=force)
         self.onSaveEdits(None)
-        if self.testing is not None:
-            self.finalise_testing()
 
     def writeConfig(self, cfgname=None, force=False):
         super().writeConfig(cfgname=cfgname, force=force)
@@ -4633,10 +4631,14 @@ class GtkViewModel(ViewModel):
 
     def onSaveAsNewConfig(self, w):
         self.set("t_configName", "")
+        self.set("c_overwriteConfig", False)    # replacing must be chosen afresh each time
         dialog = self.builder.get_object("dlg_configName")
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             cfg = self.get("t_configName")
+            if not self.replaceConfigFor(cfg):
+                dialog.hide()
+                return
             self.set("ecb_savedConfig", cfg)
             self.doConfigNameChange(cfg)
             self.changed()
@@ -4882,6 +4884,12 @@ class GtkViewModel(ViewModel):
 
     def onConfigKeyPressed(self, btn, *a):
         self.configKeypressed = True
+        self.checkNewConfigName()
+
+    def onOverwriteConfigToggled(self, btn):
+        self.checkNewConfigName()
+
+    def checkNewConfigName(self):
         self.builder.get_object("btn_cfg_ok").set_sensitive(False) 
         msg = ""
         cfg = self.get("t_configName")
@@ -4892,10 +4900,33 @@ class GtkViewModel(ViewModel):
         elif not len(cfg):
             pass
         elif cpath is not None and os.path.exists(cpath):
-            msg = _("That Configuration already exists.\nUse another name.")
+            if cfg in ("Default", self.cfgid):
+                msg = _("That Configuration already exists.\nUse another name.")
+            elif self.get("c_overwriteConfig"):
+                msg = _("That Configuration already exists\nand will be replaced.")
+                self.builder.get_object("btn_cfg_ok").set_sensitive(True)
+            else:
+                msg = _("That Configuration already exists.\nUse another name, or tick Replace.")
         else:
             self.builder.get_object("btn_cfg_ok").set_sensitive(True) 
         self.builder.get_object("l_configNameMsg").set_text(msg) 
+
+    def replaceConfigFor(self, cfg):
+        """ Before saving the current settings as a new config called cfg: if one exists,
+            remove it when the user chose to replace it. Returns whether to go ahead. """
+        cpath = self.project.srcPath(cfg) if cfg else None
+        if cpath is None or not os.path.exists(cpath):
+            return True
+        if not self.get("c_overwriteConfig") or cfg in ("Default", self.cfgid):
+            # saving would load the existing config instead of copying the current settings
+            self.doStatus(_("The configuration {} already exists, so nothing was saved.").format(cfg), warning=True)
+            return False
+        try:
+            rmtree(cpath)
+        except OSError as e:
+            self.doStatus(_("Could not replace the configuration {}: {}").format(cfg, e), warning=True)
+            return False
+        return True
 
     def onCfgFocusOutEvent(self, btn, *a):
         self.configKeypressed = False

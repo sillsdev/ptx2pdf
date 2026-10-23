@@ -140,7 +140,10 @@ def _runtest(prjTree, config, macrosdir, project, doit, args):
         mainw.noInt = True
     # copy files before loading config
     tester = GtkTester(None, mainw)
+    tester.startReplayHooks()
     mainw.replayer = tester
+    if args.teststep is None:
+        mainw.doSysError = tester.handlerError     # run() makes this sys.excepthook
     tester.project = project
     tester.setuprun(args.test, mainw)
     if args.pid:

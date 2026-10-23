@@ -1719,7 +1719,7 @@ Berean Standard Bible</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkButton" id="b_installBSB">
                     <property name="label" translatable="yes">Install BSB</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
@@ -2287,6 +2287,24 @@ Spaces are not permitted.</property>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_overwriteConfig">
+                <property name="label" translatable="yes">Replace it if it already exists</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">If a configuration with this name already exists, delete it and save the current settings in its place.
+(Useful for tests and tutorials that make a fresh copy each time they run.)</property>
+                <property name="margin-start">10</property>
+                <property name="draw-indicator">True</property>
+                <signal name="toggled" handler="onOverwriteConfigToggled" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -3113,7 +3131,7 @@ If in doubt, click Cancel.</property>
                     <property name="spacing">2</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsAll">
                         <property name="label" translatable="yes">All Books</property>
                         <property name="width-request">200</property>
                         <property name="visible">True</property>
@@ -3133,7 +3151,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsOT">
                         <property name="label" translatable="yes">Old Testament</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3152,7 +3170,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsNT">
                         <property name="label" translatable="yes">New Testament</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3171,7 +3189,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsDC">
                         <property name="label" translatable="yes">Deuterocanon</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3190,7 +3208,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsXtra">
                         <property name="label" translatable="yes">Extra Material</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3221,7 +3239,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsToggle">
                         <property name="label" translatable="yes">Toggle Books</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3242,7 +3260,7 @@ and the unselected ones will be selected.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsNone">
                         <property name="label" translatable="yes">Reset All</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -17251,7 +17269,7 @@ the Notes field below.</property>
                                         <property name="spacing">6</property>
                                         <property name="homogeneous">True</property>
                                         <child>
-                                          <object class="GtkButton">
+                                          <object class="GtkButton" id="b_saveAsNewConfig">
                                             <property name="label">gtk-save-as</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>

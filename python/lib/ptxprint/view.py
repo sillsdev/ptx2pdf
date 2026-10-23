@@ -2476,7 +2476,7 @@ class ViewModel:
             res[os.path.join(fpath, 'Lexicon.xml')] = baseprjid + '/Lexicon.xml' 
 
         script = self.customScript
-        if script: # is not None and len(script):
+        if script and os.path.isfile(str(script)):     # only a real script, not a folder or a stale name
             res[script] = bname(script, baseprjid)
             cfgchanges["btn_selectScript"] = (Path(bname(script, "${prjdir}")), "customScript")
             # and the modules it imports from beside it
