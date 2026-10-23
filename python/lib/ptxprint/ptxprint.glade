@@ -23107,10 +23107,13 @@ enable this option.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">This option will place footnotes (and optionally 
-also the Cross-references and Section Headings) 
+                                            <property name="tooltip-text" translatable="yes">This option will place footnotes (and optionally
+also the Cross-references and Section Headings)
 in a column next to the text and align them as
-closely as possible vertically to their caller. </property>
+closely as possible vertically to their caller.
+
+This option is only available if Margin Notes
+has been enabled on the Layout Tab.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="margin-start">24</property>
@@ -23995,10 +23998,13 @@ enable this option.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">This option will place references (and optionally 
-also the Footnotes and Section Headings) 
+                                            <property name="tooltip-text" translatable="yes">This option will place references (and optionally
+also the Footnotes and Section Headings)
 in a column next to the text and align them as
-closely as possible vertically to their caller. </property>
+closely as possible vertically to their caller.
+
+This option is only available if Margin Notes
+has been enabled on the Layout Tab.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="margin-right">6</property>
