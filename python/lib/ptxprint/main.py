@@ -245,6 +245,11 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     # PDF & Output Settings
     parser.add_argument('-F', '--difffile', help="Generate difference PDF against another file")
     parser.add_argument('--diffpages', type=int, default=0, help="Max pages to insert in diff file")
+    parser.add_argument('--diffignore', help="Comma separated parts of the page to ignore when comparing: "
+                        "headfoot (headers and footers), sides (margin notes, thumb tabs)")
+    parser.add_argument('--diffoffset', type=int, default=0,
+                        help="Page offset when comparing: positive skips pages at the start of the old PDF, "
+                             "negative skips pages at the start of the new PDF")
     parser.add_argument('--diffoutfile', help="Output filename for difference PDF")
     parser.add_argument('--diffdpi', type=int, default=0, help="DPI for PDF differencing")
     parser.add_argument('-V', '--pdfversion', type=int, default=14, help="PDF version to read/write (default: 14)")
@@ -646,6 +651,12 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                 mainw.set("c_onlyDiffs", True)
                 if args.diffpages > 0:
                     mainw.set("s_diffpages", str(args.diffpages))
+                if args.diffignore is not None:
+                    ignores = [x.strip().lower() for x in args.diffignore.split(",")]
+                    mainw.set("c_diffIgnoreHeadFoot", "headfoot" in ignores)
+                    mainw.set("c_diffIgnoreSides", "sides" in ignores)
+                if args.diffoffset:
+                    mainw.set("s_diffOffset", str(args.diffoffset))
                 mainw.docreatediff = True
                 if args.difffile.lower() == 'last':
                     mainw.set("s_keepVersions", "1")

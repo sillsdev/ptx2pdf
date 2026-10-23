@@ -1,5 +1,5 @@
 import os, re, argparse
-from PIL import Image, ImageChops, ImageEnhance, ImageOps, ImageDraw
+from PIL import Image, ImageChops, ImageEnhance, ImageOps, ImageDraw, ImageFilter
 from ptxprint.utils import _
 import logging
 logger = logging.getLogger(__name__)
@@ -28,10 +28,9 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         return 1
     results = []
     hasdiffs = False
-    for iimg in ingen:
-        oimg = next(ogen, None)
-        if oimg is None:
-            break
+    compared = 0
+    for iimg, oimg in pagePairs(ingen, ogen):
+        compared += 1
         if abs(oimg.size[0] - iimg.size[0]) > 2 or abs(oimg.size[1] - iimg.size[1]) > 2:
             doError(_("Page sizes differ between output and base. Cannot create a difference."),
                 threaded=True, title=_("Difference Error"))
@@ -47,16 +46,13 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
                 draw = ImageDraw.Draw(im)
                 for r in zones:
                     draw.rectangle(r, fill=(255, 255, 255))
-        dmask = ImageChops.difference(oimg, iimg).convert("L")
-        dval = sum([i * x / 256. for i, x in enumerate(dmask.histogram()) if i > 12])
-        logger.debug(f"Difference val = {dval} size({dmask.getbbox()})")
-        if not dmask.getbbox() or dval < 2.:
+        dmask, changed = realDifference(oimg, iimg, info.get("scale", 3))
+        logger.debug(f"Changed pixels = {changed}")
+        if not changed:
             if onlydiffs:
                 continue
         else:
             hasdiffs = True
-        if maxdiff:
-            dmask = dmask.point(lambda x: 255 if x else 0)
         diffimg = ImageChops.subtract(oimg, iimg, scale=0.5, offset=127).convert("L")    # old - new
         overlay = ImageOps.colorize(diffimg, color, oldcolor, mid=(255, 255, 255))
         #translucent = Image.new("RGB", iimg.size, color)
@@ -73,6 +69,8 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         results.append(nimg)
         if limit > 0 and len(results) >= limit:
             break
+    if not compared:
+        return 5
     if hasdiffs and len(results):
         results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
         return outname
@@ -83,6 +81,43 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
             logger.warn(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."))
             return 4
     return 0
+
+def pagePairs(ingen, ogen):
+    """ Pairs up the pages of the new and old PDFs. A page that only one of them has is paired with a blank page,
+        so that the extra pages show up as differences instead of being silently left out. """
+    first = True
+    while True:
+        iimg = next(ingen, None)
+        oimg = next(ogen, None)
+        if iimg is None and oimg is None:
+            return
+        if first and (iimg is None or oimg is None):
+            return          # one has no pages at all (e.g. the offset is past its end): nothing to pair
+        first = False
+        if oimg is None:
+            oimg = Image.new("RGB", iimg.size, (255, 255, 255))
+        elif iimg is None:
+            iimg = Image.new("RGB", oimg.size, (255, 255, 255))
+        yield iimg, oimg
+
+
+def realDifference(oimg, iimg, scale=3):
+    """ Returns (mask, changed) where mask marks the parts of the page that really differ and changed says
+        whether there are enough of them to count. Two renderings of the same text rarely agree to the
+        pixel: glyphs and marks land on slightly different fractions of a pixel (e.g. when the page sits at
+        a different offset in the PDF, as with crop marks). So a pixel only differs if one page has ink
+        with no ink within a pixel or so of it on the other, and a few such pixels are not a change. """
+    radius = max(1, int(round(scale / 3.)))
+    size = 2 * radius + 1
+    ol, il = oimg.convert("L"), iimg.convert("L")
+    added = ImageChops.subtract(ol.filter(ImageFilter.MinFilter(size)), il)     # ink in new, none near it in old
+    removed = ImageChops.subtract(il.filter(ImageFilter.MinFilter(size)), ol)
+    mask = ImageChops.lighter(added, removed).point(lambda x: 255 if x > 40 else 0)
+    changed = mask.histogram()[255]
+    if changed < 20 * (radius ** 2):
+        return mask, 0
+    return mask.filter(ImageFilter.MaxFilter(5)), changed
+
 
 def zoneRects(info, size, ignore, geometry):
     """ Pixel rectangles (x0, y0, x1, y1) of a rendered page that are to be ignored. info is the .info of the

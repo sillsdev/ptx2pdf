@@ -159,6 +159,7 @@ class RunJob:
         self.forcedlooseness = None
         # self.oldversions = 1
         self.docreatediff = False
+        self.diffresult = None
         # self.onlydiffs = True
         # self.diffPdf = None
         self.rerunReasons = []
@@ -872,19 +873,42 @@ class RunJob:
                 odiffcolor = self.printer.get("col_odiffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
                 diffpages = int(self.printer.get("s_diffpages") or 0)
-                logger.debug(f"diffing from: {basename=} {pdfname=}")
+                diffoffset = int(self.printer.get("s_diffOffset") or 0)
+                ignore = []
+                if self.printer.get("c_diffIgnoreHeadFoot"):
+                    ignore.append("topbottom")
+                if self.printer.get("c_diffIgnoreSides"):
+                    ignore.append("sides")
+                geometry = None
+                if len(ignore):
+                    if int(self.info.dict.get("finishing/pgsperspread", 1) or 1) > 1 or self.info.dict.get("finishing/scaletofit", False):
+                        # the pages have been moved around, so where the margins are is no longer known
+                        logger.warning("Not ignoring parts of the page when comparing: the pages have been imposed or scaled")
+                        ignore = []
+                    else:
+                        parlocs = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".parlocs"))
+                        geometry = self.printer.getDiffGeometry(parlocs)
+                logger.debug(f"diffing from: {basename=} {pdfname=} {ignore=} {diffoffset=}")
                 if basename is None or len(basename):
                     othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
                     diffname = self.createDiff(pdfname, basename, outname=self.args.diffoutfile, dpi=self.args.diffdpi,
-                                color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
+                                color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages,
+                                offset=diffoffset, ignore=ignore, geometry=geometry)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         self.printer.onIdle(self.printer.onShowPDF, path=diffname)
                         if diffname == pdfname:
-                            if os.path.exists(othername):
-                                self.printer.onIdle(self.printer.set, "l_statusLine", _("No differences found"))
+                            # Say what really happened. Only a result of 0 means the PDFs are the same.
+                            if not os.path.exists(othername):
+                                msg = _("Nothing to compare with yet: make a change and print again") if basename is None \
+                                      else _("Cannot find the PDF to compare with: {}").format(os.path.basename(othername))
                             else:
-                                self.printer.onIdle(self.printer.set, "l_statusLine",
-                                        _("Nothing to compare with yet: make a change and print again"))
+                                msg = {0: _("No differences found"),
+                                       1: _("Cannot compare PDFs: Poppler or the image libraries are not available"),
+                                       3: _("Cannot compare PDFs: the pages are different sizes"),
+                                       4: _("No differences found, but the old Diff PDF is open and cannot be removed"),
+                                       5: _("No pages could be compared. Check the Start Page Offset")}.get(self.diffresult,
+                                            _("The PDFs could not be compared"))
+                            self.printer.onIdle(self.printer.set, "l_statusLine", msg)
                 self.printer.docreatediff = False
                 startname = pdfname
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
@@ -1125,6 +1149,7 @@ class RunJob:
         othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
         logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)}) to {outname}")
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
+        self.diffresult = res
         if res == 2 and (self.noview or self.args.print):
             # Nothing to compare with: tell the command line (exit code) and the tests. In the GUI this
             # is not a failed print, and treating it as one makes finished() clear the preview.

@@ -286,6 +286,9 @@ _map = {
     "document/diffpdf":         ("btn_selectDiffPDF", "finish", lambda w,v: w.diffPDF.as_posix() \
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
     "document/diffpages":       ("s_diffpages", "finish", None),
+    "document/diffignoretopbottom": ("c_diffIgnoreHeadFoot", "finish", None),
+    "document/diffignoresides": ("c_diffIgnoreSides", "finish", None),
+    "document/diffoffset":      ("s_diffOffset", "finish", None),
     "document/printarchive":    ("c_printArchive", "finish", None),
     
     "slice/ref":                ("t_sliceRef", "slice", None),

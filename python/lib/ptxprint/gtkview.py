@@ -382,7 +382,7 @@ c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter btn_rescanFRTvars btn_delz
 lb_Peripherals
 tb_Cover lb_Cover
 c_scaleToFit
-s_diffpages l_diffpages
+s_diffpages l_diffpages c_diffIgnoreHeadFoot c_diffIgnoreSides l_diffIgnore l_diffOffset s_diffOffset
 fr_pdfDetails fcb_outputFormat c_cropmarks s_keepVersions c_inclSettingsInPDF
 c_applyWatermark btn_selectWatermarkPDF lb_applyWatermark lb_Finishing
 l_prjdir l_settings_dir l_working_dir l_trainingVideos lb_trainingOnPTsite l_reportBugs
@@ -2616,6 +2616,8 @@ class GtkViewModel(ViewModel):
         if not os.path.exists(self.project.printPath(self.cfgid)):
             os.makedirs(self.project.printPath(self.cfgid))
         self.docreatediff = self.get("c_createDiff")
+        if self.docreatediff:
+            self.checkDiffPDF(announce=True)
         pdfnames = self.baseTeXPDFnames(diff=self.docreatediff)
         for basename in pdfnames:
             pdfname = os.path.join(self.project.printPath(self.cfgid), "..", basename) + ".pdf"
@@ -3040,12 +3042,7 @@ class GtkViewModel(ViewModel):
         self.sensiVisible('c_lockUI4Layout') # Why does this do nothing? Is it in the wrong place?
         self.onExtListSourceChanges(None)
         # self.onExpertModeClicked(None)
-        x = self.get("btn_selectDiffPDF")
-        if x is not None and len(x) < 200:
-            self.makeLabelBold("l_selectDiffPDF", True)
-            self.set("lb_diffPDF", pdfre.sub(r"\1", x))
-        else:
-            self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        self.checkDiffPDF()
         for f, g, key, d in _collapsibleSections:
             self._updateSectionVisibility(key)
         if config.has_section("coverwiz"):
@@ -5541,6 +5538,28 @@ class GtkViewModel(ViewModel):
         else:
             self.makeLabelBold("l_selectDiffPDF", True)
 
+    def checkDiffPDF(self, announce=False):
+        """ The PDF to compare with is either a file the user chose or, when there is none, the previous
+            output (_1). Old configs can hold anything in there (the text of a tooltip, a file that has since
+            gone, a path from another computer), and then nothing gets compared. So keep a file that exists
+            and otherwise go back to the previous PDF. Returns True if something unusable was reset. """
+        x = self.get("btn_selectDiffPDF")
+        if x is not None and len(x.strip()) and os.path.isfile(x) and x.lower().endswith(".pdf"):
+            self.diffPDF = Path(x, self)        # so that it is saved with the config again
+            self.makeLabelBold("l_selectDiffPDF", True)
+            self.set("lb_diffPDF", pdfre.sub(r"\1", x))
+            return False
+        stale = x is not None and len(x.strip()) > 0
+        self.set("btn_selectDiffPDF", None)
+        self.diffPDF = None
+        self.makeLabelBold("l_selectDiffPDF", False)
+        self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        if stale:
+            logger.debug(f"Reset the PDF to compare with, which was: {x}")
+            if announce:
+                self.doStatus(_("The PDF to compare with was not found, so the previous PDF (_1) will be used"))
+        return stale
+
     def makeLabelBold(self, lbl, bold=True):
         lb = self.builder.get_object(lbl)
         ctxt = lb.get_style_context()
@@ -7738,7 +7757,9 @@ Thank you,
         self.pdf_viewer.onTabChange(page)
 
     def onCreateDiffClicked(self, w):
-        if not self.get("c_createDiff"):
+        if self.get("c_createDiff"):
+            self.checkDiffPDF(announce=True)
+        else:
             self.pdf_viewer.clear(view="diff", remove=True)
             diffname = self.baseTeXPDFnames(diff=True)[1]+".pdf"
             diffpath = os.path.join(self.project.printPath(None), diffname)

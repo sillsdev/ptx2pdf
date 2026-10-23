@@ -145,3 +145,34 @@ def test_columnExtents(tmp_path):
     assert ext[0] == pytest.approx((50 * tobp, 250 * tobp))
     assert ext[2] == pytest.approx((30 * tobp, 240 * tobp))
     assert columnExtents(str(tmp_path / "missing.parlocs")) == {}
+
+
+def test_extraPageIsADifference(tmp_path):
+    two = makeBook(tmp_path / "two.pdf", [20, 80])
+    three = makeBook(tmp_path / "three.pdf", [20, 80, 140])
+    out = str(tmp_path / "d.pdf")
+    assert createDiff(three, two, out, noError) == out        # a page that is not in the old PDF
+    assert createDiff(two, three, out, noError) == out        # a page that is no longer in the new PDF
+
+
+def test_nothingToCompareIsReported(tmp_path):
+    new = makeBook(tmp_path / "new.pdf", [20, 80])
+    old = makeBook(tmp_path / "old.pdf", [20, 80])
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, offset=5) == 5
+
+
+def test_subPixelShiftAndSpecksAreNotDifferences(tmp_path):
+    def make(path, dx, speck):
+        w = pypdf.PdfWriter()
+        page = w.add_blank_page(300, 400)
+        s = DecodedStreamObject()
+        ops = f"{100 + dx} 150 50 50 re f "
+        if speck:
+            ops += "200 300 1 2 re f "
+        s.set_data(ops.encode())
+        page[NameObject("/Contents")] = w._add_object(s)
+        w.write(str(path))
+        return str(path)
+    new = make(tmp_path / "new.pdf", 0.2, True)      # 0.2pt is well under a pixel; a speck is not a change
+    old = make(tmp_path / "old.pdf", 0., False)
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError) == 0
