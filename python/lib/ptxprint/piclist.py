@@ -78,22 +78,28 @@ class PicChecks:
             self._init_default(cfg, prefix)
 
     def writeCfg(self, basepath, configid):
-        if len(self.cfgShared) < 2 or configid is None:     # always a default
+        if configid is None:
             return False
-        self.savepic()
+        self.savepic()      # first, so that the picture being edited is kept even if no other has been touched
+        if len(self.cfgShared) < 2:     # always a default
+            return False
         for a in ((None, self.sharedfname, self.cfgShared), (configid, self.pubfname, self.cfgProject)):
             p = os.path.join(basepath, a[0]) if a[0] else basepath
             for s in a[2].sections():
                 hasdata = False
                 for n,o in a[2].items(section=s):
-                    if a[2].has_option("DEFAULT", n) and o == a[2].get("DEFAULT", n):
+                    if (a[2].has_option("DEFAULT", n) and o == a[2].get("DEFAULT", n)) \
+                            or (n, o) in (("approved", "false"), ("notes", "")):    # what a missing entry reads as
                         a[2].remove_option(s, n)
                     else:
                         hasdata = True
                 if not hasdata:
                     a[2].remove_section(s)
+            fpath = os.path.join(p, a[1])
+            if not len(a[2].sections()) and not os.path.exists(fpath):
+                continue        # nothing to record, so don't create a file of defaults
             try:
-                with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
+                with open(fpath, "w", encoding="utf-8") as outf:
                     a[2].write(outf)
             except FileNotFoundError:
                 pass

@@ -28,7 +28,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | ~~[#789](https://github.com/sillsdev/ptx2pdf/issues/789)~~ | ~~Copying setting from an old style (Borders)~~ | ~~Borders not copied when adding a style based on `cat:box\|esb`.~~ **DONE** 2026-10-23: new `copyMarkerValues` copies all keys (base + user sheets); test in `test/test_styleditor.py`. | |
 | [#991](https://github.com/sillsdev/ptx2pdf/issues/991) | Problem removing footnote from module | Notes checkbox should also strip the `\f` content. | |
 | ~~[#997](https://github.com/sillsdev/ptx2pdf/issues/997)~~ | ~~Picture Details tab doesn't remember Media settings~~ | ~~Persistence bug; see grouping above.~~ **DONE** 2026-10-23: unchecking all of Print/App/Web saved `media="x"`, but reloading filtered the `x` away and fell back to the default (all active). `_loadrow` now keeps `x`. Not yet checked whether this also explains #1049. | |
-| [#1049](https://github.com/sillsdev/ptx2pdf/issues/1049) | Disappearing image copyrights | Probably same cause as #997. | |
+| ~~[#1049](https://github.com/sillsdev/ptx2pdf/issues/1049)~~ | ~~Disappearing image copyrights~~ | ~~Probably same cause as #997.~~ **DONE Fixed?** 2026-10-23: not the same cause as #997. Mostly already fixed by `ad816fdfb` (17 Oct 2026: `PicChecks.init` read the wrong folder, so credits were never read back and the next save discarded them). Also fixed: the first credit in a project was lost if you exited without clicking another picture (`writeCfg` bailed before `savepic`). Awaiting Alastair's confirmation. | |
 | [#1114](https://github.com/sillsdev/ptx2pdf/issues/1114) | diglot: text blocks ending with an end-title should be set as text | Fix described in the issue (vtop vs vbox). | |
 | [#1038](https://github.com/sillsdev/ptx2pdf/issues/1038) | Start each Footnote on a new line moves the footnote bottom down | Known workaround (±0.25 space) to bake in. | |
 | [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246) | Slight change in footnote spacing – observation | Likely same cause as #1038. | |
@@ -152,7 +152,7 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#998](https://github.com/sillsdev/ptx2pdf/issues/998) | Covers and diglots | M | |
 | [#999](https://github.com/sillsdev/ptx2pdf/issues/999) | Random changes in Strong's numbering | M | 🔺 |
 | ~~[#1028](https://github.com/sillsdev/ptx2pdf/issues/1028)~~ | ~~Issue page vs displayed page mismatch~~ | ~~S~~ **DONE Fixed?** | |
-| [#1049](https://github.com/sillsdev/ptx2pdf/issues/1049) | Disappearing image copyrights | S | |
+| ~~[#1049](https://github.com/sillsdev/ptx2pdf/issues/1049)~~ | ~~Disappearing image copyrights~~ | ~~S~~ **DONE Fixed?** | |
 | [#1051](https://github.com/sillsdev/ptx2pdf/issues/1051) | `\w`→footnote makes nested footnotes | M | |
 | [#1094](https://github.com/sillsdev/ptx2pdf/issues/1094) | Settings not stable after restart / upgrade | L | 🔺 |
 | [#1137](https://github.com/sillsdev/ptx2pdf/issues/1137) | Stylesheet figures not archived / absolute paths | S | |
