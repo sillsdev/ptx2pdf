@@ -865,6 +865,7 @@ class RunJob:
         print(f"{self.res=}")
         if self.res == 0:
             logger.debug(f"{self.noview=} {self.printer.isDisplay=} {pdfname=} doCreateDiff={self.printer.docreatediff}")
+            comparing = bool(self.printer.docreatediff)     # the status line is then reporting on the comparison
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
                 if basename == _("Previous PDF (_1)"):
@@ -933,7 +934,11 @@ class RunJob:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
-                    if not self.noview and not self.args.print:
+                    if comparing and smry["E"] == 0:
+                        # Don't replace what the comparison said ("No differences found", ...) with advice
+                        # about underfilled pages or warnings. Real errors are still shown.
+                        logger.debug("Not showing the XeTeX log summary in the status line while comparing")
+                    elif not self.noview and not self.args.print:
                         severity = "error" if smry["E"] > 0 else "warn"
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:

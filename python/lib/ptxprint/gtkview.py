@@ -383,7 +383,7 @@ c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter btn_rescanFRTvars btn_delz
 lb_Peripherals
 tb_Cover lb_Cover
 c_scaleToFit
-s_diffpages l_diffpages c_diffIgnoreHeadFoot c_diffIgnoreSides l_diffIgnore l_diffOffset s_diffOffset c_diffSmart
+s_diffpages l_diffpages
 fr_pdfDetails fcb_outputFormat c_cropmarks s_keepVersions c_inclSettingsInPDF
 c_applyWatermark btn_selectWatermarkPDF lb_applyWatermark lb_Finishing
 l_prjdir l_settings_dir l_working_dir l_trainingVideos lb_trainingOnPTsite l_reportBugs
@@ -460,6 +460,7 @@ btn_sty_ok btn_sty_cancel t_styMarker textv_styDesc t_styName t_styEndMarker l_s
 """.split()
 
 _ui_full = """
+l_diffIgnore c_diffIgnoreHeadFoot c_diffIgnoreSides l_diffOffset s_diffOffset c_diffSmart
 c_useChapterLabel t_clBookList l_clHeading t_clHeading c_optimizePoetryLayout c_differentColLayout
 t_differentColBookList
 gr_fnRulePosParms s_fnIndent s_fnLength s_fnThick fcb_fnHorizPosn l_fnRulePosParms ex_miscFootnotes
