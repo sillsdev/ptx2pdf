@@ -5,7 +5,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, 
-                maxdiff=False, oldcolor=None, limit=0, dpi=0, **kw):
+                maxdiff=False, oldcolor=None, limit=0, dpi=0, boxmode="auto", **kw):
+    """ boxmode "auto" compares the TrimBox of each page, so that a PDF with crop marks (whose MediaBox is
+        bigger than the page) lines up with one without. Any other value compares what Poppler renders by
+        default: the CropBox, which is the MediaBox when there is no CropBox. """
     if color is None or not len(color):
         color = (240, 0, 0)
     if oldcolor is None or not len(oldcolor):
@@ -13,8 +16,8 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
     if not os.path.exists(othername):
         return 2
     try:
-        ingen = pdfimages(pdfname, dpi=dpi)
-        ogen = pdfimages(othername, dpi=dpi)
+        ingen = pdfimages(pdfname, dpi=dpi, boxmode=boxmode)
+        ogen = pdfimages(othername, dpi=dpi, boxmode=boxmode)
     except ImportError:
         return 1
     results = []
@@ -23,16 +26,20 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         oimg = next(ogen, None)
         if oimg is None:
             break
+        if abs(oimg.size[0] - iimg.size[0]) > 2 or abs(oimg.size[1] - iimg.size[1]) > 2:
+            doError(_("Page sizes differ between output and base. Cannot create a difference."),
+                threaded=True, title=_("Difference Error"))
+            return 3
+        if oimg.size != iimg.size:      # rounding of the trim box to whole pixels
+            size = (min(oimg.size[0], iimg.size[0]), min(oimg.size[1], iimg.size[1]))
+            oimg = oimg.crop((0, 0) + size)
+            iimg = iimg.crop((0, 0) + size)
         dmask = ImageChops.difference(oimg, iimg).convert("L")
         dval = sum([i * x / 256. for i, x in enumerate(dmask.histogram()) if i > 12])
         logger.debug(f"Difference val = {dval} size({dmask.getbbox()})")
         if not dmask.getbbox() or dval < 2.:
             if onlydiffs:
                 continue
-        elif dmask.size != iimg.size:
-            doError(_("Page sizes differ between output and base. Cannot create a difference."),
-                threaded=True, title=_("Difference Error"))
-            return 3
         else:
             hasdiffs = True
         if maxdiff:
@@ -58,7 +65,18 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
             return 4
     return 0
 
-def pdfimages(infile, dpi=0):
+def trimBoxes(infile):
+    """ Returns a list, one per page, of the TrimBox [llx, lly, urx, ury] in PDF points, or None for a
+        page with no TrimBox (or if the file cannot be read by pdfrw). """
+    try:
+        from ptxprint.pdfrw import PdfReader
+        return [[float(x) for x in p.inheritable.TrimBox] if p.inheritable.TrimBox is not None else None
+                for p in PdfReader(infile).pages]
+    except Exception as e:
+        logger.debug(f"Could not read TrimBoxes from {infile}: {e}")
+        return []
+
+def pdfimages(infile, dpi=0, boxmode="auto"):
     import gi
     gi.require_version('Poppler', '0.18')
     from gi.repository import Poppler, GLib
@@ -66,6 +84,7 @@ def pdfimages(infile, dpi=0):
     uri = GLib.filename_to_uri(infile, None)
     doc = Poppler.Document.new_from_file(uri, None)
     numpages = doc.get_n_pages()
+    trims = trimBoxes(infile) if boxmode == "auto" else []
     if dpi == 0:
         dpi = 3
     else:
@@ -75,12 +94,22 @@ def pdfimages(infile, dpi=0):
         if page is None:
             continue
         w, h = (int(x*dpi) for x in page.get_size())  # in points
+        # Poppler draws the CropBox with its top left corner at the origin. Shift so that the TrimBox is
+        # what lands on the surface: whatever is outside it (crop marks, bleed) is clipped by the surface.
+        shiftx = shifty = 0.
+        trim = trims[i] if i < len(trims) else None
+        if trim is not None:
+            crop = page.get_crop_box()
+            shiftx = trim[0] - crop.x1
+            shifty = crop.y2 - trim[3]
+            w, h = (int(round((trim[2] - trim[0]) * dpi)), int(round((trim[3] - trim[1]) * dpi)))
         surface = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
         ctx = cairo.Context(surface)
-        ctx.scale(dpi, dpi)
         ctx.set_source_rgba(1., 1., 1., 1.)
         ctx.rectangle(0, 0, w, h)
         ctx.fill()
+        ctx.scale(dpi, dpi)
+        ctx.translate(-shiftx, -shifty)
         try:
             page.render(ctx)
             imgr = Image.frombuffer(mode='RGBA', size=(w,h), data=surface.get_data().tobytes())
