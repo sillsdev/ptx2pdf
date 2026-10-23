@@ -50,3 +50,35 @@ def test_wholePageSizeMismatchReported(tmp_path):
     errors = []
     res = createDiff(plain, crops, str(tmp_path / "d.pdf"), lambda *a, **kw: errors.append(a), boxmode="page")
     assert res == 3 and len(errors) == 1
+
+
+def makeBook(path, positions):
+    """ One page per entry in positions: a square at that x offset, so each page differs from the others. """
+    w = pypdf.PdfWriter()
+    for x in positions:
+        page = w.add_blank_page(300, 400)
+        s = DecodedStreamObject()
+        s.set_data(f"{x} 50 40 40 re f".encode())
+        page[NameObject("/Contents")] = w._add_object(s)
+    w.write(str(path))
+    return str(path)
+
+
+def test_offsetSkipsExtraPagesInOld(tmp_path):
+    new = makeBook(tmp_path / "new.pdf", [20, 80, 140])
+    old = makeBook(tmp_path / "old.pdf", [200, 20, 80, 140])        # old has an extra page at the front
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError) != 0
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, offset=1) == 0
+
+
+def test_negativeOffsetSkipsExtraPagesInNew(tmp_path):
+    new = makeBook(tmp_path / "new.pdf", [200, 20, 80, 140])        # new has an extra page at the front
+    old = makeBook(tmp_path / "old.pdf", [20, 80, 140])
+    assert createDiff(new, old, str(tmp_path / "d.pdf"), noError, offset=-1) == 0
+
+
+def test_offsetStillFindsChanges(tmp_path):
+    new = makeBook(tmp_path / "new.pdf", [20, 80, 150])
+    old = makeBook(tmp_path / "old.pdf", [200, 20, 80, 140])
+    out = str(tmp_path / "d.pdf")
+    assert createDiff(new, old, out, noError, offset=1) == out

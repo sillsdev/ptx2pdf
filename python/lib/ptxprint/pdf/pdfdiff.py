@@ -5,10 +5,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, 
-                maxdiff=False, oldcolor=None, limit=0, dpi=0, boxmode="auto", **kw):
+                maxdiff=False, oldcolor=None, limit=0, dpi=0, boxmode="auto", offset=0, **kw):
     """ boxmode "auto" compares the TrimBox of each page, so that a PDF with crop marks (whose MediaBox is
         bigger than the page) lines up with one without. Any other value compares what Poppler renders by
-        default: the CropBox, which is the MediaBox when there is no CropBox. """
+        default: the CropBox, which is the MediaBox when there is no CropBox.
+        offset pairs page i of pdfname with page i+offset of othername: positive skips that many pages at
+        the start of othername (the old PDF), negative skips that many at the start of pdfname. """
     if color is None or not len(color):
         color = (240, 0, 0)
     if oldcolor is None or not len(oldcolor):
@@ -16,8 +18,8 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
     if not os.path.exists(othername):
         return 2
     try:
-        ingen = pdfimages(pdfname, dpi=dpi, boxmode=boxmode)
-        ogen = pdfimages(othername, dpi=dpi, boxmode=boxmode)
+        ingen = pdfimages(pdfname, dpi=dpi, boxmode=boxmode, start=max(-offset, 0))
+        ogen = pdfimages(othername, dpi=dpi, boxmode=boxmode, start=max(offset, 0))
     except ImportError:
         return 1
     results = []
@@ -76,7 +78,7 @@ def trimBoxes(infile):
         logger.debug(f"Could not read TrimBoxes from {infile}: {e}")
         return []
 
-def pdfimages(infile, dpi=0, boxmode="auto"):
+def pdfimages(infile, dpi=0, boxmode="auto", start=0):
     import gi
     gi.require_version('Poppler', '0.18')
     from gi.repository import Poppler, GLib
@@ -89,7 +91,7 @@ def pdfimages(infile, dpi=0, boxmode="auto"):
         dpi = 3
     else:
         dpi /= 72
-    for i in range(numpages):
+    for i in range(start, numpages):
         page = doc.get_page(i)
         if page is None:
             continue
