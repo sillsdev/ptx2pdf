@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 import argparse, sys, os, re, configparser, shlex
-import site, logging, time, socket, multiprocessing
+import site, logging, time, socket, multiprocessing, subprocess
 from shutil import rmtree
-from zipfile import ZipFile
+from zipfile import ZipFile, is_zipfile
 
 import ptxprint
 from ptxprint.utils import saferelpath, appdirs, bookcodes
-from ptxprint.gtktesting import load_project_from_archive
 from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
@@ -30,7 +29,9 @@ class DictAction(argparse.Action):
         if vals is None:
             vals = {}
             setattr(namespace, self.dest, vals)
-        (k, v) = values.split("=")
+        if "=" not in values:
+            parser.error(f"{option_string} needs component=value, not {values}")
+        (k, v) = values.split("=", 1)
         vals[k] = v
 
 class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/questions/19425736/how-to-redirect-stdout-and-stderr-to-logger-in-python
@@ -55,31 +56,77 @@ def testport(host, port, timeout=10):
             pass
     return False
 
-def run_broadway(wnum):
-    pnum = 8880 + wnum
-    if testport("127.0.0.1", pnum, timeout=0.5):
-        # logger.info("Broadway is already running")
+def broadway_socket(wnum):
+    """ GTK3 broadway on posix talks over a Unix socket named after display+1. On Linux it is
+        in the abstract namespace, so there is no file to look for: connect to it instead. """
+    if sys.platform in ("win32", "cygwin"):
         return None
-    else:
-        bwname = "broadwayd.exe" if sys.platform in ("win32", "cygwin") else "broadwayd"
-        server = popen([bwname, "-p", str(pnum), ":"+str(wnum)])
-    if testport("127.0.0.1", pnum):
-        return server
-    elif server is not None and server.poll() is None:
-        server.terminate()
+    rundir = os.environ.get("XDG_RUNTIME_DIR")
+    if not rundir:
+        from gi.repository import GLib
+        rundir = GLib.get_user_runtime_dir()
+    res = os.path.join(rundir, "broadway{}.socket".format(wnum + 1))
+    return "\0" + res if sys.platform.startswith("linux") else res
+
+def broadway_listening(wnum):
+    sockpath = broadway_socket(wnum)
+    if sockpath is None:
+        return testport("127.0.0.1", 8880 + wnum, timeout=0.1)
+    try:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+            s.connect(sockpath)
+            return True
+    except OSError:
+        return False
+
+def broadway_ready(wnum, server, timeout=10):
+    start = time.time()
+    while time.time() - start < timeout:
+        if server is not None and server.poll() is not None:
+            return False        # the daemon died
+        if broadway_listening(wnum):
+            return True
+        time.sleep(0.1)
+    return False
+
+def run_broadway(wnum=None):
+    """ Start a broadwayd on a free display (or on wnum). Returns (server, display) or (None, None) """
+    bwname = "broadwayd.exe" if sys.platform in ("win32", "cygwin") else "broadwayd"
+    for d in ([wnum] if wnum is not None else range(5, 64)):
+        if broadway_listening(d) or testport("127.0.0.1", 8880 + d, timeout=0.1):
+            continue        # someone else has this display
+        try:
+            server = popen([bwname, "-p", str(8880 + d), ":"+str(d)],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except OSError as e:
+            print(f"Can't run {bwname}: {e}")
+            return (None, None)
+        if broadway_ready(d, server):
+            return (server, d)
+        if server.poll() is None:
+            server.terminate()
         server.wait()
-    return None
+        if wnum is None and d >= 8:
+            break           # something is wrong with broadwayd, not just a busy display
+    return (None, None)
+
+def start_test_display():
+    """ Start a broadway server and point GTK at it. This must happen before anything imports Gtk
+        (ptxprint.view does), since GTK opens its display on import. Returns the server or None. """
+    server, broadway_display = run_broadway()
+    if server is None:
+        return None
+    os.environ['GDK_BACKEND'] = "broadway"
+    os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
+    for v in ("DISPLAY", "WAYLAND_DISPLAY"):    # never fall back to a real screen
+        os.environ.pop(v, None)
+    return server
 
 def runtest(prjTree, config, macrosdir, project, doit, args):
     args.quiet = True
-    server = None
-    if not args.testwithgui:
-        broadway_display = 5
-        server = run_broadway(broadway_display)
-        os.environ['GDK_BACKEND'] = "broadway"
-        os.environ["BROADWAY_DISPLAY"] = ":" + str(broadway_display)
-    #else:
-    #    setup_wm(args.nox11)
+    return _runtest(prjTree, config, macrosdir, project, doit, args)
+
+def _runtest(prjTree, config, macrosdir, project, doit, args):
     from ptxprint.gtkview import GtkViewModel, reset_gtk_direction
     from ptxprint.gtktesting import GtkTester
     from ptxprint.utils import setup_i18n
@@ -91,45 +138,53 @@ def runtest(prjTree, config, macrosdir, project, doit, args):
     if args.nointernet:
         mainw.set('c_noInternet', True)
         mainw.noInt = True
-    tester = None
-    if args.test is not None:
-        # copy files before loading config
-        tester = GtkTester(None, mainw)
-        tester.project = project
-        tester.setuprun(args.test, mainw)
+    # copy files before loading config
+    tester = GtkTester(None, mainw)
+    tester.startReplayHooks()
+    mainw.replayer = tester
+    if args.teststep is None:
+        mainw.doSysError = tester.handlerError     # run() makes this sys.excepthook
+    tester.project = project
+    tester.setuprun(args.test, mainw)
     if args.pid:
         mainw.setPrjid(args.pid, project.guid)
         mainw.setConfigId(args.config or "Default")
     else:
-        mainw.setFallbackProject()
+        print("No project found to run the test on")
+        return 2
 
-    if tester is not None:
-        GLib.idle_add(tester.run_action, args.testwithgui)
+    GLib.idle_add(tester.run_action, args.testwithgui, args.teststep)
     mainw.run(doit)
-    if tester is not None:
-        test_result = tester.run_finalise()
-        if not any(test_result.values()):
-            exit_code = 0
-            print('Test result: PASS. No differences found to test data.')
-        else:
-            exit_code = 1
-            print('Test result: FAIL. The following differences to test data were found:')
-            if test_result['cfg']:
-                cfg_str = '\n\t'.join(['', *test_result['cfg']])
-                print(f"The following differences were found in the cfg:{cfg_str}")
-            if test_result['sty']:
-                sty_str = '\n\t'.join(['', *test_result['sty']])
-                print(f"The following differences were found in the sty:{sty_str}")
-            if test_result['ref']:
-                print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
-            #if test_result['test']:
-            #    print(f"The following files were found only in the test run: {', '.join(test_result['test'])}")
-            if test_result['diff']:
-                print(f"The following files were not identical: {', '.join([f'{a} and {b}' for a, b in test_result['diff']])}")
-    if server is not None:
-        server.terminate()
-        server.wait()
-    return exit_code
+    test_result = tester.run_finalise()
+    if args.testing:
+        resname = os.path.splitext(args.test)[0] + "_result.zip"
+        tester.saveSnapshot(resname)
+        print(f"Replay result saved in {resname}")
+    # Files only in the test run's archive come from archiving more than when the test was
+    # recorded, so they don't fail it, but say what they are.
+    if test_result['test']:
+        print(f"These files are only in the test run's archive: {', '.join(test_result['test'])}")
+    if test_result['skipped']:
+        skip_str = '\n\t'.join(['', *test_result['skipped']])
+        print(f"These events were skipped:{skip_str}")
+    if not any(v for k, v in test_result.items() if k not in ('test', 'skipped')):
+        print('Test result: PASS. No differences found to test data.')
+        return 0
+    print('Test result: FAIL. The following differences to test data were found:')
+    if test_result['errors']:
+        err_str = '\n\t'.join(['', *test_result['errors']])
+        print(f"The following events could not be replayed:{err_str}")
+    if test_result['cfg']:
+        cfg_str = '\n\t'.join(['', *test_result['cfg']])
+        print(f"The following differences were found in the cfg:{cfg_str}")
+    if test_result['sty']:
+        sty_str = '\n\t'.join(['', *test_result['sty']])
+        print(f"The following differences were found in the sty:{sty_str}")
+    if test_result['ref']:
+        print(f"The following files were found only in the reference: {', '.join(test_result['ref'])}")
+    if test_result['diff']:
+        print(f"The following files were not identical: {', '.join(test_result['diff'])}")
+    return 1
 
 commands = {
     'print': (),
@@ -166,8 +221,12 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
     parser.add_argument('-T', '--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
     parser.add_argument('-C', '--capture', metavar='FILE', help="Capture interaction events from UI session to zip file")
-    parser.add_argument('-t', '--test',help="test file to run interactive test against")
+    parser.add_argument('-t', '--test',help="test file (.zip) to replay and check, or a tutorial (.json) to step through on the project")
     parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
+    parser.add_argument('--tutorial', metavar='FILE', help="Start stepping through a tutorial (.json) on the project")
+    parser.add_argument('--teststep', type=float, nargs='?', const=0., metavar='SECONDS',
+                        help="Watch a test (-t) being replayed: one event every SECONDS, or with no value, "
+                             "on each press of Step (or Space) in the replay window. Implies --testwithgui")
     
     # Performance & Debugging
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
@@ -187,6 +246,13 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     # PDF & Output Settings
     parser.add_argument('-F', '--difffile', help="Generate difference PDF against another file")
     parser.add_argument('--diffpages', type=int, default=0, help="Max pages to insert in diff file")
+    parser.add_argument('--diffignore', help="Comma separated parts of the page to ignore when comparing: "
+                        "headfoot (headers and footers), sides (margin notes, thumb tabs)")
+    parser.add_argument('--diffsmart', action='store_true',
+                        help="When comparing, line up each page first so that a moved text block is not a difference")
+    parser.add_argument('--diffoffset', type=int, default=0,
+                        help="Page offset when comparing: positive skips pages at the start of the old PDF, "
+                             "negative skips pages at the start of the new PDF")
     parser.add_argument('--diffoutfile', help="Output filename for difference PDF")
     parser.add_argument('--diffdpi', type=int, default=0, help="DPI for PDF differencing")
     parser.add_argument('-V', '--pdfversion', type=int, default=14, help="PDF version to read/write (default: 14)")
@@ -235,6 +301,28 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         elif args.action == "createArchive":
             args.cmd = "archive"
 
+    testserver = None
+    if args.test is not None and os.path.isfile(args.test) and not is_zipfile(args.test):
+        # a tutorial (.json): step through it on the project given, nothing to compare
+        args.tutorial = args.test
+        args.test = None
+    if args.teststep is not None:
+        args.testwithgui = True
+    if args.test is not None and not args.testwithgui:
+        testserver = start_test_display()
+        if testserver is None:
+            print("Can't start a broadway server to run the test on. Is broadwayd installed?")
+            return 2
+        args.nox11 = True
+    try:
+        return _main(args, config, conffile, doitfn, retview, viewClass)
+    finally:
+        if testserver is not None:
+            testserver.terminate()
+            testserver.wait()
+
+def _main(args, config, conffile, doitfn, retview, viewClass):
+    exit_code = 0
     # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
     # setup_i18n()
 
@@ -294,17 +382,23 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             args.projects.append(pdir)
         savetreedirs = True
 
+    testtree = None
     if args.test:
-        with ZipFile(args.test) as zf:
-            zip_contains_full_archive = any(
-                Path(name).match("*/ptxSettings.xml")
-                for name in zf.namelist()
-            )
-            if zip_contains_full_archive:
+        savetreedirs = False
+        from ptxprint.gtktesting import load_project_from_archive
+        # A test runs only on the project in its archive, never on the user's own projects
+        try:
+            with ZipFile(args.test) as zf:
                 test_project = load_project_from_archive(zf)
-                args.pid = test_project.prjid
-                conffile = '{}/ptxprint_user.cfg'.format(test_project.path)
-                args.projects.append(test_project.path)
+        except Exception as e:
+            print(f"Can't use {args.test} as a test: {e}")
+            return 2
+        args.pid = test_project.prjid
+        args.projects = []
+        conffile = '{}/ptxprint_user.cfg'.format(test_project.path)
+        # the tree that holds the project, not the project itself
+        testtree = os.path.dirname(test_project.path)
+        args.projects.append(testtree)
 
     if (args.extras & 16) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
@@ -377,10 +471,12 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         args.projects = [os.path.abspath(p.replace("\\", "/")) for p in args.projects if p is not None]
         args.projects = [p[:-1] if p.endswith("/") else p for p in args.projects]
 
-    config.remove_section("projectdirs")
-    config.add_section("projectdirs")
-    for i, p in enumerate(args.projects, 1):
-        config.set("projectdirs", str(i), str(p))
+    # Only remember project folders the user chose, not ones given with -p or a test's temporary tree
+    if savetreedirs:
+        config.remove_section("projectdirs")
+        config.add_section("projectdirs")
+        for i, p in enumerate(args.projects, 1):
+            config.set("projectdirs", str(i), str(p))
 
     # handle being passed a .zip
     if not args.zip and args.pid is not None and args.pid.lower().endswith(".zip"):
@@ -462,7 +558,10 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     if args.zip:
         print(f"{args.projects=} {args.pid=} {args.config=}")
-        if not args.testsuite and len(args.projects[0]) and len(args.pid):
+        if not os.path.isfile(args.zip) or not is_zipfile(args.zip):
+            print(f"Can't read archive {args.zip}. Quitting")
+            sys.exit(1)
+        if not args.testsuite and len(args.projects[0]) and args.pid:
             rmtree(os.path.join(args.projects[0], args.pid), ignore_errors = True)
         zf = ZipFile(args.zip)
         zf.extractall(args.projects[0])
@@ -473,6 +572,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         prjTree.addTreedir(p)
         log.debug(f"Adding project tree: {p}")
 
+    project = None
     if args.pid:
         project = prjTree.findProject(args.pid)
         if project is None:
@@ -485,7 +585,11 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 # Keep going with it (as before), but say so: a mistyped name otherwise goes unnoticed
                 print(f"Can't find config {args.config} in project {args.pid} ({project.srcPath(None)})")
     if args.test is not None:
-        exit_code = runtest(prjTree, config, macrosdir, project, doit, args)
+        try:
+            exit_code = runtest(prjTree, config, macrosdir, project, doit, args)
+        finally:
+            if testtree is not None and not args.testing:
+                rmtree(testtree, ignore_errors=True)
     elif args.print or args.cmd is not None or retview:
         mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()
@@ -498,6 +602,9 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
+        if not retview and mainw.project is None and (args.print or args.cmd is not None):
+            print("No project to work on. Quitting")
+            sys.exit(1)
         if args.print or retview or args.cmd in ("print", "fill"):
             if args.pub:
                 from ptxprint.publications import printSetup
@@ -507,8 +614,14 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
                 mprint = MultiPrint(numproc=args.jobs or None)
                 for pub in args.pub:
-                    pvars = mainw.publications.get(pub, {})
+                    if pub not in mainw.publications:
+                        print(f"Can't find publication {pub} in config {mainw.cfgid}")
+                        continue
+                    pvars = mainw.publications[pub]
                     books = pvars.get("__books", "")
+                    if not len(RefList(books)):
+                        print(f"No books to print for publication {pub}")
+                        continue
                     bparms = BuildParams(
                         prjtree = mainw.prjTree,
                         config = mainw.userconfig,
@@ -534,12 +647,25 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 mainw.moduleFile = Path(args.module)
             if args.define is not None:
                 for k, v in args.define.items():
-                    mainw.set(k, v)
+                    if k.startswith("c_"):      # a checkbox wants a bool, not the string "False"
+                        v = v.strip().lower() in ("true", "1", "yes", "on")
+                    try:
+                        mainw.set(k, v)
+                    except ValueError as e:     # e.g. a spin button given a word
+                        print(f"Can't set {k} to {v}: {e}")
             if args.difffile:
                 mainw.set("btn_selectDiffPDF", None if args.difffile.lower() == 'last' else os.path.abspath(args.difffile))
                 mainw.set("c_onlyDiffs", True)
                 if args.diffpages > 0:
                     mainw.set("s_diffpages", str(args.diffpages))
+                if args.diffignore is not None:
+                    ignores = [x.strip().lower() for x in args.diffignore.split(",")]
+                    mainw.set("c_diffIgnoreHeadFoot", "headfoot" in ignores)
+                    mainw.set("c_diffIgnoreSides", "sides" in ignores)
+                if args.diffsmart:
+                    mainw.set("c_diffSmart", True)
+                if args.diffoffset:
+                    mainw.set("s_diffOffset", str(args.diffoffset))
                 mainw.docreatediff = True
                 if args.difffile.lower() == 'last':
                     mainw.set("s_keepVersions", "1")
@@ -576,7 +702,11 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 res = 0 if job is None else job.res
                 print(f"{res=}")
         if args.action:
-            print(getattr(mainw, args.action)())
+            actionfn = getattr(mainw, args.action, None)
+            if not callable(actionfn):
+                print(f"Unknown action {args.action}")
+                sys.exit(1)
+            print(actionfn())
         elif args.cmd == "archive":
             mainw.createArchive(args.output, nobuild=True)
         sys.exit(res)
@@ -618,8 +748,17 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
                 mainw.setFallbackProject()
             if args.define is not None:
                 for k, v in args.define.items():
-                    mainw.set(k, v)
+                    if k.startswith("c_"):      # a checkbox wants a bool, not the string "False"
+                        v = v.strip().lower() in ("true", "1", "yes", "on")
+                    try:
+                        mainw.set(k, v)
+                    except ValueError as e:     # e.g. a spin button given a word
+                        print(f"Can't set {k} to {v}: {e}")
             log.debug(f"Created gtkview for {args.projects}")
+            if args.tutorial and not loops:
+                from ptxprint.gtktesting import GtkTester
+                from gi.repository import GLib
+                GLib.idle_add(lambda: GtkTester.runTutorial(mainw, args.tutorial) and False)
             mainw.run(doit)
             if mainw.lang != args.lang:
                 if not sys.platform.startswith("win"):

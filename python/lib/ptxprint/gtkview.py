@@ -213,7 +213,8 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-t_configName l_configNameMsg l_projectNameMsg btn_cfg_ok btn_cfg_cancel
+btn_runTutorial
+t_configName l_configNameMsg c_overwriteConfig l_projectNameMsg btn_cfg_ok btn_cfg_cancel
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
@@ -248,7 +249,7 @@ fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapte
 tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestionsLang t_txlQuestionsLang
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
 tb_Peripherals bx_ToC c_autoToC t_tocTitle c_frontmatter
-gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value col_zvar_pub cr_zvar_pub
+gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF c_createDiff
 btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
@@ -265,7 +266,7 @@ btn_adjust_diglot btn_seekPage2fill_previous btn_seekPage2fill_next
 # tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
 # lpolyfraction_ spolyfraction_ tb_diglotSwitch btn_diglotSwitch
 
-_ui_default = """
+_ui_regular = """
 ex_copyright ecb_licenseText textv_copyright btn_resetCopyright btn_copyToTargetProj
 btn_resetDefaults btn_editModule s_indentUnit l_linesOnPage l_linesOnPageLabel btn_adjust_spacing
 c_useMarginNotes s_marginNotesWidth c_marginNotesInner
@@ -380,9 +381,6 @@ c_periphPageBreak c_periphSuppressPage c_inclMaps btn_addMaps1 btn_editMaps1 bx_
 gr_colophon textv_colophon btn_resetColophon c_standAloneColophon c_colophon gr_importBackPDF
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter btn_rescanFRTvars btn_delzvar btn_addzvar
 lb_Peripherals
-tb_Publications l_pubHeading l_pubIntro bx_pubToolbar btn_pubAdd btn_pubDuplicate btn_pubDel
-btn_pubExpandAll btn_pubCollapseAll scr_publications tv_publications col_pub_select col_pub_field
-col_pub_value bx_pubFooter l_pubStatus btn_pubPrint lb_Publications
 tb_Cover lb_Cover
 c_scaleToFit
 s_diffpages l_diffpages
@@ -405,7 +403,7 @@ r_generateFRT_diglot r_generateFRT_paratext
 btn_gnr8pl_ok btn_gnr8pl_cancel c_protectPicList l_picListWarn1 l_picListWarn2
 btn_mbs_ok btn_mbs_cancel
 btn_mps_ok btn_mps_cancel l_copy2otherProjects ecb_mpsTargets r_copyConfig_noReplace
-r_copyConfig_merge r_copyConfig_overwrite
+r_copyConfig_merge r_copyConfig_overwrite c_copyConfig_skipVars
 btn_pw_cancel btn_pw_ok
 btn_disableDiglot_ok btn_disableDiglot_cancel l_warningDiglot2Mono t_newMonoglotConfigName
 l_diableDiglotNewCfgMsg
@@ -462,6 +460,7 @@ btn_sty_ok btn_sty_cancel t_styMarker textv_styDesc t_styName t_styEndMarker l_s
 """.split()
 
 _ui_full = """
+l_diffIgnore c_diffIgnoreHeadFoot c_diffIgnoreSides l_diffOffset s_diffOffset c_diffSmart
 c_useChapterLabel t_clBookList l_clHeading t_clHeading c_optimizePoetryLayout c_differentColLayout
 t_differentColBookList
 gr_fnRulePosParms s_fnIndent s_fnLength s_fnThick fcb_fnHorizPosn l_fnRulePosParms ex_miscFootnotes
@@ -495,7 +494,6 @@ btn_prn_compare bx_prn_priceInfo lb_Printers
 """.split()
 
 _ui_experimental = """
-btn_layoutWizard
 """.split()
 
 _processing_needed = """ecb_savedConfig c_addColon c_autoTagHebGrk c_bookIntro c_ch1pagebreak c_chapterNumber c_decorator_endayah c_elipsizeMissingVerses c_extendedFnotes c_extendedXrefs c_filterGlossary c_fnOverride c_fnomitcaller c_frVerseOnly c_glossaryFootnotes c_glueredupwords c_hideEmptyVerses c_hyphenate c_inclEndOfBook c_inclVerseDecorator c_includeFootnotes c_includeXrefs c_includeillustrations c_interlinear c_introOutline c_keepBookWithRefs c_letterSpacing c_mainBodyText c_nonBreakingHyphens c_omitHyphen c_pagebreakAllChs c_parallelRefs c_prettyIntroOutline c_preventorphans c_preventwidows c_processScript c_sectionHeads c_show1chBookNum c_showNonScriptureChapters c_sidebars c_strongsShowAll c_strongsShowInText c_strongsShowNums c_txlQuestionsInclude c_txlQuestionsNumbered c_txlQuestionsOverview c_txlQuestionsRefs c_useChapterLabel c_useModsTex c_useOrnaments c_usePreModsTex c_usePrintDraftChanges c_useXrefList c_xoVerseOnly c_xrOverride c_xrautocallers c_xromitcaller fcb_filterXrefs fcb_glossaryMarkupStyle fcb_script fcb_xRefExtListSource r_book_module r_book_multiple r_book_single r_decorator_ayah r_decorator_file r_when2processScript_after t_chapfrom t_chapto r_when2processScript_before s_letterShrink s_letterStretch s_maxSpace s_minSpace t_clBookList t_differentColBookList t_interlinearLang btn_chooseBibleModule""".split()
@@ -519,8 +517,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
         "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
 
 _ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist",
-                       "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks",
-                       "btn_layoutWizard") # toggling these causes a crash
+                       "ex_styNote", "l_diglotSerialBooks", "t_diglotSerialBooks") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging tb_Cover lb_Cover lb_Expert bx_statusMsgBar fr_plChecklistFilter l_picListWarn1 l_picListWarn2 col_noteLines l_thumbVerticalL l_thumbVerticalR l_thumbHorizontalL l_thumbHorizontalR l_url_usfm l_homePage l_community l_trainingVideos l_reportBugs lb_trainingOnVimeo lb_masterSlides lb_chatBot lb_homePage lb_community lb_trainingOnPTsite lb_reportBugs lb_techFAQ lb_learnHowTo l_giveFeedback lb_giveFeeback btn_about".split()
@@ -528,7 +525,7 @@ _ui_keepHidden = "btn_download_update l_extXrefsComingSoon tb_Logging lb_Logging
 _uiLevels = {
     2 : _ui_minimal,
     4 : _ui_basic,
-    5 : _ui_default,
+    5 : _ui_regular,
     6 : _ui_full,
 }
 
@@ -774,16 +771,6 @@ _vertical_thumb = {
     "2" : (90,  270),
     "3" : (90,   90),
     "4" : (270, 270),
-}
-
-_signals = {
-    'clicked': ("Button",),
-    'changed': ("ComboBox", "Entry"),
-    'color-set': ("ColorButton",),
-    'change-current-page': ("Notebook",),
-    'value-changed': ("SpinButton",),
-    # 'state-set': ("Switch",),
-    'row-activated': ("TreeView",),
 }
 
 _olst = ["fr_savedLayout", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
@@ -1439,6 +1426,8 @@ class GtkViewModel(ViewModel):
             for m in self.mruCopyTargets:
                 mrucopy.append(None, m)
 
+        self.setupCustomPageSizes()
+
         imsets = self.builder.get_object("ecb_artPictureSet")
         imsets.remove_all()
         ims = getImageSets()
@@ -1931,13 +1920,7 @@ class GtkViewModel(ViewModel):
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
             self.testing = GtkTester(self.args.capture, self, full_archive=True)
-            self.starttime = time.time()
-            for k, v in _signals.items():
-                for w in v:
-                    # print(f"{k=} {w=}")
-                    o = getattr(Gtk, w)
-                    sigid = GObject.signal_lookup(k, o)
-                    GObject.add_emission_hook(o, k, self.emission_hook, k)
+            self.testing.startRecording()
         el = self.userconfig.getboolean('init', 'englinks', fallback=False)
         self.set("c_useEngLinks", el)
         # expert = self.userconfig.getboolean('init', 'expert', fallback=False)
@@ -1987,6 +1970,8 @@ class GtkViewModel(ViewModel):
         It hooks the save-on-exit mechanism and restores the previous session's
         window geometry.
         """
+        # win.show_all() in do_startup has just re-shown everything the UI level hides, so apply it again
+        self.set_uiChangeLevel(self.uilevel)
         self.doConfigNameChange(None)
         logger.debug(f"Main width={self.mainapp.win.get_size().width}")
         # Hook the save-on-exit event BEFORE restoring. This ensures that
@@ -2004,16 +1989,6 @@ class GtkViewModel(ViewModel):
         if self.pdf_viewer is not None:
             self.pdf_viewer.hide_unused()
         logger.debug(f"Main width={self.mainapp.win.get_size().width}")
-
-    def emission_hook(self, w, *a):     # sigid, detail, self, *a):
-        if self.testing is None or self.testing.paused:
-            return True
-        sigid = a[-1]
-        name = Gtk.Buildable.get_name(w)
-        val = self.get(name, skipmissing=True) if name is not None else None
-        t = time.time()-self.starttime
-        self.testing.addEvent(name, sigid, t, val, a[:-1])
-        return True
 
     def pause_logging(self):
         self.logactive = False
@@ -2518,6 +2493,9 @@ class GtkViewModel(ViewModel):
     def onDestroy(self, btn, *a):
         if self.testing is not None:
             self.testing.finalise()
+        replayer = getattr(self, 'replayer', None)
+        if replayer is not None:
+            replayer.closing()
         mprint = getattr(self, 'mprint', None)
         if mprint is not None:
             mprint.terminate()
@@ -2638,6 +2616,8 @@ class GtkViewModel(ViewModel):
         if not os.path.exists(self.project.printPath(self.cfgid)):
             os.makedirs(self.project.printPath(self.cfgid))
         self.docreatediff = self.get("c_createDiff")
+        if self.docreatediff:
+            self.checkDiffPDF(announce=True)
         pdfnames = self.baseTeXPDFnames(diff=self.docreatediff)
         for basename in pdfnames:
             pdfname = os.path.join(self.project.printPath(self.cfgid), "..", basename) + ".pdf"
@@ -2806,6 +2786,53 @@ class GtkViewModel(ViewModel):
         self.userconfig.set('init', 'mruBooks', "\n".join(self.mruBookList))
         self.showmybook()
 
+    pageSizeRe = re.compile(r'^[\d.]+\s*(?:mm|cm|in|")\s*[,xX]\s*[\d.]+\s*(?:mm|cm|in|")(?:\s*\(.*\))?$')
+
+    def setupCustomPageSizes(self):
+        """ Add the user's saved custom page sizes to the page size list, and let one be removed """
+        self.customPageSizes = [x for x in self.userconfig.get('init', 'customPageSizes', fallback='').split('\n') if x]
+        self.declinedPageSizes = set()
+        for s in self.customPageSizes:
+            self.addCustomPageSize(s, persist=False)
+        combo = self.builder.get_object("ecb_pagesize")
+        entry = combo.get_child() if combo is not None else None
+        if entry is not None:
+            entry.connect("populate-popup", self.onPageSizePopup)
+
+    def addCustomPageSize(self, text, persist=True):
+        """ Make a size that is not already in the list available to all projects. Matches the whole string. """
+        text = (text or "").strip()
+        combo = self.builder.get_object("ecb_pagesize")
+        if combo is None or not self.pageSizeRe.match(text) or text in self.declinedPageSizes:
+            return
+        if any(row[0] == text for row in combo.get_model()):
+            return
+        combo.append_text(text)
+        if persist and text not in self.customPageSizes:
+            self.customPageSizes.append(text)
+            self.userconfig.set('init', 'customPageSizes', "\n".join(self.customPageSizes))
+
+    def onPageSizePopup(self, entry, menu):
+        text = entry.get_text().strip()
+        if text not in self.customPageSizes:
+            return
+        sep = Gtk.SeparatorMenuItem()
+        item = Gtk.MenuItem(label=_("Remove '{}' from saved sizes").format(text))
+        item.connect("activate", self.onRemoveCustomPageSize, text)
+        for w in (sep, item):
+            menu.append(w)
+            w.show()
+
+    def onRemoveCustomPageSize(self, item, text):
+        self.customPageSizes.remove(text)
+        self.userconfig.set('init', 'customPageSizes', "\n".join(self.customPageSizes))
+        self.declinedPageSizes.add(text)     # the entry still holds it: don't save it again this session
+        combo = self.builder.get_object("ecb_pagesize")
+        for i, row in enumerate(combo.get_model()):
+            if row[0] == text:
+                combo.remove(i)
+                break
+
     def onSaveConfig(self, btn, force=False):
         """ Save the view """
         if self.project.prjid is None or (not force and self.configLocked()):
@@ -2825,6 +2852,7 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "updatepdf",  "true" if self.get("c_updatePDF")  else "false")
         self.userconfig.set("init", "bkview",     "true" if self.get("c_bkView")     else "false")
         self.noInt = self.get("c_noInternet")
+        self.addCustomPageSize(self.get("ecb_pagesize"))
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
         if sys.platform.startswith("win"):
             self.saveWindowGeometry()
@@ -2832,8 +2860,6 @@ class GtkViewModel(ViewModel):
             self.userconfig.set("init", "config", self.cfgid)
         self.saveConfig(force=force)
         self.onSaveEdits(None)
-        if self.testing is not None:
-            self.finalise_testing()
 
     def writeConfig(self, cfgname=None, force=False):
         super().writeConfig(cfgname=cfgname, force=force)
@@ -2844,7 +2870,7 @@ class GtkViewModel(ViewModel):
         self.publications = self.pubView.save()
         config = super().createConfig(diff=diff)
         if self.coverwiz is not None:
-            self.coverwiz.state.saveConfig(config)
+            self.coverwiz.saveConfig(config)
         elif self._coverwiz_cfg_stash is not None and \
                 self._coverwiz_cfg_stash.has_section("coverwiz"):
             if not config.has_section("coverwiz"):
@@ -2989,6 +3015,7 @@ class GtkViewModel(ViewModel):
         if clearvars:
             self.unpaintUnlock()
         super(GtkViewModel, self).loadConfig(config, clearvars=clearvars, **kw)
+        self.addCustomPageSize(self.get("ecb_pagesize"), persist=False)
         if clearvars:
             for k, v in _sensitivities.items():
                 if k.startswith("r_"):
@@ -3015,19 +3042,21 @@ class GtkViewModel(ViewModel):
         self.sensiVisible('c_lockUI4Layout') # Why does this do nothing? Is it in the wrong place?
         self.onExtListSourceChanges(None)
         # self.onExpertModeClicked(None)
-        x = self.get("btn_selectDiffPDF")
-        if x is not None and len(x) < 200:
-            self.makeLabelBold("l_selectDiffPDF", True)
-            self.set("lb_diffPDF", pdfre.sub(r"\1", x))
-        else:
-            self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        self.checkDiffPDF()
         for f, g, key, d in _collapsibleSections:
             self._updateSectionVisibility(key)
         if config.has_section("coverwiz"):
             if self.coverwiz is not None:
-                self.coverwiz.state.loadConfig(config)
+                self.coverwiz.loadConfig(config)
             else:
                 self._coverwiz_cfg_stash = config
+        else:
+            # This config has no cover wizard settings: forget the previous config's, or they would
+            # be saved into this one and the wizard would not know it is being used for the first time
+            if self.coverwiz is not None:
+                self.coverwiz.window.hide()
+            self.coverwiz = None
+            self._coverwiz_cfg_stash = None
         self.unpauseNoUpdate()
 
     def colorTabs(self):
@@ -3142,10 +3171,17 @@ class GtkViewModel(ViewModel):
             self.pauseNoUpdate()
 
     def onLocalFRTclicked(self, w):
+        # w is None when PTXprint calls this itself (e.g. the Cover Wizard after writing the cover periphs).
+        # Only a click by the user may switch the Colophon: a user may want both, and has chosen so earlier.
         if self.loadingConfig:
             return
+        byUser = w is not None
+        coverOffMsg = _("The Cover is disabled because Local Front Matter is turned off.")
         if self.get('c_frontmatter'):
-            self.set('c_colophon', False)
+            if self.get("l_statusLine") == coverOffMsg:
+                self.doStatus("")       # Local Front Matter is on again, so that is no longer true
+            if byUser:
+                self.set('c_colophon', False)
             frtpath = self.configFRT()
             # when FRT doesn't even exist yet, or is empty:
             if not os.path.exists(frtpath) or \
@@ -3154,9 +3190,10 @@ class GtkViewModel(ViewModel):
                 self.rescanFRTvarsClicked(None, autosave=False)
                 self.onViewerChangePage(None, None, 0, forced=True)
         else:
-            self.set('c_colophon', True)
+            if byUser:
+                self.set('c_colophon', True)
             if self.get('c_makeCoverPage'):
-                self.doStatus(_("The Cover is disabled because Local Front Matter is turned off."))
+                self.doStatus(coverOffMsg)
                 self.set('c_makeCoverPage', False)
     
     def onFnPosChanged(self, btn):
@@ -4326,6 +4363,8 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def onChooseTargetProjectsClicked(self, btn):
+        if (self.cfgid or "Default") == "Default":      # the button is disabled for Default; don't allow it by any other route
+            return
         dialog = self.builder.get_object("dlg_multiProjSelector")
         mps_grid = self.builder.get_object("mps_grid")
         mps_grid.forall(mps_grid.remove)
@@ -4360,12 +4399,13 @@ class GtkViewModel(ViewModel):
                     pass
             for p in projlist:
                 try:
+                    skipvars = self.get("c_copyConfig_skipVars")
                     if self.get("r_copyConfig") == "noReplace":
-                        self.applyConfig(cfg, cfg, newprj=p)
+                        self.applyConfig(cfg, cfg, newprj=p, skipvars=skipvars)
                     elif self.get("r_copyConfig") == "merge":
-                        self.applyConfig(cfg, cfg, action=1, newprj=p)
+                        self.applyConfig(cfg, cfg, action=1, newprj=p, skipvars=skipvars)
                     elif self.get("r_copyConfig") == "overwrite":
-                        self.applyConfig(cfg, cfg, action=0, newprj=p)
+                        self.applyConfig(cfg, cfg, action=0, newprj=p, skipvars=skipvars)
                     with open(os.path.join(p.path, "unique.id"), "w") as outf:
                         outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
                 except FileNotFoundError as e:
@@ -4587,10 +4627,14 @@ class GtkViewModel(ViewModel):
 
     def onSaveAsNewConfig(self, w):
         self.set("t_configName", "")
+        self.set("c_overwriteConfig", False)    # replacing must be chosen afresh each time
         dialog = self.builder.get_object("dlg_configName")
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             cfg = self.get("t_configName")
+            if not self.replaceConfigFor(cfg):
+                dialog.hide()
+                return
             self.set("ecb_savedConfig", cfg)
             self.doConfigNameChange(cfg)
             self.changed()
@@ -4797,6 +4841,13 @@ class GtkViewModel(ViewModel):
         lockBtn.set_sensitive(not isDefault)
         self.builder.get_object("btn_deleteConfig").set_visible(not isDefault)
         self.builder.get_object("btn_resetDefaults").set_visible(isDefault)
+        # The Default configuration is never copied to other projects
+        copyBtn = self.builder.get_object("btn_copyToTargetProj")
+        if not hasattr(self, "_copyBtnTooltip"):
+            self._copyBtnTooltip = copyBtn.get_tooltip_text()
+        copyBtn.set_sensitive(not isDefault)
+        copyBtn.set_tooltip_text(_("The Default configuration cannot be copied to other projects.\n"
+                                   "Save it under another name first.") if isDefault else self._copyBtnTooltip)
 
     def doConfigNameChange(self, w):
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
@@ -4829,6 +4880,12 @@ class GtkViewModel(ViewModel):
 
     def onConfigKeyPressed(self, btn, *a):
         self.configKeypressed = True
+        self.checkNewConfigName()
+
+    def onOverwriteConfigToggled(self, btn):
+        self.checkNewConfigName()
+
+    def checkNewConfigName(self):
         self.builder.get_object("btn_cfg_ok").set_sensitive(False) 
         msg = ""
         cfg = self.get("t_configName")
@@ -4839,10 +4896,80 @@ class GtkViewModel(ViewModel):
         elif not len(cfg):
             pass
         elif cpath is not None and os.path.exists(cpath):
-            msg = _("That Configuration already exists.\nUse another name.")
+            if cfg == self.cfgid:
+                if self.get("c_overwriteConfig"):
+                    src = self.configSource(cfg)
+                    if src is not None:
+                        msg = _("That is the configuration you are in.\nIt will be made again from {}.").format(src)
+                    else:
+                        msg = _("That is the configuration you are in.\nIts current settings will be saved.")
+                    self.builder.get_object("btn_cfg_ok").set_sensitive(True)
+                else:
+                    msg = _("That is the configuration you are in.\nUse another name, or tick Replace.")
+            elif cfg == "Default":
+                msg = _("The Default configuration can't be replaced.\nUse another name.")
+            elif self.get("c_overwriteConfig"):
+                msg = _("That Configuration already exists\nand will be replaced.")
+                self.builder.get_object("btn_cfg_ok").set_sensitive(True)
+            else:
+                msg = _("That Configuration already exists.\nUse another name, or tick Replace.")
         else:
             self.builder.get_object("btn_cfg_ok").set_sensitive(True) 
         self.builder.get_object("l_configNameMsg").set_text(msg) 
+
+    def configSource(self, cfg):
+        """ The config that cfg was copied from, if PTXprint recorded it (in cfg's base/) and it
+            still exists; otherwise None """
+        cpath = self.project.srcPath(cfg) if cfg else None
+        if cpath is None:
+            return None
+        basecfg = os.path.join(cpath, "base", "ptxprint.cfg")
+        if not os.path.exists(basecfg):
+            return None
+        config = configparser.ConfigParser(interpolation=None)
+        try:
+            config.read(basecfg, encoding="utf-8")
+        except configparser.Error:
+            return None
+        src = config.get("config", "name", fallback=None)
+        if not src or src == cfg:
+            return None
+        spath = self.project.srcPath(src)
+        if spath is None or not os.path.exists(os.path.join(spath, "ptxprint.cfg")):
+            return None
+        return src
+
+    def replaceConfigFor(self, cfg):
+        """ Before saving the current settings as a new config called cfg: if one exists,
+            remove it when the user chose to replace it. Returns whether to go ahead. """
+        cpath = self.project.srcPath(cfg) if cfg else None
+        if cpath is None or not os.path.exists(cpath):
+            return True
+        if not self.get("c_overwriteConfig"):
+            # saving would load the existing config instead of copying the current settings
+            self.doStatus(_("The configuration {} already exists, so nothing was saved.").format(cfg), warning=True)
+            return False
+        if cfg == self.cfgid:
+            # Replacing the config we are in: make it again from the config it was copied from
+            # (as recorded in its base/), as deleting it and copying again would. Without that,
+            # all we can do is save its current settings.
+            src = self.configSource(cfg)
+            if src is None:
+                return True
+            self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=False,
+                                       configName=src, readConfig=True)
+            if self.cfgid != src:
+                self.doStatus(_("Could not switch to {} to make {} again, so nothing was saved.").format(src, cfg), warning=True)
+                return False
+        if cfg == "Default":
+            self.doStatus(_("The Default configuration can't be replaced, so nothing was saved."), warning=True)
+            return False
+        try:
+            rmtree(cpath)
+        except OSError as e:
+            self.doStatus(_("Could not replace the configuration {}: {}").format(cfg, e), warning=True)
+            return False
+        return True
 
     def onCfgFocusOutEvent(self, btn, *a):
         self.configKeypressed = False
@@ -5457,6 +5584,28 @@ class GtkViewModel(ViewModel):
             self.makeLabelBold("l_selectDiffPDF", False)
         else:
             self.makeLabelBold("l_selectDiffPDF", True)
+
+    def checkDiffPDF(self, announce=False):
+        """ The PDF to compare with is either a file the user chose or, when there is none, the previous
+            output (_1). Old configs can hold anything in there (the text of a tooltip, a file that has since
+            gone, a path from another computer), and then nothing gets compared. So keep a file that exists
+            and otherwise go back to the previous PDF. Returns True if something unusable was reset. """
+        x = self.get("btn_selectDiffPDF")
+        if x is not None and len(x.strip()) and os.path.isfile(x) and x.lower().endswith(".pdf"):
+            self.diffPDF = Path(x, self)        # so that it is saved with the config again
+            self.makeLabelBold("l_selectDiffPDF", True)
+            self.set("lb_diffPDF", pdfre.sub(r"\1", x))
+            return False
+        stale = x is not None and len(x.strip()) > 0
+        self.set("btn_selectDiffPDF", None)
+        self.diffPDF = None
+        self.makeLabelBold("l_selectDiffPDF", False)
+        self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        if stale:
+            logger.debug(f"Reset the PDF to compare with, which was: {x}")
+            if announce:
+                self.doStatus(_("The PDF to compare with was not found, so the previous PDF (_1) will be used"))
+        return stale
 
     def makeLabelBold(self, lbl, bold=True):
         lb = self.builder.get_object(lbl)
@@ -6473,13 +6622,78 @@ class GtkViewModel(ViewModel):
                 startfile(fpath)
         dialog.hide()
         
+    def hasLegacyCover(self):
+        ''' Cover settings in this config that the Cover Wizard did not make '''
+        return len(self.styleEditor.coverStyles()) > 0 or len(self.coverPeriphsInFrontMatter()) > 0
+
+    def confirmWipeLegacyCover(self, why="legacy"):
+        win = getattr(self.mainapp, "win", None)
+        if win and not isinstance(win, Gtk.Window):
+            win = win.get_toplevel() if hasattr(win, "get_toplevel") else None
+        dialog = Gtk.MessageDialog(parent=win, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.WARNING,
+                                   buttons=Gtk.ButtonsType.NONE,
+                                   message_format=_("Existing cover settings found"))
+        if why == "changed":
+            what = _("The cover settings in this configuration (in the styles and/or the local Front Matter) "
+                     "have been changed since the Cover Wizard made them, so it no longer knows what they are.")
+        else:
+            what = _("This configuration already has cover settings (in the styles and/or the local Front Matter) "
+                     "that were not made by the Cover Wizard.")
+        dialog.format_secondary_text(what + "\n\n" + _(
+            "The Cover Wizard can't build on them: you can't put new wine into old wineskins! "
+            "To use it, PTXprint must DELETE those old cover settings and start the cover from scratch.\n\n"
+            "Delete the old cover settings and open the Cover Wizard?"))
+        dialog.add_button(_("Cancel (keep my settings)"), Gtk.ResponseType.CANCEL)
+        dialog.add_button(_("Delete and Continue"), Gtk.ResponseType.OK)
+        dialog.set_default_response(Gtk.ResponseType.CANCEL)
+        response = dialog.run()
+        dialog.destroy()
+        return response == Gtk.ResponseType.OK
+
+    def wipeLegacyCover(self):
+        mkrs = self.styleEditor.removeCoverStyles()
+        removed = self.removeCoverPeriphs()
+        logger.info(f"Removed old cover settings: styles {mkrs}, front matter {removed}")
+        self.styleEditor.editMarker()       # in case a cover style is on show
+        self.onViewerChangePage(None, None, 0, forced=True)     # reload the Front Matter tab
+
+    def coverWizardFingerprint(self):
+        ''' What the Cover Wizard last left behind for this config, or None if it has never made a cover here '''
+        if self.coverwiz is not None:
+            return None if self.coverwiz.applied is None else self.coverwiz.applied.get("fingerprint", "")
+        if self._coverwiz_cfg_stash is not None:
+            return self._coverwiz_cfg_stash.get("coverwiz", "fingerprint", fallback="")
+        return None
+
+    def coverNeedsWiping(self):
+        ''' "legacy" if the cover was not made by the wizard, "changed" if it was but has been altered since
+            (or was made before PTXprint recorded fingerprints), None if there is nothing in the way '''
+        if not self.hasLegacyCover():
+            return None
+        fp = self.coverWizardFingerprint()
+        if fp is None:
+            return "legacy"
+        return None if fp == self.coverFingerprint() else "changed"
+
     def onCoverWizardClicked(self, btn):
+        if self.coverwiz is not None and self.coverwiz.window.get_visible():
+            self.coverwiz.window.present()
+            return
+        fresh = False
+        why = self.coverNeedsWiping()
+        if why is not None:
+            if not self.confirmWipeLegacyCover(why):
+                return
+            self.wipeLegacyCover()
+            self.coverwiz = None            # start from scratch, and save nothing of the old cover
+            self._coverwiz_cfg_stash = None
+            fresh = True
         if self.coverwiz is None:
             self.coverwiz = CoverWizardApp(view=self)
             if self._coverwiz_cfg_stash is not None:
-                self.coverwiz.state.loadConfig(self._coverwiz_cfg_stash)
+                self.coverwiz.loadConfig(self._coverwiz_cfg_stash)
                 self._coverwiz_cfg_stash = None
-            else:
+            elif not fresh:
                 self.coverwiz.state.readFromView(self)
         self.coverwiz.run()
     
@@ -7590,7 +7804,9 @@ Thank you,
         self.pdf_viewer.onTabChange(page)
 
     def onCreateDiffClicked(self, w):
-        if not self.get("c_createDiff"):
+        if self.get("c_createDiff"):
+            self.checkDiffPDF(announce=True)
+        else:
             self.pdf_viewer.clear(view="diff", remove=True)
             diffname = self.baseTeXPDFnames(diff=True)[1]+".pdf"
             diffpath = os.path.join(self.project.printPath(None), diffname)
@@ -7724,6 +7940,9 @@ Thank you,
         else:
             self.bkProgressDlg.hide()
 
+    def onRunTutorial(self, btn):
+        GtkTester.tutorialFromUser(self)
+
     def onConfigWizardClicked(self, widget):
         launchWizard(self, parentWindow=self.builder.get_object("mainapp_win"),
              projectDir=self.project.path, configName=self.cfgid,
@@ -7733,34 +7952,18 @@ Thank you,
         if self.args.capture:
             raise Exception("--capture was specified on the command line, so test recording is already in progress.")
 
-        testing_active = btn.get_active()
-        if testing_active:  # testing has just been turned on
-            zip_file = self.fileChooser(_("Select the location and name for the test archive file"),
-                    filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
-                    multiple=False, folder=False, save=True,
-                    basedir=os.path.join(self.project.printPath(self.cfgid), '..'))
-            if zip_file is not None:
-                zip_file = str(zip_file[0])
-                print(zip_file)
-                self.emission_hook_ids = []
-                for k, v in _signals.items():
-                    for w in v:
-                        o = getattr(Gtk, w)
-                        sigid = GObject.signal_lookup(k, o)
-                        hook_id = GObject.add_emission_hook(o, k, self.emission_hook, k)
-                        self.emission_hook_ids.append((o, k, hook_id))
-                self.testing = GtkTester(zip_file, self, full_archive=True)
-                self.starttime = time.time()
+        if btn.get_active():    # testing has just been turned on
+            if self.testing is None:
+                self.testing = GtkTester.recordFromUser(self)
+                if self.testing is None:        # no file chosen
+                    btn.set_active(False)
         else:  # testing has just been turned off
             self.finalise_testing()
 
     def finalise_testing(self):
         if self.testing is None:
             return
-        if hasattr(self, 'emission_hook_ids'):
-            for obj, signal_name, hook_id in self.emission_hook_ids:
-                GObject.remove_emission_hook(obj, signal_name, hook_id)
-            self.emission_hook_ids = []
+        self.testing.stopRecording()
         self.testing.setid(self.project, self.cfgid)
         self.testing.finalise()
         self.testing = None

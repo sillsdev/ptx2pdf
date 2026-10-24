@@ -193,6 +193,12 @@ THE SOFTWARE.
     <property name="step-increment">1</property>
     <property name="page-increment">5</property>
   </object>
+  <object class="GtkAdjustment" id="a_diffOffset">
+    <property name="lower">-999</property>
+    <property name="upper">999</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">5</property>
+  </object>
   <object class="GtkAdjustment" id="a_diffpages">
     <property name="lower">1</property>
     <property name="upper">999</property>
@@ -1719,7 +1725,7 @@ Berean Standard Bible</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkButton" id="b_installBSB">
                     <property name="label" translatable="yes">Install BSB</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
@@ -2094,7 +2100,7 @@ General section of the Advanced tab.&lt;/span&gt;</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 3.1.3</property>
+    <property name="version">Version 3.1.4</property>
     <property name="copyright">© 2020-2026, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -2287,6 +2293,24 @@ Spaces are not permitted.</property>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_overwriteConfig">
+                <property name="label" translatable="yes">Replace it if it already exists</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">If a configuration with this name already exists, delete it and save the current settings in its place.
+(Useful for tests and tutorials that make a fresh copy each time they run.)</property>
+                <property name="margin-start">10</property>
+                <property name="draw-indicator">True</property>
+                <signal name="toggled" handler="onOverwriteConfigToggled" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -3113,7 +3137,7 @@ If in doubt, click Cancel.</property>
                     <property name="spacing">2</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsAll">
                         <property name="label" translatable="yes">All Books</property>
                         <property name="width-request">200</property>
                         <property name="visible">True</property>
@@ -3133,7 +3157,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsOT">
                         <property name="label" translatable="yes">Old Testament</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3152,7 +3176,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsNT">
                         <property name="label" translatable="yes">New Testament</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3171,7 +3195,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsDC">
                         <property name="label" translatable="yes">Deuterocanon</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3190,7 +3214,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsXtra">
                         <property name="label" translatable="yes">Extra Material</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3221,7 +3245,7 @@ If in doubt, click Cancel.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsToggle">
                         <property name="label" translatable="yes">Toggle Books</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3242,7 +3266,7 @@ and the unselected ones will be selected.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton">
+                      <object class="GtkButton" id="b_mbsNone">
                         <property name="label" translatable="yes">Reset All</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -3718,6 +3742,33 @@ source project's setting will "win").</property>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_copyConfig_skipVars">
+                <property name="label" translatable="yes">Keep each project's own language-specific variables</property>
+                <property name="name">Copy Config: Keep target project's own variables</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">When checked, the variable values (such as the
+main title, subtitle and language name, and the
+Strong's index titles) are NOT copied, so each
+target project keeps its own. A configuration
+that is new to a target project starts without
+them, rather than with the source project's values.
+
+Uncheck this to copy these values as well.</property>
+                <property name="halign">end</property>
+                <property name="margin-end">12</property>
+                <property name="margin-bottom">6</property>
+                <property name="active">True</property>
+                <property name="draw-indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
@@ -7429,10 +7480,10 @@ parentheses, underscores and hyphens.</property>
                             <property name="name">Import: Entire PicList "as is" (overwrite existing PicList)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Replace the target's whole picture list with
 the source's. Pictures only in the target are
 removed. Use it when the source is the master list.</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -7451,9 +7502,9 @@ removed. Use it when the source is the master list.</property>
                             <property name="name">Import: Elements of PicList (preserving existing PicList)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Keep the target's picture list and copy only the
 parts ticked below, for pictures in both lists.</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="active">True</property>
@@ -7480,10 +7531,10 @@ parts ticked below, for pictures in both lists.</property>
                                 <property name="label" translatable="yes">Captions</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
                                 <property name="tooltip-text" translatable="yes">Copy the captions and the reference shown with
 each picture. Leave unticked if the target is in
 another language.</property>
-                                <property name="receives-default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
@@ -7498,9 +7549,9 @@ another language.</property>
                                 <property name="label" translatable="yes">Size, Position, Mirror, Rotation settings</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
                                 <property name="tooltip-text" translatable="yes">Copy the size, position, scale, mirroring
 and rotation of each picture.</property>
-                                <property name="receives-default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="active">True</property>
@@ -7516,9 +7567,9 @@ and rotation of each picture.</property>
                                 <property name="label" translatable="yes">Copyright Information</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
                                 <property name="tooltip-text" translatable="yes">Copy the copyright (credit) information
 of each picture.</property>
-                                <property name="receives-default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="active">True</property>
@@ -7606,9 +7657,9 @@ of each picture.</property>
                             <property name="label" translatable="yes">Add Any New Pictures</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Add pictures that are in the source list
 but not yet in the target list.</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="active">True</property>
@@ -7625,10 +7676,10 @@ but not yet in the target list.</property>
                             <property name="label" translatable="yes">Remove Any Old Pictures</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Remove pictures from the target list that are
 not in the source list. Tick it when the source
 list is the complete, final list.</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -7654,11 +7705,11 @@ list is the complete, final list.</property>
                     <property name="name">Import Picture Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">Import the picture settings and the
 picture list. Use the Pictures tab
 of this dialog to choose how the
 picture list is combined.</property>
-                    <property name="receives-default">False</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
@@ -7708,9 +7759,9 @@ are imported with Other &gt; Header+Footer settings.)</property>
                     <property name="name">Import Layout Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">Import page size, margins, columns,
 line spacing and related settings.</property>
-                    <property name="receives-default">False</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
@@ -7759,9 +7810,9 @@ Fonts that have been set within individual Styles are also updated to match the 
                     <property name="name">Import Fonts and Script Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">Import the font and script settings (Fonts+Scripts tab),
 including fonts set within individual styles.</property>
-                    <property name="receives-default">False</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
@@ -7837,9 +7888,9 @@ with Fonts+Script.)</property>
                     <property name="name">Import Styles Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">Import the style settings (Styles tab),
 merged into the target configuration.</property>
-                    <property name="receives-default">False</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
@@ -7905,8 +7956,8 @@ merged into the target configuration.</property>
                             <property name="label" translatable="yes">Body Tab settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">Import the settings of the Body tab.</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">Import the settings of the Body tab.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="active">True</property>
@@ -7922,8 +7973,8 @@ merged into the target configuration.</property>
                             <property name="label" translatable="yes">Notes+Refs settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">Import the settings of the Notes+Refs tab.</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">Import the settings of the Notes+Refs tab.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="active">True</property>
@@ -7939,9 +7990,9 @@ merged into the target configuration.</property>
                             <property name="label" translatable="yes">Header+Footer settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Import the settings of the
 Header+Footer tab.</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="active">True</property>
@@ -7957,9 +8008,9 @@ Header+Footer tab.</property>
                             <property name="label" translatable="yes">Thumb Tabs settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Import the thumb tab settings
 (Tabs+Borders tab).</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -7974,10 +8025,10 @@ Header+Footer tab.</property>
                             <property name="label" translatable="yes">Overwrite Front Matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Replace the front matter in the target with
 the source's, instead of only adding the
 parts that are missing.</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -8022,9 +8073,9 @@ and Customized Styles (custom.sty).</property>
                             <property name="label" translatable="yes">Cover settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Import the cover settings, cover styles
 and the cover pages of the front matter.</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -8113,11 +8164,11 @@ and verse number decorators.</property>
                             <property name="label" translatable="yes">Variables + Meta Data</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Import the variables (Peripherals tab) and the
 publication details: copyright statement,
 licence, colophon and configuration notes.
 The book selection and any password are not imported.</property>
-                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -8144,8 +8195,8 @@ The book selection and any password are not imported.</property>
                             <property name="label" translatable="yes">Texpert Hacks</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">Import the expert TeX (TeXpert) settings.</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">Import the expert TeX (TeXpert) settings.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -8207,11 +8258,11 @@ The book selection and any password are not imported.</property>
                     <property name="name">Import Other Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">Use the Other tab of this dialog to
 choose more groups of settings.
 If this is not ticked, none of the
 boxes on the Other tab are used.</property>
-                    <property name="receives-default">False</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
@@ -8263,10 +8314,10 @@ when exporting to an external folder of settings.</property>
                     <property name="name">Import All Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">Import all settings and files of the
 source configuration, whatever the
 other boxes say.</property>
-                    <property name="receives-default">False</property>
                     <property name="margin-left">6</property>
                     <property name="margin-right">6</property>
                     <property name="margin-start">20</property>
@@ -8505,6 +8556,8 @@ other boxes say.</property>
                   <object class="GtkTreeView" id="tv_fontFamily">
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="has-focus">True</property>
+                    <property name="can-default">True</property>
                     <property name="tooltip-text" translatable="yes">Choose a font from the installed fonts.
 Fonts shown in BOLD have all 4 typefaces.
 
@@ -8512,8 +8565,6 @@ If you cannot locate the desired font
 in this list, then it is quite likely that
 it has not been installed "For all Users"
 in the Windows system.</property>
-                    <property name="has-focus">True</property>
-                    <property name="can-default">True</property>
                     <property name="model">ls_font</property>
                     <property name="headers-visible">False</property>
                     <property name="search-column">0</property>
@@ -8585,10 +8636,10 @@ in the Windows system.</property>
                     <property name="name">Font Selection Dialog: Find a font</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">Type the start of a font name
-to jump to it in the list.</property>
                     <property name="has-focus">True</property>
                     <property name="is-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">Type the start of a font name
+to jump to it in the list.</property>
                     <property name="margin-start">8</property>
                     <property name="margin-bottom">6</property>
                     <property name="primary-icon-name">edit-find-symbolic</property>
@@ -8890,9 +8941,9 @@ Changing this clears the font features.</property>
                     <property name="name">Font Selection Dialog: Select font features</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Choose font features (and the language)
 from a list of those this font supports.</property>
-                    <property name="receives-default">True</property>
                     <property name="halign">start</property>
                     <signal name="clicked" handler="onFontFeaturesClicked" swapped="no"/>
                   </object>
@@ -12183,8 +12234,8 @@ counts are invalid.</property>
                     <property name="name">Sidebar FG/BG: Select an image</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">Choose the image file (JPG, PNG or PDF).</property>
                     <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Choose the image file (JPG, PNG or PDF).</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <signal name="clicked" handler="onSBimageFileChooser" swapped="no"/>
@@ -12437,9 +12488,9 @@ Centre, Right or Outer.</property>
                             <property name="name">Sidebar foreground image: Cutout position options</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="can-default">True</property>
                             <property name="tooltip-text" translatable="yes">Which side of the sidebar text the cutout
 for the foreground image is on.</property>
-                            <property name="can-default">True</property>
                             <property name="halign">start</property>
                             <property name="model">ls_sbi_posn_cutout</property>
                             <property name="wrap-width">4</property>
@@ -14220,7 +14271,7 @@ project's Biblical Terms renderings.</property>
         <col id="1">4</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Default View</col>
+        <col id="0" translatable="yes">Regular View</col>
         <col id="1">5</col>
       </row>
       <row>
@@ -14385,13 +14436,13 @@ project's Biblical Terms renderings.</property>
         <child>
           <object class="GtkMenuButton" id="btn_menu_showPDF">
             <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="no-show-all">True</property>
             <property name="tooltip-text" translatable="yes">Choose how the PDF is shown after
 printing: in the preview pane, in your
 system's PDF viewer, or by opening
 the output folder.</property>
-            <property name="focus-on-click">False</property>
-            <property name="receives-default">True</property>
-            <property name="no-show-all">True</property>
             <property name="hexpand">True</property>
             <property name="relief">none</property>
             <property name="xalign">0.20000000298023224</property>
@@ -14417,11 +14468,11 @@ the output folder.</property>
           <object class="GtkMenuButton" id="btn_menu_level">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
             <property name="tooltip-text" translatable="yes">Choose how many settings PTXprint shows.
 Hidden settings keep their values
 and still take effect.</property>
-            <property name="focus-on-click">False</property>
-            <property name="receives-default">True</property>
             <property name="hexpand">True</property>
             <property name="relief">none</property>
             <property name="xalign">0.20000000298023224</property>
@@ -14447,10 +14498,10 @@ and still take effect.</property>
           <object class="GtkMenuButton" id="btn_menu_lang">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <property name="tooltip-text" translatable="yes">Change the language of the
-PTXprint user interface.</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Change the language of the
+PTXprint user interface.</property>
             <property name="hexpand">True</property>
             <property name="relief">none</property>
             <property name="xalign">0.20000000298023224</property>
@@ -16104,9 +16155,9 @@ reference (e.g. JHN 3.16)</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
+                <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Print only this slice of the book
 (for quick layout work).</property>
-                <property name="receives-default">True</property>
                 <property name="always-show-image">True</property>
               </object>
               <packing>
@@ -17224,7 +17275,7 @@ the Notes field below.</property>
                                         <property name="spacing">6</property>
                                         <property name="homogeneous">True</property>
                                         <child>
-                                          <object class="GtkButton">
+                                          <object class="GtkButton" id="b_saveAsNewConfig">
                                             <property name="label">gtk-save-as</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -17328,15 +17379,14 @@ or export them to an external folder.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton" id="btn_layoutWizard">
-                                        <property name="label" translatable="yes">Layout Wizard...</property>
+                                      <object class="GtkButton" id="btn_runTutorial">
+                                        <property name="label" translatable="yes">Run Tutorial...</property>
                                         <property name="visible">True</property>
-                                        <property name="sensitive">False</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
-                                        <property name="no-show-all">True</property>
+                                        <property name="tooltip-text" translatable="yes">Step through a tutorial on the current project and configuration: a list of actions saved as .json from the test replay window, or the actions in a recorded test (.zip).</property>
                                         <property name="valign">center</property>
-                                        <signal name="clicked" handler="onConfigWizardClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onRunTutorial" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
@@ -17446,10 +17496,10 @@ to be printed from the project.</property>
                                     <property name="name">Bible module selector</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
                                     <property name="tooltip-text" translatable="yes">Print a Paratext Bible module
 (a .sfm file that lists the
 passages to include).</property>
-                                    <property name="receives-default">False</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">12</property>
@@ -17472,9 +17522,9 @@ Multiple Books:</property>
                                     <property name="width-request">110</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="receives-default">False</property>
                                     <property name="tooltip-text" translatable="yes">Print several books, or the
 passages listed in the box.</property>
-                                    <property name="receives-default">False</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">12</property>
@@ -17495,9 +17545,9 @@ passages listed in the box.</property>
                                     <property name="name">Single book selector</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
                                     <property name="tooltip-text" translatable="yes">Print one book, or a range
 of its chapters.</property>
-                                    <property name="receives-default">False</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">12</property>
@@ -17973,8 +18023,10 @@ or select from the list of preset values.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">Type required page width and height,
-     for example:    148mm, 208mm 
-or select from the list of preset values.</property>
+     for example:    148mm, 208mm
+or select from the list of preset values.
+A size you type is saved for use in all projects.
+To remove one, right-click it and choose Remove.</property>
                                         <property name="halign">start</property>
                                         <property name="active">1</property>
                                         <property name="has-entry">True</property>
@@ -22855,11 +22907,11 @@ of the column/page width.</property>
                                                             <property name="width-request">100</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">False</property>
+                                                            <property name="can-default">True</property>
                                                             <property name="tooltip-text" translatable="yes">Which side of the column the rule is aligned to:
 Left, Right, Center, Inner (spine side) or Outer.
 Inner and Outer swap sides on odd and even pages.
 This only matters when the Length is less than 100%.</property>
-                                                            <property name="can-default">True</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <property name="model">ls_fnruleHorizPosn</property>
@@ -23060,10 +23112,13 @@ enable this option.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">This option will place footnotes (and optionally 
-also the Cross-references and Section Headings) 
+                                            <property name="tooltip-text" translatable="yes">This option will place footnotes (and optionally
+also the Cross-references and Section Headings)
 in a column next to the text and align them as
-closely as possible vertically to their caller. </property>
+closely as possible vertically to their caller.
+
+This option is only available if Margin Notes
+has been enabled on the Layout Tab.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="margin-start">24</property>
@@ -23948,10 +24003,13 @@ enable this option.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">This option will place references (and optionally 
-also the Footnotes and Section Headings) 
+                                            <property name="tooltip-text" translatable="yes">This option will place references (and optionally
+also the Footnotes and Section Headings)
 in a column next to the text and align them as
-closely as possible vertically to their caller. </property>
+closely as possible vertically to their caller.
+
+This option is only available if Margin Notes
+has been enabled on the Layout Tab.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="margin-right">6</property>
@@ -25027,6 +25085,7 @@ rule settings apply.)</property>
                                                         <property name="width-request">100</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">False</property>
+                                                        <property name="can-default">True</property>
                                                         <property name="tooltip-text" translatable="yes">Which side of the column the rule is aligned to:
 Left, Right, Center, Inner (spine side) or Outer.
 Inner and Outer swap sides on odd and even pages.
@@ -25034,7 +25093,6 @@ This only matters when the Length is less than 100%.
 (Used only when footnotes or cross-references are
 placed at the End of Book. Otherwise the Footnote
 rule settings apply.)</property>
-                                                        <property name="can-default">True</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">start</property>
                                                         <property name="model">ls_fnruleHorizPosn</property>
@@ -25582,11 +25640,11 @@ of the column/page width.</property>
                                                             <property name="width-request">100</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">False</property>
+                                                            <property name="can-default">True</property>
                                                             <property name="tooltip-text" translatable="yes">Which side of the column the rule is aligned to:
 Left, Right, Center, Inner (spine side) or Outer.
 Inner and Outer swap sides on odd and even pages.
 This only matters when the Length is less than 100%.</property>
-                                                            <property name="can-default">True</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <property name="model">ls_snruleHorizPosn</property>
@@ -34243,11 +34301,11 @@ Position:</property>
                                                             <property name="width-request">150</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">False</property>
+                                                            <property name="can-default">True</property>
                                                             <property name="tooltip-text" translatable="yes">Where text sits vertically in a table cell
 that is shorter than the tallest cell in
 the row. Gridded Center keeps the text
 on whole lines.</property>
-                                                            <property name="can-default">True</property>
                                                             <property name="halign">start</property>
                                                             <property name="model">ls_tcVpos</property>
                                                             <property name="wrap-width">1</property>
@@ -34523,9 +34581,9 @@ of the background colour:
                                                             <property name="width-request">140</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
+                                                            <property name="receives-default">True</property>
                                                             <property name="tooltip-text" translatable="yes">Choose the frame size and position of
 this category of sidebar on the page.</property>
-                                                            <property name="receives-default">True</property>
                                                             <property name="halign">start</property>
                                                             <signal name="clicked" handler="onSBpositionClicked" swapped="no"/>
                                                             </object>
@@ -37927,6 +37985,7 @@ main scripture pages.</property>
                     <child>
                       <object class="GtkBox" id="tb_Publications">
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <property name="margin-start">12</property>
                         <property name="margin-end">12</property>
                         <property name="margin-top">12</property>
@@ -38214,6 +38273,7 @@ are finished.</property>
                     <child type="tab">
                       <object class="GtkLabel" id="lb_Publications">
                         <property name="can-focus">False</property>
+                        <property name="no-show-all">True</property>
                         <property name="tooltip-text" translatable="yes">Define several publications (each with
 its own books, titles and other variables)
 from this one configuration, and print
@@ -38607,7 +38667,7 @@ options allow plenty of scope.</property>
                                 <property name="can-focus">False</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <!-- n-columns=8 n-rows=2 -->
+                                  <!-- n-columns=8 n-rows=3 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -38616,7 +38676,6 @@ options allow plenty of scope.</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
-                                    <property name="row-spacing">6</property>
                                     <property name="column-spacing">8</property>
                                     <child>
                                       <object class="GtkButton" id="btn_selectDiffPDF">
@@ -38688,18 +38747,18 @@ out what might have changed.</property>
                                         <property name="tooltip-text" translatable="yes">Use this color to show anything
 that has been added (or moved to
 the current location) in the new PDF.</property>
-                                        <property name="halign">start</property>
+                                        <property name="halign">center</property>
                                         <property name="valign">center</property>
                                         <property name="title" translatable="yes">Color to Highlight Differences</property>
                                         <property name="rgba">rgb(26,95,180)</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">7</property>
-                                        <property name="top-attach">1</property>
+                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_ndiffColor">
+                                      <object class="GtkLabel" id="l_ndiffNew">
                                         <property name="name">Compare PDFs: Colour of new text</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -38710,38 +38769,13 @@ the old and the new PDFs.
 Use this color to show anything
 that has been added (or moved to
 the current location) in the new PDF.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">12</property>
-                                        <property name="label" translatable="yes">Show New Text
-or Position in:</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">start</property>
+                                        <property name="label" translatable="yes">New Text</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">6</property>
+                                        <property name="left-attach">7</property>
                                         <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_odiffColor">
-                                        <property name="name">Compare PDFs: Colour of old text</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">Set the color to use when
-differences are found between
-the old and the new PDFs.
-
-Use this color to show anything
-that has been deleted (or moved from
-the previous location) in the old PDF.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">18</property>
-                                        <property name="label" translatable="yes">Show Old Text
-or Position in:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">6</property>
-                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -38752,11 +38786,12 @@ or Position in:</property>
                                         <property name="tooltip-text" translatable="yes">Use this color to show anything
 that has been deleted (or moved from
 the previous location) in the old PDF.</property>
+                                        <property name="halign">center</property>
                                         <property name="valign">center</property>
                                         <property name="rgba">rgb(204,0,0)</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">7</property>
+                                        <property name="left-attach">6</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
@@ -38846,6 +38881,195 @@ Diff Pages:</property>
                                         <property name="left-attach">4</property>
                                         <property name="top-attach">0</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_diffIgnore">
+                                        <property name="name">Compare PDFs: Parts of the page to ignore</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Ignore When
+Comparing:</property>
+                                        <property name="xalign">1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_diffIgnoreHeadFoot">
+                                        <property name="label" translatable="yes">Headers + Footers</property>
+                                        <property name="name">Compare PDFs: Ignore headers and footers</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Only compare the text area of each page, and
+ignore the margins above and below it: running
+headers, footers and page numbers.
+
+The ignored areas are shaded in the "Diff" PDF.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_diffIgnoreSides">
+                                        <property name="label" translatable="yes">Side Margins</property>
+                                        <property name="name">Compare PDFs: Ignore margin notes and thumb tabs</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Only compare the text area of each page, and
+ignore the margins to the left and right of it:
+margin notes and references, thumb tabs, etc.
+
+The ignored areas are shaded in the "Diff" PDF.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">2</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_diffOffset">
+                                        <property name="name">Compare PDFs: Page offset</property>
+                                        <property name="width-request">125</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="tooltip-text" translatable="yes">If the two PDFs do not start on the same page
+(for example one has a cover or extra front
+matter), then pages would be compared with the
+wrong ones. Use this to line them up.
+
+A positive number skips that many pages at the
+start of the older PDF. A negative number skips
+that many pages at the start of the new PDF.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="width-chars">3</property>
+                                        <property name="text">0</property>
+                                        <property name="xalign">1</property>
+                                        <property name="input-purpose">number</property>
+                                        <property name="adjustment">a_diffOffset</property>
+                                        <property name="climb-rate">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update-policy">if-valid</property>
+                                        <signal name="value-changed" handler="labelledChanged" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">5</property>
+                                        <property name="top-attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_diffSmart">
+                                        <property name="label" translatable="yes">Smart Check</property>
+                                        <property name="name">Compare PDFs: Smart Check (ignore a moved text block)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Compare the text, not where it sits on the page.
+
+Use this when the margins have been changed but the
+text itself has not. For example, a binding gutter has
+been added and the left and right margins reduced so
+that the text block stays the same size. Or the top
+margin has been increased and the bottom margin
+reduced by the same amount.
+
+Normally everything on the page would show up as
+different because it has all moved. With Smart Check,
+each page of the old PDF is first moved to line up
+with the new one (left and right pages can move in
+opposite directions), so only real differences are
+shown: changed wording, different line breaks, etc.
+
+If the text block has changed size then the lines
+will wrap differently, and those differences are
+still shown.
+
+Note: on a page that had to be moved, Smart Check is
+a little less sensitive than a normal comparison, so
+a very small change (such as one comma replacing a
+full stop) might not be reported.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">6</property>
+                                        <property name="top-attach">2</property>
+                                        <property name="width">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_ndiffOld">
+                                        <property name="name">Compare PDFs: Colour of new text</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Set the color to use when
+differences are found between
+the old and the new PDFs.
+
+Use this color to show anything
+that has been added (or moved to
+the current location) in the new PDF.</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">start</property>
+                                        <property name="label" translatable="yes">Old Text</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">6</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEventBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                        <child>
+                                          <object class="GtkLabel" id="l_diffOffset">
+                                            <property name="name">Compare PDFs: Page offset</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">If the two PDFs do not start on the same page
+(for example one has a cover or extra front
+matter), then pages would be compared with the
+wrong ones. Use this to line them up.
+
+A positive number skips that many pages at the
+start of the older PDF. A negative number skips
+that many pages at the start of the new PDF.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="label" translatable="yes">Start Page
+Offset:</property>
+                                            <property name="xalign">1</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">4</property>
+                                        <property name="top-attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -39503,8 +39727,8 @@ output with a previous PDF.</property>
                                           <object class="GtkSpinButton" id="s_prn_pages">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">5</property>
                                             <property name="tooltip-text" translatable="yes">Number of pages in the book. Filled in automatically from the most recently created PDF (99 if no PDF has been made yet), but can be adjusted manually.</property>
+                                            <property name="width-chars">5</property>
                                             <property name="adjustment">a_prn_pages</property>
                                             <property name="numeric">True</property>
                                           </object>
@@ -40781,9 +41005,9 @@ Click to visit download page on the website.</property>
                     <property name="width-request">55</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">Hide this message.</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Hide this message.</property>
                     <property name="halign">end</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>

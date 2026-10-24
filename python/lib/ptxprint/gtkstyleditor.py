@@ -417,7 +417,9 @@ class StyleEditorView(StyleEditor):
         it = self._searchMarker(self.treestore, root, marker)
         if it is None:
             return
-        path = self.treestore.get_path(it)
+        path = self.filter.convert_child_path_to_path(self.treestore.get_path(it))
+        if path is None:        # filtered out
+            return
         self.treeview.expand_to_path(path)
         self.treeview.get_selection().select_path(path)
         self.treeview.scroll_to_cell(path, None, False, 0, 0)
@@ -855,8 +857,10 @@ class StyleEditorView(StyleEditor):
             # print(f"{key=}[{isset=}=>{newv[3](isset)}]: {val=}")
             key = newv[3](isset)
             other = newv[3](not isset)
-            if other in data:
-                super(self.__class__, self).setval(mkr, key, None)
+            # style keys are stored lowercase, so compare that way or the other form (e.g. BaseLine
+            # when switching to LineSpacing) is never removed and wins again when the style is reloaded
+            if other.lower() in self.sheet.get(mkr, {}):
+                super(self.__class__, self).setval(mkr, other, None)
             value = val if isset or v[3] is None else v[3](val) # v[4 if isset else 3] is None else v[4 if isset else 3](val)
         elif v[0].startswith("col_"):
             value = coltotex(val)
@@ -874,7 +878,7 @@ class StyleEditorView(StyleEditor):
                 newlabel = self.stylediverts[controlk][2 if val else 1]
                 controlw = stylemap[controlk][1]
                 self.set(controlw, newlabel)
-                if otherkey in data:
+                if otherkey.lower() in self.sheet.get(mkr, {}):
                     super(self.__class__, self).setval(mkr, otherkey, None)
             value = val
             # value = val if newv[3] is None else newv[3](val)
@@ -982,9 +986,7 @@ class StyleEditorView(StyleEditor):
             name = self.model.get(dialogKeys['Name'], '')
             if key.lower() not in self.sheet:
                 selecti = self.addMarker(key, name)
-                for k, v in stylemap.items():
-                    if not k.startswith("_"):
-                        self.setval(key, k, self.getval(self.marker, k), mapin=False)
+                self.copyMarkerValues(self.marker, key)
             else:
                 self.treestore.set_value(selecti, 1, name)
             for k, v in dialogKeys.items():
@@ -993,6 +995,8 @@ class StyleEditorView(StyleEditor):
                 val = self.model.get(v)
                 if val is not None:
                     val = val.replace("\\","")
+                if k == 'EndMarker' and not val:
+                    continue    # don't write an empty \Endmarker
                 # print(f"{k=} {v=} -> {val=}")
                 if k != "mrktype" or Grammar.marker_categories.get(key, '') == '':
                     self.setval(key, k, val)

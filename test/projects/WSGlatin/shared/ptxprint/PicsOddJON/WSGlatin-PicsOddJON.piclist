@@ -1,0 +1,7 @@
+JON 1.3 Truncated jpg|src="broken.jpg" size="col" pgpos="t" ref="1.3"
+JON 1.5 Not an image|src="text.png" size="col" pgpos="b" ref="1.5"
+JON 1.8 PDF picture|src="deco.pdf" size="col" pgpos="t" ref="1.8"
+JON 2.1 Transparency|src="alpha.png" size="col" pgpos="b" ref="2.1"
+JON 2.5 CMYK|src="cmyk.jpg" size="col" pgpos="t" ref="2.5"
+JON 3.4 Grey tiff|src="grey.tif" size="span" pgpos="b" ref="3.4"
+JON 4.5 Tiny picture, cropped|src="oi00185.jpg" size="col" pgpos="t" ref="4.5" scale="0.1"

@@ -367,6 +367,10 @@ codecs.register(wincpaliases)
 def universalopen(fname, rewrite=False, cp=65001):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
     encoding = "cp{}".format(cp) if str(cp) != "65001" else "utf-8"
+    try:
+        codecs.lookup(encoding)
+    except LookupError:         # a codepage we don't know
+        encoding = "utf-8"
     fh = open(fname, "r", encoding=encoding)
     try:
         fh.readline()
@@ -385,8 +389,9 @@ def universalopen(fname, rewrite=False, cp=65001):
             fh = open(fname, 'r', encoding="cp1252")
             fh.readline()
             failed = False
-        except UnicodeError:
-            return None
+        except UnicodeError:        # callers expect a file, so give them what we can
+            logger.warning(f"Can't work out the encoding of {fname}, reading it as UTF-8")
+            fh = open(fname, 'r', encoding="utf-8", errors="replace")
     fh.seek(0)
     if rewrite:
         dat = fh.readlines()
@@ -1105,7 +1110,10 @@ def binsearch(arr, v, fn):
 def convert2mm(measure):
     _unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
     units = _unitConv.keys()
-    num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
+    try:
+        num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
+    except ValueError:      # not a measurement
+        return 0.
     unit = str(measure)[len(str(num)):].strip(" ")
     return (num * _unitConv[unit]) if unit in units else num
 
@@ -1188,6 +1196,9 @@ def bringParatextToForeground():
         user32.SetForegroundWindow(hwnd)
         user32.AttachThreadInput(our_tid, tgt_tid, False)
     return False
+
+# Marks where the Cover Wizard's periphs start in FRTlocal.sfm, so the user can find them
+coverSeparator = r"\rem ============= Cover Page Settings ============="
 
 # Paper weight (gsm) -> thickness (µm per sheet, approximate). Values below 60gsm
 # are for thin Bible paper (from Pretore's figures); 60gsm and up are typical

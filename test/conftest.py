@@ -6,10 +6,6 @@ def updatedata(pytestconfig):
     return pytestconfig.option.update
 
 @pytest.fixture(scope="session")
-def maxSize(pytestconfig):
-    return pytestconfig.option.maxsize
-
-@pytest.fixture(scope="session")
 def logging(pytestconfig):
     return pytestconfig.option.logging
 
@@ -17,11 +13,7 @@ def logging(pytestconfig):
 def starttime(pytestconfig):
     return time.time()
 
-def pytest_addoption(parser):
-    parser.addoption("--dir", help="Project root directory to test")
-    parser.addoption("-U","--update", action="store_true", default=False)
-    parser.addoption("-S","--maxsize", type=float, default=10, help="Auto pass tests with > xMB regression pdf")
-    parser.addoption("--logging")
+# Command line options are in ../conftest.py, so they work from the repo root too.
 
 def pytest_generate_tests(metafunc):
     jobs = []
@@ -47,7 +39,20 @@ def pytest_generate_tests(metafunc):
                     break
             jobs.append((b, c, size))
     # print("generating tests", basedir, jobs)
-    jobs = [j[:2] for j in sorted(jobs, key=lambda x:(-x[2], x[0], x[1]))]
+    # A config with a standard PDF over 1MB is slow
+    jobs = [pytest.param(*j[:2], marks=pytest.mark.slow) if j[2] > 1000000 else j[:2]
+                for j in sorted(jobs, key=lambda x:(-x[2], x[0], x[1]))]
     metafunc.parametrize("projectsdir", [basedir], scope="module")
     if len(jobs):
         metafunc.parametrize(("project", "config"), jobs, scope="module")
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "slow: slow test, only run with --slow")
+
+def pytest_collection_modifyitems(config, items):
+    if config.getoption("slow", default=False):
+        return
+    skipslow = pytest.mark.skip(reason="slow: use --slow to run")
+    for item in items:
+        if "slow" in item.keywords:
+            item.add_marker(skipslow)

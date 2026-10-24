@@ -9,7 +9,7 @@ from ptxprint.module import Module
 from ptxprint.markdown import MarkDown
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
-                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect, spineWidthMm
+                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect, spineWidthMm, asfloat
 from ptxprint.dimension import Dimension
 from ptxprint.interlinear import Interlinear
 from usfmtc.reference import Ref, RefRange, RefList
@@ -256,6 +256,31 @@ class TexModel:
                         - (self.dict["paper/gutter"] if self.dict["paper/ifaddgutter"] == "true" else 0.))
         if self.dict["project/interlinear"] != "%" and self.dict["project/interlang"]:
             self.interlinear = Interlinear(self.dict["project/interlang"], self.dict["/ptxpath"])
+
+        # marginal verses
+        if self.dict["paper/ifmarginnotes"] == "":
+            width = self.dict["paper/marginnoteswidth"]     # a float already
+            gap = float(self.dict["texpert/marginnotesgap"])
+            ncols = int(self.dict["paper/columns"])
+            margins = float(self.dict["paper/margins"])
+            mwidth = width + (gap * 25.4 / 72.27)
+            if ncols == 1:
+                ml = "paper/gutter"
+                if self.dict["document/marginnotesinner"]:
+                    self.dict["paper/ifoutergutter"] = "false"
+                else:
+                    if self.dict["paper/ifaddgutter"] == "true":
+                        gw = float(self.dict[ml])
+                        margins += gw
+                        mwidth -= gw
+                        self.dict["paper/margins"] = str(margins)
+                    self.dict["paper/ifoutergutter"] = "true"
+                    self.dict[ml] = "0"
+                self.dict["paper/ifaddgutter"] = "true"
+            else:
+                ml = "paper/margins"
+            self.dict[ml] = str(float(self.dict[ml]) + mwidth)
+
         regfont = self.printer.get("bl_fontR")
         if regfont is not None:
             if regfont.isCtxtSpace:
@@ -301,14 +326,11 @@ class TexModel:
             if a not in self.dict:
                 self.dict[a] = ''
 
-        # marginal verses
-        if self.dict["paper/ifmarginnotes"] == "":
-            width = self.dict["paper/marginnoteswidth"]     # a float already
-            gap = float(self.dict["texpert/marginnotesgap"])
-            ncols = int(self.dict["paper/columns"])
-            margins = float(self.dict["paper/margins"])
-            margins += (width + gap * 72. / 25.4) * ncols / 2.
-            self.dict["paper/margins"] = "{:.2f}".format(margins)
+        # Set snippet flags here, not in makelocalChanges, which "Layout only" skips
+        if self.printer is not None:
+            for k, c in self._snippets.items():
+                v = self.printer.get(c[0])
+                self.dict[k] = ("true" if v else "false") if c[1] is None else v
 
         # handle diglot fractions
         # if self.dict['poly/fraction']:
@@ -323,14 +345,16 @@ class TexModel:
             self.dict['paper/ifcropmarks'] = "true"
         else:
             self.dict['paper/ifcropmarks'] = "false"
-        if self.dict.get('document/tocleaders', None) is None:
-            self.dict['document/tocleaders'] = 0
-        self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'
-        self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
-        self.dict['document/tocleaderrule'] = "hrule" if int(self.dict['document/tocleaders'] or 0) == 4 else ""
+        tocleaders = loosint(self.dict.get('document/tocleaders', None))
+        if not 0 <= tocleaders < len(self._tocleaders):
+            tocleaders = 0
+        self.dict['document/tocleaders'] = tocleaders
+        self.dict['document/iftocleaders'] = '' if tocleaders > 0 else '%'
+        self.dict['document/tocleaderstyle'] = self._tocleaders[tocleaders]
+        self.dict['document/tocleaderrule'] = "hrule" if tocleaders == 4 else ""
         self.calcRuleParameters()
         if self.asBool('cover/includespine'):
-            self.dict['cover/spinewidth_'] = float((self.dict.get("cover/spinewidth") or "0mm").replace("mm", ""))
+            self.dict['cover/spinewidth_'] = asfloat((self.dict.get("cover/spinewidth") or "0mm").replace("mm", ""), 0.)
             # A publication may give its own page count, from which we calculate its spine width
             pages = self.printer.getvar("pagecount", "") if self.printer is not None else ""
             try:
@@ -406,7 +430,7 @@ class TexModel:
         for a in (('Foot', fnrule), ('End', enrule), ('Study', 'sn')):
             dat = []
             if a[1] is not None:
-                pos = int(self.dict['notes/{}ruleposn'.format(a[1])] or 0)
+                pos = loosint(self.dict['notes/{}ruleposn'.format(a[1])])
                 left = r"\hskip {:.2f} mm".format(float(self.dict['notes/{}ruleindent'.format(a[1])] or 0.))
                 right = r"\hss"
                 if pos == 2 or pos == 4:      # Right or Outer
@@ -470,7 +494,9 @@ class TexModel:
             # ratio = float(self.dict['document/diglotprifraction']) # FixMe!
             ratio = 0.5
             if self.dict['document/diglotadjcenter']:
-                ratio = float(self.dict['poly/fraction'])
+                ratio = asfloat(self.dict['poly/fraction'], 0.5)
+                if not 0 < ratio < 1:
+                    ratio = 0.5
             # print(f"{ratio=}")
             if ratio > 0.5:
                 lhfil = "\\ifdiglot\\ifseriesdiglot\\else\\hskip 0pt plus {}fil\\fi\\fi".format(f2s(ratio/(1-ratio)-1))
@@ -557,6 +583,7 @@ class TexModel:
     def calculateMargins(self):
         (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms,
          ruleposmms, headerlabel, footerlabel, hfontsizemms) = self.printer.getMargins()
+        marginmms = float(self.dict["paper/margins"])
         self.dict["paper/topmarginfactor"] = f2s(topmarginmms / marginmms)
         self.dict["paper/bottommarginfactor"] = f2s(bottommarginmms / marginmms)
         self.dict["paper/headerposition"] = f2s(headerposmms / marginmms)
@@ -599,19 +626,20 @@ class TexModel:
             p = Path(f, self.printer)
             outp = str(p).replace("/", "_")
             outpath = os.path.join(file_dir, outp)
-            sanitiseme = False
+            if not os.path.isfile(f):
+                logger.warning(f"Can't find PDF to include: {f}")
+                continue
+            sanitiseme = True
             if os.path.exists(outpath):
-                ostat = os.stat(outpath)
-                fstat = os.stat(f)
-                if fstat.st_mtime > ostat.st_mtime:
-                    sanitiseme = True
-            else:
-                sanitiseme = True
+                sanitiseme = os.stat(f).st_mtime > os.stat(outpath).st_mtime
             use = outpath
-            if os.path.exists(f):
-                if sanitiseme:
+            if sanitiseme:
+                try:
                     if not sanitise(f.as_posix(), Path(outpath).as_posix(), forced=False):
                         use = f
+                except Exception as e:      # not a PDF we can read
+                    logger.warning(f"Skipping PDF to include {f}: {e}")
+                    continue
             if os.path.exists(use):
                 outps.append(use)
         self.dict[restag] = "\n".join('\\includepdf{{{}}}'.format(Path(s).as_posix()) for s in outps)
@@ -783,7 +811,7 @@ class TexModel:
                         if v:
                             fn = getattr(c[2], 'generateTex', None)
                             if fn is not None:
-                                res.append(fn(v, self))
+                                res.append(fn(self))
                             elif c[2].processTex:
                                 res.append(c[2].texCode.format(**self.dict))
                             else:
@@ -873,7 +901,7 @@ class TexModel:
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \
                                      + '.jpg" copy="None" ' + m.group(2)+ r'\fig*', l)
-                    l = re.sub(r'(\\fig .*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
+                    l = re.sub(r'(\\fig[ |].*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
@@ -908,9 +936,11 @@ class TexModel:
         if not noaction:
             usfms = self.printer.get_usfms()
             if infpath.lower().endswith(".md"):
-                with open(fname, encoding="utf-8") as inf:
-                    text = inf.read()
-                mod = MarkDown(text)
+                mdtext = text
+                if mdtext is None:
+                    with open(infpath, encoding="utf-8") as inf:
+                        mdtext = inf.read()
+                mod = MarkDown(mdtext)
                 res = mod
             else:
                 mod = Module(infpath, usfms, self, text=text, changes=self.changes.get('module', []))
@@ -935,7 +965,7 @@ class TexModel:
         outfpath = infpath
         script = self.dict['project/selectscript']
         logger.debug(f"{script} {infpath} {outfpath}, ?={self.dict['project/processscript']}")
-        if self.dict['project/processscript'] and script and os.path.exists(script):
+        if self.dict['project/processscript'] and script and os.path.isfile(script):
             outfpath = os.path.join(outdir, os.path.basename(infpath))
             doti = outfpath.rfind(".")
             if doti > 0:
@@ -968,7 +998,12 @@ class TexModel:
 
     def _getText(self, data, doc, bk, logmsg=""):
         if doc is not None:
-            data = doc.asUsfm(grammar=self.printer.usfms.grammar)
+            try:
+                data = doc.asUsfm(grammar=self.printer.usfms.grammar)
+            except (ValueError, TypeError) as e:     # e.g. a chapter that isn't a number
+                self.printer.doError(f"Error regenerating USFM for {bk}: {e}")
+                if data is None:
+                    data = ""
             logger.log(5, logmsg+data)
         else:
             logger.log(5, logmsg)
@@ -1438,14 +1473,7 @@ class TexModel:
 
         # Apply any changes specified in snippets
         for k, c in sorted(self._snippets.items(), key=lambda x: x[1][2].order):
-            if self.printer is None:
-                v = self.asBool(k) if c[1] is None else c[1](self.dict[k])
-            elif c[1] is None:
-                v = self.printer.get(c[0])
-                self.dict[k] = "true" if v else "false"
-            else:
-                self.dict[k] = self.printer.get(c[0])
-                v = c[1](self.dict[k])
+            v = self.asBool(k) if c[1] is None else c[1](self.dict[k])
             if v: # if the c_checkbox is true then extend the list with those changes
                 if k == "snippets/fancyintro" and bk in nonScriptureBooks: # Only allow fancyIntros for scripture books
                     pass

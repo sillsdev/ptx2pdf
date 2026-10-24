@@ -240,6 +240,20 @@ is committed, each of its slices takes any outcome with the same height and
 lower badness (better balance at no page cost, since slice positions follow
 from heights). This applies to every page, full or not.
 
+A slice crossing the bottom of the page needs more. If its glots end unevenly
+on the next page, the shorter one leaves a gap there, often a whole column
+at the top of the page when one glot has nothing left to carry over. TeX's
+underfill does not see it (a column counts as used down to the last sync
+point, and the gap is above it), so filling never did either. Once a page is
+committed, the filler tries a few outcomes of that slice that even its ends
+(`balance_crossing`), changing only its paragraphs that reach the next page:
+changing those wholly on this page just changes this page, since TeX carries
+over at least two lines of a paragraph or none, and text pulled back brings
+its notes. A change is kept if the measured ends are more even, no page done
+so far goes short and the next page is no shorter. When the next page is
+filled, a change to the slice's paragraphs there counts the imbalance where
+the slice ends against its badness, so the fill does not undo the evening.
+
 ### 4.5 Failure and backtracking
 
 If a page cannot be filled within its budget, it is committed with the best
@@ -357,6 +371,18 @@ the user fixes it, and maybe all that follows, by hand) and for restarting:
 PHP 4/10, my_judson EST 2/16 (a structural L imbalance), WSGlatin EST 2/29,
 RUT 14/15; the other 11 books fill completely. 27 lines short in all, about
 2100 runs.
+
+Slice ends after a page break (section 4.4). The report now gives the lines
+of gap where slices crossing a page end. Filling made them worse (BSB_1 MRK
+90 at neutral, 142 after filling). Evening them, over the 17 books other
+than MRK: 637 → 372 lines of gap, 28 → 26 lines short, about the same runs
+(1266 → 1249); first failing pages BSB_1 HEB 23 → none, fr_diglot EST 6 →
+none, BSB_1 ROM 19 (7 → 4 lines short); fr_diglot PHP page 4 got worse (1 →
+7 lines short) because evenings on pages 1 and 2 gave page 4 a different
+start. Counting these gaps as lines short instead, so that the page search
+works on them, was tried and dropped: many cannot be fixed by paragraph
+shapes (a 4 line carry over against a 32 line paragraph), and fr_diglot RUT
+took 472 runs instead of 35 with most pages failing.
 
 The notes below describe the first design's code (patches 05 to 06b).
 

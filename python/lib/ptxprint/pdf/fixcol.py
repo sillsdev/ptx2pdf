@@ -75,13 +75,17 @@ class PdfStreamParser:
                     if v.Subtype == "/Form":
                         instrm.append(v)
                     elif v.Subtype == "/Image":
-                        if vi is not None and vi in self.imgcache:
-                            img = self.imgcache[vi]
-                        else:
-                            img = PDFImage(v, compressor=compress)
-                        if vi is not None:
-                            self.imgcache[vi] = img
-                        newimg = self.processImg(img)
+                        try:
+                            if vi is not None and vi in self.imgcache:
+                                img = self.imgcache[vi]
+                            else:
+                                img = PDFImage(v, compressor=compress)
+                            if vi is not None:
+                                self.imgcache[vi] = img
+                            newimg = self.processImg(img)
+                        except (OSError, ValueError) as e:      # e.g. a truncated image: leave it as it is
+                            logger.warning(f"Can't convert image {k}: {e}")
+                            newimg = None
                         if newimg is not None:
                             externals[k] = newimg
         for i in instrm:

@@ -252,7 +252,8 @@ class PicList:
                     val = self.parent.picMedia(pic.get('src', ''))[0]
                 else:
                     limit = self.parent.picMedia(pic.get('src',''))[1]
-                    val = "".join(x for x in val if x in limit)
+                    if val != "x":      # "x" means no media at all, and must survive being reloaded
+                        val = "".join(x for x in val if x in limit)
             elif e == "scale_colour":
                 val = self.calc_scale_colour(row)
             else:

@@ -325,13 +325,16 @@ texpertOptions = {
                               "0: no preference.\n"
                               "A bigger number (+ or −) means a higher penalty.\n"
                               "Affects: Quality.")),
-    "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Keep neighbouring paragraphs alike"),
-                            _("The page filler compares each paragraph with the paragraph before it. "
-                              "It tries to avoid a very stretched paragraph next to a very shrunk one.\n"
-                              "Higher: neighbouring paragraphs look more alike, so the page looks more even.\n"
-                              "Lower: neighbouring paragraphs can look more different.\n"
-                              "Affects: Quality.")),
+   "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Keep neighbouring paragraphs alike"),
+                           _("The page filler compares each paragraph with the paragraph before it. "
+                             "It tries to avoid a very stretched paragraph next to a very shrunk one.\n"
+                             "Higher: neighbouring paragraphs look more alike, so the page looks more even.\n"
+                             "Lower: neighbouring paragraphs can look more different.\n"
+                             "Affects: Quality.")),
 #    "pbStrict":           O("pbstrict", "APF", False, "", _("Add strict layout constraints"), _("Ensure things like \\q2 don't start a column")),
+    "pbpolyimbalance":    O("pbpolyimbalance", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("The cost of imbalance in a polyglot slice"),
+                            _("How bad is it for a polyglot slice to not be balanced. This the multiplier of that cost\n"
+                              "Only relevant to diglot and polyglot projects")),
 
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),

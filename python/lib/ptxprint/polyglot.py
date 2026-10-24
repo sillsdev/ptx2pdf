@@ -38,7 +38,10 @@ class PolyglotConfig:
         for k, v in configmap.items():
             nv = None
             if v[1] == float:
-                nv = config.getfloat(sect, k, fallback=None)
+                try:
+                    nv = config.getfloat(sect, k, fallback=None)
+                except ValueError:      # e.g. empty
+                    nv = None
             if v[1] == int:
                 nv = int(config.get(sect, k, fallback=1))
             elif v[1] == str:

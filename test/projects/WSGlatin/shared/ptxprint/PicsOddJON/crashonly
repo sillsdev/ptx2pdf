@@ -1,0 +1,1 @@
+Only check that this config prints without crashing; its output is not compared with a standard.

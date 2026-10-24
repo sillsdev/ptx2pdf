@@ -94,6 +94,12 @@ def setWidgetVal(wid, w, value, noui=False, useMarkup=False, sub=-1):
             if isinstance(value, str):
                 value = value.lower() == "true"
             w.set_active(value)
+        elif wid.startswith("r_"):
+            # a radio button: True picks it, and False means nothing (picking another does that)
+            if isinstance(value, str):
+                value = value.lower() == "true"
+            if value:
+                w.set_active(True)
         elif wid.startswith("ct_"):
             if isinstance(value, str):
                 value = value.lower() == "true"

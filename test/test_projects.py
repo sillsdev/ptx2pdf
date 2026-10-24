@@ -108,14 +108,20 @@ def make_paths(projectsdir, project, config, logging):
         filename = "{}{}_{}-{}_ptxp".format(project, cfgname, bks[0], bks[-1])
     else:
         filename = "{}{}_{}_ptxp".format(project, cfgname, bks[0])
+    # Output formats other than Screen add to the PDF's name (as _outputPDFtypes in ptxprint.view)
+    fmt = _outputPDFtypes.get(cfg.get("snippets", "pdfoutput", fallback="Screen"), "")
+    if fmt:
+        filename += "_" + fmt
     stddir = os.path.join(projectsdir, '..', 'standards', project)
     return (stddir, filename, testsdir, ptxcmd)
 
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent", "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
+
 PdfInfo = namedtuple("PdfInfo", ["project", "config", "pdfpath", "stdpath", "diffpath",
-                                 "arcpath", "ptxcmd", "result", "resulta"])
+                                 "arcpath", "ptxcmd", "result", "resulta", "crashonly"])
 
 @pytest.fixture(scope="class")
-def pdf(request, projectsdir, project, config, starttime, logging, maxSize):
+def pdf(request, projectsdir, project, config, starttime, logging):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, logging)
     pdftpath = os.path.join(projectsdir, project, "local", "ptxprint")
     cfglocal = os.path.join(pdftpath, config)
@@ -123,10 +129,6 @@ def pdf(request, projectsdir, project, config, starttime, logging, maxSize):
     pdffile = "{}.pdf".format(filename)
     pdfpath = os.path.join(pdftpath, pdffile)
     stdpath = os.path.join(stddir, pdffile)
-    if maxSize > 0 and os.path.exists(stdpath):
-        if os.path.getsize(stdpath) > maxSize * 1000000:
-            request.cls.pdf = None
-            return
     diffpath = pdfpath.replace(".pdf", "_diff.pdf")
     try:
         os.remove(diffpath)
@@ -139,7 +141,13 @@ def pdf(request, projectsdir, project, config, starttime, logging, maxSize):
             os.remove(fpath)
         except FileNotFoundError:
             pass
-    pdfptxcmd = ptxcmd[:-1] + ["-P", "-F", stdpath, "--diffpages=50"] + ptxcmd[-1:]
+    # A config with a crashonly file is only checked for printing (and archiving) without failing,
+    # not against a standard: its output (e.g. from deliberately broken input) isn't worth comparing.
+    crashonly = os.path.exists(os.path.join(projectsdir, project, "shared", "ptxprint", config or "", "crashonly"))
+    if crashonly:
+        pdfptxcmd = ptxcmd[:-1] + ["-P"] + ptxcmd[-1:]
+    else:
+        pdfptxcmd = ptxcmd[:-1] + ["-P", "-F", stdpath, "--diffpages=50"] + ptxcmd[-1:]
     res = call(pdfptxcmd)
     resa = 0
     arcpath = None
@@ -151,7 +159,7 @@ def pdf(request, projectsdir, project, config, starttime, logging, maxSize):
         except FileNotFoundError:
             pass
         resa = call(aptxcmd)
-    request.cls.pdf = PdfInfo(project, config, pdfpath, stdpath, diffpath, arcpath, ptxcmd, res, resa)
+    request.cls.pdf = PdfInfo(project, config, pdfpath, stdpath, diffpath, arcpath, ptxcmd, res, resa, crashonly)
 
 @pytest.mark.usefixtures("pdf")
 class TestXetex:
@@ -171,7 +179,7 @@ class TestXetex:
             msg = "pdfs are inconsistent"
         #else:
         #    return
-        if updatedata:
+        if updatedata and not self.pdf.crashonly:
             shutil.copy(self.pdf.pdfpath, self.pdf.stdpath)
 
         if self.pdf.arcpath is not None:
@@ -182,8 +190,14 @@ class TestXetex:
             except FileNotFoundError:
                 pass
             ptxcmd = self.pdf.ptxcmd
+            # Unpack into an empty tree of its own, so files left by earlier runs can't hide what the
+            # archive is missing, and parallel tests (xdist) of the same project don't share it
+            tmpdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tmp",
+                                  "{}-{}".format(self.pdf.project, self.pdf.config or "Default"))
+            shutil.rmtree(tmpdir, ignore_errors=True)
+            os.makedirs(tmpdir)
             # ptxprint -p basedir ... <project>
-            ptxcmd = ptxcmd[:2] + ["tmp"] + ptxcmd[3:-1] + ["-Z", self.pdf.arcpath, "-F", self.pdf.pdfpath,
+            ptxcmd = ptxcmd[:2] + [tmpdir] + ptxcmd[3:-1] + ["-Z", self.pdf.arcpath, "-F", self.pdf.pdfpath,
                                     "--diffpages=50", "--diffoutfile="+outfname, "-P"] + ptxcmd[-1:]
             print(f"exists({os.path.dirname(self.pdf.arcpath)}) = {os.path.exists(os.path.dirname(self.pdf.arcpath))}")
             res = call(ptxcmd)

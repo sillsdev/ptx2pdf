@@ -14,7 +14,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, GdkPixbuf
 import cairo
 
-from ptxprint.utils import coltoonemax, coltotex, gsmToUm, umToGsm
+from ptxprint.utils import coltoonemax, coltotex, gsmToUm, umToGsm, coverSeparator
 from PIL import Image
 
 
@@ -119,6 +119,10 @@ class WorkingCoverState:
         self.isbn_enabled: bool = False
         self.isbn: str = ""
         self.isbn_hpos: str = "inner"   # inner | centre | outer
+
+        # Summary of the cover styles and periphs as the wizard left them (see ViewModel.coverFingerprint).
+        # If they no longer match, something else has changed the cover since.
+        self.fingerprint: str = ""
 
     def saveConfig(self, config):
         if not config.has_section("coverwiz"):
@@ -363,7 +367,7 @@ class WorkingCoverState:
                     self.langname_enabled = True
                     self.langname_position_pct = max(0, min(100,
                         int(round(cum_mm / pheight * 100))))
-                elif r'\fig|' in line and 'pgpos="pc"' in line:
+                elif re.search(r'\\fig ?\|', line) and 'pgpos="pc"' in line:
                     self.fgimage_enabled = True
                     self.fgimage_position_pct = max(0, min(100,
                         int(round(cum_mm / pheight * 100))))
@@ -384,7 +388,7 @@ class WorkingCoverState:
 
             # Logo figure
             logo_m = re.search(
-                r'\\fig\|src="([^"]+)"[^\n]*?pgpos="([^"]*)"[^\n]*?'
+                r'\\fig ?\|src="([^"]+)"[^\n]*?pgpos="([^"]*)"[^\n]*?'
                 r'(?:scale="([^"]*)")?[^\n]*?\\fig\*',
                 back)
             if logo_m:
@@ -406,19 +410,39 @@ class WorkingCoverState:
                     m2 = re.match(r'\\zgap\|([0-9.]+)(mm|pt|in|)\\?\*', bl)
                     if m2:
                         last_back_zgap_mm = _mm_from_zgap(m2.group(1), m2.group(2) or "mm")
-                    elif r'\fig|' in bl and 'pgpos=' in bl:
+                    elif re.search(r'\\fig ?\|', bl) and 'pgpos=' in bl:
                         if pheight > 0:
                             self.logo_vpos_pct = max(0, min(100,
                                 int(round(last_back_zgap_mm / pheight * 100))))
                         break
 
-            # ISBN horizontal position
-            isbn_m = re.search(r'\\esb\s*\\cat ISBNbox\\cat\*\s*\\(\w+)', back)
-            if isbn_m:
-                pos_rev = {"hr": "inner", "hl": "outer", "hc": "centre"}
-                self.isbn_hpos = pos_rev.get(isbn_m.group(1), "inner")
+            # ISBN horizontal position comes from the style of the ISBN box
+            if re.search(r'\\cat ISBNbox\\cat\*', back):
+                code = str(view.styleEditor.getval("cat:ISBNbox|esb", "Position", "hc", includebase=True))
+                if code == "hc":
+                    self.isbn_hpos = "centre"
+                else:
+                    inner = "hl" if self.rtl_binding else "hr"
+                    self.isbn_hpos = "inner" if code == inner else "outer"
+
+    # The style settings the wizard writes. They are cleared on every cover marker before being applied,
+    # so nothing from an earlier layout (e.g. another coverage pattern) is left behind.
+    managedStyleKeys = ("Alpha", "BgColor", "BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha",
+                        "Border", "BorderStyle", "BorderRef", "BorderColor", "BorderFillColor",
+                        "BorderMargin", "BorderWidth")
+
+    def isbnPosition(self):
+        """The Position of the ISBN box on the back cover. Inner is the spine side: the right of the
+        back cover for a left-to-right binding, the left for a right-to-left one."""
+        if self.isbn_hpos == "centre":
+            return "hc"
+        inner, outer = ("hl", "hr") if self.rtl_binding else ("hr", "hl")
+        return inner if self.isbn_hpos == "inner" else outer
 
     def updateView(self, view):
+        for part in ("whole", "front", "spine", "back"):
+            view.styleEditor.clearUserKeys(f"cat:cover{part}|esb", self.managedStyleKeys)
+        view.styleEditor.clearUserKeys("cat:ISBNbox|esb", ("Position",))
         def setfront(k, v, all=False):
             view.styleEditor.setval("cat:coverwhole|esb" if all else "cat:coverfront|esb", k, v)
         if self.border_enabled:
@@ -476,8 +500,8 @@ class WorkingCoverState:
         if self.langname_enabled:
             view.setvar('languagename', self.langname)
         if self.isbn_enabled:
-            positions = {"inner": "hr", "outer": "hl", "centre": "hc"}
             view.setvar('isbn', self.isbn)
+            view.styleEditor.setval("cat:ISBNbox|esb", "Position", self.isbnPosition())
         if self.spine_enabled and self.spine_width_computed_mm > 0.:
             view.set("l_spineWidth", str(self.spine_width_computed_mm))
             view.set("c_inclSpine", True)
@@ -485,6 +509,10 @@ class WorkingCoverState:
         else:
             view.set("c_inclSpine", False)
             view.set("s_coverBleed", 0)
+        # The cover periphs live in the local front matter, so that has to be switched on
+        if not view.get("c_frontmatter"):
+            view.set("c_frontmatter", True)
+            view.sensiVisible("c_frontmatter")
         self.createCoverPeriphs(view)
 
     def getBorderVal(self, view, mkr, vh, key):
@@ -509,6 +537,8 @@ class WorkingCoverState:
             if a == "spine" and not self.spine_enabled:
                 continue
             res = []
+            if a == 'front':
+                res.append(coverSeparator)      # the cover periphs follow in FRTlocal.sfm
             res.append(fr'\periph {a}|id="cover{a}"')
             if a == 'front':
                 bits = []
@@ -531,7 +561,7 @@ class WorkingCoverState:
                     bits.append((theight * self.langname_position_pct / 100, langname_height * linefactor, r"\mt3 \zvar|languagename\*"))
                 if self.fgimage_enabled:
                     fgimage_height = self.get_image_height(self.fgimage_path, twidth, theight)
-                    bits.append((theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig|src="{self.fgimage_path}" size="col", pgpos="pc"\fig*'))
+                    bits.append((theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig |src="{texPath(self.fgimage_path)}" size="col" pgpos="pc"\fig*'))
                 basepos = 0
                 for b in sorted(bits):
                     if b[0] > basepos:
@@ -545,7 +575,14 @@ class WorkingCoverState:
             elif a == 'spine':
                 theight = self.spine_width_computed_mm
                 text_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
-                res.append(rf"\mt2 \zvar|maintitle\* - \zvar|subtitle\*")
+                parts = []
+                if self.spine_title:
+                    parts.append(r"\zvar|maintitle\*")
+                if self.spine_subtitle and self.subtitle_enabled:
+                    parts.append(r"\zvar|subtitle\*")
+                if self.spine_langname and self.langname_enabled:
+                    parts.append(r"\zvar|languagename\*")
+                res.append(r"\mt2 " + " - ".join(parts) if parts else r"\p")
             elif a == "back":
                 back_height = view.styleEditor.getval(f"cat:cover{a}|m", "LineSpacing", 1.0)
                 positions = {"inner": "qr", "centre": "pc", "outer": "p"}
@@ -553,11 +590,14 @@ class WorkingCoverState:
                 res.append(rf"\m {self.backtext}")
                 if self.logo_enabled:
                     res.append(rf"\zgap|{self.logo_vpos_pct / 100 * pheight}mm\*")
-                    res.append(rf'\fig|src="{self.logo_path}" pgpos="{positions[self.logo_hpos]}" size="col" scale="{self.logo_scale / 100}"\fig*')
+                    res.append(rf'\fig |src="{texPath(self.logo_path)}" size="col" pgpos="{positions[self.logo_hpos]}" scale="{self.logo_scale / 100}"\fig*')
                 res.append(r"\vfill")
                 if self.isbn_enabled:
                     res.append(r'\ztruetext')
-                    res.append(fr'\esb\cat ISBNbox\cat*\{positions[self.isbn_hpos]} \zISBNbarcode|var="isbn" height="medium"\*\esbe')
+                    # where it sits across the cover is the Position of the ISBNbox style (see updateView)
+                    res.append(r'\esb \cat ISBNbox\cat*')
+                    res.append(r'\zISBNbarcode|var="isbn" height="medium"\*')
+                    res.append(r'\esbe')
                     res.append(r'\zgap|10pt\*')
                     res.append(r'\ztruetext*')
             view.periphs['cover'+a] = "\n".join(res)
@@ -719,9 +759,18 @@ def makeSpinner(val, lo, hi, step=1.0, digits=0):
     sp.show()
     return sp
 
+_lastImageDir = None
+
+def texPath(path):
+    """Paths in \\fig src= must use forward slashes: TeX would read backslashes as control sequences."""
+    return path.replace("\\", "/")
+
 def openImageChooser(parent, title="Choose image"):
+    global _lastImageDir
     dlg = Gtk.FileChooserDialog(title=title, parent=parent,
                                 action=Gtk.FileChooserAction.OPEN)
+    if _lastImageDir and os.path.isdir(_lastImageDir):
+        dlg.set_current_folder(_lastImageDir)
     dlg.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                     Gtk.STOCK_OPEN,   Gtk.ResponseType.OK)
     ff = Gtk.FileFilter()
@@ -732,6 +781,8 @@ def openImageChooser(parent, title="Choose image"):
     path = ""
     if dlg.run() == Gtk.ResponseType.OK:
         path = dlg.get_filename() or ""
+        if path:
+            _lastImageDir = os.path.dirname(path)
     dlg.destroy()
     return path
 
@@ -785,6 +836,13 @@ class CoverWizardApp:
         self.window.set_position(Gtk.WindowPosition.CENTER)
         self.window.set_default_size(1180, 760)
         self.window.connect("destroy", self.onWindowDestroy)
+        # Closing the window is a Cancel, but the window must survive for the next time the wizard opens
+        self.window.connect("delete-event", self.onWindowDeleted)
+
+        # What has actually been applied to the styles and periphs (set at Finish, or when loaded from
+        # the config). The state the user is editing is only saved in the config once it is applied.
+        self.applied = None
+        self._openSnapshot = None
 
         bx_root = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.window.add(bx_root)
@@ -899,7 +957,25 @@ class CoverWizardApp:
         self._buildPage6()
         self._buildPage7()
 
+    def markApplied(self):
+        self.applied = dict(vars(self.state))
+
+    def loadConfig(self, config):
+        found = self.state.loadConfig(config)
+        if found:
+            self.markApplied()
+        return found
+
+    def saveConfig(self, config):
+        ''' Save only what has been applied, so the config never describes a cover that was not made '''
+        if self.applied is None:
+            return
+        tmp = WorkingCoverState()
+        vars(tmp).update(self.applied)
+        tmp.saveConfig(config)
+
     def run(self):
+        self._openSnapshot = dict(vars(self.state))   # what Cancel goes back to
         # Pre-fill page count from the view's PDF if not already set
         if self.state.pagecount == 0 and self.view is not None:
             pc = self._getViewPageCount()
@@ -2408,7 +2484,20 @@ class CoverWizardApp:
 
     def onBackClicked(self, widget):    self._goToStep(self._stepIndex - 1)
     def onNextClicked(self, widget):    self._goToStep(self._stepIndex + 1)
-    def onCancelClicked(self, widget):  self.window.destroy()
+    def onCancelClicked(self, widget):
+        self.discardChanges()
+        self.window.hide()
+
+    def onWindowDeleted(self, widget, event):
+        self.discardChanges()
+        self.window.hide()
+        return True     # stop GTK destroying the window
+
+    def discardChanges(self):
+        if self._openSnapshot is not None:
+            vars(self.state).update(self._openSnapshot)
+            self._openSnapshot = None
+            self._pixbufCache.clear()
 
     def onAdvancedClicked(self, widget):
         dlg = Gtk.MessageDialog(transient_for=self.window,
@@ -2421,6 +2510,9 @@ class CoverWizardApp:
     def onFinishClicked(self, widget):
         if self.view is not None:
             self.state.updateView(self.view)
+            self.state.fingerprint = self.view.coverFingerprint()
+        self.markApplied()
+        self._openSnapshot = None
         self.onWindowDestroy(self.window)
 
     def onWindowDestroy(self, widget):

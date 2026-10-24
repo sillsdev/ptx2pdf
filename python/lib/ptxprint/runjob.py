@@ -159,6 +159,7 @@ class RunJob:
         self.forcedlooseness = None
         # self.oldversions = 1
         self.docreatediff = False
+        self.diffresult = None
         # self.onlydiffs = True
         # self.diffPdf = None
         self.rerunReasons = []
@@ -591,6 +592,8 @@ class RunJob:
             self.pdffile = outpath + f"{pdfext}.pdf"
         logger.debug(f"{self.pdffile} exists({os.path.exists(self.pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
+        if self.printer.docreatediff and oldversions < 1:
+            oldversions = 1     # comparing with the previous PDF needs that PDF to be kept
         if oldversions > 0:
             for c in range(oldversions, 0, -1):
                 opdffile = self.pdffile[:-4] + "_{}.pdf".format(c)
@@ -862,6 +865,7 @@ class RunJob:
         print(f"{self.res=}")
         if self.res == 0:
             logger.debug(f"{self.noview=} {self.printer.isDisplay=} {pdfname=} doCreateDiff={self.printer.docreatediff}")
+            comparing = bool(self.printer.docreatediff)     # the status line is then reporting on the comparison
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
                 if basename == _("Previous PDF (_1)"):
@@ -870,14 +874,43 @@ class RunJob:
                 odiffcolor = self.printer.get("col_odiffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
                 diffpages = int(self.printer.get("s_diffpages") or 0)
-                logger.debug(f"diffing from: {basename=} {pdfname=}")
+                diffoffset = int(self.printer.get("s_diffOffset") or 0)
+                smart = bool(self.printer.get("c_diffSmart"))
+                ignore = []
+                if self.printer.get("c_diffIgnoreHeadFoot"):
+                    ignore.append("topbottom")
+                if self.printer.get("c_diffIgnoreSides"):
+                    ignore.append("sides")
+                geometry = None
+                if len(ignore):
+                    if int(self.info.dict.get("finishing/pgsperspread", 1) or 1) > 1 or self.info.dict.get("finishing/scaletofit", False):
+                        # the pages have been moved around, so where the margins are is no longer known
+                        logger.warning("Not ignoring parts of the page when comparing: the pages have been imposed or scaled")
+                        ignore = []
+                    else:
+                        parlocs = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".parlocs"))
+                        geometry = self.printer.getDiffGeometry(parlocs)
+                logger.debug(f"diffing from: {basename=} {pdfname=} {ignore=} {diffoffset=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, basename, outfname=self.args.diffoutfile, dpi=self.args.diffdpi,
-                                color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
+                    othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
+                    diffname = self.createDiff(pdfname, basename, outname=self.args.diffoutfile, dpi=self.args.diffdpi,
+                                color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages,
+                                offset=diffoffset, ignore=ignore, geometry=geometry, smart=smart)
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         self.printer.onIdle(self.printer.onShowPDF, path=diffname)
                         if diffname == pdfname:
-                            self.printer.onIdle(self.printer.set, "l_statusLine", _("No differences found"))
+                            # Say what really happened. Only a result of 0 means the PDFs are the same.
+                            if not os.path.exists(othername):
+                                msg = _("Nothing to compare with yet: make a change and print again") if basename is None \
+                                      else _("Cannot find the PDF to compare with: {}").format(os.path.basename(othername))
+                            else:
+                                msg = {0: _("No differences found"),
+                                       1: _("Cannot compare PDFs: Poppler or the image libraries are not available"),
+                                       3: _("Cannot compare PDFs: the pages are different sizes"),
+                                       4: _("No differences found, but the old Diff PDF is open and cannot be removed"),
+                                       5: _("No pages could be compared. Check the Start Page Offset")}.get(self.diffresult,
+                                            _("The PDFs could not be compared"))
+                            self.printer.onIdle(self.printer.set, "l_statusLine", msg)
                 self.printer.docreatediff = False
                 startname = pdfname
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
@@ -901,7 +934,11 @@ class RunJob:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
-                    if not self.noview and not self.args.print:
+                    if comparing and smry["E"] == 0:
+                        # Don't replace what the comparison said ("No differences found", ...) with advice
+                        # about underfilled pages or warnings. Real errors are still shown.
+                        logger.debug("Not showing the XeTeX log summary in the status line while comparing")
+                    elif not self.noview and not self.args.print:
                         severity = "error" if smry["E"] > 0 else "warn"
                         if len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
@@ -1118,7 +1155,10 @@ class RunJob:
         othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
         logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)}) to {outname}")
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
-        if res == 2:
+        self.diffresult = res
+        if res == 2 and (self.noview or self.args.print):
+            # Nothing to compare with: tell the command line (exit code) and the tests. In the GUI this
+            # is not a failed print, and treating it as one makes finished() clear the preview.
             self.res = 2
         if not str(res).endswith('_diff.pdf'):
             outname = pdfname
@@ -1226,6 +1266,8 @@ class RunJob:
         except OSError:
             return im
         box = im.getbbox()
+        if box is None:     # a blank image
+            return im
         cbox = []
         cbox.append(self.getBorder(box, 0, 2, lambda x, y: bwim[x, y]))
         cbox.append(self.getBorder(box, 1, 3, lambda y, x: bwim[x, y]))     # top is 0
@@ -1304,33 +1346,37 @@ class RunJob:
         tgtpath = os.path.join(tmpPicPath, tgtfile)
         if os.path.splitext(srcpath)[1].lower().startswith(".pdf"):
             log.setLevel(logging.CRITICAL)
-            trailer = PdfReader(srcpath)
-            writer = PdfWriter(tgtpath)
-            writer.trailer = trailer
-            writer.write()
+            try:
+                trailer = PdfReader(srcpath)
+                writer = PdfWriter(tgtpath)
+                writer.trailer = trailer
+                writer.write()
+            except (PdfError, OSError, ValueError) as e:
+                print(_("Error: Unable to read PDF image {}: {}").format(srcpath, e))
             return os.path.basename(tgtpath)
         try:
             im = Image.open(srcpath)
             iw = im.size[0]
             ih = im.size[1]
-        except OSError:
+        except OSError:     # not an image we can read, so treat it as missing
             print(("Failed to get size of (image) file:"), srcpath)
+            return os.path.basename(tgtpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or (ratio is not None and iw/ih < ratio) \
+        if cropme or (ratio is not None and ih and iw/ih < ratio) \
                   or os.path.splitext(srcpath)[1].lower() in (".tif", ".tiff", ".png"):
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
-            #try:
-            self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
-            #except: # MH: Which exception should I try to catch?
-            #    print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
-            #    return os.path.basename(tgtpath)
-        else:
             try:
-                copyfile(srcpath, tgtpath)
-            except OSError:
-                print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
-                return os.path.basename(tgtpath)
+                self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
+            except (OSError, ValueError, SyntaxError) as e:     # e.g. a truncated image; treat it as missing
+                print(_("Error: Unable to convert/resize image {}: {}").format(srcpath, e))
+                if os.path.exists(tgtpath):
+                    os.remove(tgtpath)
+            return os.path.basename(tgtpath)
+        try:
+            copyfile(srcpath, tgtpath)
+        except OSError:
+            print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
         return os.path.basename(tgtpath)
 
     def usablePageRatios(self):

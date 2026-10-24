@@ -163,7 +163,7 @@ class Hyphenation:
         self.chars = set()
         for k in self.wordlist.keys():
             self.chars.update(k)
-        self.splitre = re.compile(r"(?i)([^{}]+)".format("".join(sorted(self.chars))))
+        self.splitre = re.compile(r"(?i)([^{}]+)".format("".join(re.escape(c) for c in sorted(self.chars))))
 
     def hyphenate(self, t, hyphenchar):
         t = t.replace("-", hyphenchar)
@@ -205,7 +205,7 @@ class Hunspell:
         for w in self.dict.dic.words:
             self.chars.update(w.stem)
         self.has2010 = "\u2010" in self.chars
-        self.splitre = re.compile(r"(?i)([^{}]+)".format("".join(sorted(self.chars))))
+        self.splitre = re.compile(r"(?i)([^{}]+)".format("".join(re.escape(c) for c in sorted(self.chars))))
 
     def get_hyphen_char(self):
         return "\u2010" if self.has2010 else "-"

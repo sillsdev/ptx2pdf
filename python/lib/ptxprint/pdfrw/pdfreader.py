@@ -653,7 +653,7 @@ class PdfReader(PdfDict):
 
                 self._parse_encrypt_info(source, password, trailer)
 
-            if source.is_stream:
+            if source.is_stream and trailer.object_streams is not None:   # None when built from another reader
                 self.load_stream_objects(trailer.object_streams)
 
             while source.xref_list:
@@ -684,7 +684,7 @@ class PdfReader(PdfDict):
             if source.is_stream:
                 for a in ('Root', 'Info', 'ID', 'Size', 'Encrypt', 'Version'):
                     v = getattr(trailer, a)
-                    setattr(self, a, v.copy() if sourceonly else v)
+                    setattr(self, a, v.copy() if sourceonly and hasattr(v, 'copy') else v)
             else:
                 self.update({k: (v.copy() if isinstance(v, PdfDict) else v) for k,v in trailer.items()})
 

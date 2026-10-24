@@ -1,5 +1,5 @@
 
-import re, os
+import re, os, io
 from ptxprint.usxutils import Sheets, typesFromMrk
 from ptxprint.font import FontRef
 from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path, saferelpath, asfloat
@@ -307,6 +307,8 @@ _fieldmap = {
 
 class StyleEditor:
 
+    identityKeys = ('name', 'description', 'endmarker', 'mrktype', 'styletype', 'texttype')
+
     def __init__(self, model, basepath=None, copy=False):
         self.model = model
         self.sheet = {}
@@ -315,7 +317,9 @@ class StyleEditor:
         self.reset(basepath=basepath)
 
     def copy(self):
-        res = self.__class__(self.model,copy=True)
+        # A plain data copy: a GtkStyleEditor's constructor wires up the UI (again), and its setval
+        # would write the copy's values into the live widgets.
+        res = StyleEditor(self.model, copy=True)
         res.sheet = Sheets(base=self.sheet)
         res.basesheet = Sheets(base=self.basesheet)
         res.marker = self.marker
@@ -418,6 +422,38 @@ class StyleEditor:
             del self.basesheet[mrk][key.lower()]
             self.model.changed()
 
+    def coverStyles(self):
+        ''' The user's own styles (in ptxprint.sty) that belong to the cover, e.g. cat:coverfront|esb '''
+        return [m for m in self.sheet if m.startswith("cat:cover")]
+
+    def removeCoverStyles(self):
+        ''' The Cover Wizard owns these: drop them all so none of an old cover's settings survives '''
+        mkrs = self.coverStyles()
+        for m in mkrs:
+            del self.sheet[m]
+        if len(mkrs):
+            self.model.changed()
+        return mkrs
+
+    def coverStyleText(self):
+        ''' The cover styles exactly as they are written to ptxprint.sty, so it comes out the same
+            before saving and after loading them again. Used to tell whether they have been changed. '''
+        out = io.StringIO()
+        self.output_diffile(out, sheet={m: self.sheet[m] for m in self.coverStyles()})
+        return out.getvalue()
+
+    def clearUserKeys(self, mrk, keys):
+        ''' Remove these keys from the user's own settings for a style. Unlike setval(..., None)
+            this never touches the underlying stylesheets. '''
+        sty = self.sheet.get(mrk, None)
+        if sty is None:
+            return
+        for k in keys:
+            if sty.pop(k.lower(), None) is not None:
+                self.model.changed()
+        if not len(sty):
+            del self.sheet[mrk]
+
     def haskey(self, mrk, key):
         if key.lower() in self.sheet.get(mrk, {}) or key.lower() in self.basesheet.get(mrk, {}):
             return True
@@ -425,6 +461,16 @@ class StyleEditor:
 
     def addMarker(self, mrk, name):
         self.sheet[mrk] = {" deletable": True, "name": name}
+
+    def copyMarkerValues(self, src, dest):
+        ''' Copy the formatting of style src (base and user sheets merged) into the user's style dest,
+            including settings that have no widget in the editor, such as Border and Padding.
+            What identifies the style (name, description, type, end marker) belongs to the new style
+            and is set from the dialog, so it is not copied. '''
+        for k, v in self.asStyle(src).items():
+            if k.startswith(" ") or k in self.identityKeys:
+                continue
+            self.setval(dest, k, v, mapin=False)
 
     def set_legacy_types(self, mrk):
         mtype = self.getval(mrk, 'mrktype', None)

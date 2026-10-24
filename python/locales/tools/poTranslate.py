@@ -137,7 +137,10 @@ class Job:
 
     # -- data ---------------------------------------------------------------
     def loadEntries(self, glade):
-        pot = parsePo(os.path.join(localesDir, 'ptxprint.pot'))
+        # --fromPo: take the string list from the language's current .po (Crowdin's newer string set) instead of
+        # the repo's ptxprint.pot, which can lag behind
+        pot = parsePo(os.path.join(self.poDir, 'ptxprint.po') if self.args.fromPo
+                      else os.path.join(localesDir, 'ptxprint.pot'))
         self.potHeader = pot[0] if pot and pot[0].msgid == '' else None
         self.potEntries = [e for e in pot if e.msgid != '']
         poPath = os.path.join(self.poDir, 'ptxprint.po')
@@ -471,6 +474,7 @@ def main():
     ap.add_argument('--out', help="output file (bare name goes in the language's LC_MESSAGES)")
     ap.add_argument('--onlyDone', action='store_true', help="write only translated entries (for samples)")
     ap.add_argument('--hints', action='store_true', help="show current .po translations to the model as hints")
+    ap.add_argument('--fromPo', action='store_true', help="use the string list of the current .po, not the .pot")
     ap.add_argument('--redo', action='store_true', help="ignore saved progress")
     ap.add_argument('--review', action='store_true', help="review existing translations (report only)")
     ap.add_argument('--applyReview', action='store_true', help="with --review: apply suggested changes to the output")
