@@ -9,6 +9,13 @@ model = "sonnet"            # alias or full model id; remove the line to use the
 extraArgs = []
 timeout = 900
 
+[providers.claudeOpus]
+type = "claudeCli"          # the stronger model, for lower-resource languages (Burmese, Malayalam)
+command = "claude"
+model = "opus"
+extraArgs = []
+timeout = 1200
+
 [providers.lmstudio]
 type = "openai"             # LM Studio local server (Developer tab -> Start Server)
 baseUrl = "http://localhost:1234/v1"
@@ -48,12 +55,15 @@ name = "Indonesian"
 reuseExisting = true       # keep existing translations; only fill gaps
 [languages.ko]
 name = "Korean"
+reuseExisting = true       # 2026-10-24: 63% of the Crowdin text graded good/ok: keep it, fill gaps, then --review --applyReview
 script = "[\\uAC00-\\uD7AF]"
 [languages.ml]
 name = "Malayalam"
+provider = "claudeOpus"    # 2026-10-24: 60% of the Crowdin text graded poor/wrong: redone from scratch
 script = "[\\u0D00-\\u0D7F]"
 [languages.my]
 name = "Burmese"           # the 'my' folder is Burmese (my_MM), not Malay
+provider = "claudeOpus"    # 2026-10-24: 77% of the Crowdin text graded poor/wrong: redone from scratch
 script = "[\\u1000-\\u109F]"
 [languages.pt]
 name = "Portuguese"
@@ -64,6 +74,7 @@ reuseExisting = true       # keep existing, fill gaps, then --review --applyRevi
 replace = [["ş", "ș"], ["ţ", "ț"], ["Ş", "Ș"], ["Ţ", "Ț"]]   # cedilla -> comma-below (also applied to kept entries)
 [languages.ru]
 name = "Russian"
+reuseExisting = true       # 2026-10-24: 56% of the Crowdin text graded good/ok: keep it, fill gaps, then --review --applyReview
 script = "[\\u0400-\\u04FF]"
 [languages.th]
 name = "Thai"

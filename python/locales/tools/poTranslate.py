@@ -462,6 +462,12 @@ def runReview(args, cfg, lang):
 
 
 def main():
+    # Progress lines quote strings in any script; a Windows console (cp1252) would otherwise stop the run
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding='utf-8', errors='replace')
+        except (AttributeError, ValueError):
+            pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--lang', action='append', required=True, help="language code (repeatable) or 'all'")
     ap.add_argument('--config', default=os.path.join(here, 'localize.toml'))

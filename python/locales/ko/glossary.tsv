@@ -1,0 +1,25 @@
+# English<TAB>Korean<TAB>note (optional). Hand-written; overrides lexicon.tsv. Starting set, to be extended after native review.
+Book	책	Bible book (권 when counting)
+Chapter	장
+Verse	절	Bible verse
+Cross-reference	관주	Bible cross-reference
+Cross-references	관주
+Footnote	각주
+Diglot	이중 언어	two languages side by side (NOT a disc or digit)
+Front matter	앞부분	title page, preface, contents etc. before the main text (NOT the main content)
+Back matter	뒷부분	appendices, glossary, maps etc. after the main text
+Strong's	스트롱	a person's name, as in Strong's numbers (스트롱 번호)
+Border	테두리
+Thumb tab	색인 탭	index tab on the page edge (NOT a thumbnail)
+Thumb tabs	색인 탭
+Spine	책등
+Gutter	제본 여백
+Bleed	재단 여유
+Header	머리글
+Footer	바닥글
+Odd	홀수	odd-numbered (pages)
+Even	짝수	even-numbered (pages)
+Column	단	a column of text on the page (NOT a colour)
+Font	글꼴
+Margin	여백
+Underline	밑줄

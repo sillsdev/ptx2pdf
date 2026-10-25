@@ -1,0 +1,24 @@
+# English<TAB>Russian<TAB>note (optional). Hand-written; overrides lexicon.tsv. Starting set, to be extended after native review.
+Book	книга	Bible book
+Chapter	глава
+Verse	стих	Bible verse
+Footnote	сноска
+Cross-reference	параллельное место	Bible cross-reference
+Cross-references	параллельные места
+Diglot	двуязычное издание	two languages side by side (NOT a digital disc)
+Front matter	предтекстовая часть	title page, preface, contents etc. before the main text
+Back matter	послетекстовая часть	appendices, glossary, maps etc. after the main text
+Strong's	Стронга	a person's name, as in номера Стронга (Strong's numbers)
+Border	рамка
+Thumb tab	указатель на обрезе	index tab printed on the page edge (NOT a thumbnail)
+Thumb tabs	указатели на обрезе
+Spine	корешок
+Gutter	корешковое поле
+Bleed	вылет под обрез
+Header	верхний колонтитул
+Footer	нижний колонтитул
+Odd	нечётные	odd-numbered (pages), NOT strange
+Even	чётные	even-numbered (pages)
+Column	колонка
+Margin	поле
+Underline	подчёркивание

@@ -1,0 +1,21 @@
+# English<TAB>Burmese<TAB>note (optional). Hand-written; starting set, to be extended after native review.
+Bible	သမ္မာကျမ်းစာ
+Book	ကျမ်း	Bible book
+Chapter	အခန်းကြီး	Bible chapter (Judson)
+Verse	အခန်းငယ်	Bible verse (Judson)
+Footnote	အောက်ခြေမှတ်စု
+Cross-reference	ကိုးကားချက်
+Cross-references	ကိုးကားချက်များ
+Diglot	နှစ်ဘာသာ	two languages side by side
+Page	စာမျက်နှာ
+Font	ဖောင့်
+Border	ဘောင်
+Header	ခေါင်းစီး
+Footer	အောက်ခြေစာ
+Column	ကော်လံ
+Spine	စာအုပ်ကျော	the bound edge of the book
+Thumb tab	အညွှန်းတက်ဘ်	index tab printed on the page edge (NOT a thumbnail)
+Thumb tabs	အညွှန်းတက်ဘ်များ
+Odd	မ	odd-numbered (pages)
+Even	စုံ	even-numbered (pages)
+Settings	ဆက်တင်များ
