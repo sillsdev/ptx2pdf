@@ -488,7 +488,9 @@ if sys.platform in ("win32", "cygwin"):
         shutil.copytree(f"{srcdir}/{a}", f"dist/ptxprint/share/{a}", dirs_exist_ok=True)
     process_icons(icons, f"{srcdir}/icons", "dist/PTXprint/share/icons")
     shutil.copy(f"{srcdir}/icons/Adwaita/index.theme", "dist/PTXprint/share/icons/Adwaita/index.theme")
-    innosetup_path = Path(os.getenv("INNOSETUP_PATH", "C:/Program Files (x86)/Inno Setup 6"))
+    innosetup_path_raw = os.getenv("INNOSETUP_PATH", "C:/Program Files (x86)/Inno Setup 6")
+    innosetup_path = Path(innosetup_path_raw.strip('"'))
+    print(repr(innosetup_path), innosetup_path.exists(), innosetup_path.is_file())
     run([innosetup_path / "ISCC.exe", "InnoSetupPTXprint.iss"])
 
 elif sys.platform == "darwin":
