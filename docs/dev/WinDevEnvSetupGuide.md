@@ -15,7 +15,7 @@ The key issue here is NOT to have an installation of python under MSYS2, but to 
 
 4. Install the necessary packages:
 ```
-pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-pip mingw-w64-x86_64-python-setuptools mingw-w64-x86_64-gtksourceview3 mingw-w64-x86_64-python-pillow mingw-w64-x86_64-python-fonttools mingw-w64-x86_64-python-regex mingw-w64-x86_64-python-cairo mingw-w64-x86_64-python-gobject mingw-w64-x86_64-gtk3 mingw-w64-x86_64-glib2 mingw-w64-x86_64-libffi mingw-w64-x86_64-gcc mingw-w64-x86_64-glade mingw-w64-x86_64-python-pyopenssl mingw-w64-x86_64-poppler mingw-w64-x86_64-python-numpy mingw-w64-x86_64-adwaita-icon-theme mingw-w64-x86_64-python-lxml mingw-w64-x86_64-python-psutil
+pacman -S mingw-ucrt64-x86_64-python mingw-ucrt64-x86_64-python-pip mingw-ucrt64-x86_64-python-setuptools mingw-ucrt64-x86_64-gtksourceview3 mingw-ucrt64-x86_64-python-pillow mingw-ucrt64-x86_64-python-fonttools mingw-ucrt64-x86_64-python-regex mingw-ucrt64-x86_64-python-cairo mingw-ucrt64-x86_64-python-gobject mingw-ucrt64-x86_64-gtk3 mingw-ucrt64-x86_64-glib2 mingw-ucrt64-x86_64-libffi mingw-ucrt64-x86_64-gcc mingw-ucrt64-x86_64-glade mingw-ucrt64-x86_64-python-pyopenssl mingw-ucrt64-x86_64-poppler mingw-ucrt64-x86_64-python-numpy mingw-ucrt64-x86_64-adwaita-icon-theme mingw-ucrt64-x86_64-python-lxml mingw-ucrt64-x86_64-python-psutil
 ```
 
 5. Install ptxprint and its dependencies not yet covered

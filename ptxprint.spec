@@ -314,7 +314,7 @@ icons.update(parseglade("python/lib/ptxprint/ptxprint.glade"))
 if sys.platform in ("win32", "cygwin"):
     for a in ("ucrt64", "mingw64"):
         msys2def = fr"C:\msys64\{a}"
-        if os.patch.exists(msys2def):
+        if os.path.exists(msys2def):
             break
     MSYS2 = Path(os.environ.get("MSYS2_DIR", msys2def))
     print(f"{MSYS2} = '{os.environ.get('MSYS2_DIR')}'")
