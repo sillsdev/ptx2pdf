@@ -32,7 +32,7 @@ Check these things before you open PTXprint:
 2. The main PTXprint window opens. It has:
    * **tabs** across the top (**Basic**, **Layout**, **Fonts+Script** and others). Each tab holds
      one group of settings;
-   * the **☰** button at the top-right, for the main menu;
+   * the **☰** button at the top-left, for the main menu;
    * a **bar at the bottom** with the **Save**, **Print (Make PDF)** and **Quit** buttons.
 
 The first time PTXprint starts, it uses the **Regular** view level, which shows most tabs and

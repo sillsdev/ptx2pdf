@@ -7,7 +7,7 @@ This chapter gives short, step-by-step answers to the questions people ask most 
 For every task:
 
 * Most changes appear in the PDF only after you click **Print (Make PDF)** again.
-* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **☰** (top-right) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
+* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **☰** (top-left) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
 * Click **Save** before you change to another configuration. PTXprint does not save the current configuration when you choose another one.
 * "pt" means point. 1 pt is about 0.35 mm.
 
@@ -1125,7 +1125,7 @@ See also: Main window.
 
 ### How do I see more (or fewer) settings?
 
-Click **☰** (top-right) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
+Click **☰** (top-left) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
 
 Hidden settings still work and still change the PDF.
 

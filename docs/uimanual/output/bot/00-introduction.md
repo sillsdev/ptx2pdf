@@ -104,7 +104,7 @@ PTXprint has hundreds of settings, but most people need only a few. So PTXprint 
 settings you do not need. This is the **view level**. There are four: **Mini** (fewest settings),
 **Basic**, **Regular** and **Full** (every setting).
 
-To change the view level, click the **☰** button at the top-right of the window, point to
+To change the view level, click the **☰** button at the top-left of the window, point to
 **View Level**, and choose a level.
 
 A hidden setting still works. It keeps its value and still changes the PDF. So if the PDF does

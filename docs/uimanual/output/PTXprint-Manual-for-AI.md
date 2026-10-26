@@ -68,7 +68,7 @@ Generated 2026-10-26 from the PTXprint source code and the explanations in docs/
    - 3.7 The ☰ main menu
    - 3.8 Common tasks
    - 3.9 Common problems
-   - 3.10 Settings reference (Main menu (top-right ☰ button), Main window)
+   - 3.10 Settings reference (Main menu (top-left ☰ button), Main window)
 4. **Basic tab**
    - 4.1 What this tab is for
    - 4.2 Project
@@ -434,7 +434,7 @@ PTXprint has hundreds of settings, but most people need only a few. So PTXprint 
 settings you do not need. This is the **view level**. There are four: **Mini** (fewest settings),
 **Basic**, **Regular** and **Full** (every setting).
 
-To change the view level, click the **☰** button at the top-right of the window, point to
+To change the view level, click the **☰** button at the top-left of the window, point to
 **View Level**, and choose a level.
 
 A hidden setting still works. It keeps its value and still changes the PDF. So if the PDF does
@@ -478,7 +478,7 @@ Check these things before you open PTXprint:
 2. The main PTXprint window opens. It has:
    * **tabs** across the top (**Basic**, **Layout**, **Fonts+Script** and others). Each tab holds
      one group of settings;
-   * the **☰** button at the top-right, for the main menu;
+   * the **☰** button at the top-left, for the main menu;
    * a **bar at the bottom** with the **Save**, **Print (Make PDF)** and **Quit** buttons.
 
 The first time PTXprint starts, it uses the **Regular** view level, which shows most tabs and
@@ -691,7 +691,7 @@ different name** in the PDF Preview window.
 The main window is where you do all your work in PTXprint. It has three parts:
 
 * **The tabs** across the top (**Basic**, **Layout**, **Fonts+Script**, **Body** and so on). Each tab holds one group of settings.
-* **The ☰ main menu** button at the top-right corner, next to the tabs. It holds settings about PTXprint itself, not about your book: how to show the PDF, the **View Level**, the interface **Language**, and links to **Donate** and **Give Feedback**.
+* **The ☰ main menu** button at the top-left corner, before the first tab. It holds settings about PTXprint itself, not about your book: how to show the PDF, the **View Level**, the interface **Language**, and links to **Donate** and **Give Feedback**.
 * **The bar at the bottom of the window**, with the **Search for settings** box, the button to open the output folder, the **Quick Run** and **Layout Only** check boxes, and the **Save**, **Print (Make PDF)** and **Quit** buttons.
 
 This chapter also explains three ideas that you need everywhere in PTXprint: **configurations**, **view levels**, and how PTXprint **saves** your settings.
@@ -728,7 +728,7 @@ PTXprint has hundreds of settings. Most people need only a few. So PTXprint can 
 | **Regular** | Adds the **Diglot**, **Tabs+Borders**, **Styles**, **Advanced** and **View+Edit** tabs, and many more settings on all tabs. | Most typesetters. PTXprint uses this level the first time it starts. |
 | **Full** | Shows every setting, including the **Publications** and **Printers** tabs. | Experienced users who need special settings. |
 
-**How to change the view level:** click the **☰** button (top-right), point to **View Level**, and click **Mini View**, **Basic View**, **Regular View** or **Full View**. The current level is shown in blue and bold in that list. The change happens at once, without a restart.
+**How to change the view level:** click the **☰** button (top-left), point to **View Level**, and click **Mini View**, **Basic View**, **Regular View** or **Full View**. The current level is shown in blue and bold in that list. The change happens at once, without a restart.
 
 **Hidden settings still work.** A lower view level only *hides* settings. A hidden setting keeps its value, is still saved with the configuration, and still changes the PDF. For example, if you turned on pictures or a diglot in the **Regular** view and then change to the **Mini** view, the pictures or the diglot are still in the PDF, though you cannot see the tab. If the PDF looks different from what you expect, change to the **Full** view and check the settings again.
 
@@ -762,7 +762,7 @@ From left to right, the bar at the bottom of the window has:
 
 Above the bar, a **status line** sometimes shows a message from PTXprint (for example "No books to print"). Click **Dismiss** to hide it.
 
-When a newer version of PTXprint is available, a **Check for updates...** button can appear at the top-right, next to the ☰ button. (PTXprint checks at most once a day, only on Windows, and only if Internet use is allowed on the **Advanced** tab.)
+When a newer version of PTXprint is available, a **Check for updates...** button can appear at the top-left, just to the right of the ☰ button. (PTXprint checks at most once a day, only on Windows, and only if Internet use is allowed on the **Advanced** tab.)
 
 ## 3.7 The ☰ main menu
 
@@ -862,7 +862,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 
 ## 3.10 Settings reference
 
-### Main menu (top-right ☰ button)
+### Main menu (top-left ☰ button)
 
 #### Show PDF
 
@@ -1074,7 +1074,7 @@ This tab is normally not shown in the main window.
 
 Menu button · Mini+ · `btn_menu`
 
-The **☰** button at the top-right of the window. It opens the main menu (**Show PDF**, **View Level**, **Language**, **Donate**, **Give Feedback**). Always visible.
+The **☰** button at the top-left of the window. It opens the main menu (**Show PDF**, **View Level**, **Language**, **Donate**, **Give Feedback**). Always visible.
 
 #### Check for updates...
 
@@ -15826,7 +15826,7 @@ This chapter gives short, step-by-step answers to the questions people ask most 
 For every task:
 
 * Most changes appear in the PDF only after you click **Print (Make PDF)** again.
-* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **☰** (top-right) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
+* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **☰** (top-left) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
 * Click **Save** before you change to another configuration. PTXprint does not save the current configuration when you choose another one.
 * "pt" means point. 1 pt is about 0.35 mm.
 
@@ -16944,7 +16944,7 @@ See also: Main window.
 
 ### How do I see more (or fewer) settings?
 
-Click **☰** (top-right) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
+Click **☰** (top-left) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
 
 Hidden settings still work and still change the PDF.
 

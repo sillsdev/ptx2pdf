@@ -48,7 +48,7 @@ controlClasses = {
 dialogTitles = {
     "mainAppWindow": "Main window",
     "mainapp_win": "Main window",
-    "menu_main": "Main menu (top-right ☰ button)",
+    "menu_main": "Main menu (top-left ☰ button)",
     "pop_locateIssues": "PDF Preview > Issue types popup",
     "dlg_about": "About dialog",
 }

@@ -11,7 +11,7 @@ chapters = [
     ("00-introduction", "About this manual", []),
     ("01-getting-started", "Getting started with PTXprint", []),
     ("02-main-window", "The main window, menu and view levels",
-        ["Main window", "Main menu (top-right ☰ button)"]),
+        ["Main window", "Main menu (top-left ☰ button)"]),
     ("03-basic", "Basic tab",
         ["Basic tab", "Save Current Configuration As... (dialog)", "Lock/Unlock Configuration (dialog)",
          "Copy Configuration To... (dialog)", "Select Books To Export to PDF (dialog)",
