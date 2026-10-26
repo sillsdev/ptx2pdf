@@ -16,7 +16,7 @@ jobs:
       id: msys2
       uses: msys2/setup-msys2@v2
       with:
-        msystem: MINGW64
+        msystem: UCRT64
         update: true
         release: false
         cache: true
