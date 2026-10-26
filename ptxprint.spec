@@ -309,11 +309,15 @@ icons = set("""applications-system-symbolic changes-allow changes-prevent docume
 icons.update([icon_mappings["gtk-"+i] for i in \
         ("cdrom", "harddisk", "network", "directory", "floppy", "file", "home", "find")])
 icons.update(parseglade("python/lib/ptxprint/ptxprint.glade"))
-MSYS2 = Path(os.environ.get("MSYS2_DIR", r'C:\msys64\mingw64'))
-print(f"{MSYS2} = '{os.environ.get('MSYS2_DIR')}'")
 # add all the library dependency dlls (not python ones, but the dlls they typically call)
 # including GTK, etc.
 if sys.platform in ("win32", "cygwin"):
+    for a in ("ucrt64", "mingw64"):
+        msys2def = fr"C:\msys64\{a}"
+        if os.patch.exists(msys2def):
+            break
+    MSYS2 = Path(os.environ.get("MSYS2_DIR", msys2def))
+    print(f"{MSYS2} = '{os.environ.get('MSYS2_DIR')}'")
     mingwb = MSYS2 / 'bin'
     binaries = [(f'{mingwb}\\{x}', 'ptxprint') for x in ('gspawn-win64-helper.exe', 'broadwayd.exe')] \
               + [(f'{mingwb}\\{x}.dll', '.') for x in

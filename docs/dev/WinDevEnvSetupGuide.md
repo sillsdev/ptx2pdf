@@ -11,7 +11,7 @@ Instead, manually open the **MSYS2 MinGW x64** console app and then proceed with
 pacman -Syu
 ```
 Don't run any of the other steps, and DON'T run this (as suggested): pacman -S --needed base-devel mingw-w64-x86_64-toolchain
-The key issue here is NOT to have an installation of python under MSYS2, but to only have python under MINGW64 (otherwise nothing works).
+The key issue here is NOT to have an installation of python under MSYS2, but to only have python under UCRT64 (or MINGW64 as was) otherwise nothing works.
 
 4. Install the necessary packages:
 ```
