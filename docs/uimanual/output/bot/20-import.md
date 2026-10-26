@@ -1,98 +1,82 @@
-# Importing settings
+# 21. Importing settings
 
-## What this dialog is for
+## 21.1 What this dialog is for
 
 The **Import Settings** dialog copies settings from somewhere else into a configuration. Use it when:
 
-* you have a PDF that PTXprint made earlier, and you want the same layout again (for example, the settings were lost, or the PDF came from another person),
+* you have a PDF that PTXprint made earlier, and want the same layout again (for example the settings were lost, or the PDF came from another person),
 * someone sent you a PTXprint ZIP archive,
-* another project or configuration has settings that you want to reuse – all of them, or only some groups (for example only the pictures, or only the header and footer).
+* another project or configuration has settings you want to reuse – all of them, or only some groups (for example only the pictures, or only the header and footer).
 
-You can also use it to **extract** the settings from a PDF or ZIP into a normal folder, so that you can look at them.
+You can also **extract** the settings from a PDF or ZIP into a normal folder, to look at them.
 
-To open the dialog: on the **Basic** tab, in the **Layout Configuration** area, click **Import Settings...**. (This button is not shown in the **Mini** view.)
+To open it: on the **Basic** tab, in the **Layout Configuration** area, click **Import Settings...**. (Not shown in the **Mini** view.)
 
 The dialog has three parts: **Source of Settings** (where the settings come from), **Target** (where they go), and a row of **category tabs** (what to bring in).
 
-## Source of Settings
+## 21.2 Source of Settings
 
 Choose one of two sources:
 
 * **PDF file (with embedded settings) or ZIP archive file** – click **Select...** and choose the file.
-  * A **PDF** only works if it was made by PTXprint with **Include Config Settings Within PDF** turned on (on the **Finishing** tab). Otherwise PTXprint says that it cannot find any settings in the file.
-  * A **ZIP archive** is the kind of file that PTXprint makes with **Create Archive...** on the **Help** tab.
+  * A **PDF** only works if PTXprint made it with **Include Config Settings Within PDF** turned on (on the **Finishing** tab). Otherwise PTXprint says it cannot find any settings in the file.
+  * A **ZIP archive** is the kind of file made with **Create Archive...** on the **Help** tab.
 * **A Previously Saved Configuration** – choose the **Project** and then the **Configuration** to copy from. Settings are read from the saved files, so if the source is the configuration that is open now, click **Save** first.
 
-## Target
+## 21.3 Target
 
 Choose where the settings go:
 
-* **A New/Existing Project and/or Configuration** – this is the usual choice. PTXprint fills in the current project and configuration. You can choose another existing project. You can choose another configuration, or type a **new** configuration name. A new configuration starts with the PTXprint default settings, and then the imported settings are added.
-* **An External Folder of Settings** – click **Select...** and choose a folder. PTXprint copies **all** the settings files from the source into that folder. Nothing in your projects is changed. When this target is chosen, **Everything** is turned on and the category tabs are greyed out.
+* **A New/Existing Project and/or Configuration** – the usual choice. The current project and configuration are filled in. You can choose another existing project, and another configuration, or type a **new** configuration name. A new configuration starts with the PTXprint defaults, and then the imported settings are added. So for a new name, PTXprint ticks **Everything** and greys out the category boxes. If you then choose an existing configuration again, **Everything** is unticked again (unless you ticked it yourself).
+* **An External Folder of Settings** – click **Select...** and choose a folder. PTXprint copies **all** the settings files from the source into that folder. Nothing in your projects is changed. **Everything** is turned on and the category tabs are greyed out.
 
-The **OK** button stays greyed out until the choices are complete: a file or a source configuration, a target folder or a target configuration, and at least one category ticked. It is also greyed out when the source and the target are the same configuration.
+**OK** stays greyed out until the choices are complete: a file or source configuration, a target folder or target configuration, and at least one category ticked. It is also greyed out when the source and target are the same configuration, and when the target **Project** name you typed is not one of your projects.
 
-## What to import: the category tabs
+## 21.4 What to import: the category tabs
 
-Each tab has a check box in its label. Tick the box to import that group. Click the tab to see its options.
+Each tab has a check box in its label: tick it to import that group. Click the tab to see its options.
 
 * **Pictures** – the picture settings and the picture list.
 * **Layout** – the page and column layout.
 * **Fonts+Script** – fonts and writing-system settings.
-* **Styles** – the style settings from the **Styles** tab.
-* **Other** – a list of other groups that you choose one by one.
-* **Everything** – all settings. (Only shown in the **Default** and **Full** views.)
+* **Styles** – the settings from the **Styles** tab.
+* **Other** – other groups that you choose one by one.
+* **Everything** – all settings. (Only shown in the **Regular** and **Full** views.)
 
-When **Everything** is ticked, PTXprint imports everything, no matter which other boxes are ticked or not ticked. Untick **Everything** if you want only some groups.
+When **Everything** is ticked, everything is imported, whatever the other boxes say. Untick **Everything** to import only some groups.
 
 ### What each category brings in
 
 | Category | What is imported |
 |---|---|
 | **Pictures** | The general settings of the **Pictures** tab (include pictures, picture folder, resolution, captions shown, placeholders…) and the picture list. With **Import Entire PicList "as is"** the whole list is replaced. With **Import Elements of PicList** only the parts you tick are copied for each picture. |
-| **Layout** | Page size, margins (top, bottom, side), mirror pages and binding gutter, number of columns and column gutter, vertical rule between columns, line spacing, note lines, margin notes, and related settings. It does **not** bring the font size (that is in **Fonts+Script**) or the header and footer (that is in **Other** › **Header+Footer settings**). |
-| **Fonts+Script** | The main fonts (regular, bold, italic, bold italic, extra), the font size, the fallback font, text direction, script and line-breaking settings, word and letter spacing, coloured text, and script-specific options. Fonts that are set inside individual styles are not changed. |
-| **Styles** | The style settings from the source (the **Styles** tab). Normally only styles that you have **not** changed in the target are updated. Tick **Override ALL Style Settings** to update all styles. |
-| **Other** | Only the groups that you tick on the **Other** tab (see below). |
+| **Layout** | Page size, margins (top, bottom, side), mirror pages and binding gutter, number of columns and column gutter, vertical rule between columns, line spacing, note lines, margin notes, and related settings. **Not** the fonts or font size (in **Fonts+Script**) or the header and footer (in **Other** › **Header+Footer settings**). |
+| **Fonts+Script** | The main fonts (regular, bold, italic, bold italic, extra), the font size, the fallback font, text direction, script and line-breaking settings, word and letter spacing, coloured text, and script-specific options. Also the fonts set inside individual styles (for styles that the target already has). Styles whose font you changed in the target keep it, unless **Override ALL Style Settings** is ticked. |
+| **Styles** | The style settings from the source (the **Styles** tab). Normally only styles that you have **not** changed in the target are updated. **Override ALL Style Settings** updates all styles. The fonts inside styles come with **Fonts+Script**, not with **Styles**. |
+| **Other** | Only the groups that you tick on the **Other** tab (see the control notes below). |
 | **Everything** | All settings in the source configuration, including the book list, copyright text, diglot and Strong's settings, the whole picture list, styles, front matter, cover, and the special files from the **Advanced** tab. |
-
-### The Other tab
-
-* **Body Tab settings** – the settings on the **Body** tab, including hyphenation, chapter and verse numbers, section headings, and glossary markup.
-* **Notes+Refs settings** – footnotes, cross-references and study notes.
-* **Header+Footer settings** – the content and position of the header and footer.
-* **Thumb Tabs settings** – the thumb tab settings from the **Tabs+Borders** tab.
-* **Advanced settings** – the options on the **Advanced** tab, and the special files that go with them (changes file, extra TeX files, extra style file, and a custom script if the source uses one).
-* **Cover settings** – the cover settings, cover styles and cover pages.
-* **Front +Back Matter** – most settings of the **Peripherals** tab (front and back PDFs, table of contents, front matter, section introductions), the front matter text, and any variables that the target does not have yet.
-* **Overwrite Front Matter** – (only available when **Front +Back Matter** or **Cover settings** is ticked) replace the existing front matter in the target, not only add missing parts.
-* **Custom Script** – the custom script processing set on the **Advanced** tab. Greyed out when the source is a PDF, because a PDF does not contain the script.
-* **Borders + Decorations** – page borders, section-heading decorations, end-of-book and verse-number decorations. (Default and Full views.)
-* **Variables + Meta Data** – the variables from the **Peripherals** tab and other information about the publication. (Default and Full views.)
-* **Texpert Hacks** – the expert TeX settings on the **Advanced** tab. (Default and Full views.)
-* **Finishing settings** – everything on the **Finishing** tab: PDF output format, watermark, crop marks, grid, pages per sheet, compare-PDF settings and similar. (Default and Full views.)
 
 ### What happens when you click OK
 
 1. PTXprint reads the settings from the source.
-2. It changes only the groups you ticked, in the target configuration.
+2. It changes only the ticked groups in the target configuration.
 3. It **saves** the target configuration at once.
 4. It opens the target project and configuration, and shows a message such as "Imported Settings into: ABC::NT_A5".
 
 There is no Undo. If you are not sure, import into a **new** configuration name first, and check the result there.
 
-## RESET
+## 21.5 RESET
 
-The **RESET** button at the bottom of the dialog sets all settings of the **current** configuration back to the PTXprint defaults. It does not reset the style settings. The dialog stays open, and nothing is saved until you click **Save** or **Print (Make PDF)** (or until an import saves the configuration). Use it when you want the target to have only the imported settings, for example before you import styles.
+**RESET** at the bottom of the dialog sets all settings of the **current** configuration back to the PTXprint defaults, at once and without asking. It does not reset the style settings. The dialog stays open, and nothing is saved until you click **Save** or **Print (Make PDF)** (or until an import saves the configuration). Use it when you want the target to have only the imported settings, for example before you import styles.
 
-## Common tasks
+## 21.6 Common tasks
 
 ### Get back the settings that were used for a PDF
 
 1. On the **Basic** tab, click **Import Settings...**.
 2. Click **PDF file (with embedded settings) or ZIP archive file**, then **Select...**, and choose the PDF.
 3. Under **Target**, click **A New/Existing Project and/or Configuration**. In **Configuration**, type a new name, for example `FromPDF`.
-4. Tick **Everything** (change to the **Default** view if you cannot see it).
+4. Check that **Everything** is ticked. (For a new name, PTXprint ticks it for you. Change to the **Regular** view if you cannot see it.)
 5. Click **OK**. PTXprint opens the new configuration with the settings from the PDF.
 
 ### Copy only the pictures from another configuration
@@ -101,7 +85,7 @@ The **RESET** button at the bottom of the dialog sets all settings of the **curr
 2. Click **A Previously Saved Configuration** and choose the source **Project** and **Configuration**.
 3. Check that the **Target** is the configuration you want.
 4. Untick **Everything**, **Layout**, **Fonts+Script**, **Styles** and **Other**. Tick **Pictures**.
-5. On the **Pictures** tab, choose **Import Entire PicList "as is"**, or choose **Import Elements of PicList** and tick only what you want (for example **Size, Position, Mirror, Rotation settings**).
+5. On the **Pictures** tab, choose **Import Entire PicList "as is"**, or **Import Elements of PicList** and tick only what you want (for example **Size, Position, Mirror, Rotation settings**).
 6. Click **OK**.
 
 ### Copy the header and footer from another configuration
@@ -124,7 +108,7 @@ The **RESET** button at the bottom of the dialog sets all settings of the **curr
 3. Choose the source, untick **Everything**, and tick **Styles** (and other groups you need).
 4. Click **OK**.
 
-## Common problems
+## 21.7 Common problems
 
 ### "Cannot find any settings to import from the selected file"
 
@@ -136,42 +120,40 @@ The **RESET** button at the bottom of the dialog sets all settings of the **curr
 
 ### Everything was imported, but I ticked only one category
 
-**Cause:** **Everything** was still ticked. In the **Basic** view the **Everything** tab is hidden, but it is still ticked (it is ticked by default). **What to do:** Change to the **Default** view (**☰** › **View Level** › **Default View**) and untick **Everything**.
+**Cause:** **Everything** was still ticked. In the **Basic** view the **Everything** tab is hidden but still ticked (it is ticked by default). Also, when the target is a **new** configuration or an external folder, PTXprint ticks **Everything** itself and you cannot untick it. **What to do:** Import into an existing configuration. Change to the **Regular** view (**☰** › **View Level** › **Regular View**) and untick **Everything**.
 
 ### The styles did not change
 
-**Cause:** Without **Override ALL Style Settings**, PTXprint only updates styles that are still unchanged in the target. **What to do:** Tick **Override ALL Style Settings**, or click **RESET** before you import.
+**Cause:** Without **Override ALL Style Settings**, only styles still unchanged in the target are updated. **What to do:** Tick **Override ALL Style Settings**, or click **RESET** before you import.
 
 ### The font size did not change when I imported Layout
 
-**Cause:** The font size belongs to **Fonts+Script**, not **Layout**. **What to do:** Tick **Fonts+Script** too.
+**Cause:** The font size belongs to **Fonts+Script**. **What to do:** Tick **Fonts+Script** too.
 
 ### The header and footer did not change when I imported Layout
 
-**Cause:** The header and footer belong to **Other** › **Header+Footer settings**. **What to do:** Tick **Other** and **Header+Footer settings**.
+**Cause:** They belong to **Other** › **Header+Footer settings**. **What to do:** Tick **Other** and **Header+Footer settings**.
 
 ### Custom Script is greyed out
 
-**Cause:** The source is a PDF. A PDF does not contain the custom script. **What to do:** Import from a ZIP archive or a saved configuration instead.
+**Cause:** The source is a PDF, which does not contain the custom script. **What to do:** Import from a ZIP archive or a saved configuration instead.
 
-### Some options on the Other tab seem to have no effect
+### The fonts in some styles did not change
 
-**Cause:** In the current version, **Thumb Tabs settings**, **Overwrite Front Matter**, **Variables + Meta Data** and **Custom Script** may not bring in their settings when they are used on their own. **What to do:** After importing, check the **Tabs+Borders**, **Peripherals** and **Advanced** tabs. If something is missing, import into a new configuration with **Everything** ticked, or set those few settings by hand.
+**Cause:** Fonts inside styles come with **Fonts+Script** (not **Styles**), and styles whose font you changed in the target keep their font. **What to do:** Tick **Fonts+Script**. To replace the fonts in all styles, also tick **Override ALL Style Settings**.
 
-## Settings reference: Importing settings
+### The category boxes are greyed out and Everything is ticked
 
-Every control in this part of PTXprint is listed below, grouped by where it appears.
+**Cause:** The target is a configuration that does not exist yet (you typed a new name), or an external folder. A new configuration starts from the PTXprint defaults, so everything is imported. **What to do:** To import only some groups, choose an existing configuration as the target.
+
+## 21.8 Settings reference
 
 ### Import Settings... (dialog)
 
 #### RESET
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Button
-- **Description:** Reset the current Configuration's UI settings
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Basic+ · `btn_resetConfig`  
+Also: Reset the current Configuration's UI settings
 
 > Warning! This will reset ALL the UI settings for the CURRENT configuration to their default values.
 >
@@ -179,667 +161,378 @@ Every control in this part of PTXprint is listed below, grouped by where it appe
 >
 > The reset is not saved until you next save, print, or import with OK.
 
-**Explanation:**
-
-Sets every setting of the configuration that is open now back to the PTXprint defaults, at once and without asking. Style settings are not reset. The change is not saved until you click **Save**, **Print (Make PDF)**, or **OK** to import.
-
-*(Internal ID: `btn_resetConfig`)*
+Resets at once and without asking. See "RESET" in this chapter.
 
 #### OK
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Button
-- **View level:** Basic, Default and Full views
+Button · Basic+ · `btn_importSettingsOK`
 
-**Explanation:**
-
-Imports the ticked groups into the target, saves the target configuration, and opens it. With an external folder as target, it copies the settings files into the folder instead. Greyed out until the choices are complete. Shortcut: **Alt+Enter**.
-
-*(Internal ID: `btn_importSettingsOK`)*
+Imports the ticked groups into the target, saves it, and opens it. With an external folder as target, it copies the settings files there instead. Greyed out until the choices are complete. Shortcut: **Alt+Enter**.
 
 #### Cancel
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Button
-- **View level:** Basic, Default and Full views
+Button · Basic+ · `btn_importCancel`
 
-**Explanation:**
-
-Closes the dialog without importing. (Changes made with **RESET** stay on the screen.) Shortcut: **Ctrl+W**.
-
-*(Internal ID: `btn_importCancel`)*
+Closes without importing. (Changes made with **RESET** stay on the screen.) Shortcut: **Ctrl+W**.
 
 #### Pictures
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Checkbox (ticked by default)
-- **Description:** Import Picture Settings
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Everything” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Basic+ · `c_impPictures`  
+Also: Import Picture Settings
 
 > Import the picture settings and the picture list. Use the Pictures tab of this dialog to choose how the picture list is combined.
 
-**Explanation:**
-
-Imports the general picture settings (from the **Pictures** tab) and the picture list. The options on the **Pictures** tab of this dialog control how the picture list is combined. When you tick or untick this box, the **Pictures** tab of the dialog opens.
-
-*(Internal ID: `c_impPictures`)*
+Ticking or unticking it opens the **Pictures** tab of the dialog.
 
 #### Layout
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Checkbox (ticked by default)
-- **Description:** Import Layout Settings
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Everything” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Basic+ · `c_impLayout`  
+Also: Import Layout Settings
 
 > Import page size, margins, columns, line spacing and related settings.
 
-**Explanation:**
-
-Imports the page layout: page size, margins, gutters, columns, line spacing and similar. It does not import font size, fonts, or the header and footer. The text on the **Layout** tab of the dialog also mentions the header and footer, but they are imported with **Other** › **Header+Footer settings**.
-
-*(Internal ID: `c_impLayout`)*
+See the table in "What each category brings in". The text on the dialog's **Layout** tab also mentions the header and footer, but they are imported with **Other** › **Header+Footer settings**.
 
 #### Fonts+Script
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Checkbox (ticked by default)
-- **Description:** Import Fonts and Script Settings
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Everything” is selected
+Checkbox, on · Basic+ · `c_impFontsScript`  
+Also: Import Fonts and Script Settings
 
-**Explanation:**
+> Import the font and script settings (Fonts+Scripts tab), including fonts set within individual styles.
 
-Imports the main fonts, the font size, and the writing-system settings (text direction, script, line breaking, spacing, fallback font, coloured text). Fonts that are set inside individual styles are not changed. Hyphenation settings are imported with **Other** › **Body Tab settings**, not here.
-
-*(Internal ID: `c_impFontsScript`)*
+Imports fonts inside styles (font name and font features) even when **Styles** is not ticked. Hyphenation settings come with **Other** › **Body Tab settings**, not here.
 
 #### Styles
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Checkbox (ticked by default)
-- **Description:** Import Styles Settings
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Everything” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Basic+ · `c_impStyles`  
+Also: Import Styles Settings
 
 > Import the style settings (Styles tab), merged into the target configuration.
 
-**Explanation:**
-
-Imports the style settings (the **Styles** tab) by merging them into the target. Only styles that are unchanged in the target are updated, unless **Override ALL Style Settings** is ticked. Font names and font features inside styles are only imported when **Everything** is ticked.
-
-*(Internal ID: `c_impStyles`)*
+Font names and font features inside styles are imported only when **Fonts+Script** (or **Everything**) is also ticked.
 
 #### Other
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Checkbox (ticked by default)
-- **Description:** Import Other Settings
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Everything” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Basic+ · `c_impOther`  
+Also: Import Other Settings
 
 > Use the Other tab of this dialog to choose more groups of settings. If this is not ticked, none of the boxes on the Other tab are used.
 
-**Explanation:**
-
-Turns on the **Other** tab, where you choose more groups one by one (Body, Notes+Refs, Header+Footer, Advanced, Cover, Front +Back Matter, Finishing…). If this box is not ticked, none of the boxes on the **Other** tab are used.
-
-*(Internal ID: `c_impOther`)*
+Groups on the **Other** tab include Body, Notes+Refs, Header+Footer, Advanced, Cover, Front +Back Matter and Finishing.
 
 #### Everything
 
-- **Where:** Import Settings... (dialog)
-- **Type:** Checkbox (ticked by default)
-- **Description:** Import All Settings
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_impEverything`  
+Also: Import All Settings
 
 > Import all settings and files of the source configuration, whatever the other boxes say.
 
-**Explanation:**
+Use it to recreate a configuration from a PDF or ZIP, or to make a full copy. Ticked by default, and ticked again when you open the dialog with no category ticked. Also turned on automatically (with the other boxes greyed out) when the target is an external folder or a new configuration. In the **Basic** view it is hidden but still works.
 
-Imports all settings and files of the source configuration, whatever the other boxes say. Use it to recreate a configuration from a PDF or ZIP, or to make a full copy. It is ticked by default, and PTXprint ticks it again when you open the dialog with no category ticked. It is also turned on automatically when the target is an external folder. Only shown in the **Default** and **Full** views – in the **Basic** view it is hidden but still works.
+#### Source of Settings
 
-*(Internal ID: `c_impEverything`)*
+##### PDF file (with embedded settings) or ZIP archive file
 
-### Import Settings... (dialog) › Source of Settings
-
-#### PDF file (with embedded settings) or ZIP archive file
-
-- **Where:** Import Settings... (dialog) › Source of Settings
-- **Type:** Radio button
-- **Description:** Import: From existing PDF file or ZIP archive
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Basic+ · `r_impSource_pdf`  
+Also: Import: From existing PDF file or ZIP archive
 
 > It is possible to import settings from an existing PDF file which was produced earlier by PTXprint. But this only works if the settings are embedded within the PDF. (This is enabled on the Finishing tab).
 >
 > Importing from a PTXprint ZIP archive (created on the Help tab) is also possible.
 
-**Explanation:**
+Click **Select...** to choose the file.
 
-Import from a PDF made by PTXprint (with settings embedded) or from a PTXprint ZIP archive. Click **Select...** to choose the file.
+##### A Previously Saved Configuration
 
-*(Internal ID: `r_impSource_pdf`)*
+Radio · Basic+ · `r_impSource_config`  
+Also: Import: From Saved Configuration
 
-#### A Previously Saved Configuration
+Choosing a project or configuration in the lists below also selects this option.
 
-- **Where:** Import Settings... (dialog) › Source of Settings
-- **Type:** Radio button
-- **Description:** Import: From Saved Configuration
-- **View level:** Basic, Default and Full views
+##### Project – Import: Project name
 
-**Explanation:**
-
-Import from a configuration that is saved on this computer. Choose the **Project** and **Configuration** below. Choosing a project or configuration in those lists also selects this option.
-
-*(Internal ID: `r_impSource_config`)*
-
-#### Project
-
-- **Where:** Import Settings... (dialog) › Source of Settings
-- **Type:** Drop-down list
-- **Description:** Import: Project name
-- **View level:** Basic, Default and Full views
-- **Choices:** unknown
-- **Only available when:** “A Previously Saved Configuration” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Basic+ · `fcb_impProject`  
+Choices: unknown · Needs: “A Previously Saved Configuration”
 
 > Select the project from which the settings will be imported.
 
-**Explanation:**
+Choosing a project fills the **Configuration** list with its configurations and selects **Default**.
 
-The project that has the configuration you want to copy from. When you choose a project, the **Configuration** list is filled with its configurations, and **Default** is selected.
+##### Configuration – Import: Project configuration
 
-*(Internal ID: `fcb_impProject`)*
-
-#### Configuration
-
-- **Where:** Import Settings... (dialog) › Source of Settings
-- **Type:** Drop-down list
-- **Description:** Import: Project configuration
-- **View level:** Basic, Default and Full views
-- **Choices:** (None)
-- **Only available when:** “A Previously Saved Configuration” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Basic+ · `ecb_impConfig`  
+Choices: (None) · Needs: “A Previously Saved Configuration”
 
 > Select a configuration from the selected project from which the settings will be imported.
 
-**Explanation:**
+Settings are read from the saved files, so save the source configuration first if it is open.
 
-The configuration to copy settings from. The settings are read from the saved files, so save the source configuration first if it is open.
+##### Select...
 
-*(Internal ID: `ecb_impConfig`)*
-
-#### Select...
-
-- **Where:** Import Settings... (dialog) › Source of Settings
-- **Type:** Button
-- **Description:** Select PDF to import settings from
-- **View level:** Basic, Default and Full views
-- **Only available when:** “PDF file (with embedded settings) or ZIP archive file” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Basic+ · `btn_impSource_pdf`  
+Also: Select PDF to import settings from · Needs: “PDF file (with embedded settings) or ZIP archive file”
 
 > Select either a PTXprint PDF or ZIP archive to import the settings from.
 >
 > Importing from a PDF will only work if the PDF contains the PTXprint configuration settings (as enabled on the Finishing tab).
 
-**Explanation:**
+Starts in the output folder of the current project, where PTXprint keeps its PDFs. If the file has no PTXprint settings, PTXprint shows an error and changes back to **A Previously Saved Configuration**. The chosen file name is shown next to the button.
 
-Opens a file chooser, starting in the output folder of the current project, where PTXprint keeps its PDFs. Choose a PDF or ZIP. If the file has no PTXprint settings, PTXprint shows an error and changes back to **A Previously Saved Configuration**. The chosen file name is shown next to the button.
+#### Target
 
-*(Internal ID: `btn_impSource_pdf`)*
+##### An External Folder of Settings
 
-### Import Settings... (dialog) › Target
-
-#### An External Folder of Settings
-
-- **Where:** Import Settings... (dialog) › Target
-- **Type:** Radio button
-- **Description:** Extract settings to an external folder
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Basic+ · `r_impTarget_folder`  
+Also: Extract settings to an external folder
 
 > Settings can be extracted to an external folder.
 >
 > This may be useful when examining settings from a different user, or when there is a need to recover lost settings from a known good PDF or Zip archive.
 
-**Explanation:**
+No project is changed. **Everything** is used automatically.
 
-Copy the settings files to a folder instead of into a configuration. No project is changed. This is useful to look at someone else's settings, or to rescue a few files from a good PDF or ZIP. **Everything** is used automatically.
+##### A New/Existing Project and/or Configuration
 
-*(Internal ID: `r_impTarget_folder`)*
+Radio · Basic+ · `r_impTarget_prjcfg`  
+Also: Import: Into Project/Configuration
 
-#### A New/Existing Project and/or Configuration
+The usual choice. The current project and configuration are filled in when the dialog opens.
 
-- **Where:** Import Settings... (dialog) › Target
-- **Type:** Radio button
-- **Description:** Import: Into Project/Configuration
-- **View level:** Basic, Default and Full views
+##### Project – Import: Project name
 
-**Explanation:**
+Drop-down · Basic+ · `ecb_targetProject`  
+Choices: unknown · Needs: “A New/Existing Project and/or Configuration”
 
-Import into a configuration of a project on this computer. This is the usual choice. The current project and configuration are filled in when the dialog opens.
-
-*(Internal ID: `r_impTarget_prjcfg`)*
-
-#### Project
-
-- **Where:** Import Settings... (dialog) › Target
-- **Type:** Drop-down list
-- **Description:** Import: Project name
-- **View level:** Basic, Default and Full views
-- **Choices:** unknown
-- **Only available when:** “A New/Existing Project and/or Configuration” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Select an existing project into which the settings will be imported.  
->   OR Enter a NEW project name which causes a (temporary) project to be created in the normal Paratext folder.
+> Select an existing project into which the settings will be imported.
 >
 > Select the project into which the settings will be imported.
 
-**Explanation:**
+You cannot import into a new project. If you type a name that is not one of your projects, **OK** stays greyed out. Choosing a project here also selects **A New/Existing Project and/or Configuration** and fills the **Configuration** list.
 
-The project that receives the settings. Choose one of your existing projects. Choosing a project here also selects **A New/Existing Project and/or Configuration** and fills the **Configuration** list.
+##### Select...
 
-*(Internal ID: `ecb_targetProject`)*
-
-#### Select...
-
-- **Where:** Import Settings... (dialog) › Target
-- **Type:** Button
-- **Description:** Select target folder for extracted settings
-- **View level:** Basic, Default and Full views
-- **Only available when:** “An External Folder of Settings” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Basic+ · `btn_tgtFolder`  
+Also: Select target folder for extracted settings · Needs: “An External Folder of Settings”
 
 > Select a folder to save the settings in. This could be in a temporary location from where just the needed settings can be accessed and copied into the appropriate place of an existing config.
 
-**Explanation:**
+Choose an empty folder, so the extracted files are easy to find. The chosen folder is shown next to the button.
 
-Opens a folder chooser for **An External Folder of Settings**. Choose an empty folder, so that the extracted files are easy to find. The chosen folder is shown next to the button.
+##### Configuration
 
-*(Internal ID: `btn_tgtFolder`)*
-
-#### Configuration
-
-- **Where:** Import Settings... (dialog) › Target
-- **Type:** Drop-down list
-- **View level:** Basic, Default and Full views
-- **Choices:** Default
-- **Only available when:** “A New/Existing Project and/or Configuration” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Basic+ · `ecb_targetConfig`  
+Choices: Default · Needs: “A New/Existing Project and/or Configuration”
 
 > Choose a configuration from the selected project into which the settings will be imported.  
 >   OR Enter a NEW config name which causes a new configuration to be created for the current/new project.
 >
 > Select a configuration in the selected project into which the settings will be imported.
 
-**Explanation:**
+Importing into a new configuration is the safest way to try an import, because your existing configurations are not changed.
 
-The configuration that receives the settings. Choose an existing one, or type a new name to create a new configuration. Importing into a new configuration is the safest way to try an import, because your existing configurations are not changed.
+##### Enter a name for the configuration to be saved.
 
-*(Internal ID: `ecb_targetConfig`)*
-
-#### Enter a name for the configuration to be saved.
-
-- **Where:** Import Settings... (dialog) › Target
-- **Type:** Text box
-- **View level:** Basic, Default and Full views
-- **Only available when:** “A New/Existing Project and/or Configuration” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Basic+ · `t_targetConfig`  
+Needs: “A New/Existing Project and/or Configuration”
 
 > Enter a name for the configuration to be saved.
 >
 > Note that only Roman/Latin names are supported using: a-z A-Z, 0-9, parentheses, underscores and hyphens.
 
-**Explanation:**
+The text part of the target **Configuration** box. No spaces. When you type a new name, PTXprint ticks **Everything** for you.
 
-The text part of the target **Configuration** box. Type a new configuration name here. Use only letters a–z and A–Z, numbers, `(`, `)`, `_` and `-`, with no spaces. A new configuration starts from the PTXprint defaults, so tick **Everything** (or all the groups you need).
+#### Pictures
 
-*(Internal ID: `t_targetConfig`)*
+##### Import Entire PicList "as is" (overwrite existing PicList)
 
-### Import Settings... (dialog) › Pictures tab
+Radio · Regular+ · `r_impPics_entire`  
+Also: Import: Entire PicList "as is" (overwrite existing PicList) · Needs: “Pictures”
 
-#### Import Entire PicList "as is" (overwrite existing PicList)
+> Replace the target's whole picture list with the source's. Pictures only in the target are removed. Use it when the source is the master list.
 
-- **Where:** Import Settings... (dialog) › Pictures tab
-- **Type:** Radio button
-- **Description:** Import: Entire PicList "as is" (overwrite existing PicList)
-- **View level:** Default and Full views
-- **Only available when:** “Pictures” is selected
+Pictures that were only in the target are removed.
 
-**Explanation:**
+##### Import Elements of PicList (preserving existing PicList)
 
-Replaces the target's whole picture list with the source's picture list. Pictures that were only in the target are removed. Use it when the source is the "master" picture list. (Default and Full views.)
+Radio · Regular+ · `r_impPics_elements`  
+Also: Import: Elements of PicList (preserving existing PicList) · Needs: “Pictures”
 
-*(Internal ID: `r_impPics_entire`)*
+> Keep the target's picture list and copy only the parts ticked below, for pictures in both lists.
 
-#### Import Elements of PicList (preserving existing PicList)
+The parts are captions, size and position, and copyright. **Add Any New Pictures** and **Remove Any Old Pictures** control which pictures are in the list.
 
-- **Where:** Import Settings... (dialog) › Pictures tab
-- **Type:** Radio button
-- **Description:** Import: Elements of PicList (preserving existing PicList)
-- **View level:** Default and Full views
-- **Only available when:** “Pictures” is selected
+##### Captions
 
-**Explanation:**
+Checkbox, off · Regular+ · `c_pic_Captions`  
+Needs: “Import Elements of PicList (preserving existing PicList)”, “Pictures”
 
-Keeps the target's picture list, and copies only the parts you tick below (captions, size and position, copyright) for pictures that are in both lists. Use **Add Any New Pictures** and **Remove Any Old Pictures** to control which pictures are in the list. (Default and Full views.)
+> Copy the captions and the reference shown with each picture. Leave unticked if the target is in another language.
 
-*(Internal ID: `r_impPics_elements`)*
+Also copies the caption of the second text in a diglot. Unticked for another language because the captions would be in the wrong language.
 
-#### Captions
+##### Size, Position, Mirror, Rotation settings
 
-- **Where:** Import Settings... (dialog) › Pictures tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-- **Only available when:** “Import Elements of PicList (preserving existing PicList)”, “Pictures” is selected
+Checkbox, on · Regular+ · `c_pic_SizePosn`  
+Needs: “Import Elements of PicList (preserving existing PicList)”, “Pictures”
 
-**Explanation:**
+> Copy the size, position, scale, mirroring and rotation of each picture.
 
-Copies the caption text, the caption of the second text in a diglot, and the reference shown with the picture. Leave it unticked if the target is in another language, because the captions would then be in the wrong language.
+Useful when two projects share the same pictures and layout.
 
-*(Internal ID: `c_pic_Captions`)*
+##### Copyright Information
 
-#### Size, Position, Mirror, Rotation settings
+Checkbox, on · Regular+ · `c_pic_Copyright`  
+Needs: “Import Elements of PicList (preserving existing PicList)”, “Pictures”
 
-- **Where:** Import Settings... (dialog) › Pictures tab
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-- **Only available when:** “Import Elements of PicList (preserving existing PicList)”, “Pictures” is selected
+> Copy the copyright (credit) information of each picture.
 
-**Explanation:**
+Copies the picture credits.
 
-Copies the size, the position on the page, the scale, mirroring and rotation of each picture. This is useful when two projects share the same pictures and layout.
+##### Add Any New Pictures
 
-*(Internal ID: `c_pic_SizePosn`)*
+Checkbox, on · Basic+ · `c_impPicsAddNew`  
+Needs: “Pictures”
 
-#### Copyright Information
+> Add pictures that are in the source list but not yet in the target list.
 
-- **Where:** Import Settings... (dialog) › Pictures tab
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-- **Only available when:** “Import Elements of PicList (preserving existing PicList)”, “Pictures” is selected
+Leave it ticked unless you want to keep exactly the pictures the target already has.
 
-**Explanation:**
+##### Remove Any Old Pictures
 
-Copies the copyright (credit) information of each picture.
+Checkbox, off · Basic+ · `c_impPicsDelOld`  
+Needs: “Pictures”
 
-*(Internal ID: `c_pic_Copyright`)*
+> Remove pictures from the target list that are not in the source list. Tick it when the source list is the complete, final list.
 
-#### Add Any New Pictures
+Use it with a complete, final source list.
 
-- **Where:** Import Settings... (dialog) › Pictures tab
-- **Type:** Checkbox (ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Pictures” is selected
+#### Styles
 
-**Explanation:**
+##### Override ALL Style Settings
 
-Adds pictures that are in the source list but not yet in the target list. Leave it ticked unless you want to keep exactly the pictures that the target already has.
+Checkbox, off · Basic+ · `c_sty_OverrideAllStyles`
 
-*(Internal ID: `c_impPicsAddNew`)*
+> Normally only styles that have not been changed in the receiving configuration will be imported. But if you require ALL styles to be updated regardless of whether they have already been modified locally, then enable this option. (This also applies to fonts in styles imported with Fonts+Script.)
 
-#### Remove Any Old Pictures
+Without it, your own style changes in the target are kept.
 
-- **Where:** Import Settings... (dialog) › Pictures tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Pictures” is selected
+#### Other
 
-**Explanation:**
+##### Body Tab settings
 
-Removes pictures from the target list that are not in the source list. Tick it when the source list is the complete, final list.
-
-*(Internal ID: `c_impPicsDelOld`)*
-
-### Import Settings... (dialog) › Styles tab
-
-#### Override ALL Style Settings
-
-- **Where:** Import Settings... (dialog) › Styles tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Normally only styles that have not been changed in the receiving configuration will be imported. But if you require ALL styles to be updated regardless of whether they have already been modified locally, then enable this option.
-
-**Explanation:**
-
-Normally, PTXprint only updates styles that you have not changed in the target, so your own style changes are kept. Tick this box to update all styles from the source, even the ones you changed.
-
-*(Internal ID: `c_sty_OverrideAllStyles`)*
-
-### Import Settings... (dialog) › Other tab
-
-#### Body Tab settings
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Basic+ · `c_oth_Body`  
+Needs: “Other”
 
 > Import the settings of the Body tab.
 
-**Explanation:**
+Includes how books and chapters start, chapter and verse numbers, section headings, hyphenation, glossary markup, and similar.
 
-Imports the settings of the **Body** tab: how books and chapters start, chapter and verse numbers, section headings, hyphenation, glossary markup, and similar.
+##### Notes+Refs settings
 
-*(Internal ID: `c_oth_Body`)*
-
-#### Notes+Refs settings
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Basic+ · `c_oth_NotesRefs`  
+Needs: “Other”
 
 > Import the settings of the Notes+Refs tab.
 
-**Explanation:**
+Footnotes, cross-references, note callers, note rules and study notes.
 
-Imports the settings of the **Notes+Refs** tab: footnotes, cross-references, note callers, note rules and study notes.
+##### Header+Footer settings
 
-*(Internal ID: `c_oth_NotesRefs`)*
-
-#### Header+Footer settings
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Basic+ · `c_oth_HeaderFooter`  
+Needs: “Other”
 
 > Import the settings of the Header+Footer tab.
 
-**Explanation:**
+What is shown in the header and footer, and their positions.
 
-Imports the settings of the **Header+Footer** tab: what is shown in the header and footer, and the header and footer positions.
+##### Thumb Tabs settings
 
-*(Internal ID: `c_oth_HeaderFooter`)*
+Checkbox, off · Basic+ · `c_oth_ThumbTabs`  
+Needs: “Other”
 
-#### Thumb Tabs settings
+> Import the thumb tab settings (Tabs+Borders tab).
 
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Other” is selected
+Use it when two configurations or projects should have matching thumb tabs.
 
-**Explanation:**
+##### Overwrite Front Matter
 
-Meant to import the thumb tab settings from the **Tabs+Borders** tab. In the current version it may not bring in these settings; after importing, check the **Tabs+Borders** tab.
+Checkbox, off · Basic+ · `c_oth_OverwriteFrtMatter`  
+Needs: “Front +Back Matter”, “Cover settings”, “Other”
 
-*(Internal ID: `c_oth_ThumbTabs`)*
+> Replace the front matter in the target with the source's, instead of only adding the parts that are missing.
 
-#### Overwrite Front Matter
+Leave it unticked if the target has its own front matter (for example in another language) that you want to keep.
 
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Front +Back Matter”, “Cover settings”, “Other” is selected
+##### Advanced settings
 
-**Explanation:**
-
-Only available when **Front +Back Matter** or **Cover settings** is ticked. It is meant to replace the front matter in the target with the source's front matter, instead of only adding missing parts. In the current version it may have no effect unless **Everything** is ticked; check the front matter on the **Peripherals** tab after importing.
-
-*(Internal ID: `c_oth_OverwriteFrtMatter`)*
-
-#### Advanced settings
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Basic+ · `c_oth_Advanced`  
+Needs: “Other”
 
 > This includes everything on the Advanced tab with the exception of Custom Script processing and Customized Styles (custom.sty).
 
-**Explanation:**
+Includes the changes file, the extra TeX files, and the extra style file (merged with the target's). For the custom script, tick **Custom Script**. custom.sty is not imported.
 
-Imports the options of the **Advanced** tab and the files that go with them: the changes file, the extra TeX files, and the extra style file (merged with the target's). If the source uses a custom script and the script file is in the source, it is copied too. The customized styles file (custom.sty) is not imported.
+##### Cover settings
 
-*(Internal ID: `c_oth_Advanced`)*
-
-#### Cover settings
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Basic+ · `c_oth_Cover`  
+Needs: “Other”
 
 > Import the cover settings, cover styles and the cover pages of the front matter.
 
-**Explanation:**
+Also turns on decorations, which the cover uses.
 
-Imports the cover settings, the cover styles, and the cover pages from the source's front matter. It also turns on decorations, which the cover uses.
+##### Front +Back Matter
 
-*(Internal ID: `c_oth_Cover`)*
-
-#### Front +Back Matter
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Basic+ · `c_oth_FrontMatter`  
+Needs: “Other”
 
 > This includes most of the settings on the Peripherals tab, but not the Variables and Values. Front Matter and also Section Introductions are included in this.
 
-**Explanation:**
+Includes front and back PDFs, table of contents, front matter, colophon and section introductions, plus the source's front matter pages and any variables the target does not have yet. Existing variable values in the target are not changed.
 
-Imports the settings of the **Peripherals** tab (front and back PDFs, table of contents, front matter, colophon, section introductions), the front matter pages from the source, and any variables that the target does not have yet. Existing variable values in the target are not changed.
+##### Custom Script
 
-*(Internal ID: `c_oth_FrontMatter`)*
-
-#### Custom Script
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Basic, Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Basic+ · `c_oth_customScript`  
+Needs: “Other”
 
 > This includes the Custom Script processing defined on the Advanced tab.
 >
 > Note that it is not possible to extract a custom script from a PDF file, which is why this option is sometimes disabled.
 
-**Explanation:**
+Includes whether the script is used and when it runs. PTXprint finds the script in the source (also inside a ZIP made with **Create Archive...**), copies it into the target configuration folder, and points the **Advanced** tab at the copy. For a Python script, other Python files it uses from the same folder are copied too. Greyed out (and unticked) when the source is a PDF.
 
-Meant for the custom script set on the **Advanced** tab. Greyed out when the source is a PDF, because a PDF does not hold the script. In the current version the script is imported together with **Advanced settings**, so tick that box as well.
+##### Borders + Decorations
 
-*(Internal ID: `c_oth_customScript`)*
-
-#### Borders + Decorations
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_oth_Decorate`  
+Needs: “Other”
 
 > This includes the various decorative borders and other ornamental features including section headers, end-of-book and verse number decorators.
 
-**Explanation:**
+Includes page borders and the book-title border.
 
-Imports the decoration settings from the **Tabs+Borders** tab: page borders, section-heading decorations, the book-title border, end-of-book decorations and verse-number decorations. (Default and Full views.)
+##### Variables + Meta Data
 
-*(Internal ID: `c_oth_Decorate`)*
+Checkbox, off · Regular+ · `c_oth_Variables`  
+Needs: “Other”
 
-#### Variables + Meta Data
+> Import the variables (Peripherals tab) and the publication details: copyright statement, licence, colophon and configuration notes. The book selection and any password are not imported.
 
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-- **Only available when:** “Other” is selected
+Variables that the target is missing are also added by **Front +Back Matter**.
 
-**Explanation:**
+##### Texpert Hacks
 
-Meant to import the variables (the values on the **Peripherals** tab) and information about the publication. In the current version it may have no effect on its own; variables that the target is missing are also added by **Front +Back Matter**. (Default and Full views.)
-
-*(Internal ID: `c_oth_Variables`)*
-
-#### Texpert Hacks
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_oth_Texpert`  
+Needs: “Other”
 
 > Import the expert TeX (TeXpert) settings.
 
-**Explanation:**
+Use it only if you know that the source used special TeX settings.
 
-Imports the expert TeX settings (the "TeXpert" options on the **Advanced** tab). Use it only if you know that the source used special TeX settings. (Default and Full views.)
+##### Finishing settings
 
-*(Internal ID: `c_oth_Texpert`)*
-
-#### Finishing settings
-
-- **Where:** Import Settings... (dialog) › Other tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-- **Only available when:** “Other” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_oth_Finish`  
+Needs: “Other”
 
 > This includes everything on the Finishing tab.
 
-**Explanation:**
-
-Imports the settings of the **Finishing** tab: PDF output format, watermark, crop marks, grid, pages per sheet and sheet size, the compare-PDF settings, and whether settings are included in the PDF. (Default and Full views.)
-
-*(Internal ID: `c_oth_Finish`)*
+PDF output format, watermark, crop marks, grid, pages per sheet and sheet size, the compare-PDF settings, and whether settings are included in the PDF.

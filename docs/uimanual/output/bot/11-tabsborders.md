@@ -1,103 +1,88 @@
-# Tabs+Borders tab
+# 12. Tabs+Borders tab
 
-## What this tab is for
+## 12.1 What this tab is for
 
-This tab adds two kinds of decoration to a publication:
+This tab adds two kinds of decoration:
 
-* **Thumb Tabs** – coloured blocks printed at the outer edge of the page, with a short book name in them. When the book is closed, the reader can see the blocks on the edge of the paper and open the book near the right Bible book. They are useful in long publications such as a whole Bible or a New Testament.
-* **Ornamental Decorations** – decorative borders and graphics: a border around the page or the text, a graphic behind section headings, a decoration at the end of each book, decorated verse numbers, and borders around book titles. Some cultures value such decoration highly in Scripture publications.
+* **Thumb Tabs** – coloured blocks at the outer edge of the page, with a short book name in them. When the book is closed, the reader sees the blocks on the edge of the paper and can open the book near the right Bible book. They are useful in long publications such as a whole Bible or a New Testament.
+* **Ornamental Decorations** – a border around the page or the text, a graphic behind section headings, a decoration at the end of each book, decorated verse numbers, and borders around book titles. Some cultures value such decoration highly in Scripture publications.
 
-Each area is collapsed until you tick its checkbox: until then you only see a short description. The tab name shows **Tabs** and **Borders**, and each word turns blue when that feature is on. The **Tabs+Borders** tab is shown in the **Default** and **Full** views.
+Each area is collapsed until you tick its checkbox; until then you only see a short description. The tab name shows **Tabs** and **Borders**, and each word turns blue when that feature is on. The tab is shown in the **Regular** and **Full** views.
 
-The **Border Settings** dialog is also described in this chapter. It controls the look of a border (lines, ornaments, colours and padding). You open it from the **Styles** tab, with the **Borders...** button (see **Border Settings dialog** below).
+This chapter also describes the **Border Settings** dialog, which sets the look of a border (lines, ornaments, colours and padding). You open it from the **Styles** tab with the **Borders...** button.
 
-In this chapter, "pt" means point. 1 pt is about 0.35 mm. Thumb tab sizes are in mm.
+"pt" means point; 1 pt is about 0.35 mm. Thumb tab sizes are in mm.
 
-## Thumb Tabs
+## 12.2 Thumb Tabs
 
-Tick **Thumb Tabs** to show the settings.
+**Where the tabs go.** Each Scripture book gets a tab position, counting down from the top of the page: the first book at position 1 (top), the next at position 2, and so on. When the positions run out, the next book starts again at the top. Front matter, glossaries and other non-Scripture books get no tab. Positions are worked out from all the books in the multiple-book list on the main window, even if you print only one book. So the tab for Mark is in the same place whether you print the whole NT or only Mark.
 
-**Where the tabs go.** PTXprint gives each Scripture book a tab position, counting down from the top of the page. The first book gets position 1 (at the top), the next book position 2, and so on. When the positions run out, the next book starts again at the top. Front matter, glossaries and other non-Scripture books do not get a tab. The positions are worked out from all the books in the multiple-book list on the main window, even if you print only one book. So a tab for Mark is in the same place whether you print the whole NT or only Mark.
+**Size.** For normal tabs, **Height** is the size along the page edge and **Length** is how far the tab reaches in from the edge. For rotated tabs it is the other way round.
 
-**Size.** **Height** and **Length** are in mm.
+**Number of Tab Positions** is how many tabs fit down the page. PTXprint recalculates it from the page height, the top and bottom margins and the tab size whenever these change. Bigger = tabs overlap; smaller = tabs spread apart.
 
-* For normal (not rotated) tabs, **Height** is how tall the tab is along the edge of the page, and **Length** is how far it reaches in from the edge.
-* For rotated tabs (**Rotate Tabs** ticked), **Length** runs along the edge of the page, and **Height** is how far the tab reaches in from the edge.
+**Grouped Tabs.** Many Bible books are short, so giving each its own position would need too many positions. Neighbouring short books can share one position, and each still has its own name in the tab. The **Grouped Tabs** button restores PTXprint's default groups.
 
-**Number of Tab Positions** is how many tabs fit down the page. PTXprint calculates it from the page height, the top and bottom margins and the tab size, and recalculates it whenever these change. If you make it bigger, the tabs overlap. If you make it smaller, they spread apart.
+**Restart Tabs at MAT** starts a new cycle at Matthew, so the New Testament tabs start again at the top.
 
-**Grouped Tabs.** Many Bible books are short. If every book had its own position, there would be too many positions. You can make neighbouring short books share one position. Type the book codes of each group with spaces between them, and put `;` between groups. Each book still has its own name in the tab. Click the **Grouped Tabs** button to get PTXprint's default groups back.
+**Rotate Tabs** turns the text to run along the page edge (good for narrow margins and longer names). The drop-down list next to it chooses which way the text faces on left and right pages. The preview on the tab shows facing pages.
 
-**Restart Tabs at MAT** starts a new cycle of positions at Matthew, so the New Testament tabs start again at the top of the page.
+**Only Show on Odd Pages** is for thin paper, so a tab on the back of the page does not show through.
 
-**Rotate Tabs** turns the text so it runs along the edge of the page. This works well with narrow margins and longer names. When it is ticked, the drop-down list next to it chooses which way the text faces on left and right pages. The preview on the tab shows how the tabs will look on facing pages.
+**Tab text and colour.** By default the tab text is the short book name from each book's `\toc3` line. **Tab Color** sets only the block colour. The text colour, font and size come from the style: click **Edit Style** to change them on the **Styles** tab. Tabs usually use a dark block with white or light text.
 
-**Only Show on Odd Pages** prints the tabs only on right-hand (odd) pages. Use this for thin paper, so the tab on the back of the page does not show through.
+The **\toc3** and **\zthumbtab** options choose where the tab text comes from. If the **Table of Contents** on the **Peripherals** tab is on but does not use `\toc3`, PTXprint selects **\zthumbtab** and greys out both options.
 
-**Tab text and colour.** By default the tab text is the short book name from the `\toc3` line of each book. **Tab Color** sets the colour of the block. The text colour, font and size come from the style: click **Edit Style** to change them on the **Styles** tab. Tabs usually use a dark block with white or light text.
+## 12.3 Ornamental Decorations
 
-The **\toc3** and **\zthumbtab** options choose where the tab text comes from (see the control notes). If the **Table of Contents** on the **Peripherals** tab is switched on but does not use `\toc3`, PTXprint selects **\zthumbtab** and greys out both options.
-
-## Ornamental Decorations
-
-Tick **Ornamental Decorations** to show the settings. Then tick each kind of decoration you want. A file name next to a **Select...** button shows which graphic is used. When you choose a file, the checkbox for that decoration is ticked for you. The **Select...** buttons open PTXprint's own folder of border art, but you can pick a PDF file from anywhere.
+Tick each kind of decoration you want. A file name next to a **Select...** button shows which graphic is used. Choosing a file ticks that decoration's checkbox for you. The **Select...** buttons open PTXprint's own border-art folder, but you can pick a PDF file from anywhere.
 
 ### Section Headings
 
-This puts a decoration on section headings. There are two methods:
-
-* **PDF border (Legacy)** – a PDF graphic is placed behind each section heading (`\s`, `\s1` and `\s2`). Choose the file with **Select...**. **Scale** changes its size (1 = the size of the graphic). **Shift** moves it up (negative values) or down (positive values), in pt. The graphic does not grow with the heading, so make sure each heading fits inside it, also when a heading needs two lines. You may need to add space before and after headings on the **Styles** tab.
-* **Dynamic Border** – PTXprint draws a box around each heading block, and the box grows and shrinks with the heading. It is controlled by the special style `cat:headingsbox|esb`. Click the link to open that style on the **Styles** tab, where you can set its background colour and border (with the **Borders...** button).
+* **PDF border (Legacy)** – a PDF graphic behind each `\s`, `\s1` and `\s2` heading. **Scale**: 1 = the graphic's own size. **Shift**: in pt, positive = up, negative = down. The graphic does not grow with the heading, so make sure every heading fits, also two-line headings. You may need more space before and after headings on the **Styles** tab.
+* **Dynamic Border** – a box around each heading block that grows and shrinks with the heading. It is controlled by the special style `cat:headingsbox|esb`; the link opens it on the **Styles** tab, where you set its background colour and border (**Borders...** button).
 
 ### Border
 
-This puts a border on the pages. There are three kinds:
+* **PDF border (Legacy)** – a PDF graphic (for example a frame) on every page. It is stretched to the full page if **Full page** is ticked, otherwise to the page size without the binding gutter.
+* **Dynamic Border** – a border around the Bible text on each page. Introductions, footnotes and other peripheral material are outside it. It can be plain, double or ornamental. It is controlled by the `textborder` style (**Styles** tab, **Other** category); change it with the **Borders...** button in **Sidebar Settings**.
+* **Page Border** – meant to place a border of the same size on every page, whatever the content, controlled by the `\pageborder` style. If you do not get the result you want, use **Dynamic Border** or **PDF border (Legacy)**.
 
-* **PDF border (Legacy)** – a PDF graphic is placed on every page, for example a frame. Choose the file with **Select...**. If **Full page** is ticked, the graphic is stretched to the full page size. Otherwise it is stretched only to the page size without the binding gutter.
-* **Dynamic Border** – PTXprint draws a border around the Bible text on each page. Introductions, footnotes and other peripheral material are outside the border. The border can be plain, double or made of ornaments. It is controlled by the `textborder` style on the **Styles** tab (in the **Other** category). Change it there with the **Borders...** button in **Sidebar Settings**.
-* **Page Border** – meant to place a border of the same size on every page, whatever the content. It is controlled by the `\pageborder` style. If you do not get the result you want, use **Dynamic Border** or **PDF border (Legacy)** instead.
-
-A border takes space. You will probably need to make the margins larger on the **Layout** tab so the border does not touch the text or the edge of the paper.
+A border takes space, so you will probably need larger margins on the **Layout** tab so it does not touch the text or the paper edge.
 
 ### End of Book Decoration
 
-This adds a small graphic after the last verse of each Scripture book. Choose the PDF file with **Select...**. PTXprint suggests its own `decoration.pdf` graphic.
+A small graphic after the last verse of each Scripture book. PTXprint suggests its own `decoration.pdf`.
 
 ### Verse Number Decorator
 
-This puts a decoration around every verse number. There are two methods:
+* **End of Ayah** – the verse number inside the font's "End of Ayah" character (U+06DD), common in Arabic script. The font must contain this character. **Move Ayah** moves the decorated number to the end of the verse; the `\vp` link opens the style for the moved numbers.
+* **Verse Border Graphic** – a small PDF graphic (for example a star) behind each verse number, adjusted with **Scale** and **Shift** (pt, positive = up).
 
-* **End of Ayah** – uses the "End of Ayah" character (Unicode U+06DD) from the font, with the verse number inside it. This is common in Arabic-script publications. The font must contain this character. Tick **Move Ayah** to move the decorated number to the end of each verse instead of the start. The `\vp` link opens the style used for the moved numbers.
-* **Verse Border Graphic** – uses a small PDF graphic (for example a star) behind each verse number. Choose it with **Select...**. Use **Scale** to change its size and **Shift** to move it up (positive values) or down (negative values), in pt.
-
-The `\v` link opens the verse number style. You may need a smaller font size or a different colour for the numbers so they fit inside the decoration.
+The `\v` link opens the verse number style. You may need a smaller font size or another colour so the numbers fit inside the decoration.
 
 ### Book Title Borders
 
-This draws a border around the book title (`\mt1` and `\mt2`). It is controlled by the special style `cat:titlebox|esb`. Click the link to open the style on the **Styles** tab and change its colours and border.
+A border around the book title (`\mt1` and `\mt2`), controlled by the special style `cat:titlebox|esb`. The link opens it on the **Styles** tab to change its colours and border.
 
-## Border Settings dialog
+## 12.4 Border Settings dialog
 
-The **Border Settings** dialog sets how a border looks. It belongs to a style on the **Styles** tab. To open it, select the style (for example a sidebar style, `textborder`, `cat:headingsbox|esb` or `cat:titlebox|esb`), open **Sidebar Settings**, and click **Borders...**. Click **OK** to save the changes in that style, or **Cancel** to leave the style as it was.
+The dialog belongs to a style on the **Styles** tab. To open it, select the style (for example a sidebar style, `textborder`, `cat:headingsbox|esb` or `cat:titlebox|esb`), open **Sidebar Settings**, and click **Borders...**. **OK** saves the changes in that style; **Cancel** leaves the style as it was.
 
 **Borders** area:
 
-* **Type of Border** – **None**, **Plain (single)** (one line), **Double** (two lines) or **Ornamental** (a pattern of ornaments). Most other settings are greyed out when **None** is chosen.
-* **Left**, **Right**, **Top**, **Bottom**, **Inner**, **Outer** – which sides get a border. Use **Inner** and **Outer** instead of **Left** and **Right** if the border should follow the binding (inner = the side near the spine). Ticking **Inner** or **Outer** unticks **Left** and **Right**, and the other way round.
-* **Border Width (pt)** – how wide the whole border is. For ornamental borders use at least 10 pt.
-* **Line Thickness (pt)** – how thick the lines that make up a **Double** or **Ornamental** border are.
-* **Line Color** – the colour of the lines.
-* **Fill Color** – the colour that fills a **Double** or **Ornamental** border.
-* **Select Ornamental Border** (only for **Ornamental**) – which ornament pattern to use. Click **Ornamental Border Style** to open the ornaments catalogue (a PDF) and see what the patterns look like.
+* **Type of Border** – **None**, **Plain (single)** (one line), **Double** (two lines) or **Ornamental** (a pattern of ornaments).
+* **Left**, **Right**, **Top**, **Bottom**, **Inner**, **Outer** – which sides get a border. Use **Inner**/**Outer** if the border should follow the binding (inner = near the spine). Ticking **Inner** or **Outer** unticks **Left** and **Right**, and the other way round.
+* **Border Width**, **Line Thickness**, **Line Color**, **Fill Color**, and **Select Ornamental Border** (the pattern, only for **Ornamental**) – see the control notes. **Ornamental Border Style** opens the ornaments catalogue (a PDF).
 
-**Padding** area. There are two kinds of padding, on two tabs:
+**Padding** area, on two tabs:
 
-* **Box** – the space between the edge of the box (its background colour) and the text inside it.
-* **Border** – the space between the inside edge of the border and the box inside it.
+* **Box** – space between the edge of the box (its background colour) and the text inside it.
+* **Border** – space between the inside edge of the border and the box inside it.
 
-Each tab has four values in a cross: top, bottom, left (or inner) and right (or outer), in pt. Tick **Uniform Box Padding** or **Uniform Border Padding** to use the top value for all four sides; the other three are then greyed out. Negative values are allowed. The picture in the dialog shows the effect.
+Each tab has four values in a cross: top, bottom, left (or inner) and right (or outer), in pt. **Uniform Box Padding** / **Uniform Border Padding** use the top value for all four sides and grey out the other three. Negative values are allowed. The picture in the dialog shows the effect.
 
-## Common tasks
+## 12.5 Common tasks
 
 ### Add thumb tabs to a Bible or New Testament
 
@@ -105,43 +90,40 @@ Each tab has four values in a cross: top, bottom, left (or inner) and right (or 
 2. On the **Tabs+Borders** tab, tick **Thumb Tabs**.
 3. Set **Height** and **Length** (for example 8 mm and 15 mm).
 4. Choose a dark **Tab Color**.
-5. Click **Edit Style** and set a light text colour (for example white) for the tab text.
+5. Click **Edit Style** and set a light text colour (for example white).
 6. Print and look at the outer edge of the pages.
 
 ### Let short books share a tab position
 
 1. Tick **Thumb Tabs**.
-2. Click the **Grouped Tabs** button to load PTXprint's default groups. Or type your own groups in the **Grouped Tabs** box, for example `PHM TIT; 1JN 2JN 3JN JUD`.
+2. Click the **Grouped Tabs** button for the default groups, or type your own in the **Grouped Tabs** box, for example `PHM TIT; 1JN 2JN 3JN JUD`.
 3. Print. Each group uses one position, but each book keeps its own name.
 
 ### Make the text in the tabs run along the page edge
 
 1. Tick **Rotate Tabs**.
-2. In the drop-down list next to it, choose how the text should face, for example **Each Facing Outward**.
+2. In the drop-down list next to it, choose how the text faces, for example **Each Facing Outward**.
 3. Check the preview on the tab, then print.
 
 ### Start the New Testament tabs at the top again
 
-1. Tick **Restart Tabs at MAT**.
-2. Print.
+Tick **Restart Tabs at MAT** and print.
 
 ### Put a decorative border around the Bible text
 
-1. Tick **Ornamental Decorations**.
-2. Tick **Border** and choose **Dynamic Border**.
-3. Go to the **Styles** tab and select the `textborder` style (in the **Other** category).
-4. Open **Sidebar Settings** and click **Borders...**.
-5. Choose the **Type of Border** (for example **Ornamental**), the ornament, the **Border Width** (at least 10 pt for ornaments) and the colours. Click **OK**.
-6. On the **Layout** tab, make the margins larger if the border is too close to the text or the paper edge.
-7. Print.
+1. Tick **Ornamental Decorations**, then **Border**, and choose **Dynamic Border**.
+2. On the **Styles** tab, select the `textborder` style (in the **Other** category).
+3. Open **Sidebar Settings** and click **Borders...**.
+4. Choose the **Type of Border** (for example **Ornamental**), the ornament, the **Border Width** (at least 10 pt for ornaments) and the colours. Click **OK**.
+5. On the **Layout** tab, make the margins larger if the border is too close to the text or the paper edge.
+6. Print.
 
 ### Use a ready-made PDF frame on every page
 
 1. Tick **Ornamental Decorations**, then **Border**.
-2. Choose **PDF border (Legacy)**.
-3. Click **Select...** and choose the PDF file.
-4. Tick **Full page** if the frame should cover the whole page.
-5. Make the margins larger on the **Layout** tab if needed, then print.
+2. Choose **PDF border (Legacy)**, click **Select...** and choose the PDF file.
+3. Tick **Full page** if the frame should cover the whole page.
+4. Make the margins larger on the **Layout** tab if needed, then print.
 
 ### Decorate the verse numbers
 
@@ -152,8 +134,7 @@ Each tab has four values in a cross: top, bottom, left (or inner) and right (or 
 ### Add a graphic at the end of each book
 
 1. Tick **Ornamental Decorations**, then **End of Book Decoration**.
-2. Click **Select...** and choose a PDF graphic.
-3. Print.
+2. Click **Select...**, choose a PDF graphic, and print.
 
 ### Put a border around book titles or section headings
 
@@ -163,31 +144,31 @@ Each tab has four values in a cross: top, bottom, left (or inner) and right (or 
 4. Change the background colour, and click **Borders...** in **Sidebar Settings** to change the border.
 5. Print.
 
-## Common problems
+## 12.6 Common problems
 
 **I cannot see the thumb tab or ornament settings.**
-These areas are collapsed until their checkbox is ticked. Tick **Thumb Tabs** or **Ornamental Decorations**. If the whole tab is missing, change the view level to **Default** or **Full**.
+Tick **Thumb Tabs** or **Ornamental Decorations**. If the whole tab is missing, change the view level to **Regular** or **Full**.
 
 **The thumb tabs overlap each other, or there are big gaps between them.**
-Change **Number of Tab Positions** (larger = closer together and may overlap, smaller = further apart), or change **Height** (or **Length** for rotated tabs). Group short books in **Grouped Tabs**, or tick **Restart Tabs at MAT**. Remember that PTXprint recalculates **Number of Tab Positions** when you change the tab size, page size or margins.
+Change **Number of Tab Positions** (larger = closer and may overlap, smaller = further apart), or change **Height** (or **Length** for rotated tabs). Group short books in **Grouped Tabs**, or tick **Restart Tabs at MAT**.
 
 **My value for Number of Tab Positions keeps changing.**
-PTXprint recalculates it whenever the tab size, page size or margins change. Set the size first, then adjust this number last.
+PTXprint recalculates it whenever the tab size, page size or margins change. Set those first, then adjust this number last.
 
 **The thumb tab is blank.**
 The book has no `\toc3` line, or it has an empty `\zthumbtab` line. If the table of contents does not use `\toc3`, the `\toc3` text is removed and cannot be used for the tabs. On the **Peripherals** tab, include `\toc3` in the table of contents, or add the tab text with `\zthumbtab` in the book (in Paratext).
 
 **The \toc3 and \zthumbtab options are greyed out.**
-The table of contents on the **Peripherals** tab is on but does not use `\toc3`. Tick `\toc3` there to make both options available again.
+The table of contents on the **Peripherals** tab is on but does not use `\toc3`. Tick `\toc3` there.
 
 **When I print one book, its tab is not at the top.**
-This is on purpose. The tab position is calculated from all the books in the multiple-book list, so each book's tab stays in the same place in every print.
+This is on purpose: positions come from all the books in the multiple-book list, so each tab stays in the same place in every print.
 
 **I cannot change the colour of the tab text with Tab Color.**
-**Tab Color** sets only the colour of the block. Click **Edit Style** and change the text colour of the style there.
+**Tab Color** sets only the block. Click **Edit Style** and change the text colour there.
 
 **Message: "Warning: Could not locate decorative PDF(s)".**
-A decoration is ticked but its PDF file is missing or was moved. Click the **Select...** button for that decoration and choose the file again, or untick the decoration.
+A decoration is ticked but its PDF file is missing or was moved. Choose the file again with that decoration's **Select...** button, or untick the decoration.
 
 **The border touches or covers the text.**
 Make the margins larger on the **Layout** tab. For a dynamic border, also increase the padding in the **Border Settings** dialog.
@@ -205,507 +186,292 @@ With **End of Ayah**, the font does not have the End of Ayah character (U+06DD).
 Increase **Scale**, adjust **Shift**, or click the `\v` link and make the verse number font smaller.
 
 **A Select... button or a Shift/Scale box is greyed out.**
-These belong to **PDF border (Legacy)** or **Verse Border Graphic**. Choose that option first.
+Choose **PDF border (Legacy)** or **Verse Border Graphic** first.
 
-**Clicking the \textborder or \pageborder link does nothing.**
-Go to the **Styles** tab yourself and select the `textborder` style (or the page border style) from the list.
+**Clicking the \pageborder link does nothing.**
+This link does not open the style. Go to the **Styles** tab and select the page border style yourself. (The **\textborder** link does open the `textborder` style.)
 
-## Settings reference: Tabs+Borders tab
-
-Every control in this part of PTXprint is listed below, grouped by where it appears.
+## 12.7 Settings reference
 
 ### Border Settings (dialog)
 
 #### OK
 
-- **Where:** Border Settings (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_border_ok`
 
-**Explanation:**
-
-Closes the dialog and saves the border settings in the selected style.
-
-*(Internal ID: `btn_border_ok`)*
+Saves the border settings in the selected style and closes the dialog.
 
 #### Cancel
 
-- **Where:** Border Settings (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Explanation:**
+Button · Regular+ · `btn_border_cancel`
 
 Closes the dialog without changing the style.
 
-*(Internal ID: `btn_border_cancel`)*
+#### Borders
 
-### Border Settings (dialog) › Borders
+##### Left – Borders dialog: Show LEFT border
 
-#### Left
+Checkbox, on · Regular+ · `c_sbBorder_lhs`
 
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Checkbox (ticked by default)
-- **Description:** Borders dialog: Show LEFT border
-- **View level:** Default and Full views
+Ticking it unticks **Inner** and **Outer**. Use **Left** and **Right** when the border does not need to follow the binding.
 
-**Explanation:**
+##### Right
 
-Draws the border on the left side. Ticking it unticks **Inner** and **Outer**. Use **Left** and **Right** when the border does not need to follow the binding.
+Checkbox, on · Regular+ · `c_sbBorder_rhs`  
+Also: Borders dialog: Show RIGHT border
 
-*(Internal ID: `c_sbBorder_lhs`)*
+Ticking it unticks **Inner** and **Outer**.
 
-#### Right
+##### Top
 
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Checkbox (ticked by default)
-- **Description:** Borders dialog: Show RIGHT border
-- **View level:** Default and Full views
-
-**Explanation:**
-
-Draws the border on the right side. Ticking it unticks **Inner** and **Outer**.
-
-*(Internal ID: `c_sbBorder_rhs`)*
-
-#### Top
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Checkbox (ticked by default)
-- **Description:** Borders dialog: Show TOP border
-- **View level:** Default and Full views
-
-**Explanation:**
+Checkbox, on · Regular+ · `c_sbBorder_top`  
+Also: Borders dialog: Show TOP border
 
 Draws the border along the top.
 
-*(Internal ID: `c_sbBorder_top`)*
+##### Bottom
 
-#### Bottom
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Checkbox (ticked by default)
-- **Description:** Borders dialog: Show BOTTOM border
-- **View level:** Default and Full views
-
-**Explanation:**
+Checkbox, on · Regular+ · `c_sbBorder_bot`  
+Also: Borders dialog: Show BOTTOM border
 
 Draws the border along the bottom.
 
-*(Internal ID: `c_sbBorder_bot`)*
+##### Outer
 
-#### Outer
+Checkbox, off · Regular+ · `c_sbBorder_out`  
+Also: Borders dialog: Show OUTER border
 
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Borders dialog: Show OUTER border
-- **View level:** Default and Full views
+Away from the spine. Ticking it unticks **Left** and **Right**.
 
-**Explanation:**
+##### Inner – Borders dialog: Show INNER border
 
-Draws the border on the outer side (the side away from the spine). Ticking it unticks **Left** and **Right**.
+Checkbox, off · Regular+ · `c_sbBorder_inn`
 
-*(Internal ID: `c_sbBorder_out`)*
+Near the spine, so it changes between left and right pages. Ticking it unticks **Left** and **Right**.
 
-#### Inner
+##### Border Width (pt) – Borders dialog: Border width
 
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Borders dialog: Show INNER border
-- **View level:** Default and Full views
-
-**Explanation:**
-
-Draws the border on the inner side (the side near the spine). This side changes between left and right pages. Ticking it unticks **Left** and **Right**.
-
-*(Internal ID: `c_sbBorder_inn`)*
-
-#### Border Width (pt)
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Number box
-- **Description:** Borders dialog: Border width
-- **View level:** Default and Full views
-- **Values:** from 0.1 to 200, default 2
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBorderWidth`  
+Values: 0.1–200 (default 2)
 
 > Specify how wide the border should be. Note that for ornamental borders this value needs to be at least 10pt.
 
-**Explanation:**
+For **Plain** this is the thickness of the line.
 
-The total width of the border, in pt. For **Plain** this is the thickness of the line. For **Ornamental**, use at least 10 pt so the ornaments are drawn properly.
+##### Line Color – Borders dialog: Border line color
 
-*(Internal ID: `s_sbBorderWidth`)*
-
-#### Line Color
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Colour picker
-- **Description:** Borders dialog: Border line color
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Regular+ · `col_sbBorderColor`
 
 > Sets the line color for this border.
 
-**Explanation:**
-
 The colour of the border lines.
 
-*(Internal ID: `col_sbBorderColor`)*
+##### Type of Border – Borders dialog: Border type
 
-#### Type of Border
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Drop-down list
-- **Description:** Borders dialog: Border type
-- **View level:** Default and Full views
-- **Choices:** None; Plain (single); Double; Ornamental
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbBorderStyle`  
+Choices: None | Plain (single) | Double | Ornamental
 
 > None, a plain (single) line, a double line, or an ornamental pattern.
 
-**Explanation:**
+With **None**, most other settings in the dialog are greyed out. **Line Thickness** and **Fill Color** are only used for **Double** and **Ornamental**; the ornament list only for **Ornamental**.
 
-Chooses the kind of border: **None**, **Plain (single)**, **Double** or **Ornamental**. With **None**, most other settings in the dialog are greyed out. **Line Thickness** and **Fill Color** are only used for **Double** and **Ornamental**; the ornament list only for **Ornamental**.
+##### Borders dialog: Ornamental border
 
-*(Internal ID: `fcb_sbBorderStyle`)*
-
-#### Borders dialog: Ornamental border
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Han1; Han2; Han3; Han4; Han5; Vectorian1; Vectorian2; Vectorian3; Vectorian4; v85; v85r; v85out; v86c; c86out; v88; v88r; v88c; v88out
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbBorderOrnament`  
+Choices: Han1 | Han2 | Han3 | Han4 | Han5 | Vectorian1 | Vectorian2 | Vectorian3 | Vectorian4 | v85 | v85r | v85out | v86c | v86out | v88 | v88r | v88c | v88out
 
 > A selection of ornamental borders are available to choose from, or a custom-made border may be applied.
 
-**Explanation:**
+**Han** patterns are traditional Chinese-style designs; **Vectorian** and **v…** patterns are Victorian-style. See them in the catalogue (**Ornamental Border Style** link). Only available when **Type of Border** is **Ornamental**.
 
-Chooses the ornament pattern. The **Han** patterns are traditional Chinese-style designs; the **Vectorian** and **v…** patterns are Victorian-style designs. Open the catalogue with the **Ornamental Border Style** link to see them. Only available when **Type of Border** is **Ornamental**.
+##### Fill Color – Borders dialog: Border fill color
 
-*(Internal ID: `fcb_sbBorderOrnament`)*
-
-#### Fill Color
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Colour picker
-- **Description:** Borders dialog: Border fill color
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Regular+ · `col_sbBorderFillColor`
 
 > Sets the fill color for this border.
 
-**Explanation:**
+Fills a **Double** or **Ornamental** border. Greyed out for **Plain (single)**.
 
-The colour that fills a **Double** or **Ornamental** border. It is greyed out for **Plain (single)**.
+##### Ornamental Border Style
 
-*(Internal ID: `col_sbBorderFillColor`)*
-
-#### Ornamental Border Style
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Link
-- **Description:** Show the Ornaments Catalog
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Regular+ · `lb_openOrnamentsCatalog`  
+Also: Show the Ornaments Catalog
 
 > Click to open a PDF containing a catalog of the various Ornamental Borders (pgs 4-7).
 
-**Explanation:**
+Pages 4–7 show the ornamental borders in the list.
 
-Opens the ornaments catalogue (a PDF). Pages 4–7 show the ready-made ornamental borders you can choose in the list.
+##### Line Thickness (pt) – Borders dialog: Border Line Thickness
 
-*(Internal ID: `lb_openOrnamentsCatalog`)*
-
-#### Line Thickness (pt)
-
-- **Where:** Border Settings (dialog) › Borders
-- **Type:** Number box
-- **Description:** Borders dialog: Border Line Thickness
-- **View level:** Default and Full views
-- **Values:** default 0.3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBorderLineWidth`
 
 > Specify the thickness of the lines which make up the border.
 
-**Explanation:**
+For **Double** and **Ornamental** borders (default 0.3 pt). Greyed out for **Plain (single)**.
 
-The thickness of the lines that draw a **Double** or **Ornamental** border, in pt (the default is 0.3 pt). It is greyed out for **Plain (single)**.
+#### Padding
 
-*(Internal ID: `s_sbBorderLineWidth`)*
+##### Box
 
-### Border Settings (dialog) › Padding › Box tab
+###### All/Top (pt)
 
-#### All/Top (pt)
-
-- **Where:** Border Settings (dialog) › Padding › Box tab
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+
 
 > Top padding (pts). When Uniform Box Padding is ticked, this value is used for all four sides.
 
-#### Borders dialog: Box padding bottom
+###### Borders dialog: Box padding bottom
 
-- **Where:** Border Settings (dialog) › Padding › Box tab
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -200 to 200, default 8
-- **Greyed out when:** “Uniform Box Padding” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBoxPadB`  
+Values: -200–200 (default 8) · Greyed out by: “Uniform Box Padding”
 
 > The space (pts) between the edge of background box (or figure, if any) and the edge of the text in the box.
 
-**Explanation:**
+Bottom padding of the box.
 
-The bottom padding of the box, in pt. Greyed out when **Uniform Box Padding** is ticked.
+###### Bottom (pt) – Borders dialog: Box padding right
 
-*(Internal ID: `s_sbBoxPadB`)*
-
-#### Bottom (pt)
-
-- **Where:** Border Settings (dialog) › Padding › Box tab
-- **Type:** Number box
-- **Description:** Borders dialog: Box padding right
-- **View level:** Default and Full views
-- **Values:** from -200 to 200, default 8
-- **Greyed out when:** “Uniform Box Padding” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBoxPadR`  
+Values: -200–200 (default 8) · Greyed out by: “Uniform Box Padding”
 
 > The space (pts) between the edge of background box (or figure, if any) and the edge of the text in the box.
 >
 > The vertical space (pts) between the top/bottom borders (if any) and the text contained within the box.
 
-**Explanation:**
+Right (or outer) padding of the box.
 
-The right (or outer) padding of the box, in pt. Greyed out when **Uniform Box Padding** is ticked.
+###### Left/Inner (pt) – Borders dialog: Box padding top
 
-*(Internal ID: `s_sbBoxPadR`)*
-
-#### Left/Inner (pt)
-
-- **Where:** Border Settings (dialog) › Padding › Box tab
-- **Type:** Number box
-- **Description:** Borders dialog: Box padding top
-- **View level:** Default and Full views
-- **Values:** from -200 to 200, default 8
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBoxPadT`  
+Values: -200–200 (default 8)
 
 > The space (pts) between the edge of background box (or figure, if any) and the edge of the text in the box.
 >
 > The horizontal space (pts) between the left/right borders (if any) and the text contained within the box.
 
-**Explanation:**
+Space between the top edge of the box and the text. With **Uniform Box Padding** it is used for all four sides.
 
-The top padding of the box: the space between the top edge of the box and the text, in pt. When **Uniform Box Padding** is ticked, this value is used for all four sides.
+###### Borders dialog: Box padding left
 
-*(Internal ID: `s_sbBoxPadT`)*
-
-#### Borders dialog: Box padding left
-
-- **Where:** Border Settings (dialog) › Padding › Box tab
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -200 to 200, default 8
-- **Greyed out when:** “Uniform Box Padding” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBoxPadL`  
+Values: -200–200 (default 8) · Greyed out by: “Uniform Box Padding”
 
 > The space (pts) between the edge of background box (or figure, if any) and the edge of the text in the box.
 
-**Explanation:**
+Left (or inner) padding of the box.
 
-The left (or inner) padding of the box, in pt. Greyed out when **Uniform Box Padding** is ticked.
+###### Right/Outer (pt)
 
-*(Internal ID: `s_sbBoxPadL`)*
-
-#### Right/Outer (pt)
-
-- **Where:** Border Settings (dialog) › Padding › Box tab
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+
 
 > The horizontal space (pts) between the left/right borders (if any) and the text contained within the box.
 
-#### Uniform Box Padding
+###### Uniform Box Padding
 
-- **Where:** Border Settings (dialog) › Padding › Box tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_boxPadSymmetrical`
 
 > Use the same value for the Top, Bottom, Left, and Right padding.
 
-**Explanation:**
+Greys out the bottom, left and right boxes.
 
-Uses the top value for all four sides of the box padding, and greys out the other three boxes.
+##### Border
 
-*(Internal ID: `c_boxPadSymmetrical`)*
+###### All/Top (pt)
 
-### Border Settings (dialog) › Padding › Border tab
-
-#### All/Top (pt)
-
-- **Where:** Border Settings (dialog) › Padding › Border tab
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+
 
 > Top padding (pts). When Uniform Border Padding is ticked, this value is used for all four sides.
 
-#### Borders dialog: Border padding bottom
+###### Borders dialog: Border padding bottom
 
-- **Where:** Border Settings (dialog) › Padding › Border tab
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -200 to 200, default 8
-- **Greyed out when:** “Uniform Border Padding” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBdrPadB`  
+Values: -200–200 (default 8) · Greyed out by: “Uniform Border Padding”
 
 > The space between the inside edge of the border and the outside edge of the box inside it.
 
-**Explanation:**
+Bottom padding between the border and the box.
 
-The bottom padding between the border and the box, in pt. Greyed out when **Uniform Border Padding** is ticked.
+###### Bottom (pt) – Borders dialog: Border padding right
 
-*(Internal ID: `s_sbBdrPadB`)*
-
-#### Bottom (pt)
-
-- **Where:** Border Settings (dialog) › Padding › Border tab
-- **Type:** Number box
-- **Description:** Borders dialog: Border padding right
-- **View level:** Default and Full views
-- **Values:** from -200 to 200, default 8
-- **Greyed out when:** “Uniform Border Padding” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBdrPadR`  
+Values: -200–200 (default 8) · Greyed out by: “Uniform Border Padding”
 
 > The space between the inside edge of the border and the outside edge of the box inside it.
 >
 > The vertical space (pts) between the top/bottom borders (if any) and the text contained within the box.
 
-**Explanation:**
+Right (or outer) padding between the border and the box.
 
-The right (or outer) padding between the border and the box, in pt. Greyed out when **Uniform Border Padding** is ticked.
+###### Left/Inner (pt) – Borders dialog: Border padding top
 
-*(Internal ID: `s_sbBdrPadR`)*
-
-#### Left/Inner (pt)
-
-- **Where:** Border Settings (dialog) › Padding › Border tab
-- **Type:** Number box
-- **Description:** Borders dialog: Border padding top
-- **View level:** Default and Full views
-- **Values:** from -200 to 200, default 8
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBdrPadT`  
+Values: -200–200 (default 8)
 
 > The space between the inside edge of the border and the outside edge of the box inside it.
 >
 > The horizontal space (pts) between the left/right borders (if any) and the text contained within the box.
 
-**Explanation:**
+Top padding between the border and the box. With **Uniform Border Padding** it is used for all four sides. A negative value makes the box reach under the border.
 
-The top padding between the border and the box inside it, in pt. When **Uniform Border Padding** is ticked, this value is used for all four sides. A negative value makes the box reach under the border.
+###### Borders dialog: Border padding left
 
-*(Internal ID: `s_sbBdrPadT`)*
-
-#### Borders dialog: Border padding left
-
-- **Where:** Border Settings (dialog) › Padding › Border tab
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -200 to 200, default 8
-- **Greyed out when:** “Uniform Border Padding” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbBdrPadL`  
+Values: -200–200 (default 8) · Greyed out by: “Uniform Border Padding”
 
 > The space between the inside edge of the border and the outside edge of the box inside it.
 
-**Explanation:**
+Left (or inner) padding between the border and the box.
 
-The left (or inner) padding between the border and the box, in pt. Greyed out when **Uniform Border Padding** is ticked.
+###### Right/Outer (pt)
 
-*(Internal ID: `s_sbBdrPadL`)*
-
-#### Right/Outer (pt)
-
-- **Where:** Border Settings (dialog) › Padding › Border tab
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+
 
 > The horizontal space (pts) between the left/right borders (if any) and the text contained within the box.
 
-#### Uniform Border Padding
+###### Uniform Border Padding
 
-- **Where:** Border Settings (dialog) › Padding › Border tab
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_bdrPadSymmetrical`
 
 > Use the same value for the Top, Bottom, Left, and Right padding.
 
-**Explanation:**
+Greys out the bottom, left and right boxes.
 
-Uses the top value for all four sides of the border padding, and greys out the other three boxes.
+### Tabs+Borders
 
-*(Internal ID: `c_bdrPadSymmetrical`)*
+#### Thumb Tabs
 
-### Tabs+Borders tab › Thumb Tabs
+Checkbox, off · Regular+ · `c_thumbtabs` · cfg `thumbtabs/ifthumbtabs`  
+Also: Enable thumb tabs · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
-#### Height
+> Thumb Tabs are sometimes used in longer publications to help the user find a scripture book more easily. By default these use the \toc3 element in a USFM file to provide the text for the tab. Note: If only a single book is currently selected, it will place the Thumb Tab relative to ALL the books listed in the multiple book list.
 
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Number box
-- **Description:** Thumb tabs: Height
-- **View level:** Default and Full views
-- **Values:** from 3 to 20, default 8
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
+Only Scripture books get tabs. Thumb tabs are printed to the edge of the paper, so they need a printer that can print or trim to the edge.
 
-**Tooltip (the text shown when you hover the mouse over it):**
+#### Ornamental Decorations
+
+Checkbox, off · Regular+ · `c_useOrnaments` · cfg `snippets/fancyborders`  
+Also: Ornamental Decorations: Enable decorative borders, rules and verses · Shown when: “Ornamental Decorations”, “Thumb Tabs”
+
+> Enable this option to make use of ornamental borders, rules & verses.
+>
+> Some cultures place a high value on such decorative features in scripture publications.
+
+Most decorations need extra space, so check the margins and heading spacing after you print.
+
+#### Thumb Tabs
+
+##### Height – Thumb tabs: Height
+
+Number · Regular+ · `s_thumbheight` · cfg `thumbtabs/height`  
+Values: 3–20 (default 8) · Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > The height of the Thumb Tab measured in millimeters (mm).
 
-**Explanation:**
+Normal tabs: size along the page edge. Rotated tabs: how far the tab reaches in. Changing it recalculates **Number of Tab Positions** (for normal tabs).
 
-For normal tabs this is the size of the tab along the page edge. For rotated tabs it is how far the tab reaches in from the edge. Changing it makes PTXprint recalculate **Number of Tab Positions** (for normal tabs).
+##### Tab Color – Thumb tabs: Tab color
 
-*(Internal ID: `s_thumbheight` · Config key: `thumbtabs/height`)*
-
-#### Tab Color
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Colour picker
-- **Description:** Thumb tabs: Tab color
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Regular+ · `col_thumbback` · cfg `thumbtabs/background`  
+Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > The background color of the tabs. Use a dark color here and set the light text color with the Edit Style link.
 >
@@ -713,84 +479,39 @@ For normal tabs this is the size of the tab along the page edge. For rotated tab
 >
 > The background color is set here, but the foreground text color needs to be set by clicking the Edit Style link.
 
-**Explanation:**
+A dark colour shows well on the edge of the closed book.
 
-The colour of the tab block. Choose a dark colour so the edge of the closed book shows it well. The text colour is set in the style (use **Edit Style**).
+##### Rotate Tabs
 
-*(Internal ID: `col_thumbback` · Config key: `thumbtabs/background`)*
-
-#### Rotate Tabs
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Thumb tabs: Rotate tabs
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_thumbrotate` · cfg `thumbtabs/rotate`  
+Also: Thumb tabs: Rotate tabs · Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page.
 
-**Explanation:**
+Allows longer names in narrow margins. When ticked, the orientation list next to it becomes available.
 
-Turns the tab text so it runs along the page edge. This allows longer names in narrow margins, but each tab then takes more space along the edge, so fewer positions fit. When ticked, the orientation list next to it becomes available.
+##### Number of Tab Positions – Thumb tabs: Number of tab positions
 
-*(Internal ID: `c_thumbrotate` · Config key: `thumbtabs/rotate`)*
-
-#### Number of Tab Positions
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Number box
-- **Description:** Thumb tabs: Number of tab positions
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_thumbtabs` · cfg `thumbtabs/numtabs`  
+Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > How many tabs can there be down a page. This is automatically calculated from the Height (or Length when rotated), Page size and Margins. If any of these change then this value will be updated. Increasing it, makes tabs overlap. Reducing it spreads them apart.
 
-**Explanation:**
+PTXprint overwrites your value when the page height, margins or tab size change. After the last position, the next book starts again at the top.
 
-How many tab positions there are from the top to the bottom of the page. PTXprint calculates it from the page height, margins and tab size, and overwrites your value when one of these changes. After the last position, the next book starts again at the top.
+##### Length – Thumb tabs: Length
 
-*(Internal ID: `s_thumbtabs` · Config key: `thumbtabs/numtabs`)*
-
-#### Length
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Number box
-- **Description:** Thumb tabs: Length
-- **View level:** Default and Full views
-- **Values:** from 3 to 40, default 15
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_thumblength` · cfg `thumbtabs/length`  
+Values: 3–40 (default 15) · Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > The length of the Thumb Tab measured in millimeters (mm).
 
-**Explanation:**
+Normal tabs: how far the tab reaches in; make it long enough for the longest book name. Rotated tabs: size along the page edge. Changing it recalculates **Number of Tab Positions** (for rotated tabs).
 
-For normal tabs this is how far the tab reaches in from the page edge; make it long enough for the longest book name. For rotated tabs it is the size along the page edge. Changing it makes PTXprint recalculate **Number of Tab Positions** (for rotated tabs).
+##### Grouped Tabs – Thumb tabs: Tabs grouped by books
 
-*(Internal ID: `s_thumblength` · Config key: `thumbtabs/length`)*
-
-#### Grouped Tabs
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Text box
-- **Description:** Thumb tabs: Tabs grouped by books
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Regular+ · `t_thumbgroups` · cfg `thumbtabs/groups`  
+Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > List book IDs of short books to be grouped together at the same tab position. Use spaces between book IDs, and use ; to separate groups. There is no need to list all the book IDs here - only the special ones which need to share the same tab position.
 >
@@ -798,106 +519,50 @@ For normal tabs this is how far the tab reaches in from the page edge; make it l
 >
 > When several shorter adjacent books occur, it is common to group them together to use the same tab position (but still have differently named tabs).
 
-**Explanation:**
+Books not listed get their own position.
 
-Lists books that share one tab position. Use spaces between book codes and `;` between groups, for example `PHM TIT; 1JN 2JN 3JN JUD`. Only list the books that should share; other books get their own position.
+##### Length – Thumb tabs: Rotate options
 
-*(Internal ID: `t_thumbgroups` · Config key: `thumbtabs/groups`)*
-
-#### Length
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Drop-down list
-- **Description:** Thumb tabs: Rotate options
-- **View level:** Default and Full views
-- **Choices:** Each Facing Outward; Each Facing Inward; Rotate Both Anticlockwise; Rotate Both Clockwise
-- **Only available when:** “Rotate Tabs”, “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_rotateTabs` · cfg `thumbtabs/rotatetype`  
+Choices: Each Facing Outward | Each Facing Inward | Rotate Both Anticlockwise | Rotate Both Clockwise · Needs: “Rotate Tabs”, “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > If you choose to Rotate the tabs, there are various options as to how these should be oriented. The preview (right) will show how these will appear on facing pages.
 
-**Explanation:**
+Outward and inward face opposite ways on left and right pages; the other two turn both pages the same way.
 
-Chooses which way rotated text faces on left and right pages: both facing outward, both facing inward, or both turned the same way (anticlockwise or clockwise). The preview on the tab shows the result. It is only available when **Rotate Tabs** is ticked.
+##### Restart Tabs at MAT
 
-*(Internal ID: `fcb_rotateTabs` · Config key: `thumbtabs/rotatetype`)*
-
-#### Restart Tabs at MAT
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Thumb tabs: Restart tabs at New Testament
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_thumbrestart` · cfg `thumbtabs/restart`  
+Also: Thumb tabs: Restart tabs at New Testament · Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew).
 
-**Explanation:**
+Use it in a whole Bible, so the New Testament has its own run of tabs.
 
-Starts the tab positions again at the top for Matthew. Use it in a whole Bible, so the New Testament has its own run of tabs.
+##### Grouped Tabs – Thumb tabs: Reload default book groups
 
-*(Internal ID: `c_thumbrestart` · Config key: `thumbtabs/restart`)*
-
-#### Grouped Tabs
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Button
-- **Description:** Thumb tabs: Reload default book groups
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_resetTabGroups`  
+Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > Clicking this button will replace the Grouped Tabs list with the default groups.
 
-**Explanation:**
+The default groups include `RUT 1SA`, the Minor Prophets in two groups, and the short letters. Any groups you typed are lost.
 
-Replaces the **Grouped Tabs** text with PTXprint's default groups (for example `RUT 1SA`, the Minor Prophets in two groups, and the short letters). Any groups you typed are lost.
+##### \toc3
 
-*(Internal ID: `btn_resetTabGroups`)*
-
-#### \toc3
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Radio button
-- **Description:** Thumb tabs: Use \toc3 text
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_thumbText_toc3` · cfg `thumbtabs/thumbtextmkr=toc3`  
+Also: Thumb tabs: Use \toc3 text · Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > By default, Thumb Tabs use the content and styling of the \toc3 marker.
 >
 > Note that this setting is interconnected with the Table of Contents settings on the Peripherals tab. If \toc3 is not included in the ToC, then this option will be disabled. So it is recommended to use \toc3 as your thumbtab text and include it in the Table of Contents.
 
-**Explanation:**
+The usual choice.
 
-Uses the short book name from `\toc3` as the tab text. This is the usual choice. If the table of contents on the **Peripherals** tab is on, keep `\toc3` included there, or this option is not available.
+##### \zthumbtab
 
-*(Internal ID: `r_thumbText_toc3` · Config key: `thumbtabs/thumbtextmkr=toc3`)*
-
-#### \zthumbtab
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Radio button
-- **Description:** Thumb tabs: Use \zthumbtab text
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_thumbText_zthumbtab` · cfg `thumbtabs/thumbtextmkr=zthumbtab`  
+Also: Thumb tabs: Use \zthumbtab text · Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > By default, Thumb Tabs use the content and styling of the \toc3 marker. If you prefer different content and/or styling for the tabs, then this  
 > \zthumbtab option needs to be enabled, and the thumbtab names entered into your USFM text.
@@ -907,644 +572,288 @@ Uses the short book name from `\toc3` as the tab text. This is the usual choice.
 > The USFM extension \zthumbtab can be used to set an alternative value for the thumbtab contents. If a book's header contains a \zthumbtab entry, then  
 > \toc3 will not be used as the thumbtab contents. An empty \zthumbtab entry specifies that there should be no text in the thumbtab for that book.
 
-**Explanation:**
+Use it if the tab text should differ from `\toc3`. Add the `\zthumbtab` line to each book's header in Paratext. With this option, **Edit Style** opens the `\zthumbtab` style.
 
-Choose this if the tab text should differ from `\toc3`. The tab text is then taken from a `\zthumbtab` line in each book's header (added in Paratext). An empty `\zthumbtab` line gives a tab with no text. With this option, **Edit Style** opens the `\zthumbtab` style.
+##### Edit Style
 
-*(Internal ID: `r_thumbText_zthumbtab` · Config key: `thumbtabs/thumbtextmkr=zthumbtab`)*
-
-#### Edit Style
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Link
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Regular+ · `lb_style_toc3`  
+Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > Click to jump to the appropriate (\toc3 or \zthumbtab) marker in the style editor to change the formatting of the thumb tabs.
 
-**Explanation:**
+Change the text colour, font and size there. Changing the `\toc3` style may also change how `\toc3` text looks elsewhere, such as in the table of contents.
 
-Opens the style used for the tab text (`\toc3`, or `\zthumbtab` if that option is chosen) on the **Styles** tab. Change the text colour, font and size there. Note that changing the `\toc3` style may also change how `\toc3` text looks in other places, such as the table of contents.
+##### Only Show on Odd Pages
 
-*(Internal ID: `lb_style_toc3`)*
-
-#### Only Show on Odd Pages
-
-- **Where:** Tabs+Borders tab › Thumb Tabs
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Thumb tabs: Only Show on Odd Pages
-- **View level:** Default and Full views
-- **Only available when:** “Thumb Tabs” is selected
-- **Hidden until:** “Thumb Tabs” is ticked
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_tabsOddOnly` · cfg `thumbtabs/tabsoddonly`  
+Also: Thumb tabs: Only Show on Odd Pages · Needs: “Thumb Tabs” · Hidden until: “Thumb Tabs” · Shown when: “Thumb Tabs”, “Ornamental Decorations”
 
 > When printing thumb tabs on thin paper, it is preferable to only print these tabs on a single side of the page (the odd pages).
 
-**Explanation:**
-
-Prints the tabs only on odd (right-hand) pages. This is better on thin paper, where a tab printed on both sides can show through.
-
-*(Internal ID: `c_tabsOddOnly` · Config key: `thumbtabs/tabsoddonly`)*
-
-### Tabs+Borders tab
-
-#### Thumb Tabs
-
-- **Where:** Tabs+Borders tab
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Enable thumb tabs
-- **View level:** Default and Full views
-- **This tab/section appears when:** “Thumb Tabs”, “Ornamental Decorations” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Thumb Tabs are sometimes used in longer publications to help the user find a scripture book more easily. By default these use the \toc3 element in a USFM file to provide the text for the tab. Note: If only a single book is currently selected, it will place the Thumb Tab relative to ALL the books listed in the multiple book list.
-
-**Explanation:**
-
-Turns thumb tabs on and shows their settings. Tabs are only given to Scripture books, and their positions are calculated from all the books in the multiple-book list, even when you print a single book. Thumb tabs are printed to the edge of the paper, so they need a printer that can print or trim to the edge.
-
-*(Internal ID: `c_thumbtabs` · Config key: `thumbtabs/ifthumbtabs`)*
+Better on thin paper, where a tab printed on both sides can show through.
 
 #### Ornamental Decorations
 
-- **Where:** Tabs+Borders tab
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Ornamental Decorations: Enable decorative borders, rules and verses
-- **View level:** Default and Full views
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
+##### Section Headings
 
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Enable this option to make use of ornamental borders, rules & verses.
->
-> Some cultures place a high value on such decorative features in scripture publications.
-
-**Explanation:**
-
-Turns on the ornament features and shows their settings. Then tick each kind of decoration you want. Most decorations need extra space, so check the margins and heading spacing after you print.
-
-*(Internal ID: `c_useOrnaments` · Config key: `snippets/fancyborders`)*
-
-### Tabs+Borders tab › Ornamental Decorations › Section Headings
-
-#### Select...
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Section Headings
-- **Type:** Button
-- **Description:** Select decorative section headings
-- **View level:** Default and Full views
-- **Only available when:** “PDF border (Legacy)”, “Section Headings”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Explanation:**
-
-Opens a file chooser for the section heading graphic (a PDF file). The name of the chosen file appears next to the button. It is only available with **PDF border (Legacy)**.
-
-*(Internal ID: `btn_selectSectionHeaderPDF` · Config key: `fancy/sectionheaderpdf`)*
-
-#### Shift
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Section Headings
-- **Type:** Number box
-- **Description:** Decorative section headings: Vertical shift
-- **View level:** Default and Full views
-- **Values:** from -50 to 50
-- **Only available when:** “PDF border (Legacy)”, “Section Headings”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Vertical shift in pts of the section box image.  
->   - values shift the box upwards  
->   + values shift the box downwards
-
-**Explanation:**
-
-Moves the section heading graphic up or down, in pt. Negative values move it up, positive values move it down. Change it in small steps (for example 2 pt) and print to check.
-
-*(Internal ID: `s_inclSectionShift` · Config key: `fancy/sectionheadershift`)*
-
-#### Scale
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Section Headings
-- **Type:** Number box
-- **Description:** Decorative section headings: Scale
-- **View level:** Default and Full views
-- **Values:** default 1
-- **Only available when:** “PDF border (Legacy)”, “Section Headings”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Scale section header image. 1.0 = its own size,  
-> 0.5 = half size, 2.0 = double size.
-
-**Explanation:**
-
-Changes the size of the section heading graphic. 1 is the graphic's own size, 0.8 is 80%, 1.2 is 120%.
-
-*(Internal ID: `s_inclSectionScale` · Config key: `fancy/sectionheaderscale`)*
-
-#### PDF border (Legacy)
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Section Headings
-- **Type:** Radio button
-- **View level:** Default and Full views
-- **Only available when:** “Section Headings”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Place a PDF graphic behind each section heading (\s, \s1, \s2). Use Select... to choose it, and Scale/Shift to fit it.
-
-**Explanation:**
-
-Places a fixed PDF graphic behind each section heading (`\s`, `\s1`, `\s2`). Choose the graphic with **Select...** and adjust it with **Scale** and **Shift**. It does not grow with the heading, so it suits headings that are always one line.
-
-*(Internal ID: `r_sectHead_legacy` · Config key: `fancy/sectionborder=legacy`, `fancy/sectionbordertype=legacy`)*
-
-#### Dynamic Border
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Section Headings
-- **Type:** Radio button
-- **View level:** Default and Full views
-- **Only available when:** “Section Headings”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Draw a box around each section heading that grows with the heading. Its look is set by the cat:headingsbox|esb style.
-
-**Explanation:**
-
-Draws a box around each heading block that grows with the heading. Its look comes from the `cat:headingsbox|esb` style; PTXprint makes that style active for you when this option is chosen. Use the link to change it.
-
-*(Internal ID: `r_sectHead_dynamic` · Config key: `fancy/sectionborder=dynamic`, `fancy/sectionbordertype=dynamic`)*
-
-#### \cat:headingsbox|esb
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Section Headings
-- **Type:** Link
-- **View level:** Default and Full views
-- **Only available when:** “Dynamic Border”, “Section Headings”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> If Section Headings sometimes extend to more than one line, then a static PDF section heading is unlikely to work. Instead, a dynamically generated decorative section heading needs to be set up to grow/shrink with the content of the heading. Use this link to show the special style, which needs to be enabled and defined.
-
-**Explanation:**
-
-Opens the `cat:headingsbox|esb` style on the **Styles** tab. There you can set the background colour and, with the **Borders...** button, the border of the box around headings. It is only available with **Dynamic Border**.
-
-*(Internal ID: `lb_style_cat:headingsbox|esb`)*
-
-### Tabs+Borders tab › Ornamental Decorations
-
-#### Section Headings
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Enable decorative section headings
-- **View level:** Default and Full views
-- **Only available when:** “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_inclSectionHeader` · cfg `fancy/sectionheader`  
+Also: Enable decorative section headings · Needs: “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Section Headings may be adorned with a special graphic. Ensure that there is adequate space - both horizontal as well as vertical to make sure all headings fit.
 
-**Explanation:**
+Choose **PDF border (Legacy)** for a fixed graphic or **Dynamic Border** for a box that fits the heading.
 
-Adds a decoration to section headings. Choose **PDF border (Legacy)** for a fixed graphic or **Dynamic Border** for a box that fits the heading. Make sure there is enough space around headings so they fit inside the decoration.
+##### Border
 
-*(Internal ID: `c_inclSectionHeader` · Config key: `fancy/sectionheader`)*
-
-#### Border
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Enable decorative borders
-- **View level:** Default and Full views
-- **Only available when:** “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_inclPageBorder` · cfg `fancy/pageborders`  
+Also: Enable decorative borders · Needs: “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > There are different kinds of borders that can be applied to the publication.
 >
 > Note that if you use a border, it is likely that you will need to adjust the margins to make it fit.
 
-**Explanation:**
+Choose one of the three kinds below it.
 
-Adds a border to the pages. Choose one of the three kinds below it. You will usually need larger margins on the **Layout** tab.
+##### End of Book Decoration
 
-*(Internal ID: `c_inclPageBorder` · Config key: `fancy/pageborders`)*
-
-#### End of Book Decoration
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Enable end of book decoration
-- **View level:** Default and Full views
-- **Only available when:** “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_inclEndOfBook` · cfg `fancy/endofbook`  
+Also: Enable end of book decoration · Needs: “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > The end of each book may be adorned with a special graphic.
 
-**Explanation:**
+Front matter, glossaries and other non-Scripture books do not get it.
 
-Adds a decoration after the last verse of each Scripture book. Choose the graphic with **Select...**. Front matter, glossaries and other non-Scripture books do not get it.
+##### Verse Number Decorator
 
-*(Internal ID: `c_inclEndOfBook` · Config key: `fancy/endofbook`)*
-
-#### Verse Number Decorator
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Enable decorative verse numbers
-- **View level:** Default and Full views
-- **Only available when:** “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_inclVerseDecorator` · cfg `fancy/versedecorator`  
+Also: Enable decorative verse numbers · Needs: “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Verse numbers can be decorated using either of the options shown below.
 
-**Explanation:**
+**End of Ayah** uses a character from the font; **Verse Border Graphic** uses a small PDF graphic.
 
-Decorates every verse number. Choose **End of Ayah** (a character from the font) or **Verse Border Graphic** (a small PDF graphic).
+##### Book Title Borders
 
-*(Internal ID: `c_inclVerseDecorator` · Config key: `fancy/versedecorator`)*
-
-#### Book Title Borders
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Enable dynamic title borders
-- **View level:** Default and Full views
-- **Only available when:** “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_inclTitleBorders` · cfg `fancy/booktitleborder`  
+Also: Enable dynamic title borders · Needs: “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Dynamic borders can be applied to book titles (\mt1 and \mt2). Styling can be adjusted using the link below.
 
-**Explanation:**
+PTXprint makes the `cat:titlebox|esb` style active for you. Use the link below to change its look.
 
-Draws a border around the book title (`\mt1` and `\mt2`). PTXprint makes the `cat:titlebox|esb` style active for you. Use the link below to change its look.
+##### Section Headings
 
-*(Internal ID: `c_inclTitleBorders` · Config key: `fancy/booktitleborder`)*
+###### Select...
 
-### Tabs+Borders tab › Ornamental Decorations › Border
+Button · Regular+ · `btn_selectSectionHeaderPDF` · cfg `fancy/sectionheaderpdf`  
+Also: Select decorative section headings · Needs: “PDF border (Legacy)”, “Section Headings”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
-#### Select...
+Chooses the section heading PDF graphic. The file name appears next to the button.
 
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Border
-- **Type:** Button
-- **Description:** Select decorative borders
-- **View level:** Default and Full views
-- **Only available when:** “PDF border (Legacy)”, “Border”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
+###### Shift – Decorative section headings: Vertical shift
 
-**Explanation:**
+Number · Regular+ · `s_inclSectionShift` · cfg `fancy/sectionheadershift`  
+Values: -50–50 · Needs: “PDF border (Legacy)”, “Section Headings”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
-Opens a file chooser for the page border graphic (a PDF file). It starts in PTXprint's border-art folder. It is only available with **PDF border (Legacy)**.
+> Vertical shift in pts of the section box image.  
+>   + values shift the box upwards  
+>   - values shift the box downwards
 
-*(Internal ID: `btn_selectPageBorderPDF` · Config key: `fancy/pageborderpdf`)*
+Same direction as **Shift** for the verse graphic. Change it in small steps (for example 2 pt) and print to check.
 
-#### Full page
+In older versions of PTXprint this worked the other way round. When you open a configuration saved by an older version, PTXprint changes the sign for you, so the graphic stays in place. A configuration saved by this version and opened in an older PTXprint moves the graphic the other way.
 
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Border
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Decorative borders: Expand to fill page
-- **View level:** Default and Full views
-- **Only available when:** “PDF border (Legacy)”, “Border”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
+###### Scale – Decorative section headings: Scale
 
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_inclSectionScale` · cfg `fancy/sectionheaderscale`  
+Needs: “PDF border (Legacy)”, “Section Headings”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
+
+> Scale section header image. 1.0 = its own size,  
+> 0.5 = half size, 2.0 = double size.
+
+0.8 = 80%, 1.2 = 120%.
+
+###### PDF border (Legacy)
+
+Radio · Regular+ · `r_sectHead_legacy` · cfg `fancy/sectionborder=legacy`, `fancy/sectionbordertype=legacy`  
+Needs: “Section Headings”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
+
+> Place a PDF graphic behind each section heading (\s, \s1, \s2). Use Select... to choose it, and Scale/Shift to fit it.
+
+It does not grow with the heading, so it suits headings that are always one line.
+
+###### Dynamic Border
+
+Radio · Regular+ · `r_sectHead_dynamic` · cfg `fancy/sectionborder=dynamic`, `fancy/sectionbordertype=dynamic`  
+Needs: “Section Headings”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
+
+> Draw a box around each section heading that grows with the heading. Its look is set by the cat:headingsbox|esb style.
+
+PTXprint makes the `cat:headingsbox|esb` style active for you. Use the link to change it.
+
+###### \cat:headingsbox|esb
+
+Link · Regular+ · `lb_style_cat:headingsbox|esb`  
+Needs: “Dynamic Border”, “Section Headings”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
+
+> If Section Headings sometimes extend to more than one line, then a static PDF section heading is unlikely to work. Instead, a dynamically generated decorative section heading needs to be set up to grow/shrink with the content of the heading. Use this link to show the special style, which needs to be enabled and defined.
+
+On the **Styles** tab set the background colour and, with **Borders...**, the border of the box around headings.
+
+##### Border
+
+###### Select...
+
+Button · Regular+ · `btn_selectPageBorderPDF` · cfg `fancy/pageborderpdf`  
+Also: Select decorative borders · Needs: “PDF border (Legacy)”, “Border”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
+
+Chooses the page border PDF. It starts in PTXprint's border-art folder.
+
+###### Full page
+
+Checkbox, off · Regular+ · `c_borderPageWide` · cfg `fancy/pageborderfullpage`, `fancy/pagebordernfullpage_`  
+Also: Decorative borders: Expand to fill page · Needs: “PDF border (Legacy)”, “Border”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins.
 
-**Explanation:**
+If unticked, the graphic is stretched to the page size without the binding gutter.
 
-Stretches the PDF border graphic to the whole page. If unticked, the graphic is stretched to the page size without the binding gutter. It is only available with **PDF border (Legacy)**.
+###### \textborder
 
-*(Internal ID: `c_borderPageWide` · Config key: `fancy/pageborderfullpage`, `fancy/pagebordernfullpage_`)*
-
-#### \textborder
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Border
-- **Type:** Link
-- **View level:** Default and Full views
-- **Only available when:** “Dynamic Border”, “Border”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Regular+ · `lb_style_textborder`  
+Needs: “Dynamic Border”, “Border”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Click to edit the properties of the Text Border (which is controlled by the \textborder style on the Styles tab).
 
-**Explanation:**
+Change the border there with **Borders...** in **Sidebar Settings**.
 
-Meant to take you to the `textborder` style that controls the **Dynamic Border**. If it does not open the style, go to the **Styles** tab and select `textborder` (in the **Other** category). It is only available with **Dynamic Border**.
+###### PDF border (Legacy)
 
-*(Internal ID: `lb_style_textborder`)*
-
-#### PDF border (Legacy)
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Border
-- **Type:** Radio button
-- **View level:** Default and Full views
-- **Only available when:** “Border”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_border_pdf` · cfg `fancy/pageborder`  
+Needs: “Border”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Use an existing PDF Border for the entire publication.
 
-**Explanation:**
+Choose the graphic with **Select...**. It is stretched to the page without the binding gutter, or to the whole page if **Full page** is ticked.
 
-Places a PDF graphic (for example a decorative frame) on every page. Choose it with **Select...**. The graphic is stretched to the page (or to the page without the binding gutter, unless **Full page** is ticked).
+###### Dynamic Border
 
-*(Internal ID: `r_border_pdf` · Config key: `fancy/pageborder`)*
-
-#### Dynamic Border
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Border
-- **Type:** Radio button
-- **View level:** Default and Full views
-- **Only available when:** “Border”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_border_text` · cfg `fancy/pagebordertype=text`  
+Needs: “Border”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Place a decorative border only around the Scripture text (excludes introductions, footnotes and other peripheral material).
 
-**Explanation:**
+Its look comes from the `textborder` style (**Styles** tab, **Other** category); PTXprint makes that style active for you. Change it with **Borders...** in **Sidebar Settings**.
 
-Draws a border around the Bible text area of each page, leaving out introductions, footnotes and other material. Its look comes from the `textborder` style on the **Styles** tab (in the **Other** category); PTXprint makes that style active for you. Change it with the **Borders...** button in **Sidebar Settings**.
+###### Page Border
 
-*(Internal ID: `r_border_text` · Config key: `fancy/pagebordertype=text`)*
-
-#### Page Border
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Border
-- **Type:** Radio button
-- **View level:** Default and Full views
-- **Only available when:** “Border”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_border_page` · cfg `fancy/pagebordertype=page`  
+Needs: “Border”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Place a uniform-sized decorative border on every page regardless of content.
 
-**Explanation:**
+If you do not get the result you want, use **Dynamic Border** or **PDF border (Legacy)**.
 
-Meant to put a border of the same size on every page, whatever is on it, controlled by the `\pageborder` style. If you do not get the result you want, use **Dynamic Border** or **PDF border (Legacy)**.
+###### \pageborder
 
-*(Internal ID: `r_border_page` · Config key: `fancy/pagebordertype=page`)*
-
-#### \pageborder
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Border
-- **Type:** Link
-- **View level:** Default and Full views
-- **Only available when:** “Page Border”, “Border”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Regular+ · `lb_style_pageborder`  
+Needs: “Page Border”, “Border”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Click to edit the properties of the Page Border (which is controlled by the \pageborder style on the Styles tab).
 
-**Explanation:**
+Refers to the `\pageborder` style. (Clicking it does not open the style; see **Common problems**.)
 
-Refers to the `\pageborder` style that controls the **Page Border** option. It is only available with **Page Border**.
+##### End of Book Decoration
 
-*(Internal ID: `lb_style_pageborder`)*
+###### Select...
 
-### Tabs+Borders tab › Ornamental Decorations › End of Book Decoration
+Button · Regular+ · `btn_selectEndOfBookPDF` · cfg `fancy/endofbookpdf`  
+Also: Select end of book decoration · Needs: “End of Book Decoration”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
-#### Select...
+Chooses the end-of-book PDF. It is centred below the last line of each book.
 
-- **Where:** Tabs+Borders tab › Ornamental Decorations › End of Book Decoration
-- **Type:** Button
-- **Description:** Select end of book decoration
-- **View level:** Default and Full views
-- **Only available when:** “End of Book Decoration”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
+##### Verse Number Decorator
 
-**Explanation:**
+###### End of Ayah
 
-Opens a file chooser for the end-of-book graphic (a PDF file). The graphic is centred below the last line of each book.
-
-*(Internal ID: `btn_selectEndOfBookPDF` · Config key: `fancy/endofbookpdf`)*
-
-### Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-
-#### End of Ayah
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-- **Type:** Radio button
-- **Description:** Decorative verse numbers: Use end of Ayah
-- **View level:** Default and Full views
-- **Only available when:** “Verse Number Decorator”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_decorator_ayah` · cfg `fancy/versedecoratortype=ayah`  
+Also: Decorative verse numbers: Use end of Ayah · Needs: “Verse Number Decorator”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Use the End of Ayah character in the font to decorate the verse number.
 
-**Explanation:**
+The character is U+06DD. If the font lacks it you see empty boxes. **Move Ayah** puts the number at the end of the verse.
 
-Puts each verse number inside the End of Ayah character (U+06DD) of the font. The font must contain this character, otherwise you see empty boxes. Use **Move Ayah** to place the number at the end of the verse.
+###### Verse Border Graphic
 
-*(Internal ID: `r_decorator_ayah` · Config key: `fancy/versedecoratortype=ayah`)*
-
-#### Verse Border Graphic
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-- **Type:** Radio button
-- **Description:** Decorative verse numbers: Use verse border graphic
-- **View level:** Default and Full views
-- **Only available when:** “Verse Number Decorator”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_decorator_file` · cfg `fancy/versedecoratortype=file`  
+Also: Decorative verse numbers: Use verse border graphic · Needs: “Verse Number Decorator”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Use a PDF graphic to decorate the verse number. You may need to also adjust the font properties to ensure the verse numbers fit within the graphic.
 
-**Explanation:**
+Choose it with **Select...**; adjust with **Scale** and **Shift**.
 
-Places a small PDF graphic behind each verse number. Choose it with **Select...** and adjust it with **Scale** and **Shift**. You may need to change the verse number font size or colour so the number fits inside.
+###### \vp
 
-*(Internal ID: `r_decorator_file` · Config key: `fancy/versedecoratortype=file`)*
-
-#### \vp
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-- **Type:** Link
-- **View level:** Default and Full views
-- **Only available when:** “Move Ayah”, “Verse Number Decorator”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Regular+ · `lb_style_vp`  
+Needs: “Move Ayah”, “Verse Number Decorator”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Click to edit the \vp marker's properties on the Styles tab.
 
-**Explanation:**
+`\vp` is used for the verse numbers when **Move Ayah** is ticked.
 
-Opens the `\vp` style on the **Styles** tab. This style is used for the verse numbers when **Move Ayah** is ticked.
+###### Select...
 
-*(Internal ID: `lb_style_vp`)*
+Button · Regular+ · `btn_selectVerseDecorator` · cfg `fancy/versedecoratorpdf`  
+Also: Select verse border graphic · Needs: “Verse Border Graphic”, “Verse Number Decorator”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
-#### Select...
+Chooses the verse number PDF. PTXprint suggests its own star graphic.
 
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-- **Type:** Button
-- **Description:** Select verse border graphic
-- **View level:** Default and Full views
-- **Only available when:** “Verse Border Graphic”, “Verse Number Decorator”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
+###### Shift – Verse border graphic: Vertical shift
 
-**Explanation:**
-
-Opens a file chooser for the verse number graphic (a PDF file). PTXprint suggests its own star graphic. It is only available with **Verse Border Graphic**.
-
-*(Internal ID: `btn_selectVerseDecorator` · Config key: `fancy/versedecoratorpdf`)*
-
-#### Shift
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-- **Type:** Number box
-- **Description:** Verse border graphic: Vertical shift
-- **View level:** Default and Full views
-- **Values:** from -20 to 20
-- **Only available when:** “Verse Border Graphic”, “Verse Number Decorator”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_verseDecoratorShift` · cfg `fancy/versedecoratorshift`  
+Values: -20–20 · Needs: “Verse Border Graphic”, “Verse Number Decorator”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Vertical shift in pts of the verse decorator image.  
 >   + values shift the decorator upwards  
 >   - values shift the decorator downwards
 
-**Explanation:**
+Use small steps, for example 0.5 pt.
 
-Moves the verse graphic up or down, in pt. Positive values move it up, negative values move it down. Use small steps, for example 0.5 pt.
+###### Scale – Verse border graphic: Scale
 
-*(Internal ID: `s_verseDecoratorShift` · Config key: `fancy/versedecoratorshift`)*
-
-#### Scale
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-- **Type:** Number box
-- **Description:** Verse border graphic: Scale
-- **View level:** Default and Full views
-- **Values:** default 1
-- **Only available when:** “Verse Border Graphic”, “Verse Number Decorator”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_verseDecoratorScale` · cfg `fancy/versedecoratorscale`  
+Needs: “Verse Border Graphic”, “Verse Number Decorator”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Scale verse decorator image. 1.0 = its own size,  
 > 0.5 = half size, 2.0 = double size.
 
-**Explanation:**
+Make it bigger if two- or three-digit verse numbers do not fit.
 
-Changes the size of the verse graphic. 1 is its own size. Make it bigger if two- or three-digit verse numbers do not fit.
+###### Move Ayah
 
-*(Internal ID: `s_verseDecoratorScale` · Config key: `fancy/versedecoratorscale`)*
-
-#### Move Ayah
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Decorative verse numbers: Move Ayah to end of verse
-- **View level:** Default and Full views
-- **Only available when:** “End of Ayah”, “Verse Number Decorator”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_decorator_endayah` · cfg `fancy/endayah`  
+Also: Decorative verse numbers: Move Ayah to end of verse · Needs: “End of Ayah”, “Verse Number Decorator”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > This option moves the Ayah to the end of the verse.
 
-**Explanation:**
+As is usual in Arabic-script layout. When ticked, the `\vp` link becomes available to style the moved numbers.
 
-Moves the decorated verse number from the start to the end of each verse, as is usual in Arabic-script layout. It is only available with **End of Ayah**. When ticked, the `\vp` link becomes available to style the moved numbers.
+###### \v
 
-*(Internal ID: `c_decorator_endayah` · Config key: `fancy/endayah`)*
-
-#### \v
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Verse Number Decorator
-- **Type:** Link
-- **View level:** Default and Full views
-- **Only available when:** “Verse Number Decorator”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Regular+ · `lb_style_v`  
+Needs: “Verse Number Decorator”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Click to edit the \v marker's properties on the Styles tab.
 
-**Explanation:**
+Change the font size, colour and position of the verse numbers there so they fit the decoration.
 
-Opens the `\v` (verse number) style on the **Styles** tab, where you can change the font size, colour and position of the verse numbers so they fit the decoration.
+##### Book Title Borders
 
-*(Internal ID: `lb_style_v`)*
+###### \cat:titlebox|esb
 
-### Tabs+Borders tab › Ornamental Decorations › Book Title Borders
-
-#### \cat:titlebox|esb
-
-- **Where:** Tabs+Borders tab › Ornamental Decorations › Book Title Borders
-- **Type:** Link
-- **View level:** Default and Full views
-- **Only available when:** “Book Title Borders”, “Ornamental Decorations” is selected
-- **Hidden until:** “Ornamental Decorations” is ticked
-- **This tab/section appears when:** “Ornamental Decorations”, “Thumb Tabs” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Regular+ · `lb_style_cat:titlebox|esb`  
+Needs: “Book Title Borders”, “Ornamental Decorations” · Hidden until: “Ornamental Decorations” · Shown when: “Ornamental Decorations”, “Thumb Tabs”
 
 > Adjust the styling of the dynamic borders around book titles.
 
-**Explanation:**
-
-Opens the `cat:titlebox|esb` style on the **Styles** tab. Change the background colour there, and use **Borders...** in **Sidebar Settings** to change the border.
-
-*(Internal ID: `lb_style_cat:titlebox|esb`)*
+Change the background colour there, and use **Borders...** in **Sidebar Settings** for the border.

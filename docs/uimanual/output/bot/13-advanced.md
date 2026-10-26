@@ -1,44 +1,42 @@
-# Advanced tab
+# 14. Advanced tab
 
-## What this tab is for
+## 14.1 What this tab is for
 
-The **Advanced** tab holds settings for experienced users. Most people never need to change anything here. Come here when another tab cannot give you the result you need, or when someone on the support team asks you to change a specific setting.
+The **Advanced** tab holds settings for experienced users. Most people never need it. Come here when another tab cannot give you the result you need, or when the support team asks you to change a specific setting.
 
 The tab has two sub-tabs:
 
 * **Main** – ways to change the text before it is typeset (a changes file, a processing script), extra stylesheets and TeX settings files, interlinear output, plugins, internet use, and locks that protect a finished layout.
-* **Other** – about 125 "TeXpert" settings. These are fine controls for the typesetting engine, sorted into groups such as **Page Layout and Spacing** or **Footnotes, Cross-references, Study Notes**.
+* **Other** – about 125 "TeXpert" settings: fine controls for the typesetting engine, sorted into groups such as **Page Layout and Spacing** or **Footnotes, Cross-references, Study Notes**.
 
-The **Advanced** tab is only shown in the **Default** and **Full** views. Some settings on the **Main** sub-tab are only shown in the **Full** view (this is noted below).
+The tab is only shown in the **Regular** and **Full** views. Some **Main** settings are only shown in the **Full** view (noted below).
 
-## Before you change anything here
+## 14.2 Before you change anything here
 
-These are expert settings. A small change can move text on many pages. Follow these rules:
+A small change here can move text on many pages. Follow these rules:
 
-1. **Change one setting at a time.** Then print and look at the result. If you change several settings together, you cannot tell which one caused a change.
-2. **Write down the original value** before you change it. Then you can always go back.
-3. **Look for bold labels.** On the **Other** sub-tab, the label of a check box or number box turns **bold** when its value is different from the default value. This lets you see quickly what has been changed. (Drop-down lists do not turn bold.)
+1. **Change one setting at a time.** Then print and look at the result. If you change several together, you cannot tell which one caused a change.
+2. **Write down the original value** before you change it.
+3. **Look for bold labels.** On the **Other** sub-tab, the label of a check box or number box turns **bold** when its value differs from the default. (Drop-down lists do not turn bold.)
 4. **To go back to the default value:**
-   * For a number box, click its bold label. The value goes back to the default.
-   * For a check box, click the check box again.
-   * For a drop-down list, choose the first item in the list. The first item is always the default.
-5. **Hover the mouse over a setting** to see its tooltip. The first line of the tooltip shows the internal name and the default value in square brackets. For a number box the brackets show several numbers: the first number is the default (the others are the lowest value, highest value and step sizes).
+   * Number box: click its bold label.
+   * Check box: click the check box again.
+   * Drop-down list: choose the first item. The first item is always the default.
+5. **Hover over a setting** to see its tooltip. The first line shows the internal name and the default value in square brackets. For a number box the first number in the brackets is the default; the others are the lowest value, highest value and step sizes.
 
-PTXprint saves a TeXpert setting in the configuration only when it is different from the default.
+PTXprint saves a TeXpert setting in the configuration only when it differs from the default.
 
 To find a TeXpert setting quickly, type part of its name in the **Search for settings** box at the bottom of the main window (Ctrl+F).
 
-## Main sub-tab: Text Processing & Stylesheets
+## 14.3 Main sub-tab: Text Processing & Stylesheets
 
-This area lets you change the text, or the way it is styled, using files that you edit yourself. Each option has a check box (to turn it on) and an **Edit...** button. The **Edit...** button is only active when its check box is ticked. It opens the file on the **View+Edit** tab, where you can type in it and save it.
+Here you change the text, or how it is styled, with files you edit yourself. Each option has a check box (to turn it on) and an **Edit...** button, which is only active when the box is ticked. **Edit...** opens the file on the **View+Edit** tab, where you can type in it and save it.
 
-These are advanced features. They are for people who understand USFM, regular expressions (a way to describe text patterns) or TeX. Never change these files if you are not sure what you are doing. Untick the check box to turn the file off again. You do not need to delete the file.
+These features are for people who understand USFM, regular expressions (a way to describe text patterns) or TeX. Never change these files if you are not sure what you are doing. To turn a file off, untick its box; you do not need to delete the file.
 
-What each file does:
-
-* **Apply Modifications to USFM Text (changes.txt)** – a list of search-and-replace rules. PTXprint applies them to a temporary copy of the text before it typesets it. Your Paratext project is never changed. `changes.txt` belongs to the current configuration only. `PrintDraftChanges.txt` (in the project folder) applies to all configurations of the project.
-* **Apply Customized Settings (ptxprint-mods.tex)** – TeX settings that are applied after all the PTXprint settings. Use it for things that PTXprint has no control for. A support person may give you a line to add here.
-* **Apply Initial Settings (ptxprint-premods.tex)** – TeX settings applied before the stylesheets and other settings. This is rarely needed. (**Full** view only.)
+* **Apply Modifications to USFM Text (changes.txt)** – search-and-replace rules applied to a temporary copy of the text before typesetting. Your Paratext project is never changed. `changes.txt` belongs to the current configuration only; `PrintDraftChanges.txt` (in the project folder) applies to all configurations of the project.
+* **Apply Customized Settings (ptxprint-mods.tex)** – TeX settings applied after all PTXprint settings, for things PTXprint has no control for. A support person may give you a line to add here.
+* **Apply Initial Settings (ptxprint-premods.tex)** – TeX settings applied before the stylesheets and other settings. Rarely needed. (**Full** view only.)
 * **Apply Customized Styles (custom.sty)** – the project's own custom stylesheet, the same one Paratext uses. (**Full** view only.)
 * **Apply Stylesheet Overrides (ptxprint-mods.sty)** – an extra stylesheet for this configuration that overrides other styles. Most style changes are easier on the **Styles** tab. (**Full** view only.)
 * **Process Text With Custom Script at** – runs a program of your own on each book. (**Full** view only.)
@@ -47,104 +45,104 @@ PTXprint changes the text in this order:
 
 1. A custom script, if **start** is chosen.
 2. The rules in the changes files.
-3. **Auto-Correct USFM** and other changes that PTXprint makes for settings on other tabs.
+3. **Auto-Correct USFM** and other changes PTXprint makes for settings on other tabs.
 4. A custom script, if **end** is chosen.
 
-## Main sub-tab: General
+## 14.4 Main sub-tab: General
 
-This area holds settings that do not fit anywhere else:
+Settings that do not fit anywhere else:
 
-* **Sensitive Project** – for projects in sensitive locations. It shortens picture credits and keeps private data out of the PDF.
-* **Auto-Correct USFM** – fixes common USFM mistakes and warns you about serious ones. Leave it ticked.
+* **Sensitive Project** – shortens picture credits and keeps private data out of the PDF.
+* **Auto-Correct USFM** – fixes common USFM mistakes and warns about serious ones. Leave it ticked.
 * **Interlinear** – prints Paratext interlinear glosses under (or above) each word. (**Full** view only.)
-* **Auto-tag Hebrew and Greek words** – marks Hebrew and Greek words so they use the right font.
-* **Only Use English Links** and **Disable ALL Internet Use** – control how PTXprint uses the internet.
+* **Auto-tag Hebrew and Greek words** – marks these words so they use the right font.
+* **Only Use English Links** and **Disable ALL Internet Use** – how PTXprint uses the internet.
 * **Plugins** – loads extra parts of the typesetting code for special features. (**Full** view only.)
 * **Lock XeTeX Layout Level** and **Lock UI Layout Settings** – protect a finished layout from changes. (**Full** view only.)
 
-## Main sub-tab: Capture tests?
+## 14.5 Main sub-tab: Capture tests?
 
-This area is only shown in the **Full** view. It is a tool for the PTXprint developers. It records what you click so that the developers can make an automatic test. Normal users do not need it.
+Only shown in the **Full** view. A developer tool that records what you click to make an automatic test. Normal users do not need it.
 
-## Other sub-tab: the TeXpert settings
+## 14.6 Other sub-tab: the TeXpert settings
 
-The **Other** sub-tab lists the TeXpert settings in groups. Click a group name to open or close it. The button with the filter icon at the top shows only the groups that have changed settings. It is only active while the **Other** sub-tab is shown.
+Click a group name to open or close it. The filter button at the top shows only the groups that have changed settings; it is only active while the **Other** sub-tab is shown.
 
-The sections below follow the groups on the screen. Remember: change one setting at a time, and write down the original value.
+The sections below follow the groups on the screen.
 
 ### Page Layout and Spacing
 
-These settings control where books and introductions start, how two columns are balanced, line spacing, and notelines.
+Where books and introductions start, how two columns are balanced, line spacing, and notelines.
 
-* **Where to start a new book** chooses if each book starts on the next page, on the same page as the end of the previous book, or on the next odd (right-hand) page. **Page full factor** sets how full the page can be before the next book is moved to a new page anyway.
-* **Where to start a new intro page** does the same for book introductions. **Grouped** keeps adjacent introductions together and starts the group on an odd page.
+* **Where to start a new book**: next page, same page as the end of the previous book, or next odd (right-hand) page. **Page full factor** sets how full the page can be before the next book is moved to a new page anyway.
+* **Where to start a new intro page** does the same for book introductions.
 * **Unbalanced Lines (Max)** is only used when **Allow Unbalanced Columns** is ticked on the **Layout** tab.
 * **Variable line spacing maximum stretch** and **shrink** are only used when **Fill Columns** is ticked on the **Layout** tab.
-* The **Noteline** settings change the lines for hand-written notes that you turn on with **Notelines** on the **Layout** tab. Set the noteline colour there too.
+* The **Noteline** settings change the lines for hand-written notes, which you turn on (and colour) with **Notelines** on the **Layout** tab.
 * **Maximum layout version** and **Legacy 1/14 LineSpacing** keep older projects looking the same after PTXprint is updated.
-* **Maximum parallel processes** controls how many jobs run at the same time, for example when the page filler works.
+* **Maximum parallel processes** limits how many jobs run at the same time, for example when the page filler works.
 
 ### Chapter and Verse
 
-These settings fine-tune chapter numbers and verse numbers: the space after them, the size of large (drop) chapter numbers, hanging verse numbers in poetry, and marginal verse numbers (verse numbers placed in the margin, set on the **Body** tab).
+Space after chapter and verse numbers, the size of large (drop) chapter numbers, hanging verse numbers in poetry, and marginal verse numbers (verse numbers in the margin, set on the **Body** tab).
 
 ### Body Text
 
-These settings control paragraph indents, line breaking and hyphenation, and clickable links.
+Paragraph indents, line breaking and hyphenation, and clickable links.
 
-Some of these are "penalties". A penalty is a number that tells the typesetting engine how much to avoid something. A higher penalty means "avoid this more strongly". 10000 means "never".
+Some of these are "penalties": a number that tells the typesetting engine how much to avoid something. Higher = avoid more strongly. 10000 means "never".
 
-* **Hyphenation threshold**, **Penalty for inserting hyphen** and **Double hyphenation penalty** only matter when hyphenation is turned on (**Fonts+Script** tab).
+* **Hyphenation threshold**, **Penalty for inserting hyphen** and **Double hyphenation penalty** only matter when hyphenation is on (**Fonts+Script** tab).
 * **Maximum orphan word length** is only used when **Prevent Orphan Words** is ticked on the **Body** tab.
 
 ### Fonts and Underline
 
-These settings control how line heights are measured, whether system fonts can be used, and how underlines look.
+How line heights are measured, whether system fonts can be used, and how underlines look.
 
 ### Footnotes, Cross-references, Study Notes
 
-These settings control where notes go on a page, when notes may be split across pages, and fine details of the spacing of paragraphed notes. Many of these settings interact. Change them only to solve a specific problem, and check several pages after each change.
+Where notes go on a page, when notes may be split across pages, fine spacing of paragraphed notes, and the gap to margin notes. Many of these interact. Change them only to solve a specific problem, and check several pages after each change.
 
 ### Diglot
 
-These settings are only used when you print two or more texts side by side (see the **Diglot** tab). They control notes, versification, shading, borders and what happens when a page cannot be printed.
+Only used when you print two or more texts side by side (see the **Diglot** tab): notes, versification, shading, borders, and what happens when a page cannot be printed.
 
 ### Pictures, Figures, Images, Sidebars
 
-These settings control the default position of pictures, the order of caption and reference, the space around pictures and sidebars, and the style of picture credits.
+Default picture position, order of caption and reference, space around pictures and sidebars, and the style of picture credits.
 
 ### PDF Options, Covers, Show/Hide
 
-These settings control bookmarks, links and transparency in the PDF. They also hold some cover sizes, and "show" options that put helpful marks on the pages while you proofread. Turn all the "show" options off again before you make the final PDF.
+Bookmarks, links and transparency in the PDF, some cover sizes, and "show" options that put helpful marks on the pages while you proofread. Turn all "show" options off before you make the final PDF.
 
 ### Preview Pane: Adjustment and Analysis Settings
 
-These settings control the PDF Preview window: the auto-update delay, how far the right-click menu can shrink or expand text, and how **Layout Analysis** finds bad spaces, collisions and rivers. A river is a line of white space that runs down through several lines of text. Changes here take effect in the preview straight away. You can also reach these settings from the PDF Preview window: click the delay text next to **Auto-update**, or the analysis settings link.
+The PDF Preview window: the auto-update delay, how far the right-click menu can shrink or expand text, and how **Layout Analysis** finds bad spaces, collisions and rivers. A river is a line of white space running down through several lines of text. Changes here take effect in the preview straight away. You can also reach these settings from the PDF Preview window: click the delay text next to **Auto-update**, or the analysis settings link.
 
 ### Automatic Page Filler
 
-These settings control the page filler tool in the PDF Preview window. The page filler stretches or shrinks paragraphs a little so that each page is filled. The settings balance speed against how good the text looks. See the chapter on the PDF Preview window for how to use the tool.
+The page filler tool in the PDF Preview window stretches or shrinks paragraphs a little so each page is filled. These settings balance speed against how good the text looks. **The cost of imbalance in a polyglot slice** is only used for diglot and polyglot projects. See the PDF Preview chapter for how to use the tool.
 
 ### Other Miscellaneous Settings
 
-These settings control thumb tab text, the tilde (~) character, unwanted reference links from DBL text, and the space above the end-of-book decoration.
+Thumb tab text, the tilde (~) character, unwanted reference links from DBL text, and the space above the end-of-book decoration.
 
-## Common tasks
+## 14.7 Common tasks
 
 ### Apply a search-and-replace rule to the text (advanced)
 
-1. On the **Advanced** tab, **Main** sub-tab, in **Text Processing & Stylesheets**, tick **Apply Modifications to USFM Text (changes.txt)**.
-2. Click the **Edit...** button next to it (or press Shift+Ctrl+C). PTXprint opens the **View+Edit** tab and shows `changes.txt`.
-3. Add one rule on each line. A simple rule looks like `"old text" > "new text"`. The text in the first quotes is a regular expression, so some characters (such as `.` `(` `[` `\`) have a special meaning.
+1. On **Advanced** › **Main** › **Text Processing & Stylesheets**, tick **Apply Modifications to USFM Text (changes.txt)**.
+2. Click **Edit...** next to it (or press Shift+Ctrl+C). `changes.txt` opens on the **View+Edit** tab.
+3. Add one rule per line. A simple rule looks like `"old text" > "new text"`. The first quoted text is a regular expression, so some characters (such as `.` `(` `[` `\`) have a special meaning.
 4. Save the file on the **View+Edit** tab.
-5. Click **Print**. Check that the change appears in the PDF.
+5. Click **Print** and check the change in the PDF.
 
 If PTXprint reports an error in the changes file, look at the last rule you added.
 
 ### Turn off a changes file or mods file without deleting it
 
 1. Go to **Advanced** › **Main** › **Text Processing & Stylesheets**.
-2. Untick the check box for that file (for example **Apply Customized Settings (ptxprint-mods.tex)**).
+2. Untick the box for that file (for example **Apply Customized Settings (ptxprint-mods.tex)**).
 3. Print again. The file stays on disk, so you can tick the box later to use it again.
 
 ### Print an interlinear text
@@ -152,43 +150,42 @@ If PTXprint reports an error in the changes file, look at the last rule you adde
 1. In Paratext, make sure the interlinear glosses are approved.
 2. Change to the **Full** view.
 3. On **Advanced** › **Main** › **General**, tick **Interlinear**.
-4. In the box next to it, type the language code of the glosses (for example `en`). The code is the end of the folder name `Interlinear_en` in the project folder.
-5. Tick **Ruby Text Above** if you want the glosses above the words instead of below.
+4. In the box next to it, type the gloss language code (for example `en`).
+5. Tick **Ruby Text Above** if you want the glosses above the words.
 6. Click **Print**.
-7. To change the font size or colour of the glosses, click the **\gloss|rb** link. For the base text, click the **\rb** link.
+7. To change the size or colour of the glosses, click the **\gloss|rb** link. For the base text, click **\rb**.
 
 ### Protect a finished layout
 
 1. Change to the **Full** view.
 2. On **Advanced** › **Main** › **General**, tick **Lock XeTeX Layout Level**. Future PTXprint updates will then use the same layout rules as now.
-3. Tick **Lock UI Layout Settings**. The main layout, font and style controls are now greyed out, so nobody can change them by accident.
+3. Tick **Lock UI Layout Settings**. The main layout, font and style controls are greyed out, so nobody changes them by accident.
 4. Untick these boxes when you need to change the layout again.
 
 ### Find out which TeXpert settings have been changed
 
-1. Go to the **Advanced** tab and click the **Other** sub-tab.
+1. On the **Advanced** tab, click the **Other** sub-tab.
 2. Click the filter button at the top. Only the groups with changed settings stay visible, and they open.
-3. Look for the bold labels. These are the changed settings.
+3. The bold labels are the changed settings.
 4. Click the filter button again to show all groups.
 
 ### Put a TeXpert setting back to its default value
 
 1. Find the setting on **Advanced** › **Other**. Its label is bold.
-2. For a number box, click the bold label. For a check box, click the check box. For a drop-down list, choose the first item.
-3. Check that the label is no longer bold.
-4. Print again.
+2. Number box: click the bold label. Check box: click the box. Drop-down list: choose the first item.
+3. Check that the label is no longer bold, then print again.
 
 ### Start each book on a right-hand page
 
 1. Go to **Advanced** › **Other** › **Page Layout and Spacing**.
 2. Set **Where to start a new book** to **Odd page**.
-3. Print. PTXprint adds a blank page where it is needed.
+3. Print. PTXprint adds blank pages where needed.
 
 ### Let books follow each other on the same page
 
 1. Go to **Advanced** › **Other** › **Page Layout and Spacing**.
 2. Set **Where to start a new book** to **Same page**.
-3. If a new book still starts on a new page when you do not want it to, increase **Page full factor** a little (for example from 0.65 to 0.75).
+3. If a book still starts on a new page when you do not want it to, increase **Page full factor** a little (for example from 0.65 to 0.75).
 
 ### Mark places that need attention while proofreading
 
@@ -197,9 +194,9 @@ If PTXprint reports an error in the changes file, look at the last rule you adde
 3. Print and check the PDF.
 4. Untick these options before you make the final PDF.
 
-## Common problems
+## 14.8 Common problems
 
-**The Advanced tab is missing.** It is only shown in the **Default** and **Full** views. Change the view level (see the chapter on the main window).
+**The Advanced tab is missing.** It is only shown in the **Regular** and **Full** views. Change the view level (see the chapter on the main window).
 
 **Some settings on the Main sub-tab are missing** (for example **Interlinear**, **Plugins**, **Process Text With Custom Script at**, or the locks). These are only shown in the **Full** view.
 
@@ -207,120 +204,98 @@ If PTXprint reports an error in the changes file, look at the last rule you adde
 
 **My changes in changes.txt have no effect.** Make sure **Apply Modifications to USFM Text (changes.txt)** is ticked, the file is saved on the **View+Edit** tab, and you printed again. Check that the search text really matches the USFM text, including spaces and markers. Look at the Log tab for messages about the changes file.
 
-**Printing fails after I edited a mods file.** Untick **Apply Customized Settings (ptxprint-mods.tex)** (or the box for the file you edited) and print again. If the problem goes away, the error is in that file. Undo your last change in the file.
+**Printing fails after I edited a mods file.** Untick the box for the file you edited (for example **Apply Customized Settings (ptxprint-mods.tex)**) and print again. If the problem goes away, the error is in that file. Undo your last change in it.
 
 **Interlinear printing says some references "need to be reapproved".** The glosses for those verses are not approved in the Paratext Interlinearizer. Approve them in Paratext and print again.
 
-**Between Letters spacing is greyed out on the Fonts+Script tab.** **Interlinear** is ticked on the **Advanced** tab. These two settings cannot be used together.
+**Between Letters spacing is greyed out on the Fonts+Script tab.** **Interlinear** is ticked on the **Advanced** tab. The two cannot be used together.
 
-**Layout, font and style controls are greyed out.** **Lock UI Layout Settings** is ticked on **Advanced** › **Main** › **General** (**Full** view). Untick it.
+**Layout, font and style controls are greyed out.** Untick **Lock UI Layout Settings** on **Advanced** › **Main** › **General** (**Full** view).
 
-**Help links and the update check are missing.** **Disable ALL Internet Use** is ticked. Untick it if you want PTXprint to use the internet again.
+**Help links and the update check are missing.** **Disable ALL Internet Use** is ticked. Untick it to let PTXprint use the internet again.
 
-**My PDF suddenly looks different but I did not change anything on the main tabs.** Someone may have changed a TeXpert setting. Open **Advanced** › **Other** and click the filter button to see the changed settings (look for bold labels). Also check whether a changes file or mods file is ticked on the **Main** sub-tab.
+**My PDF suddenly looks different but I did not change anything on the main tabs.** Someone may have changed a TeXpert setting. Open **Advanced** › **Other** and click the filter button to see the changed settings (bold labels). Also check whether a changes file or mods file is ticked on the **Main** sub-tab.
 
 **Unbalanced Lines (Max) or the variable line spacing settings have no effect.** They only work when **Allow Unbalanced Columns** or **Fill Columns** is ticked on the **Layout** tab.
 
-**I changed Use system fonts but nothing happened.** You must close and restart PTXprint for this setting to take effect.
+**I changed Use system fonts but nothing happened.** Close and restart PTXprint.
 
 **Coloured marks or labels appear in the margins of my PDF.** One of the "show" options in **PDF Options, Covers, Show/Hide** is ticked (**Show adjust points**, **Mark Trigger Points**, **Show USFM codes**, **Show Error Bars For Overfull Lines**), or **Show Diglot Trace Marks** in the **Diglot** group. Untick it.
 
-## Settings reference: Advanced tab
+## 14.9 Settings reference
 
-Every control in this part of PTXprint is listed below, grouped by where it appears.
+### Advanced
 
-### Advanced tab › Main tab › Text Processing & Stylesheets
+#### Other
 
-#### Apply Customized Settings (ptxprint-mods.tex)
+Label · Regular+ · `l_advOther`
 
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Apply customized TeX settings
-- **View level:** Default and Full views
+> To balance columns of text on a page it is possible to specify paragraphs adjustments (shrink or expand):
+>
+> A Paragraph Adjust List needs to be in this format:  
+> MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line) %MARK 4.14 +1   (ignore this line - treat it as a comment) MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines) MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph  
+>                               which contains MRK 6.23 e.g. a heading.) etc. Note that adjusting paragraphs needs to be done right at the end when all other settings have been finalized. Otherwise you are likely to have to re-do it all again.
 
-**Tooltip (the text shown when you hover the mouse over it):**
+The **Other** sub-tab label. The sub-tab holds the TeXpert settings in groups.
+
+#### Filter: show only sections with non-default settings. Sectio...
+
+Toggle, off · Regular+ · `btn_texpertFilter`
+
+> Filter: show only sections with non-default settings. Sections where all values are default will be hidden. Sections with changed values will be expanded. Disable to restore all sections in collapsed state.
+
+Inside the shown groups, only the changed settings are shown. The quickest way to see what has changed in a configuration. Only works while the **Other** sub-tab is shown.
+
+#### Main
+
+##### Text Processing & Stylesheets
+
+###### Apply Customized Settings (ptxprint-mods.tex)
+
+Checkbox, off · Regular+ · `c_useModsTex` · cfg `project/ifusemodstex`  
+Also: Apply customized TeX settings
 
 > This is the normal file for advanced users to configure TeX. This .tex file executes AFTER all the PTXprint settings.
 
-**Explanation:**
+Anything in this file wins over PTXprint's own settings. Use it only when a support person or expert gives you something to put in it. If printing suddenly fails, untick this box first to see whether the file is the cause.
 
-Turns on the file `ptxprint-mods.tex` for this configuration. PTXprint reads it after all its own settings, so anything in it wins. Use it only when a support person or an expert gives you something to put in it. If printing suddenly fails, untick this box first to see whether the file is the cause.
+###### Process Text With Custom Script at
 
-*(Internal ID: `c_useModsTex` · Config key: `project/ifusemodstex`)*
-
-#### Process Text With Custom Script at
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Process text with custom script
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_processScript` · cfg `project/processscript`
 
 > Processes the .usfm file through a program of your choosing. The program is run as `prog infile outfile` where infile is the source .usfm file and outfile the output .usfm that will then be typeset.
 
-**Explanation:**
+Use it for changes too complex for a changes file, such as converting the text to another writing system. Choose the program with **Select...** and when it runs with **start** or **end**. Experienced users only.
 
-Runs a program of your own on each book before it is typeset. The program gets the name of the input USFM file and the name of the output file to write. Use it for changes that are too complex for a changes file, such as converting the text from one writing system to another. Choose the program with **Select...** and choose when it runs with **start** or **end**. This is for experienced users only.
+###### start
 
-*(Internal ID: `c_processScript` · Config key: `project/processscript`)*
-
-#### start
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Radio button
-- **View level:** Full view only
-- **Only available when:** “Process Text With Custom Script at” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Full · `r_when2processScript_before` · cfg `project/when2processscript=before`  
+Needs: “Process Text With Custom Script at”
 
 > Execute processing script BEFORE running any printdraftchanges, canonicalisation (i.e. Auto-Correct USFM) or local changes which are all specified below.
 
-**Explanation:**
+The script works on the original USFM text. Choose this when your changes-file rules expect the text that the script produces.
 
-Runs the custom script first, on the original USFM text. After that, PTXprint applies the changes files and **Auto-Correct USFM**. Choose this when your rules in the changes files expect the text that the script produces.
+###### end
 
-*(Internal ID: `r_when2processScript_before` · Config key: `project/when2processscript=before`)*
-
-#### end
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Radio button
-- **View level:** Full view only
-- **Only available when:** “Process Text With Custom Script at” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Full · `r_when2processScript_after` · cfg `project/when2processscript=after`  
+Needs: “Process Text With Custom Script at”
 
 > Execute processing script AFTER running any printdraftchanges, canonicalisation (i.e. Auto-Correct USFM) or local changes which are all specified below.
 
-**Explanation:**
+The script then sees the text almost exactly as it will be typeset.
 
-Runs the custom script last, after the changes files, **Auto-Correct USFM** and the other changes PTXprint makes. The script then sees the text almost exactly as it will be typeset.
+###### Select...
 
-*(Internal ID: `r_when2processScript_after` · Config key: `project/when2processscript=after`)*
+Button · Full · `btn_selectScript` · cfg `project/selectscript`  
+Also: Select custom script · Needs: “Process Text With Custom Script at”
 
-#### Select...
+Accepts .bat, .exe, .py or .sh. Choosing a file ticks **Process Text With Custom Script at** for you; cancelling without a file turns the option off. Hover over the button to see the chosen file.
 
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Button
-- **Description:** Select custom script
-- **View level:** Full view only
-- **Only available when:** “Process Text With Custom Script at” is selected
+###### Apply Modifications to USFM Text (changes.txt)
 
-**Explanation:**
-
-Opens a file chooser to pick the script or program (.bat, .exe, .py or .sh). After you choose a file, PTXprint ticks **Process Text With Custom Script at** for you. Hover over the button to see the chosen file. If you cancel without choosing a file, the option is turned off.
-
-*(Internal ID: `btn_selectScript` · Config key: `project/selectscript`)*
-
-#### Apply Modifications to USFM Text (changes.txt)
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Enable changes.txt to be applied
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_usePrintDraftChanges` · cfg `project/usechangesfile`  
+Also: Enable changes.txt to be applied
 
 > If there are changes that you wish to apply to the USFM file(s) prior to producing the printout, then these can be specified in these files:
 >
@@ -328,226 +303,123 @@ Opens a file chooser to pick the script or program (.bat, .exe, .py or .sh). Aft
 >
 > PrintDraftChanges.txt - specifies changes which apply to all configurations, and gets 'included' at the top of changes.txt
 
-**Explanation:**
+Use it to fix small problems in the text for printing only, such as spacing or punctuation. Your Paratext project is not changed. The rules are regular expressions, so test each new rule carefully.
 
-Applies the search-and-replace rules in `changes.txt` (for this configuration) and `PrintDraftChanges.txt` (for all configurations of the project) to a temporary copy of the text. Your Paratext project is not changed. Use it to fix small problems in the text for printing only, such as spacing or punctuation. The rules are regular expressions, so test each new rule carefully.
+###### Edit...
 
-*(Internal ID: `c_usePrintDraftChanges` · Config key: `project/usechangesfile`)*
-
-#### Edit...
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Button
-- **Description:** Edit changes files
-- **View level:** Default and Full views
-- **Only available when:** “Apply Modifications to USFM Text (changes.txt)” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_editChangesFile`  
+Also: Edit changes files · Needs: “Apply Modifications to USFM Text (changes.txt)”
 
 > Switch to the View+Edit tab to show the Changes.txt file in one tab, and PrintDraftChanges.txt in the next tab to the right.
 >
 > Shortcut: Shift-Ctrl-C
 
-**Explanation:**
+`PrintDraftChanges.txt` opens in the next tab only if the project has one. Save there, then print again.
 
-Opens `changes.txt` on the **View+Edit** tab. If the project has a `PrintDraftChanges.txt` file, it opens in the next tab too. Save the file there, then print again to see the result.
+###### Edit...
 
-*(Internal ID: `btn_editChangesFile`)*
-
-#### Edit...
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Button
-- **Description:** Edit customized TeX settings
-- **View level:** Default and Full views
-- **Only available when:** “Apply Customized Settings (ptxprint-mods.tex)” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_editModsTeX`  
+Also: Edit customized TeX settings · Needs: “Apply Customized Settings (ptxprint-mods.tex)”
 
 > Switch to the View+Edit tab to show the ptxprint-mods.tex file.
 >
 > Shortcut: Shift-Ctrl-T
 
-**Explanation:**
+Save the file there and print again.
 
-Opens `ptxprint-mods.tex` on the **View+Edit** tab so that you can edit it. Save it there and print again. Only available when **Apply Customized Settings (ptxprint-mods.tex)** is ticked.
+###### Edit...
 
-*(Internal ID: `btn_editModsTeX`)*
-
-#### Edit...
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Button
-- **Description:** Edit stylesheet overrides
-- **View level:** Full view only
-- **Only available when:** “Apply Stylesheet Overrides (ptxprint-mods.sty)” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Full · `btn_editModsSty`  
+Also: Edit stylesheet overrides · Needs: “Apply Stylesheet Overrides (ptxprint-mods.sty)”
 
 > Switch to the View+Edit tab to show the ptxprint-mods.sty file.
 >
 > Shortcut: Shift-Ctrl-S
 
-**Explanation:**
+Most style changes are easier and safer on the **Styles** tab.
 
-Opens `ptxprint-mods.sty` on the **View+Edit** tab. Most style changes are easier and safer on the **Styles** tab.
+###### Apply Stylesheet Overrides (ptxprint-mods.sty)
 
-*(Internal ID: `btn_editModsSty`)*
-
-#### Apply Stylesheet Overrides (ptxprint-mods.sty)
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Apply stylesheet overrides
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_useModsSty` · cfg `project/ifusemodssty`
 
 > It is recommended to leave this option unchecked (off) unless you have intentionally customized styles using the ptxprint-mods.sty stylesheet and wish for these to be used by PTXprint.
 
-**Explanation:**
+Most people make style changes on the **Styles** tab instead.
 
-Uses the extra stylesheet `ptxprint-mods.sty` for this configuration. Leave it unticked unless you, or someone helping you, has written style changes in that file on purpose. Most people make style changes on the **Styles** tab instead.
+###### Apply Customized Styles (custom.sty)
 
-*(Internal ID: `c_useModsSty` · Config key: `project/ifusemodssty`)*
-
-#### Apply Customized Styles (custom.sty)
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Apply custom styles
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_useCustomSty` · cfg `project/ifusecustomsty`  
+Also: Apply custom styles
 
 > It is recommended to leave this option unchecked (off) unless you have intentionally customized styles using the custom.sty stylesheet and wish for these to be used by PTXprint.
 
-**Explanation:**
+The same file Paratext uses for its own display. If the file does not exist, nothing changes.
 
-Uses the project's `custom.sty` stylesheet, the same file that Paratext uses for its own display. Leave it unticked unless you know that the project's custom styles should also be used for printing. If the file does not exist, nothing changes.
+###### Edit...
 
-*(Internal ID: `c_useCustomSty` · Config key: `project/ifusecustomsty`)*
-
-#### Edit...
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Button
-- **Description:** Edit custom styles
-- **View level:** Full view only
-- **Only available when:** “Apply Customized Styles (custom.sty)” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Full · `btn_editCustomSty`  
+Also: Edit custom styles · Needs: “Apply Customized Styles (custom.sty)”
 
 > Switch to the View+Edit tab to show the custom.sty file.
 >
 > Shortcut: Shift-Ctrl-M
 
-**Explanation:**
+The file is shared with Paratext, so a change here can also change how Paratext shows the text.
 
-Opens the project's `custom.sty` on the **View+Edit** tab. Remember that this file is shared with Paratext, so a change here can also change how Paratext shows the text.
+###### Edit...
 
-*(Internal ID: `btn_editCustomSty`)*
-
-#### Edit...
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Button
-- **Description:** Edit custom script
-- **View level:** Full view only
-- **Only available when:** “Process Text With Custom Script at” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Full · `btn_editScript`  
+Also: Edit custom script · Needs: “Process Text With Custom Script at”
 
 > Edit the processing script
 
-**Explanation:**
+Lets you read or change the chosen script. Only active when a script has been selected.
 
-Opens the chosen processing script on the **View+Edit** tab, so that you can read or change it. It is only active when a script has been selected.
+###### Edit...
 
-*(Internal ID: `btn_editScript`)*
-
-#### Edit...
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Button
-- **Description:** Edit initial TeX settings
-- **View level:** Full view only
-- **Only available when:** “Apply Initial Settings (ptxprint-premods.tex)” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Full · `btn_editModsPreTex`  
+Also: Edit initial TeX settings · Needs: “Apply Initial Settings (ptxprint-premods.tex)”
 
 > Switch to the View+Edit tab to show the ptxprint-premods.tex file.
 >
 > Shortcut: Shift-Ctrl-P
 
-**Explanation:**
+Opens `ptxprint-premods.tex` for editing.
 
-Opens `ptxprint-premods.tex` on the **View+Edit** tab. Only available when **Apply Initial Settings (ptxprint-premods.tex)** is ticked.
+###### Apply Initial Settings (ptxprint-premods.tex)
 
-*(Internal ID: `btn_editModsPreTex`)*
-
-#### Apply Initial Settings (ptxprint-premods.tex)
-
-- **Where:** Advanced tab › Main tab › Text Processing & Stylesheets
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Apply initial TeX settings
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_usePreModsTex` · cfg `project/ifusepremodstex`  
+Also: Apply initial TeX settings
 
 > This .tex file is executed BEFORE any stylesheets of other settings are applied. This file is rarely used.
 
-**Explanation:**
+Most changes belong in `ptxprint-mods.tex` instead.
 
-Uses the file `ptxprint-premods.tex`, which is read very early, before the stylesheets and the other settings. It is rarely needed. Most changes belong in `ptxprint-mods.tex` instead.
+##### General
 
-*(Internal ID: `c_usePreModsTex` · Config key: `project/ifusepremodstex`)*
+###### Sensitive Project
 
-### Advanced tab › Main tab › General
-
-#### Sensitive Project
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_sensitive` · cfg `document/sensitive`
 
 > In sensitive locations the illustration copyright statement(s) can just contain the appropriate acronyms (e.g. BFBS or DCC) for some artists.
 >
 > In addition, the PDF's metadata will not contain sensitive project-specific data.
 
-**Explanation:**
+Credits use short names (for example "DCC" instead of the artist's full name) where allowed. Tick it before you make any PDF that will be shared.
 
-Tick this for a project that must be careful about security. The picture credits then use short names (for example "DCC" instead of the artist's full name) where that is allowed. The PDF's hidden information (metadata) does not include project details. Tick it before you make any PDF that will be shared.
+###### Auto-Correct USFM
 
-*(Internal ID: `c_sensitive` · Config key: `document/sensitive`)*
-
-#### Auto-Correct USFM
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (ticked by default)
-- **Description:** Auto-correct common USFM syntax errors
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_canonicalise` · cfg `project/canonicalise`  
+Also: Auto-correct common USFM syntax errors
 
 > PTXprint can analyze the USFM files and automatically correct some common errors in syntax. It will also notify you of errors which are likely to cause the print process to fail - giving you helpful feedback about how to fix the issue before re-trying to print.
 
-**Explanation:**
+Fixes are made in a temporary copy. Serious errors show a "USFM Check Error" message with the book and the problem. Untick it only if a support person asks, for example to see whether the check itself causes a problem.
 
-Checks the USFM and fixes common small mistakes in a temporary copy before typesetting. If it finds serious errors, it shows a "USFM Check Error" message that lists the book and the problem. Leave this ticked. Untick it only if a support person asks you to, for example to find out whether the check itself causes a problem.
+###### Interlinear  &  Code
 
-*(Internal ID: `c_canonicalise` · Config key: `project/canonicalise`)*
-
-#### Interlinear  &  Code
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Interlinear settings
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_interlinear` · cfg `project/interlinear`  
+Also: Interlinear settings
 
 > Convert Paratext's interlinear data text to ruby (glossing) so that an interlinear text can be printed.
 >
@@ -557,36 +429,20 @@ Checks the USFM and fixes common small mistakes in a temporary copy before types
 >
 > Note that if this Interlinear option is enabled, then the Spacing Adjustments Between Letters (on the Fonts+Scripts page) will be disabled as these two settings are mutually exclusive.
 
-**Explanation:**
+Uses glosses from the Paratext Interlinearizer. You must also type the gloss language code in the box next to it. If some verses have unapproved glosses, PTXprint lists the references to approve in Paratext.
 
-Prints the interlinear glosses from the Paratext Interlinearizer together with the text, so each word has its gloss. You must also type the gloss language code in the box next to it. While this is ticked, the **Between Letters** spacing option on the **Fonts+Script** tab is greyed out. If some verses have unapproved glosses, PTXprint lists the references that need to be approved in Paratext.
+###### Interlinear language code to use. To find which code to use,...
 
-*(Internal ID: `c_interlinear` · Config key: `project/interlinear`)*
-
-#### Interlinear language code to use. To find which code to use,...
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Text box
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Full · `t_interlinearLang` · cfg `project/interlang`
 
 > Interlinear language code to use. To find which code to use, look in the project folder for a folder named "Interlinear_xy" where xy is the language code. For example if the interlinear has been glossed into English, then the code would be "en".
 
-**Explanation:**
+Interlinear output only works when this box has a code.
 
-Type the language code of the glosses here, for example `en` for English glosses. You find the code in the project folder: it is the end of the folder name `Interlinear_xx`. Interlinear output only works when this box has a code.
+###### Ruby Text Above
 
-*(Internal ID: `t_interlinearLang` · Config key: `project/interlang`)*
-
-#### Ruby Text Above
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Place Ruby text above words
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_ruby` · cfg `project/ruby`  
+Also: Place Ruby text above words
 
 > Treat ruby text as ruby rather than interlinear text by placing it above the base text rather than below.
 >
@@ -594,2207 +450,1145 @@ Type the language code of the glosses here, for example `en` for English glosses
 >   \rb    for the base text  
 >   \gloss|rb    for the gloss text Use the shortcut links on the right to locate those styles in the editor.
 
-**Explanation:**
+Like ruby text in East Asian scripts. Only has an effect when **Interlinear** is ticked.
 
-Puts the glosses above the words (like ruby text in East Asian scripts) instead of below them. It only has an effect when **Interlinear** is ticked. Use the **\rb** and **\gloss|rb** links to change the look of the base text and the glosses.
+###### \rb
 
-*(Internal ID: `c_ruby` · Config key: `project/ruby`)*
-
-#### \rb
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Link
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Full · `lb_style_rb`
 
 > Click to jump to the \rb marker in the style editor to change the formatting of the ruby text.
 
-**Explanation:**
+The base text is the words that carry glosses.
 
-Opens the **Styles** tab at the `\rb` marker. Change the font size or other formatting of the base text (the words that carry glosses) there.
+###### \gloss|rb
 
-*(Internal ID: `lb_style_rb`)*
-
-#### \gloss|rb
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Link
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Full · `lb_style_gloss|rb`
 
 > Click to jump to the \gloss|rb marker in the style editor to change the formatting of the glosses for interlinear/ruby text.
 
-**Explanation:**
+Change size, colour or spacing of the glosses there. Glosses are usually smaller than the base text.
 
-Opens the **Styles** tab at the `\gloss|rb` style. Change the size, colour or spacing of the glosses there. Glosses are usually smaller than the base text.
+###### Only Use English Links
 
-*(Internal ID: `lb_style_gloss|rb`)*
-
-#### Only Use English Links
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Only use English links (do not G-translate)
-- **View level:** Default and Full views
-- **Greyed out when:** “Disable ALL Internet Use” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_useEngLinks`  
+Also: Only use English links (do not G-translate) · Greyed out by: “Disable ALL Internet Use”
 
 > When using a non-English interface (such as French, Spanish, Hindi, etc.) most links to external websites get sent via the Google Translate site so that you can read the information in the same language as the selected interface.
 >
 > Enable this option if Google is blocked in your country, or you simply prefer to read the original page in English.
 
-**Explanation:**
+Useful where Google is blocked.
 
-When the PTXprint window uses a language other than English, many web links open through Google Translate. Tick this to open the original English pages directly. This is useful where Google is blocked. It is greyed out when **Disable ALL Internet Use** is ticked.
+###### Disable ALL Internet Use
 
-*(Internal ID: `c_useEngLinks`)*
-
-#### Disable ALL Internet Use
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Disable internet use
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_noInternet`  
+Also: Disable internet use
 
 > PTXprint checks for program updates and also contains links to external sites (mainly from the Styles tab and the Help tab). If this is an issue, then check this option to prevent PTXprint from accessing the internet.
 
-**Explanation:**
+Website links (for example on the **Help** tab) are hidden. Use it where internet use is expensive, slow or not safe. This setting belongs to your computer, not to the configuration.
 
-Stops PTXprint from using the internet. It no longer checks for updates, and the links to websites (for example on the **Help** tab) are hidden. Use it where internet use is expensive, slow or not safe. This setting belongs to your computer, not to the configuration.
+###### Plugins – List of plugins
 
-*(Internal ID: `c_noInternet`)*
-
-#### Plugins
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Text box
-- **Description:** List of plugins
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Full · `t_plugins` · cfg `project/plugins`
 
 > Some advanced features load extra code that is not normally needed. List them here if you need to use them. For example, if you are generating a QR code, then you need to add qr to the list of plugins. For a polyglot, you can add polyglot-simplepages
 
-**Explanation:**
+Separate names with commas or spaces. PTXprint loads the plugins for ornaments, polyglot layouts and covers by itself when you use those features. Leave the box empty unless you know you need a plugin.
 
-Type the names of extra code modules that PTXprint does not load by default, separated by commas or spaces. For example, type `qr` if you want to make QR codes. PTXprint loads the plugins for ornaments, polyglot layouts and covers by itself when you use those features, so you do not need to type them. Leave the box empty unless you know you need a plugin.
+###### Use Interlinear Punctuation
 
-*(Internal ID: `t_plugins` · Config key: `project/plugins`)*
-
-#### Use Interlinear Punctuation
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Place Ruby text above words
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_usePunctuation` · cfg `project/interpunc`  
+Also: Place Ruby text above words
 
 > Include specifically modified interlinearized punctuation.
 
-**Explanation:**
+Used with **Interlinear**: includes the punctuation stored in the Paratext interlinear data. When unticked, those punctuation entries are left out.
 
-Used with **Interlinear**. When ticked, punctuation that is stored in the Paratext interlinear data is included in the output. When unticked, PTXprint leaves out those punctuation entries.
+###### Auto-tag Hebrew and Greek words
 
-*(Internal ID: `c_usePunctuation` · Config key: `project/interpunc`)*
-
-#### Auto-tag Hebrew and Greek words
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_autoTagHebGrk` · cfg `project/autotaghebgrk`
 
 > Auto-tag Hebrew words \wh ... \wh* and Greek words with  \wg ... \wg*
 >
 > PTXprint can automatically tag all source language words (Hebrew and Greek) with the appropriate markup to ensure they display with the right font and direction for that script.
 
-**Explanation:**
+This avoids empty boxes in place of letters. Leave it ticked unless the project already marks these words itself. Hebrew words are not marked if the project itself uses the Hebrew script; the same applies to Greek.
 
-Finds Hebrew and Greek words in the text and marks them with the `\wh` and `\wg` markers. These markers give the words a font that has those letters, and the right text direction. This avoids empty boxes in place of letters. Leave it ticked unless the project already marks these words itself. (Hebrew words are not marked if the project itself uses the Hebrew script; the same applies to Greek.)
+###### Lock XeTeX Layout Level
 
-*(Internal ID: `c_autoTagHebGrk` · Config key: `project/autotaghebgrk`)*
-
-#### Lock XeTeX Layout Level
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Lock XeTeX Layout Settings
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_lockXeTeXLayout` · cfg `config/lockxetexlayout`  
+Also: Lock XeTeX Layout Settings
 
 > This feature enables final typesetting to proceed with minimal risk of change to the final layout by locking the TeX macros to use the current layout logic, which will prevent newer functionality from taking effect in the future. This sets the "Maximum Layout Version" value in the TeXpert Hacks section.
 
-**Explanation:**
+Ticking it sets **Maximum layout version** (**Other** › **Page Layout and Spacing**) to the current version, so later updates do not change how your pages break. Use it near the end of a project. Unticking it sets **Maximum layout version** back to 0 (newest rules).
 
-Freezes the layout rules at the current version. When you tick it, PTXprint sets **Maximum layout version** (on the **Other** sub-tab, **Page Layout and Spacing**) to the current version. Later updates to PTXprint then do not change how your pages break. Use it near the end of a project, when the layout is final. Unticking it sets **Maximum layout version** back to 0 (always use the newest rules).
+###### Lock UI Layout Settings
 
-*(Internal ID: `c_lockXeTeXLayout` · Config key: `config/lockxetexlayout`)*
-
-#### Lock UI Layout Settings
-
-- **Where:** Advanced tab › Main tab › General
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_lockUI4Layout` · cfg `config/lockui4layout`
 
 > This feature enables final typesetting to proceed with minimal risk of change to the final layout by disabling various controls (on the layout, fonts and styles tabs) so that settings can't be accidentally changed while doing final page layout.
 
-**Explanation:**
+Greys out page size, margins, font size, line spacing, columns and gutters, and the whole **Fonts+Script** and **Styles** tabs. Untick it to make changes again.
 
-Greys out the main controls that change the page layout: page size, margins, font size, line spacing, columns and gutters, and the whole **Fonts+Script** and **Styles** tabs. Use it during final page adjustments so that nobody changes these by accident. Untick it to make changes again.
+##### Capture tests?
 
-*(Internal ID: `c_lockUI4Layout` · Config key: `config/lockui4layout`)*
+###### Test recording in progress
 
-### Advanced tab › Main tab › Capture tests?
-
-#### Test recording in progress
-
-- **Where:** Advanced tab › Main tab › Capture tests?
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Sensitive project
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_testrecording`  
+Also: Sensitive project
 
 > Record PTXPrint options clicked for use in creating an automated test.
 >
 > Will stop recording when Save is pressed or the checkbox is unticked and a dialog will allow saving the test in zip format.
 
-**Explanation:**
-
-A tool for developers. It records what you click so that it can become an automatic test. When you untick it (or save), PTXprint asks where to save the test as a zip file. Normal users do not need this.
-
-*(Internal ID: `c_testrecording`)*
-
-### Advanced tab
+When you untick it (or save), PTXprint asks where to save the test zip file. Normal users do not need this.
 
 #### Other
 
-- **Where:** Advanced tab
-- **Type:** Label
-- **View level:** Default and Full views
+##### Page Layout and Spacing
 
-**Tooltip (the text shown when you hover the mouse over it):**
+###### Maximum layout version
 
-> To balance columns of text on a page it is possible to specify paragraphs adjustments (shrink or expand):
->
-> A Paragraph Adjust List needs to be in this format:  
-> MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line) %MARK 4.14 +1   (ignore this line - treat it as a comment) MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines) MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph  
->                               which contains MRK 6.23 e.g. a heading.) etc. Note that adjusting paragraphs needs to be done right at the end when all other settings have been finalized. Otherwise you are likely to have to re-do it all again.
-
-**Explanation:**
-
-The tab label of the **Other** sub-tab. This sub-tab holds the TeXpert settings, sorted into groups. Click a group name to open it.
-
-*(Internal ID: `l_advOther`)*
-
-#### Filter: show only sections with non-default settings. Sectio...
-
-- **Where:** Advanced tab
-- **Type:** Toggle button (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Filter: show only sections with non-default settings. Sections where all values are default will be hidden. Sections with changed values will be expanded. Disable to restore all sections in collapsed state.
-
-**Explanation:**
-
-Shows only the groups that have settings with non-default values, and opens those groups. Inside them, only the changed settings are shown. This is the quickest way to see what has been changed in a configuration. Click it again to show everything. It only works while the **Other** sub-tab is shown.
-
-*(Internal ID: `btn_texpertFilter`)*
-
-### Advanced tab › Other tab › Page Layout and Spacing
-
-#### Maximum layout version
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10, default 0
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_ptxversion` · cfg `texpert/ptxversion`  
+Values: 0–10 (default 0)
 
 > Maximum layout version to use or 0 for any. Used to maintain backward compatibility when the TeX macros have been changed in newer versions of PTXprint.
 
-**Explanation:**
+Pages sometimes break differently after an update. A value here uses the layout rules of that older version. Normally set it with **Lock XeTeX Layout Level**, not by hand. Some settings depend on it; for example, from version 6 the enhanced paragraphed footnotes are always used.
 
-The typesetting code improves with each PTXprint version, and sometimes pages break differently after an update. A value here tells PTXprint to use the layout rules of that older version. 0 means "use the newest rules". Normally you set this with **Lock XeTeX Layout Level** on the **Main** sub-tab, not by hand. Some settings depend on this. For example, from version 6 the enhanced paragraphed footnotes are always used.
+###### Legacy 1/14 LineSpacing
 
-*(Internal ID: `s_ptxversion` · Config key: `texpert/ptxversion`)*
-
-#### Legacy 1/14 LineSpacing
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_linespacebase` · cfg `texpert/linespacebase`
 
 > In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.
 
-**Explanation:**
+For old projects only. Tick it if an old project's spacing changed after an update and you want the old spacing back.
 
-Use only for old projects. Older versions measured **Space Above** and **Space Below** in styles in units of 1/14 of the line spacing. Now the unit is 1/12. Tick this if an old project's spacing changed after an update and you want the old spacing back.
+###### Where to start a new book
 
-*(Internal ID: `c_linespacebase` · Config key: `texpert/linespacebase`)*
-
-#### Where to start a new book
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Next page; Same page; Odd page
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_bookstartpage` · cfg `texpert/bookstartpage`  
+Choices: Next page | Same page | Odd page
 
 > Does a scripture book start on a new page, the same page as the previous book (if <65% of page has been used), or an odd page
 
-**Explanation:**
+**Same page** saves paper. **Odd page** adds blank pages where needed. See also **Page full factor**.
 
-Chooses where a new book starts. **Next page** is the default. **Same page** saves paper, because a short book can start straight after the previous one. **Odd page** starts every book on a right-hand page and adds blank pages where needed. See also **Page full factor**.
+###### Page full factor
 
-*(Internal ID: `fcb_bookstartpage` · Config key: `texpert/bookstartpage`)*
-
-#### Page full factor
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0.3 to 0.9, default 0.65
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pagefullfactor` · cfg `texpert/pagefullfactor`  
+Values: 0.3–0.9 (default 0.65)
 
 > This setting is related to how full a page needs to be to force the next book to start on a new page.
 
-**Explanation:**
+The part of the page (0.65 = about two thirds). With **Same page**, if the previous book fills more than this, the next book goes to a new page. The same factor is used when single-column text (such as a book title or introduction) is followed by two-column text. A higher value lets more books share a page.
 
-A number from 0.3 to 0.9 that means "part of the page". With **Same page**, if the previous book already fills more than this part of the page, the next book goes to a new page. The same factor is used when single-column text (such as a book title or introduction) is followed by two-column text. A higher value lets more books share a page. The default is 0.65 (about two thirds of the page).
+###### Where to start a new intro page
 
-*(Internal ID: `s_pagefullfactor` · Config key: `texpert/pagefullfactor`)*
-
-#### Where to start a new intro page
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Next page; No page breaks; On an odd page; Grouped
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_intropagealign` · cfg `texpert/intropagealign`  
+Choices: Next page | No page breaks | On an odd page | Grouped
 
 > Does an intro page start on a new page, the same page as the previous book, an odd page, or group all adjacent intro pages into an odd paged group
 
-**Explanation:**
+**No page breaks** lets the introduction follow on the same page. **Grouped** keeps adjacent introductions together and starts the group on an odd page.
 
-Chooses where a book introduction starts. **No page breaks** lets the introduction follow on the same page. **On an odd page** starts it on a right-hand page. **Grouped** keeps adjacent introductions together and starts the group on an odd page.
+###### Unbalanced Lines (Max)
 
-*(Internal ID: `fcb_intropagealign` · Config key: `texpert/intropagealign`)*
-
-#### Unbalanced Lines (Max)
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10, default 3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_bottomrag` · cfg `texpert/bottomrag`  
+Values: 0–10 (default 3)
 
 > Maximum number of unbalanced lines allowed in 2-column layout. Recommended range 1-5.
 
-**Explanation:**
+How many lines the two columns may differ at the end of a page or section. 0 forces balanced columns.
 
-In two-column layout, the largest number of lines by which the two columns may differ in length at the end of a page or section. 0 forces balanced columns. It is only used when **Allow Unbalanced Columns** is ticked on the **Layout** tab. Values from 1 to 5 work best.
+###### Variable line spacing maximum stretch
 
-*(Internal ID: `s_bottomrag` · Config key: `texpert/bottomrag`)*
-
-#### Variable line spacing maximum stretch
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10, default 2
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_interlinestretch` · cfg `texpert/interlinestretch`  
+Values: 0–10 (default 2)
 
 > Maximum stretch to insert between lines in variable line spacing in pts
 
-**Explanation:**
+1 pt is about 0.35 mm. A larger value fills columns more easily, but the line spacing looks less even.
 
-How much extra space (in points; 1 pt is about 0.35 mm) can be added between lines to fill a column exactly. It is only used when **Fill Columns** is ticked on the **Layout** tab. A larger value fills columns more easily, but the line spacing looks less even.
+###### Variable line spacing maximum shrink
 
-*(Internal ID: `s_interlinestretch` · Config key: `texpert/interlinestretch`)*
-
-#### Variable line spacing maximum shrink
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 3, default 0.3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_interlineshrink` · cfg `texpert/interlineshrink`  
+Values: 0–3 (default 0.3)
 
 > Maximum shrink to insert between lines in variable line spacing in pts
 
-**Explanation:**
+Keep it small. Lines too close together are hard to read.
 
-How much the space between lines can be reduced (in points) to fill a column. It is only used when **Fill Columns** is ticked on the **Layout** tab. Keep this small. Lines that are too close together are hard to read.
+###### No Top Space
 
-*(Internal ID: `s_interlineshrink` · Config key: `texpert/interlineshrink`)*
-
-#### No Top Space
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_squashgrid` · cfg `texpert/squashgrid`
 
 > Don’t insert space above headings at the start of a column
 
-**Explanation:**
+Keeps the tops of columns level. Untick it for the full space above every heading, even at the top of a column.
 
-When ticked (the default), a heading at the top of a column does not get its **Space Above**. This keeps the tops of columns level. Untick it if you want the full space above every heading, even at the top of a column.
+###### Suppress pagebreak after bookend-final
 
-*(Internal ID: `c_squashgrid` · Config key: `texpert/squashgrid`)*
-
-#### Suppress pagebreak after bookend-final
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_lastnoeject` · cfg `texpert/lastnoeject`
 
 > Revert to old behaviour of not ensuring that the whole of the last book is output before back-matter PDFs
 
-**Explanation:**
+Normally the last book ends with a page break, so a back-matter PDF starts on a new page. Tick this only to go back to the old behaviour.
 
-PTXprint normally ends the last book with a page break, so that any back-matter PDF starts on a new page. Tick this only to return to the old behaviour without that page break.
+###### Noteline offset (mm)
 
-*(Internal ID: `c_lastnoeject` · Config key: `texpert/lastnoeject`)*
-
-#### Noteline offset (mm)
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 100, default 3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_notelineoffset` · cfg `texpert/notelineoffset`  
+Values: 0–100 (default 3)
 
 > Gap (mm) between noteline and text
 
-**Explanation:**
+Notelines are turned on with **Notelines** on the **Layout** tab.
 
-The gap in mm between the text and the notelines (the lines for hand-written notes). Notelines are turned on with **Notelines** on the **Layout** tab.
+###### Noteline margin (mm)
 
-*(Internal ID: `s_notelineoffset` · Config key: `texpert/notelineoffset`)*
-
-#### Noteline margin (mm)
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 100, default 10
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_notelinemargin` · cfg `texpert/notelinemargin`  
+Values: 0–100 (default 10)
 
 > Gap (mm) between noteline and edge of page
 
-**Explanation:**
+A bigger value keeps the lines from being cut off when the pages are trimmed.
 
-The gap in mm between the notelines and the edge of the paper. A bigger value gives the lines more space from the edge, so they are not cut off when the pages are trimmed.
+###### Noteline type
 
-*(Internal ID: `s_notelinemargin` · Config key: `texpert/notelinemargin`)*
-
-#### Noteline type
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Solid line; Row of dots
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_notelinetype` · cfg `texpert/notelinetype`  
+Choices: Solid line | Row of dots
 
 > Sometimes it is preferable to use a series of dots rather than a solid line.
 
-**Explanation:**
+Dots are lighter and disturb the text less.
 
-Chooses solid lines or rows of dots for the notelines. Dots are lighter on the page and disturb the text less.
+###### Noteline spacing (mm)
 
-*(Internal ID: `fcb_notelinetype` · Config key: `texpert/notelinetype`)*
-
-#### Noteline spacing (mm)
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 25, default 0
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_noteliney` · cfg `texpert/noteliney`  
+Values: 0–25 (default 0)
 
 > Line spacing between notelines. When set to 0.00 the default line spacing of the document is used.
 
-**Explanation:**
+0 makes the notelines match the text lines. Increase it if readers need more room to write.
 
-The distance in mm between notelines. 0 uses the line spacing of the body text, so the notelines match the text lines. Increase it if readers need more room to write.
+###### Noteline width (major)
 
-*(Internal ID: `s_noteliney` · Config key: `texpert/noteliney`)*
-
-#### Noteline width (major)
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10, default 0.5
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_notelinemajor` · cfg `texpert/notelinemajor`  
+Values: 0–10 (default 0.5)
 
 > Thickness (pt) of major notelines. Specify the colour on the Layout page.
 
-**Explanation:**
+Thin lines (0.2 to 0.5) look best.
 
-How thick the notelines are, in points (1 pt is about 0.35 mm). Thin lines (0.2 to 0.5) look best. Set the colour with **Notelines** on the **Layout** tab.
+###### Double Sided Layout
 
-*(Internal ID: `s_notelinemajor` · Config key: `texpert/notelinemajor`)*
-
-#### Double Sided Layout
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_doublesided` · cfg `texpert/doublesided`
 
 > This setting can be disabled to turn off inner/outer margins, forcing the inner/outer gutter, and Notelines to always appear on the same side of the printed page.
 
-**Explanation:**
+When ticked, inner and outer margins swap on even pages and the even-page headers and footers are used. Untick it for one-sided printing: every page then uses the same margins and the odd-page header and footer.
 
-When ticked (the default), odd and even pages are treated differently: inner and outer margins swap, and the headers and footers for even pages are used. Untick it for pages printed on one side only. Then every page uses the same margins, the odd-page header and footer, and notelines on the same side.
+###### Maximum parallel processes
 
-*(Internal ID: `c_doublesided` · Config key: `texpert/doublesided`)*
-
-#### Maximum parallel processes
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_maxproc` · cfg `texpert/maxproc`
 
 > The maximum number of parallel processes to use for example when page filling
 
-**Explanation:**
+Also used when you print several publications. The default depends on the number of processors in your computer. Lower it if your computer becomes slow or runs out of memory.
 
-How many printing jobs PTXprint can run at the same time, for example when the page filler works on several books, or when you print several publications. The default depends on the number of processors in your computer. Lower it if your computer becomes slow or runs out of memory.
+###### Maximum Filling Time (mins)
 
-*(Internal ID: `s_maxproc` · Config key: `texpert/maxproc`)*
-
-#### Maximum Filling Time (mins)
-
-- **Where:** Advanced tab › Other tab › Page Layout and Spacing
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 100, default 0
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_maxfilltime` · cfg `texpert/maxfilltime`  
+Values: 0–100 (default 0)
 
 > Stop page filling a book after this many minutes
 
-**Explanation:**
+We could not confirm that the current code uses this. To limit page filler time, use **Time limit for the whole job (minutes)** in **Automatic Page Filler**.
 
-This setting is meant to stop page filling of one book after a number of minutes. In the current code we could not confirm that it is used. To limit the time of the page filler, use **Time limit for the whole job (minutes)** in the **Automatic Page Filler** group.
+##### Chapter and Verse
 
-*(Internal ID: `s_maxfilltime` · Config key: `texpert/maxfilltime`)*
+###### Position of marginal verse hyphen if any
 
-### Advanced tab › Other tab › Chapter and Verse
-
-#### Position of marginal verse hyphen if any
-
-- **Where:** Advanced tab › Other tab › Chapter and Verse
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Always down; Always up; Up on left; Up on right; No hyphens
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_vhyphenmode` · cfg `texpert/vhyphenmode`  
+Choices: Always down | Always up | Up on left | Up on right | No hyphens
 
 > Insert or not a marginal verse hyphen in verse ranges, whether on the first or second line
 
-**Explanation:**
+For a verse range such as 3-4 shown as a marginal verse number. **Up on left** and **Up on right** put the hyphen on the first line only in the left or right margin. Marginal verses are turned on with **Marginal Verses** on the **Body** tab.
 
-For marginal verse numbers (verse numbers placed in the margin) with a verse range, such as 3-4. This chooses whether the hyphen goes on the first or the second line, or is left out. **Up on left** and **Up on right** put it on the first line only in the left or right margin. Marginal verses are turned on with **Marginal Verses** on the **Body** tab.
+###### Gutter space reduction for marginal verses
 
-*(Internal ID: `fcb_vhyphenmode` · Config key: `texpert/vhyphenmode`)*
-
-#### Gutter space reduction for marginal verses
-
-- **Where:** Advanced tab › Other tab › Chapter and Verse
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_mverseismargin` · cfg `texpert/mverseismargin`
 
 > If false, the space for marginal verses is taken from the column. If true, some space for marginal verses is taken from the margins or rule gutter
 
-**Explanation:**
+Unticked, the column becomes narrower. Ticked, part of the space comes from the margin or the gutter (the space between columns), so the text keeps more width.
 
-For marginal verse numbers. When unticked (the default), the space for the verse numbers is taken from the text column, so the column becomes narrower. When ticked, part of the space is taken from the margin or the gutter (the space between columns) instead, so the text keeps more width.
+###### Auto Calc Optimum Chapter Size
 
-*(Internal ID: `c_mverseismargin` · Config key: `texpert/mverseismargin`)*
-
-#### Auto Calc Optimum Chapter Size
-
-- **Where:** Advanced tab › Other tab › Chapter and Verse
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_calcchapsize` · cfg `texpert/calcchapsize`
 
 > Attempt to automatically calculate drop chapter number size
 
-**Explanation:**
+Makes a large chapter number fill exactly two lines, when the `\c` style is not much larger than the body text. Untick it to set the size yourself on the **Styles** tab.
 
-When ticked (the default), PTXprint calculates the size of a large chapter number so that it fills the height of two lines exactly. This happens when the chapter number style (`\c`) is not much larger than the body text. Untick it if you want to set the chapter number size yourself on the **Styles** tab.
+###### Don't hang verse one beside a chapter (in poetry)
 
-*(Internal ID: `c_calcchapsize` · Config key: `texpert/calcchapsize`)*
-
-#### Don't hang verse one beside a chapter (in poetry)
-
-- **Where:** Advanced tab › Other tab › Chapter and Verse
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_nohangvone` · cfg `texpert/nohangvone`
 
 > Hanging verses into a chapter number can result in clashes, depending on the after-chapter space. If so, then turn off hanging verse numbers for the first verse (in poetry only).
 
-**Explanation:**
+Untick it only if the after-chapter space is wide enough and you want verse 1 to hang like the others.
 
-In poetry with hanging verse numbers, verse 1 can clash with a large chapter number. When ticked (the default), verse 1 does not hang. Untick it only if the after-chapter space is wide enough and you want verse 1 to hang like the others.
+###### Alternate verse numbers also hang
 
-*(Internal ID: `c_nohangvone` · Config key: `texpert/nohangvone`)*
-
-#### Alternate verse numbers also hang
-
-- **Where:** Advanced tab › Other tab › Chapter and Verse
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_hangva` · cfg `texpert/hangva`
 
 > If there is an alternative verse and the current verse is hanging, does the alternate hang?
 
-**Explanation:**
+For alternative verse numbers (`\va`). Most projects do not use them.
 
-When a verse number hangs in the margin and also has an alternative verse number (`\va`), this decides whether the alternative number hangs too. Most projects do not use alternative verse numbers.
+###### After chapter space factor
 
-*(Internal ID: `c_hangva` · Config key: `texpert/hangva`)*
-
-#### After chapter space factor
-
-- **Where:** Advanced tab › Other tab › Chapter and Verse
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -0.2 to 1, default 0.25
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_afterchapterspace` · cfg `texpert/afterchapterspace`  
+Values: -0.2–1 (default 0.25)
 
 > This sets the gap between the chapter number and the text following. The setting here is a multiple of the main body text size as specified in layout.
 
-**Explanation:**
+0.25 = a quarter of the text size. Increase it if text looks crowded against the chapter number. Negative values move the text closer.
 
-The gap between a large chapter number and the text next to it, as a part of the body text size. 0.25 means a quarter of the text size. Increase it if the text looks crowded against the chapter number. Negative values move the text closer.
+###### After verse space factor
 
-*(Internal ID: `s_afterchapterspace` · Config key: `texpert/afterchapterspace`)*
-
-#### After verse space factor
-
-- **Where:** Advanced tab › Other tab › Chapter and Verse
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -0.2 to 1, default 0.15
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_afterversespace` · cfg `texpert/afterversespace`  
+Values: -0.2–1 (default 0.15)
 
 > This sets the gap between the verse number and the text following. The setting here is a multiple of the main body text size as specified in layout.
 
-**Explanation:**
+Change it only if verse numbers look too close to the text, or too far from it.
 
-The gap between a verse number and the text that follows it, as a part of the body text size. The default 0.15 is a small space. Change it only if verse numbers look too close to the text, or too far from it.
+##### Body Text
 
-*(Internal ID: `s_afterversespace` · Config key: `texpert/afterversespace`)*
+###### Allow Indent Para with Cutouts
 
-### Advanced tab › Other tab › Body Text
-
-#### Allow Indent Para with Cutouts
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_chapindent` · cfg `texpert/chapindent`
 
 > Allow indented paragraphs at chapter start with cutouts
 
-**Explanation:**
+Unticked, the lines next to a large chapter number (a cutout) are not indented. Tick it to keep the paragraph's normal indent there.
 
-Decides whether the first paragraph of a chapter keeps its indent when it sits next to a large chapter number (a cutout). When unticked (the default), the lines next to the chapter number are not indented. Tick it to keep the paragraph's normal indent there too.
+###### Allow Indent Para After Heading
 
-*(Internal ID: `c_chapindent` · Config key: `texpert/chapindent`)*
-
-#### Allow Indent Para After Heading
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_afterheadindent` · cfg `texpert/afterheadindent`
 
 > Allow indented paragraphs following a heading
 
-**Explanation:**
+Untick it to start the first line after a heading at the margin, a common book style.
 
-When ticked (the default), the first paragraph after a heading is indented like any other paragraph. Untick it if you want the first line after a heading to start at the margin, which is a common book style.
+###### Maximum orphan word length
 
-*(Internal ID: `c_afterheadindent` · Config key: `texpert/afterheadindent`)*
-
-#### Maximum orphan word length
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 1 to 20, default 8
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_maxorphanlength` · cfg `texpert/maxorphanlength`  
+Values: 1–20 (default 8)
 
 > Maximum length of the word that will receive orphan protection at the end of a paragraph
 
-**Explanation:**
+An orphan word is a short word alone on the last line of a paragraph. With **Prevent Orphan Words** (**Body** tab), PTXprint keeps the last word with the word before it. Longer last words (in characters) can stand alone.
 
-An orphan word is a short word left alone on the last line of a paragraph. When **Prevent Orphan Words** is ticked on the **Body** tab, PTXprint joins the last word to the word before it, so they stay on the same line. This number is the longest word (in characters) that gets this protection. Longer last words can stand alone.
+###### Bad space penalty
 
-*(Internal ID: `s_maxorphanlength` · Config key: `texpert/maxorphanlength`)*
-
-#### Bad space penalty
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -10000 to 10000, default 100
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_badsppen` · cfg `texpert/badsppen`  
+Values: -10000–10000 (default 100)
 
 > Penalty for a bad (but not impossible) place to break
 
-**Explanation:**
+PTXprint uses "bad" spaces, for example, to keep orphan words with the word before them. Higher = break less likely; 10000 forbids it. A negative value encourages a break.
 
-The penalty for a line break at a "bad" space. PTXprint uses these spaces, for example, to keep orphan words with the word before them. A higher value makes such a break less likely. 10000 forbids it. A negative value encourages a break there.
+###### Optional break penalty
 
-*(Internal ID: `s_badsppen` · Config key: `texpert/badsppen`)*
-
-#### Optional break penalty
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10000, default 300
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_optbkpen` · cfg `texpert/optbkpen`  
+Values: 0–10000 (default 300)
 
 > Penalty for the optional break
 
-**Explanation:**
+The optional break is the place you mark with `//` in the USFM text. A higher value makes the break more attractive. Change it only if lines break there too often or too seldom.
 
-The strength of an optional line break. This is the place you mark with `//` in the USFM text. A higher value makes the break more attractive. Change it only if lines break at those places too often or too seldom.
+###### Hyphenation threshold
 
-*(Internal ID: `s_optbkpen` · Config key: `texpert/optbkpen`)*
-
-#### Hyphenation threshold
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -1 to 10000, default 100
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pretolerance` · cfg `texpert/pretolerance`  
+Values: -1–10000 (default 100)
 
 > Paragraph badness threshold before trying hyphenation. Set to -1 to always hyphenate
 
-**Explanation:**
+Hyphenation is tried only for paragraphs that look bad without it. Lower values hyphenate more often. Only matters when hyphenation is on.
 
-Hyphenation is tried only for paragraphs that cannot be set well without it. This number says how bad a paragraph must look before PTXprint tries hyphenation. Lower values hyphenate more often. -1 means "always try hyphenation". It only matters when hyphenation is turned on.
+###### Penalty for inserting hyphen
 
-*(Internal ID: `s_pretolerance` · Config key: `texpert/pretolerance`)*
-
-#### Penalty for inserting hyphen
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -9999 to 10000, default 50
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_hyphenpenalty` · cfg `texpert/hyphenpenalty`  
+Values: -9999–10000 (default 50)
 
 > Hyphenation penalty
 
-**Explanation:**
+Higher = fewer hyphens, but possibly wider word spaces. 10000 or more stops hyphenation completely.
 
-How much PTXprint avoids breaking a word with a hyphen. A higher value gives fewer hyphens but may give wider word spaces. A value of 10000 or more stops hyphenation completely.
+###### Double hyphenation penalty
 
-*(Internal ID: `s_hyphenpenalty` · Config key: `texpert/hyphenpenalty`)*
-
-#### Double hyphenation penalty
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 1e+06, default 10000
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_doublehyphendemerits` · cfg `texpert/doublehyphendemerits`  
+Values: 0–1e+06 (default 10000)
 
 > Penalty for consecutive hyphenation across two lines
 
-**Explanation:**
+Higher makes two hyphenated lines in a row rarer. The default is already high.
 
-An extra penalty when two lines in a row end with a hyphen. A higher value makes this rarer. The default is already high.
+###### Use loc attrib on ref to make a link
 
-*(Internal ID: `s_doublehyphendemerits` · Config key: `texpert/doublehyphendemerits`)*
-
-#### Use loc attrib on ref to make a link
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_userefloc` · cfg `texpert/userefloc`
 
 > The ref character style can include an attribute like loc="GEN 1:2". Should this be used to make a clickable link?
 
-**Explanation:**
+Turns `\ref` references into links you can click in the PDF to jump to that verse.
 
-Some texts mark references with `\ref` and a `loc` attribute (for example GEN 1:2). When ticked, PTXprint turns these into links that you can click in the PDF to jump to that verse.
+###### Use href-link attrib on jmp to make a link
 
-*(Internal ID: `c_userefloc` · Config key: `texpert/userefloc`)*
-
-#### Use href-link attrib on jmp to make a link
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_hreflink` · cfg `texpert/hreflink`
 
 > The jmp character style can include an attribute like href-link="https://my.web.site/". Should this be used to make a clickable link?
 
-**Explanation:**
+Untick it for a printed book where active links are not wanted.
 
-When the text has `\jmp` markers with a web address (`href-link`), this turns them into clickable web links in the PDF. Untick it for a printed book where active links are not wanted.
+###### Box style for URL links
 
-*(Internal ID: `c_hreflink` · Config key: `texpert/hreflink`)*
-
-#### Box style for URL links
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Underline only; No line; Solid line; Row of dots; Dashed line; Viewer default
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_urllinkborderstyle` · cfg `texpert/urllinkborderstyle`  
+Choices: Underline only | No line | Solid line | Row of dots | Dashed line | Viewer default
 
 > Active web links in PDFs are marked by either a box (solid, dashed or dotted line) or an underline. Your viewer probably has a default setting. Set the colour with \def\URLLinkBorderCol{0.9 0.5 0.5} or similar in ptxprint-mods.tex.
 
-**Explanation:**
+The mark is only visible on screen; it is not printed. The link colour can only be changed by an expert, in `ptxprint-mods.tex`.
 
-How web links are marked in the PDF on screen: underline, a box, dots, dashes, nothing, or the PDF viewer's own default. This mark is only visible on screen. It is not printed. The link colour can only be changed by an expert, in `ptxprint-mods.tex`.
+###### Box style for GOTO links
 
-*(Internal ID: `fcb_urllinkborderstyle` · Config key: `texpert/urllinkborderstyle`)*
-
-#### Box style for GOTO links
-
-- **Where:** Advanced tab › Other tab › Body Text
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Underline only; No line; Solid line; Row of dots; Dashed line; Viewer default
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_gotolinkborderstyle` · cfg `texpert/gotolinkborderstyle`  
+Choices: Underline only | No line | Solid line | Row of dots | Dashed line | Viewer default
 
 > Active internal links in PDFs are marked by either a box (solid, dashed or dotted line) or an underline. Your viewer probably has a default setting. Set the colour with \def\GOTOLinkBorderCol{0.9 0.5 0.5} or similar in ptxprint-mods.tex.
 
-**Explanation:**
+For links inside the PDF, for example from a cross-reference to a verse. Not printed.
 
-How links inside the PDF (for example from a cross-reference to a verse) are marked on screen. The choices are the same as for web links. These marks are not printed.
+##### Fonts and Underline
 
-*(Internal ID: `fcb_gotolinkborderstyle` · Config key: `texpert/gotolinkborderstyle`)*
+###### Use glyph metrics
 
-### Advanced tab › Other tab › Fonts and Underline
-
-#### Use glyph metrics
-
-- **Where:** Advanced tab › Other tab › Fonts and Underline
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_useglyphmetrics` · cfg `texpert/useglyphmetrics`
 
 > PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths. Font metrics gives more consistent results.
 
-**Explanation:**
+Unticked, every line is measured the same way and spacing is even. Ticked, the real letter shapes in each line are used. Leave it unticked unless a support person suggests otherwise.
 
-Decides how PTXprint measures the height of a line. Unticked (the default), it uses the font's design values, so every line is measured the same way and the spacing is even. Ticked, it uses the real shapes of the letters in that line. Leave it unticked unless a support person suggests otherwise.
+###### Use system fonts
 
-*(Internal ID: `c_useglyphmetrics` · Config key: `texpert/useglyphmetrics`)*
-
-#### Use system fonts
-
-- **Where:** Advanced tab › Other tab › Fonts and Underline
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_usesysfonts` · cfg `texpert/usesysfonts`
 
 > Use fonts from your system as well as your project. Note that you need to restart PTXprint for this setting to take effect.
 
-**Explanation:**
+Untick it to use only fonts stored with the project, so the result is the same on every computer.
 
-When ticked (the default), PTXprint can use fonts installed on your computer as well as fonts in the project. Untick it to use only fonts stored with the project, so that the result is the same on every computer. You must restart PTXprint after you change this.
+###### Underline thickness (em)
 
-*(Internal ID: `c_usesysfonts` · Config key: `texpert/usesysfonts`)*
-
-#### Underline thickness (em)
-
-- **Where:** Advanced tab › Other tab › Fonts and Underline
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0.01 to 0.5, default 0.05
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_underlinethickness` · cfg `texpert/underlinethickness`  
+Values: 0.01–0.5 (default 0.05)
 
 > This sets the thickness of the text underline, (measured in ems).
 
-**Explanation:**
+em = the size of the font. 0.05 is a thin line.
 
-How thick underlines are, as a part of the text size (em – the size of the font). The default 0.05 is a thin line.
+###### Underline vertical position (em)
 
-*(Internal ID: `s_underlinethickness` · Config key: `texpert/underlinethickness`)*
-
-#### Underline vertical position (em)
-
-- **Where:** Advanced tab › Other tab › Fonts and Underline
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -1 to 1, default 0.1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_underlineposition` · cfg `texpert/underlineposition`  
+Values: -1–1 (default 0.1)
 
 > This sets how far (in ems) the underline is below the text and what it is relative to. If negative, it is the distance below the baseline. If positive (or zero), it is the distance below the bottom of any descenders.
 
-**Explanation:**
+Descenders are the parts of letters like g and p that go below the baseline (the line letters sit on). Increase it if underlines touch the letters.
 
-How far below the text the underline sits, in em. With a positive value (or 0), it is measured from the bottom of the letters with descenders (such as g and p). With a negative value, it is measured from the baseline, the line the letters sit on. Increase it if underlines touch the letters.
+###### Underline Spaces
 
-*(Internal ID: `s_underlineposition` · Config key: `texpert/underlineposition`)*
-
-#### Underline Spaces
-
-- **Where:** Advanced tab › Other tab › Fonts and Underline
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_underlnsp` · cfg `texpert/underlnsp`
 
 > Underline spaces in underlined runs
 
-**Explanation:**
+Ticked, the underline is unbroken. Untick it to underline only the words.
 
-When ticked (the default), the spaces between underlined words are underlined too, so the line is unbroken. Untick it to underline only the words.
+###### Log font creation
 
-*(Internal ID: `c_underlnsp` · Config key: `texpert/underlnsp`)*
-
-#### Log font creation
-
-- **Where:** Advanced tab › Other tab › Fonts and Underline
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_logfontusage` · cfg `texpert/logfontusage`
 
 > Create <jobname>.fontusage in the local/ptxprint/<config>/ directory, which will list the page number and exact font definition when each new style is first used.
 
-**Explanation:**
+Useful for finding where an unexpected font comes from. It does not change the PDF. A support person may ask you to turn it on.
 
-Makes a file that lists each font used and the page where each style first uses it. It is useful for finding where an unexpected font comes from. It does not change the PDF. A support person may ask you to turn this on.
+##### Footnotes, Cross-references, Study Notes
 
-*(Internal ID: `c_logfontusage` · Config key: `texpert/logfontusage`)*
+###### Mid-Page Footnotes
 
-### Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-
-#### Mid-Page Footnotes
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_midnotes` · cfg `texpert/midnotes`
 
 > Should footnotes go before a single-double column transition
 
-**Explanation:**
+For single-column text (for example an introduction) followed by two-column text. Ticked, the notes of the single-column part come right after it, mid-page. Unticked, all notes go to the bottom of the page.
 
-For pages where single-column text (for example a book introduction) is followed by two-column text. When ticked, the footnotes of the single-column part are placed right after that part, in the middle of the page. When unticked (the default), all notes go to the bottom of the page.
+###### Final Page Notes Down
 
-*(Internal ID: `c_midnotes` · Config key: `texpert/midnotes`)*
-
-#### Final Page Notes Down
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_fnotesdown` · cfg `texpert/fnotesdown`
 
 > Push notes on the final page to the bottom of the page
 
-**Explanation:**
+For the last page of a book, where the text may end high. Unticked, the notes follow straight after the text.
 
-On the last page of a book, the text may end high on the page. When ticked, the footnotes on that page are pushed down to the bottom margin. When unticked (the default), the notes follow straight after the text.
+###### Reset Callers at Each Book
 
-*(Internal ID: `c_fnotesdown` · Config key: `texpert/fnotesdown`)*
-
-#### Reset Callers at Each Book
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_bookresetcallers` · cfg `texpert/bookresetcallers`
 
 > Re-start the footnote and cross-reference callers at the start of each book
 
-**Explanation:**
+Untick it to continue the caller sequence (a, b, c …) across books.
 
-When ticked (the default), the note callers (such as a, b, c) start again at the start of each book. Untick it to continue the sequence across books.
+###### Endnotes at Each Book
 
-*(Internal ID: `c_bookresetcallers` · Config key: `texpert/bookresetcallers`)*
-
-#### Endnotes at Each Book
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_neachbook` · cfg `texpert/neachbook`
 
 > Output endnotes at the end of each book
 
-**Explanation:**
+Untick it to collect all endnotes at the end of the last book.
 
-When ticked (the default), endnotes are printed at the end of each book. Untick it to collect all endnotes at the end of the last book.
+###### Enhanced paragraphed footnotes
 
-*(Internal ID: `c_neachbook` · Config key: `texpert/neachbook`)*
-
-#### Enhanced paragraphed footnotes
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_newparnotes` · cfg `texpert/newparnotes`
 
 > Paragraphed footnotes which allow \fp to work and also the ifparnotes... controls below. Causes some spacing differences compared to old-style.
 
-**Explanation:**
+Paragraphed footnotes run several notes together in one paragraph. With the current layout version this is always on; the box only matters when **Maximum layout version** is 5 or lower.
 
-Turns on a newer way of making paragraphed footnotes (several notes run together in one paragraph). It allows the `\fp` marker and the other paragraphed-note settings in this group. With the current layout version this is already always on. The check box only matters when **Maximum layout version** is set to 5 or lower.
+###### Remove depth above paragraphed notes
 
-*(Internal ID: `c_newparnotes` · Config key: `texpert/newparnotes`)*
-
-#### Remove depth above paragraphed notes
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_parntkillpd` · cfg `texpert/parntkillpd`
 
 > Kern away (kill) the glyph/font depth of note types before paragraphed notes, using the value of \prevdepth
 
-**Explanation:**
+Keeps the space between different note types even. Change it only to solve a specific spacing problem.
 
-Fine-tunes the space above paragraphed notes. When ticked (the default), PTXprint removes the space below the letters of the note type above them. This keeps the space between different note types even. Change it only to solve a specific spacing problem.
+###### Remove depth after paragraphed notes
 
-*(Internal ID: `c_parntkillpd` · Config key: `texpert/parntkillpd`)*
-
-#### Remove depth after paragraphed notes
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_parntkilldepth` · cfg `texpert/parntkilldepth`
 
 > Kill the depth of (the last row of) paragraphed note styles. Paragraphed notes will use the margin as their baseline.
 
-**Explanation:**
+Ticked, the last line of paragraphed notes sits on the bottom margin. Unticked, space for letters below the baseline (such as g and p) is kept.
 
-When ticked, the last line of paragraphed notes sits right on the bottom margin. When unticked (the default), the space for letters below the baseline (such as g and p) is kept.
+###### Use grid not font/glyph height at rule
 
-*(Internal ID: `c_parntkilldepth` · Config key: `texpert/parntkilldepth`)*
-
-#### Use grid not font/glyph height at rule
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_parntruletopskip` · cfg `texpert/parntruletopskip`
 
 > If true, the footnote rule is positioned relative to the hypothetical baseline above the topmost footnote, rather than relative to the glyph/font height.
 
-**Explanation:**
+The footnote rule is the line above the notes. Unticked, it is placed relative to the height of the letters in the first note. Change it only if the space between rule and notes looks wrong.
 
-Decides how the footnote rule (the line above the notes) is positioned. When ticked, it is placed relative to the line grid. When unticked (the default), it is placed relative to the height of the letters in the first note. Change it only if the space between the rule and the notes looks wrong.
+###### Use grid not font/glyph height between notes
 
-*(Internal ID: `c_parntruletopskip` · Config key: `texpert/parntruletopskip`)*
-
-#### Use grid not font/glyph height between notes
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_parntmidtopskip` · cfg `texpert/parntmidtopskip`
 
 > If true, then the \InterNoteSpace is relative to the hypothetical baseline above the topmost footnote, rather than the glyph/font height. \InterNoteSpace is triggered between note styles.
 
-**Explanation:**
+For the space between two note types (for example footnotes and cross-references). Ticked gives the same space everywhere. Untick it to measure from the letter height.
 
-Decides how the space between two different note types (for example footnotes and cross-references) is measured. When ticked (the default), it is measured from the line grid. This gives the same space everywhere. Untick it to measure from the height of the letters instead.
+###### Use glyph height not font height in footnotes
 
-*(Internal ID: `c_parntmidtopskip` · Config key: `texpert/parntmidtopskip`)*
-
-#### Use glyph height not font height in footnotes
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_fnxugm` · cfg `texpert/fnxugm`
 
 > Does the note use the font's descender design parameter, or the actual bottom of the glyph. If the former (and depth is not killed), then the bottom of notes have a common baseline across pages. If the latter, then the glyphs sit as close to the bottom margin as they can, which may permit an extra line of text.
 
-**Explanation:**
+Unticked, the last line of notes is at the same height on every page. Ticked, notes sit as low as possible, which sometimes leaves room for an extra line of text.
 
-Decides how the bottom of the notes is measured. Unticked (the default), PTXprint uses the font's design value, so the last line of notes is at the same height on every page. Ticked, it uses the real bottom of the letters. The notes then sit as low as possible, which sometimes leaves room for an extra line of text.
+###### Last Note: interlinepenalty
 
-*(Internal ID: `c_fnxugm` · Config key: `texpert/fnxugm`)*
-
-#### Last Note: interlinepenalty
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -9999 to 10000, default 10000
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_lastnoteinterlinep` · cfg `texpert/lastnoteinterlinep`  
+Values: -9999–10000 (default 10000)
 
 > Penalty for breaking between lines of the last footnote.
 
-**Explanation:**
+10000 = never split the last footnote across pages. Lower values allow a split, which can help fill pages with many notes.
 
-Controls whether the last footnote on a page can be split between two pages. The default 10000 means "never split it". Lower values allow a split. This can help fill pages that have many notes.
+###### Last Note: widowpenalty
 
-*(Internal ID: `s_lastnoteinterlinep` · Config key: `texpert/lastnoteinterlinep`)*
-
-#### Last Note: widowpenalty
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -9999 to 10000, default 10000
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_lastnotewidowp` · cfg `texpert/lastnotewidowp`  
+Values: -9999–10000 (default 10000)
 
 > Extra penalty for breaking at the last line of the last footnote.
 
-**Explanation:**
+For a split that leaves only the last line on the next page. 10000 forbids it.
 
-An extra penalty for a split that leaves only the last line of the last footnote on the next page. The default 10000 forbids this.
+###### Last Note: clubpenalty
 
-*(Internal ID: `s_lastnotewidowp` · Config key: `texpert/lastnotewidowp`)*
-
-#### Last Note: clubpenalty
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -9999 to 10000, default 10000
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_lastnoteclubp` · cfg `texpert/lastnoteclubp`  
+Values: -9999–10000 (default 10000)
 
 > Extra penalty for breaking at the first line of the last footnote.
 
-**Explanation:**
+For a split that leaves only the first line on the page. 10000 forbids it.
 
-An extra penalty for a split that leaves only the first line of the last footnote on the page. The default 10000 forbids this.
+###### Last Note: penalty at par
 
-*(Internal ID: `s_lastnoteclubp` · Config key: `texpert/lastnoteclubp`)*
-
-#### Last Note: penalty at par
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -9999 to 10000, default 100
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_lastnoteparp` · cfg `texpert/lastnoteparp`  
+Values: -9999–10000 (default 100)
 
 > Penalty for breaking at an explicit footnote-paragraph in the last footnote.
 
-**Explanation:**
+The default 100 allows a split at a note paragraph more easily than mid-paragraph.
 
-The penalty for splitting the last footnote at a place where the note itself starts a new paragraph. The default 100 allows this more easily than a split in the middle of a paragraph.
+###### Split notes: Shortest note to shave
 
-*(Internal ID: `s_lastnoteparp` · Config key: `texpert/lastnoteparp`)*
-
-#### Split notes: Shortest note to shave
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 100, default 2
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_nshaveshort` · cfg `texpert/nshaveshort`  
+Values: 0–100 (default 2)
 
 > If footnotes might be shaved, how many lines must it be?
 
-**Explanation:**
+"Shaving" splits a note that does not fit and moves part to the next page. Shorter notes are kept whole.
 
-When notes do not fit, PTXprint can split ("shave") a note and move part of it to the next page. This is the shortest note, in lines, that may be split. Notes shorter than this are kept whole.
+###### Split notes: min lines to move.
 
-*(Internal ID: `s_nshaveshort` · Config key: `texpert/nshaveshort`)*
-
-#### Split notes: min lines to move.
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 100, default 2
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_nshavemin` · cfg `texpert/nshavemin`  
+Values: 0–100 (default 2)
 
 > If a footnote is being shaved (split onto next page), what is the minimum number of lines to move?
 
-**Explanation:**
+Avoids moving a single lonely line.
 
-When a note is split, at least this many lines must move to the next page. This avoids moving a single lonely line.
+###### Split notes: note lines to stay
 
-*(Internal ID: `s_nshavemin` · Config key: `texpert/nshavemin`)*
-
-#### Split notes: note lines to stay
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 100, default 2
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_nshavestay` · cfg `texpert/nshavestay`  
+Values: 0–100 (default 2)
 
 > If a footnote is being shaved (split onto next page), how many lines of (all) notes must remain on the page?
 
-**Explanation:**
+Counts lines of all notes.
 
-When a note is split, at least this many lines of notes must stay on the current page.
+###### Study note factor-Single column
 
-*(Internal ID: `s_nshavestay` · Config key: `texpert/nshavestay`)*
+Number · Regular+ · `s_footnotemulsts` · cfg `texpert/footnotemulsts`  
+Values: 0–2100 (default 400)
 
-#### Study note factor-Single column
+> To avoid needless cycles/underfull pages, what portion of a study note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)
 
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 2100, default 400
+PTXprint guesses how much space study notes need while it collects text for a page. 1000 = 100%. Lower values can give fuller pages but more work; higher values can leave pages underfull. Change it only on advice.
 
-**Tooltip (the text shown when you hover the mouse over it):**
+###### Study note factor-Two column
 
-> To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)
+Number · Regular+ · `s_footnotemulstt` · cfg `texpert/footnotemulstt`  
+Values: 0–2100 (default 800)
 
-**Explanation:**
+> To avoid needless cycles/underfull pages, what portion of a study note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)
 
-While PTXprint collects text for a page, it guesses how much space the study notes will need. This value is that guess as a portion of the full estimate, for single-column text (100 = 10%, 1000 = 100%). Lower values can give fuller pages but more work. Higher values can leave pages underfull. Change it only on advice.
+Same as **Study note factor-Single column**, for two-column text.
 
-*(Internal ID: `s_footnotemulsts` · Config key: `texpert/footnotemulsts`)*
+###### Study note factor-Diglot
 
-#### Study note factor-Two column
+Number · Regular+ · `s_footnotemulstd` · cfg `texpert/footnotemulstd`  
+Values: 0–2100 (default 500)
 
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 2100, default 800
+> To avoid needless cycles/underfull pages, what portion of a study note's height-estimate should TeX apply when gathering diglot input? (100=10percent)
 
-**Tooltip (the text shown when you hover the mouse over it):**
+Same as **Study note factor-Single column**, for diglot text.
 
-> To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)
+###### Footnote factor-Single column
 
-**Explanation:**
+Number · Regular+ · `s_footnotemuls` · cfg `texpert/footnotemuls`  
+Values: 0–2100 (default 400)
 
-Same as **Study note factor-Single column**, but for two-column text.
+> To avoid needless cycles/underfull pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)
 
-*(Internal ID: `s_footnotemulstt` · Config key: `texpert/footnotemulstt`)*
+Same idea for ordinary footnotes. Change it only on advice.
 
-#### Study note factor-Diglot
+###### Footnote factor-Two column
 
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 2100, default 500
+Number · Regular+ · `s_footnotemult` · cfg `texpert/footnotemult`  
+Values: 0–2100 (default 800)
 
-**Tooltip (the text shown when you hover the mouse over it):**
+> To avoid needless cycles/underfull pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)
 
-> To avoid needless cylces/underful pages, what portion of a study note's height-estimate should TeX apply when gathering diglot input? (100=10percent)
+Change it only on advice.
 
-**Explanation:**
+###### Footnote factor-Diglot
 
-Same as **Study note factor-Single column**, but for diglot text.
+Number · Regular+ · `s_footnotemuld` · cfg `texpert/footnotemuld`  
+Values: 0–2100 (default 10)
 
-*(Internal ID: `s_footnotemulstd` · Config key: `texpert/footnotemulstd`)*
+> To avoid needless cycles/underfull pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)
 
-#### Footnote factor-Single column
+Change it only on advice.
 
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 2100, default 400
+###### Footnote factor-Centre column
 
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_footnotemulc` · cfg `texpert/footnotemulc`  
+Values: 0–2100 (default 1)
 
-> To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)
+> To avoid needless cycles/underfull pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)
 
-**Explanation:**
+For example cross-references between two columns. These notes do not take space from the text column, so the default is very low.
 
-Same idea as the study note factors, but for ordinary footnotes in single-column text (100 = 10%). Change it only on advice.
+###### Distance of margin notes from text
 
-*(Internal ID: `s_footnotemuls` · Config key: `texpert/footnotemuls`)*
-
-#### Footnote factor-Two column
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 2100, default 800
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)
-
-**Explanation:**
-
-The footnote space estimate for two-column text. Change it only on advice.
-
-*(Internal ID: `s_footnotemult` · Config key: `texpert/footnotemult`)*
-
-#### Footnote factor-Diglot
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 2100, default 10
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)
-
-**Explanation:**
-
-The footnote space estimate for diglot text. Change it only on advice.
-
-*(Internal ID: `s_footnotemuld` · Config key: `texpert/footnotemuld`)*
-
-#### Footnote factor-Centre column
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 2100, default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)
-
-**Explanation:**
-
-The space estimate for notes in a centre column (for example cross-references between two columns). These notes do not take space from the text column, so the default is very low.
-
-*(Internal ID: `s_footnotemulc` · Config key: `texpert/footnotemulc`)*
-
-#### Distance of margin notes from text
-
-- **Where:** Advanced tab › Other tab › Footnotes, Cross-references, Study Notes
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 100, default 6
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_marginnotesgap` · cfg `texpert/marginnotesgap`  
+Values: 0–100 (default 6)
 
 > The size of the gap between the margin notes and the text
 
-**Explanation:**
+A larger number moves margin notes further from the text. Margin notes are turned on, and their width set, on the **Layout** tab, **Page Setup** area (**Margin Notes Col Width (mm)** and **Margin Notes on Left/Inner**).
 
-The gap between the main text and the margin notes. A larger number moves the margin notes further away from the text. Margin notes are turned on, and their column width set, on the **Layout** tab in the **Page Setup** area (**Margin Notes Col Width (mm)** and **Margin Notes on Left/Inner**). Change it if the notes look too close to, or too far from, the text.
+##### Diglot
 
-*(Internal ID: `s_marginnotesgap` · Config key: `texpert/marginnotesgap`)*
+###### Balance diglot/polyglot notes
 
-### Advanced tab › Other tab › Diglot
-
-#### Balance diglot/polyglot notes
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_diglotbalnotes` · cfg `texpert/diglotbalnotes`
 
 > When there's a note on column R (for example), does that reduce the space from other columns?
 
-**Explanation:**
+Tick it to keep the bottoms of all columns level. Unticked, each column uses its own space.
 
-In a diglot or polyglot, when one column has a note, this decides whether the other columns lose the same space. Tick it to keep the bottoms of all columns level. Untick it (the default) so that each column uses its own space.
+###### Diglot/polyglot merged paragraphed notes are RTL
 
-*(Internal ID: `c_diglotbalnotes` · Config key: `texpert/diglotbalnotes`)*
+Checkbox, off · Regular+ · `c_mergednotesrtl` · cfg `texpert/mergednotesrtl`
 
-#### Diglot/polyglot merged paragraphed notes are RTL
+> When merged notes are not shown as individual paragraphs, the result must be arranged as though RTL or LTR (however the individual notes are structured). This defines the paragraph alignment.
 
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
+Tick it when the merged notes should read right-to-left. Getting this wrong arranges the notes badly, so match it to the language of the notes.
 
-**Tooltip (the text shown when you hover the mouse over it):**
+###### Adjust Versification of Projects
 
-> When merged notes are not shown as individual paragraphs, the result must be arranged as though RTL or LTR (however the induvidual notes are structured). This defines the paragraph alignment.
-
-**Explanation:**
-
-In a diglot or polyglot where the notes of the columns are merged into one paragraph, this sets the direction of that paragraph. Tick it when the merged notes should read right-to-left. Getting this wrong gives badly arranged notes, so match it to the language of the notes.
-
-*(Internal ID: `c_mergednotesrtl` · Config key: `texpert/mergednotesrtl`)*
-
-#### Adjust Versification of Projects
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_reversify` · cfg `texpert/reversify`
 
 > If versification differs between projects, adjust diglot/polyglot projects to match the primary (L) project.
 
-**Explanation:**
+Keeps matching verses side by side. Leave it ticked unless the projects already use the same versification.
 
-When the projects in a diglot or polyglot use different versification (verse numbering), PTXprint moves the verses of the other projects to match the primary (L) project. This keeps matching verses side by side. Leave it ticked unless the projects already use the same versification.
+###### Keep existing verse numbers (as \vp)
 
-*(Internal ID: `c_reversify` · Config key: `texpert/reversify`)*
-
-#### Keep existing verse numbers (as \vp)
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_showvpvrse` · cfg `texpert/showvpvrse`
 
 > When adjusting versification, show the original verse numbers in their new (adjusted) location.
 
-**Explanation:**
+Readers then see the verse numbers of their own translation.
 
-When versification is adjusted, verses may move to a new place. When ticked, the original verse numbers are still shown, so readers see the numbers of their own translation.
+###### Show old chapter numbers if changed (in \vp)
 
-*(Internal ID: `c_showvpvrse` · Config key: `texpert/showvpvrse`)*
-
-#### Show old chapter numbers if changed (in \vp)
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_showvpchap` · cfg `texpert/showvpchap`
 
 > When adjusting versification, show the adjusted chapter numbers (only) if they have changed.
 
-**Explanation:**
+The old chapter number is shown with the verse number.
 
-When versification is adjusted and a verse moves to a different chapter, the old chapter number is shown with the verse number. This only happens when the chapter has changed.
+###### Show Diglot Trace Marks
 
-*(Internal ID: `c_showvpchap` · Config key: `texpert/showvpchap`)*
-
-#### Show Diglot Trace Marks
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_vistrace` · cfg `texpert/vistrace`
 
 > Insert visible trace marks in diglot output
 
-**Explanation:**
+Marks where the column pieces are joined, to find layout problems. Turn it off for the final PDF.
 
-Puts visible marks in a diglot PDF where the text pieces of the columns are joined. It is a tool for finding layout problems. Turn it off for the final PDF.
+###### Extra Trace Mark Info
 
-*(Internal ID: `c_vistrace` · Config key: `texpert/vistrace`)*
-
-#### Extra Trace Mark Info
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_vistracex` · cfg `texpert/vistracex`
 
 > Add extra information to diglot trace marks. (debugging only - can alter layout)
 
-**Explanation:**
+Debugging only; it can change the layout.
 
-Adds more information to the diglot trace marks. It is for debugging only and can change the layout.
+###### Diglot Shading Padding
 
-*(Internal ID: `c_vistracex` · Config key: `texpert/vistracex`)*
-
-#### Diglot Shading Padding
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -20 to 20, default 3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_diglotcolourpad` · cfg `texpert/diglotcolourpad`  
+Values: -20–20 (default 3)
 
 > The amount of side padding (pt) on the shaded background of a diglot
 
-**Explanation:**
+Larger extends the shading further beyond the text. Negative values make it narrower than the text.
 
-The extra space (in points) at the sides of the background colour shading of diglot columns. A larger value makes the shading extend further beyond the text. Negative values make it narrower than the text.
+###### How does text-border behave in diglots?
 
-*(Internal ID: `s_diglotcolourpad` · Config key: `texpert/diglotcolourpad`)*
-
-#### How does text-border behave in diglots?
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Borders start at body text; Borders include book intros; Wide book intros for per-column textborders
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_textbordermode` · cfg `texpert/textbordermode`  
+Choices: Borders start at body text | Borders include book intros | Wide book intros for per-column textborders
 
 > Historically, diglot text-borders put the border around book introductions. This control allows that (substandard) behaviour to be chosen, and also allows  experimental code to make books with per-column textborders use full-width text for introductory text.
 
-**Explanation:**
+**Borders start at body text** leaves book introductions outside the border. **Borders include book intros** is the old behaviour. **Wide book intros for per-column textborders** is experimental: introductions use the full page width when each column has its own border.
 
-How a text border behaves in a diglot. **Borders start at body text** (the default) leaves book introductions outside the border. **Borders include book intros** is the old behaviour. **Wide book intros for per-column textborders** is experimental: introductions use the full page width when each column has its own border.
+###### Unprintable page recovery.
 
-*(Internal ID: `fcb_textbordermode` · Config key: `texpert/textbordermode`)*
-
-#### Unprintable page recovery.
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -1 to 10, default 2
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_growunprintable` · cfg `texpert/growunprintable`  
+Values: -1–10 (default 2)
 
 > If notes / figures make a page unprintable: -1: immediately stop; 0: print failed contents and try to struggle on; >0 grow page height by up to N lines.
 
-**Explanation:**
+Grown pages may extend into the bottom margin, so check them.
 
-What to do when notes or pictures make a page impossible to print. -1 stops printing at once. 0 prints what it can and continues. A value above 0 allows the page to grow by up to that many lines, so it can be printed. Grown pages may extend into the bottom margin, so check them.
+###### Page-full test.
 
-*(Internal ID: `s_growunprintable` · Config key: `texpert/growunprintable`)*
-
-#### Page-full test.
-
-- **Where:** Advanced tab › Other tab › Diglot
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** 1xBiggest baseline; 2xSmallest baseline; 2xBiggest baseline; 3xSmallest baseline
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_pagefulltest` · cfg `texpert/pagefulltest`  
+Choices: 1xBiggest baseline | 2xSmallest baseline | 2xBiggest baseline | 3xSmallest baseline
 
 > When a (non-title) chunk has finished, the amount of unused space below which diglot will immediately output a page,  rather than trying to fit the next chunk. (irrespective of how short it is). Higher values encourage underfilled pages, but can prevent orphaning of the 1st line of poetry.
 
-**Explanation:**
+We could not confirm that a change here reaches the typesetting code in the current version.
 
-In a diglot, after a piece of text is finished, if less than this much space is left on the page, PTXprint ends the page instead of trying to fit the next piece. Larger values give more underfilled pages, but can stop the first line of a poem being left alone at the bottom. Note: in the current version we could not confirm that a change here reaches the typesetting code.
+##### Pictures, Figures, Images, Sidebars
 
-*(Internal ID: `fcb_pagefulltest` · Config key: `texpert/pagefulltest`)*
+###### Default Figures Top Left
 
-### Advanced tab › Other tab › Pictures, Figures, Images, Sidebars
-
-#### Default Figures Top Left
-
-- **Where:** Advanced tab › Other tab › Pictures, Figures, Images, Sidebars
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_figleft` · cfg `texpert/figleft`
 
 > Default figure positions to top left
 
-**Explanation:**
+For two-column pictures with no usable position: PTXprint places them at the top of a column, alternating left and right. Ticked, it starts with the left column.
 
-When a picture in two-column layout has no usable position, PTXprint puts it at the top of a column, alternating between left and right. When ticked (the default), it starts with the left column.
+###### Ref Before Caption
 
-*(Internal ID: `c_figleft` · Config key: `texpert/figleft`)*
-
-#### Ref Before Caption
-
-- **Where:** Advanced tab › Other tab › Pictures, Figures, Images, Sidebars
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_captreffirst` · cfg `texpert/captreffirst`
 
 > Output reference before caption
 
-**Explanation:**
+Puts the verse reference before the caption text.
 
-Puts the verse reference before the caption text instead of after it.
+###### Show Caption Before Image
 
-*(Internal ID: `c_captreffirst` · Config key: `texpert/captreffirst`)*
-
-#### Show Caption Before Image
-
-- **Where:** Advanced tab › Other tab › Pictures, Figures, Images, Sidebars
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_captfirst` · cfg `texpert/captfirst`
 
 > Output caption before image
 
-**Explanation:**
+Puts the caption above the picture.
 
-Puts the caption above the picture instead of below it.
+###### Space (pt) beside cutout/sidebar
 
-*(Internal ID: `c_captfirst` · Config key: `texpert/captfirst`)*
-
-#### Space (pt) beside cutout/sidebar
-
-- **Where:** Advanced tab › Other tab › Pictures, Figures, Images, Sidebars
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 50, default 10
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_cutouterpadding` · cfg `texpert/cutouterpadding`  
+Values: 0–50 (default 10)
 
 > This sets the default gap (pt) between the body text and the side of a figure/sidebar in a cutout.
 
-**Explanation:**
+A cutout is a space cut into the side of the text. This value is used when a picture or sidebar does not set its own space. **Default space beside picture** sets the same value and wins when changed from its default.
 
-The default gap (in points) between the text and a picture or sidebar that sits in a cutout (a space cut into the side of the text). It is used when a picture or sidebar does not set its own space. **Default space beside picture** sets the same value, and it wins when it is changed from its default.
+###### Space between picture & caption
 
-*(Internal ID: `s_cutouterpadding` · Config key: `texpert/cutouterpadding`)*
-
-#### Space between picture & caption
-
-- **Where:** Advanced tab › Other tab › Pictures, Figures, Images, Sidebars
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -10 to 20, default 0
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_captionadj` · cfg `texpert/captionadj`  
+Values: -10–20 (default 0)
 
 > Increase/Reduce the gap between figures and their captions
 
-**Explanation:**
+Negative values remove space, in points.
 
-Adds space between a picture and its caption (positive values) or removes space (negative values), in points.
+###### Default space beside picture
 
-*(Internal ID: `s_captionadj` · Config key: `texpert/captionadj`)*
-
-#### Default space beside picture
-
-- **Where:** Advanced tab › Other tab › Pictures, Figures, Images, Sidebars
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 100, default 10
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_spbeside` · cfg `texpert/spbeside`  
+Values: 0–100 (default 10)
 
 > Picture horizontal margin*2
 
-**Explanation:**
+Horizontal space, in points. Sets the same value as **Space (pt) beside cutout/sidebar**; when changed from its default (10), this one is used.
 
-The default horizontal space (in points) beside a picture. This sets the same value as **Space (pt) beside cutout/sidebar**. When you change this one from its default (10), it is used instead.
+###### Show comprehensive illustration credits
 
-*(Internal ID: `s_spbeside` · Config key: `texpert/spbeside`)*
-
-#### Show comprehensive illustration credits
-
-- **Where:** Advanced tab › Other tab › Pictures, Figures, Images, Sidebars
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_allpicredits` · cfg `texpert/allpicredits`
 
 > Instead of using the catch-all phrasing 'All other illustrations by...' show a comprehensive list of every artist and all pages that contain their illustrations.
 
-**Explanation:**
+Lists every artist with all the pages of their pictures.
 
-Picture credits normally list the main artists and then say "All other illustrations by...". Tick this to list every artist with all the pages that have their pictures.
+##### PDF Options, Covers, Show/Hide
 
-*(Internal ID: `c_allpicredits` · Config key: `texpert/allpicredits`)*
+###### No PDF Bookmarks
 
-### Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-
-#### No PDF Bookmarks
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_noactions` · cfg `texpert/noactions`
 
 > Don’t output PDF bookmarks
 
-**Explanation:**
+Bookmarks are the list of books and chapters in a PDF viewer's side panel. Some printers ask for a PDF without them.
 
-Stops PTXprint from making bookmarks (the list of books and chapters in the side panel of a PDF viewer). Some printers ask for a PDF without bookmarks.
+###### Allow Active Links in PDF
 
-*(Internal ID: `c_noactions` · Config key: `texpert/noactions`)*
-
-#### Allow Active Links in PDF
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_actions` · cfg `texpert/actions`
 
 > Make links active inside PDF
 
-**Explanation:**
+For example cross-references and web links. Untick it for a PDF only for printing.
 
-When ticked (the default), links in the PDF work when you click them (for example cross-references and web links). Untick it for a PDF that is only for printing.
+###### Use Book Codes in PDF Bookmarks
 
-*(Internal ID: `c_actions` · Config key: `texpert/actions`)*
-
-#### Use Book Codes in PDF Bookmarks
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_refbkmks` · cfg `texpert/refbkmks`
 
 > Use book codes instead of book names in bookmarks
 
-**Explanation:**
+Helps when book names are long or in a script the PDF viewer cannot show.
 
-Uses book codes (such as GEN, MAT) instead of book names in the PDF bookmarks. This can help when the book names are long or in a script the PDF viewer cannot show.
+###### Disable Transparency in PDF
 
-*(Internal ID: `c_refbkmks` · Config key: `texpert/refbkmks`)*
-
-#### Disable Transparency in PDF
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_notransparent` · cfg `texpert/notransparent`
 
 > Disable transparency output in PDF
 
-**Explanation:**
+For printers that cannot handle transparent colours. Each one becomes a solid colour that looks the same on white paper. Anything behind it is then hidden, so check pages with shading or overlapping pictures.
 
-Some printers cannot handle transparent colours. When ticked, PTXprint changes each transparent colour into a solid colour that looks the same on white paper. Anything behind a transparent item is then hidden, so check pages with shading or overlapping pictures.
+###### Show adjust points
 
-*(Internal ID: `c_notransparent` · Config key: `texpert/notransparent`)*
-
-#### Show adjust points
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_showadjpoints` · cfg `texpert/showadjpoints`
 
 > Show adjust points in the margin of the text.
 
-**Explanation:**
+Marks where paragraph adjustments (stretch or shrink from the adjustment list) apply. Turn it off for the final PDF.
 
-Shows marks in the margin where paragraph adjustments (stretch or shrink from the adjustment list) are applied. It helps you check your adjustments. Turn it off for the final PDF.
+###### Mark Trigger Points
 
-*(Internal ID: `c_showadjpoints` · Config key: `texpert/showadjpoints`)*
-
-#### Mark Trigger Points
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_mktrigpts` · cfg `texpert/mktrigpts`
 
 > Display trigger points in output
 
-**Explanation:**
+Triggers are instructions tied to a verse, such as a picture position or a style change. Turn it off for the final PDF.
 
-Shows marks where triggers (instructions tied to a verse, such as a picture position or a style change) take effect. It helps you check them. Turn it off for the final PDF.
+###### Show USFM codes
 
-*(Internal ID: `c_mktrigpts` · Config key: `texpert/mktrigpts`)*
-
-#### Show USFM codes
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_showusfmcodes` · cfg `texpert/showusfmcodes`
 
 > Show the USFM markers in the margin beside paragraphs.
 
-**Explanation:**
+Helps you find which style to change on the **Styles** tab. Turn it off for the final PDF.
 
-Shows the USFM marker of each paragraph (such as p, q1, s1) in the margin. It helps you find which style to change on the **Styles** tab. Turn it off for the final PDF.
+###### Show Error Bars For Overfull Lines
 
-*(Internal ID: `c_showusfmcodes` · Config key: `texpert/showusfmcodes`)*
-
-#### Show Error Bars For Overfull Lines
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_showhboxerrorbars` · cfg `texpert/showhboxerrorbars`
 
 > Enable this option to have TeX make overfull lines stand out.
 
-**Explanation:**
+A black bar at the end of every overfull line. Fix such lines, for example with hyphenation or small text changes. Then turn this off.
 
-Puts a black bar at the end of every line that is too long for the column (an overfull line). Use it while proofreading to find such lines. Fix them, for example with hyphenation or small changes to the text. Then turn this off.
+###### Spine Overlap onto Back Cover (mm)
 
-*(Internal ID: `c_showhboxerrorbars` · Config key: `texpert/showhboxerrorbars`)*
-
-#### Spine Overlap onto Back Cover (mm)
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 50, default 0
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_spineoverlapback` · cfg `texpert/spineoverlapback`  
+Values: 0–50 (default 0)
 
 > If you want the spine graphic or colour to spill over onto the back cover page, then set the amount of overlap here.
 
-**Explanation:**
+Helps hide small errors when the cover is folded. Used when you make a cover on the **Peripherals** tab.
 
-Lets the spine colour or picture extend this many mm onto the back cover. It helps hide small errors when the cover is folded. It is used when you make a cover on the **Peripherals** tab.
+###### Spine Overlap onto Front Cover (mm)
 
-*(Internal ID: `s_spineoverlapback` · Config key: `texpert/spineoverlapback`)*
-
-#### Spine Overlap onto Front Cover (mm)
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 50, default 0
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_spineoverlapfront` · cfg `texpert/spineoverlapfront`  
+Values: 0–50 (default 0)
 
 > If you want the spine graphic or colour to spill over onto the front cover page, then set the amount of overlap here.
 
-**Explanation:**
+Used when you make a cover.
 
-Lets the spine colour or picture extend this many mm onto the front cover. It is used when you make a cover.
+###### Cover Bleed (mm)
 
-*(Internal ID: `s_spineoverlapfront` · Config key: `texpert/spineoverlapfront`)*
-
-#### Cover Bleed (mm)
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 25, default 5
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_bleed` · cfg `texpert/bleed`  
+Values: 0–25 (default 5)
 
 > Bleed is the section of artwork that goes beyond where the paper is cut. This ensures that the image goes right to the edge of the cover after it has been trimmed.
 
-**Explanation:**
+Ask your printer how much bleed they need; often 3 to 5 mm.
 
-The extra area (in mm) of cover artwork beyond the cut edge. After trimming, the picture or colour then goes right to the edge. Ask your printer how much bleed they need. Often it is 3 to 5 mm.
+###### Hard Cover Art Bleed (mm)
 
-*(Internal ID: `s_bleed` · Config key: `texpert/bleed`)*
-
-#### Hard Cover Art Bleed (mm)
-
-- **Where:** Advanced tab › Other tab › PDF Options, Covers, Show/Hide
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 25, default 0
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_artbleed` · cfg `texpert/artbleed`  
+Values: 0–25 (default 0)
 
 > Art Bleed is specifically for hard cover binding and is the setting which enables images to go beyond the size of the cover in order to wrap around the hard cover and stuck down under the inner backing sheet.
 
-**Explanation:**
+Leave it at 0 for soft covers. Ask your printer for the right value.
 
-Extra bleed in mm for hard cover books. The cover picture must wrap around the board and be glued under the inside sheet, so it must be larger. Leave it at 0 for soft covers. Ask your printer for the right value.
+##### Preview Pane: Adjustment and Analysis Settings
 
-*(Internal ID: `s_artbleed` · Config key: `texpert/artbleed`)*
+###### Auto-update Delay (seconds)
 
-### Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-
-#### Auto-update Delay (seconds)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 120, default 3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_autoupdatedelay` · cfg `texpert/autoupdatedelay`  
+Values: 0–120 (default 3)
 
 > Right-clicking again on the PDF within this time (3 second default) will prevent the Auto-update from running.
 
-**Explanation:**
+A right-click adjustment with **Auto-update** on starts a new print after this delay, so you can make several adjustments first. Increase it if you need more time between adjustments.
 
-When **Auto-update** is on in the PDF Preview window, a right-click adjustment starts a new print after this many seconds. If you right-click again within this time, PTXprint waits, so you can make several adjustments before it prints. Increase it if you need more time between adjustments.
+###### Shrink Text Step Value (%)
 
-*(Internal ID: `s_autoupdatedelay` · Config key: `texpert/autoupdatedelay`)*
-
-#### Shrink Text Step Value (%)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 1 to 5, default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_shrinktextstep` · cfg `texpert/shrinktextstep`  
+Values: 1–5 (default 1)
 
 > Step Value to shrink text using right-click context menu adjustment.
 
-**Explanation:**
+Percent per "shrink text" step.
 
-How many percent each "shrink text" step from the right-click menu in the PDF Preview window makes a paragraph smaller.
+###### Minimum Text Shrink (%)
 
-*(Internal ID: `s_shrinktextstep` · Config key: `texpert/shrinktextstep`)*
-
-#### Minimum Text Shrink (%)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 85 to 100, default 95
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_shrinktextlimit` · cfg `texpert/shrinktextlimit`  
+Values: 85–100 (default 95)
 
 > Limit how much text can shrink to using right-click context menu adjustment.
 
-**Explanation:**
+95 = at most 5% smaller. The page filler also uses this limit. Shrinking too much makes text look crowded.
 
-The smallest size (in percent of normal) that a paragraph can be shrunk to with the right-click menu. 95 means at most 5% smaller. The page filler also uses this limit. Shrinking too much makes text look crowded.
+###### Expand Text Step Value (%)
 
-*(Internal ID: `s_shrinktextlimit` · Config key: `texpert/shrinktextlimit`)*
-
-#### Expand Text Step Value (%)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 1 to 5, default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_expandtextstep` · cfg `texpert/expandtextstep`  
+Values: 1–5 (default 1)
 
 > Step Value to expand text using right-click context menu adjustment.
 
-**Explanation:**
+Percent per "expand text" step.
 
-How many percent each "expand text" step from the right-click menu makes a paragraph larger.
+###### Maximum Text Expand (%)
 
-*(Internal ID: `s_expandtextstep` · Config key: `texpert/expandtextstep`)*
-
-#### Maximum Text Expand (%)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 100 to 115, default 105
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_expandtextlimit` · cfg `texpert/expandtextlimit`  
+Values: 100–115 (default 105)
 
 > Limit how much text can expand to using right-click context menu adjustment.
 
-**Explanation:**
+105 = at most 5% larger.
 
-The largest size (in percent of normal) that a paragraph can be expanded to with the right-click menu. 105 means at most 5% larger.
+###### Bad Space minimum width (em)
 
-*(Internal ID: `s_expandtextlimit` · Config key: `texpert/expandtextlimit`)*
-
-#### Bad Space minimum width (em)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10, default 1.3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_spaceEms` · cfg `texpert/spaceEms`  
+Values: 0–10 (default 1.3)
 
 > Minimum width for a bad space. 0 says to calculate for the 20 worst spaces in the doc
 
-**Explanation:**
+Used by **Layout Analysis** in the PDF Preview window; em = the size of the font. A lower value marks more spaces.
 
-**Layout Analysis** in the PDF Preview window marks word spaces wider than this, in em (the size of the font). With 0, PTXprint finds the 20 widest spaces in the document instead. A lower value marks more spaces.
+###### Bad intercharacter space minimum width (em)
 
-*(Internal ID: `s_spaceEms` · Config key: `texpert/spaceEms`)*
-
-#### Bad intercharacter space minimum width (em)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 1, default 0.3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_charSpaceEms` · cfg `texpert/charSpaceEms`  
+Values: 0–1 (default 0.3)
 
 > Minimum width for a bad inter character space.
 
-**Explanation:**
+Only used when **Between Letters** spacing is on (**Fonts+Script** tab).
 
-**Layout Analysis** marks spaces between letters wider than this, in em. It is only used when letter spacing is turned on (**Between Letters** on the **Fonts+Script** tab).
+###### Precise collisions
 
-*(Internal ID: `s_charSpaceEms` · Config key: `texpert/charSpaceEms`)*
-
-#### Precise collisions
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Checkbox (not ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_collisionPrecise` · cfg `texpert/collisionPrecise`
 
 > Only show precise collisions between glyphs rather than overlapping bounding boxes - slow
 
-**Explanation:**
+Finds fewer false collisions.
 
-When ticked, collision checking looks at the real shapes of the letters, not just the boxes around them. It finds fewer false collisions but is slow.
+###### Collision Detection Padding (pt)
 
-*(Internal ID: `c_collisionPrecise` · Config key: `texpert/collisionPrecise`)*
-
-#### Collision Detection Padding (pt)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -1 to 5, default 0.5
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_paddingwidth` · cfg `texpert/paddingwidth`  
+Values: -1–5 (default 0.5)
 
 > Minimum space between bounding boxes of glyphs before a collision is flagged.
 
-**Explanation:**
+For boxes around letters on different lines. A larger value reports more possible collisions.
 
-How close (in points) the boxes around letters on different lines can come before **Layout Analysis** reports a collision. A larger value reports more possible collisions.
+###### River Detection Threshold (em)
 
-*(Internal ID: `s_paddingwidth` · Config key: `texpert/paddingwidth`)*
-
-#### River Detection Threshold (em)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 1 to 1000, default 3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_riverthreshold` · cfg `texpert/riverthreshold`  
+Values: 1–1000 (default 3)
 
 > The sum of all the widths in the river must be above this for the river to be detected
 
-**Explanation:**
+Increase it to report only the worst rivers.
 
-A river is a line of white space running down through several lines of text. A river is reported only when the widths of all its spaces add up to more than this, in em. Increase it to report only the worst rivers.
+###### River Detection minimum required maximum width (em)
 
-*(Internal ID: `s_riverthreshold` · Config key: `texpert/riverthreshold`)*
-
-#### River Detection minimum required maximum width (em)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0.1 to 5, default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_riverminmaxwidth` · cfg `texpert/riverminmaxwidth`  
+Values: 0.1–5 (default 1)
 
 > Minimum width required for the widest part of the river
 
-**Explanation:**
+In em.
 
-A river is reported only if its widest space is at least this wide (in em).
+###### River Detection minimum width (em)
 
-*(Internal ID: `s_riverminmaxwidth` · Config key: `texpert/riverminmaxwidth`)*
-
-#### River Detection minimum width (em)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0.1 to 5, default 0.5
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_riverminwidth` · cfg `texpert/riverminwidth`  
+Values: 0.1–5 (default 0.5)
 
 > Minimum width of any space in a river for it to be included
 
-**Explanation:**
+Narrower spaces are not counted as part of a river.
 
-A space must be at least this wide (in em) to be counted as part of a river.
+###### River Detection maximum line leading (em)
 
-*(Internal ID: `s_riverminwidth` · Config key: `texpert/riverminwidth`)*
-
-#### River Detection maximum line leading (em)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 5, default 0.4
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_rivergap` · cfg `texpert/rivergap`  
+Values: 0–5 (default 0.4)
 
 > Any lines separated by a gap greater than this will be considered not to be in the same river
 
-**Explanation:**
+In em.
 
-Spaces on lines that are further apart than this (in em) are not counted as one river.
+###### River Detection minimum overlap (em)
 
-*(Internal ID: `s_rivergap` · Config key: `texpert/rivergap`)*
-
-#### River Detection minimum overlap (em)
-
-- **Where:** Advanced tab › Other tab › Preview Pane: Adjustment and Analysis Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -5 to 5, default 0.4
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_riveroverlap` · cfg `texpert/riveroverlap`  
+Values: -5–5 (default 0.4)
 
 > Minimum overlap in ems required for two spaces above each other to be considered part of the same river
 
-**Explanation:**
+For two spaces on lines above each other.
 
-Two spaces on lines above each other must overlap by at least this much (in em) to belong to the same river.
+##### Automatic Page Filler
 
-*(Internal ID: `s_riveroverlap` · Config key: `texpert/riveroverlap`)*
+###### Time limit for the whole job (minutes)
 
-### Advanced tab › Other tab › Automatic Page Filler
-
-#### Time limit for the whole job (minutes)
-
-- **Where:** Advanced tab › Other tab › Automatic Page Filler
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 1000, default 180
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pbtimeout` · cfg `texpert/pbtimeout`  
+Values: 0–1000 (default 180)
 
 > The page filler works on all the books together. When this time is reached, the page filler stops. A book that is not finished keeps the pages that are already filled. Usually this affects only the longest book.  
 > Higher: more time to find a good layout for every page.
 
-**Explanation:**
+0 means no time limit. Increase it for a long Bible if the longest book does not finish.
 
-The longest time in minutes that the page filler works on the whole job. When the time is up, it stops. Pages it has already filled are kept. 0 means no time limit. Increase it for a long Bible if the longest book does not finish.
+###### Earlier pages to retry
 
-*(Internal ID: `s_pbtimeout` · Config key: `texpert/pbtimeout`)*
-
-#### Earlier pages to retry
-
-- **Where:** Advanced tab › Other tab › Automatic Page Filler
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10, default 4
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pbbacktrack` · cfg `texpert/pbbacktrack`  
+Values: 0–10 (default 4)
 
 > If the page filler cannot fill a page, it backtracks to the page before and tries a different layout there. This is the largest number of pages it can backtrack.  
 > Higher: fewer failed pages, but much slower.  
 > Lower: faster, but more pages may fail. 0 = never backtrack (fastest).  
 > Affects: Speed.
 
-**Explanation:**
+How many earlier pages the page filler may go back to try a different layout.
 
-When the page filler cannot fill a page, it can go back to earlier pages and try a different layout there. This is how many pages it may go back. Higher values fail on fewer pages but are much slower.
+###### Paragraphs to adjust on each page
 
-*(Internal ID: `s_pbbacktrack` · Config key: `texpert/pbbacktrack`)*
-
-#### Paragraphs to adjust on each page
-
-- **Where:** Advanced tab › Other tab › Automatic Page Filler
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 1 to 10, default 6
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pbmaxr` · cfg `texpert/pbmaxr`  
+Values: 1–10 (default 6)
 
 > The largest number of paragraphs on one page that the page filler may stretch or shrink. Each poetry line (\q1, \q2 …) counts as one paragraph. Each extra paragraph doubles the number of layouts the page filler tries.  
 > Higher: more ways to fill each page, so fewer failed pages, but each page takes longer.  
 > Lower: faster, but more pages may fail.  
 > Affects: Speed.
 
-**Explanation:**
+Keep it low unless many pages fail.
 
-How many paragraphs on one page the page filler may stretch or shrink. Each poetry line counts as a paragraph. Each extra paragraph doubles the work, so keep this low unless many pages fail.
+###### Widest word space allowed (× text size)
 
-*(Internal ID: `s_pbmaxr` · Config key: `texpert/pbmaxr`)*
-
-#### Widest word space allowed (× text size)
-
-- **Where:** Advanced tab › Other tab › Automatic Page Filler
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10, default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pbspacingtol` · cfg `texpert/pbspacingtol`  
+Values: 0–10 (default 1)
 
 > When the page filler stretches a paragraph, the average space between words must not be wider than this. 1.0 = as wide as the text size. A normal word space is about 0.3 to 0.5.  
 > Higher: easier to fill pages, but the text can look too spread out.  
 > Lower: tighter, better-looking text, but pages are harder to fill and take longer.  
 > Affects: Quality and Speed.
 
-**Explanation:**
+As a part of the text size.
 
-The widest average word space the page filler allows when it stretches a paragraph, as a part of the text size. A normal word space is about 0.3 to 0.5. Lower values look better, but more pages may fail and filling takes longer.
+###### Keep paragraphs close to normal width
 
-*(Internal ID: `s_pbspacingtol` · Config key: `texpert/pbspacingtol`)*
-
-#### Keep paragraphs close to normal width
-
-- **Where:** Advanced tab › Other tab › Automatic Page Filler
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 10, default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pbexpbad` · cfg `texpert/pbexpbad`  
+Values: 0–10 (default 1)
 
 > The page filler prefers small changes to a paragraph over big changes. This setting controls how strong that preference is. Higher: the page filler tries small changes first, so the text looks more even.  
 > Lower: the page filler accepts big changes more easily.  
 > Affects: Quality.
 
-**Explanation:**
+Higher values give more even text.
 
-How strongly the page filler prefers small changes to paragraphs over large ones. Higher values give more even text.
+###### Penalise shrink or stretch
 
-*(Internal ID: `s_pbexpbad` · Config key: `texpert/pbexpbad`)*
-
-#### Penalise shrink or stretch
-
-- **Where:** Advanced tab › Other tab › Automatic Page Filler
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -5 to 5, default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pbexpcost` · cfg `texpert/pbexpcost`  
+Values: -5–5 (default 1)
 
 > Tells the page filler whether to shrink paragraphs or stretch them when both are possible.  
 > Positive numbers: penalise stretching (so the text prefers to shrink more).  
@@ -2803,112 +1597,70 @@ How strongly the page filler prefers small changes to paragraphs over large ones
 > A bigger number (+ or −) means a higher penalty.  
 > Affects: Quality.
 
-**Explanation:**
+Applies when both shrinking and stretching would work.
 
-Whether the page filler prefers to shrink or to stretch paragraphs when both would work. Positive values prefer shrinking. Negative values prefer stretching. 0 has no preference.
+###### Keep neighbouring paragraphs alike
 
-*(Internal ID: `s_pbexpcost` · Config key: `texpert/pbexpcost`)*
-
-#### Keep neighbouring paragraphs alike
-
-- **Where:** Advanced tab › Other tab › Automatic Page Filler
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from 0 to 20, default 3
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_pbcontrast` · cfg `texpert/pbcontrast`  
+Values: 0–20 (default 3)
 
 > The page filler compares each paragraph with the paragraph before it. It tries to avoid a very stretched paragraph next to a very shrunk one.  
 > Higher: neighbouring paragraphs look more alike, so the page looks more even.  
 > Lower: neighbouring paragraphs can look more different.  
 > Affects: Quality.
 
-**Explanation:**
+Higher values give a more even page.
 
-How strongly the page filler avoids a very stretched paragraph next to a very shrunk one. Higher values give a more even page.
+###### The cost of imbalance in a polyglot slice
 
-*(Internal ID: `s_pbcontrast` · Config key: `texpert/pbcontrast`)*
+Number · Regular+ · `s_pbpolyimbalance` · cfg `texpert/pbpolyimbalance`  
+Values: 0–10 (default 1)
 
-### Advanced tab › Other tab › Other Miscellaneous Settings
+> How bad is it for a polyglot slice to not be balanced. This the multiplier of that cost  
+> Only relevant to diglot and polyglot projects
 
-#### Use \toc3 for Tab Text
+The page filler works on slices: pieces of text that belong together across the columns, such as the same verses in each language. A slice is unbalanced when one column ends lower than another. This sets how much to avoid that, compared with stretching or shrinking paragraphs. Higher: columns end more evenly, but paragraphs may change more. Lower: paragraphs look more even, but one column may end a few lines lower. Change it only if your diglot columns are often uneven after page filling.
 
-- **Where:** Advanced tab › Other tab › Other Miscellaneous Settings
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
+##### Other Miscellaneous Settings
 
-**Tooltip (the text shown when you hover the mouse over it):**
+###### Use \toc3 for Tab Text
+
+Checkbox, on · Regular+ · `c_tocthreetab` · cfg `texpert/tocthreetab`
 
 > Use \toc3 for tab text if no \zthumbtab
 
-**Explanation:**
+`\toc3` is the short book name. Thumb tabs are set on the **Tabs+Borders** tab.
 
-When ticked (the default), the thumb tab text of a book comes from its `\toc3` (short book name), if the book has no `\zthumbtab` marker. Thumb tabs are set on the **Tabs+Borders** tab.
+###### Tilde is No Break Space
 
-*(Internal ID: `c_tocthreetab` · Config key: `texpert/tocthreetab`)*
-
-#### Tilde is No Break Space
-
-- **Where:** Advanced tab › Other tab › Other Miscellaneous Settings
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_tildenbsp` · cfg `texpert/tildenbsp`
 
 > Treat ~ as non breaking space
 
-**Explanation:**
+A non-breaking space looks like a normal space, but the line never breaks there. Untick it only if your text needs a real tilde.
 
-When ticked (the default), a tilde (~) in the text prints as a non-breaking space. A non-breaking space looks like a normal space, but the line never breaks there. Untick it only if your text needs to print a real tilde character.
+###### Remove \ref ... \ref* links
 
-*(Internal ID: `c_tildenbsp` · Config key: `texpert/tildenbsp`)*
-
-#### Remove \ref ... \ref* links
-
-- **Where:** Advanced tab › Other tab › Other Miscellaneous Settings
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_removextreflinks` · cfg `texpert/removextreflinks`
 
 > USFM 3.2 allows additional reference links to be inserted as part of \xt ... \xt* markup. This frequently appear in DBL text bundles, but are unhandled by PTXprint. Allow these to be removed from the USFM prior to typesetting.
 
-**Explanation:**
+These `\ref` links inside cross-references come from Digital Bible Library (DBL) text. Only their visible text is kept.
 
-Text from the Digital Bible Library (DBL) often has extra `\ref` links inside cross-references. PTXprint cannot use them. When ticked (the default), they are removed before typesetting, and only their visible text is kept.
+###### End decoration skip
 
-*(Internal ID: `c_removextreflinks` · Config key: `texpert/removextreflinks`)*
-
-#### End decoration skip
-
-- **Where:** Advanced tab › Other tab › Other Miscellaneous Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -100 to 100, default 16
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_bedskip` · cfg `texpert/bedskip`  
+Values: -100–100 (default 16)
 
 > The gap between the end of the book and the book-end decoration
 
-**Explanation:**
+In points. The decoration is turned on in **Ornamental Decorations** on the **Tabs+Borders** tab. Negative values move it up.
 
-The space (in points) between the end of the book text and the end-of-book decoration. The decoration is turned on in **Ornamental Decorations** on the **Tabs+Borders** tab. Use negative values to move the decoration up.
+###### Thumbtab rotated adjustment
 
-*(Internal ID: `s_bedskip` · Config key: `texpert/bedskip`)*
-
-#### Thumbtab rotated adjustment
-
-- **Where:** Advanced tab › Other tab › Other Miscellaneous Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -10 to 50, default -2
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_thumbvvadj` · cfg `texpert/thumbvvadj`  
+Values: -10–50 (default -2)
 
 > Shift thumbtab text
 
-**Explanation:**
-
-Moves the text on rotated thumb tabs (in points) so that it sits in the middle of the tab. Change it if the tab text looks off-centre. Thumb tabs and **Rotate Tabs** are on the **Tabs+Borders** tab.
-
-*(Internal ID: `s_thumbvvadj` · Config key: `texpert/thumbvvadj`)*
+Moves the text on rotated thumb tabs (in points) to centre it on the tab. Thumb tabs and **Rotate Tabs** are on the **Tabs+Borders** tab.

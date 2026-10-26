@@ -1,6 +1,6 @@
-# Basic tab
+# 4. Basic tab
 
-## What this tab is for
+## 4.1 What this tab is for
 
 The **Basic** tab is the first tab in PTXprint. You come here to:
 
@@ -9,68 +9,71 @@ The **Basic** tab is the first tab in PTXprint. You come here to:
 * choose **what to print** – one book, part of a book, several books, or a Bible module,
 * check the **copyright and license** statement for the publication.
 
-Start here every time. Most other settings depend on the project and configuration that you choose on this tab.
+Start here every time. Most other settings depend on the project and configuration that you choose here.
 
-## Project
+## 4.2 Project
 
 Choose your Paratext project in the **Project** list. PTXprint shows the full name of the project next to the list.
 
 * When you change to another project, PTXprint first saves the current configuration. Then it opens the configuration that you last used with the new project (or **Default**).
-* At the end of the **Project** list there is a blue item, **Import...**. It opens the **Import Scripture...** dialog. Use it when you do not have the text as a Paratext project, but you have a Scripture text bundle (a .zip file), or when you want to install the sample text (the Berean Standard Bible).
+* The last item in the **Project** list is a blue **Import...** item. It opens the **Import Scripture...** dialog. Use it when you have a Scripture text bundle (a .zip file) but not a Paratext project, or to install the sample text (the Berean Standard Bible).
 
 ### Copyright & Licensing
 
-(This area is only shown in the **Default** and **Full** views.) Click **Copyright & Licensing** to open the area. It has two parts:
+(Regular and Full views.) Click **Copyright & Licensing** to open the area. It has two parts:
 
 * **Copyright** – the copyright statement. PTXprint fills it in from the Paratext project settings. You can change it here. Click **Reload copyright from Paratext project** to get the Paratext text back.
 * **License** – choose one of the Creative Commons licenses, **All Rights Reserved**, or type your own license.
 
-PTXprint puts these texts into the front matter (for example on the title page back) through the variables `\zcopyright` and `\zlicense`. Some special codes work in both boxes: `(c)` becomes ©, `(r)` becomes ®, `(tm)` becomes ™, `~` is a non-breaking space, and `//` forces a new line.
+PTXprint puts these texts into the front matter (for example on the back of the title page) through the variables `\zcopyright` and `\zlicense`. Special codes work in both boxes: `(c)` becomes ©, `(r)` becomes ®, `(tm)` becomes ™, `~` is a non-breaking space, and `//` forces a new line.
 
-## Layout Configuration
+## 4.3 Layout Configuration
 
 A **configuration** (or layout) is a named set of settings. One project can have many configurations, for example one for a draft and one for the final book. See the chapter about the main window for more about configurations and saving.
 
-* **Name** – the list of saved configurations. Choose one to load its settings. You can also type a new name here and click **Save** to make a new configuration. Use only the letters a–z and A–Z, numbers, brackets `( )`, underscores `_` and hyphens `-`. No spaces.
-* The **Save As** button (an icon next to the name) opens the **Save Current Configuration As...** dialog, where you type a name for a new configuration.
+* **Name** – the list of saved configurations. Choose one to load its settings. Or type a new name here and click **Save** to make a new configuration. Use only the letters a–z and A–Z, numbers, brackets `( )`, underscores `_` and hyphens `-`. No spaces.
+* The **Save As** button (an icon next to the name) opens the **Save Current Configuration As...** dialog.
 * The **lock** button locks or unlocks the configuration with a password.
-* The **Copy configuration to other projects** button opens the **Copy Configuration To...** dialog. (Default and Full views.)
+* The **Copy configuration to other projects** button opens the **Copy Configuration To...** dialog. (Regular and Full views.) It is greyed out for the **Default** configuration, because **Default** is never copied to other projects.
 * **Delete** removes the selected configuration. For the **Default** configuration, this button is replaced by **Reset**.
-* **Import Settings...** opens the **Import Settings** dialog, where you can bring settings in from a PDF, a ZIP archive, or another configuration. See the chapter "Importing settings". (Basic, Default and Full views.)
-* **Notes** – an optional description of the configuration, for you and your team. (Basic, Default and Full views.)
+* **Import Settings...** opens the **Import Settings** dialog, to bring in settings from a PDF, a ZIP archive, or another configuration. See the chapter "Importing settings". (Basic, Regular and Full views.)
+* **Run Tutorial...** steps through a tutorial file on the current project and configuration. See "Run a tutorial" below. (Basic, Regular and Full views.)
+* **Notes** – an optional description of the configuration, for you and your team. (Basic, Regular and Full views.)
 
 When you choose another configuration in the **Name** list, PTXprint does **not** save the current one. Click **Save** first.
 
-## What to Print
+## 4.4 What to Print
 
 Choose one of three ways to say what goes into the PDF:
 
-* **Single Book** – choose one book in the list. You can also type chapter numbers in **From Chapter** and **To** to print only part of the book. When you choose a new book, PTXprint sets the chapters to the whole book.
+* **Single Book** – choose one book in the list. To print only part of the book, type chapter numbers in **From Chapter** and **To**. When you choose a new book, PTXprint sets the chapters to the whole book.
 * **Portions or Multiple Books** – click **Select Multiple Books...** to choose books by clicking them, or type a list in the box. You can type book codes (`MAT MRK LUK JHN`), book ranges (`MAT-REV`) and references (`JHN 2:1-12`, `PSA 23; 100; 117`, `GEN 1:1-2:3`). Use the 3-letter USFM codes (for example `JHN`, not `John`). Press **Ctrl+B** to jump to this box.
-* **Bible Module** – print a Paratext module (a .sfm file that lists passages to include). Click **Choose...** to select the module file. Click **Edit...** to see it on the **View+Edit** tab. (Bible Module is shown in the **Basic**, **Default** and **Full** views; **Edit...** in **Default** and **Full**.)
+* **Bible Module** – print a Paratext module (a .sfm file that lists passages to include). Click **Choose...** to select the module file. Click **Edit...** to see it on the **View+Edit** tab. (Bible Module: Basic, Regular and Full views; **Edit...**: Regular and Full.)
 
 If you type in **From Chapter** or **To**, PTXprint changes to **Single Book**. If you type in the book list, PTXprint changes to **Portions or Multiple Books**.
 
 The FRT (front matter) book is not in the book lists. Set up the front matter on the **Peripherals** tab instead.
 
-## Dialogs on this tab
+## 4.5 Dialogs on this tab
 
 ### Save Current Configuration As...
 
-Opens when you click the **Save As** button. Type a name in **Configuration Name** and click **OK**. PTXprint makes a new configuration with a copy of the current settings, saves it, and changes to it. The **OK** button stays greyed out until the name is valid. PTXprint shows a message below the box if the name has spaces or special characters, or if a configuration with that name already exists.
+Opens when you click the **Save As** button. Type a name in **Configuration Name** and click **OK**. PTXprint makes a new configuration with a copy of the current settings, saves it, and changes to it. **OK** stays greyed out until the name is valid. A message below the box says if the name has spaces or special characters, or if a configuration with that name already exists.
 
-Tip: Click **Save** before you use **Save As...**. Then the new configuration starts from your latest settings.
+If the name already exists, you can tick **Replace it if it already exists**. Then PTXprint deletes the old configuration and saves the current settings in its place. The **Default** configuration can never be replaced. The box is unticked each time the dialog opens, so you must choose to replace each time.
+
+Tip: Click **Save** before **Save As...**, so that the new configuration starts from your latest settings.
 
 ### Lock/Unlock Configuration
 
 Opens when you click the **lock** button. Locking protects a configuration so that nobody changes or deletes it by mistake.
 
 * **To lock:** type a password (up to 16 characters) and click **OK**. PTXprint saves the configuration and then locks it. The lock icon changes, and dots appear in the box next to the name.
-* **To unlock:** click the lock button again, type the same password, and click **OK**. If the password is wrong, nothing happens.
+* **To unlock:** click the lock button again, type the same password, and click **OK**. If the password is wrong, the configuration stays locked and the status line says "Incorrect password".
+* You must type a password to lock. If the box is empty, PTXprint does not lock the configuration and asks you for a password.
+* **Cancel** (or closing the dialog) never locks or unlocks anything.
 * While a configuration is locked, **Save**, **Delete** and **Notes** are greyed out, and PTXprint does not save changes (not even when you print). You can still try out settings and print, but the changes are not kept.
 * You cannot lock the **Default** configuration.
-
-Note: if you click **Cancel** while the configuration is not locked, PTXprint may still lock it, with an empty password. To unlock it, click the lock button, leave the password box empty and click **OK**.
 
 ### Copy Configuration To...
 
@@ -81,19 +84,22 @@ Opens when you click the **Copy configuration to other projects** button. Use it
    * **Do NOT Replace Existing Config** – skip those projects. Use this the first time you copy.
    * **Merge Configurations From Both** – combine the two. Settings that were changed in the target project since the first copy are kept.
    * **Overwrite With Recent Changes** – settings that were changed in this (source) project replace the target settings.
-3. Click **OK**.
+3. Leave **Keep each project's own language-specific variables** ticked (the normal choice), so that each target project keeps its own titles and language name. Untick it only if the target projects should get the same values as this project.
+4. Click **OK**.
+
+The **Default** configuration is never copied, and the button is greyed out while **Default** is selected. Use **Save As** to give the configuration a name first.
 
 PTXprint copies the saved files of the configuration: the settings, the styles, the changes and TeX files, and the front matter. Adjust lists (paragraph adjustments) are not copied, because they belong to one text. Click **Save** before you copy, so that the copy has your latest settings.
 
 ### Select Books To Export to PDF
 
-Opens when you click **Select Multiple Books...**. Each book in the project is a button. Click a button to select or unselect that book. Hold **Shift** and click another book to select or unselect all books between the two. The buttons at the side select groups: **All Books**, **Old Testament**, **New Testament**, **Deuterocanon**, **Extra Material**, **Toggle Books** (reverse the selection), and **Reset All** (unselect all). Click **OK**. PTXprint puts the books in the normal Bible order in the book list. You can then change the order in the list by typing, if needed.
+Opens when you click **Select Multiple Books...**. Each book in the project is a button. Click a button to select or unselect that book. Hold **Shift** and click another book to select or unselect all books between the two. The buttons at the side select groups: **All Books**, **Old Testament**, **New Testament**, **Deuterocanon**, **Extra Material**, **Toggle Books** (reverse the selection), and **Reset All** (unselect all). A group button selects all books of that group. If they are all selected already, it unselects them. Click **OK**. PTXprint puts the books in the book list in normal Bible order. You can then change the order by typing in the list.
 
 ### Import Scripture...
 
 Opens when you choose **Import...** at the end of the **Project** list. There are two ways to get a text:
 
-* **Install BSB** – installs the Berean Standard Bible, a public-domain English Bible that comes with PTXprint. It is good for practice and as a second text in a diglot.
+* **Install BSB** – installs the Berean Standard Bible that comes with PTXprint. It is good for practice and as a second text in a diglot.
 * **Step 1 – Step 3** – install a Scripture text bundle (.zip):
   1. Download a bundle from the **Primary DBL site** (Digital Bible Library – you must log in) or the **Open.Bible site**. Choose a bundle that has the text (not only audio). The USX format is best.
   2. Click **Locate...** and choose the .zip file.
@@ -105,10 +111,10 @@ PTXprint creates the new project in a folder called `_PTXprint` inside your Para
 
 PTXprint asks you to confirm before something that cannot be undone:
 
-* **"You are about to REMOVE this Configuration"** – appears when you click **Delete**. Click **Yes** to delete the configuration, or **No** to keep it.
+* **"You are about to REMOVE the '...' configuration"** – appears when you click **Delete**. It names the configuration. Click **Yes** to delete it, or **No** to keep it. Its settings and working files are deleted. PDF files that you made from it are **not** deleted.
 * **"You are about to CREATE a diglot (or polyglot) configuration"** – appears when you turn on a diglot. PTXprint suggests that you first use **Save As...** to make a new configuration for the diglot.
 
-## Common tasks
+## 4.6 Common tasks
 
 ### Start a new publication from an existing configuration
 
@@ -120,17 +126,15 @@ PTXprint asks you to confirm before something that cannot be undone:
 
 ### Print one book, or part of a book
 
-1. Click **Single Book**.
-2. Choose the book in the list.
-3. To print only some chapters, type the first chapter in **From Chapter** and the last chapter in **To**.
-4. Click **Print (Make PDF)**.
+1. Click **Single Book** and choose the book in the list.
+2. To print only some chapters, type the first chapter in **From Chapter** and the last chapter in **To**.
+3. Click **Print (Make PDF)**.
 
 ### Print several books, or selected passages
 
-1. Click **Select Multiple Books...**.
-2. Click the books you want (or click **New Testament**), then click **OK**.
-3. Or type in the book list, for example `MAT-ACT` or `PSA 23; 100; 117 LUK 15:11-32`.
-4. Click **Print (Make PDF)**.
+1. Click **Select Multiple Books...**, click the books you want (or click **New Testament**), then click **OK**.
+2. Or type in the book list, for example `MAT-ACT` or `PSA 23; 100; 117 LUK 15:11-32`.
+3. Click **Print (Make PDF)**.
 
 ### Protect a finished configuration
 
@@ -141,14 +145,14 @@ PTXprint asks you to confirm before something that cannot be undone:
 ### Use the same layout for another project
 
 1. Click **Save**.
-2. Click the **Copy configuration to other projects** button. (Default or Full view.)
+2. Click the **Copy configuration to other projects** button. (Regular or Full view. The configuration must not be **Default**.)
 3. Click the target project(s).
-4. Choose **Do NOT Replace Existing Config** and click **OK**.
+4. Choose **Do NOT Replace Existing Config**, leave **Keep each project's own language-specific variables** ticked, and click **OK**.
 5. In **Project**, choose the target project and check the copied configuration.
 
 ### Set or correct the copyright statement
 
-1. Change to the **Default** or **Full** view if needed.
+1. Change to the **Regular** or **Full** view if needed.
 2. Click **Copyright & Licensing** to open it.
 3. Type the copyright text (type `(c)` for ©), or click **Reload copyright from Paratext project**.
 4. Choose or type the **License**.
@@ -156,16 +160,25 @@ PTXprint asks you to confirm before something that cannot be undone:
 ### Get a text to practise with
 
 1. Open the **Project** list and choose **Import...** (the last item).
-2. Click **Install BSB**.
-3. PTXprint installs and opens the BSB project.
+2. Click **Install BSB**. PTXprint installs and opens the BSB project.
 
 ### Delete a configuration that you do not need
 
 1. Choose it in **Name**.
-2. Click **Delete**, then **Yes**.
-3. Before you delete, copy any PDF files that you want to keep to another folder (click the **Open folder containing the PDF** button at the bottom of the window to find them).
+2. Click **Delete**. Check that the message names the right configuration, then click **Yes**.
+3. PTXprint changes to the **Default** configuration and deletes the settings and working files of the old one. The PDF files that you made from it stay in the output folder.
 
-## Common problems
+### Run a tutorial
+
+A tutorial is a file with a list of steps (a .json file, or a recorded test in a .zip file). You may get one from a trainer.
+
+1. Choose the project and configuration to practise on. The tutorial makes its changes there, so use a practice configuration (for example make one with **Save As**).
+2. Click **Run Tutorial...** and choose the tutorial file.
+3. A small tutorial window opens. It shows the next step, and PTXprint highlights the control that the step uses.
+4. Click **Step** (or press **Space**) to do the next step, **Skip** (or **S**) to leave it out, or **Play** (or **P**) to do the steps one after another. **Run to end** does all the remaining steps.
+5. Close the tutorial window to stop. If the tutorial needed a higher view level, PTXprint changes the view level while it runs and changes it back when you close the window.
+
+## 4.7 Common problems
 
 ### My recent changes were lost when I chose another configuration
 
@@ -181,7 +194,7 @@ PTXprint asks you to confirm before something that cannot be undone:
 
 ### There is a Reset button instead of Delete
 
-**Cause:** The **Default** configuration is selected. It cannot be deleted. **Reset** is shown instead. Be careful: **Reset** asks no question. It sets all settings back to the PTXprint defaults at once.
+**Cause:** The **Default** configuration is selected. It cannot be deleted, so **Reset** is shown instead. Be careful: **Reset** asks no question. It at once sets all settings of the Default configuration back to the PTXprint defaults, and deletes the files in the Default configuration folder. Other configurations are not changed.
 
 ### The OK button in "Save Current Configuration As..." is greyed out
 
@@ -201,92 +214,59 @@ PTXprint asks you to confirm before something that cannot be undone:
 
 ### Copyright & Licensing or Copy configuration are missing, or Reset is greyed out
 
-**Cause:** They are only available in the **Default** and **Full** views. **What to do:** Click **☰** › **View Level** › **Default View**.
+**Cause:** They are only available in the **Regular** and **Full** views. **What to do:** Click **☰** › **View Level** › **Regular View**.
 
-## Settings reference: Basic tab
+### The Copy configuration to other projects button is greyed out
 
-Every control in this part of PTXprint is listed below, grouped by where it appears.
+**Cause:** The **Default** configuration is selected. PTXprint never copies **Default** to other projects. **What to do:** Use **Save As** to save the settings under another name, then copy that configuration.
+
+## 4.8 Settings reference
 
 ### Import Scripture... (dialog)
 
 #### OK
 
-- **Where:** Import Scripture... (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_dbl_ok`
 
-**Explanation:**
-
-Installs the bundle that you chose with **Locate...**, using the name in **Assign a Name for the Project**, and opens the new project. It is greyed out until the name is valid and not already used.
-
-*(Internal ID: `btn_dbl_ok`)*
+Installs the bundle chosen with **Locate...**, using the name in **Assign a Name for the Project**, and opens the new project. Greyed out until the name is valid and not already used.
 
 #### Cancel
 
-- **Where:** Import Scripture... (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Explanation:**
+Button · Regular+ · `btn_dbl_cancel`
 
 Closes the dialog without installing anything. PTXprint goes back to the project that was open before.
 
-*(Internal ID: `btn_dbl_cancel`)*
-
 #### Install BSB
 
-- **Where:** Import Scripture... (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_installBSB`
 
 > The Berean Standard Bible is a Public Domain English Bible. It is bundled with PTXprint but needs to be installed in your Projects folder.
 >
 > This is a good training project and can also be used in diglots.
 
+Installs the BSB as a project called `BSB` in your projects folder, opens it and closes the dialog. No internet is needed. Use it to practise, to try out settings, or as the second text in a diglot.
+
 #### Locate...
 
-- **Where:** Import Scripture... (dialog)
-- **Type:** Button
-- **Description:** Locate DBL bundle
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Basic+ · `btn_locateDBLbundle`  
+Also: Locate DBL bundle
 
 > After downloading a scripture text bundle (.zip) file you need to tell PTXprint where the .zip file is located so that it can install it as a special resource project.
 
-**Explanation:**
+Opens a file chooser in the `Bundles` folder of your Paratext projects folder. PTXprint then shows the file name and suggests a project name from the bundle (adding a number if that name is already used). Shortcut: **Alt+O**.
 
-Opens a file chooser in the `Bundles` folder of your Paratext projects folder. Choose the .zip file that you downloaded. PTXprint then shows the file name and suggests a project name from the bundle (adding a number if that name is already used). Shortcut: **Alt+O**.
+#### Step 3 Assign a Name for the Project – Assign a name to a DBL bundle
 
-*(Internal ID: `btn_locateDBLbundle`)*
+Text box · Basic+ · `t_DBLprojName`
 
-#### Step 3 Assign a Name for the Project
+> PTXprint will create this project within a subfolder called '_PTXprint'. Use a short name (8 characters or fewer is best) for the new project. Do not use the name of an existing Project.
 
-- **Where:** Import Scripture... (dialog)
-- **Type:** Text box
-- **Description:** Assign a name to a DBL bundle
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> PTXprint will create this project within a subfolder called '_PTXprint'. Use 8 characters or less for the new project name. Do not use the name of an existing Project.
-
-**Explanation:**
-
-The short name (ID) of the new project. PTXprint suggests one from the bundle. Change it if you want. Use 8 characters or fewer, with no spaces or special characters, and do not use the name of a project you already have. A message appears below the box if the name cannot be used.
-
-*(Internal ID: `t_DBLprojName`)*
+PTXprint suggests a name from the bundle. Use no spaces or special characters. A message appears below the box if the name cannot be used.
 
 #### Primary DBL site
 
-- **Where:** Import Scripture... (dialog)
-- **Type:** Link
-- **Description:** Visit the Digital Bible Library to download a DBL Scripture bundle
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Basic+ · `lb_DBLdownloads`  
+Also: Visit the Digital Bible Library to download a DBL Scripture bundle
 
 > There are hundreds of Scripture bundles available at the Digital Bible Library website which you may download and use in a publication. You must log in to the site in order to access resources.
 >
@@ -294,20 +274,12 @@ The short name (ID) of the new project. PTXprint suggests one from the bundle. C
 >
 > Note: If this option is disabled, it is due to the "Disable ALL Internet Use" option which has been set on the General section of the Advanced tab.
 
-**Explanation:**
-
-Opens the Digital Bible Library website in your browser. You need a DBL login to download bundles. Choose a text bundle (not audio only), preferably in USX format. Greyed out when **Disable ALL Internet Use** is ticked on the **Advanced** tab.
-
-*(Internal ID: `lb_DBLdownloads`)*
+Opens the Digital Bible Library website in your browser.
 
 #### Open.Bible site
 
-- **Where:** Import Scripture... (dialog)
-- **Type:** Link
-- **Description:** Visit the Open.Bible site to download a Scripture bundle
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Basic+ · `lb_openBible`  
+Also: Visit the Open.Bible site to download a Scripture bundle
 
 > There are hundreds of Scripture bundles at the Open.Bible website which you may download and use in a publication.
 >
@@ -317,160 +289,113 @@ Opens the Digital Bible Library website in your browser. You need a DBL login to
 >
 > If you don't already have a Scripture Text Bundle, then you can download a USX or USFM text bundle from an online scripture repository.
 
-**Explanation:**
-
-Opens the Open.Bible website in your browser, where you can download openly licensed Scripture bundles. Choose a text bundle, preferably USX. Greyed out when **Disable ALL Internet Use** is ticked on the **Advanced** tab.
-
-*(Internal ID: `lb_openBible`)*
+Opens the Open.Bible website in your browser. Its bundles are openly licensed.
 
 ### Save Current Configuration As... (dialog)
 
 #### OK
 
-- **Where:** Save Current Configuration As... (dialog)
-- **Type:** Button
-- **View level:** Basic, Default and Full views
+Button · Basic+ · `btn_cfg_ok`
 
-**Explanation:**
-
-Creates the new configuration with the name you typed, saves it, and changes to it. It is greyed out until the name is valid.
-
-*(Internal ID: `btn_cfg_ok`)*
+Creates the new configuration, saves it, and changes to it. Greyed out until the name is valid.
 
 #### Cancel
 
-- **Where:** Save Current Configuration As... (dialog)
-- **Type:** Button
-- **View level:** Basic, Default and Full views
-
-**Explanation:**
+Button · Basic+ · `btn_cfg_cancel`
 
 Closes the dialog. No new configuration is made.
 
-*(Internal ID: `btn_cfg_cancel`)*
+#### Configuration Name – Enter a name for the configuration to be saved
 
-#### Configuration Name
-
-- **Where:** Save Current Configuration As... (dialog)
-- **Type:** Text box
-- **Description:** Enter a name for the configuration to be saved
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Basic+ · `t_configName`
 
 > Enter a name for the configuration to be saved.
 >
 > Note that only Roman/Latin names are supported using: a-z A-Z, 0-9, parentheses, underscores and hyphens. Spaces are not permitted.
 
-**Explanation:**
+Use a short, clear name such as `NT_A5` or `Draft_2col`. Letters with accents are not allowed. The message below the box says if the name is not valid or already exists. Write longer descriptions in **Notes** on the Basic tab.
 
-Type the name of the new configuration. Use a short, clear name such as `NT_A5` or `Draft_2col`. Spaces and letters with accents are not allowed. The message below the box tells you if the name is not valid or already exists. Write longer descriptions in **Notes** on the Basic tab.
+#### Replace it if it already exists
 
-*(Internal ID: `t_configName`)*
+Checkbox, off · Basic+ · `c_overwriteConfig`
+
+> If a configuration with this name already exists, delete it and save the current settings in its place. (Useful for tests and tutorials that make a fresh copy each time they run.)
+
+Leave it unticked in normal use; then PTXprint does not accept a name that already exists. When ticked, the old configuration is deleted when you click **OK**, and this cannot be undone. If you type the name of the configuration that you are in, PTXprint makes it again from the configuration it was first copied from (if PTXprint knows it), or else just saves it.
 
 ### Select Books To Export to PDF (dialog)
 
 #### OK
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_mbs_ok`
 
-**Explanation:**
-
-Closes the book selector and puts the selected books in the book list, in normal Bible order. PTXprint changes to **Portions or Multiple Books** if any books are selected.
-
-*(Internal ID: `btn_mbs_ok`)*
+Puts the selected books in the book list, in normal Bible order. PTXprint changes to **Portions or Multiple Books** if any books are selected.
 
 #### Cancel
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Explanation:**
+Button · Regular+ · `btn_mbs_cancel`
 
 Closes the book selector without changing the book list.
 
-*(Internal ID: `btn_mbs_cancel`)*
-
 #### All Books
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_mbsAll`
 
 > Click to turn ALL books on/off.
 
+If all books are already selected, it unselects them all.
+
 #### Old Testament
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_mbsOT`
 
 > Click to turn OT books on/off.
 
+If they are all selected already, it unselects them. Other books are not changed.
+
 #### New Testament
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_mbsNT`
 
 > Click to turn NT books on/off.
 
+If they are all selected already, it unselects them. Other books are not changed.
+
 #### Deuterocanon
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_mbsDC`
 
 > Click to turn DC books on/off.
 
+If they are all selected already, it unselects them. Other books are not changed.
+
 #### Extra Material
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_mbsXtra`
 
 > Click to turn Extra books on/off.
 
+Extra books are for example the glossary (GLO), the indexes (TDX, NDX) and XXA–XXG. If they are all selected already, it unselects them. Other books are not changed.
+
 #### Toggle Books
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_mbsToggle`
 
 > Click to toggle ALL books. Those which are selected will be deselected, and the unselected ones will be selected.
 
+For example, click **New Testament** and then **Toggle Books** to select everything except the New Testament.
+
 #### Reset All
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_mbsNone`
 
 > Click to turn OFF all books.
 
+Use it to start your selection again.
+
 #### Why is FRT not listed?
 
-- **Where:** Select Books To Export to PDF (dialog)
-- **Type:** Label
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Mini+
 
 > The FRT book in Paratext contains front matter for a publication. Visit the Peripherals page to set up front matter for this publication.
 
@@ -478,187 +403,121 @@ Closes the book selector without changing the book list.
 
 #### OK
 
-- **Where:** Copy Configuration To... (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_mps_ok`
 
-**Explanation:**
-
-Copies the current configuration to all selected projects, using the option you chose (Do NOT Replace, Merge, or Overwrite). The copy uses the saved files, so click **Save** in the main window before you open this dialog.
-
-*(Internal ID: `btn_mps_ok`)*
+Copies the current configuration to all selected projects, using the option you chose. The copy uses the saved files, so click **Save** in the main window before you open this dialog.
 
 #### Cancel
 
-- **Where:** Copy Configuration To... (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Explanation:**
+Button · Regular+ · `btn_mps_cancel`
 
 Closes the dialog. Nothing is copied.
 
-*(Internal ID: `btn_mps_cancel`)*
-
 #### Recent
 
-- **Where:** Copy Configuration To... (dialog)
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `ecb_mpsTargets`
 
 > Shows selected target projects. Pick a previous selection from the dropdown, or select projects in the grid above.
 
-**Explanation:**
-
-Shows the names of the projects that you selected in the grid. You can also type project names here, separated by spaces, or choose an earlier selection from the list. PTXprint remembers your last 10 selections. This is useful when you copy to the same group of projects again and again.
-
-*(Internal ID: `ecb_mpsTargets`)*
+You can also type project names here, separated by spaces. PTXprint remembers your last 10 selections, which helps when you copy to the same group of projects again and again.
 
 #### Do NOT Replace Existing Config
 
-- **Where:** Copy Configuration To... (dialog)
-- **Type:** Radio button
-- **Description:** Copy Config: Do NOT Replace Existing Config
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_copyConfig_noReplace`  
+Also: Copy Config: Do NOT Replace Existing Config
 
 > Selecting this option will prevent any changes overwriting an existing configuration of the same name in the target project(s).
 >
 > This option is usually used when copying a configuration to other projects for the first time.
 
-**Explanation:**
-
-Copies the configuration only to projects that do **not** already have a configuration with this name. Projects that already have it are left unchanged. This is the safest choice, and the right choice the first time.
-
-*(Internal ID: `r_copyConfig_noReplace`)*
+Projects that already have a configuration with this name are left unchanged. The safest choice.
 
 #### Merge Configurations From Both
 
-- **Where:** Copy Configuration To... (dialog)
-- **Type:** Radio button
-- **Description:** Copy Config: MERGE Configurations From Both
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_copyConfig_merge`  
+Also: Copy Config: MERGE Configurations From Both
 
 > Selecting this option will MERGE the settings from the source configuration with the identically named configuration in the target project. Any changes that were made to the target project's configuration since it was first shared will be kept (i.e. modified target settings are retained if there is a clash of settings).
 
-**Explanation:**
-
-For projects that already have a configuration with this name, PTXprint combines the two. When a setting was changed in the target project after the first copy, the target's value is kept. Other settings are updated from this project.
-
-*(Internal ID: `r_copyConfig_merge`)*
+Settings not changed in the target are updated from this project.
 
 #### Overwrite With Recent Changes
 
-- **Where:** Copy Configuration To... (dialog)
-- **Type:** Radio button
-- **Description:** Copy Config: OVERWRITE With Recent Changes
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_copyConfig_overwrite`  
+Also: Copy Config: OVERWRITE With Recent Changes
 
 > Selecting this option will REPLACE (or overwrite) any settings in the identically named configuration in the target project IF those settings were changed in the source project since the configuration was first shared. (i.e. if both source and target projects modified a setting, then the source project's setting will "win").
 
-**Explanation:**
+Use it when this project is the "master" layout for a group of projects.
 
-For projects that already have a configuration with this name, settings that were changed in this (source) project replace the values in the target. Use it when this project is the "master" layout for a group of projects.
+#### Keep each project's own language-specific variables
 
-*(Internal ID: `r_copyConfig_overwrite`)*
+Checkbox, on · Regular+ · `c_copyConfig_skipVars`  
+Also: Copy Config: Keep target project's own variables
+
+> When checked, the variable values (such as the main title, subtitle and language name, and the Strong's index titles) are NOT copied, so each target project keeps its own. A configuration that is new to a target project starts without them, rather than with the source project's values.
+>
+> Uncheck this to copy these values as well.
+
+The variables are listed on the **Peripherals** tab. After the copy, fill them in on each target project that did not have this configuration before.
 
 ### Lock/Unlock Configuration (dialog)
 
 #### OK
 
-- **Where:** Lock/Unlock Configuration (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_pw_ok`
 
-**Explanation:**
-
-This is the **OK** button of the Lock/Unlock dialog. It locks the configuration with the password you typed, or unlocks it if the password matches.
-
-*(Internal ID: `btn_pw_cancel`)*
+Locks the configuration with the password you typed, or unlocks it if the password matches. If the configuration is not locked and the box is empty, nothing is locked and PTXprint asks for a password. If the password is wrong, the configuration stays locked and the status line says so.
 
 #### Cancel
 
-- **Where:** Lock/Unlock Configuration (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_pw_cancel`
 
-**Explanation:**
+Closes the dialog. Nothing is locked or unlocked, and the password box is cleared.
 
-This is the **Cancel** button of the Lock/Unlock dialog. Note: if the configuration is not locked, clicking it may lock the configuration with an empty password. To undo this, open the dialog again, leave the box empty and click **OK**.
+#### Enter Password – Enter password for config
 
-*(Internal ID: `btn_pw_ok`)*
-
-#### Enter Password
-
-- **Where:** Lock/Unlock Configuration (dialog)
-- **Type:** Text box
-- **Description:** Enter password for config
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Mini+ · `t_password`
 
 > Enter a password of up to 16 characters to lock/unlock this saved configuration.
 
-**Explanation:**
+PTXprint stores only a coded form of the password. If you forget it, you cannot unlock the configuration in PTXprint, so keep it somewhere safe.
 
-Type the password here. PTXprint does not store the password itself, only a coded form of it. If you forget the password, you cannot unlock the configuration in PTXprint, so keep it somewhere safe.
+### Basic
 
-*(Internal ID: `t_password`)*
+#### Layout Configuration
 
-### Basic tab › Project
+Label · Mini+
 
-#### Project ID
+> A Layout (or Config) is a collection of settings that can be saved. By naming and saving a layout you can recall those settings later.
 
-- **Where:** Basic tab › Project
-- **Type:** Drop-down list
-- **Description:** Paratext project code
-- **View level:** All view levels (Mini, Basic, Default, Full)
-- **Choices:** Unknown
+#### Project
 
-**Explanation:**
+##### Project ID – Paratext project code
 
-Choose the Paratext project to print. When you change the project, PTXprint saves the current configuration first and opens the last configuration you used with the new project. The last item, **Import...** (in blue), opens the **Import Scripture...** dialog.
+Drop-down · Mini+ · `fcb_project`  
+Choices: Unknown
 
-*(Internal ID: `fcb_project`)*
+When you change the project, PTXprint saves the current configuration first and opens the last configuration you used with the new project. The last item, **Import...** (in blue), opens the **Import Scripture...** dialog.
 
-#### Copyright & Licensing
+##### Copyright & Licensing
 
-- **Where:** Basic tab › Project
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+
 
 > It is important to include copyright and license statements on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed by expanding the section below.
 
-### Basic tab › Project › Copyright & Licensing
+##### Copyright & Licensing
 
-#### Copyright
+###### Copyright
 
-- **Where:** Basic tab › Project › Copyright & Licensing
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+
 
 > It is important to include a copyright statement on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed.
 
-#### License
+###### License – License details
 
-- **Where:** Basic tab › Project › Copyright & Licensing
-- **Type:** Drop-down list
-- **Description:** License details
-- **View level:** Default and Full views
-- **Choices:** This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND).; This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC).; This work is licensed under a Creative Commons Attribution-Sharealike 4.0 International License (CC BY-SA).; This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY).; All Rights Reserved.
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `ecb_licenseText` · cfg `project/license`  
+Choices: This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND). | This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC). | This work is licensed under a Creative Commons Attribution-Sharealike 4.0 International License (CC BY-SA). | This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY). | All Rights Reserved.
 
 > Select one of these licenses, or type a different license.
 >
@@ -686,19 +545,11 @@ Choose the Paratext project to print. When you change the project, PTXprint save
 > For more detailed information about the various Creative Commons licenses, refer to:  
 > https://creativecommons.org/licenses/
 
-**Explanation:**
+Used in the front matter through `\zlicense`. Ask your organization which license to use.
 
-Choose a Creative Commons license or **All Rights Reserved**, or type your own text. It is used in the front matter through `\zlicense`. Ask your organization which license to use. The special codes `(c)`, `(r)`, `(tm)`, `~` and `//` work here too.
+###### Copyright text entry
 
-*(Internal ID: `ecb_licenseText` · Config key: `project/license`)*
-
-#### Copyright text entry
-
-- **Where:** Basic tab › Project › Copyright & Licensing
-- **Type:** Text area
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text area · Regular+ · `textv_copyright`
 
 > It is important to include a copyright statement on every publication. Note: There are several shortcuts you can use:  
 >    (c) --> ©  the copyright sign  
@@ -708,71 +559,37 @@ Choose a Creative Commons license or **All Rights Reserved**, or type your own t
 > Other special codes converted at print time:  
 > Use ~ where a non-breaking space is needed. Use // to force a line break (:// in URLs is not changed).
 
-**Explanation:**
+PTXprint fills it from the Paratext project settings when it is empty. `(c)`, `(r)` and `(tm)` change to ©, ® or ™ as you type. Used in the front matter through `\zcopyright`.
 
-The copyright statement for the publication. PTXprint fills it from the Paratext project settings when it is empty. When you type `(c)`, `(r)` or `(tm)`, PTXprint changes it to ©, ® or ™ at once. The text is used in the front matter through `\zcopyright`.
+###### Reload copyright from Paratext project
 
-*(Internal ID: `textv_copyright`)*
-
-#### Reload copyright from Paratext project
-
-- **Where:** Basic tab › Project › Copyright & Licensing
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_resetCopyright`
 
 > Clicking this button will reload the Copyright Statement from the Paratext project settings.
 
-**Explanation:**
+If Paratext has no copyright statement, PTXprint shows a message in the status line.
 
-Replaces the text in the copyright box with the copyright statement from the Paratext project settings. If Paratext has no copyright statement, PTXprint shows a message in the status line.
+#### Layout Configuration
 
-*(Internal ID: `btn_resetCopyright`)*
+##### Notes – (Optional) Notes about configuration
 
-### Basic tab › Layout Configuration
-
-#### Notes
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Text box
-- **Description:** (Optional) Notes about configuration
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Basic+ · `t_configNotes` · cfg `config/notes`
 
 > Optional: Provide a description about the saved/shared configuration named above.
 
-**Explanation:**
+For example "A5 NT for village distribution, 2 columns". Saved with the configuration, so other team members see it after Send/Receive. Greyed out when the configuration is locked.
 
-A short description of this configuration, for example "A5 NT for village distribution, 2 columns". It is saved with the configuration, so other team members see it after Send/Receive. Greyed out when the configuration is locked.
+##### Name
 
-*(Internal ID: `t_configNotes` · Config key: `config/notes`)*
-
-#### Name
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Text box
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Basic+ · `t_invisiblePassword` · cfg `config/pwd`
 
 > Dots indicate that a password has been set for this configuration.
 
-**Explanation:**
+Empty when the configuration is not locked. You cannot type here; use the lock button.
 
-Shows dots when the configuration is locked with a password, and is empty when it is not locked. You cannot type here; use the lock button.
+##### Name – Lock configuration
 
-*(Internal ID: `t_invisiblePassword` · Config key: `config/pwd`)*
-
-#### Name
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Button
-- **Description:** Lock configuration
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `btn_lockunlock`
 
 > When Config is UNLOCKED:  
 > Click to set a password to prevent anyone from accidentally changing the saved settings or deleting the configuration.
@@ -782,39 +599,22 @@ Shows dots when the configuration is locked with a password, and is empty when i
 >
 > Note that the Default config cannot be locked.
 
-**Explanation:**
+Opens the **Lock/Unlock Configuration** dialog. The icon shows whether the configuration is locked.
 
-Opens the **Lock/Unlock Configuration** dialog. The icon shows whether the configuration is locked. Greyed out for the **Default** configuration.
+##### Name – Copy configuration to other projects
 
-*(Internal ID: `btn_lockunlock`)*
-
-#### Name
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Button
-- **Description:** Copy configuration to other projects
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_copyToTargetProj`
 
 > A saved configuration can be copied to other Paratext projects in order to avoid having to manually re-create all the same settings for a similar project.
 >
 > Save first: the saved files are copied. Adjust lists are not copied.
 
-**Explanation:**
+Opens the **Copy Configuration To...** dialog. Greyed out when **Default** is selected (hold the mouse over the button to see why).
 
-Opens the **Copy Configuration To...** dialog, to copy this configuration to one or more other Paratext projects. Save first. Only shown in the **Default** and **Full** views.
+##### Name
 
-*(Internal ID: `btn_copyToTargetProj`)*
-
-#### Name
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Drop-down list
-- **View level:** All view levels (Mini, Basic, Default, Full)
-- **Choices:** Default
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Mini+ · `ecb_savedConfig`  
+Choices: Default
 
 > Select a previously-saved layout configuration to retrieve those settings.
 >
@@ -824,19 +624,11 @@ Opens the **Copy Configuration To...** dialog, to copy this configuration to one
 >
 > Alternatively, select a previously-saved layout configuration to retrieve settings.
 
-**Explanation:**
+Choose a configuration to load its settings. Click **Save** first.
 
-The list of configurations saved for this project. Choose one to load its settings. PTXprint does **not** save the current configuration when you change to another one, so click **Save** first. Configurations are shared with other users of the project through Paratext Send/Receive.
+##### Enter a name for the layout configuration to be saved.
 
-*(Internal ID: `ecb_savedConfig`)*
-
-#### Enter a name for the layout configuration to be saved.
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Text box
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Mini+ · `t_savedConfig`
 
 > Enter a name for the layout configuration to be saved.
 >
@@ -844,194 +636,105 @@ The list of configurations saved for this project. Choose one to load its settin
 >
 > Longer descriptions may be typed into the Notes field below.
 
-**Explanation:**
+The text part of the configuration **Name** box. Type a new name and click **Save** to create a new configuration from the current settings. Characters that are not allowed (such as spaces) are removed.
 
-The text part of the configuration **Name** box. You can type a new name here and click **Save** to create a new configuration from the current settings. Characters that are not allowed (such as spaces) are removed.
+##### gtk-save-as
 
-*(Internal ID: `t_savedConfig`)*
-
-#### gtk-save-as
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `b_saveAsNewConfig`
 
 > Save the current settings as a new Configuration.
 >
 > When the Paratext project is shared through Send/Recv, all saved configurations will be also made available to other PTXprint users of the same Paratext project.
 
-#### Delete
+Opens the **Save Current Configuration As...** dialog. The new configuration starts with the current settings, including unsaved changes. Use it to start a new publication from an existing one, or to make an unlocked copy of a locked configuration.
 
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Button
-- **Description:** Delete configuration
-- **View level:** Basic, Default and Full views
+##### Delete
 
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Basic+ · `btn_deleteConfig`  
+Also: Delete configuration
 
 > Delete this Saved Configuration
 >
 > This also deletes the corresponding subfolder of temporary files in the local\ptxprint folder but does not delete the previously created PDF files which will remain in that folder.
 
-**Explanation:**
+Deletes the selected configuration after you click **Yes** in the **Please Confirm...** dialog. The dialog names the configuration, so check the name. PTXprint first changes to the **Default** configuration, then deletes the settings and working files of the old one. Other configurations are not touched. This cannot be undone. If some files cannot be deleted (for example because they are open in another program), the status line lists them. For the **Default** configuration you see **Reset** instead. Greyed out when the configuration is locked, and in the **Mini** view.
 
-Deletes the selected configuration after you click **Yes** in the **Please Confirm...** dialog. PTXprint then opens the **Default** configuration. This cannot be undone. Before you delete, copy any PDF files that you want to keep to another folder. Not available for the **Default** configuration (you see **Reset** instead). Greyed out when the configuration is locked, and in the **Mini** view.
+##### Reset
 
-*(Internal ID: `btn_deleteConfig`)*
-
-#### Reset
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_resetDefaults`
 
 > Reset the Default configuration to PTXprint's default settings.
 >
 > Warning: this also deletes the files kept in the Default configuration folder (such as styles, picture list, adjust lists and front matter). There is no confirmation.
 
-**Explanation:**
+Only shown when the **Default** configuration is selected. PDF files are kept. The status line confirms when the reset is done. Use it only when you really want to start again. Greyed out in the **Mini** and **Basic** views.
 
-Only shown when the **Default** configuration is selected. It sets all settings of the Default configuration back to the PTXprint defaults, at once and without asking. The files kept in the Default configuration folder (for example its styles and picture list) are also removed. Use it only when you really want to start again. In the **Mini** and **Basic** views the button is greyed out.
+##### Name – Import settings from PDFs, ZIP files or other Configurations
 
-*(Internal ID: `btn_resetDefaults`)*
-
-#### Name
-
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Button
-- **Description:** Import settings from PDFs, ZIP files or other Configurations
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Basic+ · `btn_importSettings`
 
 > Open the Import Settings dialog to select options for importing settings from other PDFs, ZIP archives, or different project configurations.
 >
 > By default, imported settings are applied to the current project and configuration. However, you can also choose to import them into other projects or export them to an external folder.
 
-**Explanation:**
+In the dialog you also choose which groups of settings to bring in. See the chapter "Importing settings".
 
-Opens the **Import Settings** dialog. There you can bring settings into this (or another) configuration from a PTXprint PDF, a PTXprint ZIP archive, or another saved configuration, and choose which groups of settings to bring in. See the chapter "Importing settings". Not shown in the **Mini** view.
+##### Run Tutorial...
 
-*(Internal ID: `btn_importSettings`)*
+Button · Basic+ · `btn_runTutorial`
 
-#### Layout Wizard...
+> Step through a tutorial on the current project and configuration: a list of actions saved as .json from the test replay window, or the actions in a recorded test (.zip).
 
-- **Where:** Basic tab › Layout Configuration
-- **Type:** Button
-- **View level:** Experimental (only shown when PTXprint is started in experimental mode)
+Opens a file chooser for the tutorial file, then a small tutorial window. The steps really change the settings, so use a practice configuration. See "Run a tutorial" in this chapter.
 
-**Explanation:**
+#### What to Print
 
-Opens the Layout Wizard, a step-by-step helper for setting up a layout. It is an experimental feature and is only shown when PTXprint is started in experimental mode.
+##### Single book chooser
 
-*(Internal ID: `btn_layoutWizard`)*
+Drop-down · Mini+ · `ecb_book` · cfg `project/book`  
+Choices: NONE
 
-### Basic tab
+Used when **Single Book** is selected. When you choose a book, PTXprint sets **From Chapter** to 1 and **To** to the last chapter of that book, and changes to **Single Book**.
 
-#### Layout Configuration
+##### Select Multiple Books...
 
-- **Where:** Basic tab
-- **Type:** Label
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> A Layout (or Config) is a collection of settings that can be saved. By naming and saving a layout you can recall those settings later.
-
-### Basic tab › What to Print
-
-#### Single book chooser
-
-- **Where:** Basic tab › What to Print
-- **Type:** Drop-down list
-- **View level:** All view levels (Mini, Basic, Default, Full)
-- **Choices:** NONE
-
-**Explanation:**
-
-Choose the book to print when **Single Book** is selected. When you choose a book, PTXprint sets **From Chapter** to 1 and **To** to the last chapter of that book, and changes to **Single Book**.
-
-*(Internal ID: `ecb_book` · Config key: `project/book`)*
-
-#### Select Multiple Books...
-
-- **Where:** Basic tab › What to Print
-- **Type:** Button
-- **Description:** Multiple book selector
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Mini+ · `btn_chooseBooks`  
+Also: Multiple book selector
 
 > Select one or more Biblical books to be printed from the project.
 
-**Explanation:**
+Opens the **Select Books To Export to PDF** dialog. Shortcut: **Alt+O**.
 
-Opens the **Select Books To Export to PDF** dialog, where you click the books you want. Shortcut: **Alt+O**.
+##### Bible Module
 
-*(Internal ID: `btn_chooseBooks`)*
-
-#### Bible Module
-
-- **Where:** Basic tab › What to Print
-- **Type:** Radio button
-- **Description:** Bible module selector
-- **View level:** Basic, Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Basic+ · `r_book_module` · cfg `project/bookscope=module`  
+Also: Bible module selector
 
 > Print a Paratext Bible module (a .sfm file that lists the passages to include).
 
-**Explanation:**
+The module file is usually in the project's `Modules` folder. Choose it with **Choose...**.
 
-Prints a Paratext Bible module instead of whole books. A module is a .sfm file (usually in the project's `Modules` folder) that lists the passages to include. Choose the file with **Choose...**. Not shown in the **Mini** view.
+##### Portions or Multiple Books
 
-*(Internal ID: `r_book_module` · Config key: `project/bookscope=module`)*
-
-#### Portions or Multiple Books
-
-- **Where:** Basic tab › What to Print
-- **Type:** Radio button
-- **Description:** Choose books or enter ranges to print
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Mini+ · `r_book_multiple` · cfg `document/multibook`  
+Also: Choose books or enter ranges to print
 
 > Print several books, or the passages listed in the box.
 
-**Explanation:**
+Use it for several books, a range such as `MAT-REV`, or selected passages such as `PSA 23; 100`. PTXprint changes to this option when you type in the book list or pick books with **Select Multiple Books...**.
 
-Prints the books or passages in the book list. Use it for several books, for a range such as `MAT-REV`, or for selected passages such as `PSA 23; 100`. PTXprint changes to this option when you type in the book list or pick books with **Select Multiple Books...**.
+##### Single Book
 
-*(Internal ID: `r_book_multiple` · Config key: `document/multibook`)*
-
-#### Single Book
-
-- **Where:** Basic tab › What to Print
-- **Type:** Radio button
-- **Description:** Single book selector
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Mini+ · `r_book_single` · cfg `project/bookscope=single`  
+Also: Single book selector
 
 > Print one book, or a range of its chapters.
 
-**Explanation:**
+Use **From Chapter** and **To** for a range of chapters.
 
-Prints one book, or a range of chapters in one book (with **From Chapter** and **To**).
+##### Use 3-letter USFM book codes (e.g. JHN, not John; MRK, not M...
 
-*(Internal ID: `r_book_single` · Config key: `project/bookscope=single`)*
-
-#### Use 3-letter USFM book codes (e.g. JHN, not John; MRK, not M...
-
-- **Where:** Basic tab › What to Print
-- **Type:** Drop-down list
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Mini+ · `ecb_booklist` · cfg `project/booklist`, `document/subject`
 
 > Use 3-letter USFM book codes (e.g. JHN, not John; MRK, not Mark).
 >
@@ -1049,19 +752,11 @@ Prints one book, or a range of chapters in one book (with **From Chapter** and *
 >
 > Shortcut: Ctrl-B
 
-**Explanation:**
+Separate items with spaces. Books print in the order you type. The drop-down remembers your recent lists.
 
-The list of books or passages to print with **Portions or Multiple Books**. Separate items with spaces. You can type references with chapters and verses, ranges of books (`MAT-REV`) and lists (`PSA 23; 100; 117`). The order you type is the order of printing, so you can change the order of books if needed. The drop-down remembers your recent lists. Shortcut: **Ctrl+B**.
+##### Multiple books editable list entry
 
-*(Internal ID: `ecb_booklist` · Config key: `project/booklist`, `document/subject`)*
-
-#### Multiple books editable list entry
-
-- **Where:** Basic tab › What to Print
-- **Type:** Text box
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Mini+
 
 > Use 3-letter USFM book codes (e.g. JHN, not John; MRK, not Mark).
 >
@@ -1079,64 +774,34 @@ The list of books or passages to print with **Portions or Multiple Books**. Sepa
 >
 > Shortcut: Ctrl-B
 
-#### From Chapter
+##### From Chapter
 
-- **Where:** Basic tab › What to Print
-- **Type:** Text box
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Mini+ · `t_chapfrom` · cfg `document/chapfrom`
 
 > If you want to print less than the entire book, enter the chapter number to start at.
 
-**Explanation:**
+Only numbers are allowed. If you type a number below 1 or above the last chapter, PTXprint corrects it. Typing here selects **Single Book**.
 
-The first chapter to print in **Single Book** mode. Only numbers are allowed. If you type a number below 1 or above the last chapter, PTXprint corrects it. Typing here selects **Single Book**.
+##### To
 
-*(Internal ID: `t_chapfrom` · Config key: `document/chapfrom`)*
-
-#### To
-
-- **Where:** Basic tab › What to Print
-- **Type:** Text box
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Mini+ · `t_chapto` · cfg `document/chapto`
 
 > If you want to print less than the entire book, enter the chapter number to end with.
 
-**Explanation:**
+PTXprint corrects numbers that are too high or lower than **From Chapter**. Typing here selects **Single Book**.
 
-The last chapter to print in **Single Book** mode. PTXprint corrects numbers that are too high or lower than **From Chapter**. Typing here selects **Single Book**.
+##### Choose...
 
-*(Internal ID: `t_chapto` · Config key: `document/chapto`)*
-
-#### Choose...
-
-- **Where:** Basic tab › What to Print
-- **Type:** Button
-- **Description:** Bible module chooser button
-- **View level:** Basic, Default and Full views
-
-**Explanation:**
+Button · Basic+ · `btn_chooseBibleModule` · cfg `project/modulefile`  
+Also: Bible module chooser button
 
 Opens a file chooser (in the project's `Modules` folder) to select the module .sfm file. The file name is then shown next to the button and **Bible Module** is selected. If you cancel, PTXprint changes back to **Single Book**. Shortcut: **Alt+O**.
 
-*(Internal ID: `btn_chooseBibleModule` · Config key: `project/modulefile`)*
+##### Edit...
 
-#### Edit...
-
-- **Where:** Basic tab › What to Print
-- **Type:** Button
-- **Description:** Edit Bible module
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_editModule`  
+Also: Edit Bible module
 
 > Switch to the View+Edit tab to show the selected Bible module.
 
-**Explanation:**
-
-Opens the selected module file on the **View+Edit** tab, so you can look at it or change it. Only works after you have chosen a module. Only shown in the **Default** and **Full** views.
-
-*(Internal ID: `btn_editModule`)*
+Only works after you have chosen a module. You can look at the module there or change it.

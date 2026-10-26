@@ -39015,7 +39015,7 @@ full stop) might not be reported.</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_ndiffOld">
-                                        <property name="name">Compare PDFs: Colour of new text</property>
+                                        <property name="name">Compare PDFs: Colour of old text</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">Set the color to use when
@@ -39023,8 +39023,8 @@ differences are found between
 the old and the new PDFs.
 
 Use this color to show anything
-that has been added (or moved to
-the current location) in the new PDF.</property>
+that has been deleted (or moved from
+the previous location) in the old PDF.</property>
                                         <property name="halign">center</property>
                                         <property name="valign">start</property>
                                         <property name="label" translatable="yes">Old Text</property>

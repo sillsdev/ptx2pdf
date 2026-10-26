@@ -19,7 +19,7 @@ chapters = [
     ("04-layout", "Layout tab", ["Layout tab", "Change the Grid Settings (dialog)"]),
     ("05-fonts", "Fonts+Script tab",
         ["Fonts+Script tab", "Pick a Font (and Typeface) (dialog)", "Select Font Features... (dialog)",
-         "Create Hyphenation List (dialog)", "Add Tatweel (kashida) Rules (dialog)"]),
+         "Create List (dialog)", "Create Hyphenation List (dialog)", "Add Tatweel (kashida) Rules (dialog)"]),
     ("06-body", "Body tab", ["Body tab"]),
     ("07-notes", "Notes+Refs tab", ["Notes+Refs tab", "Generate Strong's Index... (dialog)"]),
     ("08-headfoot", "Header+Footer tab", ["Header+Footer tab"]),

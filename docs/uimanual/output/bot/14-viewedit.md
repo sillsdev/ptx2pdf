@@ -1,25 +1,24 @@
-# View+Edit tab
+# 15. View+Edit tab
 
-## What this tab is for
+## 15.1 What this tab is for
 
-The **View+Edit** tab lets you look at the files that PTXprint uses and creates. For two of
-these files you can also make changes here: the **front matter** (the pages before the
-Scripture text, such as the title page and the table of contents) and the **Adj List**
-(the list of paragraph adjustments).
+The **View+Edit** tab shows the files that PTXprint uses and creates. You can edit two of
+them here: the **front matter** (the pages before the Scripture text, such as the title page
+and the table of contents) and the **Adj List** (the list of paragraph adjustments).
 
-Come here when you want to:
+Come here to:
 
 * create or change the front matter (title page, copyright page, contents page, preface);
 * make a paragraph one line longer or shorter so that a page fits better;
-* look at the text exactly as PTXprint sent it to the typesetting program;
-* look at the log of the last print run when something went wrong.
+* see the text exactly as PTXprint sent it to the typesetting program;
+* read the log of the last print run when something went wrong.
 
-This tab is only shown in the **Default** and **Full** views. In the **Basic** view you
-cannot see it, but PTXprint still uses the front matter and Adj List that you made before.
+The tab is only shown in the **Regular** and **Full** views. In the **Basic** view PTXprint
+still uses the front matter and Adj List that you made before.
 
-## The sub-tabs: which files you may edit
+## 15.2 The sub-tabs: which files you may edit
 
-The tab has several small tabs (sub-tabs) along the top. Each one shows one file.
+Each small tab (sub-tab) along the top shows one file.
 
 | Sub-tab | What it shows | Can you edit it here? |
 |---|---|---|
@@ -30,90 +29,81 @@ The tab has several small tabs (sub-tabs) along the top. Each one shows one file
 | **XeTeX Log** | The log (report) of the last print run. | **No – look only.** |
 | **Settings** (up to three) | Other settings files that you chose to open from the **Advanced** tab. | Advanced users only – see the **Advanced** tab chapter. |
 
-**Important:** Changes to the Scripture text itself must be made in Paratext. Do not try to
-correct the text on the **Final SFM** sub-tab. That file is replaced every time you print.
+**Important:** Make changes to the Scripture text in Paratext, not on the **Final SFM**
+sub-tab. That file is replaced every time you print.
 
-The **.tex file** and **XeTeX Log** sub-tabs are useful when you ask for help. A supporter may
-ask you to look for an error message in the **XeTeX Log**. You do not need to understand
-these files to use PTXprint.
+The **.tex file** and **XeTeX Log** are useful when you ask for help. A supporter may ask you
+to look for an error message in the **XeTeX Log**. You do not need to understand these files
+to use PTXprint.
 
 Very long log files are cut short on the screen. Click **View/Edit...** to see the whole file
 in your computer's text editor.
 
-## The buttons at the top of the tab
+## 15.3 The buttons at the top of the tab
 
-The row of buttons at the top changes with the sub-tab that is open. Some buttons are greyed
-out on sub-tabs where they do not apply.
+The buttons change with the open sub-tab. Buttons that do not apply are greyed out.
 
-* **Refresh** reloads the file from the disk. Any changes you have not saved are lost.
-* **Book in Focus** chooses which book is shown. It is only active on the **Adj List** and
-  **Final SFM** sub-tabs.
+* **Refresh** reloads the file from the disk. Unsaved changes are lost.
+* **Book in Focus** chooses which book is shown (only on **Adj List** and **Final SFM**).
 * **Generate** creates new content for the open sub-tab (see below).
-* **View/Edit...** opens the file in your computer's own text editor. On the look-only sub-tabs
-  the button is called **View Only...**.
-* **Edit Variables...** (only on the **Front Matter** sub-tab) takes you to the table of
-  variables on the **Peripherals** tab.
-* The information button (only active on the **Front Matter** sub-tab) shows a list of special
-  codes when you hold the mouse over it.
+* **View/Edit...** opens the file in your computer's own text editor. On the look-only
+  sub-tabs it is called **View Only...**.
+* **Edit Variables...** (only on **Front Matter**) takes you to the variables table on the
+  **Peripherals** tab.
+* The information button (only active on **Front Matter**) lists the special codes when you
+  hold the mouse over it.
 * **Autosave** decides whether changes are saved without asking.
 * The slider changes the size of the text in the editing area.
 
 ### Saving your changes
 
-When you change the text on an editable sub-tab, the name of the sub-tab turns red. This means
-there are unsaved changes. PTXprint saves the changes:
+When you change the text on an editable sub-tab, the sub-tab name turns red: there are unsaved
+changes. PTXprint saves them:
 
-* when you click somewhere outside the text area (without asking if **Autosave** is ticked,
-  or after asking you if it is not ticked);
+* when you click outside the text area (without asking if **Autosave** is ticked, otherwise
+  after asking);
 * when you click **Print** while an editable sub-tab is open.
 
-If you do not want your changes, click **Refresh** (or press F5) before you click elsewhere.
+To throw away your changes, click **Refresh** (or press F5) before you click elsewhere.
 
 If the configuration is locked (see the **Basic** tab), you cannot generate or save front
 matter, and **Autosave** is turned off.
 
-## The Generate button
+## 15.4 The Generate button
 
 **Generate** does a different job on each sub-tab:
 
-* **Front Matter** – opens the **Generate Front Matter** dialog, so you can start the front
-  matter from a template.
+* **Front Matter** – opens the **Generate Front Matter** dialog, to start the front matter
+  from a template.
 * **Adj List** – makes a new adjustment list for the books you are printing (see
   **The Adj List** below).
-* **Final SFM** – makes the Final SFM file again for the **Book in Focus**, so you can look at it.
+* **Final SFM** – makes the Final SFM file again for the **Book in Focus**.
 
 On the other sub-tabs **Generate** is greyed out.
 
-## The Generate Front Matter dialog
+## 15.5 The Generate Front Matter dialog
 
-This dialog appears when you click **Generate** on the **Front Matter** sub-tab. You choose one
-of four starting points:
+Click **Generate** on the **Front Matter** sub-tab and choose one of four starting points:
 
-* **BASIC** – a title page, a page with copyright and licence information, and a table of
-  contents. This is a good start for most projects.
-* **ADVANCED** – more sections (title page, publication data, foreword, preface, table of
-  contents, alphabetical contents). It contains sample English text. You must change the text
-  into your language, or delete the sections you do not want.
+* **BASIC** – title page, copyright and licence page, table of contents. A good start for
+  most projects.
+* **ADVANCED** – more sections, with sample English text that you must translate or delete.
 * **DIGLOT** – a fuller template for diglot or polyglot publications (two or more languages).
-  It is only available when **Diglot** is turned on for this configuration. Delete the
-  sections you do not need.
-* **PARATEXT** – copies the FRT (front matter) book from your Paratext project. It is greyed
-  out if the project has no FRT book. After the copy, changes in Paratext are **not** copied
-  here automatically. Generate again if you want the new Paratext version.
+* **PARATEXT** – a copy of the FRT (front matter) book from your Paratext project.
 
-**Warning:** When you click **OK**, the new template **replaces** all of the front matter that
-is there now. Your earlier changes are lost. If you have worked on your front matter, click
-**Cancel**.
+See the control notes below for details of each.
 
-After you click **OK**, PTXprint also looks for variables (`\zvar|...\*` codes) in the new
-front matter and adds any new ones to the variables table on the **Peripherals** tab.
+**Warning:** **OK** **replaces** all of the current front matter. Your earlier changes are
+lost. If you have worked on your front matter, click **Cancel**.
 
-## The front matter and its special codes (advanced)
+After **OK**, PTXprint also finds any new variables (`\zvar|...\*` codes) in the new front
+matter and adds them to the variables table on the **Peripherals** tab.
 
-The front matter uses USFM markers, the same kind of markers that Paratext uses (for example
-`\mt1` for a main title and `\pc` for a centred paragraph). PTXprint also understands some
-extra codes. These start with `\z` and are often called **z-codes**. Hold the mouse over the
-information button to see a short list.
+## 15.6 The front matter and its special codes (advanced)
+
+The front matter uses USFM markers, as in Paratext (for example `\mt1` for a main title and
+`\pc` for a centred paragraph). PTXprint also understands extra codes that start with `\z`,
+often called **z-codes**. Hold the mouse over the information button for a short list.
 
 Each configuration has its own front matter. If you make a new configuration, check its
 front matter too.
@@ -126,14 +116,19 @@ The front matter is divided into sections. Each section starts with a line such 
 
 Each section normally starts on a new page.
 
+If you used the **Cover Wizard** (on the **Peripherals** tab), the cover sections are at the end
+of the front matter, after the line `\rem ============= Cover Page Settings =============`. The
+wizard replaces these sections each time you click **Finish**. If you change them here, the
+wizard asks to delete the old cover settings the next time you open it.
+
 ### Text from other settings
 
 * `\zcopyright` – the copyright statement from the **Basic** tab.
 * `\zlicense` – the licence statement from the **Basic** tab. (Type it with an **s**.)
 * `\zimagecopyrights` – a list of the pictures used, with their pages and copyright credits.
-  You can add a language code at the end, for example `\zimagecopyrightsfr` for French.
-  The list is only correct after you have printed **twice**, because PTXprint first needs to
-  find out on which page each picture is.
+  Add a language code at the end for another language, for example `\zimagecopyrightsfr`
+  for French. The list is only correct after you print **twice**, because PTXprint first needs
+  to find the page of each picture.
 
 Put these codes after a paragraph marker, for example: `\pc \zcopyright`
 
@@ -165,16 +160,15 @@ configuration, so two configurations can use the same front matter with differen
 `pre` (books before the Scripture text), `ot` (Old Testament only), `heb` (Old Testament in
 Hebrew order), `dc` (Deuterocanon only), `nt` (New Testament only), `post` (books after
 Revelation, such as a glossary), or `sorta`, `sortb`, `sortc` (alphabetical lists sorted by
-`\toc1`, `\toc2` or `\toc3`). The table of contents must also be turned on with
-**Table of Contents** on the **Peripherals** tab.
+`\toc1`, `\toc2` or `\toc3`). Also tick **Table of Contents** on the **Peripherals** tab.
 
 ### Code Snippets buttons
 
-On the **Front Matter** sub-tab, buttons under **Code Snippets** list ready-made codes in
+On the **Front Matter** sub-tab, the buttons under **Code Snippets** list ready-made codes in
 groups (for example **Periph+Var**, **Insert**, **ISBN+QR**, **Contents**, **Pages**,
-**Diglot**). Put the cursor where you want the code. Click a group button, then choose an item.
-PTXprint inserts the code at the cursor. Hold the mouse over an item to see what it does.
-The **Settings** sub-tabs have their own snippet buttons for the type of file that is open.
+**Diglot**). Put the cursor where you want the code, click a group button, then choose an item.
+Hold the mouse over an item to see what it does. The **Settings** sub-tabs have their own
+snippet buttons for the type of file that is open.
 
 ### Keyboard shortcuts in the front matter editor
 
@@ -185,21 +179,20 @@ The **Settings** sub-tabs have their own snippet buttons for the type of file th
 * Ctrl+minus / Ctrl+equals – make the text in the editor smaller or larger.
 * Alt+X – show the Unicode values of the selected characters in the status bar.
 
-## The Adj List (adjustment list)
+## 15.7 The Adj List (adjustment list)
 
-PTXprint fills each page with lines of text. Sometimes a page ends badly: for example, one
-line of a paragraph is alone at the top of the next page, or the two columns do not end at
-the same height. You can often fix this by asking PTXprint to set one paragraph a little
-tighter (so it uses one line less) or a little looser (so it uses one line more).
+Sometimes a page ends badly: for example, one line of a paragraph is alone at the top of the
+next page, or the two columns do not end at the same height. You can often fix this by asking
+PTXprint to set one paragraph a little tighter (one line less) or looser (one line more).
 
 The **Adj List** is the list of these requests. Each row is one paragraph. The columns are:
 
-* **Book** and **C.V** – the book and the chapter and verse where the paragraph is.
+* **Book** and **C.V** – the book, chapter and verse where the paragraph is.
 * **Para** – which paragraph: 1 is the paragraph that contains the verse, 2 is the next one,
   and so on. This lets you adjust, for example, the paragraph after a heading.
 * **Stretch** – the change. `+1` asks for one line more, `-1` for one line less. After
-  **Generate**, you will also see values such as `+0`, `-0` or `+-0`. These mean "no change
-  yet", and they show whether the paragraph *can* grow (+) or shrink (-).
+  **Generate**, you also see values such as `+0`, `-0` or `+-0`. These mean "no change
+  yet", and show whether the paragraph *can* grow (+) or shrink (-).
 * **Marker** – the paragraph marker (for example `p` or `q1`).
 * **Expand** – how much the letters are spread out or squeezed, in percent. 100 is normal.
 * **Parameters** and **Comment** – extra information.
@@ -207,35 +200,33 @@ The **Adj List** is the list of these requests. Each row is one paragraph. The c
 Click a cell to change its value. To delete rows, select them and press the Delete key, or
 right-click and choose **Delete Row(s)**.
 
-For a diglot, the book code has an L or R after it (for example `MATL` and `MATR`), to say
-which side the paragraph is on.
+For a diglot, the book code has an L or R after it (for example `MATL` and `MATR`) to show
+the side.
 
-**Generate** on the **Adj List** sub-tab prints the books three times in the background (once
-normal, once tight, once loose). From this it learns which paragraphs can shrink or grow. This
-can take some time. If an Adj List already exists, PTXprint asks if you want to replace it
-(**Yes**), merge the new information into it (**No** – the safe choice), or do nothing
-(**Cancel**).
+**Generate** on the **Adj List** sub-tab prints the books three times in the background (normal,
+tight, loose) to learn which paragraphs can shrink or grow. This can take some time. If an
+Adj List already exists, PTXprint asks whether to replace it (**Yes**), merge the new
+information into it (**No** – the safe choice), or do nothing (**Cancel**).
 
-In most cases it is easier to make adjustments from the **PDF Preview** window. There you can
-right-click a paragraph and choose to shrink or expand it. PTXprint writes those changes into
-this same Adj List.
+It is usually easier to adjust from the **PDF Preview** window: right-click a paragraph and
+choose to shrink or expand it. PTXprint writes those changes into this same Adj List.
 
 **Do paragraph adjustments last.** Any change to fonts, margins, pictures or other layout
 settings moves the text, and your adjustments may then be wrong.
 
-## Common tasks
+## 15.8 Common tasks
 
 ### Create front matter for the first time
 
-1. Go to the **Peripherals** tab and tick **Local Front Matter**. If there is no front matter
+1. On the **Peripherals** tab, tick **Local Front Matter**. If there is no front matter
    yet, PTXprint makes a BASIC one for you.
-2. Go to the **View+Edit** tab and click the **Front Matter** sub-tab.
-3. If you want a different template, click **Generate**, choose **BASIC**, **ADVANCED**,
+2. On the **View+Edit** tab, click the **Front Matter** sub-tab.
+3. For a different template, click **Generate**, choose **BASIC**, **ADVANCED**,
    **DIGLOT** or **PARATEXT**, and click **OK**.
 4. Click **Edit Variables...** and type the values (title, subtitle and so on) in the
    **Value** column.
 5. Click **Print**. If the front matter has a table of contents or picture credits, click
-   **Print** a second time.
+   **Print** again.
 
 ### Change the text on the title page
 
@@ -260,10 +251,9 @@ settings moves the text, and your adjustments may then be wrong.
 ### Make a paragraph one line shorter or longer
 
 1. Finish all other layout settings first.
-2. Open the PDF in the **PDF Preview** window and right-click the paragraph to shrink or
-   expand it. This is the easiest way.
-3. Or: on the **View+Edit** tab, click the **Adj List** sub-tab, choose the **Book in Focus**,
-   find the paragraph and type `-1` or `+1` in the **Stretch** column.
+2. Easiest: in the **PDF Preview** window, right-click the paragraph to shrink or expand it.
+3. Or: on the **Adj List** sub-tab, choose the **Book in Focus**, find the paragraph and type
+   `-1` or `+1` in the **Stretch** column.
 4. Click **Print** and check the result.
 
 ### See what text PTXprint actually typeset
@@ -271,7 +261,7 @@ settings moves the text, and your adjustments may then be wrong.
 1. Click **Print** once, so the file exists.
 2. On the **View+Edit** tab, click the **Final SFM** sub-tab.
 3. Choose the book in **Book in Focus**.
-4. Read the text. Do not edit it – make corrections in Paratext instead.
+4. Read the text. Do not edit it – make corrections in Paratext.
 
 ### Look at the log after a failed print
 
@@ -279,19 +269,18 @@ settings moves the text, and your adjustments may then be wrong.
 2. Scroll to the end. Error messages usually start with `!`.
 3. If the log is cut short, click **View Only...** to open the whole file.
 
-## Common problems
+## 15.9 Common problems
 
 **My changes to the front matter disappeared.**
-You probably clicked **Generate** and then **OK**. This replaces the whole front matter. Or you
-clicked **Refresh**, or answered "No" when PTXprint asked "Save changes?". There is no undo.
-In future, keep a copy of important text before you generate a new template.
+You probably clicked **Generate** and then **OK**, which replaces the whole front matter. Or you
+clicked **Refresh**, or answered "No" to "Save changes?". There is no undo. Keep a copy of
+important text before you generate a new template.
 
 **The front matter does not appear in the PDF.**
-**Local Front Matter** on the **Peripherals** tab must be ticked.
+Tick **Local Front Matter** on the **Peripherals** tab.
 
 **A variable prints as "<Type Value Here>".**
-PTXprint found the variable in the front matter but nobody has given it a value. Go to the
-**Peripherals** tab and type a value for it in the variables table.
+The variable has no value yet. Type one in the variables table on the **Peripherals** tab.
 
 **The licence statement does not print.**
 Check that the code is spelled `\zlicense` (with an **s**).
@@ -300,7 +289,7 @@ Check that the code is spelled `\zlicense` (with an **s**).
 PTXprint needs a first print run to find the page numbers. Click **Print** again.
 
 **The View+Edit tab is missing.**
-You are using the **Basic** or **Minimal** view. Change the view level to **Default** or
+You are using the **Basic** or **Mini** view. Change the view level to **Regular** or
 **Full** in the main menu.
 
 **The Generate button is greyed out.**
@@ -316,67 +305,40 @@ list of books to print. Choose a book that you are printing, or add the book on 
 The layout has changed since you made them (for example a new font size or new pictures).
 Check the adjustments again, or generate a new Adj List.
 
-## Settings reference: View+Edit tab
-
-Every control in this part of PTXprint is listed below, grouped by where it appears.
+## 15.10 Settings reference
 
 ### Generate Front Matter (dialog)
 
 #### OK
 
-- **Where:** Generate Front Matter (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_gnr8frt_ok`
 
-**Explanation:**
-
-Replaces the current front matter with the template you chose. Anything you typed in the
-front matter before is lost, so only click this if you really want to start again.
-
-*(Internal ID: `btn_gnr8frt_ok`)*
+Replaces the current front matter with the chosen template. Everything you typed before is lost.
 
 #### Cancel
 
-- **Where:** Generate Front Matter (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_gnr8frt_cancel`
 
-**Explanation:**
+Closes the dialog and keeps your front matter. Click this if you are not sure.
 
-Closes the dialog and keeps your front matter as it is. Click this if you are not sure.
+#### Generate Front Matter
 
-*(Internal ID: `btn_gnr8frt_cancel`)*
+##### BASIC: Front matter contains just a few essentials with publication information
 
-### Generate Front Matter (dialog) › Generate Front Matter
-
-#### BASIC: Front matter contains just a few essentials with publication information
-
-- **Where:** Generate Front Matter (dialog) › Generate Front Matter
-- **Type:** Radio button
-- **Description:** Generate front matter: BASIC (just the essentials)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_generateFRT_basic`  
+Also: Generate front matter: BASIC (just the essentials)
 
 > This option will create a simple verso page containing essential copyright and licensing information followed by a table of contents.
 
-**Explanation:**
+Contains a title page, a publication data page (copyright, licence and picture credits) and a
+table of contents. The titles come from variables such as **maintitle** and **subtitle**, so
+you only need to fill in the variables table on the **Peripherals** tab. A good choice for
+most first-time users.
 
-The simplest template: a title page, a publication data page (copyright, licence and picture
-credits) and a table of contents. The titles come from variables such as **maintitle** and
-**subtitle**, so you only need to fill in the variables table on the **Peripherals** tab.
-A good choice for most first-time users.
+##### ADVANCED: template contains several sections (some of which require editing before use)
 
-*(Internal ID: `r_generateFRT_basic`)*
-
-#### ADVANCED: template contains several sections (some of which require editing before use)
-
-- **Where:** Generate Front Matter (dialog) › Generate Front Matter
-- **Type:** Radio button
-- **Description:** Generate front matter: ADVANCED (requires editing)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_generateFRT_advanced`  
+Also: Generate front matter: ADVANCED (requires editing)
 
 > This option will create an extensive template with multiple sections (each of which will start on a new page in the final publication). You will need to edit the sample text provided so that it communicates in the required language(s). You can also remove unwanted sections if they are inappropriate for this publication. Note: In order to make this template generic for several different publications in this project, you are encouraged to use \zvar|variables\*  which will be replaced with publication-specific info when printed. For example:  
 > \mt1 \zvar|maintitle\*  
@@ -386,44 +348,27 @@ A good choice for most first-time users.
 > \pc \zvar|languagename\*  
 > \pc \zvar|copiesprinted\*
 
-**Explanation:**
+Contains title page, publication data, foreword, preface, table of contents and an
+alphabetical contents list. The foreword and preface have sample English text to replace or
+delete. It uses more variables (for example **languagename**, **copiesprinted**,
+**printedby**), which you fill in on the **Peripherals** tab.
 
-A longer template with title page, publication data, foreword, preface, table of contents and
-an alphabetical contents list. The foreword and preface contain sample English text that you
-must replace or delete. It also uses more variables (for example **languagename**,
-**copiesprinted**, **printedby**), which you fill in on the **Peripherals** tab.
+##### Include sections for a separate cover page
 
-*(Internal ID: `r_generateFRT_advanced`)*
-
-#### Include sections for a separate cover page
-
-- **Where:** Generate Front Matter (dialog) › Generate Front Matter
-- **Type:** Checkbox (ticked by default)
-- **Description:** Generate front matter: Include sections for cover page
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_includeCoverSections` · cfg `project/inclcoverperiphs`  
+Also: Generate front matter: Include sections for cover page
 
 > (Not yet implemented) Enable this option if you want to include the following sections (used for creating a cover page):  
 > \periph Cover - detailing text and optional picture  
 > \periph Spine - text for the spine of the cover
 
-**Explanation:**
+Does nothing yet, ticked or not. To make a cover, use **Create Cover Page** and the
+**Cover Wizard...** on the **Peripherals** tab.
 
-This option does not do anything yet in the current version, whether it is ticked or not.
-To make a cover, use **Create Cover Page** and the **Cover Wizard...** on the
-**Peripherals** tab instead.
+##### DIGLOT: template for a Diglot or Polyglot publication (deliberately fuller — delete sections you do not need)
 
-*(Internal ID: `c_includeCoverSections` · Config key: `project/inclcoverperiphs`)*
-
-#### DIGLOT: template for a Diglot or Polyglot publication (deliberately fuller — delete sections you do not need)
-
-- **Where:** Generate Front Matter (dialog) › Generate Front Matter
-- **Type:** Radio button
-- **Description:** Generate front matter: DIGLOT (for Diglot/Polyglot publications)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_generateFRT_diglot`  
+Also: Generate front matter: DIGLOT (for Diglot/Polyglot publications)
 
 > This option creates a DIGLOT / POLYGLOT front matter template designed for publications with two (or more) languages or scripts. It is deliberately more complete than the BASIC and ADVANCED templates because diglots are inherently complex: two (or more) texts, often two contents lists, two prefaces, sometimes two scripts and two writing directions. Delete the sections you do not need.
 >
@@ -432,88 +377,51 @@ To make a cover, use **Create Cover Page** and the **Cover Wizard...** on the
 >
 > If this option is disabled, the Diglot setting is not enabled for this configuration.
 
-**Explanation:**
+Has sections for both languages (for example two prefaces taken from each side's INT book)
+and also cover sections. Expect to delete several sections.
 
-A template for publications with two or more languages. It includes sections for both
-languages (for example two prefaces taken from each side's INT book) and also cover
-sections. It is greyed out unless **Diglot** is turned on for this configuration. Expect to
-delete several sections you do not need.
+##### PARATEXT: Make a copy of the Project's FRT book (which may be edited to make use of \zvar|variables\*)
 
-*(Internal ID: `r_generateFRT_diglot`)*
-
-#### PARATEXT: Make a copy of the Project's FRT book (which may be edited to make use of \zvar|variables\*)
-
-- **Where:** Generate Front Matter (dialog) › Generate Front Matter
-- **Type:** Radio button
-- **Description:** Generate front matter: PARATEXT (make a local copy)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Radio · Regular+ · `r_generateFRT_paratext`  
+Also: Generate front matter: PARATEXT (make a local copy)
 
 > This option will create a COPY of the Paratext project's FRT book to be used exclusively by PTXprint. You can edit the front matter to make use of PTXprint-specific  
 > \zvar|variables\* but note that none of these edits will be reflected in Paratext. In addition, if you edit the FRT book in Paratext, those changes will not be reflected here until you regenerate this (local) Front Matter.
 >
 > If option is disabled, it is due to not having a FRT book in the Paratext project (so there is nothing to import).
 
-**Explanation:**
+After the copy, the two are separate: edits in Paratext do not appear here, and edits here do
+not go back to Paratext. Generate again to get the new Paratext version. Use this if your team
+already keeps good front matter in Paratext.
 
-Copies the FRT book from the Paratext project into PTXprint's own front matter. After that,
-the two are separate: edits in Paratext do not appear here, and edits here do not go back to
-Paratext. Use this if your team already keeps good front matter in Paratext. It is greyed out
-if the project has no FRT book.
-
-*(Internal ID: `r_generateFRT_paratext`)*
-
-### View+Edit tab
+### View+Edit
 
 #### Refresh
 
-- **Where:** View+Edit tab
-- **Type:** Button
-- **Description:** Reload current file in view from saved version
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_refreshViewerText`  
+Also: Reload current file in view from saved version
 
 > Discard any changes that have been made and restore the contents of this file as it was when last saved.
 >
 > Shortcut: F5
 
-**Explanation:**
+Use it to throw away unsaved changes, or after you changed the file in an outside editor.
+Greyed out on the look-only sub-tabs.
 
-Reloads the file shown on the current sub-tab from the disk. Use it to throw away changes you
-have not saved yet, or after you changed the file in an outside editor. It is greyed out on
-the look-only sub-tabs.
+#### Book in Focus – Book in focus for editor (or viewer)
 
-*(Internal ID: `btn_refreshViewerText`)*
-
-#### Book in Focus
-
-- **Where:** View+Edit tab
-- **Type:** Drop-down list
-- **Description:** Book in focus for editor (or viewer)
-- **View level:** Default and Full views
-- **Choices:** NONE
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `ecb_examineBook`  
+Choices: NONE
 
 > Choose any book (including those which are not currently in the list to be printed.)
 
-**Explanation:**
-
-Chooses the book shown on the **Adj List** and **Final SFM** sub-tabs. On other sub-tabs it is
-greyed out. When printing a module instead of books, it is always greyed out.
-
-*(Internal ID: `ecb_examineBook`)*
+Active only on the **Adj List** and **Final SFM** sub-tabs. Always greyed out when printing a
+module instead of books.
 
 #### Generate
 
-- **Where:** View+Edit tab
-- **Type:** Button
-- **Description:** Generate ... (context sensitive)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_Generate`  
+Also: Generate ... (context sensitive)
 
 > This button will (re-)generate content for Front Matter, AdjList(s) and Final SFM.
 >
@@ -521,23 +429,14 @@ greyed out. When printing a module instead of books, it is always greyed out.
 >
 > Shortcut: Ctrl-G
 
-**Explanation:**
-
-What it creates depends on the open sub-tab: the **Generate Front Matter** dialog on
-**Front Matter**, a new adjustment list on **Adj List**, or a fresh Final SFM file for the
-**Book in Focus** on **Final SFM**. Generating an Adj List prints the books three times in the
-background, so it can take a while for large books.
-
-*(Internal ID: `btn_Generate`)*
+Opens the **Generate Front Matter** dialog on **Front Matter**, makes a new adjustment list on
+**Adj List**, or a fresh Final SFM file for the **Book in Focus** on **Final SFM**. An Adj List
+takes three background print runs, so it can be slow for large books.
 
 #### View/Edit...
 
-- **Where:** View+Edit tab
-- **Type:** Button
-- **Description:** View (or edit) file in external editor
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_viewEdit`  
+Also: View (or edit) file in external editor
 
 > You may view (and in some cases edit) the file in your system's text Editor.
 >
@@ -549,41 +448,23 @@ background, so it can take a while for large books.
 >
 > Shortcut: Ctrl-E
 
-**Explanation:**
-
-Opens the current file in your computer's own text editor, which can be easier for long files
-or for searching. If you change a file there, save it in that editor and then click
-**Refresh** in PTXprint before you print. Otherwise PTXprint may save its own older copy over
-your changes.
-
-*(Internal ID: `btn_viewEdit`)*
+Easier for long files or for searching. If you change a file there, save it in that editor,
+then click **Refresh** in PTXprint before you print. Otherwise PTXprint may save its own older
+copy over your changes.
 
 #### Edit Variables...
 
-- **Where:** View+Edit tab
-- **Type:** Button
-- **Description:** Edit peripheral variables
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_editZvars`  
+Also: Edit peripheral variables
 
 > If you have used \zvar_variable names in the front matter template, these may be edited on the "Pub. Info" tab. Click this button to show that tab.
 
-**Explanation:**
-
-Takes you to the variables table on the **Peripherals** tab. Before it goes there, it saves the
-front matter and adds any new `\zvar` names it finds to the table, so you can type their values.
-It is only shown on the **Front Matter** sub-tab.
-
-*(Internal ID: `btn_editZvars`)*
+Before it switches tabs, it saves the front matter and adds any new `\zvar` names to the
+table, so you can type their values. Only shown on the **Front Matter** sub-tab.
 
 #### Use the following codes to include special text in front mat...
 
-- **Where:** View+Edit tab
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_infoViewEdit`
 
 > Use the following codes to include special text in front matter:
 >
@@ -616,41 +497,23 @@ It is only shown on the **Front Matter** sub-tab.
 >   \mt1 \zvar|maintitle\*  
 >   \mt2 \zvar|subtitle\*
 
-**Explanation:**
-
-An information button. Hold the mouse over it to see a short list of the special codes you
-can type in the front matter. It is only active on the **Front Matter** sub-tab. See the section
-"The front matter and its special codes" in this chapter for a fuller explanation.
-
-*(Internal ID: `btn_infoViewEdit`)*
+Only active on the **Front Matter** sub-tab. See "The front matter and its special codes"
+in this chapter for a fuller explanation.
 
 #### Autosave
 
-- **Where:** View+Edit tab
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_autoSave` · cfg `config/autosave`
 
 > Save any changes made below without a confirmation check.
 
-**Explanation:**
+When not ticked, PTXprint asks "Save changes?" when you click outside the text area. Untick it
+if you often experiment and want to be asked. Greyed out on the look-only sub-tabs and when
+the configuration is locked.
 
-When ticked, PTXprint saves your edits as soon as you click outside the text area. When not
-ticked, it asks "Save changes?" first. Untick it if you often experiment and want to be asked.
-It is greyed out on the look-only sub-tabs and when the configuration is locked.
+#### Book in Focus – Adjust display font size
 
-*(Internal ID: `c_autoSave` · Config key: `config/autosave`)*
-
-#### Book in Focus
-
-- **Where:** View+Edit tab
-- **Type:** Slider
-- **Description:** Adjust display font size
-- **View level:** Default and Full views
-- **Values:** from 8 to 20, default 12
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Slider · Regular+ · `s_viewEditFontSize` · cfg `config/displayfontsize`  
+Values: 8–20 (default 12)
 
 > Use this slider to adjust the size of the text on the View+Edit tab as well as in other locations that use a specialized font or script.
 >
@@ -658,20 +521,11 @@ It is greyed out on the look-only sub-tabs and when the configuration is locked.
 >   Ctrl-Minus - shrink text size  
 >   Ctrl-Plus - grow text size
 
-**Explanation:**
-
-Changes only how large the text looks on the screen in the editor (and in some other boxes that
-use the project font). It has no effect on the printed PDF.
-
-*(Internal ID: `s_viewEditFontSize` · Config key: `config/displayfontsize`)*
+Affects only the screen (the editor and some other boxes that use the project font), not the PDF.
 
 #### Adj List
 
-- **Where:** View+Edit tab
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+ · `l_AdjList`
 
 > To balance columns of text on a page it is possible to specify paragraphs adjustments (shrink or expand):
 >
@@ -700,47 +554,23 @@ use the project font). It has no effect on the printed PDF.
 >
 > Note that adjusting paragraphs needs to be done right at the end when all other settings have been finalized. Otherwise you are likely to have to re-do it all again.
 
-**Explanation:**
-
-The name of the **Adj List** sub-tab. The table on this sub-tab shows one row per paragraph for
-the **Book in Focus**. Type `+1` or `-1` in the **Stretch** column to make a paragraph one line
-longer or shorter. See "The Adj List (adjustment list)" in this chapter for the meaning of
-each column.
-
-*(Internal ID: `l_AdjList`)*
+The table shows one row per paragraph for the **Book in Focus**. Type `+1` or `-1` in the
+**Stretch** column. See "The Adj List (adjustment list)" in this chapter for the columns.
 
 #### Code Snippets
 
-- **Where:** View+Edit tab
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+ · `l_codeSnippets`
 
 > Use the buttons below to insert various code snippets as required.
 
-**Explanation:**
-
-The heading over the snippet buttons. The buttons appear on the **Front Matter** and
-**Settings** sub-tabs. Each button opens a menu of ready-made codes; choose one to insert it at
-the cursor.
-
-*(Internal ID: `l_codeSnippets`)*
+The buttons appear on the **Front Matter** and **Settings** sub-tabs. Each opens a menu of
+ready-made codes; choose one to insert it at the cursor.
 
 #### More...
 
-- **Where:** View+Edit tab
-- **Type:** Link
-- **Description:** Link to deeper technical help
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Link · Regular+ · `lb_snippets`  
+Also: Link to deeper technical help
 
 > Online documentation on a structured list of code snippets which can be copied and pasted into the appropriate settings files.
 
-**Explanation:**
-
-Opens a web page that explains more code snippets. Most of these are for advanced users who
-work with the settings files on the **Advanced** tab.
-
-*(Internal ID: `lb_snippets`)*
+Mostly for advanced users who work with the settings files on the **Advanced** tab.

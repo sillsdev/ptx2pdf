@@ -66,6 +66,9 @@ def main():
                     continue
                 start, end = span
             block = text[start:end]
+            if "\r\n" in text:      # match the file's line endings (edits are written with \n)
+                e = dict(e, old=e["old"].replace("\r\n", "\n").replace("\n", "\r\n"),
+                         new=e["new"].replace("\r\n", "\n").replace("\n", "\r\n"))
             n = block.count(e["old"])
             if e["old"] == e["new"]:
                 print(f"FAIL {os.path.basename(jf)}: {e.get('widget') or e['file']}: edit changes nothing")

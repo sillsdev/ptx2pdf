@@ -1,154 +1,150 @@
-# Styles tab
+# 13. Styles tab
 
-## What this tab is for
+## 13.1 What this tab is for
 
-Your Paratext text uses **markers** to say what each piece of text is. A marker is a short code that starts with a backslash. For example, `\p` starts a normal paragraph, `\s1` is a section heading, `\v` is a verse number, `\f` is a footnote and `\nd` is the name of God ("LORD"). These codes are called **USFM markers**.
+Your Paratext text uses **markers** to say what each piece of text is. A marker is a short code that starts with a backslash. For example, `\p` starts a normal paragraph, `\s1` is a section heading, `\v` is a verse number, `\f` is a footnote and `\nd` is the name of God ("LORD"). These are called **USFM markers**.
 
-A **style** is the set of formatting rules for one marker: its font, size, bold or italic, colour, indents, alignment and the space above and below it. The list of all styles is called a **stylesheet**. The **Styles** tab is the style editor. Use it when you want to change how one kind of text looks everywhere in the book. For example: "make all section headings bigger", "make verse numbers red", "put more space above the headings" or "do not print the `\rem` remarks".
+A **style** is the set of formatting rules for one marker: font, size, bold or italic, colour, indents, alignment and the space above and below. The list of all styles is a **stylesheet**. The **Styles** tab is the style editor. Use it to change how one kind of text looks everywhere, for example "make all section headings bigger", "make verse numbers red", "put more space above the headings" or "do not print the `\rem` remarks".
 
-The **Styles** tab is only shown in the **Default** and **Full** views. If you do not see it, change the view level (see the chapter about the main window). If the whole tab is greyed out, the setting **Lock UI Layout Settings** on the **Advanced** tab is ticked. Untick it to make changes again.
+The tab is only shown in the **Regular** and **Full** views (see the chapter about the main window). If the whole tab is greyed out, **Lock UI Layout Settings** on the **Advanced** tab is ticked; untick it to make changes.
 
-Many other tabs have small blue links with a marker name (for example next to the verse number or heading settings). Click such a link to jump straight to that marker on the **Styles** tab. The tab label moves a little to show you where you are.
+Many other tabs have small blue links with a marker name (for example next to the verse number or heading settings). Click one to jump straight to that marker on the **Styles** tab. The tab label moves a little to show you where you are.
 
-A change on this tab does not show in the PDF until you click **Print (Make PDF)** again. Style changes are saved with the current configuration.
+Changes show in the PDF only after you click **Print (Make PDF)** again. Style changes are saved with the current configuration.
 
-## The marker list
+## 13.2 The marker list
 
-The left side of the tab is a list of all markers. The markers are grouped into categories, for example **Chapters & Verses**, **Paragraphs**, **Poetry**, **Titles & Headings**, **Footnotes**, **Cross References**, **Character Styling** and **Peripheral Materials**. Category names are shown in bold blue. Click the small arrow beside a category to open it. Click a marker to select it. Its settings then appear on the right.
+The left side lists all markers, grouped into categories such as **Chapters & Verses**, **Paragraphs**, **Poetry**, **Titles & Headings**, **Footnotes**, **Cross References**, **Character Styling** and **Peripheral Materials** (category names in bold blue). Click the small arrow beside a category to open it. Click a marker to show its settings on the right.
 
-Each line shows the marker code and a short name, for example `s1 - Heading - Section Level 1`. A marker that is drawn with a line through it is set to "not printed" (see **Include Contents of Marker** below).
+Each line shows the marker code and a short name, for example `s1 - Heading - Section Level 1`. A marker drawn with a line through it is not printed (see **Include Contents of Marker**).
 
-To find a marker quickly:
+To find a marker quickly, use the **Find** box or the filter button next to it (see the control notes). The filter makes the list much shorter.
 
-* Type in the **Find** box above the list. You can type the marker code (with or without the backslash, for example `s1` or `\s1`) or a word from its name (for example `heading`). After half a second, PTXprint selects the first match, opens the categories that contain matches and colours all matching lines pale peach.
-* Click the filter button (the bulleted-list icon next to **Find**) to show only the markers that are really used in the books you have chosen to print. Click it again to show all markers. This makes the list much shorter.
+Some markers have numbered levels, for example `\s1`, `\s2` or `\q1`, `\q2`. Selecting the plain marker (`s` or `q`) edits level 1 (`s1` or `q1`). Each level has its own style: a change to `\s1` does not change `\s2`.
 
-Some markers have numbered levels, for example `\s1`, `\s2` or `\q1`, `\q2`. If you select the plain marker (for example `s` or `q`), PTXprint edits level 1 (`s1` or `q1`). Each level has its own style. A change to `\s1` does not change `\s2`.
+Below the marker name and description are these buttons:
 
-Below the marker name and description you see these buttons:
-
-* **Add** – make a new style, based on the selected style.
+* **Add** – make a new style as a copy of the selected style.
 * **Del** – delete a style that you added yourself.
-* Reset (the circular-arrows icon) – remove all your changes to the selected style.
-* **Edit** – change the name, description, type and end marker of the style.
-* **More Info...** – open the USFM documentation page for this marker on the internet. This link is only shown in the **Full** view, and only when **Disable ALL Internet Use** on the **Advanced** tab is not ticked.
+* Reset (circular-arrows icon) – remove all your changes to the selected style. Greyed out for styles that you added yourself.
+* **Edit** – change the name, description, type and end marker.
+* **More Info...** – open the USFM documentation page for this marker on the internet. Only shown in the **Full** view, and only when **Disable ALL Internet Use** on the **Advanced** tab is not ticked.
 
-## Bold setting names: what has changed
+## 13.3 Bold setting names: what has changed
 
-PTXprint reads several stylesheets, one after the other. Later ones override earlier ones:
+PTXprint reads several stylesheets in order. Later ones override earlier ones:
 
 1. The standard Paratext stylesheet (you cannot change it).
 2. PTXprint's own additions (you cannot change them).
 3. The project's `custom.sty`, if there is one. It can be edited from the **Advanced** tab. It also affects how Paratext shows the text.
-4. The changes you make on this **Styles** tab, saved with the configuration.
+4. Your changes on this **Styles** tab, saved with the configuration.
 5. `ptxprint-mods.sty`, if there is one. It can be edited from the **Advanced** tab. Because it comes last, it wins over everything else.
 
-When the name of a setting (for example **Font Size Factor** or **Space Before Factor**) is shown in **bold**, it means that you have changed this value on the **Styles** tab. It is now different from the stylesheets underneath. To go back to the original value of one setting, click the bold setting name. To remove all your changes to the whole style, click the Reset (circular-arrows) button.
+A setting name in **bold** (for example **Font Size Factor**) means you changed this value on the **Styles** tab, so it differs from the stylesheets underneath. Click the bold name to go back to the original value of that one setting. Click Reset to remove all your changes to the style.
 
-Hover the mouse over **Why are some parameters bold?** and **How are Stylesheets applied?** at the bottom of the tab for a short reminder.
+Hover over **Why are some parameters bold?** and **How are Stylesheets applied?** at the bottom of the tab for a short reminder.
 
-## Include Contents of Marker
+## 13.4 Include Contents of Marker
 
-When **Include Contents of Marker** is ticked, the text inside this marker is printed. Untick it to leave that text out of the PDF. The marker then shows with a line through it in the list, and the other settings for it are greyed out. The text stays in your Paratext project. Only the PDF changes.
+Untick it to leave the text of this marker out of the PDF. The marker then has a line through it in the list, and its other settings are greyed out. The text stays in your Paratext project; only the PDF changes.
 
-Some markers, such as `\rem` (remarks) or the identification lines, are not printed by default. Tick **Include Contents of Marker** for them if you do want them in the PDF.
+Some markers, such as `\rem` (remarks) or the identification lines, are not printed by default. Tick this box for them if you want them in the PDF.
 
-The automatic boxes around headings and titles (`cat:headingsbox|esb` and `cat:titlebox|esb`) and the border around the text (`textborder`) also use this setting. Normally you turn these on from the **Tabs+Borders** tab, which ticks this box for you.
+The automatic boxes around headings and titles (`cat:headingsbox|esb`, `cat:titlebox|esb`) and the text border (`textborder`) also use this setting. Normally you turn these on from the **Tabs+Borders** tab, which ticks this box for you.
 
-## Character Settings
+## 13.5 Character Settings
 
-The **Character Settings** area controls how the letters look.
+This area controls how the letters look.
 
-* **Select Font...** chooses a different font for this marker only. If no font is chosen, the marker uses the main font from the **Fonts+Script** tab. Next to it, PTXprint shows the real size in points (pt – one point is about 0.35 mm) and, if any are used, font changes such as Graphite, stretch, faux bold or slant.
-* **Font Size Factor** is the size compared with the **Base Font Size** on the **Layout** tab. 1.0 is the same size, 1.2 is 20% bigger, 0.8 is 20% smaller.
-* **Scale Relative to Parent** changes the meaning of the size box. The label then changes to **Font Scale**, and the number is compared with the surrounding text instead of the base font size.
-* **Bold**, **Italic**, **SmallCaps**, **Superscript** and **Underline** turn these effects on or off.
-* **Raise** moves the text up (or down, with a minus number) by a number of points. It is greyed out when **Superscript** is ticked, because superscript sets its own size and raise.
-* **Color** sets the colour of the text.
+* **Select Font...** – a different font for this marker only; otherwise the main font from the **Fonts+Script** tab is used. Beside it PTXprint shows the real size in points (pt – one point is about 0.35 mm) and any font changes such as Graphite, stretch, faux bold or slant.
+* **Font Size Factor** – size compared with the **Base Font Size** on the **Layout** tab: 1.2 is 20% bigger, 0.8 is 20% smaller.
+* **Scale Relative to Parent** – the size box becomes **Font Scale**, relative to the surrounding text instead of the base font size.
+* **Bold**, **Italic**, **SmallCaps**, **Superscript** and **Underline**.
+* **Raise** – moves the text up (or down, with a minus number) in points. Greyed out when **Superscript** is ticked, because superscript sets its own size and raise.
+* **Color** – the text colour.
 
-For the normal paragraph marker `\p`, **Font Size Factor**, **Line Spacing Factor** and **Use Absolute Spacing** are greyed out. The size and line spacing of the main text are set on the **Layout** tab (**Base Font Size** and **Base Line Spacing**).
+For `\p`, **Font Size Factor**, **Line Spacing Factor** and **Use Absolute Spacing** are greyed out. Set the main text size and line spacing on the **Layout** tab (**Base Font Size** and **Base Line Spacing**).
 
-When the marker is a character marker (a marker that styles a few words inside a paragraph, like `\nd` or `\wj`), PTXprint opens only the **Character Settings** area. For paragraph markers it also opens **Paragraph Settings**. You can always open or close an area yourself by clicking its title.
+For a character marker (one that styles a few words inside a paragraph, like `\nd` or `\wj`), PTXprint opens only **Character Settings**. For paragraph markers it also opens **Paragraph Settings**. Click an area's title to open or close it yourself.
 
-## Paragraph Settings
+## 13.6 Paragraph Settings
 
-The **Paragraph Settings** area controls the shape of the paragraph.
+This area controls the shape of the paragraph.
 
-* **Alignment** – how the lines sit between the margins: **Justified** (both edges straight), **Left**, **LeftBal**, **Center**, **Right**, **Inner** or **Outer**. **LeftBal** is left-aligned, but PTXprint also tries to keep the lines, including the last line, of a more even length. **Inner** and **Outer** are mainly for margin notes, cross-references in the margin and headings. For right-to-left scripts, Left and Right are swapped.
-* **First Line Indent Factor**, **Left Indent Factor** and **Right Indent Factor** – indents, as a multiple of the **Base Indent** on the **Layout** tab. A negative first line indent makes a "hanging" indent: the first line starts further left than the other lines. Poetry and list markers often use this.
-* **Line Spacing Factor** – the space between lines, compared with the base line spacing. Tick **Use Absolute Spacing (in pts)** to give the line spacing as an exact number of points instead. The label then changes to **Baseline**, and PTXprint converts the number for you.
-* **Space Before Factor** and **Space After Factor** – extra space above and below the paragraph, as a multiple of the base line spacing. 1.0 is about one empty line. 0.5 is about half a line.
-* **Maximum Ragged Space** – for paragraphs that are not justified, how much of the line may stay empty at the ragged edge.
+* **Alignment** – **Justified** (both edges straight), **Left**, **LeftBal**, **Center**, **Right**, **Inner** or **Outer**. **LeftBal** is left-aligned, but PTXprint also tries to make the lines, including the last line, more even in length. **Inner** and **Outer** are mainly for margin notes, cross-references in the margin and headings. For right-to-left scripts, Left and Right are swapped.
+* **First Line Indent Factor**, **Left Indent Factor**, **Right Indent Factor** – multiples of the **Base Indent** on the **Layout** tab. A negative first line indent makes a "hanging" indent: the first line starts further left than the others. Poetry and list markers often use this.
+* **Line Spacing Factor** – compared with the base line spacing. **Use Absolute Spacing (in pts)** gives an exact number of points instead; the label changes to **Baseline** and PTXprint converts the number.
+* **Space Before Factor**, **Space After Factor** – extra space above and below, as a multiple of the base line spacing. 1.0 is about one empty line, 0.5 about half a line.
+* **Maximum Ragged Space** – for non-justified paragraphs, how much of the line may stay empty at the ragged edge.
 
-## Other Settings
+## 13.7 Other Settings
 
-The **Other Settings** area holds settings that are used only by some markers. PTXprint opens the part that fits the marker you selected.
+Settings used only by some markers. PTXprint opens the part that fits the selected marker.
 
-* **Note Settings** (for footnotes `\f`, cross-references `\x` and similar notes): the style and raise of the caller (the small letter or symbol in the text and at the start of the note), and **Note Blend Into**, which puts these notes together with another kind of note.
-* **Table Settings** (for table cells `\tc`): how text sits from top to bottom in a cell when the cells in a row have different heights.
-* **Sidebar Settings** (for sidebar categories, and for the text border): see the next section.
+* **Note Settings** (footnotes `\f`, cross-references `\x` and similar): style and raise of the caller (the small letter or symbol in the text and at the start of the note), and **Note Blend Into**, which puts these notes together with another kind of note.
+* **Table Settings** (table cells `\tc`): where text sits from top to bottom when the cells in a row have different heights.
+* **Sidebar Settings** (sidebar categories and the text border): see the next section.
 
-## Sidebars
+## 13.8 Sidebars
 
-A **sidebar** is a box of extra text, for example a study note about a place or a person, separate from the Scripture text. In USFM a sidebar starts with `\esb`, then a category such as `\cat people\cat*`, and ends with `\esbe`. All sidebars with the same category share one style. The style for the category "people" has the marker name `cat:people|esb`. PTXprint itself also uses sidebar styles, for example for the parts of the cover, for the automatic boxes around headings and titles, and `cat:box|esb` for simple boxes.
+A **sidebar** is a box of extra text, separate from the Scripture text, for example a study note about a place or a person. In USFM it starts with `\esb`, then a category such as `\cat people\cat*`, and ends with `\esbe`. All sidebars with the same category share one style; for "people" the marker name is `cat:people|esb`. PTXprint also uses sidebar styles itself, for example for the parts of the cover, the automatic boxes around headings and titles, and `cat:box|esb` for simple boxes.
 
-When you select a sidebar style, the **Sidebar Settings** area opens:
+Selecting a sidebar style opens **Sidebar Settings**:
 
-* **Color** and **Alpha** – the background colour of the box and how solid it is (0 = clear, 1 = solid).
-* **Width** – the width of the box compared with the column or page. 1 is the full width. 0.5 is half the width.
-* **Borders...** – opens the **Border Settings** dialog for lines and ornaments around the box (see the **Tabs+Borders** chapter).
-* **Foreground Image...** – adds a small picture (a logo) inside each box of this category. See **Sidebar Image Settings** below.
-* **Background Image...** – adds a picture behind the text of the box, like a watermark.
-* **Size and Position...** – where the box goes on the page. The result is shown as a short code in the box beside the button.
+* **Color** and **Alpha** – background colour of the box and how solid it is.
+* **Width** – width of the box compared with the column or page.
+* **Borders...** – the **Border Settings** dialog (see the **Tabs+Borders** chapter).
+* **Foreground Image...** – a small picture (a logo) in each box of this category. See **Sidebar Image Settings** below.
+* **Background Image...** – a picture behind the text of the box, like a watermark.
+* **Size and Position...** – where the box goes on the page, shown as a short code beside the button.
 
-The text inside a sidebar can have its own styles. For example, the paragraphs inside the "people" sidebars use the marker `cat:people|p`. If such a style exists, you can change it like any other style. If not, you can add it (see **Common tasks**).
+The text inside a sidebar can have its own styles. For example, paragraphs inside "people" sidebars use `cat:people|p`. If such a style exists, change it like any other style; if not, you can add it (see **Common tasks**).
 
-## Size and Position Settings (dialog)
+## 13.9 Size and Position Settings (dialog)
 
-This dialog opens from **Size and Position...** in the **Sidebar Settings** area. (The same dialog is also used for maps on the **Pictures** tab.) A small picture shows roughly where the box will go.
+Opens from **Size and Position...** in **Sidebar Settings**. (The same dialog is used for maps on the **Pictures** tab.) A small picture shows roughly where the box will go.
 
 1. Choose the **Frame Size** first: **Column Width**, **Span Width** (across all columns), **Page (in Margins)** or **Page (to Edge)**.
-2. Then choose the **Vertical Position**. The choices depend on the frame size:
+2. Then the **Vertical Position**. The choices depend on the frame size:
    * Column width: **Top**, **Bottom**, **Before Verse**, **After Paragraph** or **Cutout**.
-   * Span width: **Top**, **Bottom** or **Below Notes** (below the footnotes).
-   * Page sizes: **Top**, **Center**, **Fill** (stretch the box to fill the page) or **Bottom**.
-3. Then choose the **Horizontal Position**. **Center** is only offered for page sizes and for **Before Verse** and **After Paragraph**. For **Span Width** this list is greyed out.
-4. For **After Paragraph** and **Cutout** you can set **Number of Lines** (for After Paragraph it becomes "Number of paragraphs"). A positive number moves the box down, a negative number moves it up.
+   * Span width: **Top**, **Bottom** or **Below Notes**.
+   * Page sizes: **Top**, **Center**, **Fill** or **Bottom**.
+3. Then the **Horizontal Position**. **Center** is only offered for page sizes and for **Before Verse** and **After Paragraph**. For **Span Width** this list is greyed out.
+4. For **After Paragraph** and **Cutout** you can set **Number of Lines** (for After Paragraph it becomes "Number of paragraphs").
 
-Click **OK** to save the position.
+Click **OK** to save.
 
 A **cutout** is a notch in the text: the text flows around the box at the side of the column.
 
-## Sidebar Image Settings (dialog)
+## 13.10 Sidebar Image Settings (dialog)
 
-This dialog opens from **Foreground Image...** or **Background Image...**. The title shows which one you are setting.
+Opens from **Foreground Image...** or **Background Image...**; the title shows which.
 
-* Click **Select...** to choose an image (.jpg, .png or .pdf). Line art in PDF format works best over a coloured background, because .jpg images cannot be transparent.
-* **Scale** sets the size of the image compared with the box. Tick **Maintain Aspect Ratio** to keep the shape of the picture (the height then follows the width).
-* For a foreground image, choose where it goes in the box: **Above or Below Text**, **Beside Text** or **Cutout Within Text**, then choose the exact place in the list beside your choice.
-* For a background image, the **Background Image Advanced Settings** set its transparency, layer order, what happens if it is too big, and what part of the box it should fill.
-* Click **Remove Image** and then **OK** to take the image away.
+* **Select...** chooses the image. PDF line art works best over a coloured background, because .jpg images cannot be transparent.
+* **Scale** is the size compared with the box. **Maintain Aspect Ratio** keeps the picture's shape (height follows width).
+* For a foreground image, choose **Above or Below Text**, **Beside Text** or **Cutout Within Text**, then the exact place in the list beside it.
+* For a background image, **Background Image Advanced Settings** set transparency, layer order, what happens if it is too big, and which part of the box it fills.
+* To take the image away, click **Remove Image**, then **OK**.
 
-## Add/Edit Style (dialog)
+## 13.11 Add/Edit Style (dialog)
 
-This dialog opens from **Add** or **Edit** on the **Styles** tab. Use it to describe a marker: its code, name, description, type and end marker. The formatting itself (font, size, spacing) is then set on the **Styles** tab as usual. Creating new markers is an advanced task. Most users only need it for special markers that their project already uses (for example markers starting with `z`), or for special cases such as a sidebar category.
+Opens from **Add** or **Edit**. It describes a marker: code, name, description, type and end marker. The formatting itself is then set on the **Styles** tab as usual. Creating markers is an advanced task. Most users only need it for special markers their project already uses (for example markers starting with `z`), or for cases such as a sidebar category.
 
-* When you click **Add**, the new style starts as a copy of the style that is selected. So first select a similar marker, then click **Add**.
-* When you click **Edit**, the **Marker** box is greyed out, because you cannot rename a marker. For standard USFM markers the **Type** is also greyed out.
-* The **Name** controls where the marker appears in the list. Use the form `marker - Category - short description`, for example `zpeople - Paragraph - Paragraph about people`. The middle part places the marker in a category (for example `Paragraph` goes into **Paragraphs**). When you type in **Marker**, PTXprint updates the start of the name for you.
+* **Add**: the new style is a copy of the selected style, with all its settings, also ones not shown on the **Styles** tab, such as the border and padding of a sidebar (box) style. Only marker, name, description, type and end marker come from the dialog. So select a similar marker first.
+* **Edit**: the **Marker** box is greyed out (a marker cannot be renamed). For standard USFM markers **Type** is also greyed out.
+* **Name** controls where the marker appears in the list, for example `zpeople - Paragraph - Paragraph about people` goes into **Paragraphs**.
 
-## Common tasks
+## 13.12 Common tasks
 
 ### Find the style for some text
 
-1. Open the **Styles** tab.
-2. If you do not know the marker, look at the text in Paratext with the "Unformatted" view, or on the **View+Edit** tab in PTXprint, to see which marker is in front of it.
-3. Type the marker code (for example `s1`) or a word (for example `heading`) in the **Find** box.
-4. Or click the filter button next to **Find** to see only the markers used in your books.
+1. If you do not know the marker, look at the text in Paratext with the "Unformatted" view, or on the **View+Edit** tab, to see which marker is in front of it.
+2. On the **Styles** tab, type the marker code (for example `s1`) or a word (for example `heading`) in **Find**.
+3. Or click the filter button to see only the markers used in your books.
 
 ### Make section headings bigger and bold
 
-1. On the **Styles** tab, type `s1` in **Find**.
+1. Type `s1` in **Find**.
 2. In **Character Settings**, change **Font Size Factor**, for example from 1.0 to 1.2.
 3. Tick **Bold**.
 4. Click **Print (Make PDF)**.
@@ -157,7 +153,7 @@ This dialog opens from **Add** or **Edit** on the **Styles** tab. Use it to desc
 
 1. Select the heading marker (for example `s1`).
 2. In **Paragraph Settings**, increase **Space Before Factor** (for example to 1.0) and **Space After Factor** (for example to 0.5).
-3. Print again and check the result.
+3. Print again and check.
 
 ### Change the colour of verse numbers
 
@@ -175,103 +171,84 @@ This dialog opens from **Add** or **Edit** on the **Styles** tab. Use it to desc
 
 1. Select the marker (for example `pc`, or `q1` for poetry).
 2. In **Paragraph Settings**, choose an **Alignment**, for example **Center**.
-3. Change **First Line Indent Factor** or **Left Indent Factor** if needed. These are multiples of the **Base Indent** on the **Layout** tab.
+3. Change **First Line Indent Factor** or **Left Indent Factor** if needed.
 
 ### Leave some text out of the PDF
 
 1. Select the marker, for example `rem` or a study-note marker.
-2. Untick **Include Contents of Marker**.
-3. The marker now has a line through it in the list. Print again.
+2. Untick **Include Contents of Marker**. The marker now has a line through it.
+3. Print again.
 
 ### Undo changes to a style
 
-* To undo one setting: click its bold name.
-* To undo all changes to the style: click the Reset (circular-arrows) button.
+* One setting: click its bold name.
+* All changes: click Reset. (For a style that you added yourself, Reset is greyed out. Change the settings back by hand, or delete the style with **Del**.)
 
 ### Give a sidebar category a coloured background
 
 1. Find the style for the category, for example type `esb` in **Find**. If your category (for example "people") has no style yet, select `cat:box|esb`, click **Add**, type `cat:people|esb` in **Marker**, give it a **Name** and click **OK**.
-2. In **Other Settings › Sidebar Settings**, click the **Color** button and choose a light colour. Set **Alpha** (for example 0.5).
+2. In **Other Settings › Sidebar Settings**, click **Color** and choose a light colour. Set **Alpha** (for example 0.5).
 3. Click **Size and Position...** to choose where the box goes, and **Borders...** for a border.
 4. Print again.
 
-## Common problems
+## 13.13 Common problems
 
 **My change on the Styles tab has no effect.**
-* You may have changed the wrong marker. Check which marker the text really uses (for example `\s2` instead of `\s1`, or `\q2` instead of `\q1`). Each level has its own style.
-* A more specific style may win. For example, a style for `cat:people|p` is used for paragraphs inside "people" sidebars instead of `p`.
-* The file `ptxprint-mods.sty` (edited from the **Advanced** tab) is applied last and may set the same value.
-* You did not print again. Click **Print (Make PDF)**.
+* You may have changed the wrong marker. Check which marker the text really uses (for example `\s2` instead of `\s1`, or `\q2` instead of `\q1`).
+* A more specific style may win. For example, `cat:people|p` is used for paragraphs inside "people" sidebars instead of `p`.
+* `ptxprint-mods.sty` (edited from the **Advanced** tab) is applied last and may set the same value.
+* You did not print again.
 
 **The Font Size Factor and Line Spacing boxes are greyed out.**
-You have selected `\p`. Change the main text size and line spacing on the **Layout** tab (**Base Font Size** and **Base Line Spacing**).
+You have selected `\p`. Change **Base Font Size** and **Base Line Spacing** on the **Layout** tab.
 
 **The whole Styles tab is greyed out.**
-**Lock UI Layout Settings** on the **Advanced** tab is ticked. Untick it.
+Untick **Lock UI Layout Settings** on the **Advanced** tab.
 
 **I cannot see the Styles tab.**
-The tab is hidden in the **Mini** and **Basic** views. Change to the **Default** or **Full** view.
+It is hidden in the **Mini** and **Basic** views. Change to **Regular** or **Full**.
 
 **I set a colour, but the text is still black.**
-**Enable Colored Text** on the **Fonts+Script** tab is not ticked. Tick it.
+Tick **Enable Colored Text** on the **Fonts+Script** tab.
 
 **I chose Justified, but the text is not justified.**
-**Justify Paragraphs** on the **Body** tab is not ticked. Then **Justified** is treated as **Left**.
+**Justify Paragraphs** on the **Body** tab is not ticked, so **Justified** is treated as **Left**.
 
 **Some text is in the wrong font.**
-The style for that marker has its own font (its **Font** label is bold). Click the bold **Font** label to go back to the main font. If the font has no bold or italic face, PTXprint may make a faux (computer-made) bold or slant. This is shown next to the font size.
+The style for that marker has its own font (its **Font** label is bold). Click the bold label to go back to the main font. If the font has no bold or italic face, PTXprint may make a faux (computer-made) bold or slant; this is shown next to the font size.
 
 **Some text is missing from the PDF.**
-**Include Contents of Marker** may be unticked for that marker (it has a line through it in the list). Tick it.
+**Include Contents of Marker** may be unticked for that marker (it has a line through it). Tick it.
 
 **The Raise box is greyed out.**
 **Superscript** is ticked. Superscript sets its own raise.
 
 **The Del button does nothing.**
-You can only delete styles that you added yourself. Standard styles cannot be deleted. Use the Reset button to remove your changes instead.
+Only styles you added yourself can be deleted. Use Reset to remove your changes to a standard style.
 
 **The More Info... link is missing or greyed out.**
-It is only shown in the **Full** view, and only when internet use is allowed on the **Advanced** tab. For combined or custom markers there is no documentation page, so the link is greyed out.
+It is only shown in the **Full** view, and only when internet use is allowed on the **Advanced** tab. Combined or custom markers have no documentation page, so the link is greyed out.
 
-## Settings reference: Styles tab
-
-Every control in this part of PTXprint is listed below, grouped by where it appears.
+## 13.14 Settings reference
 
 ### Size and Position Settings (dialog)
 
 #### OK
 
-- **Where:** Size and Position Settings (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
+Button · Mini+ · `button1`
 
-**Explanation:**
-
-Saves the chosen size and position, and closes the dialog.
-
-*(Internal ID: `button1`)*
+Saves the size and position and closes the dialog.
 
 #### Cancel
 
-- **Where:** Size and Position Settings (dialog)
-- **Type:** Button
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Explanation:**
+Button · Mini+ · `button2`
 
 Closes the dialog without changing the position.
 
-*(Internal ID: `button2`)*
+#### Frame Size – Sidebar: Frame size
 
-#### Frame Size
-
-- **Where:** Size and Position Settings (dialog)
-- **Type:** Drop-down list
-- **Description:** Sidebar: Frame size
-- **View level:** Default and Full views
-- **Choices:** Column Width; Span Width; Page (in Margins); Page (to Edge)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbSize`  
+Choices: Column Width | Span Width | Page (in Margins) | Page (to Edge)
 
 > The frame size determines the boundaries of where the sidebar will appear on the page.
 >
@@ -291,21 +268,12 @@ Closes the dialog without changing the position.
 >
 > When using single column layout, there is no difference between Column Width and Span Width.
 
-**Explanation:**
+Choose this first; it changes the choices in the other lists. **Span Width** can also be **Below Notes**. The page sizes are for boxes that take a whole page, for example on covers.
 
-Choose this first, because it changes the choices in the other lists. **Column Width** gives the most placement options. **Span Width** goes across all columns and can only be at the top, bottom or below the notes. The two page sizes are for boxes that take a whole page, for example on covers. In a one-column layout, Column Width and Span Width are the same.
+#### Vertical Position – Sidebar: Vertical position
 
-*(Internal ID: `fcb_sbSize`)*
-
-#### Vertical Position
-
-- **Where:** Size and Position Settings (dialog)
-- **Type:** Drop-down list
-- **Description:** Sidebar: Vertical position
-- **View level:** Default and Full views
-- **Choices:** Top; Bottom; Below Notes; Before Verse; After Paragraph; Cutout; Fill
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbPgPos`  
+Choices: Top | Bottom | Below Notes | Before Verse | After Paragraph | Cutout | Fill
 
 > Top: Above everything except the header line Bottom: Below all verse text (and footnotes in diglot) Before Verse: 'Here' where defined or before its Anchor Ref After Paragraph: After this paragraph Cutout: A notch/corner cut out of the text, starting at current line Below Notes: Below the footnotes (Span Width only) Fill: Stretch to fill the page (page sizes only)
 >
@@ -315,39 +283,21 @@ Choose this first, because it changes the choices in the other lists. **Column W
 >
 > The above options may have other positioning parameters such as: Left, Right, Center, no. of lines (up or down).
 
-**Explanation:**
+**After Paragraph** can go later with **Number of Lines**. **Cutout** makes the text flow around the box.
 
-Choose where the box goes from top to bottom. **Before Verse** puts it where it is in the text. **After Paragraph** puts it after the current paragraph (or later, with **Number of Lines**). **Cutout** makes the text flow around the box. **Below Notes** (span width only) puts it under the footnotes. **Fill** (page sizes only) stretches the box to fill the page.
+#### Horizontal Position – Sidebar: Horizontal position
 
-*(Internal ID: `fcb_sbPgPos`)*
-
-#### Horizontal Position
-
-- **Where:** Size and Position Settings (dialog)
-- **Type:** Drop-down list
-- **Description:** Sidebar: Horizontal position
-- **View level:** Default and Full views
-- **Choices:** Left; Center; Right; Inner; Outer; -
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbHoriz`  
+Choices: Left | Center | Right | Inner | Outer | -
 
 > The options available here change based on the Frame Size and Vertical Position settings. So if you can't find an option you are looking for, then check those settings first.
 
-**Explanation:**
+Inner = spine side, Outer = edge side. Greyed out for **Span Width**.
 
-Choose the side: Left, Right, Inner (spine side), Outer (edge side) or Center. If the side you want is not offered, change **Frame Size** or **Vertical Position** first. Greyed out for **Span Width**.
+#### Number of Lines – Sidebar/map: Lines to adjust vertically
 
-*(Internal ID: `fcb_sbHoriz`)*
-
-#### Number of Lines
-
-- **Where:** Size and Position Settings (dialog)
-- **Type:** Number box
-- **Description:** Sidebar/map: Lines to adjust vertically
-- **View level:** Default and Full views
-- **Values:** from -24 to 24
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbLines`  
+Values: -24–24
 
 > Some vertical position options allow a sidebar to be moved up or down by a number of lines or paragraphs.
 >
@@ -355,298 +305,158 @@ Choose the side: Left, Right, Inner (spine side), Outer (edge side) or Center. I
 >
 > Negative counts for cutouts raise the sidebar, but the cutout will not affect earlier paragraphs. Note that negative and fractional paragraph counts are invalid.
 
-**Explanation:**
-
-Only available for **After Paragraph** (then it counts paragraphs, whole numbers only) and **Cutout** (then it counts lines). Positive numbers move the box down, negative numbers move it up. For other positions it is greyed out.
-
-*(Internal ID: `s_sbLines`)*
+For **After Paragraph** it counts paragraphs (whole numbers only); for **Cutout** it counts lines. Greyed out for other positions.
 
 ### Sidebar Image Settings (dialog)
 
 #### Remove Image
 
-- **Where:** Sidebar Image Settings (dialog)
-- **Type:** Button
-- **Description:** Sidebar FG/BG: Remove image
-- **View level:** Default and Full views
+Button · Regular+ · `btn_removeSBimage`  
+Also: Sidebar FG/BG: Remove image
 
-**Explanation:**
-
-Clears the chosen image. Then click **OK** to remove the image from this sidebar style.
-
-*(Internal ID: `btn_removeSBimage`)*
+Then click **OK** to remove the image from this sidebar style.
 
 #### OK
 
-- **Where:** Sidebar Image Settings (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_image_ok`
 
-**Explanation:**
-
-Saves the image settings for this sidebar style. If no image file is chosen, the image is removed.
-
-*(Internal ID: `btn_image_ok`)*
+Saves the image settings. With no image file chosen, the image is removed.
 
 #### Cancel
 
-- **Where:** Sidebar Image Settings (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Explanation:**
+Button · Regular+ · `btn_image_cancel`
 
 Closes the dialog without changing anything.
 
-*(Internal ID: `btn_image_cancel`)*
+#### Sidebar Foreground/Background
 
-### Sidebar Image Settings (dialog) › Sidebar Foreground/Background
+##### Select...
 
-#### Select...
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background
-- **Type:** Button
-- **Description:** Sidebar FG/BG: Select an image
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_sbSelectFile`  
+Also: Sidebar FG/BG: Select an image
 
 > Choose the image file (JPG, PNG or PDF).
 
-**Explanation:**
+The file name is shown next to the button.
 
-Choose the image file (.jpg, .png or .pdf). The file name is shown next to the button.
+##### Scale – Sidebar FG/BG: Scale of image
 
-*(Internal ID: `btn_sbSelectFile`)*
-
-#### Scale
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background
-- **Type:** Number box
-- **Description:** Sidebar FG/BG: Scale of image
-- **View level:** Default and Full views
-- **Values:** from 0.01 to 2, default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbi_scaleWidth`  
+Values: 0.01–2 (default 1)
 
 > Specify how much the image should be scaled horizontally.
 
-**Explanation:**
+Relative to the box width. With **Maintain Aspect Ratio** it is also used for the height.
 
-The size of the image compared with the width of the sidebar box. If **Maintain Aspect Ratio** is ticked, this value is also used for the height.
+##### Scale – Sidebar FG/BG: Height of image
 
-*(Internal ID: `s_sbi_scaleWidth`)*
-
-#### Scale
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background
-- **Type:** Number box
-- **Description:** Sidebar FG/BG: Height of image
-- **View level:** Default and Full views
-- **Values:** from 0.01 to 2, default 1
-- **Greyed out when:** “Maintain Aspect Ratio” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbi_scaleHeight`  
+Values: 0.01–2 (default 1) · Greyed out by: “Maintain Aspect Ratio”
 
 > Specify how much the image should be scaled vertically.
 
-**Explanation:**
+Relative to the box height. Setting width and height separately can stretch the picture.
 
-The size of the image compared with the height of the box. Greyed out while **Maintain Aspect Ratio** is ticked. Changing width and height separately can stretch the picture.
+##### Maintain Aspect Ratio
 
-*(Internal ID: `s_sbi_scaleHeight`)*
-
-#### Maintain Aspect Ratio
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background
-- **Type:** Checkbox (ticked by default)
-- **Description:** Sidebar FG/BG: Maintain aspect ratio
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_sbi_lockRatio`  
+Also: Sidebar FG/BG: Maintain aspect ratio
 
 > Scale the width and height the same so that the image maintains its proportions.
 
-**Explanation:**
+Untick it only to set the height separately.
 
-Keep this ticked so the picture keeps its shape. Untick it only if you want to set the height separately.
+##### Foreground Image Position Within Sidebar
 
-*(Internal ID: `c_sbi_lockRatio`)*
+###### Sidebar foreground image: Beside text options
 
-### Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Foreground Image Position Within Sidebar
-
-#### Sidebar foreground image: Beside text options
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Foreground Image Position Within Sidebar
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Left; Inner; Right; Outer; Left Top; Inner Top; Right Top; Outer Top; Left Centre; Inner Centre; Right Centre; Outer Centre; Left Bottom; Inner Bottom; Right Bottom; Outer Bottom
-- **Only available when:** “Beside Text” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbi_posn_beside`  
+Choices: Left | Inner | Right | Outer | Left Top | Inner Top | Right Top | Outer Top | Left Centre | Inner Centre | Right Centre | Outer Centre | Left Bottom | Inner Bottom | Right Bottom | Outer Bottom · Needs: “Beside Text”
 
 > Which side of the sidebar text the foreground image goes on (Left, Inner, Right or Outer), and whether it sits at the top, centre or bottom of that side.
 
-**Explanation:**
+Used with **Beside Text**.
 
-The place of the image when **Beside Text** is chosen: which side (left, inner, right, outer), and optionally top, centre or bottom of that side.
+###### Above or Below Text
 
-*(Internal ID: `fcb_sbi_posn_beside`)*
+Radio · Regular+ · `r_sbiPosn_above`  
+Also: Sidebar foreground image: Above or below text
 
-#### Above or Below Text
+The image gets its own strip. Choose the exact place in the list beside it.
 
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Foreground Image Position Within Sidebar
-- **Type:** Radio button
-- **Description:** Sidebar foreground image: Above or below text
-- **View level:** Default and Full views
+###### Beside Text
 
-**Explanation:**
+Radio · Regular+ · `r_sbiPosn_beside`  
+Also: Sidebar foreground image: Beside text
 
-Puts the foreground image in its own strip above or below the text of the box. Then choose the exact place in the list beside it.
+The image gets its own column; the text is narrower for the full height of the box.
 
-*(Internal ID: `r_sbiPosn_above`)*
+###### Cutout Within Text
 
-#### Beside Text
+Radio · Regular+ · `r_sbiPosn_cutout`  
+Also: Sidebar foreground image: Cutout within sidebar
 
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Foreground Image Position Within Sidebar
-- **Type:** Radio button
-- **Description:** Sidebar foreground image: Beside text
-- **View level:** Default and Full views
+The text flows around the image. This leaves the least empty space.
 
-**Explanation:**
+###### Sidebar foreground image: Above or below options
 
-Puts the foreground image in its own column beside the text of the box. The text is narrower for the full height of the box.
-
-*(Internal ID: `r_sbiPosn_beside`)*
-
-#### Cutout Within Text
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Foreground Image Position Within Sidebar
-- **Type:** Radio button
-- **Description:** Sidebar foreground image: Cutout within sidebar
-- **View level:** Default and Full views
-
-**Explanation:**
-
-Puts the foreground image in a notch in the text of the box, so the text flows around it. This leaves the least empty space.
-
-*(Internal ID: `r_sbiPosn_cutout`)*
-
-#### Sidebar foreground image: Above or below options
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Foreground Image Position Within Sidebar
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Top; Top-Left; Top-Inner; Top-Centre; Top-Right; Top-Outer; Bottom; Bottom-Left; Bottom-Inner; Bottom-Centre; Bottom-Right; Bottom-Outer
-- **Only available when:** “Above or Below Text” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbi_posn_above`  
+Choices: Top | Top-Left | Top-Inner | Top-Centre | Top-Right | Top-Outer | Bottom | Bottom-Left | Bottom-Inner | Bottom-Centre | Bottom-Right | Bottom-Outer · Needs: “Above or Below Text”
 
 > Where the foreground image goes when it is placed in its own strip above or below the sidebar text: Top or Bottom, and Left, Inner, Centre, Right or Outer.
 
-**Explanation:**
+Used with **Above or Below Text**.
 
-The place of the image when **Above or Below Text** is chosen: top or bottom, and left, inner, centre, right or outer.
+###### Sidebar foreground image: Cutout position options
 
-*(Internal ID: `fcb_sbi_posn_above`)*
-
-#### Sidebar foreground image: Cutout position options
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Foreground Image Position Within Sidebar
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Left; Inner; Right; Outer
-- **Only available when:** “Cutout Within Text” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbi_posn_cutout`  
+Choices: Left | Inner | Right | Outer · Needs: “Cutout Within Text”
 
 > Which side of the sidebar text the cutout for the foreground image is on.
 
-**Explanation:**
+Used with **Cutout Within Text**.
 
-The side of the cutout when **Cutout Within Text** is chosen: left, inner, right or outer.
+###### Start N Lines Below Top – Sidebar foreground image: Adjust cutout position
 
-*(Internal ID: `fcb_sbi_posn_cutout`)*
-
-#### Start N Lines Below Top
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Foreground Image Position Within Sidebar
-- **Type:** Number box
-- **Description:** Sidebar foreground image: Adjust cutout position
-- **View level:** Default and Full views
-- **Values:** default 2
-- **Only available when:** “Cutout Within Text” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbiCutoutLines`  
+Needs: “Cutout Within Text”
 
 > The number of lines below the top of the sidebar text where the cutout for the foreground image starts.
 
-**Explanation:**
+Keeps the image away from the first lines, for example below a heading inside the box.
 
-How many lines below the top of the box the cutout for the image starts. Use it to keep the image away from the first lines of text, for example below a heading inside the box.
+##### Background Image Advanced Settings
 
-*(Internal ID: `s_sbiCutoutLines`)*
+###### Background Image Transparency – Sidebar background image: Transparency (alpha)
 
-### Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Background Image Advanced Settings
-
-#### Background Image Transparency
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Background Image Advanced Settings
-- **Type:** Number box
-- **Description:** Sidebar background image: Transparency (alpha)
-- **View level:** Default and Full views
-- **Values:** default 0.5
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbiAlpha`
 
 > Transparency or alpha value of the background image: 0 is transparent, 1 is solid. This is useful for turning black lines into a paler shade.
 >
 > Note that this will allow the background colour to show through, even if the image is above the background layer, so on a green background black will become a darker shade of green, not grey.
 
-**Explanation:**
+About 0.3 makes a watermark that does not make the text hard to read.
 
-How solid the background image is: 0 is invisible and 1 is solid. A value such as 0.3 makes a watermark that does not make the text hard to read.
+###### Color – Sidebar background image: Color
 
-*(Internal ID: `s_sbiAlpha`)*
-
-#### Color
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Background Image Advanced Settings
-- **Type:** Colour picker
-- **Description:** Sidebar background image: Color
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Regular+ · `col_sbiBgColor`
 
 > Some (rare) PDF line-art images do not set the colour of their lines, relying instead on the 'default' colour, which is normally black. This control sets the default colour to something other than black, and thus such images can be recoloured with this option. If (as most PDF images do) the image defines its own colour, this option will have no visible effect at all. It is also possible that an image will *partly* contain colour information, but only starting part way through the file, a situation that might produce unexpected results.
 
-**Explanation:**
+Works only for a few simple PDF line-art images; most images have their own colours, and then this has no effect.
 
-Changes the colour of the lines of a few simple PDF line-art images. Most images have their own colours, and then this has no effect.
+###### Background Image Transparency
 
-*(Internal ID: `col_sbiBgColor`)*
-
-#### Background Image Transparency
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Background Image Advanced Settings
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+
 
 > Transparency or alpha value of the background image: 0 is transparent, 1 is solid. This is useful for turning black lines into a paler shade.
 >
 > Note that this will allow the background colour to show through, even if the image is above the background layer, so on a green background black will become a darker shade of green, not grey.
 
-#### Layer Order
+###### Layer Order – Sidebar background image: Order of layers
 
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Background Image Advanced Settings
-- **Type:** Drop-down list
-- **Description:** Sidebar background image: Order of layers
-- **View level:** Default and Full views
-- **Choices:** In Front of Background; Behind Background
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbiLayerOrder`  
+Choices: In Front of Background | Behind Background
 
 > Only relevant where there is both a background image  
 > *and* a background color. Set whether the background image should come above or behind the color. Line art PDFs with a transparent background may display better above the color layer, as the color layer will not then wash them out, but .JPGs are probably better behind, as .JPG images do not have transparency.
@@ -654,391 +464,212 @@ Changes the colour of the lines of a few simple PDF line-art images. Most images
 > Only relevant where there is both a background image  
 > *and* a background color. Set whether the background image should come above or behind the color. Line art PDFs with a tranpsarent background may display better above the color layer, as the color layer will not then wash them out, but .JPGs are probably better behind, as .JPG images do not have transparency.
 
-**Explanation:**
+In front: good for PDF line art. Behind: better for .jpg photos.
 
-Only matters when the box has both a background colour and a background image. **In Front of Background** puts the image on top of the colour; this is good for PDF line art. **Behind Background** puts it under the colour; this is better for .jpg photos.
+###### If Image Is Oversized – Sidebar background image: Oversize management
 
-*(Internal ID: `fcb_sbiLayerOrder`)*
-
-#### If Image Is Oversized
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Background Image Advanced Settings
-- **Type:** Drop-down list
-- **Description:** Sidebar background image: Oversize management
-- **View level:** Default and Full views
-- **Choices:** Ignore (overflows frame); Shrink (maintains ratio); Squash (distorts ratio); Crop (unimplemented)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbiOversize`  
+Choices: Ignore (overflows frame) | Shrink (maintains ratio) | Squash (distorts ratio) | Crop (unimplemented)
 
 > Select what action should be taken if the background image size is specified with a single dimension (height or width) and the unspecified dimension ends up being too large for a given sidebar.
 
-**Explanation:**
+**Ignore** lets the image stick out of the box. **Shrink** keeps its shape. **Squash** may change its shape. **Crop** is not working yet.
 
-What happens if the image is too big for the box. **Ignore** lets it stick out of the box. **Shrink** makes it smaller and keeps its shape. **Squash** makes it fit and may change its shape. **Crop** is not working yet.
+###### Crop Offset – Sidebar background image: Crop offset (XxY)
 
-*(Internal ID: `fcb_sbiOversize`)*
+Text box · Regular+ · `t_sbiBgCropOfs`
 
-#### Crop Offset
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Background Image Advanced Settings
-- **Type:** Text box
-- **Description:** Sidebar background image: Crop offset (XxY)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
+> (Not available yet: cropping is still to be implemented.)
+>
 > Crop offset in the format XxY (e.g. 10x20). Only used when Oversize is set to Crop. Shifts the cropped region by X points horizontally and Y points vertically.
 
-**Explanation:**
+Crop is not working yet. Leave it empty.
 
-Only for the **Crop** choice in **If Image Is Oversized**, which is not working yet. Leave it empty.
+###### Scale To – Sidebar background image: Scale Image to Inner/Outer/Bleed area
 
-*(Internal ID: `t_sbiBgCropOfs`)*
-
-#### Scale To
-
-- **Where:** Sidebar Image Settings (dialog) › Sidebar Foreground/Background › Background Image Advanced Settings
-- **Type:** Drop-down list
-- **Description:** Sidebar background image: Scale Image to Inner/Outer/Bleed area
-- **View level:** Default and Full views
-- **Choices:** bleed: overflow the page into the cropped area; colbleed: overflow the page into the cropped area as much as the colours do (normally images bleed less); inner: the area that text could cover (vertically this extends to the inner edge of the border); outer: the outermost of the coloured box or the border; border: the outer edge of the border; box: the coloured box
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_sbiScaleTo`  
+Choices: bleed: overflow the page into the cropped area | colbleed: overflow the page into the cropped area as much as the colours do (normally images bleed less) | inner: the area that text could cover (vertically this extends to the inner edge of the border) | outer: the outermost of the coloured box or the border | border: the outer edge of the border | box: the coloured box
 
 > Select where the image should extend to.
 
-**Explanation:**
-
-Which area of the box the background image is sized to: the text area (**inner**), the coloured box (**box**), the border (**border**), the outermost of these (**outer**), or out past the page edge (**bleed** and **colbleed**, mainly for covers).
-
-*(Internal ID: `fcb_sbiScaleTo`)*
+**inner** = text area, **box** = coloured box, **border** = border, **outer** = outermost of these, **bleed**/**colbleed** = past the page edge (mainly for covers).
 
 ### Add/Edit Style (dialog)
 
 #### OK
 
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
+Button · Regular+ · `btn_sty_ok`
 
-**Explanation:**
-
-Saves the style details. A new style is added to the list and selected, ready for you to set its formatting.
-
-*(Internal ID: `btn_sty_ok`)*
+A new style is added to the list and selected, ready for formatting.
 
 #### Cancel
 
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Button
-- **View level:** Default and Full views
-
-**Explanation:**
+Button · Regular+ · `btn_sty_cancel`
 
 Closes the dialog without adding or changing a style.
 
-*(Internal ID: `btn_sty_cancel`)*
-
 #### Description
 
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Label
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Mini+
 
 > You can say what you like here to describe the purpose of the style.
 
-#### ⚠️Marker
+#### ⚠️Marker – Add/Edit marker dialog: Marker (code)
 
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Text box
-- **Description:** Add/Edit marker dialog: Marker (code)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Regular+ · `t_styMarker`
 
 > The marker code without the backslash, e.g. zpeople. It can only be set when adding a new style.
 
-**Explanation:**
-
-The marker code, without the backslash, for example `zpeople` or `cat:people|esb`. You can only type here when adding a new style. If you leave it empty and click **OK**, nothing is created.
-
-*(Internal ID: `t_styMarker`)*
+For example `zpeople` or `cat:people|esb`. If empty when you click **OK**, nothing is created.
 
 #### Add/Edit marker dialog: Marker description
 
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Text area
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text area · Regular+ · `textv_styDesc`
 
 > You can say what you like here to describe the purpose of the style.
 
-**Explanation:**
-
-A longer description of what the marker is for. It is only for your information.
-
-*(Internal ID: `textv_styDesc`)*
+For your information only.
 
 #### Name
 
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Label
-- **View level:** All view levels (Mini, Basic, Default, Full)
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Mini+
 
 > Consists of: Marker..Endmarker - Group - short description and helps to place the marker in the tree listing all markers.
 
-#### Name
+#### Name – Add/Edit marker dialog: Marker name (short description)
 
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Text box
-- **Description:** Add/Edit marker dialog: Marker name (short description)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Regular+ · `t_styName`
 
 > Consists of: Marker..Endmarker - Group - short description and helps to place the marker in the tree listing all markers.
 
-**Explanation:**
+Form: `marker - Category - short description`. The middle part (for example `Paragraph`, `Character`, `Heading`) decides the category in the list. PTXprint updates the start of the name when you type a marker code.
 
-A name in the form `marker - Category - short description`. The middle part decides in which category of the marker list the style appears (for example `Paragraph`, `Character`, `Heading`). PTXprint updates the start of the name when you type a marker code.
+#### End Marker – Add/Edit marker dialog: End Marker (code)
 
-*(Internal ID: `t_styName`)*
-
-#### End Marker
-
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Text box
-- **Description:** Add/Edit marker dialog: End Marker (code)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Regular+ · `t_styEndMarker`
 
 > If the closing marker for this marker is not the same as the marker followed by a * then enter it here. For example, with paired milestones, do not create a new milestone just specify the closing milestone marker here.
 
-**Explanation:**
+Usually leave it empty: for character and note markers PTXprint adds the marker followed by `*`. For a pair of milestone markers, type the closing milestone here.
 
-Usually leave this empty. For character and note markers PTXprint adds the end marker for you (the marker followed by `*`). For a pair of milestone markers, type the closing milestone here.
+#### ⚠️Type – Add/Edit marker dialog: Marker type
 
-*(Internal ID: `t_styEndMarker`)*
-
-#### ⚠️Type
-
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Drop-down list
-- **Description:** Add/Edit marker dialog: Marker type
-- **View level:** Default and Full views
-- **Choices:** Header; Title; Introduction; Introduction Character; Section Paragraph; Verse Paragraph; Character; List; List Character; Milestone; Standalone Milestone; Other Paragraph; Cross Reference; Cross Reference Character; Footnote; Footnote Character; Cell; Attribute; Identification; Internal
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_styType`  
+Choices: Header | Title | Introduction | Introduction Character | Section Paragraph | Verse Paragraph | Character | List | List Character | Milestone | Standalone Milestone | Other Paragraph | Cross Reference | Cross Reference Character | Footnote | Footnote Character | Cell | Attribute | Identification | Internal
 
 > [Required] This tells PTXprint what kind of marker this is.
 >
 > [Required] This tells PTXprint what kind of a marker this is.
 
-**Explanation:**
-
-Required. Tells PTXprint what kind of marker this is, for example **Verse Paragraph** for a body text paragraph, **Section Paragraph** for a heading, **Character** for a few words inside a paragraph, or **Footnote**. It cannot be changed for standard USFM markers.
-
-*(Internal ID: `fcb_styType`)*
+For example **Verse Paragraph** for body text, **Section Paragraph** for a heading, **Character** for words inside a paragraph, or **Footnote**. Cannot be changed for standard USFM markers.
 
 #### [Required] This tells PTXprint how to layout data in this ma...
 
-- **Where:** Add/Edit Style (dialog)
-- **Type:** Text box
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Regular+
 
 > [Required] This tells PTXprint how to layout data in this marker. For normal, vernacular body text, use VerseText. If this is part of a heading, use Section. If it is part of the title block of a book, use Title. NoteText makes this a kind of footnote, like \x.
 
-### Styles tab
+### Styles
 
-#### Find
+#### Find – Find style
 
-- **Where:** Styles tab
-- **Type:** Search box
-- **Description:** Find style
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Search box · Regular+ · `t_styleSearch`  
+Greyed out by: “Lock UI Layout Settings”
 
 > If you are not sure which category your marker can be found under, then use this Search tool to find the marker you need.
 
-**Explanation:**
-
-Type a marker code (the backslash is optional) or part of a marker's name. PTXprint waits half a second, then selects the first match, opens the categories that contain matches and colours every matching line pale peach. Clear the box to remove the colouring.
-
-*(Internal ID: `t_styleSearch`)*
+Type a marker code (backslash optional, for example `s1` or `\s1`) or part of a name (for example `heading`). After half a second PTXprint selects the first match, opens the categories with matches and colours every matching line pale peach. Clear the box to remove the colouring.
 
 #### Enable (or disable) the filter to only show markers that are...
 
-- **Where:** Styles tab
-- **Type:** Toggle button (not ticked by default)
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Toggle, off · Regular+ · `btn_styleFilter`  
+Greyed out by: “Lock UI Layout Settings”
 
 > Enable (or disable) the filter to only show markers that are in use in the current set of books.
 
-**Explanation:**
-
-This button has a bulleted-list icon. When it is pressed in, the list shows only the markers that are used in the books currently chosen for printing, and all categories are opened. Press it again to see all markers. If your text has a USFM error, PTXprint shows an error message instead.
-
-*(Internal ID: `btn_styleFilter`)*
+The bulleted-list icon next to **Find**. When pressed in, the list shows only markers used in the books chosen for printing, with all categories open. Press again to see all markers. If your text has a USFM error, PTXprint shows an error message instead.
 
 #### tv_Styles
 
-- **Where:** Styles tab
-- **Type:** Table
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
+Table · Regular+ · `tv_Styles`  
+Greyed out by: “Lock UI Layout Settings”
 
-**Explanation:**
-
-The list of all markers, grouped by category (bold blue lines). Click a marker to show its settings on the right. A line through a marker means it is not printed (**Include Contents of Marker** is unticked).
-
-*(Internal ID: `tv_Styles`)*
+Category lines are bold blue. A line through a marker means it is not printed.
 
 #### Include Contents of Marker
 
-- **Where:** Styles tab
-- **Type:** Checkbox (ticked by default)
-- **Description:** Styles: Include marker contents in PDF
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_styTextProperties`  
+Also: Styles: Include marker contents in PDF · Greyed out by: “Lock UI Layout Settings”
 
 > Uncheck this option to set the marker to "non-publishable" so the contents of this marker will not be included in the output.
 
-**Explanation:**
+Tick it to print markers hidden by default, such as `\rem`. For the heading box, title box and text border, the **Tabs+Borders** tab sets this for you.
 
-Untick to leave all text inside this marker out of the PDF. Tick it to print markers that are hidden by default, such as `\rem`. For the automatic heading box, title box and text border, PTXprint sets this box for you when you turn those features on or off on the **Tabs+Borders** tab.
+#### Include Contents of Marker
 
-*(Internal ID: `c_styTextProperties`)*
+##### More Info...
 
-### Styles tab › Include Contents of Marker
+Link · not shown · `l_url_usfm`  
+Greyed out by: “Lock UI Layout Settings”
 
-#### More Info...
+Opens in your web browser. For some interface languages the page goes through an automatic translation, unless **Only Use English Links** is ticked on the **Advanced** tab. Shown only in the **Full** view when internet use is allowed. Greyed out for combined or custom markers.
 
-- **Where:** Styles tab › Include Contents of Marker
-- **Type:** Link
-- **View level:** Not normally shown
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
+##### Add
 
-**Explanation:**
-
-Opens the official USFM documentation page for the selected marker in your web browser. For some interface languages, the page is opened through an automatic translation, unless **Only Use English Links** is ticked on the **Advanced** tab. Shown only in the **Full** view and when internet use is allowed. Greyed out for combined or custom markers.
-
-*(Internal ID: `l_url_usfm`)*
-
-#### Add
-
-- **Where:** Styles tab › Include Contents of Marker
-- **Type:** Button
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_styAdd`  
+Greyed out by: “Lock UI Layout Settings”
 
 > Find a style within the appropriate section which is similar to the new style you wish to create. Then click this Add button to create a new style based on the currently selected style.
 
-**Explanation:**
+The copy includes all settings (also border and padding of box styles). Then fill in the **Add/Edit Style** dialog. Advanced.
 
-Creates a new style. Select a similar existing style first, because the new style starts as a copy of it. Then fill in the **Add/Edit Style** dialog. This is an advanced task.
+##### Del
 
-*(Internal ID: `btn_styAdd`)*
-
-#### Del
-
-- **Where:** Styles tab › Include Contents of Marker
-- **Type:** Button
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_styDel`  
+Greyed out by: “Lock UI Layout Settings”
 
 > Click to delete this style (only styles you have added can be deleted). Warning: There is no confirmation or undo!
 
-**Explanation:**
+For standard styles nothing happens.
 
-Deletes the selected style, without asking. It only works for styles that you added yourself; for standard styles nothing happens.
+##### Click to remove all changes made to this style, returning it...
 
-*(Internal ID: `btn_styDel`)*
-
-#### Click to remove all changes made to this style, returning it...
-
-- **Where:** Styles tab › Include Contents of Marker
-- **Type:** Button
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_styReset`  
+Greyed out by: “Lock UI Layout Settings”
 
 > Click to remove all changes made to this style, returning it to the values in the underlying stylesheets.
 
-**Explanation:**
+The circular-arrows button. To reset one setting, click its bold name instead. Reset keeps the name, description and end marker. Greyed out for styles you created, because they have no underlying values to go back to.
 
-The circular-arrows button. It removes all changes you have made on this tab to the selected style, so it goes back to the values from the underlying stylesheets. To reset only one setting, click that setting's bold name instead. Be careful with styles you created yourself: Reset also clears the settings you gave them.
+##### Edit
 
-*(Internal ID: `btn_styReset`)*
-
-#### Edit
-
-- **Where:** Styles tab › Include Contents of Marker
-- **Type:** Button
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_styEdit`  
+Greyed out by: “Lock UI Layout Settings”
 
 > Click to Edit additional properties for this style.
 
-**Explanation:**
+Change name, description, type or end marker. The marker code cannot be changed.
 
-Opens the **Add/Edit Style** dialog for the selected style, so you can change its name, description, type or end marker. The marker code itself cannot be changed here.
+##### Hover-help
 
-*(Internal ID: `btn_styEdit`)*
-
-#### Hover-help
-
-- **Where:** Styles tab › Include Contents of Marker
-- **Type:** Label
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+  
+Greyed out by: “Lock UI Layout Settings”
 
 > Hover over these help topics to gain a greater understanding about how the Styles editor works.
 
-#### Why are some parameters bold?
+##### Why are some parameters bold?
 
-- **Where:** Styles tab › Include Contents of Marker
-- **Type:** Label
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+  
+Greyed out by: “Lock UI Layout Settings”
 
 > When a setting's name is in bold it indicates that the value is different from what is in the stylesheet.
 >
 > Note that you can click on a bold setting name of any parameter to RESET it to the stylesheet value.
 
-#### How are Stylesheets applied?
+##### How are Stylesheets applied?
 
-- **Where:** Styles tab › Include Contents of Marker
-- **Type:** Label
-- **View level:** Default and Full views
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+  
+Greyed out by: “Lock UI Layout Settings”
 
 > Stylesheets are applied in this order with later settings overriding earlier settings:
 >
@@ -1052,240 +683,122 @@ Opens the **Add/Edit Style** dialog for the selected style, so you can change it
 >
 > Optional: ptxprint-mods.sty can be edited from the Advanced tab. Because it comes last, it takes priority.
 
-### Styles tab › Include Contents of Marker › Character Settings
+##### Character Settings
 
-#### Select Font...
+###### Select Font...
 
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Button
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
+Button · Regular+ · `bl_font_styFontName`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
-**Explanation:**
+With no font chosen, the marker uses the main font from the **Fonts+Script** tab. When a font is set, the **Font** label is bold; click it to go back to the main font.
 
-Opens the font picker to choose a font just for this marker. If you choose nothing, the marker uses the main font from the **Fonts+Script** tab. When a font is set, the **Font** label is bold; click the bold label to go back to the main font.
+###### Font Size Factor – Styles: Font size factor
 
-*(Internal ID: `bl_font_styFontName`)*
-
-#### Font Size Factor
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Number box
-- **Description:** Styles: Font size factor
-- **View level:** Default and Full views
-- **Values:** from 0.1 to 50, default 1
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styFontSize`  
+Values: 0.1–50 (default 1) · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > This is a factor or proportion of the base font size. So 1.0 is the same as the base font size from the Layout tab. (Not available for \p, which always uses the Base Font Size.)
 
-**Explanation:**
+0.8 is smaller, 1.5 bigger. The real size in points is shown under the font button. With **Scale Relative to Parent** ticked, this becomes **Font Scale**, relative to the surrounding text.
 
-1.0 means the same size as the **Base Font Size** on the **Layout** tab; 0.8 is smaller and 1.5 is bigger. The real size in points is shown under the font button. Greyed out for `\p`, whose size is the base font size. If **Scale Relative to Parent** is ticked, this box becomes **Font Scale** and is relative to the surrounding text.
+###### Scale Relative to Parent
 
-*(Internal ID: `s_styFontSize`)*
-
-#### Scale Relative to Parent
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Styles: Scale relative to parent
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_styFontScale`  
+Also: Styles: Scale relative to parent · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Normally the Font Size is relative to the Base Font Size (Layout tab). Tick this to make it relative to the size of the surrounding text instead. Note that  
 > \p has a FontSize of 12 in the underlying stylesheet.
 
-**Explanation:**
+Use it when the size should follow the surrounding text, for example a character style that is always 80% of its paragraph. The size box label changes to **Font Scale**.
 
-Tick this when the size should follow the surrounding text, for example for a character style that should always be 80% of whatever paragraph it is in. When ticked, the size box label changes to **Font Scale**.
+###### Bold
 
-*(Internal ID: `c_styFontScale`)*
+Checkbox, off · Regular+ · `c_styFaceBold`  
+Also: Styles: Bold · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
-#### Bold
+If the font has no real bold face, PTXprint may use a faux (computer-made) bold, depending on the **Fonts+Script** tab settings.
 
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Styles: Bold
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
+###### Italic
 
-**Explanation:**
+Checkbox, off · Regular+ · `c_styFaceItalic`  
+Also: Styles: Italic · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
-Makes the text of this marker bold. If the font has no real bold face, PTXprint may use a faux (computer-made) bold, depending on the settings on the **Fonts+Script** tab.
+If the font has no real italic face, a computer-made slant may be used.
 
-*(Internal ID: `c_styFaceBold`)*
+###### Superscript
 
-#### Italic
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Styles: Italic
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Explanation:**
-
-Makes the text of this marker italic. If the font has no real italic face, a computer-made slant may be used.
-
-*(Internal ID: `c_styFaceItalic`)*
-
-#### Superscript
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Styles: Superscript
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_styFaceSuperscript`  
+Also: Styles: Superscript · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > The superscript option overrides these settings:  
 >    Font Size Factor is set to 0.75  
 >    Raise is set to 0.85 times the x-height of the font (which  
 >    defaults to 1/2 the ascent if not specified in the font).
 
-**Explanation:**
+Used for verse numbers or footnote callers.
 
-Makes the text small and raised, as for verse numbers or footnote callers. While it is ticked, the **Raise** box is greyed out.
+###### SmallCaps
 
-*(Internal ID: `c_styFaceSuperscript`)*
+Checkbox, off · Regular+ · `c_stySmallCap`  
+Also: Styles: Smallcaps · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
-#### SmallCaps
+Prints lowercase letters as small capitals. Needs a font that supports them, and only has an effect in scripts with upper and lower case. Often used for `\nd` (LORD).
 
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Styles: Smallcaps
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
+###### Raise – Styles: Raise
 
-**Explanation:**
-
-Prints lowercase letters as small capital letters. This needs a font that supports small capitals, and it only has an effect in scripts that have upper and lower case. It is often used for `\nd` (LORD).
-
-*(Internal ID: `c_stySmallCap`)*
-
-#### Raise
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Number box
-- **Description:** Styles: Raise
-- **View level:** Default and Full views
-- **Values:** from -50 to 50
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Superscript”, “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styRaise`  
+Values: -50–50 · Needs: “Include Contents of Marker” · Greyed out by: “Superscript”, “Lock UI Layout Settings”
 
 > How much to raise the text (in pts).
 
-**Explanation:**
+A negative number moves the text down. Use small values. Raised text cannot break across lines, so use it only for short text.
 
-Moves the text up by this many points (a negative number moves it down). Use small values. Raised text cannot break across lines, so use it only for short pieces of text.
+###### Color: x001122 – Styles: Color
 
-*(Internal ID: `s_styRaise`)*
-
-#### Color: x001122
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Colour picker
-- **Description:** Styles: Color
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Regular+ · `col_styColor`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Sets text color for text in this style.
 
-**Explanation:**
+The colour code is shown next to the label. Choosing a colour also ticks **Enable Colored Text** on the **Fonts+Script** tab; if that is later unticked, the colour does not print. Click the bold **Color** label to remove your colour.
 
-Click to choose a text colour. The colour code is shown next to the label. When you choose a colour, PTXprint also ticks **Enable Colored Text** on the **Fonts+Script** tab; if that box is later unticked, the colour does not print. Click the bold **Color** label to remove your colour.
+###### Underline
 
-*(Internal ID: `col_styColor`)*
-
-#### Underline
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Styles: Underline
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_styFaceUnderline`  
+Also: Styles: Underline · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Note that underlining in printed scripture text is actively discouraged.
 
-**Explanation:**
+Underlines the text of this marker.
 
-Underlines the text of this marker. Underlining is usually avoided in printed Scripture.
+###### 11.7pt (↑6.6 ↓2.2)
 
-*(Internal ID: `c_styFaceUnderline`)*
-
-#### 11.7pt (↑6.6 ↓2.2)
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Label
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+ · `l_styActualFontSize`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Calculated absolute point size given the current Base Font Size (which is set on the Layout tab).
 >
 > The (↑Ascender ↓Descender) values from the base line for this font are provided for reference.
 
-**Explanation:**
+Worked out from **Font Size Factor** and **Base Font Size**. Information only.
 
-Shows the real font size in points (pt, about 0.35 mm) for this marker, worked out from the **Font Size Factor** and the **Base Font Size**. The arrows show how far the font's letters reach above and below the line. This is information only.
+###### GR stretch=95% bold=1.8 ital=0.15
 
-*(Internal ID: `l_styActualFontSize`)*
-
-#### GR stretch=95% bold=1.8 ital=0.15
-
-- **Where:** Styles tab › Include Contents of Marker › Character Settings
-- **Type:** Label
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+ · `l_styFontFeats`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > If any modifications to the typeface have been selected, then they will be displayed here.
 >
 > GR= Graphite has been enabled stretch= (or shrink) font horizontally bold= embolden value (faux bold) ital= slant value (faux italics)
 
-**Explanation:**
+Empty when there are no changes. Information only.
 
-Shows any special changes to the font for this marker: GR (Graphite), stretch, faux bold or slant. It is empty when there are none. This is information only.
+##### Paragraph Settings
 
-*(Internal ID: `l_styFontFeats`)*
+###### Alignment – Styles: Paragraph alignment
 
-### Styles tab › Include Contents of Marker › Paragraph Settings
-
-#### Alignment
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Drop-down list
-- **Description:** Styles: Paragraph alignment
-- **View level:** Default and Full views
-- **Choices:** Justified; Left; LeftBal; Center; Right; Inner; Outer
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_styJustification`  
+Choices: Justified | Left | LeftBal | Center | Right | Inner | Outer · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > If text is justified but Justify Paragraphs is turned off on the Body tab then an alignment of Justified here is treated as Left, (and maybe swapped if Right-to-Left).
 >
@@ -1301,447 +814,220 @@ Shows any special changes to the font for this marker: GR (Graphite), stretch, f
 >   Note: Marginal notes cannot switch sides mid-paragraph  
 >              if the page or column changes.
 
-**Explanation:**
+**LeftBal** is left-aligned with more even line lengths. **Inner** and **Outer** depend on which side of the page or column the text is on. Click the bold **Alignment** label to undo your change.
 
-Choose how the lines line up. **Justified** gives straight edges on both sides (only if **Justify Paragraphs** is ticked on the **Body** tab). **LeftBal** is left-aligned with more even line lengths. **Inner** and **Outer** depend on which side of the page or column the text is on. Click the bold **Alignment** label to undo your change.
+###### First Line Indent Factor
 
-*(Internal ID: `fcb_styJustification`)*
-
-#### First Line Indent Factor
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** from -50 to 50
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styFirstLineIndent`  
+Values: -50–50 · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > This is multiplied by the Base Paragraph Indent value (specified on the Layout tab) to get the final indentation amount.
 
-**Explanation:**
+1 is a normal paragraph indent, 0 is none. A negative value gives a hanging indent, often used for poetry and lists. For sidebars it moves the whole box sideways.
 
-Indent of the first line, as a multiple of the **Base Indent** on the **Layout** tab. 1 is a normal paragraph indent, 0 is no indent. A negative value gives a hanging indent, often used for poetry and lists. For sidebars this moves the whole box sideways.
+###### Left Indent Factor – Styles: Left indent
 
-*(Internal ID: `s_styFirstLineIndent`)*
-
-#### Left Indent Factor
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Number box
-- **Description:** Styles: Left indent
-- **View level:** Default and Full views
-- **Values:** from -100 to 100
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styLeftMargin`  
+Values: -100–100 · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > This is multiplied by the Base Paragraph Indent value (specified on the Layout tab) to get the final indentation amount.
 >
 > When the Writing system text flow direction is Right-to-Left the interpretation of Left and Right is swapped.
 
-**Explanation:**
+Indents the whole paragraph. Use it for poetry levels, quotations and lists.
 
-Indent of the left side of the whole paragraph, as a multiple of the **Base Indent**. Use it for poetry levels, quotations and lists. For right-to-left text it is the right side.
+###### Right Indent Factor – Styles: Right indent
 
-*(Internal ID: `s_styLeftMargin`)*
-
-#### Right Indent Factor
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Number box
-- **Description:** Styles: Right indent
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styRightMargin`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > This is multiplied by the Base Paragraph Indent value (specified on the Layout tab) to get the final indentation amount.
 >
 > When the Writing system text flow direction is Right-to-Left the interpretation of Left and Right is swapped.
 
-**Explanation:**
+Indents the whole paragraph from the right (left for right-to-left text).
 
-Indent of the right side of the whole paragraph, as a multiple of the **Base Indent**. For right-to-left text it is the left side.
+###### Line Spacing Factor – Styles: Line spacing
 
-*(Internal ID: `s_styRightMargin`)*
-
-#### Line Spacing Factor
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Number box
-- **Description:** Styles: Line spacing
-- **View level:** Default and Full views
-- **Values:** default 1
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styLineSpacing`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > This is a proportion of the base line spacing. So 1.0 is the same as the base line spacing from the Layout tab. If Absolute Spacing is set, then this value is the line spacing in pts.
 
-**Explanation:**
+1.0 is the same as **Base Line Spacing**. With **Use Absolute Spacing** ticked, the label changes to **Baseline**. Greyed out for `\p`.
 
-Line spacing for this paragraph type, compared with the **Base Line Spacing** on the **Layout** tab. 1.0 is the same. If **Use Absolute Spacing** is ticked, the label changes to **Baseline** and the number is in points. Greyed out for `\p`.
+###### Use Absolute Spacing (in pts)
 
-*(Internal ID: `s_styLineSpacing`)*
-
-#### Use Absolute Spacing (in pts)
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Styles: Use absolute line spacing
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_styAbsoluteLineSpacing`  
+Also: Styles: Use absolute line spacing · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > The Line Spacing is usually calculated as a factor of the Font Size. If you prefer to specify an exact/absolute line spacing (in points), then enable this option.
 
-**Explanation:**
+PTXprint converts the value when you tick or untick it, and keeps only the new kind, so you can switch back and forth safely. A fixed value does not change when you later change the base line spacing. Greyed out for `\p`.
 
-Tick to give the line spacing as a fixed number of points instead of a factor. PTXprint converts the current value when you tick or untick it. A fixed value does not change when you change the base line spacing later. Greyed out for `\p`.
+###### Space Before Factor – Styles: Space before
 
-*(Internal ID: `c_styAbsoluteLineSpacing`)*
-
-#### Space Before Factor
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Number box
-- **Description:** Styles: Space before
-- **View level:** Default and Full views
-- **Values:** from -1 to 5
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_stySpaceBefore`  
+Values: -1–5 · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Amount of space to insert before the paragraph. The actual space is this factor multiplied by the base line spacing from the Layout tab.
 
-**Explanation:**
+1.0 is about one empty line. Headings often use 0.5 to 1.5.
 
-Extra space above the paragraph, as a multiple of the base line spacing. 1.0 is about one empty line. Headings often use 0.5 to 1.5.
+###### Space After Factor – Styles: Space after
 
-*(Internal ID: `s_stySpaceBefore`)*
-
-#### Space After Factor
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Number box
-- **Description:** Styles: Space after
-- **View level:** Default and Full views
-- **Values:** from -1 to 5
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_stySpaceAfter`  
+Values: -1–5 · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Amount of space to insert after the paragraph. The actual space is this factor multiplied by the base line spacing from the Layout tab.
 
-**Explanation:**
+1.0 is about one empty line.
 
-Extra space below the paragraph, as a multiple of the base line spacing. 1.0 is about one empty line.
+###### Maximum Ragged Space – Styles: Maximum ragged (fill) space
 
-*(Internal ID: `s_stySpaceAfter`)*
-
-#### Maximum Ragged Space
-
-- **Where:** Styles tab › Include Contents of Marker › Paragraph Settings
-- **Type:** Number box
-- **Description:** Styles: Maximum ragged (fill) space
-- **View level:** Default and Full views
-- **Values:** default 0.25
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styNonJustifiedFill`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > How much of the column-width can be empty space at a non-justified edge? This affects mid-paragraph line-breaking and may cause stretching of other spacing if the line would be too short otherwise. It does not stop the final line of a paragraph from being shorter.
 >
 > This value is set as the proportion of the column width, with sensible values being with the range of 0.20 to 0.75 (where 1.00 represents the entire column width). Discretionary breaks (//) will be ignored if breaking there would leave more than this much space.
 
-**Explanation:**
+Default 0.25 (a quarter of the line). Larger values allow more uneven lines; smaller values make lines more even but may stretch word spaces.
 
-Only matters for paragraphs that are not justified. The default 0.25 means up to a quarter of the line may stay empty at the ragged edge. Larger values allow more uneven lines; smaller values make lines more even but may stretch the spaces between words.
+##### Other Settings › Note Settings
 
-*(Internal ID: `s_styNonJustifiedFill`)*
+###### Caller Raise – Note settings: Caller raise
 
-### Styles tab › Include Contents of Marker › Other Settings › Note Settings
-
-#### Caller Raise
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Note Settings
-- **Type:** Number box
-- **Description:** Note settings: Caller raise
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styCallerRaise`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Raise the caller in the main text by this number of points.
 
-**Explanation:**
+Leave it at 0 unless the caller sits too high or too low.
 
-How many points the note caller in the main text is raised. Leave it at 0 unless the caller sits too high or too low.
+###### Note Caller Raise – Note settings: Note caller raise
 
-*(Internal ID: `s_styCallerRaise`)*
-
-#### Note Caller Raise
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Note Settings
-- **Type:** Number box
-- **Description:** Note settings: Note caller raise
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_styNoteCallerRaise`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Raise the caller in the note by this number of points.
 
-**Explanation:**
+The caller at the start of the note itself.
 
-How many points the caller at the start of the note itself is raised.
+###### Caller Style – Note settings: Caller style
 
-*(Internal ID: `s_styNoteCallerRaise`)*
-
-#### Caller Style
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Note Settings
-- **Type:** Text box
-- **Description:** Note settings: Caller style
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Regular+ · `t_styCallerStyle`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > The style which is used to style the caller in the main text. If none is specified then  
 > \v is used.
 
-**Explanation:**
+Type the marker code without the backslash. Advanced.
 
-Type the marker code of the style to use for the caller in the main text (without the backslash). If empty, the verse number style is used. Advanced.
+###### Note Caller Style – Note settings: Note caller style
 
-*(Internal ID: `t_styCallerStyle`)*
-
-#### Note Caller Style
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Note Settings
-- **Type:** Text box
-- **Description:** Note settings: Note caller style
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Regular+ · `t_styNoteCallerStyle`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > The style which is used to style the caller in the note itself. If none is specified then  
 > \v is used.
 
-**Explanation:**
+Type the marker code without the backslash. Advanced.
 
-Type the marker code of the style to use for the caller at the start of the note. If empty, the verse number style is used. Advanced.
+###### Note Blend Into Style – Note settings: Note blend into style
 
-*(Internal ID: `t_styNoteCallerStyle`)*
-
-#### Note Blend Into Style
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Note Settings
-- **Type:** Text box
-- **Description:** Note settings: Note blend into style
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Text box · Regular+ · `t_NoteBlendInto`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Insert the notes of the marker being defined into the collection of notes in the marker specified here.
 >
 > For example, if when defining the \x style, if this value was set to f then all cross references would be blended into the \f footnotes.
 
-**Explanation:**
+The blended notes keep their own style. The **Notes+Refs** tab sets this for cross-references when you blend them with footnotes, so normally you type nothing here.
 
-Type the code of another note type (for example `f`) to print these notes together with those notes, while keeping their own style. The **Notes+Refs** tab sets this for cross-references when you choose to blend them with footnotes, so normally you do not need to type anything here.
+##### Other Settings › Table Settings
 
-*(Internal ID: `t_NoteBlendInto`)*
+###### Table settings: Vertical position of \tc markers
 
-### Styles tab › Include Contents of Marker › Other Settings › Table Settings
-
-#### Table settings: Vertical position of \tc markers
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Table Settings
-- **Type:** Drop-down list
-- **View level:** Default and Full views
-- **Choices:** Top; Center; Bottom; Gridded Center
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Drop-down · Regular+ · `fcb_stytcVpos`  
+Choices: Top | Center | Bottom | Gridded Center · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Where text sits vertically in a table cell that is shorter than the tallest cell in the row. Gridded Center keeps the text on whole lines.
 
-**Explanation:**
+**Gridded Center** keeps the text on whole lines so it lines up with the other cells.
 
-For table cells: where the text sits when a cell has fewer lines than the tallest cell in the row. **Top**, **Center** or **Bottom**. **Gridded Center** centres the text but keeps it on whole lines, so it lines up with the other cells.
+##### Other Settings › Sidebar Settings
 
-*(Internal ID: `fcb_stytcVpos`)*
+###### Color – Sidebar settings: Color
 
-### Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-
-#### Color
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-- **Type:** Colour picker
-- **Description:** Sidebar settings: Color
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Regular+ · `col_sb_backColor`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Sets the background color for the sidebar.
 >
 > Background shading color.
 
-**Explanation:**
+Choose a light colour so the text stays easy to read. Click the bold **Color** label to remove your change.
 
-The background colour of this sidebar category. Choose a light colour so the text stays easy to read. Click the bold **Color** label to remove your change.
+###### Alpha – Sidebar settings: Alpha (transparency)
 
-*(Internal ID: `col_sb_backColor`)*
-
-#### Alpha
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-- **Type:** Number box
-- **Description:** Sidebar settings: Alpha (transparency)
-- **View level:** Default and Full views
-- **Values:** default 0.5
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbAlpha`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > The transparency or alpha value of the background colour:  
 > 0 is transparent, 1 is solid.
 
-**Explanation:**
+A value below 1 lets a background image or page decoration show through.
 
-How solid the sidebar background colour is: 0 is clear and 1 is solid. A value below 1 lets a background image or page decoration show through.
+###### Width – Sidebar settings: Width
 
-*(Internal ID: `s_sbAlpha`)*
-
-#### Width
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-- **Type:** Number box
-- **Description:** Sidebar settings: Width
-- **View level:** Default and Full views
-- **Values:** from 0.25 to 2.5, default 1
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_sbWidth`  
+Values: 0.25–2.5 (default 1) · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Sidebar width as a proportion of the column/page width (1.0 = full width,  
 > 0.5 = half width).
 
-**Explanation:**
+Relative to the frame chosen in **Size and Position**. Narrow boxes are useful for cutouts.
 
-The width of the sidebar compared with the column (or page) width that is chosen in **Size and Position**. 1 is the full width; 0.5 is half. Narrow boxes are useful for cutouts.
+###### Borders...
 
-*(Internal ID: `s_sbWidth`)*
-
-#### Borders...
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-- **Type:** Button
-- **Description:** Sidebar settings: Borders
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_sbBorders`  
+Also: Sidebar settings: Borders · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Click for additional settings to control the look of borders for this category of sidebar.
 
-**Explanation:**
+Border lines, colours, padding and ornaments. See the **Tabs+Borders** chapter.
 
-Opens the **Border Settings** dialog for the selected sidebar category: border lines, colours, padding and ornaments. See the **Tabs+Borders** chapter.
+###### Foreground Image...
 
-*(Internal ID: `btn_sbBorders`)*
-
-#### Foreground Image...
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-- **Type:** Button
-- **Description:** Sidebar settings: Foreground image settings
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_sbFGIDia`  
+Also: Sidebar settings: Foreground image settings · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Click for additional settings to use a foreground image for this category of sidebar.
 
-**Explanation:**
+A foreground image is shown in every box of this category, for example a scroll for history notes.
 
-Opens **Sidebar Image Settings** for a foreground image: a small picture, such as a logo, shown in every box of this category (for example a scroll for history notes).
+###### Background Image...
 
-*(Internal ID: `btn_sbFGIDia`)*
-
-#### Background Image...
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-- **Type:** Button
-- **Description:** Sidebar settings: Background image settings
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_sbBGIDia`  
+Also: Sidebar settings: Background image settings · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Click for additional settings to use a background image for this category of sidebar.
 
-**Explanation:**
+A background image sits behind the text of the box, like a watermark.
 
-Opens **Sidebar Image Settings** for a background image: a picture behind the text of the box, like a watermark.
+###### t_sbPgPos
 
-*(Internal ID: `btn_sbBGIDia`)*
+Text box · Regular+ · `t_sbPgPos`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
-#### t_sbPgPos
+Examples: `t` (top), `bl` (bottom left), `cr2` (cutout on the right, 2 lines down), `Pcf` (whole page, filled). Use the **Size and Position...** button rather than typing here.
 
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-- **Type:** Text box
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
+###### Size and Position...
 
-**Explanation:**
-
-Shows the position code that **Size and Position...** made, for example `t` (top), `bl` (bottom left), `cr2` (cutout on the right, 2 lines down) or `Pcf` (whole page, filled). Use the **Size and Position...** button rather than typing here.
-
-*(Internal ID: `t_sbPgPos`)*
-
-#### Size and Position...
-
-- **Where:** Styles tab › Include Contents of Marker › Other Settings › Sidebar Settings
-- **Type:** Button
-- **View level:** Default and Full views
-- **Only available when:** “Include Contents of Marker” is selected
-- **Greyed out when:** “Lock UI Layout Settings” is ticked
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_sbSizePosition`  
+Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Choose the frame size and position of this category of sidebar on the page.
 
-**Explanation:**
-
-Opens the **Size and Position Settings** dialog, where you choose the frame size and the place of the sidebar on the page with a preview picture.
-
-*(Internal ID: `btn_sbSizePosition`)*
+The dialog has a preview picture.

@@ -1,53 +1,49 @@
-# Getting started with PTXprint
+# 2. Getting started with PTXprint
 
-## About this chapter
+## 2.1 About this chapter
 
-This chapter is for people who are using PTXprint for the first time. It takes you step by step
-from opening PTXprint to your first PDF. Then it shows you how to change a few common things, and
-how to keep different sets of settings for different kinds of output.
+This chapter is for people who use PTXprint for the first time. It takes you step by step from
+opening PTXprint to your first PDF. Then it shows how to change a few common things, and how to
+keep different sets of settings for different kinds of output.
 
-You do not need to read the rest of the manual before you start. Each step tells you which chapter
-to read if you want to know more.
+You do not need to read the rest of the manual first. Each step tells you which chapter to read
+for more.
 
 In this chapter, "pt" means point. One point is about 0.35 mm. Font sizes and line spacing are
 given in points.
 
-## Before you start
+## 2.2 Before you start
 
 Check these things before you open PTXprint:
 
-1. **You have a Paratext project.** PTXprint prints the text of a Paratext project. The project
-   must be on this computer. If you use Send/Receive in Paratext, do a Send/Receive first, so that
-   you have the latest text.
+1. **You have a Paratext project** on this computer. PTXprint prints its text. If you use
+   Send/Receive in Paratext, do a Send/Receive first, so that you have the latest text.
 2. **The text has no serious marker errors.** PTXprint uses the USFM markers in the text (for
    example `\p` for a paragraph or `\v` for a verse). Run the Basic Checks in Paratext. Marker
    errors can stop PTXprint or give strange results.
-3. **The fonts are installed.** Install the fonts that your project needs on this computer. Install
-   them **for all users**. If a font is installed only for one user, PTXprint may not find it.
-4. **You do not have a project, but want to practise?** You can still use PTXprint. It can install
-   a sample English Bible (the Berean Standard Bible) for you. See "Get a text to practise with"
-   in the **Basic tab** chapter.
+3. **The fonts are installed** on this computer **for all users**. If a font is installed only
+   for one user, PTXprint may not find it.
+4. **No project, but you want to practise?** PTXprint can install a sample English Bible (the
+   Berean Standard Bible) for you. See "Get a text to practise with" in the **Basic tab** chapter.
 
-## Open PTXprint
+## 2.3 Open PTXprint
 
-1. Start PTXprint in the same way as other programs on your computer, for example from the
-   Windows Start menu.
+1. Start PTXprint like other programs on your computer, for example from the Windows Start menu.
 2. The main PTXprint window opens. It has:
    * **tabs** across the top (**Basic**, **Layout**, **Fonts+Script** and others). Each tab holds
      one group of settings;
    * the **☰** button at the top-right, for the main menu;
    * a **bar at the bottom** with the **Save**, **Print (Make PDF)** and **Quit** buttons.
 
-The first time PTXprint starts, it uses the **Default** view level. This view shows most tabs and
-settings. If the window looks too full, you can change to a simpler view: click **☰**, point to
-**View Level**, and click **Basic View** or **Mini View**. Hidden settings still work. See the
-chapter **The main window, menu and view levels**.
+The first time PTXprint starts, it uses the **Regular** view level, which shows most tabs and
+settings. If the window looks too full, click **☰**, point to **View Level**, and click
+**Basic View** or **Mini View**. Hidden settings still work. See the chapter **The main window,
+menu and view levels**.
 
-If PTXprint does not show your projects in the **Project** list, it may be looking in the wrong
-folder. See "Use projects from another Paratext folder" in the chapter **Help tab and getting
-support**.
+If your projects are not in the **Project** list, PTXprint may be looking in the wrong folder. See
+"Use projects from another Paratext folder" in the chapter **Help tab and getting support**.
 
-## Choose the project and the configuration
+## 2.4 Choose the project and the configuration
 
 Everything starts on the **Basic** tab.
 
@@ -58,56 +54,54 @@ Everything starts on the **Basic** tab.
    **Default**.
 
 A **configuration** is a named set of PTXprint settings for one project: page size, fonts,
-pictures and so on. Every project has a configuration called **Default**. You can make more
-configurations later (see "Keep different settings for different outputs" below). For now, use
-**Default**.
+pictures and so on. Every project has a configuration called **Default**. You can make more later
+(see "Keep different settings for different outputs" below). For now, use **Default**.
 
-## Choose the books
+## 2.5 Choose the books
 
 On the **Basic** tab, in the **What to Print** area:
 
 1. Click **Single Book**.
-2. Choose a book from the list. For your first PDF, choose a short book, for example Ruth, Jonah,
-   Philippians or Jude. A short book prints quickly.
+2. Choose a book from the list. For your first PDF, choose a short book (for example Ruth, Jonah,
+   Philippians or Jude), because it prints quickly.
 3. To print only some chapters, type the first chapter in **From Chapter** and the last chapter in
    **To**.
 
-Later, to print several books, click **Select Multiple Books...**, click the books you want, and
-click **OK**. See the **Basic tab** chapter for more ways to choose books and passages.
+To print several books, click **Select Multiple Books...**, click the books you want, and click
+**OK**. See the **Basic tab** chapter for more ways to choose books and passages.
 
-## Make your first PDF
+## 2.6 Make your first PDF
 
 1. Click **Print (Make PDF)** at the bottom right of the window (or press **Ctrl+P**).
-2. PTXprint first saves your settings. Then it makes the PDF. A progress bar shows that it is
-   working. This can take from a few seconds to a few minutes, depending on the number of books
-   and pictures.
+2. PTXprint saves your settings, then makes the PDF. A progress bar shows that it is working. This
+   takes from a few seconds to a few minutes, depending on the number of books and pictures.
 3. When PTXprint has finished, the **PDF Preview** window opens and shows the PDF.
 
 If a message appears instead of the PDF, read it carefully. Two common messages at the start are:
 
 * **"No books to print"** – no book is selected. Choose a book on the **Basic** tab.
-* **"One or more fonts have not been set yet"** – go to the **Fonts+Script** tab and choose a font
-  for the main text (see "Change the main font" below).
+* **"One or more fonts have not been set yet"** – on the **Fonts+Script** tab, choose a font for
+  the main text (see "Change the main font" below).
 
-## Look at the PDF in the preview
+## 2.7 Look at the PDF in the preview
 
 The **PDF Preview** window shows the pages of your PDF.
 
-* Use the arrow buttons at the top, the **Left/Right arrow** keys, or the mouse wheel to move from
-  page to page.
-* Use the **Zoom** box, or hold **Ctrl** and turn the mouse wheel, to make the page bigger or
-  smaller.
+* To move from page to page, use the arrow buttons at the top, the **Left/Right arrow** keys, or
+  the mouse wheel.
+* To make the page bigger or smaller, use the **Zoom** box, or hold **Ctrl** and turn the mouse
+  wheel.
 * Tick **Book View** (or press **Ctrl+B**) to see two facing pages side by side, as in a printed
   book.
-* The title bar shows the name of the PDF file and the time when it was made. Check it, so you
-  know that you are looking at the newest PDF.
+* The title bar shows the name of the PDF file and the time it was made. Check it, so you know
+  you are looking at the newest PDF.
 * Click **Show main PTXprint settings** (or press **Alt+S**) to go back to the main window.
 
-If you close the Preview window, it is only hidden. It comes back the next time you print. The
-Preview window can do much more, for example find layout problems and fix them. See the chapter
-**PDF Preview window, layout analysis and page filling**.
+Closing the Preview window only hides it. It comes back the next time you print. The Preview
+window can also find layout problems and fix them. See the chapter **PDF Preview window, layout
+analysis and page filling**.
 
-## Change a few common things
+## 2.8 Change a few common things
 
 After each change, click **Print (Make PDF)** again to see the result.
 
@@ -129,9 +123,9 @@ change the page size later, every line of the book moves.
    then click the font in the list.
 4. Click **OK**.
 
-PTXprint then fills in the **Bold**, **Italic** and **Bold Italic** fonts for you from the same
-font family. If some characters print as empty boxes, the font does not have those characters.
-See the **Fonts+Script tab** chapter.
+PTXprint then fills in the **Bold**, **Italic** and **Bold Italic** fonts from the same font
+family. If some characters print as empty boxes, the font does not have those characters. See the
+**Fonts+Script tab** chapter.
 
 ### Change the font size
 
@@ -140,8 +134,8 @@ See the **Fonts+Script tab** chapter.
    for the main text.
 
 When **Lock Ratio** is ticked (the normal setting), PTXprint changes the **Base Line Spacing (pt)**
-with the font size, so that the page keeps the same look. Headings, footnotes and verse numbers
-also grow or shrink with the main text. See the **Layout tab** chapter.
+with the font size, so the page keeps the same look. Headings, footnotes and verse numbers also
+grow or shrink with the main text. See the **Layout tab** chapter.
 
 ### Change between one and two columns
 
@@ -153,7 +147,7 @@ PTXprint changes the **Base Indent** for you when you change the number of colum
 ### Turn pictures on or off
 
 The **Pictures** tab is not shown in the **Mini** view. If you cannot see it, click **☰** ›
-**View Level** › **Basic View** (or a higher view).
+**View Level** › **Basic View** (or higher).
 
 1. Click the **Pictures** tab.
 2. On the **Global Options** sub-tab, tick **Include Pictures (illustrations)** to print the
@@ -161,10 +155,10 @@ The **Pictures** tab is not shown in the **Mini** view. If you cannot see it, cl
 
 The first time you turn pictures on, PTXprint needs a list of the pictures (the PicList). It makes
 this list from the `\fig` entries in your Paratext text. See "Show the pictures that are in the
-Paratext text" in the **Pictures tab** chapter. While you are working on a draft, choose **Low
-Resolution (Smaller File)** on the same sub-tab, so that the PDF stays small.
+Paratext text" in the **Pictures tab** chapter. For a draft, choose **Low Resolution (Smaller
+File)** on the same sub-tab, so that the PDF stays small.
 
-## Keep different settings for different outputs
+## 2.9 Keep different settings for different outputs
 
 You often need more than one kind of PDF from the same project. For example:
 
@@ -181,8 +175,8 @@ output. Each configuration remembers its own settings.
 2. On the **Basic** tab, in the **Layout Configuration** area, click the **Save As** button (the
    icon next to the **Name** list).
 3. The **Save Current Configuration As...** dialog opens. Type a name, for example `Draft` or
-   `Final_A5`. Use only letters, numbers, brackets `( )`, underscores `_` and hyphens `-`. Do not
-   use spaces.
+   `Final_A5`. Use only letters, numbers, brackets `( )`, underscores `_` and hyphens `-`. No
+   spaces.
 4. Click **OK**. PTXprint makes the new configuration as a copy of the current settings, and
    changes to it.
 5. Now change the settings for this kind of output. The other configuration stays as it was.
@@ -193,44 +187,43 @@ output. Each configuration remembers its own settings.
    another one.
 2. On the **Basic** tab, choose the configuration in the **Name** list.
 
-When a configuration is finished, you can lock it with a password so that nobody changes it by
-mistake. See "Protect a finished configuration" in the **Basic tab** chapter.
+You can lock a finished configuration with a password, so that nobody changes it by mistake. See
+"Protect a finished configuration" in the **Basic tab** chapter.
 
-## How PTXprint saves your settings
+## 2.10 How PTXprint saves your settings
 
 * **Save** (or **Ctrl+S**) saves the settings of the current configuration.
 * **Print (Make PDF)** always saves the settings first, then makes the PDF.
 * When you choose a different **project**, PTXprint saves the current configuration first.
-* When you choose a different **configuration**, PTXprint does **not** save first. Click **Save**
-  before you change.
+* When you choose a different **configuration**, PTXprint does **not** save first.
 * **Quit** closes PTXprint **without saving**. Click **Save** before you click **Quit**.
 
 PTXprint keeps the configurations inside the Paratext project. So when you use Send/Receive in
 Paratext, the other people on your team get the same configurations.
 
-## Where the PDF is saved
+## 2.11 Where the PDF is saved
 
 PTXprint saves the PDF inside the Paratext project, in a folder called `local\ptxprint`. This
 folder is not shared by Send/Receive. The file name is made from the project code, the
 configuration name and the books, for example `ABC_Default_JHN_ptxp.pdf`.
 
-You do not need to remember the folder. To open it, use one of these ways:
+To open the folder, do one of these:
 
 * Click the **Open folder containing the PDF** button in the bar at the bottom of the main window
-  (**Default** and **Full** views).
+  (**Regular** and **Full** views).
 * On the **Help** tab, click the blue link next to **Output PDF Location**.
 * In the PDF Preview window, click **Open folder containing the PDF**.
 
-PTXprint makes the PDF again each time you print, with the same name. If you want to keep a PDF
-(for example the one you sent to a consultant), copy it to another folder, or click **Save the PDF
-with a different name** in the PDF Preview window.
+PTXprint makes the PDF again each time you print, with the same name. To keep a PDF (for example
+the one you sent to a consultant), copy it to another folder, or click **Save the PDF with a
+different name** in the PDF Preview window.
 
-## When something goes wrong
+## 2.12 When something goes wrong
 
 * **Read the message.** PTXprint shows a message in a window, or in the status line above the
-  bottom bar. The message often tells you what to change.
+  bottom bar. It often tells you what to change.
 * **Check the view level.** If a tab or setting has disappeared, the view level may be too low.
-  Click **☰** › **View Level** › **Full View**. You can also type the name of a setting in the
+  Click **☰** › **View Level** › **Full View**. Or type the name of the setting in the
   **Search for settings** box at the bottom-left of the window.
 * **Check the "Common problems" section** of the chapter about the tab you were using.
 * **Look in the chapter "Problems and solutions"** for problems that are not about one tab.
@@ -238,7 +231,7 @@ with a different name** in the PDF Preview window.
   Agent, the PTXprint User Community, or the support team, and how to make an archive file that
   the support team can use to see your problem.
 
-## What to read next
+## 2.13 What to read next
 
 * **The main window, menu and view levels** – more about configurations, view levels and saving.
 * **Basic tab** and **Layout tab** – the most important settings for every publication.

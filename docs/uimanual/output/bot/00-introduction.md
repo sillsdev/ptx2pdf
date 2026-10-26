@@ -1,39 +1,37 @@
-# About this manual
+# 1. About this manual
 
-## What PTXprint is
+## 1.1 What PTXprint is
 
-PTXprint is a program that makes print-ready PDF files of Scripture. It takes the text from a
-Paratext project and lays it out on pages: with columns, headings, chapter and verse numbers,
-footnotes, cross-references, pictures, headers and footers. You can use the PDF for checking and
+PTXprint makes print-ready PDF files of Scripture. It takes the text from a Paratext project and
+lays it out on pages: with columns, headings, chapter and verse numbers, footnotes,
+cross-references, pictures, headers and footers. You can use the PDF for checking and
 proofreading, or send it to a printer to make a book.
 
-Behind the scenes, PTXprint uses a typesetting program called **XeTeX**. XeTeX does the work of
-placing every letter and line on the page. You never need to use XeTeX yourself. You make all
-your choices in the PTXprint window, and PTXprint tells XeTeX what to do.
+PTXprint uses a typesetting program called **XeTeX** to place every letter and line on the page.
+You never need to use XeTeX yourself. You make all your choices in the PTXprint window, and
+PTXprint tells XeTeX what to do.
 
 PTXprint never changes your Paratext text. It reads the text, makes a temporary copy, and
 typesets that copy. To correct the words of the text, use Paratext.
 
-## Who this manual is for
+## 1.2 Who this manual is for
 
 This manual is for everyone who uses the PTXprint window: translators, typesetters, project
-leaders and support staff. You do not need to know anything about typesetting or computers to use
-it.
+leaders and support staff. You do not need to know about typesetting or computers.
 
-* Every instruction in this manual can be done in the PTXprint window. You never need to edit
-  files by hand or type commands.
-* Some sections are marked **advanced**. They explain how to type special codes in the few places
-  where PTXprint gives you a text box for them (for example the front matter). You can skip these
-  sections until you need them.
-* Technical words are explained the first time they appear in a chapter. They are also listed in
-  the **Glossary of terms** at the end of the manual.
+* Every instruction can be done in the PTXprint window. You never need to edit files by hand or
+  type commands.
+* Sections marked **advanced** explain how to type special codes in the few places where
+  PTXprint gives you a text box for them (for example the front matter). You can skip them until
+  you need them.
+* Technical words are explained the first time they appear in a chapter, and listed in the
+  **Glossary of terms** at the end.
 
-## How this manual is organised
+## 1.3 How this manual is organised
 
-The manual starts with two general chapters. Then there is one chapter for each tab of the
-PTXprint window, in the same order as the tabs. After that come chapters about the PDF Preview
-window, importing settings and getting help. The manual ends with step-by-step tasks, solutions
-to problems, and a glossary.
+Two general chapters come first. Then there is one chapter for each tab of the PTXprint window,
+in the same order as the tabs. Then come chapters about the PDF Preview window, importing settings
+and getting help. The manual ends with step-by-step tasks, solutions to problems, and a glossary.
 
 1. **About this manual** – this chapter.
 2. **Getting started with PTXprint** – a first walk-through: from opening PTXprint to your first PDF.
@@ -68,47 +66,49 @@ Most tab chapters have the same parts:
 * One section for each area of the tab, using the names you see on the screen.
 * **Common tasks** – numbered steps for the things people do most often.
 * **Common problems** – what you see, why it happens, and what to change.
-* **Settings reference** – a list of every setting on the tab (see below).
+* **Settings reference** – every setting on the tab (see below).
 
-## How to read a settings-reference entry
+## 1.4 How to read a settings-reference entry
 
 At the end of each tab chapter, the **Settings reference** lists every setting (check box, list,
-number box, button and so on) in that part of PTXprint. Each entry starts with the name of the
-setting as you see it on the screen. Then it gives some or all of these facts:
+number box, button and so on) in that part of PTXprint. The settings are grouped by tab or dialog,
+then by area, for example *Layout › Page Setup*. Each heading is the setting's name on the
+screen. If it has no name, the heading is the label beside it, or a short description.
 
-* **Where** – the path to the setting: the tab, then the area or sub-tab. For example:
-  *Layout tab › Page Setup*.
-* **Type** – what kind of control it is, for example a check box, a drop-down list, a number box or
-  a button. For a check box, it also says if it is ticked or not ticked by default.
-* **Description** – a short name for the setting, when the label on the screen does not say
-  enough.
-* **Next to the label** – the label that is beside the control on the screen, when this is
-  different from the name of the entry.
-* **View level** – in which view levels you can see the setting (see below).
-* **Values** – for a number box: the lowest and highest number you can type, and the default value.
-* **Choices** – for a drop-down list: the items in the list.
-* **Only available when** – the setting is greyed out until another setting is turned on.
-* **Greyed out when** – the setting cannot be used while another setting is turned on.
-* **Hidden until** – the setting is not shown until another setting is ticked.
-* **Tooltip** – the help text that PTXprint shows when you hold the mouse over the setting.
-* **Explanation** – a description in plain words: what the setting does, when to use it, a
-  sensible value, and what to watch out for.
+Each entry has these parts:
 
-If you cannot find a setting in the window, look first at its **View level**, then at **Only
-available when** and **Hidden until**.
+* **First line** – the kind of control (for example Checkbox, Radio, Number, Drop-down, Button,
+  Text box, Colour or Link). For a check box, **on** means it is ticked by default and **off**
+  means it is not. Then the lowest view level that shows the setting: **Mini+** (all views),
+  **Basic+**, **Regular+**, or **Full** (only the Full view).
+* **Second line** (only when needed) – more facts, separated by dots:
+  * **Values** – for a number: the lowest and highest number, and the default.
+  * **Choices** – the items in a list.
+  * **Also** – a longer, descriptive name for the setting.
+  * **Beside** – the label next to the control on the screen.
+  * **Needs** – the setting can only be used when that other setting is turned on.
+  * **Greyed out by** – the setting cannot be used while that other setting is ticked.
+  * **Hidden until** – the setting is not shown until that check box is ticked.
+  * **Shown when** – the tab or area only appears when that check box is ticked.
+* **Tooltip** – the help text PTXprint shows when you hold the mouse over the setting, shown as a
+  quotation.
+* **Explanation** – in plain words: what the setting does, when to use it, a sensible value, and
+  what to watch out for.
 
-## A short note about view levels
+If you cannot find a setting in the window, check its view level, then **Needs**,
+**Hidden until** and **Shown when**.
 
-PTXprint has hundreds of settings, but most people need only a few of them. So PTXprint can hide
-the settings that you do not need. This is called the **view level**. There are four view levels:
-**Mini**, **Basic**, **Default** and **Full**. **Mini** shows the fewest settings. **Full** shows
-every setting.
+## 1.5 A short note about view levels
+
+PTXprint has hundreds of settings, but most people need only a few. So PTXprint can hide the
+settings you do not need. This is the **view level**. There are four: **Mini** (fewest settings),
+**Basic**, **Regular** and **Full** (every setting).
 
 To change the view level, click the **☰** button at the top-right of the window, point to
 **View Level**, and choose a level.
 
-A hidden setting still works. It keeps its value and it still changes the PDF. So if the PDF
-does not look the way you expect, change to the **Full** view and check the settings again.
+A hidden setting still works. It keeps its value and still changes the PDF. So if the PDF does
+not look as you expect, change to the **Full** view and check the settings again.
 
-In this manual, a note such as "(Default and Full views)" tells you which view levels show a
-setting. For more about view levels, see the chapter **The main window, menu and view levels**.
+A note such as "(Regular and Full views)" tells you which view levels show a setting. For more,
+see the chapter **The main window, menu and view levels**.

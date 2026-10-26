@@ -34,27 +34,44 @@ from collections import OrderedDict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from chapters import chapters, chapterFor
 
-levelPhrases = {2: "All view levels (Mini, Basic, Default, Full)", 4: "Basic, Default and Full views",
-                5: "Default and Full views", 6: "Full view only"}
+levelShort = {2: "Mini+", 4: "Basic+", 5: "Regular+", 6: "Full"}
+
+typeShort = {"Radio button": "Radio", "Number box": "Number", "Drop-down list": "Drop-down",
+             "Toggle button": "Toggle", "Colour picker": "Colour"}
 
 botPreface = """\
-> **Notes for the AI support assistant**
->
-> * This manual describes every setting in the PTXprint user interface (UI). Each setting lists
->   *where* it is (tab › section), *which view level* shows it, its *tooltip*, and a plain-language
->   explanation.
-> * Most PTXprint users are **not technical**, and many speak English as a second or third language.
->   Answer in short, simple sentences. Give click-by-click directions using the tab and section
->   names exactly as written here.
-> * **Do not tell users to edit configuration files (ptxprint.cfg), .sty or .tex files, or run
->   commands.** Every answer should be achievable in the PTXprint window. If something truly
->   cannot be done in the UI, say so and suggest contacting ptxprint_support@sil.org.
-> * If a user cannot find a setting, check its *View level*. Many settings are hidden in the
->   Mini and Basic views. Tell the user how to change the view level (see "View levels").
-> * Some settings are greyed out or hidden until another setting is turned on. This is shown as
->   "Only available when ..." and "Hidden until ...".
-> * "Internal ID" and "Config key" lines are for support staff. They help you match a setting
->   that appears in a user's settings file or log to the place in the UI. Do not ask users about them.
+## Notes for the AI support assistant
+
+* This manual covers every setting in the PTXprint window: chapters explain each tab, then a
+  *Settings reference* lists every control under headings that give its location
+  (tab or dialog › area › setting).
+* Most users are **not technical**, and many speak English as a second or third language. Answer in
+  short, simple sentences with click-by-click steps, using the on-screen names exactly as written here.
+* **Never tell users to edit ptxprint.cfg, .sty or .tex files, or run commands.** Every answer must
+  work in the PTXprint window. If something cannot be done there, say so and suggest
+  ptxprint_support@sil.org.
+* If a user cannot find a setting, check its view level: many settings are hidden in the Mini and
+  Basic views (see "View levels"). Some settings are greyed out or hidden until another one is turned on.
+
+### How to read a setting
+
+```
+##### <on-screen label>
+<type>[, on/off by default] · <view level> · `<internal ID>` · cfg `<config key>`
+<extra facts, separated by ·>
+> <tooltip>
+<explanation>
+```
+
+* **View level** – the lowest view that shows it: `Mini+` (all views), `Basic+`, `Regular+`, or
+  `Full` (Full view only). `not shown` = hidden in all views; `experimental` = only in experimental mode.
+* **Extra facts** – `Values:` range and default · `Choices:` options in a list · `Also:` the setting's
+  descriptive name · `Beside:` the label next to it · `Needs:` only usable when that setting is on/selected ·
+  `Greyed out by:` unusable while that setting is ticked · `Hidden until:` that box is ticked ·
+  `Shown when:` the tab/area appears when that box is ticked.
+* Quoted text (`>`) is the tooltip; the paragraph after it is a plain-language explanation.
+* The internal ID and config key are for support staff, to match a line in a user's settings file or
+  log to the place in the window. Do not ask users about them.
 """
 
 
@@ -65,10 +82,16 @@ def stripColon(s):
 
 
 def controlTitle(c):
-    prim = stripColon(c.get("label")) or stripColon(c.get("fieldLabel"))
+    """The on-screen label. A control with no label of its own borrows the label beside it, which is
+    often a row or column heading shared by several controls, so its descriptive name is added."""
+    own = stripColon(c.get("label"))
+    beside = stripColon(c.get("fieldLabel"))
     name = c.get("name")
-    if not prim:
-        prim = name
+    if own:
+        return own
+    if beside and name and name.lower() != beside.lower():
+        return f"{beside} – {name}"
+    prim = beside or name
     if not prim:
         tip = (c.get("tooltip") or "").strip().split("\n")[0]
         prim = (tip[:60] + "...") if len(tip) > 60 else tip
@@ -99,70 +122,113 @@ def depText(lst):
     return ", ".join("“{}”".format(stripColon(d.get("label")) or d["id"]) for d in lst)
 
 
-def renderControl(c, note, human, hlevel="####"):
+def renderControl(c, note, human, hlevel="#####"):
+    """One setting: heading, a compact facts line (or two), the tooltip as a quote, then the explanation."""
     title = controlTitle(c)
-    out = [f"{hlevel} {mdEscape(title) if human else title}", ""]
-    where = " › ".join(c["breadcrumbs"])
-    facts = []
-    facts.append(f"**Where:** {where}")
-    typ = c["type"]
-    if c.get("defaultOn") is not None and typ in ("Checkbox", "Toggle button"):
-        typ += " (ticked by default)" if c["defaultOn"] else " (not ticked by default)"
-    facts.append(f"**Type:** {typ}")
-    nm = c.get("name")
-    if nm and nm.lower() != title.lower():
-        facts.append(f"**Description:** {nm}")
-    if c.get("fieldLabel") and c.get("label") and stripColon(c["fieldLabel"]) != title:
-        facts.append(f"**Next to the label:** {stripColon(c['fieldLabel'])}")
+    esc = mdEscape if human else (lambda s: s)
+    out = [f"{hlevel} {esc(title)}", ""]
+
+    # line 1: type, default state, view level, ids
+    typ = typeShort.get(c["type"], c["type"])
+    if c.get("defaultOn") is not None and c["type"] in ("Checkbox", "Toggle button"):
+        typ += ", on" if c["defaultOn"] else ", off"
+    first = [typ]
     if c.get("visibility") == "hidden":
-        facts.append("**View level:** Not normally shown")
+        first.append("not shown")
     elif c.get("visibility") == "experimental":
-        facts.append("**View level:** Experimental (only shown when PTXprint is started in experimental mode)")
+        first.append("experimental")
     elif c.get("viewLevel"):
-        facts.append(f"**View level:** {levelPhrases[c['viewLevel']]}")
+        first.append(levelShort[c["viewLevel"]])
+    if not human:
+        if c.get("id"):
+            first.append(f"`{c['id']}`")
+        keys = [k for k in (c.get("configKeys") or []) if "/" in k]    # skip template-only values like 'majorcolor_'
+        if keys:
+            first.append("cfg " + ", ".join(f"`{k}`" for k in keys))
+
+    # line 2: everything else that applies
+    facts = []
     r = c.get("range")
-    if r:
-        parts = []
-        if r.get("lower") is not None and r.get("upper") is not None:
-            parts.append("from {:g} to {:g}".format(r["lower"], r["upper"]))
+    if r and r.get("lower") is not None and r.get("upper") is not None:
+        v = "{:g}–{:g}".format(r["lower"], r["upper"])
         if r.get("default") is not None:
-            parts.append("default {:g}".format(r["default"]))
-        if parts:
-            facts.append("**Values:** " + ", ".join(parts))
-    ch = c.get("choices")
-    if ch:
-        texts = [x["text"] for x in ch if x.get("text")]
-        if texts:
-            facts.append("**Choices:** " + "; ".join(texts))
+            v += " (default {:g})".format(r["default"])
+        facts.append("Values: " + v)
+    texts = [x["text"] for x in (c.get("choices") or []) if x.get("text")]
+    if texts:
+        facts.append("Choices: " + " | ".join(esc(t) for t in texts))
+    nm = c.get("name")
+    if nm and nm.lower() not in title.lower():
+        facts.append("Also: " + esc(nm))
+    if c.get("fieldLabel") and c.get("label") and stripColon(c["fieldLabel"]) != title:
+        facts.append("Beside: " + esc(stripColon(c["fieldLabel"])))
     if c.get("enabledBy"):
-        facts.append("**Only available when:** " + depText(c["enabledBy"]) + " is selected")
+        facts.append("Needs: " + depText(c["enabledBy"]))
     if c.get("disabledBy"):
-        facts.append("**Greyed out when:** " + depText(c["disabledBy"]) + " is ticked")
+        facts.append("Greyed out by: " + depText(c["disabledBy"]))
     if c.get("collapsedUntil"):
-        facts.append("**Hidden until:** " + depText([c["collapsedUntil"]]) + " is ticked")
+        facts.append("Hidden until: " + depText([c["collapsedUntil"]]))
     if c.get("tabShownBy"):
-        facts.append("**This tab/section appears when:** " + depText(c["tabShownBy"]) + " is ticked")
-    out.extend("- " + f for f in facts)
+        facts.append("Shown when: " + depText(c["tabShownBy"]))
+    lines = [" · ".join(first)]
+    if facts:
+        lines.append(" · ".join(facts))
+    out.append("  \n".join(lines))
     out.append("")
     if c.get("tooltip"):
-        out.append("**Tooltip (the text shown when you hover the mouse over it):**")
-        out.append("")
         out.append(quoteBlock(c["tooltip"], human))
         out.append("")
     if note:
-        out.append("**Explanation:**")
-        out.append("")
         out.append(note.strip())
         out.append("")
-    if not human and (c.get("id") or c.get("configKeys")):
-        bits = []
-        if c.get("id"):
-            bits.append(f"Internal ID: `{c['id']}`")
-        if c.get("configKeys"):
-            bits.append("Config key: " + ", ".join(f"`{k}`" for k in c["configKeys"]))
-        out.append("*(" + " · ".join(bits) + ")*")
-        out.append("")
     return "\n".join(out)
+
+
+def stripTab(s):
+    """'Layout tab' -> 'Layout'; keeps dialog names as they are."""
+    return s[:-4] if s.endswith(" tab") else s
+
+
+def renderReference(ctrls, notes, human):
+    """Settings reference as a tree: ### tab/dialog, #### area, ##### sub-area; settings one level deeper."""
+    esc = mdEscape if human else (lambda s: s)
+    tree = OrderedDict()            # path tuple -> list of controls, in order of first appearance
+    for c in ctrls:
+        if human and c.get("visibility") in ("hidden", "experimental"):
+            continue
+        path = tuple(c["breadcrumbs"]) or ("Other",)
+        if len(path) > 3:           # headings stop at level 5; join anything deeper
+            path = path[:2] + (" › ".join(path[2:]),)
+        tree.setdefault(path, []).append(c)
+    # order paths so that all children of a heading follow it
+    order, seen = [], {}
+    for path in tree:
+        for i in range(1, len(path) + 1):
+            seen.setdefault(path[:i], len(seen))
+    out, done = [], set()
+    for path in sorted(tree, key=lambda p: [seen[p[:i]] for i in range(1, len(p) + 1)]):
+        for i in range(1, len(path) + 1):
+            if path[:i] not in done:
+                done.add(path[:i])
+                out.append(f"{'#' * (2 + i)} {esc(stripTab(path[i - 1]))}\n")
+        for c in tree[path]:
+            out.append(renderControl(c, notes.get(c["id"]) if c["id"] else None, human,
+                                     hlevel="#" * (3 + len(path))))
+    return "\n".join(out)
+
+
+def numberSections(prose, num):
+    """Number the level-2 headings of a chapter: '## Margins' -> '## 4.3 Margins'. Returns text and titles."""
+    titles = []
+    infence = False
+    lines = prose.split("\n")
+    for i, l in enumerate(lines):
+        if l.startswith("```"):
+            infence = not infence
+        elif not infence and l.startswith("## "):
+            titles.append(l[3:].strip())
+            lines[i] = f"## {num}.{len(titles)} {l[3:].strip()}"
+    return "\n".join(lines), titles
 
 
 def parseContent(path):
@@ -206,9 +272,9 @@ def build(repo, dopdf=True, skeleton=False):
     botParts = [f"# PTXprint User Interface Manual (AI support edition)\n\nGenerated {today} from the PTXprint "
                 f"source code and the explanations in docs/uimanual/content.\n\n{botPreface}"]
     humanParts = [f"# PTXprint User Manual\n\nGenerated {today}.\n"]
-    contents = "## Contents\n\n" + "\n".join(f"{i+1}. {t}" for i, (_, t, _) in enumerate(chapters)) + "\n"
-    botParts.append(contents)
-    humanParts.append(contents)
+    chapterTexts = {False: [], True: []}
+    contents = ["## Contents", ""]
+    num = 0
     for cid, title, places in chapters:
         prose, notes = parseContent(os.path.join(base, "content", cid + ".md"))
         ctrls = bych[cid]
@@ -217,47 +283,47 @@ def build(repo, dopdf=True, skeleton=False):
                 report.append(f"{cid}: note for unknown widget id '{k}'")
             elif not any(c["id"] == k for c in ctrls):
                 report.append(f"{cid}: note for '{k}' which belongs to another chapter")
+        hasContent = prose is not None
+        if not prose and not ctrls:
+            continue
+        num += 1
+        prose, secTitles = numberSections(prose or "", num)
+        refnum = f"{num}.{len(secTitles) + 1}"
+        contents.append(f"{num}. **{title}**")
+        subs = [f"{num}.{i + 1} {t}" for i, t in enumerate(secTitles)]
+        if ctrls:
+            where = OrderedDict((stripTab(c["breadcrumbs"][0]), 1) for c in ctrls if c["breadcrumbs"])
+            subs.append(f"{refnum} Settings reference ({', '.join(where)})")
+        contents.extend(f"   - {s}" for s in subs)
         for human in (False, True):
-            parts = [f"# {title}", ""]
+            parts = [f"# {num}. {title}", ""]
             if prose:
                 parts.append(prose)
                 parts.append("")
-            elif not ctrls:
-                continue
             if ctrls:
-                parts.append(f"## Settings reference: {title}")
+                parts.append(f"## {refnum} Settings reference")
                 parts.append("")
-                parts.append("Every control in this part of PTXprint is listed below, grouped by where it appears.")
-                parts.append("")
-                groups = OrderedDict()
-                for c in ctrls:
-                    if human and c.get("visibility") in ("hidden", "experimental"):
-                        continue
-                    groups.setdefault(" › ".join(c["breadcrumbs"]), []).append(c)
-                for g, cs in groups.items():
-                    parts.append(f"### {mdEscape(g) if human else g}")
-                    parts.append("")
-                    for c in cs:
-                        parts.append(renderControl(c, notes.get(c["id"]) if c["id"] else None, human))
+                parts.append(renderReference(ctrls, notes, human))
             text = "\n".join(parts).rstrip() + "\n"
-            if human:
-                humanParts.append(text)
-            else:
-                botParts.append(text)
+            chapterTexts[human].append(text)
+            if not human:
                 with open(os.path.join(outdir, "bot", cid + ".md"), "w", encoding="utf-8") as outf:
                     outf.write(text)
                 if skeleton and ctrls:
                     with open(os.path.join(base, "data", "chapters", cid + ".md"), "w", encoding="utf-8") as outf:
                         outf.write(text)
         missing = [c["id"] for c in ctrls if c["id"] and c["id"] not in notes and c.get("visibility") is None]
-        if missing and (prose is not None):
+        if missing and hasContent:
             report.append(f"{cid}: {len(missing)} controls without a note: " + " ".join(missing))
-        elif prose is None:
+        elif not hasContent:
             report.append(f"{cid}: no content file yet ({len(ctrls)} controls)")
     if unassigned:
         report.append("Controls not assigned to any chapter: " +
                       ", ".join(f"{c['id']} [{' > '.join(c['breadcrumbs'])}]" for c in unassigned))
 
+    contentsText = "\n".join(contents) + "\n"
+    botParts += [contentsText] + chapterTexts[False]
+    humanParts += [contentsText] + chapterTexts[True]
     botText = "\n\n".join(botParts)
     with open(os.path.join(outdir, "PTXprint-Manual-for-AI.md"), "w", encoding="utf-8") as outf:
         outf.write(botText)

@@ -455,19 +455,22 @@ def extract(repo):
     def isToggled(wid):
         return wid and "_" in wid and wid.split("_", 1)[0] in allPrefixes
 
-    # notebook page id -> its tab label id (a page whose tab label is hidden can't be reached)
-    tabLabelOf = {}
+    # tab label id -> its notebook page. GTK shows a tab whenever its page is visible, even if the
+    # label widget itself was hidden, so a tab label is visible exactly when its page is.
+    pageOfTab = {}
     for nb in g.root.iter("object"):
         if nb.get("class") == "GtkNotebook":
             for c in nb.findall("child"):
                 po = c.find("object")
-                if po is not None and c.get("type") is None and po.get("id"):
-                    tabLabelOf[po.get("id")] = g.notebookTab(po)[1]
+                if po is not None and c.get("type") is None:
+                    tid = g.notebookTab(po)[1]
+                    if tid:
+                        pageOfTab[tid] = po
 
     def minLevel(o):
-        ids = [o.get("id")] + g.ancestorsIds(o)
-        ids += [tabLabelOf[i] for i in ids if tabLabelOf.get(i)]
-        ids = [i for i in ids if isToggled(i)]
+        if o.get("id") in pageOfTab:
+            o = pageOfTab[o.get("id")]
+        ids = [i for i in [o.get("id")] + g.ancestorsIds(o) if isToggled(i)]
         if any(i in keepHidden for i in ids):
             return None, "hidden"
         if any(i in experimental for i in ids):

@@ -1,76 +1,76 @@
-# Finishing tab
+# 18. Finishing tab
 
-## What this tab is for
+## 18.1 What this tab is for
 
-The **Finishing** tab controls what happens to the PDF *after* the pages have been typeset. Come here when you are getting ready to send the book to a printer, or when you want to print it yourself as a folded booklet.
+The **Finishing** tab controls what happens to the PDF *after* the pages are typeset. Come here when you prepare the book for a printer, or want to print it yourself as a folded booklet.
 
 On this tab you can:
 
-* choose the **PDF Output Format** that your printer asks for (for example CMYK or black and white);
+* choose the **PDF Output Format** your printer asks for (for example CMYK or black and white);
 * add **crop marks** and a **watermark** (such as the word "DRAFT");
-* print the pages as a **booklet** (two or more pages on each sheet of paper, in the right order for folding);
+* print the pages as a **booklet** (two or more pages on each sheet, in the right order for folding);
 * **compare** the new PDF with an older one, to see exactly what changed;
 * keep older copies of the PDF, and store your settings inside the PDF.
 
-The **Finishing** tab is shown in the **Default** and **Full** views. Some settings are only shown in the **Full** view. This is noted for each setting below.
+The tab is shown in the **Basic**, **Regular** and **Full** views. In **Basic** it shows only the booklet (pages per sheet) settings and **Compare PDFs**; more settings appear in **Regular**, and some only in **Full**.
 
-Most settings on this tab do not change the layout of the text. They change the finished PDF file. You must click **Print** (make the PDF again) before a change is visible.
+Most settings here do not change the text layout, only the finished PDF file. Click **Print** (make the PDF again) to see a change.
 
 ### Some print-shop words in simple terms
 
 * **Trim size** – the size of the finished book page, after the printer cuts it. In PTXprint this is the **Page Size** on the **Layout** tab.
 * **Crop marks** (also called trim marks) – thin lines in the corners, outside the page, that show the printer where to cut.
-* **Bleed** – a picture or colour that goes right to the edge of the page. The printer needs it to go a little *past* the cut line (usually about 3 mm), so that no white strip shows if the cut is not exact.
+* **Bleed** – a picture or colour that goes right to the edge of the page. It must go a little *past* the cut line (usually about 3 mm), so that no white strip shows if the cut is not exact.
 * **RGB** – the colours used by screens (Red, Green, Blue).
 * **CMYK** – the four inks used by most colour printing presses (Cyan, Magenta, Yellow and blacK). Many printers ask for CMYK files.
 * **Grayscale (B/W)** – only black ink, in shades of grey.
 * **Spot colour** – one extra, ready-mixed ink (often a Pantone colour) used in addition to black, for example red for the words of Jesus or for headings.
 * **PDF/X** – a type of PDF made for printing. It contains everything the printer needs (fonts, colour information) and nothing that could cause problems.
   * **PDF/X-1a** – the older, strict type. All colours must be CMYK (or grey/spot) and there may be no transparency (see-through effects). Many printing presses still ask for this.
-  * **PDF/X-4** – the newer type. It allows RGB colours with colour profiles and transparency. Many modern printers and digital (print-on-demand) printers accept it.
+  * **PDF/X-4** – the newer type. It allows RGB colours with colour profiles and transparency. Many modern and digital (print-on-demand) printers accept it.
 * **PDF/A** – a type of PDF made for keeping documents for a very long time (archiving).
-* **Imposition** – arranging several book pages on one large sheet of paper, so that after folding and cutting the pages come out in the right order.
+* **Imposition** – arranging several book pages on one large sheet, so that after folding and cutting the pages come out in the right order.
 * **Signature** – a group of sheets that are folded together and sewn or glued into the book as one unit.
 
-If your printer gives you a list of requirements, read it carefully. Look for: trim size, bleed, crop marks (yes or no), colour (CMYK, grey, or RGB), and PDF type (PDF/X-1a or PDF/X-4). Then set these on the **Layout** tab and on this tab. If you are not sure, ask the printer for a sample "print-ready PDF specification".
+If your printer gives you a list of requirements, look for: trim size, bleed, crop marks (yes or no), colour (CMYK, grey, or RGB), and PDF type (PDF/X-1a or PDF/X-4). Set these on the **Layout** tab and on this tab. If you are not sure, ask the printer for a sample "print-ready PDF specification".
 
-## PDF Details
+## 18.2 PDF Details
 
-This area controls the type of PDF that PTXprint makes. (This area is shown in the **Default** and **Full** views. Some settings are only in the **Full** view.)
+This area sets the type of PDF that PTXprint makes. (Shown in the **Regular** and **Full** views; some settings only in **Full**.)
 
 ### PDF Output Format
 
 Choose the format that matches how the book will be used:
 
-* **Screen (Quickest)** – the normal choice while you are still working on the book. PTXprint makes the PDF directly, with no extra processing. Use this for checking and proof-reading.
-* **Digital-RGB** – a PDF/X-4 file in RGB colours. Good for reading on screen, for sharing as an e-book, and for printing on an office or home printer.
-* **Digital-CMYK (Transparency)** – a PDF/X-4 file for printers who want CMYK but can accept transparency.
-* **Print-CMYK** – a PDF/X-1a file with all colours turned into CMYK. Use this for a commercial printing press that asks for PDF/X-1a or CMYK.
-* **Print-Gray (B/W)** – a PDF/X-1a file in black and shades of grey only. Use this for a book printed only in black ink. Coloured text and pictures are turned into grey.
-* **Print-Spot** – black plus one spot colour. Any colour close to the **Color Hue** you choose is printed with the spot ink; everything else is printed in black and grey. The **Color Hue** and **Tolerance (%)** settings are only active when you choose this format.
+* **Screen (Quickest)** – the normal choice while you work on the book. No extra processing. Use it for checking and proof-reading.
+* **Digital-RGB** – PDF/X-4 in RGB colours. For reading on screen, sharing as an e-book, and printing on an office or home printer.
+* **Digital-CMYK (Transparency)** – PDF/X-4 for printers who want CMYK but accept transparency.
+* **Print-CMYK** – PDF/X-1a with all colours turned into CMYK. For a commercial printing press that asks for PDF/X-1a or CMYK.
+* **Print-Gray (B/W)** – PDF/X-1a in black and shades of grey only, for a book printed only in black ink. Coloured text and pictures become grey.
+* **Print-Spot** – black plus one spot colour. Colours close to the **Color Hue** are printed with the spot ink; everything else in black and grey. **Color Hue** and **Tolerance (%)** are only active with this format.
 
-The formats other than **Screen** need extra processing after the PDF is made. This takes more time, especially when the book has many pictures. PTXprint shows a note in the status bar about this.
+Formats other than **Screen** need extra processing after the PDF is made. This takes more time, especially with many pictures. The status bar shows a note about this.
 
-PTXprint adds a short ending to the PDF file name, so you can see which format a file has: **_RGB**, **_CMYK-Transparent**, **_CMYK**, **_BW** or **_Spot**. **Screen** adds nothing.
+PTXprint adds an ending to the PDF file name to show the format: **_RGB**, **_CMYK-Transparent**, **_CMYK**, **_BW** or **_Spot**. **Screen** adds nothing. So the files do not overwrite each other.
 
-When you choose **Print-CMYK**, **Print-Gray** or **Print-Spot** and thumb tabs are turned on, PTXprint turns on **Only Show on Odd Pages** for the thumb tabs (on the **Tabs+Borders** tab), and tells you in the status bar.
+With **Print-CMYK**, **Print-Gray** or **Print-Spot**, if thumb tabs are on, PTXprint turns on **Only Show on Odd Pages** for the thumb tabs (on the **Tabs+Borders** tab) and tells you in the status bar.
 
 ### Other PDF settings
 
-* **Crop Marks** adds cut lines around every page. To make room for them, PTXprint makes each PDF page larger by 0.5 inch (about 12.7 mm) on every side. Only turn this on if your printer asks for crop marks. Many print-on-demand printers do *not* want them.
-* **Number of Previous PDFs to be Kept** keeps older copies of your PDF (with **_1**, **_2** … at the end of the name). You need at least 1 to use **Compare PDFs** with the previous version.
-* **Include Config Settings Within PDF** stores your settings inside the PDF file. Later, you (or someone else) can load the settings back from this PDF, using **Import Settings**.
+* **Crop Marks** adds cut lines around every page. To make room, each PDF page becomes 0.5 inch (about 12.7 mm) larger on every side. Only turn this on if your printer asks for crop marks. Many print-on-demand printers do *not* want them.
+* **Number of Previous PDFs to be Kept** keeps older copies of your PDF (with **_1**, **_2** … at the end of the name).
+* **Include Config Settings Within PDF** stores your settings inside the PDF, so they can be loaded back with **Import Settings**.
 * **Archive (PDF/A-4)** makes a PDF that is better for long-term storage. (Only in the **Full** view.)
 * **Extract Color Inserts** and **Extra XDV Processing** are special tools. (Only in the **Full** view.)
 * **Apply Watermark PDF** puts a PDF (for example "DRAFT") on every page.
 
-## Booklet Pagination
+## 18.3 Booklet Pagination
 
-This area lets you print several book pages on one larger sheet of paper, arranged so that you can fold the sheets into a booklet. This is called imposition. (This area is shown in the **Basic**, **Default** and **Full** views. Some settings are only in the **Full** view.)
+Print several book pages on one larger sheet, arranged so that you can fold the sheets into a booklet (imposition). (Shown in the **Basic**, **Regular** and **Full** views; some settings only in **Full**.)
 
-* **Pages Per Spread** – how many book pages go on *one side* of a sheet. **1-up (No booklet)** is the normal setting: one page per PDF page. **2-up** is a normal folded booklet: for example, A5 pages on A4 paper. **4-up** and **8-up** put more pages on bigger sheets, for printers who fold the sheet more than once.
-* **Physical Paper Size** – the size of the sheet you will print on. For 2-up, it is normally twice the page size (A5 pages → A4 sheet).
-* **Sheets Per Signature**, **Fold Cut Margin (mm)** and **Fold First** are for professional binding. (Only in the **Full** view.) Leave them at their starting values unless the printer tells you what to use.
+* **Pages Per Spread** – how many book pages go on *one side* of a sheet.
+* **Physical Paper Size** – the size of the sheet you print on.
+* **Sheets Per Signature**, **Fold Cut Margin (mm)** and **Fold First** are for professional binding. Leave them at their starting values unless the printer tells you what to use.
 
 When **Pages Per Spread** is more than 1-up:
 
@@ -80,37 +80,50 @@ When **Pages Per Spread** is more than 1-up:
 * the PDF file name gets an extra ending, such as **_2up**;
 * crop marks (if ticked) are drawn on the large sheet, not on each page.
 
-When **Pages Per Spread** is **1-up**, you can tick **Scale to fit**. Then PTXprint enlarges or shrinks each page so that it fits the **Physical Paper Size**, centred on the sheet.
+If the pages do not fit on the chosen paper, PTXprint shows a **Paper Size Error**. Choose a larger **Physical Paper Size** or fewer pages per spread.
 
-If the pages do not fit on the paper you chose, PTXprint shows a **Paper Size Error**. Choose a larger **Physical Paper Size** or a smaller number of pages per spread.
+## 18.4 Compare PDFs
 
-## Compare PDFs
+This makes a "diff" PDF that shows what changed between the new PDF and an older one. It is very useful after a late correction, to check that only the expected pages changed.
 
-This area makes a "diff" PDF that shows what changed between the new PDF and an older one. This is very useful after a late correction: you can quickly check that only the expected pages changed. (The two colour settings are only shown in the **Full** view. **Show Max Diff Pages** is shown in the **Default** and **Full** views.)
+**Compare PDFs**, **Select...**, **Only Show Pages With Differences** and **Show Max Diff Pages** are shown in the **Regular** and **Full** views. The colours (**New Text**, **Old Text**), **Ignore When Comparing** (**Headers + Footers**, **Side Margins**), **Start Page Offset** and **Smart Check** are only in the **Full** view.
 
 How it works:
 
-1. PTXprint keeps a copy of the previous PDF (the file ending **_1.pdf**), as long as **Number of Previous PDFs to be Kept** is 1 or more.
-2. When **Compare PDFs** is ticked and you click **Print**, PTXprint makes the new PDF and then compares it with the old one.
-3. If it finds differences, it makes a file ending **_diff.pdf** and opens it. Added or moved text is shown in one colour; removed text or old positions in another colour.
-4. If there are no differences, the status bar says **No differences found**.
+1. While **Compare PDFs** is ticked, PTXprint always keeps the previous PDF (ending **_1.pdf**), even if **Number of Previous PDFs to be Kept** is 0.
+2. On **Print**, PTXprint makes the new PDF and compares it, page by page, with the old one. By default that is the previous PDF (**Previous PDF (_1)**). Click **Select...** to compare with any other PDF, for example the one you sent for the last proof check.
+3. If it finds differences, it makes a file ending **_diff.pdf**. A **Diff** tab appears in the PDF Preview window (if you use your own PDF program, the diff PDF opens there). Each diff page is a picture of the new page with the changes in colour: added (or moved-in) things in the **New Text** colour (blue at first); removed (or moved-away) things in the **Old Text** colour (red at first).
+4. If no diff PDF is made, the status line at the bottom of the window says why, and the message stays there. For example: **No differences found**, or **Nothing to compare with yet: make a change and print again** (no previous PDF yet). See **Common problems** for the other messages.
 
-By default PTXprint compares with the previous PDF (**Previous PDF (_1)**). Click **Select...** to compare with any other PDF instead, for example the PDF you sent for the last proof check.
+What PTXprint compares:
 
-## Common tasks
+* Only the finished page (the trim size). Crop marks and bleed are left out, so a PDF with crop marks and the same PDF without them are the same.
+* Very tiny differences (a speck, or a letter moved a small fraction of a pixel) are not counted.
+* If one PDF has more pages, the extra pages are compared with an empty page, so they count as differences.
+* Both PDFs must have the same page size. If not, PTXprint shows an error and the status line says **Cannot compare PDFs: the pages are different sizes**.
+
+Options for special cases (only in the **Full** view):
+
+* **Start Page Offset** – use this when the two PDFs do not start on the same page, for example when one has a cover or an extra front matter page. Otherwise every page is compared with the wrong one, and everything looks different. A positive number skips pages at the start of the **old** PDF; a negative number skips pages at the start of the **new** PDF. Normally 0.
+* **Ignore When Comparing: Headers + Footers** – compares only the area between the top and bottom margins, so running headers, footers and page numbers are not compared. Use it when you only care about the text, for example after you changed the header layout.
+* **Ignore When Comparing: Side Margins** – compares only the area of the text columns, so margin notes, side references and thumb tabs are not compared.
+* The ignored areas are shaded grey in the diff PDF. These two options are not used when **Pages Per Spread** is more than 1-up, or when **Scale to fit** is ticked, because the pages have then moved on the sheet.
+* **Smart Check** – use it after you changed only the margins (for example added a binding gutter, or moved the text block up or down), not the text. Normally every line would then show as different, because it moved. With **Smart Check**, PTXprint first lines up each old page with the new one, and then shows only real changes: changed words, different line breaks, and so on. If the text block changed size, lines break differently, and those changes are still shown. On a page that had to be moved, **Smart Check** is a little less sensitive, so a very small change (such as a comma in place of a full stop) may not be shown.
+
+## 18.5 Common tasks
 
 ### Make a PDF for a commercial printer who asks for PDF/X-1a in CMYK
 
 1. On the **Layout** tab, check that the **Page Size** is the trim size the printer wants.
 2. On the **Finishing** tab, in the **PDF Details** area, set **PDF Output Format** to **Print-CMYK**.
-3. Tick **Crop Marks** only if the printer asks for crop marks.
+3. Tick **Crop Marks** only if the printer asks for them.
 4. Make sure **Pages Per Spread** is **1-up (No booklet)**. Printers do their own imposition.
 5. Click **Print**. The new PDF name ends with **_CMYK**.
 
 ### Make a black-and-white PDF for printing
 
-1. On the **Finishing** tab, set **PDF Output Format** to **Print-Gray (B/W)**.
-2. Click **Print**. All colours in text and pictures become shades of grey. The file name ends with **_BW**.
+1. Set **PDF Output Format** to **Print-Gray (B/W)**.
+2. Click **Print**. The file name ends with **_BW**.
 
 ### Print an A5 booklet on A4 paper on an office printer
 
@@ -123,47 +136,54 @@ By default PTXprint compares with the previous PDF (**Previous PDF (_1)**). Clic
 
 ### Use a paper size that is not in the list
 
-1. Click in the **Physical Paper Size** box and type the width and height, separated by a comma. For example: `203mm, 330mm`.
-2. You can use mm or in.
+Click in the **Physical Paper Size** box and type the width and height, separated by a comma, in mm or in. For example: `203mm, 330mm`.
 
 ### See what changed since the last PDF
 
-1. On the **Finishing** tab, check that **Number of Previous PDFs to be Kept** is at least 1.
-2. Tick **Compare PDFs** (or press Ctrl+R).
-3. Make your corrections, then click **Print**.
-4. The "diff" PDF opens and shows the changes in colour. Untick **Compare PDFs** when you are finished.
+1. Tick **Compare PDFs** (or press Ctrl+R).
+2. Make your corrections, then click **Print**.
+3. If there are changes, the **Diff** tab in the PDF Preview shows them in colour. If not, the status line says **No differences found**.
+4. Untick **Compare PDFs** when you are finished.
 
 ### Compare with an older proof, not just the last run
 
 1. In the **Compare PDFs** area, click **Select...** and choose the older PDF.
 2. Tick **Compare PDFs** and click **Print**.
-3. To go back to comparing with the previous run, click **Select...** again and click **Cancel** in the file dialog.
+3. If the older PDF has more (or fewer) pages at the start, for example a cover, set **Start Page Offset** so that the pages line up (**Full** view).
+4. To go back to comparing with the previous run, click **Select...** again and click **Cancel** in the file dialog.
+
+### Check that only the margins changed, not the text
+
+1. Change to the **Full** view.
+2. In the **Compare PDFs** area, tick **Smart Check**. If you also changed the headers or footers, tick **Headers + Footers** under **Ignore When Comparing**.
+3. Tick **Compare PDFs** and click **Print**.
+4. Only pages where the words or the line breaks changed are shown in the diff PDF.
 
 ### Put "DRAFT" on every page
 
 1. In the **PDF Details** area, tick **Apply Watermark PDF**.
-2. Click **Select...** next to it. PTXprint opens its own folder of watermarks. Choose the one that matches your page size (for example **A5-Draft.pdf**).
+2. Click **Select...** next to it and choose the watermark that matches your page size (for example **A5-Draft.pdf**).
 3. Click **Print**.
 
 ### Send your settings to someone else inside the PDF
 
-1. Tick **Include Config Settings Within PDF** (it is ticked by default).
+1. Tick **Include Config Settings Within PDF** (ticked by default).
 2. Click **Print** and send the PDF.
-3. The other person can load your settings from that PDF using **Import Settings** (see the chapter on importing settings).
+3. The other person loads your settings from that PDF with **Import Settings** (see the chapter on importing settings).
 
-## Common problems
+## 18.6 Common problems
 
 **The colours look different in the printed book from on screen.**
 Screens use RGB. Printing presses use CMYK, which cannot show some bright colours. Choose **Print-CMYK** (or the format your printer asks for), click **Print**, and check the result before you send it. Ask the printer for a printed proof if colour is important.
 
 **Making the PDF is now very slow.**
-A **PDF Output Format** other than **Screen** needs extra processing, especially for pictures. While you are still editing, use **Screen (Quickest)**. Change to the final format only for the last PDF. Also, **Compare PDFs** adds time, because it renders the pages as images.
+Formats other than **Screen** need extra processing, especially for pictures. Use **Screen (Quickest)** while editing, and the final format only for the last PDF. **Compare PDFs** also adds time, because it renders the pages as images.
 
 **The PDF pages are bigger than my page size.**
-**Crop Marks** is ticked. Crop marks add 0.5 inch (about 12.7 mm) on each side of every page. Untick **Crop Marks** if the printer did not ask for them.
+**Crop Marks** is ticked: it adds 0.5 inch (about 12.7 mm) on each side of every page. Untick it if the printer did not ask for crop marks.
 
 **The PDF is two pages per sheet, or the file name ends with _2up.**
-**Pages Per Spread** is not set to **1-up (No booklet)**. Set it back to **1-up** for a normal PDF. Commercial printers almost always want single pages (1-up).
+Set **Pages Per Spread** back to **1-up (No booklet)** for a normal PDF. Commercial printers almost always want single pages (1-up).
 
 **I see a "Paper Size Error" message.**
 The book pages do not fit on the **Physical Paper Size** with the chosen **Pages Per Spread**. Choose a larger sheet or fewer pages per spread.
@@ -172,178 +192,52 @@ The book pages do not fit on the **Physical Paper Size** with the chosen **Pages
 It only works with **1-up (No booklet)**. Set **Pages Per Spread** to **1-up**.
 
 **"Sheets Per Signature", "Fold Cut Margin" and "Fold First" are greyed out or missing.**
-They are only active when **Pages Per Spread** is 2-up or more, and they are only shown in the **Full** view.
+They are only active when **Pages Per Spread** is 2-up or more, and only shown in the **Full** view.
 
 **"Color Hue" and "Tolerance" are greyed out.**
-They are only used for **Print-Spot**. Set **PDF Output Format** to **Print-Spot** first.
+Set **PDF Output Format** to **Print-Spot** first.
 
-**Compare PDFs does not show anything, or says there is nothing to compare.**
-There must be an older PDF to compare with. Check that **Number of Previous PDFs to be Kept** is at least 1, and click **Print** once without comparing, so that a previous copy exists. If you used **Select...**, check that the chosen file still exists.
+**Compare PDFs does not show a diff PDF.**
+The status line at the bottom of the window says what happened:
+
+* **No differences found** – the two PDFs look the same.
+* **Nothing to compare with yet: make a change and print again** – there is no previous PDF yet. Click **Print** once more; from then on there is one.
+* **Cannot find the PDF to compare with: ...** – the file you chose with **Select...** is not there any more. Choose it again.
+* **Cannot compare PDFs: the pages are different sizes** – the page size changed (for example on the **Layout** tab). Only pages of the same size can be compared.
+* **No pages could be compared. Check the Start Page Offset** – the offset skips more pages than one of the PDFs has. Make it smaller.
+* **No differences found, but the old Diff PDF is open and cannot be removed** – close the old diff PDF in your PDF program.
+
+If the chosen comparison PDF is missing, PTXprint goes back to **Previous PDF (_1)** (when the configuration opens, when you tick **Compare PDFs**, or when you print) and says so in the status line.
+
+**Every page shows as changed in the diff PDF.**
+The pages are probably not lined up. If one PDF has an extra page at the start (for example a cover), set **Start Page Offset**. If you changed only the margins or the gutter, tick **Smart Check**. If only the headers, footers or page numbers changed, tick **Headers + Footers** under **Ignore When Comparing**. (These options are in the **Full** view.)
+
+**The extra pages at the end show as changed.**
+This is correct: extra pages are compared with an empty page.
 
 **The watermark is missing or in the wrong place.**
-The watermark PDF should have the same page size as your book. Choose a file that matches your page size. If the watermark file was moved or deleted, PTXprint warns you that it cannot find it. Click **Select...** again.
+Choose a watermark PDF with the same page size as your book. If the watermark file was moved or deleted, PTXprint warns you that it cannot find it. Click **Select...** again.
 
 **The maps (or other insert pages) are missing from my PDF.**
-**Extract Color Inserts** is ticked. These pages were saved as separate PDF files next to the main PDF. Untick it if you want them inside the main PDF.
+**Extract Color Inserts** is ticked, so these pages were saved as separate PDF files next to the main PDF. Untick it to keep them in the main PDF.
 
 **Thumb tabs now appear only on odd pages.**
-When you chose **Print-CMYK**, **Print-Gray** or **Print-Spot**, PTXprint turned on **Only Show on Odd Pages** for thumb tabs. You can change it back on the **Tabs+Borders** tab.
+Choosing **Print-CMYK**, **Print-Gray** or **Print-Spot** turned on **Only Show on Odd Pages** for thumb tabs. You can change it back on the **Tabs+Borders** tab.
 
-## Settings reference: Finishing tab
+## 18.7 Settings reference
 
-Every control in this part of PTXprint is listed below, grouped by where it appears.
-
-### Finishing tab › Booklet Pagination
-
-#### Physical Paper Size
-
-- **Where:** Finishing tab › Booklet Pagination
-- **Type:** Drop-down list
-- **Description:** Pagination: Physical paper size
-- **View level:** Default and Full views
-- **Choices:** 420mm, 594mm (A2); 297mm, 420mm (A3); 210mm, 297mm (A4); 17in, 22in (ANSI C); 11in, 17in (ANSI B); 8.5in, 11in (Letter); 353mm, 500mm (B3); 250mm, 353mm (B4); 176mm, 250mm (B5)
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> If the required size is not displayed, then just type the required page width and height separated by a comma.
->
-> For example: 203mm, 330mm (Foolscap)
->
-> This is the actual size of the sheet of paper on which multiple pages will be printed. For example, if printing an A5-sized booklet, the actual sheet of paper that you print on will be 2x the A5-sized page, which is an A4-sized sheet of paper.
-
-**Explanation:**
-
-The size of the paper that goes into the printer, not the size of the book page. It is only used when **Pages Per Spread** is 2-up or more, or when **Scale to fit** is ticked. For a 2-up booklet, choose a sheet that is twice the book page (A5 book → A4 sheet; Letter-half book → Letter sheet). You can type any size as "width, height", for example `203mm, 330mm`. If the pages do not fit, you get a **Paper Size Error** when you print.
-
-*(Internal ID: `ecb_sheetSize` · Config key: `finishing/sheetsize`)*
-
-#### Pages Per Spread
-
-- **Where:** Finishing tab › Booklet Pagination
-- **Type:** Drop-down list
-- **Description:** Pagination: Pages per spread (booklet printing)
-- **View level:** Default and Full views
-- **Choices:** 1-up (No booklet); 2-up; 4-up; 8-up
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> How many pages will be printed on one side of the physical paper?
->
-> For example, for an A5-sized booklet, 2 pages will fit on each side, making a total of 4 pages on a single sheet.
-
-**Explanation:**
-
-**1-up (No booklet)** makes a normal PDF with one book page on each PDF page. This is what commercial and print-on-demand printers want. **2-up** makes a simple folded booklet that you can print yourself on double-sided paper. **4-up** and **8-up** are for sheets that are folded twice or three times, usually by a print shop. When this is more than 1-up, the PDF file name gets an ending like **_2up**, and the signature settings become active.
-
-*(Internal ID: `fcb_pagesPerSpread` · Config key: `finishing/pgsperspread`)*
-
-#### Scale to fit
-
-- **Where:** Finishing tab › Booklet Pagination
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Pagination: Scale to fit
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> Only available when Pages per Spread is 1-up. Enable this option to scale every page (up or down) so that it fits the Physical Paper Size (set on this tab), centred on the sheet.
-
-**Explanation:**
-
-Only active when **Pages Per Spread** is **1-up**. PTXprint enlarges or shrinks every page so that it fits the **Physical Paper Size**, and centres it on the sheet. Use it, for example, to print an A5 proof on A4 paper with larger text. The book layout does not change; only the final PDF is scaled.
-
-*(Internal ID: `c_scaleToFit` · Config key: `finishing/scaletofit`)*
-
-#### Sheets Per Signature
-
-- **Where:** Finishing tab › Booklet Pagination
-- **Type:** Number box
-- **Description:** Pagination: Sheets per signature (pages per form)
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> A signature is a collection of pages folded and bound together as a unit. A signature may be made up of multiple sheets.
->
-> If unsure, leave this setting at 0 to indicate that the publication will not be bound using separate signatures.
-
-**Explanation:**
-
-How many sheets of paper are folded together into one signature (one group of pages in the book). 0 means the whole book is one group, like a stapled booklet. Only change this if your printer or binder tells you how many sheets they put in each signature. Only active when **Pages Per Spread** is 2-up or more.
-
-*(Internal ID: `s_sheetsPerSignature` · Config key: `finishing/sheetsinsigntr`)*
-
-#### Fold Cut Margin (mm)
-
-- **Where:** Finishing tab › Booklet Pagination
-- **Type:** Number box
-- **Description:** Pagination: Minimum fold cut margin
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> The minimum width of the area to be cut after folding of the signature. Measured in millimeters (mm).
-
-**Explanation:**
-
-Extra space (in mm) left at the folds of a signature, where the paper will be cut after folding. Only needed for 4-up and 8-up sheets that are folded and then trimmed. Use the value your printer gives you. Leave it at 0 for a simple 2-up booklet.
-
-*(Internal ID: `s_foldCutMargin` · Config key: `finishing/foldcutmargin`)*
-
-#### Fold First
-
-- **Where:** Finishing tab › Booklet Pagination
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Pagination: Fold First
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> If you are imposing for a printer with a folding machine, then you want to fold first and then cut. This, for example makes a folded sheet that is part of a signature consist of two sets of sequential pages.
-
-**Explanation:**
-
-Changes the page order on the sheet to suit a print shop that folds the sheets first and cuts them after. Leave it unticked unless the printer asks for "fold first". Only active when **Pages Per Spread** is 2-up or more.
-
-*(Internal ID: `c_foldFirst` · Config key: `finishing/foldfirst`)*
-
-#### Create Cover as a Separate PDF
-
-- **Where:** Finishing tab › Booklet Pagination
-- **Type:** Checkbox (ticked by default)
-- **Description:** Pagination: Create the cover as a stand-alone PDF
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
-
-> This option is only available if Create Cover is enabled on the Cover tab. Enable this option if you plan to print the outer (wrapper) cover separately from the book's content. This is often the case if cardstock, or a colour cover is used.
-
-**Explanation:**
-
-Most printers print the cover on different paper (thicker card, or colour) from the inside pages, so they want the cover as its own PDF file. When PTXprint makes a cover, it saves the cover pages in a separate PDF whose name ends with **_cover.pdf**.
-
-*(Internal ID: `c_coverSeparatePDF` · Config key: `cover/makeseparatePDF`)*
-
-### Finishing tab
+### Finishing
 
 #### Booklet Pagination
 
-- **Where:** Finishing tab
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Basic+
 
 > Whether you need a simple booklet or a more complex signature, these options allow plenty of scope.
 
 #### Compare PDFs
 
-- **Where:** Finishing tab
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Create 'diff' to Compare PDFs
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Basic+ · `c_createDiff`  
+Also: Create 'diff' to Compare PDFs
 
 > Enable this option to generate a PDF showing the differences between the current PDF and the selected previous version (see 'Compare With a Previous PDF' below).
 >
@@ -351,118 +245,203 @@ Most printers print the cover on different paper (thicker card, or colour) from 
 >
 > Shortcut: Ctrl-R
 
-**Explanation:**
+See "Compare PDFs" in this chapter. If no differences are found, the status line says why. Untick it when you no longer need it, because comparing adds time to each print. Unticking it hides the **Diff** tab in the preview.
 
-When ticked, every **Print** also makes a "diff" PDF that shows the differences between the new PDF and the comparison PDF (see **Select...** in the **Compare PDFs** area). The diff PDF opens automatically. Untick it when you no longer need it, because comparing adds time to each print. When you untick it, PTXprint deletes the old diff file.
+#### Booklet Pagination
 
-*(Internal ID: `c_createDiff`)*
+##### Physical Paper Size – Pagination: Physical paper size
 
-### Finishing tab › Compare PDFs
+Drop-down · Basic+ · `ecb_sheetSize` · cfg `finishing/sheetsize`  
+Choices: 420mm, 594mm (A2) | 297mm, 420mm (A3) | 210mm, 297mm (A4) | 17in, 22in (ANSI C) | 11in, 17in (ANSI B) | 8.5in, 11in (Letter) | 353mm, 500mm (B3) | 250mm, 353mm (B4) | 176mm, 250mm (B5)
 
-#### Select...
+> If the required size is not displayed, then just type the required page width and height separated by a comma.
+>
+> For example: 203mm, 330mm (Foolscap)
+>
+> This is the actual size of the sheet of paper on which multiple pages will be printed. For example, if printing an A5-sized booklet, the actual sheet of paper that you print on will be 2x the A5-sized page, which is an A4-sized sheet of paper.
 
-- **Where:** Finishing tab › Compare PDFs
-- **Type:** Button
-- **Description:** Compare PDFs: Select previous PDF to compare with
-- **View level:** Default and Full views
+The paper that goes into the printer, not the book page. Only used when **Pages Per Spread** is 2-up or more, or when **Scale to fit** is ticked. For a 2-up booklet, choose a sheet twice the book page (A5 book → A4 sheet; Letter-half book → Letter sheet). Units can be mm or in. If the pages do not fit, you get a **Paper Size Error** when you print.
 
-**Tooltip (the text shown when you hover the mouse over it):**
+##### Pages Per Spread – Pagination: Pages per spread (booklet printing)
+
+Drop-down · Basic+ · `fcb_pagesPerSpread` · cfg `finishing/pgsperspread`  
+Choices: 1-up (No booklet) | 2-up | 4-up | 8-up
+
+> How many pages will be printed on one side of the physical paper?
+>
+> For example, for an A5-sized booklet, 2 pages will fit on each side, making a total of 4 pages on a single sheet.
+
+**1-up (No booklet)** is a normal PDF, one book page per PDF page; commercial and print-on-demand printers want this. **2-up** is a simple folded booklet (for example A5 pages on A4) that you can print yourself double-sided. **4-up** and **8-up** are for sheets folded two or three times, usually by a print shop. Above 1-up, the file name gets an ending like **_2up** and the signature settings become active.
+
+##### Scale to fit
+
+Checkbox, off · Regular+ · `c_scaleToFit` · cfg `finishing/scaletofit`  
+Also: Pagination: Scale to fit
+
+> Only available when Pages per Spread is 1-up. Enable this option to scale every page (up or down) so that it fits the Physical Paper Size (set on this tab), centred on the sheet.
+
+Use it, for example, to print an A5 proof on A4 paper with larger text. The book layout does not change; only the final PDF is scaled.
+
+##### Sheets Per Signature – Pagination: Sheets per signature (pages per form)
+
+Number · Full · `s_sheetsPerSignature` · cfg `finishing/sheetsinsigntr`
+
+> A signature is a collection of pages folded and bound together as a unit. A signature may be made up of multiple sheets.
+>
+> If unsure, leave this setting at 0 to indicate that the publication will not be bound using separate signatures.
+
+0 means the whole book is one group, like a stapled booklet. Only change it if your printer or binder tells you how many sheets go in each signature. Only active when **Pages Per Spread** is 2-up or more.
+
+##### Fold Cut Margin (mm) – Pagination: Minimum fold cut margin
+
+Number · Full · `s_foldCutMargin` · cfg `finishing/foldcutmargin`
+
+> The minimum width of the area to be cut after folding of the signature. Measured in millimeters (mm).
+
+Only needed for 4-up and 8-up sheets that are folded and then trimmed. Use the value your printer gives you. Leave it at 0 for a simple 2-up booklet.
+
+##### Fold First
+
+Checkbox, off · Full · `c_foldFirst` · cfg `finishing/foldfirst`  
+Also: Pagination: Fold First
+
+> If you are imposing for a printer with a folding machine, then you want to fold first and then cut. This, for example makes a folded sheet that is part of a signature consist of two sets of sequential pages.
+
+Changes the page order on the sheet. Leave it unticked unless the printer asks for "fold first". Only active when **Pages Per Spread** is 2-up or more.
+
+##### Create Cover as a Separate PDF
+
+Checkbox, on · Full · `c_coverSeparatePDF` · cfg `cover/makeseparatePDF`  
+Also: Pagination: Create the cover as a stand-alone PDF
+
+> This option is only available if Create Cover is enabled on the Cover tab. Enable this option if you plan to print the outer (wrapper) cover separately from the book's content. This is often the case if cardstock, or a colour cover is used.
+
+The cover file name ends with **_cover.pdf**. Printers often print the cover on different paper (thicker card, or colour) from the inside pages.
+
+#### Compare PDFs
+
+##### Select...
+
+Button · Basic+ · `btn_selectDiffPDF` · cfg `document/diffpdf`  
+Also: Compare PDFs: Select previous PDF to compare with
 
 > Select a particular PDF file to be compared against the current output PDF. If you just want to compare output to the previous run, then click Cancel in the File Open dialog to reset the filename (which will then default to _1).
 
-**Explanation:**
+Use it to compare with, for example, the proof you sent for checking last month. The label becomes bold while a special file is selected. If the chosen file is later moved or deleted, PTXprint goes back to **Previous PDF (_1)** by itself and says so in the status line. The two PDFs must have the same page size.
 
-By default the comparison is with the previous run (**Previous PDF (_1)**). Use this button to choose a different PDF, such as the proof you sent for checking last month. The label becomes bold to remind you that a special file is selected. Click **Cancel** in the file dialog to go back to the previous run.
+##### Only Show Pages With Differences
 
-*(Internal ID: `btn_selectDiffPDF` · Config key: `document/diffpdf`)*
-
-#### Only Show Pages With Differences
-
-- **Where:** Finishing tab › Compare PDFs
-- **Type:** Checkbox (ticked by default)
-- **Description:** Compare PDFs: Only show pages with differences
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Basic+ · `c_onlyDiffs` · cfg `document/onlyshowdiffs`  
+Also: Compare PDFs: Only show pages with differences
 
 > When comparing two PDF files the resulting "Diff" PDF can get rather large. This option reduces the size of the PDF by not including any identical pages. This also saves time as you don't need to search through a lengthy PDF to find out what might have changed.
 
-**Explanation:**
+Leave it ticked, so the diff PDF is small and quick to check. Untick it only to see every page.
 
-Leave this ticked. Then the diff PDF contains only the pages that changed, so it is small and quick to check. Untick it only if you want to see every page, changed or not.
+##### Compare PDFs:
 
-*(Internal ID: `c_onlyDiffs` · Config key: `document/onlyshowdiffs`)*
-
-#### Show New Text or Position in
-
-- **Where:** Finishing tab › Compare PDFs
-- **Type:** Colour picker
-- **Description:** Compare PDFs:
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Full · `col_ndiffColor` · cfg `document/ndiffcolor`
 
 > Use this color to show anything that has been added (or moved to the current location) in the new PDF.
->
+
+Blue at first. Choose a colour that is easy to tell apart from the **Old Text** colour.
+
+##### New Text
+
+Label · Full · `l_ndiffNew`  
+Also: Compare PDFs: Colour of new text
+
 > Set the color to use when differences are found between the old and the new PDFs.
 >
 > Use this color to show anything that has been added (or moved to the current location) in the new PDF.
 
-**Explanation:**
+Label for the new-text colour button above it.
 
-The colour used in the diff PDF for new things: text that was added, or text that moved to this place. Choose a colour that is easy to tell apart from the **Show Old Text or Position in** colour.
+##### Use this color to show anything that has been deleted (or mo...
 
-*(Internal ID: `col_ndiffColor` · Config key: `document/ndiffcolor`)*
-
-#### Show Old Text or Position in
-
-- **Where:** Finishing tab › Compare PDFs
-- **Type:** Colour picker
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Full · `col_odiffColor` · cfg `document/odiffcolor`
 
 > Use this color to show anything that has been deleted (or moved from the previous location) in the old PDF.
->
-> Set the color to use when differences are found between the old and the new PDFs.
->
-> Use this color to show anything that has been deleted (or moved from the previous location) in the old PDF.
 
-**Explanation:**
+Also marks the place where moved text used to be. Red at first. Choose a colour that is easy to tell apart from the **New Text** colour.
 
-The colour used in the diff PDF for old things: text that was removed, or the place where moved text used to be. Choose a colour that is easy to tell apart from the **Show New Text or Position in** colour.
+##### Show Max Diff Pages – Compare PDFs: Set maximum diff pages to show
 
-*(Internal ID: `col_odiffColor` · Config key: `document/odiffcolor`)*
-
-#### Show Max Diff Pages
-
-- **Where:** Finishing tab › Compare PDFs
-- **Type:** Number box
-- **Description:** Compare PDFs: Set maximum diff pages to show
-- **View level:** Default and Full views
-- **Values:** from 1 to 999, default 20
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_diffpages` · cfg `document/diffpages`  
+Values: 1–999 (default 20)
 
 > The PDF showing differences between the old and the new contains images that make the resulting file rather large. Use this option to limit the number of "Diff" pages created. This will also potentially speed up the process.
 
-**Explanation:**
+Each diff page is an image, so many pages make a large file and take time. Increase it if you expect many pages to change, for example after a change that moves text across the whole book.
 
-The highest number of changed pages that are put into the diff PDF. Each diff page is an image, so many pages make a large file and take time. The default of 20 is usually enough. Increase it if you expect many pages to change, for example after a change that moves text across the whole book.
+##### Headers + Footers
 
-*(Internal ID: `s_diffpages` · Config key: `document/diffpages`)*
+Checkbox, off · Full · `c_diffIgnoreHeadFoot` · cfg `document/diffignoretopbottom`  
+Also: Compare PDFs: Ignore headers and footers
 
-### Finishing tab › PDF Details
+> Only compare the text area of each page, and ignore the margins above and below it: running headers, footers and page numbers.
+>
+> The ignored areas are shaded in the "Diff" PDF.
 
-#### PDF Output Format
+The margin sizes come from the **Layout** tab. Use it when the header or footer changed on every page but you only want to see text changes. Not used when **Pages Per Spread** is more than 1-up or **Scale to fit** is ticked.
 
-- **Where:** Finishing tab › PDF Details
-- **Type:** Drop-down list
-- **Description:** PDF output format (Screen, RGB, CMYK, B/W, spot)
-- **View level:** Default and Full views
-- **Choices:** Screen (Quickest); Digital-RGB; Digital-CMYK (Transparency); Print-CMYK; Print-Gray (B/W); Print-Spot
+##### Side Margins
 
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_diffIgnoreSides` · cfg `document/diffignoresides`  
+Also: Compare PDFs: Ignore margin notes and thumb tabs
+
+> Only compare the text area of each page, and ignore the margins to the left and right of it:  
+> margin notes and references, thumb tabs, etc.
+>
+> The ignored areas are shaded in the "Diff" PDF.
+
+PTXprint uses the place where the text columns actually are on each page of the new PDF. Ignored areas are shaded grey. Not used when **Pages Per Spread** is more than 1-up or **Scale to fit** is ticked.
+
+##### Start Page Offset – Compare PDFs: Page offset
+
+Number · Full · `s_diffOffset` · cfg `document/diffoffset`  
+Values: -999–999
+
+> If the two PDFs do not start on the same page (for example one has a cover or extra front matter), then pages would be compared with the wrong ones. Use this to line them up.
+>
+> A positive number skips that many pages at the start of the older PDF. A negative number skips that many pages at the start of the new PDF.
+
+Example: the old proof had a cover page and the new PDF does not. Page 2 of the old PDF must then be compared with page 1 of the new one, so set 1. If the **new** PDF has the extra page, use -1. If no pages are left to compare, the status line says **No pages could be compared. Check the Start Page Offset**.
+
+##### Smart Check
+
+Checkbox, off · Full · `c_diffSmart` · cfg `document/diffsmart`  
+Also: Compare PDFs: Smart Check (ignore a moved text block)
+
+> Compare the text, not where it sits on the page.
+>
+> Use this when the margins have been changed but the text itself has not. For example, a binding gutter has been added and the left and right margins reduced so that the text block stays the same size. Or the top margin has been increased and the bottom margin reduced by the same amount.
+>
+> Normally everything on the page would show up as different because it has all moved. With Smart Check, each page of the old PDF is first moved to line up with the new one (left and right pages can move in opposite directions), so only real differences are shown: changed wording, different line breaks, etc.
+>
+> If the text block has changed size then the lines will wrap differently, and those differences are still shown.
+>
+> Note: on a page that had to be moved, Smart Check is a little less sensitive than a normal comparison, so a very small change (such as one comma replacing a full stop) might not be reported.
+
+Page numbers and headers that did not move are still matched where they were. Leave it unticked for a normal comparison, because on a page that had to be moved a very small change (such as one comma) may be missed. See "Compare PDFs" in this chapter.
+
+##### Old Text
+
+Label · Full · `l_ndiffOld`  
+Also: Compare PDFs: Colour of old text
+
+> Set the color to use when differences are found between the old and the new PDFs.
+>
+> Use this color to show anything that has been deleted (or moved from the previous location) in the old PDF.
+
+Label for the colour button above it, used for removed (or moved-away) text. (Its tooltip wrongly describes the colour for *new* text.)
+
+#### PDF Details
+
+##### PDF Output Format – PDF output format (Screen, RGB, CMYK, B/W, spot)
+
+Drop-down · Regular+ · `fcb_outputFormat` · cfg `snippets/pdfoutput`  
+Choices: Screen (Quickest) | Digital-RGB | Digital-CMYK (Transparency) | Print-CMYK | Print-Gray (B/W) | Print-Spot
 
 > Select the appropriate standard for the output format to optimize the PDF for its intended purpose.
 >
@@ -470,19 +449,11 @@ The highest number of changed pages that are put into the diff PDF. Each diff pa
 >
 > Note: Tick 'Archive' to also comply with the archive standard PDF/A-4.
 
-**Explanation:**
+Use **Screen (Quickest)** while you work, and the final format only for the printer's PDF. See "PDF Output Format" in this chapter for each choice.
 
-Use **Screen (Quickest)** while you work. Choose the final format only when you make the PDF for the printer: **Print-CMYK** for a printer that asks for PDF/X-1a or CMYK; **Print-Gray (B/W)** for black-ink-only books; **Print-Spot** for black plus one extra ink; **Digital-RGB** for screens, e-books and office printers (PDF/X-4). The non-Screen formats take longer to make, especially with many pictures. Each format adds its own ending to the file name (for example **_CMYK**), so the files do not overwrite each other.
+##### PDF Output Format
 
-*(Internal ID: `fcb_outputFormat` · Config key: `transparency_`, `snippets/pdfoutput`)*
-
-#### PDF Output Format
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Label
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Label · Regular+
 
 > Select the appropriate standard for the output format to optimize the PDF for its intended purpose.
 >
@@ -490,31 +461,18 @@ Use **Screen (Quickest)** while you work. Choose the final format only when you 
 >
 > Note: Tick 'Archive' to also comply with the archive standard PDF/A-4.
 
-#### Crop Marks
+##### Crop Marks
 
-- **Where:** Finishing tab › PDF Details
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Enable crop marks
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_cropmarks` · cfg `paper/cropmarks`  
+Also: Enable crop marks
 
 > Some printers require crop marks on the PDF to show where the page should be trimmed after binding.
 
-**Explanation:**
+Many print-on-demand printers reject files with crop marks, because the page size is then wrong. With **Pages Per Spread** at 2-up or more, the marks are drawn on the large sheet.
 
-Adds cut marks at the corners of each page. PTXprint makes each PDF page 0.5 inch (about 12.7 mm) larger on every side to make room for them. Only tick this if your printer asks for crop marks; many print-on-demand printers reject files with crop marks because the page size is then wrong. When **Pages Per Spread** is 2-up or more, the marks are drawn on the large sheet instead.
+##### Number of Previous PDFs to be Kept
 
-*(Internal ID: `c_cropmarks` · Config key: `paper/cropmarks`)*
-
-#### Number of Previous PDFs to be Kept
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Number box
-- **View level:** Default and Full views
-- **Values:** default 1
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Regular+ · `s_keepVersions` · cfg `document/keepversions`
 
 > By default, PTXprint only keeps one previous PDF (named ..._1.pdf). Up to 20 previous versions can be kept. Compare PDFs uses the _1 PDF unless you select another one, so keep at least 1.
 >
@@ -522,149 +480,77 @@ Adds cut marks at the corners of each page. PTXprint makes each PDF page 0.5 inc
 >
 > If you need to keep a PDF around longer, then manually rename it so that it can be compared to at a later date.
 
-**Explanation:**
+Before each new PDF, the old one is copied to **_1.pdf** (older ones to **_2.pdf**, **_3.pdf** …). While **Compare PDFs** is ticked, the **_1** file is kept even if this is 0. Versions beyond the number are deleted, so rename a PDF yourself if you must keep it.
 
-Before each new PDF is made, PTXprint copies the old one to a file ending **_1.pdf** (and the older ones to **_2.pdf**, **_3.pdf** …). **Compare PDFs** uses the **_1** file, so keep this at 1 or more if you want to compare. Older versions are deleted when the number is reached, so rename a PDF yourself if you must keep it.
+##### Include Config Settings Within PDF
 
-*(Internal ID: `s_keepVersions` · Config key: `document/keepversions`)*
-
-#### Include Config Settings Within PDF
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Checkbox (ticked by default)
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, on · Regular+ · `c_inclSettingsInPDF` · cfg `document/settingsinpdf`, `finishing/inclsettings`
 
 > All the configuration settings (including the PTXprint styles, AdjLists, changes.txt, and related .tex files) can be included within the PDF in order to maintain a record of what settings were used to create that PDF. Later, these settings can be retrieved from the PDF to set up an identical configuration. This is also a way to share config settings with other users.
 
-**Explanation:**
+The PDF looks the same. To load the settings back, use **Import Settings** with the PDF as the source. Leave it ticked unless you do not want to share your settings with the PDF.
 
-Stores your configuration (settings, styles, AdjLists, changes and related files) inside the PDF file. The PDF looks the same. It is a good record of how the PDF was made. You or another person can load these settings back with **Import Settings**, choosing the PDF as the source. Leave it ticked unless you have a reason not to share your settings with the PDF.
+##### Archive (PDF/A-4)
 
-*(Internal ID: `c_inclSettingsInPDF` · Config key: `document/settingsinpdf`, `finishing/inclsettings`)*
-
-#### Archive (PDF/A-4)
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Include unicode text within PDF (to help with archiving)
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_printArchive` · cfg `document/printarchive`  
+Also: Include unicode text within PDF (to help with archiving)
 
 > Check this option to include the Unicode text in the PDF which is a good practice for final print and long-term archiving. PDF/A-4 is the currently preferred archival format.
 
-**Explanation:**
+The PDF text can then be searched and copied correctly as Unicode, which helps digital libraries. Not needed for normal printing.
 
-Makes a PDF that follows the PDF/A-4 archive standard. The text in the PDF can then be searched and copied correctly as Unicode, which is good for long-term storage and for digital libraries. Only tick it if you need an archive PDF; it is not needed for normal printing.
+##### Color Hue – Spot color hue
 
-*(Internal ID: `c_printArchive` · Config key: `document/printarchive`)*
-
-#### Color Hue
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Colour picker
-- **Description:** Spot color hue
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Colour · Full · `col_spotColor` · cfg `finishing/spotcolor`
 
 > If a spot color is needed then select the closest hue. Colors close to this hue are printed with the spot ink; everything else in black/gray. Tell your printer which ink to use.
 
-**Explanation:**
+For example the red used for headings. Tell your printer which ink (for example which Pantone number) to use for this colour. Only active with **Print-Spot**.
 
-Only active when **PDF Output Format** is **Print-Spot**. Choose the colour (hue) of the spot ink, for example the red used for headings. Text and graphics with a similar colour are printed with the spot ink; everything else becomes black and grey. Tell your printer which ink (for example, which Pantone number) they should use for this colour.
+##### Tolerance (%) – Spot color tolerance
 
-*(Internal ID: `col_spotColor` · Config key: `finishing/spotcolor`)*
-
-#### Tolerance (%)
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Number box
-- **Description:** Spot color tolerance
-- **View level:** Full view only
-- **Values:** default 15
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Number · Full · `s_spotColorTolerance` · cfg `finishing/spottolerance`, `color/spotcolrange`
 
 > To match the Spot Color Hue exactly, set this to 0%. If text in similar colors are also to be set to this Spot Color, then select an acceptable tolerance range (suggested default is 15%).
 >
 > Note that this will include similar colors either side (e.g. -15% to +15%) of the selected hue.
 
-**Explanation:**
+Increase it if some coloured items come out grey; decrease it if items that should be grey come out in the spot colour. Only active with **Print-Spot**.
 
-Only active when **PDF Output Format** is **Print-Spot**. Sets how close a colour must be to the **Color Hue** to be printed with the spot ink. 0% means only exactly that hue. The default of 15% also catches slightly different shades. Increase it if some coloured items come out grey; decrease it if items that should be grey come out in the spot colour.
+##### Extract Color Inserts
 
-*(Internal ID: `s_spotColorTolerance` · Config key: `finishing/spottolerance`, `color/spotcolrange`)*
-
-#### Extract Color Inserts
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Extract Color Insert pages (as separate PDFs)
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_extractInserts` · cfg `finishing/extractinserts`  
+Also: Extract Color Insert pages (as separate PDFs)
 
 > Extract the special peripheral materials named 'maps' or 'insert_*' as separate PDFs to be printed in color and inserted manually during the binding process.
 >
 > Note that the cover is always extracted.
 
-**Explanation:**
+The new files end with the insert name, for example **_maps.pdf**. The extracted pages are removed from the main PDF. Use it when colour pages are printed separately and added during binding.
 
-Takes special pages out of the main PDF and saves them as separate PDF files: maps, and peripheral pages whose name starts with "insert_". The new file names end with the name of the insert, for example **_maps.pdf**. Use this when colour pages are printed separately and added to the book during binding. The extracted pages are removed from the main PDF.
+##### Extra XDV Processing
 
-*(Internal ID: `c_extractInserts` · Config key: `finishing/extractinserts`)*
-
-#### Extra XDV Processing
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Extra XDV processing (before creating final PDF)
-- **View level:** Full view only
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Full · `c_extraxdvproc` · cfg `finishing/extraxdvproc`  
+Also: Extra XDV processing (before creating final PDF)
 
 > Enable processing of the intermediate xdv file for such things as coloured diacritics.
 
-**Explanation:**
+Leave it unticked unless a feature you use needs it, because it makes printing slower.
 
-Runs an extra processing step before the final PDF is made. It is needed only for a few special features, such as coloured diacritics. Leave it unticked unless a feature you use asks for it, because it makes printing slower.
+##### Apply Watermark PDF
 
-*(Internal ID: `c_extraxdvproc` · Config key: `finishing/extraxdvproc`)*
-
-#### Apply Watermark PDF
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Checkbox (not ticked by default)
-- **Description:** Finishing: Apply watermark
-- **View level:** Default and Full views
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Checkbox, off · Regular+ · `c_applyWatermark` · cfg `paper/ifwatermark`  
+Also: Finishing: Apply watermark
 
 > A watermark can be applied to all pages of the publication. The file must be a PDF and should ideally have the same dimensions as the publication being printed.
 
-**Explanation:**
+For example "DRAFT" or a copyright notice, so that nobody mistakes a proof for the finished book. Untick it before you make the final PDF for the printer.
 
-Adds a watermark PDF behind every page, for example the word "DRAFT" or a copyright notice. This is helpful for proof copies, so that nobody mistakes them for the finished book. Untick it before you make the final PDF for the printer. The watermark PDF should have the same page size as your book.
+##### Select...
 
-*(Internal ID: `c_applyWatermark` · Config key: `paper/ifwatermark`)*
-
-#### Select...
-
-- **Where:** Finishing tab › PDF Details
-- **Type:** Button
-- **Description:** Finishing: Select watermark to apply
-- **View level:** Default and Full views
-- **Only available when:** “Apply Watermark PDF” is selected
-
-**Tooltip (the text shown when you hover the mouse over it):**
+Button · Regular+ · `btn_selectWatermarkPDF` · cfg `paper/watermarkpdf`  
+Also: Finishing: Select watermark to apply · Needs: “Apply Watermark PDF”
 
 > Choose the watermark PDF file. It should ideally be the same size as the book page.
 
-**Explanation:**
-
-Only active when **Apply Watermark PDF** is ticked. Opens PTXprint's own folder of ready-made watermarks (for example **A4-Draft.pdf**, **A5-Draft.pdf**, **A5-CopyrightWatermark.pdf**). Choose one that matches your page size, or choose your own one-page PDF from anywhere on your computer.
-
-*(Internal ID: `btn_selectWatermarkPDF` · Config key: `paper/watermarkpdf`)*
+Opens PTXprint's own folder of ready-made watermarks (for example **A4-Draft.pdf**, **A5-Draft.pdf**, **A5-CopyrightWatermark.pdf**). Choose one that matches your page size, or your own one-page PDF from anywhere on your computer.
