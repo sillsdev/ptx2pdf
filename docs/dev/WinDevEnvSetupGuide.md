@@ -4,7 +4,7 @@
 2. Download and install MSYS2 from here:     https://www.msys2.org/ 
 
 Uncheck the option to start the MYSYS2 console from the installer. 
-Instead, manually open the **MSYS2 MinGW x64** console app and then proceed with following steps.
+Instead, manually open the **MSYS2 UCRT x64** console app and then proceed with following steps.
 
 3. To update the package database and base packages:
 ```
@@ -15,7 +15,7 @@ The key issue here is NOT to have an installation of python under MSYS2, but to 
 
 4. Install the necessary packages:
 ```
-pacman -S mingw-ucrt64-x86_64-python mingw-ucrt64-x86_64-python-pip mingw-ucrt64-x86_64-python-setuptools mingw-ucrt64-x86_64-gtksourceview3 mingw-ucrt64-x86_64-python-pillow mingw-ucrt64-x86_64-python-fonttools mingw-ucrt64-x86_64-python-regex mingw-ucrt64-x86_64-python-cairo mingw-ucrt64-x86_64-python-gobject mingw-ucrt64-x86_64-gtk3 mingw-ucrt64-x86_64-glib2 mingw-ucrt64-x86_64-libffi mingw-ucrt64-x86_64-gcc mingw-ucrt64-x86_64-glade mingw-ucrt64-x86_64-python-pyopenssl mingw-ucrt64-x86_64-poppler mingw-ucrt64-x86_64-python-numpy mingw-ucrt64-x86_64-adwaita-icon-theme mingw-ucrt64-x86_64-python-lxml mingw-ucrt64-x86_64-python-psutil
+pacman -S mingw-w64-ucrt64-x86_64-python mingw-w64-ucrt64-x86_64-python-pip mingw-w64-ucrt64-x86_64-python-setuptools mingw-w64-ucrt64-x86_64-gtksourceview3 mingw-w64-ucrt64-x86_64-python-pillow mingw-w64-ucrt64-x86_64-python-fonttools mingw-w64-ucrt64-x86_64-python-regex mingw-w64-ucrt64-x86_64-python-cairo mingw-w64-ucrt64-x86_64-python-gobject mingw-w64-ucrt64-x86_64-gtk3 mingw-w64-ucrt64-x86_64-glib2 mingw-w64-ucrt64-x86_64-libffi mingw-w64-ucrt64-x86_64-gcc mingw-w64-ucrt64-x86_64-glade mingw-w64-ucrt64-x86_64-python-pyopenssl mingw-w64-ucrt64-x86_64-poppler mingw-w64-ucrt64-x86_64-python-numpy mingw-w64-ucrt64-x86_64-adwaita-icon-theme mingw-w64-ucrt64-x86_64-python-lxml mingw-w64-ucrt64-x86_64-python-psutil
 ```
 
 5. Install ptxprint and its dependencies not yet covered
@@ -40,7 +40,7 @@ pwd (this will tell you which path to cd to in the next step)
 ```
 Close Git Bash terminal
 
-Open MSYS2 MinGW 64-bit terminal
+Open MSYS2 UCRT 64-bit terminal
 ```
 cd c:/users/<your username>/ptx2pdf  (which is the path that you got from the previous pwd command)
 python setup.py develop
