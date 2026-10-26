@@ -1,6 +1,6 @@
-# 24. Problems and solutions
+# 5. Problems and solutions
 
-## 24.1 How to use this chapter
+## 5.1 How to use this chapter
 
 This chapter lists common problems, grouped by kind, in the words users often use. Each has **Why this happens** and **What to do**.
 
@@ -12,7 +12,7 @@ First try these three quick checks. They solve many problems:
 
 "pt" means point. 1 pt is about 0.35 mm.
 
-## 24.2 Printing fails or no PDF appears
+## 5.2 Printing fails or no PDF appears
 
 ### Nothing happens when I click Print, or the status line says "No books to print"
 
@@ -123,7 +123,7 @@ First try these three quick checks. They solve many problems:
 3. On the **Pictures** tab, choose **Low Resolution (Smaller File)** or **Use Place-holders** while you work.
 4. Print one book at a time, or use **SpeedSlice** in the **PDF Preview** window for long books.
 
-## 24.3 The PDF does not change
+## 5.3 The PDF does not change
 
 ### I changed a setting, but the PDF looks the same
 
@@ -174,7 +174,7 @@ First try these three quick checks. They solve many problems:
 1. In the **PDF Preview** window, right-click a `\p` or `\m` paragraph, choose **SpeedSlice** and click **Disable**.
 2. On the **Basic** tab, check **From Chapter** and **To**, and print again.
 
-## 24.4 Text and fonts
+## 5.4 Text and fonts
 
 ### Some letters print as empty boxes (☐) or question marks
 
@@ -277,7 +277,7 @@ First try these three quick checks. They solve many problems:
 2. On the **Body** tab, check **Book Introductions**, **Introductory Outlines**, **Include Scripture Text**, **Headings**, **Parallel Passage Refs** and **Hide Empty Verses**.
 3. For study notes, tick **Extended Footnotes (\ef)** on the **Notes+Refs** tab (Full view).
 
-## 24.5 Layout and spacing
+## 5.5 Layout and spacing
 
 ### There is white space at the bottom of every page
 
@@ -392,7 +392,7 @@ The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Pa
 
 **What to do:** Change to the **Full** view. Tick **Use Special Features for These Books** and type the book codes (for example `PSA PRO`) in its list.
 
-## 24.6 Pictures
+## 5.6 Pictures
 
 ### No pictures appear in the PDF
 
@@ -466,7 +466,7 @@ The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Pa
 
 **What to do:** Print again so the preview matches the picture list. Then make the change on the **Pictures** tab, **Details** sub-tab.
 
-## 24.7 Notes and cross-references
+## 5.7 Notes and cross-references
 
 ### Footnote or cross-reference settings are greyed out
 
@@ -517,7 +517,7 @@ The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Pa
 
 **What to do:** Correct the book names in Paratext, and print again.
 
-## 24.8 Diglot
+## 5.8 Diglot
 
 ### My change has no effect in a diglot
 
@@ -590,7 +590,7 @@ The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Pa
 
 **Why this happens:** A diglot always uses columns, so PTXprint ticks this box and locks it while the diglot is on.
 
-## 24.9 Headers, footers and page numbers
+## 5.9 Headers, footers and page numbers
 
 ### There is no header on the first page of a book
 
@@ -686,7 +686,7 @@ The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Pa
 
 **What to do:** On the **Peripherals** tab, tick **Colophon at End of Publication** again. Untick **Layout Only** at the bottom of the window, and print again.
 
-## 24.10 Settings and configurations
+## 5.10 Settings and configurations
 
 ### I lost my changes after I chose another configuration
 
@@ -779,7 +779,7 @@ The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Pa
 
 **What to do:** Read the status line. PTXprint often says what it changed. Change the setting back if you need to.
 
-## 24.11 Comparing PDFs
+## 5.11 Comparing PDFs
 
 ### Compare PDFs does not show a diff PDF
 
@@ -806,7 +806,7 @@ The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Pa
 
 Extra pages at the end of the longer PDF always show as changed. This is correct.
 
-## 24.12 I cannot find a setting
+## 5.12 I cannot find a setting
 
 ### A tab or setting that I used before has disappeared
 
@@ -872,7 +872,7 @@ Extra pages at the end of the longer PDF always show as changed. This is correct
 
 **What to do:** On the **Help** tab, click **Change...** next to **Base Projects Directory**. Choose the folder that *contains* your Paratext project folders, and click **Use Selected**.
 
-## 24.13 Getting more help
+## 5.13 Getting more help
 
 If your problem is not in this chapter:
 

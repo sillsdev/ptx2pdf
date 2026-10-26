@@ -38,6 +38,9 @@ Generated 2026-10-26 from the PTXprint source code and the explanations in docs/
 
 ## Contents
 
+
+**Part 1: Start here** – New to PTXprint? Read these first.
+
 1. **About this manual**
    - 1.1 What PTXprint is
    - 1.2 Who this manual is for
@@ -69,235 +72,244 @@ Generated 2026-10-26 from the PTXprint source code and the explanations in docs/
    - 3.8 Common tasks
    - 3.9 Common problems
    - 3.10 Settings reference (Main menu (top-left ☰ button), Main window)
-4. **Basic tab**
-   - 4.1 What this tab is for
-   - 4.2 Project
-   - 4.3 Layout Configuration
-   - 4.4 What to Print
-   - 4.5 Dialogs on this tab
-   - 4.6 Common tasks
-   - 4.7 Common problems
-   - 4.8 Settings reference (Import Scripture... (dialog), Save Current Configuration As... (dialog), Select Books To Export to PDF (dialog), Copy Configuration To... (dialog), Lock/Unlock Configuration (dialog), Basic)
-5. **Layout tab**
-   - 5.1 What this tab is for
-   - 5.2 Page Setup
-   - 5.3 Two Column Layout
-   - 5.4 Margins
-   - 5.5 Change the Grid Settings dialog (graph paper)
-   - 5.6 Lock UI Layout Settings
-   - 5.7 Common tasks
-   - 5.8 Common problems
-   - 5.9 Settings reference (Change the Grid Settings (dialog), Layout)
-6. **Fonts+Script tab**
+
+**Part 2: Find an answer** – Step-by-step tasks, and what to do when something goes wrong.
+
+4. **How do I...? (step-by-step tasks)**
+   - 4.1 How to use this chapter
+   - 4.2 Printing: what goes into the PDF
+   - 4.3 Page size, margins and columns
+   - 4.4 Fonts and text size
+   - 4.5 Scripts, languages and hyphenation
+   - 4.6 Making the text fit
+   - 4.7 Scripture text: headings, numbers and other content
+   - 4.8 Footnotes and cross-references
+   - 4.9 Pictures and maps
+   - 4.10 Diglot (two texts side by side)
+   - 4.11 Thumb tabs, borders and decorations
+   - 4.12 Front matter, back matter and covers
+   - 4.13 Headers, footers and page numbers
+   - 4.14 Fixing the page layout
+   - 4.15 Preparing the PDF for a printer
+   - 4.16 Configurations and settings
+   - 4.17 Finding settings and getting help
+5. **Problems and solutions**
+   - 5.1 How to use this chapter
+   - 5.2 Printing fails or no PDF appears
+   - 5.3 The PDF does not change
+   - 5.4 Text and fonts
+   - 5.5 Layout and spacing
+   - 5.6 Pictures
+   - 5.7 Notes and cross-references
+   - 5.8 Diglot
+   - 5.9 Headers, footers and page numbers
+   - 5.10 Settings and configurations
+   - 5.11 Comparing PDFs
+   - 5.12 I cannot find a setting
+   - 5.13 Getting more help
+
+**Part 3: Reference: tab by tab** – Every setting in the PTXprint window, in the order of the tabs.
+
+6. **Basic tab**
    - 6.1 What this tab is for
-   - 6.2 Font Configuration
-   - 6.3 Pick a Font (and Typeface) dialog
-   - 6.4 Use Fallback Font
-   - 6.5 Writing System
-   - 6.6 Hyphenation
-   - 6.7 Spacing Adjustments
-   - 6.8 Add Tatweel (kashida) Rules dialog
-   - 6.9 Common tasks
-   - 6.10 Common problems
-   - 6.11 Settings reference (Create List (dialog), Add Tatweel (kashida) Rules (dialog), Pick a Font (and Typeface) (dialog), Select Font Features... (dialog), Fonts+Script)
-7. **Body tab**
+   - 6.2 Project
+   - 6.3 Layout Configuration
+   - 6.4 What to Print
+   - 6.5 Dialogs on this tab
+   - 6.6 Common tasks
+   - 6.7 Common problems
+   - 6.8 Settings reference (Import Scripture... (dialog), Save Current Configuration As... (dialog), Select Books To Export to PDF (dialog), Copy Configuration To... (dialog), Lock/Unlock Configuration (dialog), Basic)
+7. **Layout tab**
    - 7.1 What this tab is for
-   - 7.2 Beginning and Ending Material
-   - 7.3 Include Scripture Text
-   - 7.4 Other Features
-   - 7.5 Common tasks
-   - 7.6 Common problems
-   - 7.7 Settings reference (Body)
-8. **Notes+Refs tab**
+   - 7.2 Page Setup
+   - 7.3 Two Column Layout
+   - 7.4 Margins
+   - 7.5 Change the Grid Settings dialog (graph paper)
+   - 7.6 Lock UI Layout Settings
+   - 7.7 Common tasks
+   - 7.8 Common problems
+   - 7.9 Settings reference (Change the Grid Settings (dialog), Layout)
+8. **Fonts+Script tab**
    - 8.1 What this tab is for
-   - 8.2 Footnotes
-   - 8.3 Cross-References
-   - 8.4 Study Notes + Questions
-   - 8.5 Generate Strong's Index dialog
-   - 8.6 Common tasks
-   - 8.7 Common problems
-   - 8.8 Settings reference (Generate Strong's Index... (dialog), Notes+Refs)
-9. **Header+Footer tab**
+   - 8.2 Font Configuration
+   - 8.3 Pick a Font (and Typeface) dialog
+   - 8.4 Use Fallback Font
+   - 8.5 Writing System
+   - 8.6 Hyphenation
+   - 8.7 Spacing Adjustments
+   - 8.8 Add Tatweel (kashida) Rules dialog
+   - 8.9 Common tasks
+   - 8.10 Common problems
+   - 8.11 Settings reference (Create List (dialog), Add Tatweel (kashida) Rules (dialog), Pick a Font (and Typeface) (dialog), Select Font Features... (dialog), Fonts+Script)
+9. **Body tab**
    - 9.1 What this tab is for
-   - 9.2 Header
-   - 9.3 Other
-   - 9.4 Footer
+   - 9.2 Beginning and Ending Material
+   - 9.3 Include Scripture Text
+   - 9.4 Other Features
    - 9.5 Common tasks
    - 9.6 Common problems
-   - 9.7 Settings reference (Header+Footer)
-10. **Pictures tab**
+   - 9.7 Settings reference (Body)
+10. **Notes+Refs tab**
    - 10.1 What this tab is for
-   - 10.2 The picture table (PicList)
-   - 10.3 Global Options
-   - 10.4 Details
-   - 10.5 Checklist
-   - 10.6 Generate PicList dialog
-   - 10.7 Select Images dialog (the catalogue)
-   - 10.8 Download & Install Image Sets dialog
-   - 10.9 Illustration Credit Overlay dialog
-   - 10.10 Add Map dialog
-   - 10.11 Common tasks
-   - 10.12 Common problems
-   - 10.13 Settings reference (Generate PicList (dialog), Select Images... (dialog), Download & Install Image Sets (dialog), Illustration Credit Overlay (dialog), Add Map (dialog), Pictures)
-11. **Diglot tab (two or more languages)**
+   - 10.2 Footnotes
+   - 10.3 Cross-References
+   - 10.4 Study Notes + Questions
+   - 10.5 Generate Strong's Index dialog
+   - 10.6 Common tasks
+   - 10.7 Common problems
+   - 10.8 Settings reference (Generate Strong's Index... (dialog), Notes+Refs)
+11. **Header+Footer tab**
    - 11.1 What this tab is for
-   - 11.2 Diglot (or Polyglot)
-   - 11.3 The texts table
-   - 11.4 Layout
-   - 11.5 Merging mode
-   - 11.6 Column widths and auto-balance
-   - 11.7 Notes, headers and other options
-   - 11.8 Changing the settings of a secondary text
-   - 11.9 What happens to pictures, notes and headers
-   - 11.10 Auto Page Fill for diglots and polyglots (experimental)
-   - 11.11 Save As Monoglot
-   - 11.12 Common tasks
-   - 11.13 Common problems
-   - 11.14 Settings reference (Save As Monoglot... (dialog), Diglot)
-12. **Tabs+Borders tab**
+   - 11.2 Header
+   - 11.3 Other
+   - 11.4 Footer
+   - 11.5 Common tasks
+   - 11.6 Common problems
+   - 11.7 Settings reference (Header+Footer)
+12. **Pictures tab**
    - 12.1 What this tab is for
-   - 12.2 Thumb Tabs
-   - 12.3 Ornamental Decorations
-   - 12.4 Border Settings dialog
-   - 12.5 Common tasks
-   - 12.6 Common problems
-   - 12.7 Settings reference (Border Settings (dialog), Tabs+Borders)
-13. **Styles tab**
+   - 12.2 The picture table (PicList)
+   - 12.3 Global Options
+   - 12.4 Details
+   - 12.5 Checklist
+   - 12.6 Generate PicList dialog
+   - 12.7 Select Images dialog (the catalogue)
+   - 12.8 Download & Install Image Sets dialog
+   - 12.9 Illustration Credit Overlay dialog
+   - 12.10 Add Map dialog
+   - 12.11 Common tasks
+   - 12.12 Common problems
+   - 12.13 Settings reference (Generate PicList (dialog), Select Images... (dialog), Download & Install Image Sets (dialog), Illustration Credit Overlay (dialog), Add Map (dialog), Pictures)
+13. **Diglot tab (two or more languages)**
    - 13.1 What this tab is for
-   - 13.2 The marker list
-   - 13.3 Bold setting names: what has changed
-   - 13.4 Include Contents of Marker
-   - 13.5 Character Settings
-   - 13.6 Paragraph Settings
-   - 13.7 Other Settings
-   - 13.8 Sidebars
-   - 13.9 Size and Position Settings (dialog)
-   - 13.10 Sidebar Image Settings (dialog)
-   - 13.11 Add/Edit Style (dialog)
+   - 13.2 Diglot (or Polyglot)
+   - 13.3 The texts table
+   - 13.4 Layout
+   - 13.5 Merging mode
+   - 13.6 Column widths and auto-balance
+   - 13.7 Notes, headers and other options
+   - 13.8 Changing the settings of a secondary text
+   - 13.9 What happens to pictures, notes and headers
+   - 13.10 Auto Page Fill for diglots and polyglots (experimental)
+   - 13.11 Save As Monoglot
    - 13.12 Common tasks
    - 13.13 Common problems
-   - 13.14 Settings reference (Size and Position Settings (dialog), Sidebar Image Settings (dialog), Add/Edit Style (dialog), Styles)
-14. **Advanced tab**
+   - 13.14 Settings reference (Save As Monoglot... (dialog), Diglot)
+14. **Tabs+Borders tab**
    - 14.1 What this tab is for
-   - 14.2 Before you change anything here
-   - 14.3 Main sub-tab: Text Processing & Stylesheets
-   - 14.4 Main sub-tab: General
-   - 14.5 Main sub-tab: Capture tests?
-   - 14.6 Other sub-tab: the TeXpert settings
-   - 14.7 Common tasks
-   - 14.8 Common problems
-   - 14.9 Settings reference (Advanced)
-15. **View+Edit tab**
+   - 14.2 Thumb Tabs
+   - 14.3 Ornamental Decorations
+   - 14.4 Border Settings dialog
+   - 14.5 Common tasks
+   - 14.6 Common problems
+   - 14.7 Settings reference (Border Settings (dialog), Tabs+Borders)
+15. **Styles tab**
    - 15.1 What this tab is for
-   - 15.2 The sub-tabs: which files you may edit
-   - 15.3 The buttons at the top of the tab
-   - 15.4 The Generate button
-   - 15.5 The Generate Front Matter dialog
-   - 15.6 The front matter and its special codes (advanced)
-   - 15.7 The Adj List (adjustment list)
-   - 15.8 Common tasks
-   - 15.9 Common problems
-   - 15.10 Settings reference (Generate Front Matter (dialog), View+Edit)
-16. **Peripherals tab (front and back matter)**
+   - 15.2 The marker list
+   - 15.3 Bold setting names: what has changed
+   - 15.4 Include Contents of Marker
+   - 15.5 Character Settings
+   - 15.6 Paragraph Settings
+   - 15.7 Other Settings
+   - 15.8 Sidebars
+   - 15.9 Size and Position Settings (dialog)
+   - 15.10 Sidebar Image Settings (dialog)
+   - 15.11 Add/Edit Style (dialog)
+   - 15.12 Common tasks
+   - 15.13 Common problems
+   - 15.14 Settings reference (Size and Position Settings (dialog), Sidebar Image Settings (dialog), Add/Edit Style (dialog), Styles)
+16. **Advanced tab**
    - 16.1 What this tab is for
-   - 16.2 Cover
-   - 16.3 Front Matter PDF(s) and Back Matter PDF(s)
-   - 16.4 Table of Contents
-   - 16.5 Local Front Matter
-   - 16.6 Maps
-   - 16.7 Colophon at End of Publication
-   - 16.8 Variables and Values
-   - 16.9 Common tasks
-   - 16.10 Common problems
-   - 16.11 Settings reference (Peripherals)
-17. **Publications tab**
+   - 16.2 Before you change anything here
+   - 16.3 Main sub-tab: Text Processing & Stylesheets
+   - 16.4 Main sub-tab: General
+   - 16.5 Main sub-tab: Capture tests?
+   - 16.6 Other sub-tab: the TeXpert settings
+   - 16.7 Common tasks
+   - 16.8 Common problems
+   - 16.9 Settings reference (Advanced)
+17. **View+Edit tab**
    - 17.1 What this tab is for
-   - 17.2 The list of publications
-   - 17.3 The buttons
-   - 17.4 Printing the publications
-   - 17.5 Common tasks
-   - 17.6 Common problems
-   - 17.7 Settings reference (Publications)
-18. **Finishing tab**
+   - 17.2 The sub-tabs: which files you may edit
+   - 17.3 The buttons at the top of the tab
+   - 17.4 The Generate button
+   - 17.5 The Generate Front Matter dialog
+   - 17.6 The front matter and its special codes (advanced)
+   - 17.7 The Adj List (adjustment list)
+   - 17.8 Common tasks
+   - 17.9 Common problems
+   - 17.10 Settings reference (Generate Front Matter (dialog), View+Edit)
+18. **Peripherals tab (front and back matter)**
    - 18.1 What this tab is for
-   - 18.2 PDF Details
-   - 18.3 Booklet Pagination
-   - 18.4 Compare PDFs
-   - 18.5 Common tasks
-   - 18.6 Common problems
-   - 18.7 Settings reference (Finishing)
-19. **Printers tab**
+   - 18.2 Cover
+   - 18.3 Front Matter PDF(s) and Back Matter PDF(s)
+   - 18.4 Table of Contents
+   - 18.5 Local Front Matter
+   - 18.6 Maps
+   - 18.7 Colophon at End of Publication
+   - 18.8 Variables and Values
+   - 18.9 Common tasks
+   - 18.10 Common problems
+   - 18.11 Settings reference (Peripherals)
+19. **Publications tab**
    - 19.1 What this tab is for
-   - 19.2 Book & Job Specification
-   - 19.3 The printer list
-   - 19.4 The printer details panels
+   - 19.2 The list of publications
+   - 19.3 The buttons
+   - 19.4 Printing the publications
    - 19.5 Common tasks
    - 19.6 Common problems
-   - 19.7 Settings reference (Printers)
-20. **PDF Preview window, layout analysis and page filling**
-   - 20.1 What this window is for
-   - 20.2 Opening and closing the Preview window
-   - 20.3 Moving around: pages, spreads and zoom
-   - 20.4 The Content tab: what to show on the preview
-   - 20.5 Layout Analysis and finding issues
-   - 20.6 Adjusting paragraphs with the right-click menu
-   - 20.7 Moving and resizing pictures with the right-click menu
-   - 20.8 SpeedSlice: work on one part of a long book quickly
-   - 20.9 Auto Page Fill and the progress monitor
-   - 20.10 The buttons at the bottom of the window
-   - 20.11 Common tasks
-   - 20.12 Common problems
-   - 20.13 Settings reference (PDF Preview > Issue types popup, PDF Preview (dialog), Enter new anchor verse ref (dialog), SpeedSlice (dialog))
-21. **Importing settings**
-   - 21.1 What this dialog is for
-   - 21.2 Source of Settings
-   - 21.3 Target
-   - 21.4 What to import: the category tabs
-   - 21.5 RESET
-   - 21.6 Common tasks
-   - 21.7 Common problems
-   - 21.8 Settings reference (Import Settings... (dialog))
-22. **Help tab and getting support**
-   - 22.1 What this tab is for
-   - 22.2 Links and Help
-   - 22.3 How to ask for help
-   - 22.4 Log tab
-   - 22.5 About dialog
-   - 22.6 Common tasks
-   - 22.7 Common problems
-   - 22.8 Settings reference (Help, Log)
-23. **How do I...? (step-by-step tasks)**
-   - 23.1 How to use this chapter
-   - 23.2 Printing: what goes into the PDF
-   - 23.3 Page size, margins and columns
-   - 23.4 Fonts and text size
-   - 23.5 Scripts, languages and hyphenation
-   - 23.6 Making the text fit
-   - 23.7 Scripture text: headings, numbers and other content
-   - 23.8 Footnotes and cross-references
-   - 23.9 Pictures and maps
-   - 23.10 Diglot (two texts side by side)
-   - 23.11 Thumb tabs, borders and decorations
-   - 23.12 Front matter, back matter and covers
-   - 23.13 Headers, footers and page numbers
-   - 23.14 Fixing the page layout
-   - 23.15 Preparing the PDF for a printer
-   - 23.16 Configurations and settings
-   - 23.17 Finding settings and getting help
-24. **Problems and solutions**
-   - 24.1 How to use this chapter
-   - 24.2 Printing fails or no PDF appears
-   - 24.3 The PDF does not change
-   - 24.4 Text and fonts
-   - 24.5 Layout and spacing
-   - 24.6 Pictures
-   - 24.7 Notes and cross-references
-   - 24.8 Diglot
-   - 24.9 Headers, footers and page numbers
-   - 24.10 Settings and configurations
-   - 24.11 Comparing PDFs
-   - 24.12 I cannot find a setting
-   - 24.13 Getting more help
+   - 19.7 Settings reference (Publications)
+20. **Finishing tab**
+   - 20.1 What this tab is for
+   - 20.2 PDF Details
+   - 20.3 Booklet Pagination
+   - 20.4 Compare PDFs
+   - 20.5 Common tasks
+   - 20.6 Common problems
+   - 20.7 Settings reference (Finishing)
+21. **Printers tab**
+   - 21.1 What this tab is for
+   - 21.2 Book & Job Specification
+   - 21.3 The printer list
+   - 21.4 The printer details panels
+   - 21.5 Common tasks
+   - 21.6 Common problems
+   - 21.7 Settings reference (Printers)
+22. **PDF Preview window, layout analysis and page filling**
+   - 22.1 What this window is for
+   - 22.2 Opening and closing the Preview window
+   - 22.3 Moving around: pages, spreads and zoom
+   - 22.4 The Content tab: what to show on the preview
+   - 22.5 Layout Analysis and finding issues
+   - 22.6 Adjusting paragraphs with the right-click menu
+   - 22.7 Moving and resizing pictures with the right-click menu
+   - 22.8 SpeedSlice: work on one part of a long book quickly
+   - 22.9 Auto Page Fill and the progress monitor
+   - 22.10 The buttons at the bottom of the window
+   - 22.11 Common tasks
+   - 22.12 Common problems
+   - 22.13 Settings reference (PDF Preview > Issue types popup, PDF Preview (dialog), Enter new anchor verse ref (dialog), SpeedSlice (dialog))
+23. **Importing settings**
+   - 23.1 What this dialog is for
+   - 23.2 Source of Settings
+   - 23.3 Target
+   - 23.4 What to import: the category tabs
+   - 23.5 RESET
+   - 23.6 Common tasks
+   - 23.7 Common problems
+   - 23.8 Settings reference (Import Settings... (dialog))
+24. **Help tab and getting support**
+   - 24.1 What this tab is for
+   - 24.2 Links and Help
+   - 24.3 How to ask for help
+   - 24.4 Log tab
+   - 24.5 About dialog
+   - 24.6 Common tasks
+   - 24.7 Common problems
+   - 24.8 Settings reference (Help, Log)
+
+**Part 4: Glossary** – The meaning of the words used in this manual.
+
 25. **Glossary of terms**
    - 25.1 How to use this glossary
    - 25.2 1–9
@@ -359,36 +371,48 @@ leaders and support staff. You do not need to know about typesetting or computer
 
 ## 1.3 How this manual is organised
 
-Two general chapters come first. Then there is one chapter for each tab of the PTXprint window,
-in the same order as the tabs. Then come chapters about the PDF Preview window, importing settings
-and getting help. The manual ends with step-by-step tasks, solutions to problems, and a glossary.
+The manual has four parts.
 
-1. **About this manual** – this chapter.
-2. **Getting started with PTXprint** – a first walk-through: from opening PTXprint to your first PDF.
-3. **The main window, menu and view levels** – the parts of the window, configurations, view
-   levels, and how PTXprint saves your settings.
-4. **Basic tab** – choose the project, the configuration and the books to print.
-5. **Layout tab** – page size, margins, columns, font size and line spacing.
-6. **Fonts+Script tab** – fonts, writing system, hyphenation and spacing.
-7. **Body tab** – what is printed from each book (introductions, headings, verse numbers…).
-8. **Notes+Refs tab** – footnotes, cross-references and study notes.
-9. **Header+Footer tab** – the running header and footer, and page numbers.
-10. **Pictures tab** – illustrations and maps.
-11. **Diglot tab (two or more languages)** – two or more texts side by side.
-12. **Tabs+Borders tab** – thumb tabs and decorative borders.
-13. **Styles tab** – the look of each kind of text (each USFM marker).
-14. **Advanced tab** – settings for experienced users.
-15. **View+Edit tab** – front matter, the adjustment list, and the files PTXprint makes.
-16. **Peripherals tab (front and back matter)** – front matter, table of contents, colophon, maps and covers.
-17. **Publications tab** – a list of publications that you can print together.
-18. **Finishing tab** – PDF type for the printer, crop marks, booklets and comparing PDFs.
-19. **Printers tab** – price estimates and orders from print companies.
-20. **PDF Preview window, layout analysis and page filling** – look at the PDF and fix the layout of pages.
-21. **Importing settings** – copy settings from a PDF, an archive or another configuration.
-22. **Help tab and getting support** – find your files, and ask for help.
-23. **How do I...? (step-by-step tasks)** – short instructions for common jobs.
-24. **Problems and solutions** – what to do when something goes wrong.
-25. **Glossary of terms** – the meaning of the words used in this manual.
+**Part 1: Start here**
+
+* **About this manual** – this chapter.
+* **Getting started with PTXprint** – a first walk-through: from opening PTXprint to your first PDF.
+* **The main window, menu and view levels** – the parts of the window, configurations, view
+  levels, and how PTXprint saves your settings.
+
+**Part 2: Find an answer**
+
+* **How do I...? (step-by-step tasks)** – short instructions for common jobs.
+* **Problems and solutions** – what to do when something goes wrong.
+
+**Part 3: Reference, tab by tab**
+
+One chapter for each tab of the PTXprint window, in the same order as the tabs. Then come chapters
+about the PDF Preview window, importing settings and getting help.
+
+* **Basic tab** – choose the project, the configuration and the books to print.
+* **Layout tab** – page size, margins, columns, font size and line spacing.
+* **Fonts+Script tab** – fonts, writing system, hyphenation and spacing.
+* **Body tab** – what is printed from each book (introductions, headings, verse numbers…).
+* **Notes+Refs tab** – footnotes, cross-references and study notes.
+* **Header+Footer tab** – the running header and footer, and page numbers.
+* **Pictures tab** – illustrations and maps.
+* **Diglot tab (two or more languages)** – two or more texts side by side.
+* **Tabs+Borders tab** – thumb tabs and decorative borders.
+* **Styles tab** – the look of each kind of text (each USFM marker).
+* **Advanced tab** – settings for experienced users.
+* **View+Edit tab** – front matter, the adjustment list, and the files PTXprint makes.
+* **Peripherals tab (front and back matter)** – front matter, table of contents, colophon, maps and covers.
+* **Publications tab** – a list of publications that you can print together.
+* **Finishing tab** – PDF type for the printer, crop marks, booklets and comparing PDFs.
+* **Printers tab** – price estimates and orders from print companies.
+* **PDF Preview window, layout analysis and page filling** – look at the PDF and fix the layout of pages.
+* **Importing settings** – copy settings from a PDF, an archive or another configuration.
+* **Help tab and getting support** – find your files, and ask for help.
+
+**Part 4: Glossary**
+
+* **Glossary of terms** – the meaning of the words used in this manual.
 
 Most tab chapters have the same parts:
 
@@ -1180,9 +1204,2067 @@ Button · Mini+ · `b_close`
 Click **Save** first if you want to keep your changes.
 
 
-# 4. Basic tab
+# 4. How do I...? (step-by-step tasks)
 
-## 4.1 What this tab is for
+## 4.1 How to use this chapter
+
+This chapter gives short, step-by-step answers to the questions people ask most often. A task often uses more than one tab. **See also** names the chapter with more detail.
+
+For every task:
+
+* Most changes appear in the PDF only after you click **Print (Make PDF)** again.
+* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **☰** (top-left) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
+* Click **Save** before you change to another configuration. PTXprint does not save the current configuration when you choose another one.
+* "pt" means point. 1 pt is about 0.35 mm.
+
+## 4.2 Printing: what goes into the PDF
+
+### How do I make a PDF?
+
+1. On the **Basic** tab, choose the **Project**, the configuration (**Name**) and the books.
+2. Click **Print (Make PDF)** at the bottom of the window (or press **Ctrl+P**).
+3. Wait for the progress bar to finish. The PDF opens in the **PDF Preview** window.
+
+See also: Main window; Basic tab.
+
+### How do I print one book?
+
+1. On the **Basic** tab, in **What to Print**, click **Single Book**.
+2. Choose the book, then click **Print (Make PDF)**.
+
+See also: Basic tab.
+
+### How do I print only some chapters of a book?
+
+1. On the **Basic** tab, click **Single Book** and choose the book.
+2. Type the first chapter in **From Chapter** and the last in **To**.
+3. Click **Print (Make PDF)**.
+
+When you choose another book, PTXprint sets the chapters back to the whole book.
+
+See also: Basic tab.
+
+### How do I print several books?
+
+1. On the **Basic** tab, click **Select Multiple Books...**.
+2. Click each book, or a group button: **All Books**, **Old Testament**, **New Testament**, **Deuterocanon** or **Extra Material**. Click a group button again to unselect that group. **Toggle Books** reverses the selection and **Reset All** unselects all. Hold **Shift** and click to select all books between two books.
+3. Click **OK**, then **Print (Make PDF)**.
+
+See also: Basic tab.
+
+### How do I print only some passages (for example Psalm 23 and Luke 15)?
+
+1. On the **Basic** tab, click in the box beside **Portions or Multiple Books** (or press **Ctrl+B**).
+2. Type references with 3-letter book codes, for example `PSA 23; 100 LUK 15:11-32`. Ranges such as `MAT-ACT` or `GEN 1:1-2:3` also work.
+3. Click **Print (Make PDF)**.
+
+Use book codes such as `JHN`, not names such as `John`.
+
+See also: Basic tab.
+
+### How do I make the PDF faster while I am still working on the layout?
+
+1. At the bottom of the window, tick **Quick Run** (or press **Ctrl+Q**).
+2. If you only change layout settings (spacing, margins, styles), also tick **Layout Only** (Regular and Full views).
+3. For the final PDF, untick both and print again, so the table of contents and page references are correct.
+
+See also: Main window.
+
+### How do I find the PDF file on my computer?
+
+Click **Open folder containing the PDF** at the bottom of the window (Regular and Full views), or **☰** › **Show PDF** › **Output Folder**. Or click the blue link next to **Output PDF Location** on the **Help** tab.
+
+The PDF name starts with the project name, then the configuration name and the books, for example `ABC_NT_A5_MAT-REV_ptxp.pdf`.
+
+See also: Main window; Help tab.
+
+### How do I open the PDF in my normal PDF program instead of the preview?
+
+Click **☰** › **Show PDF** › **System Viewer**. Or, in the **PDF Preview** window, click **Open the PDF in Default PDF Viewer**.
+
+Close the PDF in the other program before you print again. Otherwise PTXprint cannot replace the file.
+
+See also: Main window; PDF Preview window.
+
+### How do I get a Bible text to practise with?
+
+1. On the **Basic** tab, open the **Project** list and choose **Import...** (the last item).
+2. Click **Install BSB**. PTXprint installs the Berean Standard Bible and opens it.
+
+In the same dialog you can also install a Scripture text bundle (.zip) from the Digital Bible Library or Open.Bible.
+
+See also: Basic tab.
+
+### How do I learn PTXprint with a tutorial?
+
+1. Choose a practice project and configuration (make one with **Save As**). The tutorial changes its settings.
+2. On the **Basic** tab, click **Run Tutorial...** (Basic, Regular and Full views) and choose the tutorial file (.json, or a recorded test in a .zip). You may get one from a trainer.
+3. A small tutorial window shows the next step, and PTXprint highlights the control it uses.
+4. Click **Step** (or press **Space**) for the next step, **Skip** (**S**) to leave it out, **Play** (**P**) to run the steps one after another, or **Run to end**.
+5. Close the tutorial window to stop. If PTXprint raised the view level for the tutorial, it changes it back.
+
+See also: Basic tab.
+
+## 4.3 Page size, margins and columns
+
+### How do I change the page size (for example to A5)?
+
+1. On the **Layout** tab, in **Page Setup**, choose a **Page Size**, for example **148mm, 210mm (A5)**.
+2. If **Lines Per Page** is red, click one fine-tune button (see "How do I stop wasting space at the bottom of every page?").
+3. Click **Print (Make PDF)**.
+
+Ask your printer for the exact trim size before you start. A change of page size moves every line in the book.
+
+See also: Layout tab.
+
+### How do I use a page size that is not in the list?
+
+1. On the **Layout** tab, click in the **Page Size** box.
+2. Type the width, a comma, and the height, for example `140mm, 216mm`. You can use `mm`, `cm` or `in`.
+3. Click **Print (Make PDF)**.
+
+The size is saved when you save or print. After that it is in the **Page Size** list for all your projects. To remove a saved size, select it, right-click in the box and choose **Remove**.
+
+See also: Layout tab.
+
+### How do I make the margins smaller?
+
+1. On the **Layout** tab, in **Margins**, make **Side Margin Width (mm)** smaller for the left and right margins.
+2. Make **Start of Page to Top of Text (mm)** and **Bottom of Text to End of Page (mm)** smaller for the top and bottom.
+3. Check the blue numbers in the margin picture. A very small one means the header or footer is too close to the paper edge.
+4. Click **Print (Make PDF)**.
+
+Many printers cannot print closer than about 10 mm to the edge. Ask your printer.
+
+See also: Layout tab.
+
+### How do I change from two columns to one column (or back)?
+
+1. On the **Layout** tab, tick or untick **Two Column Layout**.
+2. For two columns, set **Gutter Width (mm)** (the space between the columns) and choose whether you want a **Vertical Rule in Gutter**.
+3. Check **Base Indent**. PTXprint halves or doubles it for you.
+4. Click **Print (Make PDF)**.
+
+If **Two Column Layout** is greyed out, a diglot is on. A diglot always uses columns.
+
+See also: Layout tab.
+
+### How do I print some books in one column and the rest in two columns?
+
+1. Change to the **Full** view.
+2. On the **Body** tab, in **Other Features**, tick **Use One Column Layout for These Books** (it says **Use Two Column Layout** if the publication is one column).
+3. Type the book codes in the box beside it, for example `GLO PSA`, and print.
+
+See also: Body tab.
+
+### How do I add extra space at the spine for binding?
+
+1. On the **Layout** tab, in **Page Setup**, tick **Binding Gutter (mm)**.
+2. Type the extra space, for example 5 mm. Thicker books need more. Ask your printer.
+3. Leave **Outer Gutter** unticked, and print.
+
+See also: Layout tab.
+
+### How do I stop wasting space at the bottom of every page?
+
+1. On the **Layout** tab, look at **Lines Per Page** (Regular and Full views). If it is red, part of a line is empty at the bottom of each page.
+2. Click **one** fine-tune button: next to **Base Line Spacing (pt)**, or next to the top or bottom margin in **Margins**.
+3. The number turns blue. Click **Print (Make PDF)**.
+
+If **Lock Ratio** is ticked, the line-spacing button also changes the font size a little. Use a margin button to keep the font size.
+
+See also: Layout tab.
+
+### How do I make a journaling Bible with a wide margin for notes?
+
+1. On the **Layout** tab, tick **Notelines** (Regular and Full views).
+2. PTXprint ticks **Binding Gutter** and **Outer Gutter** and sets a wide gutter (at least 40 mm).
+3. Change the gutter width if needed, choose the line colour with the colour button, and print.
+
+See also: Layout tab; Advanced tab.
+
+## 4.4 Fonts and text size
+
+### How do I change the font?
+
+1. On the **Fonts+Script** tab, click **Select Font...** next to **Regular**.
+2. Type part of the font name in the search box, and click the font.
+3. Click **OK**. PTXprint fills in **Bold**, **Italic** and **Bold Italic** from the same family.
+4. Click **Print (Make PDF)**.
+
+Choose a different bold or italic font **after** the Regular font. Choosing the Regular font again replaces the other three.
+
+See also: Fonts+Script tab.
+
+### How do I make the text bigger or smaller?
+
+1. On the **Layout** tab, in **Page Setup**, make sure **Lock Ratio** is ticked.
+2. Change **Base Font Size (pt)**. The line spacing changes with it.
+3. If **Lines Per Page** turns red, click one fine-tune button, then print.
+
+All other text (headings, footnotes, verse numbers) changes by the same proportion.
+
+See also: Layout tab.
+
+### How do I put more space between the lines but keep the same letter size?
+
+1. On the **Layout** tab, untick **Lock Ratio**.
+2. Make **Base Line Spacing (pt)** larger, for example from 14 to 15.
+3. Tick **Lock Ratio** again if you want to keep the new ratio, and print.
+
+See also: Layout tab.
+
+### How do I change the size or font of one kind of text (for example section headings or footnotes)?
+
+1. Open the **Styles** tab (Regular and Full views).
+2. Type the marker in **Find**, for example `s1` for section headings, `f` for footnotes or `v` for verse numbers.
+3. In **Character Settings**, change **Font Size Factor** (1.0 = normal, 1.2 = 20% bigger). Tick **Bold** or **Italic** if you want.
+4. For a different font for this marker only, click **Select Font...**.
+5. Click **Print (Make PDF)**.
+
+Each level has its own style: a change to `s1` does not change `s2`. To undo all your changes to a style, click its Reset (circular-arrows) button.
+
+See also: Styles tab.
+
+### How do I fix empty boxes (missing characters) in the PDF?
+
+1. On the **Basic** tab, select as many books as possible.
+2. On the **Fonts+Script** tab, tick **Use Fallback Font** (Regular and Full views).
+3. Click **Find Missing Characters**. PTXprint lists the characters that the Regular font does not have.
+4. Click **Select Font...** next to the list and choose a font that has them. If the label turns red, that font lacks some of them too.
+5. Click **Print (Make PDF)**.
+
+A Regular font that has your whole alphabet is often the better solution.
+
+See also: Fonts+Script tab; Problems and solutions.
+
+### How do I get real bold and italic instead of fake ones?
+
+1. On the **Fonts+Script** tab, look at the **Bold**, **Italic** and **Bold Italic** buttons. A style in brackets, for example *(bold)*, is faked.
+2. Click **Select Font...** for **Regular** and choose a family that has all four typefaces. **Pick a Font** shows these families in **bold**.
+3. Or click **Select Font...** for **Bold** (or **Italic**) and choose a real bold (or italic) typeface from another family.
+4. Click **Print (Make PDF)**.
+
+See also: Fonts+Script tab.
+
+### How do I print numbers in my own script's digits?
+
+1. On the **Fonts+Script** tab, click the **Script for Numbers** link.
+2. In **Pick a Font**, choose your script in **Digit mapping**. Click **OK**, then print.
+3. Check that the font has those digits. If not, you will see empty boxes.
+
+See also: Fonts+Script tab.
+
+### How do I print some text in colour (for example red verse numbers)?
+
+1. On the **Styles** tab, find the marker, for example `v` (verse numbers) or `wj` (words of Jesus).
+2. Click the button next to **Color** and choose a colour.
+3. PTXprint ticks **Enable Colored Text (as Specified in Stylesheet)** on the **Fonts+Script** tab. Keep it ticked.
+4. Click **Print (Make PDF)**.
+
+See also: Styles tab; Fonts+Script tab.
+
+## 4.5 Scripts, languages and hyphenation
+
+### How do I set up a right-to-left script (for example Arabic or Hebrew)?
+
+1. On the **Fonts+Script** tab, choose a font made for your script.
+2. In **Writing System**, set **Text Flow Direction** to **Right-to-Left**. PTXprint ticks **RTL Book Binding**.
+3. Set **Text Script**, for example **Arabic** or **Hebrew**.
+4. If the font needs Graphite, click **Select Font...** for **Regular**, tick **Graphite Rendering**, and click **OK**.
+5. Click **Print (Make PDF)**.
+
+See also: Fonts+Script tab.
+
+### How do I set up a script that has no spaces between words (for example Thai or Khmer)?
+
+1. On the **Fonts+Script** tab, set **Text Script** to your script.
+2. If your text marks word breaks with `/` (Thai, Lao, Myanmar, Tai Tham, New Tai Lue), nothing more is needed. The `/` marks become invisible break points.
+3. Otherwise, tick **Specify Line Break Locale** (Regular and Full views) and type the code, for example `th`, `km`, `my`, `zh`, `ja` or `ko`.
+4. Click **Print (Make PDF)**.
+
+See also: Fonts+Script tab.
+
+### How do I turn on hyphenation?
+
+1. In Paratext, approve the hyphenation points in the Wordlist tool.
+2. On the **Fonts+Script** tab, in **Hyphenation**, click **Create List...**.
+3. Click **OK** in the **Create List** dialog. The message says how many words were used.
+4. Tick **Hyphenate**, and print.
+
+If the list is empty, untick **Only Use Approved Hyphenation Words** in the dialog and try again.
+
+See also: Fonts+Script tab.
+
+### How do I choose a different form of a letter that my font offers?
+
+1. On the **Fonts+Script** tab, click **Select Font...** for **Regular**, then **Select Features...**.
+2. Choose your language in **Language** (if listed). Then tick or choose the feature.
+3. Click **OK** in both dialogs, then print.
+
+See also: Fonts+Script tab.
+
+### How do I print an interlinear text (glosses under each word)?
+
+1. In Paratext, approve the interlinear glosses.
+2. Change to the **Full** view.
+3. On the **Advanced** tab, **Main** sub-tab, **General** area, tick **Interlinear** and type the language code of the glosses beside it, for example `en`.
+4. Click **Print (Make PDF)**.
+
+See also: Advanced tab.
+
+## 4.6 Making the text fit
+
+### How do I make the book fit on fewer pages?
+
+Try these one at a time. Print after each change and compare the page count.
+
+1. **Layout** tab: make **Base Font Size (pt)** a little smaller (with **Lock Ratio** ticked).
+2. **Layout** tab: make the margins a little smaller, or tick **Two Column Layout**.
+3. **Fonts+Script** tab, **Spacing Adjustments**: make **Min/Shrink** (Between Words) a little smaller.
+4. **Notes+Refs** tab: untick **Start Each Footnote on a New Line**. On the **Cross-References** sub-tab, choose **Blend with Footnotes**.
+5. **Pictures** tab: make large pictures smaller with **Scale**, or use **Column Width** instead of **Span Width**.
+6. **Advanced** tab, **Other** sub-tab, **Page Layout and Spacing**: set **Where to start a new book** to **Same page**.
+7. **PDF Preview** window: shrink paragraphs on short last pages (see "How do I fix a page that is not full?").
+
+See also: Layout tab; Fonts+Script tab; Notes+Refs tab.
+
+### How do I fit more text on each line?
+
+1. On the **Fonts+Script** tab, in **Spacing Adjustments**, make **Min/Shrink** (Between Words) a little smaller.
+2. Or click **Select Font...** for **Regular** and set **Stretch** a little below 1.00, for example 0.97.
+3. Print and check that the text is still easy to read.
+
+See also: Fonts+Script tab.
+
+### How do I start each book on a right-hand page?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Advanced** tab, **Other** sub-tab, open **Page Layout and Spacing**.
+3. Set **Where to start a new book** to **Odd page**, and print. PTXprint adds blank pages where needed.
+
+See also: Advanced tab.
+
+### How do I let a new book start on the same page as the end of the previous book?
+
+1. On the **Advanced** tab, **Other** sub-tab, open **Page Layout and Spacing**.
+2. Set **Where to start a new book** to **Same page**.
+3. If a book still starts on a new page, increase **Page full factor** a little (for example from 0.65 to 0.75), and print.
+
+See also: Advanced tab.
+
+## 4.7 Scripture text: headings, numbers and other content
+
+### How do I remove (or add back) the section headings?
+
+On the **Body** tab, in **Include Scripture Text**, untick (or tick) **Headings**, and print. Unticking **Headings** also removes the parallel passage references.
+
+See also: Body tab.
+
+### How do I hide the verse numbers or the chapter numbers?
+
+On the **Body** tab, untick **Verse Numbers** or **Chapter numbers**, and print. The header references still work.
+
+See also: Body tab.
+
+### How do I show verse number 1 at the start of each chapter?
+
+On the **Body** tab, untick **Hide First Verse Number** (Regular and Full views), and print.
+
+See also: Body tab.
+
+### How do I leave out the book introductions?
+
+1. On the **Body** tab, in **Beginning and Ending Material**, untick **Book Introductions**.
+2. Also untick **Introductory Outlines** to remove the outline. Then print.
+
+To print **only** the introductions, untick **Include Scripture Text** instead. Remember to tick it again later.
+
+See also: Body tab.
+
+### How do I print a draft that has many untranslated verses?
+
+1. On the **Body** tab, in **Include Scripture Text**, tick **Hide Empty Verses**.
+2. Tick **Show '...'** if readers should see where text is missing. Then print.
+
+See also: Body tab.
+
+### How do I print "Psalm 1", "Psalm 2" … instead of big chapter numbers?
+
+1. Change to the **Full** view.
+2. On the **Body** tab, in **Other Features**, tick **Use Special Features for These Books**.
+3. Type `PSA` in the box beside it. (An empty box means **all** books.)
+4. In **Chapter Label**, type the word for "Psalm" in your language, and print.
+
+For the books in this list you can also tick **Optimize Layout for Poetry Books**. It lets the columns end at different heights, which often removes large white gaps in Psalms.
+
+See also: Body tab.
+
+### How do I put the verse numbers in the margin?
+
+1. On the **Body** tab, tick **Marginal Verses**.
+2. In **Position on Page**, choose **Left**, **Right**, **Inner** or **Outer**.
+3. In **Col Width (pts)**, type a width that fits the longest verse number, for example 12–16. Then print.
+
+See also: Body tab.
+
+### How do I change how glossary words are marked in the text?
+
+1. On the **Body** tab, in **Other Features**, open **Glossary Word Appearance**.
+2. Choose a style, for example **format as bold**, **star \*before word**, or **star \*before and after\*** for a star on both sides.
+3. Click **Print (Make PDF)**.
+
+See also: Body tab.
+
+### How do I leave out one kind of text (for example remarks or a special marker)?
+
+1. On the **Styles** tab, find the marker in **Find**.
+2. Untick **Include Contents of Marker**. The marker is now shown with a line through it. Then print.
+
+The text stays in Paratext. Only the PDF changes.
+
+See also: Styles tab.
+
+## 4.8 Footnotes and cross-references
+
+### How do I hide all footnotes?
+
+On the **Notes+Refs** tab, **Footnotes** sub-tab, untick **Include Footnotes**, and print.
+
+See also: Notes+Refs tab.
+
+### How do I remove (or add back) the cross-references?
+
+1. On the **Notes+Refs** tab, **Cross-References** sub-tab, untick (or tick) **Include Cross-References (From Project Text)**.
+2. To remove all cross-references, also untick **Use External List of Cross-References** if it is ticked. Then print.
+
+See also: Notes+Refs tab.
+
+### How do I put the footnotes at the end of each book?
+
+On the **Notes+Refs** tab, **Footnotes** sub-tab, under **Placement of Footnotes**, choose **End of Book**, and print. The notes appear after the last chapter of each book.
+
+See also: Notes+Refs tab.
+
+### How do I start each footnote on a new line?
+
+1. On the **Notes+Refs** tab, **Footnotes** sub-tab, tick **Start Each Footnote on a New Line**.
+2. For cross-references, tick **Start Each Cross-Reference on a New Line** on the **Cross-References** sub-tab. Then print.
+
+Notes on new lines use more space.
+
+See also: Notes+Refs tab.
+
+### How do I change the footnote callers (the small letters or symbols)?
+
+1. On the **Notes+Refs** tab, **Footnotes** sub-tab, make sure **Show Callers** is ticked.
+2. In the box beside it, type the marks separated by commas, with no spaces, for example `*,†,‡,§`.
+3. If some notes still show other marks, tick **Override hidden/automatic Footnote caller settings**.
+4. Tick **Reset Callers on Page** if the sequence should start again on each page.
+5. Print. If the reset does not look right, print a second time.
+
+See also: Notes+Refs tab.
+
+### How do I save space by mixing cross-references with the footnotes?
+
+1. On the **Notes+Refs** tab, **Cross-References** sub-tab, under **Placement of Cross-References**, choose **Blend with Footnotes**.
+2. Make sure **Include Footnotes** is ticked on the **Footnotes** sub-tab, and print.
+
+See also: Notes+Refs tab.
+
+### How do I add a column of cross-references from a ready-made list?
+
+1. Change to the **Full** view.
+2. On the **Notes+Refs** tab, **Cross-References** sub-tab, tick **Use External List of Cross-References**.
+3. Under **Placement of Cross-References**, choose **Column Cross-References**.
+4. In **Source for References**, choose a list in **External Refs**, for example **Standard list**.
+5. In **Include Refs for Books in**, choose which books the references may point to, for example **New Testament**. Then print.
+
+See also: Notes+Refs tab.
+
+### How do I put footnotes in the side margin, next to their verse?
+
+1. On the **Layout** tab, tick **Margin Notes Col Width (mm)** (Regular and Full views) and type the width of the margin column.
+2. On the **Notes+Refs** tab, set **Placement of Footnotes** (and/or **Placement of Cross-References**) to **Side Margin**. Then print.
+
+See also: Layout tab; Notes+Refs tab.
+
+## 4.9 Pictures and maps
+
+### How do I print the pictures that are in my Paratext text?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Pictures** tab, **Global Options** sub-tab, tick **Include Pictures (illustrations)**.
+3. Click **Generate...**. If a dialog opens, choose **Append Pictures to PicList From These Books**, keep **Protect existing PicList settings** ticked, and click **OK**.
+4. Look for grey rows in the picture table. A grey row means PTXprint cannot find that picture file.
+5. Click **Print (Make PDF)**.
+
+See also: Pictures tab.
+
+### How do I add a new picture from the illustration catalogue?
+
+1. On the **Pictures** tab, click **Show Catalogue...**. If you have no image set yet, download one first.
+2. Choose the **Image Set**. Type a word in **Search**, or check **Limit to Range of References**, then click **Search + Update Images**.
+3. Click the pictures you want, then **Add Images to PicList**.
+4. On the **Details** sub-tab, type a **Caption** for each new picture and check its **Anchor Ref**. Then print.
+
+See also: Pictures tab.
+
+### How do I make a picture bigger or smaller?
+
+1. On the **Pictures** tab, click the picture's row, then open the **Details** sub-tab.
+2. Change **Frame Size** (**Column Width**, **Span Width**, **Page (in Margins)** or **Page (to Edge)**).
+3. Change **Scale**. 100% is the full width of the frame. Then print.
+
+Or, in the **PDF Preview** window, right-click the picture and choose **Shrink by 1 line** or **Grow by 1 line**. A red row in the table means the picture is too tall for the page: make **Scale** smaller.
+
+See also: Pictures tab; PDF Preview window.
+
+### How do I change where a picture sits on the page?
+
+1. Select the picture in the table and open the **Details** sub-tab.
+2. Set **Frame Size** first, then **Vertical Position** (for example **Top** or **Bottom**), then **Horizontal Position** (for example **Left**, **Right**, **Inner** or **Outer**). Then print.
+
+Or, in the **PDF Preview** window, right-click the picture and choose **Vertical Position** or **Horizontal Position**.
+
+See also: Pictures tab; PDF Preview window.
+
+### How do I move a picture to an earlier or later page?
+
+1. Select the picture and open the **Details** sub-tab.
+2. Change **Anchor Ref** to a verse a few verses earlier (to move it back) or later (to move it forward). Keep the dot: `LUK 2.7`. Then print.
+
+Or right-click the picture in the **PDF Preview** window and choose **Change Anchor Ref**.
+
+See also: Pictures tab; PDF Preview window.
+
+### How do I make the text flow around a small picture?
+
+1. Select the picture. On the **Details** sub-tab, set **Frame Size** to **Column Width**.
+2. Set **Vertical Position** to **Cutout** and **Horizontal Position** to **Left** or **Right** (or **Inner**/**Outer**).
+3. Set **Scale** to about 40%.
+4. Set **Number of Lines** to the line where the picture should start (0 = first line of the paragraph). Then print.
+
+See also: Pictures tab.
+
+### How do I use high-quality pictures for the final PDF?
+
+1. Put the high-resolution files in the project's `local\figures` folder, or tick **Use Other Location** and click **Picture Folder...** to choose their folder.
+2. On the **Pictures** tab, **Global Options**, choose **High Resolution (Larger File)**.
+3. Print and check that the missing-pictures count is 0.
+
+See also: Pictures tab.
+
+### How do I make a small PDF to send by email?
+
+1. On the **Pictures** tab, **Global Options**, choose **Low Resolution (Smaller File)**. For an even smaller file, choose **Use Place-holders (Smallest PDF File)**: each picture becomes an empty box.
+2. On the **Finishing** tab, make sure **PDF Output Format** is **Screen (Quickest)**. Then print.
+
+See also: Pictures tab; Finishing tab.
+
+### How do I add maps?
+
+1. On the **Pictures** tab, click **Add Maps...** (or on the **Peripherals** tab, tick **Include Maps** and click **Add Maps...**).
+2. Check **Book Code for Maps** (usually **XXM**).
+3. Click **Select Map...** and choose the map file. Type a **Caption** if you want one.
+4. Click **Size and Position...** to choose the frame size and position.
+5. Click **Add Another Map** for the next map, or **OK - Done!** to finish. Then print.
+
+See also: Pictures tab; Peripherals tab.
+
+### How do I print the copyright credits for the pictures?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Peripherals** tab, tick **Colophon at End of Publication**. Its text normally contains `\zimagecopyrights`. If not, add the line `\pc \zimagecopyrights` (or put it on the copyright page of the front matter).
+3. On the **Pictures** tab, **Details** sub-tab, check each picture. Known illustration series show **Automatic**. For other pictures, type the credit in **Copyright Attribution**.
+4. Print twice. The first run finds the page of each picture.
+
+See also: Pictures tab; Peripherals tab; View+Edit tab.
+
+### How do I print a small credit line on top of a picture?
+
+1. Select the picture on the **Pictures** tab and open the **Details** sub-tab.
+2. Click **© ...**. The **Illustration Credit Overlay** dialog opens.
+3. Type the **Image Credit Text**, choose the position, click **OK**, and print.
+
+See also: Pictures tab.
+
+## 4.10 Diglot (two texts side by side)
+
+### How do I make a diglot (two languages side by side)?
+
+1. Make sure both projects print well on their own.
+2. Open the primary project. On the **Basic** tab, click **Save As** and give the diglot its own configuration name, for example `Diglot`.
+3. On the **Diglot** tab (Regular and Full views), tick **Diglot (or Polyglot)**. Click **Yes** in the message.
+4. In the **R** row of the table, choose the second **Project**, then its **Configuration**.
+5. Check that the **% Width** values add up to 100 (for example 50 and 50).
+6. Choose one short book that is in both projects, and print.
+
+See also: Diglot tab.
+
+### How do I change the column widths in a diglot?
+
+1. On the **Diglot** tab, click the **% Width** cell of each text and type a new value, for example 55 and 45. The numbers must add up to 100.
+2. Print and compare the number of pages. Give more width to the text that needs more space.
+3. Or select one short book and click **Auto-calculate optimum widths of diglot columns** (diglots with exactly two texts). It prints many times, so it takes a while.
+
+See also: Diglot tab.
+
+### How do I change the font of the second text in a diglot?
+
+1. On the **Diglot** tab, right-click the **R** row and choose **Edit Settings…**.
+2. The window now shows the second text's configuration. On the **Fonts+Script** tab, change the font.
+3. Click **Return to Primary** (the big button at the bottom), then print.
+
+To change only the font size or line spacing, type it in the **Font Size** or **Spacing** cell of that row on the **Diglot** tab.
+
+See also: Diglot tab.
+
+### How do I print the captions of both texts under a shared picture?
+
+1. On the **Diglot** tab, tick **Captions** in the row of the secondary text. (The **L** text always shows its captions.)
+2. Make sure both texts use the same picture file at the same verse. Only then is the picture shared.
+3. Print.
+
+Pictures are not shared in the books listed in **Use Serial Layout for These Books**.
+
+See also: Diglot tab.
+
+### How do I put the two texts on facing pages?
+
+1. On the **Diglot** tab, in the **R** row, change **1|2** to **2**.
+2. Check that the **Layout** box shows **L,R**.
+3. Set **% Width** to 100 for each text, and print.
+
+See also: Diglot tab.
+
+### How do I add a third text (polyglot)?
+
+1. On the **Diglot** tab, right-click in the table and choose **Add a row/text**.
+2. Choose the **Project** and **Configuration** for the new row.
+3. Right-click a row and choose **Distribute Widths**, then print.
+
+See also: Diglot tab.
+
+### How do I turn a diglot back into a normal (one text) configuration?
+
+1. On the **Diglot** tab, untick **Diglot (or Polyglot)**. The **Save As Monoglot** dialog opens.
+2. Type a new configuration name (no spaces) and click **OK**.
+3. PTXprint opens the new one-text configuration. The diglot configuration is still there.
+
+See also: Diglot tab.
+
+## 4.11 Thumb tabs, borders and decorations
+
+### How do I add thumb tabs?
+
+1. On the **Basic** tab, select all the books of the publication.
+2. On the **Tabs+Borders** tab (Regular and Full views), tick **Thumb Tabs**.
+3. Set **Height** and **Length** (for example 8 mm and 15 mm), and choose a dark **Tab Color**.
+4. Click **Edit Style** and set a light text colour, for example white. Then print.
+
+See also: Tabs+Borders tab.
+
+### How do I put a decorative border around the text?
+
+1. On the **Tabs+Borders** tab, tick **Ornamental Decorations**, then **Border**.
+2. Choose **Dynamic Border**.
+3. Click the **\textborder** link. The **Styles** tab opens with the `textborder` style.
+4. In **Sidebar Settings**, click **Borders...**. Choose the **Type of Border**, the colours and the **Border Width** (at least 10 pt for ornaments). Click **OK**.
+5. On the **Layout** tab, make the margins larger if the border is too close to the text or the paper edge. Then print.
+
+For a ready-made frame, choose **PDF border (Legacy)** in step 2 and click **Select...** to choose the PDF.
+
+See also: Tabs+Borders tab; Styles tab.
+
+### How do I add a decoration at the end of each book?
+
+On the **Tabs+Borders** tab, tick **Ornamental Decorations**, then **End of Book Decoration**. Click **Select...**, choose a PDF graphic, and print.
+
+See also: Tabs+Borders tab.
+
+### How do I put a border around book titles or section headings?
+
+1. On the **Tabs+Borders** tab, tick **Ornamental Decorations**.
+2. Tick **Book Title Borders**, or tick **Section Headings** and choose **Dynamic Border**.
+3. Click the style link next to it. The **Styles** tab opens.
+4. Choose a background colour, and click **Borders...** in **Sidebar Settings** for the border. Then print.
+
+With **PDF border (Legacy)** for section headings, **Shift** moves the graphic: a positive number moves it up.
+
+See also: Tabs+Borders tab.
+
+### How do I decorate the verse numbers?
+
+1. On the **Tabs+Borders** tab, tick **Ornamental Decorations**, then **Verse Number Decorator**.
+2. Choose **Verse Border Graphic** and click **Select...** to choose a small PDF graphic. (For Arabic script you can choose **End of Ayah**.)
+3. Print. Change **Scale** and **Shift** if the number does not fit.
+
+See also: Tabs+Borders tab.
+
+## 4.12 Front matter, back matter and covers
+
+### How do I add a title page, copyright page and table of contents?
+
+1. On the **Peripherals** tab, tick **Local Front Matter**. If there is no front matter yet, PTXprint makes a **BASIC** one: a title page, a copyright and licence page, and a table of contents.
+2. In the **Variables and Values** table, type the values, for example **maintitle** and **subtitle**.
+3. Print twice. The table of contents needs two runs.
+
+See also: Peripherals tab; View+Edit tab.
+
+### How do I start the front matter from a different template?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **View+Edit** tab, click the **Front Matter** sub-tab.
+3. Click **Generate**. Choose **BASIC**, **ADVANCED**, **DIGLOT** or **PARATEXT** (a copy of the FRT book in Paratext), and click **OK**.
+4. Click **Edit Variables...**, fill in the values, and print.
+
+**Warning:** **Generate** replaces all of the current front matter. If you have already changed it, click **Cancel**.
+
+See also: View+Edit tab.
+
+### How do I change the text of the title page?
+
+1. On the **View+Edit** tab, click the **Front Matter** sub-tab.
+2. If the line says `\mt1 \zvar|maintitle\*`, the title comes from a variable. Click **Edit Variables...** and change **maintitle**.
+3. If the line has normal text, change it in the editor.
+4. Click outside the text area to save, then print.
+
+See also: View+Edit tab; Peripherals tab.
+
+### How do I set the copyright and licence text?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Basic** tab, click **Copyright & Licensing** to open it.
+3. Type the copyright text (type `(c)` for ©), or click **Reload copyright from Paratext project**.
+4. Choose or type the **License**.
+5. Make sure the front matter or the colophon contains `\zcopyright` and `\zlicense` (the BASIC template has them). Then print.
+
+See also: Basic tab; View+Edit tab.
+
+### How do I turn on the table of contents?
+
+1. On the **Peripherals** tab, tick **Table of Contents** and type the heading in the **Title** box beside it.
+2. Choose which book names to show (`\toc1`, `\toc2`, `\toc3`) and the **Leaders** (the dots between the name and the page number) (Regular and Full views).
+3. Make sure the front matter contains `\ztoc|main\*` (the BASIC template has it).
+4. Print twice.
+
+See also: Peripherals tab; View+Edit tab.
+
+### How do I add a colophon at the end of the book?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Peripherals** tab, tick **Colophon at End of Publication**.
+3. Change the text in the colophon box if needed. The button beside it reloads the default text.
+4. Tick **Force Page Break Before Colophon** if it must start on a new page. Then print.
+
+When you tick **Local Front Matter** or **Layout Only**, PTXprint unticks the colophon. Check it again afterwards.
+
+See also: Peripherals tab.
+
+### How do I add an existing PDF at the front or the back of the book?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Peripherals** tab, tick **Front Matter PDF(s)** (or **Back Matter PDF(s)**).
+3. Click **Select...** beside it and choose one or more PDF files. Then print.
+
+Several files are added in alphabetical order of their file names. Name them `01-title.pdf`, `02-preface.pdf` and so on to control the order. Make the PDF pages the same size as your book pages.
+
+See also: Peripherals tab.
+
+### How do I make a cover?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Peripherals** tab, tick **Local Front Matter** (a cover needs it), then tick **Create Cover Page**.
+3. Click **Cover Wizard...**. If the message **Existing cover settings found** appears, click **Delete and Continue** to start a new cover, or **Cancel (keep my settings)** to keep the old cover (the wizard then does not open).
+4. Go through the steps: book and spine, picture, background, front cover text, spine text, back cover. Click **Finish** on the **Review** step.
+5. Print. The cover is a separate PDF whose name ends with **_cover**. It is shown on the **Cover** tab of the **PDF Preview** window.
+
+**Finish** replaces the cover sections of the front matter, and puts the title, subtitle, language name and ISBN into the variables table. PTXprint keeps your wizard answers, so you can open the wizard again later to change the cover. To fine-tune colours, borders or pictures, click **Front Cover**, **Spine**, **Back Cover** or **Cover Spread** on the **Peripherals** tab.
+
+The spine must be as wide as the book is thick. The wizard can work it out from the page count and paper, and the **Printers** tab (Full view) gives an estimate. Ask your printer for the exact spine width.
+
+See also: Peripherals tab; Printers tab.
+
+## 4.13 Headers, footers and page numbers
+
+### How do I put the page number in the outer corner and the references in the centre?
+
+1. On the **Layout** tab, in **Page Setup**, tick **Mirror Pages**.
+2. On the **Header+Footer** tab, set **Outer (Right)** to **Page Number**, **Center** to **Reference Range**, and **Inner (Left)** to **-empty-**.
+3. Click **Print (Make PDF)**.
+
+See also: Header+Footer tab.
+
+### How do I mirror the headers for double-sided printing?
+
+1. On the **Layout** tab, in **Page Setup**, tick **Mirror Pages**.
+2. On the **Header+Footer** tab, use **Inner (Left)** for the spine side and **Outer (Right)** for the page-edge side. Then print.
+
+With **Mirror Pages** ticked, the inner and outer items change sides on left-hand pages, and **First Reference** and **Last Reference** are swapped there.
+
+See also: Header+Footer tab; Layout tab.
+
+### How do I show verse numbers in the header references?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Header+Footer** tab, under **Include in References**, make sure **Chapter** is ticked.
+3. Tick **Verse**, choose **Colon (ch:vs)** or **Period (ch.vs)**, and print.
+
+See also: Header+Footer tab.
+
+### How do I put the page number at the bottom of the page?
+
+1. On the **Header+Footer** tab, set **Center Footer** to **Page Number**.
+2. Set the header place that had **Page Number** to **-empty-**, and print.
+
+See also: Header+Footer tab.
+
+### How do I add "DRAFT" and the date (or time) to every page?
+
+1. On the **Header+Footer** tab, open **Center Footer** (or a header place).
+2. Choose **Printed on YYYY-MM-DD**, **Date (YYYY-MM-DD)**, **Time (HH:MM)**, or **Date and Time** (useful when you print several drafts on one day).
+3. Or type your own text, for example `DRAFT\ \isodate`. Type `\ ` (a backslash and a space) for each space.
+4. Click **Print (Make PDF)**. The date and time are those of printing.
+
+For a large "DRAFT" across each page, use a watermark (see "How do I put DRAFT across every page?").
+
+See also: Header+Footer tab.
+
+### How do I start the page numbers at a given number?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Header+Footer** tab, in **Other**, set **Starting Page Number (for Scripture Books)**, for example to 101, and print.
+
+In the front matter you can also use `\resetpagenums` (advanced; see the View+Edit chapter).
+
+See also: Header+Footer tab; View+Edit tab.
+
+### How do I print a page number on the first page of each book?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Header+Footer** tab, in **Other**, tick **Print Page Number at Bottom of Intro Page(s)**, and print.
+
+PTXprint never prints a header on the first page of a book. This setting puts the page number in its footer.
+
+See also: Header+Footer tab.
+
+### How do I put a line under the header?
+
+On the **Layout** tab, in **Margins**, tick **Horizontal Rule**, set **Space between Rule and Top of Text (pt)**, and print.
+
+See also: Layout tab.
+
+## 4.14 Fixing the page layout
+
+### How do I fix a page that is not full (too much white space at the bottom)?
+
+1. Print. The **PDF Preview** window opens.
+2. Go to the page. Or tick **Layout Analysis** on the **Content** tab, click **Locate...**, tick **Underfilled Pages**, and click **Locate the next issue**.
+3. Find a paragraph on this page or the page before whose last line is very short.
+4. Right-click it and choose **Try Shrink -1 line** (or **Shift + left-click** it). This pulls text up from the next page.
+5. Wait a few seconds for the update (if **Auto-update** is ticked), or click **Print (Update PDF)**.
+6. If nothing changed, try **Shrink Both**, or another paragraph.
+
+Do this last, when all other layout settings are final. Work from the front of the book to the back.
+
+See also: PDF Preview window.
+
+### How do I fix a page that is too full (make text go to the next page)?
+
+1. In the **PDF Preview** window, find a paragraph on that page whose last line is nearly full.
+2. Right-click it and choose **Expand +1 line** (or **Shift + right-click** it).
+3. Wait for the update, then check this page and the following pages.
+
+See also: PDF Preview window.
+
+### How do I fill all pages automatically?
+
+1. On the **Basic** tab, choose the books to fill, and print once.
+2. In the **PDF Preview** window, click the lightning icon (**Show/hide Page Fill tool with progress monitor**) (Regular and Full views).
+3. Click **Start Fill** for a fresh start, or **Resume Fill** to keep the existing adjustments. **Start Fill** removes your earlier adjustments for these books.
+4. Wait. This can take from minutes to hours.
+5. When it has finished, use **Locate the next issue** to find pages that could not be filled, and fix them by hand.
+
+The tool also works for a diglot or polyglot (experimental). It then also tries to keep the columns at the same height. **The cost of imbalance in a polyglot slice** (**Advanced** tab › **Other** › **Automatic Page Filler**) sets how important that is. Check the result carefully.
+
+See also: PDF Preview window; Diglot tab.
+
+### How do I undo paragraph adjustments?
+
+1. In the **PDF Preview** window, right-click the paragraph.
+2. Choose **Reset Adjustments**, then **Paragraph**, **Column**, **Page**, **Spread** or **End of Book**.
+3. Or, on the **View+Edit** tab, **Adj List** sub-tab, choose the book, select the rows and press **Delete**.
+4. Click **Print (Make PDF)**.
+
+See also: PDF Preview window; View+Edit tab.
+
+### How do I work quickly on pages in the middle of a long book?
+
+1. In the **PDF Preview** window, go to the page.
+2. Right-click a `\p` or `\m` paragraph at the top of the page and choose **SpeedSlice** (not available for diglots).
+3. Type the first word on the page in **First Word on This Page**, and set **Length of Slice** (for example 3 chapters).
+4. Click **Enable**. Now each print makes only this part of the book.
+5. When you have finished, open **SpeedSlice** again and click **Disable**. Then print the whole book.
+
+Always disable SpeedSlice before you make the final PDF.
+
+See also: PDF Preview window.
+
+### How do I find spacing problems, letters that touch, or missing characters?
+
+1. In the **PDF Preview** window, on the **Content** tab, tick **Layout Analysis**.
+2. Look at the coloured marks: red = letters that touch, purple = missing characters, yellow = rivers of white space, light blue-green = wide spaces.
+3. Click **Locate...** and tick the kinds of issue you want. Use the arrow buttons to go from page to page.
+
+See also: PDF Preview window.
+
+### How do I see two facing pages together?
+
+In the **PDF Preview** window, tick **Book View** (or press **Ctrl+B**).
+
+See also: PDF Preview window.
+
+## 4.15 Preparing the PDF for a printer
+
+### How do I make a print-ready PDF for a commercial printer (PDF/X, CMYK)?
+
+1. Ask the printer for their requirements: trim size, colour (CMYK, grey or RGB), PDF type (PDF/X-1a or PDF/X-4), crop marks and bleed.
+2. On the **Layout** tab, check that **Page Size** is the trim size.
+3. On the **Pictures** tab, choose **High Resolution (Larger File)**.
+4. On the **Finishing** tab, in **PDF Details**, set **PDF Output Format**. For PDF/X-1a in CMYK, choose **Print-CMYK**. For PDF/X-4, choose **Digital-CMYK (Transparency)** or **Digital-RGB**.
+5. Tick **Crop Marks** only if the printer asks for them.
+6. Make sure **Pages Per Spread** is **1-up (No booklet)**.
+7. Print. The PDF name ends with the format, for example **_CMYK**.
+
+See also: Finishing tab.
+
+### How do I make a black-and-white PDF for printing?
+
+On the **Finishing** tab, set **PDF Output Format** to **Print-Gray (B/W)**, and print. The file name ends with **_BW**.
+
+See also: Finishing tab.
+
+### How do I add crop marks?
+
+On the **Finishing** tab, in **PDF Details**, tick **Crop Marks**, and print.
+
+Each PDF page becomes 0.5 inch (about 12.7 mm) larger on every side, to make room for the marks. Many print-on-demand printers do not want crop marks.
+
+See also: Finishing tab.
+
+### How do I set the bleed for the cover?
+
+1. Change to the **Regular** or **Full** view.
+2. On the **Advanced** tab, **Other** sub-tab, open **PDF Options, Covers, Show/Hide**.
+3. Set **Cover Bleed (mm)** to the value your printer asks for (often 3–5 mm), and print.
+
+See also: Advanced tab; Finishing tab.
+
+### How do I print an A5 booklet on A4 paper?
+
+1. On the **Layout** tab, set **Page Size** to A5.
+2. On the **Finishing** tab, in **Booklet Pagination**, set **Pages Per Spread** to **2-up**.
+3. Set **Physical Paper Size** to **210mm, 297mm (A4)**.
+4. Print. The new PDF ends with **_2up**.
+5. Print it double-sided ("flip on short edge"). Fold the sheets in the middle and staple.
+
+Commercial printers want single pages (**1-up**), not a booklet.
+
+See also: Finishing tab.
+
+### How do I put "DRAFT" across every page?
+
+1. On the **Finishing** tab, in **PDF Details**, tick **Apply Watermark PDF**.
+2. Click **Select...** and choose a watermark that matches your page size, for example **A5-Draft.pdf**. Then print.
+
+See also: Finishing tab.
+
+### How do I see what changed since the last PDF?
+
+1. On the **Finishing** tab, tick **Compare PDFs** (or press **Ctrl+R**). PTXprint now always keeps the previous PDF (**_1.pdf**), even if **Number of Previous PDFs to be Kept** is 0.
+2. Make your corrections, then print.
+3. If there are differences, the **Diff** tab of the **PDF Preview** window shows them in colour: added text in the **New Text** colour (blue at first), removed text in the **Old Text** colour (red at first). Otherwise the status line says why, for example **No differences found**.
+4. Untick **Compare PDFs** when you have finished. It makes printing slower.
+
+See also: Finishing tab.
+
+### How do I compare with an older proof, or ignore changes in the margins or headers?
+
+1. To compare with an older PDF (not the last run), click **Select...** in the **Compare PDFs** area and choose it. To go back to the last run, click **Select...** and then **Cancel**.
+2. Change to the **Full** view for these options:
+   * **Start Page Offset** – when one PDF has extra pages at the start (for example a cover). A positive number skips pages of the **old** PDF, a negative number skips pages of the **new** PDF.
+   * **Ignore When Comparing: Headers + Footers** or **Side Margins** – those areas are not compared (shaded grey in the diff PDF). Not used with booklets (more than 1-up) or **Scale to fit**.
+   * **Smart Check** – after you changed only the margins or gutter, it lines up each old page with the new one and shows only real changes (words, line breaks).
+3. Tick **Compare PDFs** and print.
+
+Both PDFs must have the same page size.
+
+See also: Finishing tab.
+
+### How do I get a price estimate for printing?
+
+1. Make the PDF of the whole book first, so that the page count is right.
+2. Change to the **Full** view and open the **Printers** tab.
+3. Check **Pages** and **Trim size**. Type the number of **Copies**, and choose **Interior**, **Binding** and **Currency**.
+4. Read the **Est. per copy** column. These are estimates only. Always ask the printer for a real quotation.
+
+See also: Printers tab.
+
+## 4.16 Configurations and settings
+
+### How do I save my settings as a new configuration?
+
+1. Click **Save** first, so the new configuration starts from your latest settings.
+2. On the **Basic** tab, in **Layout Configuration**, click the **Save As** button (the icon next to **Name**).
+3. Type a name, for example `NT_A5`. Use only letters, numbers, `(`, `)`, `_` and `-`. No spaces.
+4. Click **OK**. PTXprint changes to the new configuration. The old one stays as it was.
+
+See also: Basic tab.
+
+### How do I replace an existing configuration with my current settings?
+
+1. Click **Save**, then click the **Save As** button on the **Basic** tab.
+2. Type the name of the configuration to replace, and tick **Replace it if it already exists**.
+3. Click **OK**. PTXprint deletes the old configuration and saves the current settings in its place. This cannot be undone.
+
+The **Default** configuration can never be replaced. The box is unticked each time the dialog opens.
+
+See also: Basic tab.
+
+### How do I change to another configuration without losing my changes?
+
+1. Click **Save** (or **Print (Make PDF)**, which also saves).
+2. On the **Basic** tab, choose the other configuration in **Name**.
+
+See also: Basic tab; Main window.
+
+### How do I copy a configuration to other projects?
+
+1. Choose the configuration (not **Default** – it is never copied) and click **Save**.
+2. On the **Basic** tab, click **Copy configuration to other projects** (Regular and Full views).
+3. Click the target project(s).
+4. Choose **Do NOT Replace Existing Config** (the safe choice the first time).
+5. Leave **Keep each project's own language-specific variables** ticked, so each project keeps its own titles and language name. Click **OK**.
+6. Choose the target project in **Project** and check the copied configuration.
+
+Adjust lists (paragraph adjustments) are not copied.
+
+See also: Basic tab.
+
+### How do I get back the settings that were used to make a PDF?
+
+1. On the **Basic** tab, click **Import Settings...**.
+2. Click **PDF file (with embedded settings) or ZIP archive file**, then **Select...**, and choose the PDF.
+3. Under **Target**, choose **A New/Existing Project and/or Configuration** and type a new configuration name, for example `FromPDF`. PTXprint ticks **Everything** for a new name.
+4. Click **OK**.
+
+This only works if the PDF was made with **Include Config Settings Within PDF** ticked on the **Finishing** tab.
+
+See also: Importing settings; Finishing tab.
+
+### How do I import settings from a ZIP archive?
+
+1. On the **Basic** tab, click **Import Settings...**.
+2. Click **PDF file (with embedded settings) or ZIP archive file**, then **Select...**, and choose the ZIP file.
+3. Choose the **Target** configuration. A new name is safest.
+4. Tick **Everything**, or only the groups you want (into an existing configuration). Click **OK**.
+
+See also: Importing settings.
+
+### How do I copy only some settings (for example only the pictures or the headers) from another configuration?
+
+1. On the **Basic** tab, click **Import Settings...**.
+2. Click **A Previously Saved Configuration** and choose the source **Project** and **Configuration**.
+3. Choose an **existing** target configuration. (For a new name PTXprint always imports everything.)
+4. Change to the **Regular** view if needed, and untick **Everything**.
+5. Tick only the group you want, for example **Pictures**, or **Other** and then **Header+Footer settings** on the **Other** tab. Click **OK**.
+
+There is no Undo. If you are not sure, first try it on a copy made with **Save As**.
+
+See also: Importing settings.
+
+### How do I lock a configuration so nobody changes it?
+
+1. On the **Basic** tab, choose the configuration in **Name** (not **Default** – it cannot be locked).
+2. Click the **lock** button, type a password (it cannot be empty), and click **OK**. Remember the password.
+
+To unlock, click the lock button again and type the same password. **Cancel** never locks or unlocks.
+
+See also: Basic tab.
+
+### How do I protect a finished layout from accidental changes?
+
+1. Change to the **Full** view.
+2. On the **Advanced** tab, **Main** sub-tab, **General** area, tick **Lock UI Layout Settings**. Most **Layout**, **Fonts+Script** and **Styles** settings are now greyed out.
+3. Also tick **Lock XeTeX Layout Level** if future PTXprint versions must give exactly the same layout.
+4. Untick these boxes when you need to change the layout again.
+
+See also: Advanced tab.
+
+### How do I delete a configuration I do not need?
+
+1. On the **Basic** tab, choose the configuration in **Name**.
+2. Click **Delete**. Check that the message names the right configuration, then click **Yes**.
+3. PTXprint changes to **Default** and deletes the settings and working files of the old configuration. This cannot be undone.
+
+The PDFs you made from it stay in the output folder. Other configurations are not touched.
+
+See also: Basic tab.
+
+### How do I go back to the PTXprint default settings?
+
+* **Default** configuration: choose **Default** in **Name** and click **Reset** (Regular and Full views; it replaces **Delete**). PTXprint does not ask first. It also removes the files of **Default**, such as its styles and picture list.
+* Another configuration: click **Import Settings...** and then **RESET**. Style settings are not reset. Click **Save** if you want to keep the result.
+
+See also: Basic tab; Importing settings.
+
+## 4.17 Finding settings and getting help
+
+### How do I find a setting that I cannot see?
+
+1. Click in the **Search for settings** box at the bottom-left (or press **Ctrl+F**).
+2. Type a word, for example `margin` or `footnote`, and press **Enter**.
+3. Click the setting in the list. PTXprint opens the right tab, highlights the setting, and raises the view level if needed.
+
+See also: Main window.
+
+### How do I see more (or fewer) settings?
+
+Click **☰** (top-left) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
+
+Hidden settings still work and still change the PDF.
+
+See also: Main window.
+
+### How do I send my project to the support team?
+
+1. Choose the project, configuration and only the book(s) that show the problem.
+2. If the problem is not about pictures, untick **Include Pictures (illustrations)** on the **Pictures** tab to make the file smaller.
+3. On the **Help** tab, click **Create Archive...**.
+4. Choose where to save the ZIP file and click **Save**. PTXprint prints again and then makes the ZIP file.
+5. Email it to **ptxprint_support@sil.org** with a description of the problem, your PTXprint version (from **About**) and screenshots.
+
+The archive contains the text of your project. If the text is sensitive, ask your project leader first.
+
+See also: Help tab.
+
+### How do I check the last PDF for warnings and errors?
+
+1. Click **Print (Make PDF)**.
+2. On the **Help** tab, click **Create Report...** (or **Show Report Information** in the **PDF Preview** window).
+3. The report opens in your web browser. Read the warnings and errors.
+
+See also: Help tab; PDF Preview window.
+
+### How do I change the language of PTXprint's menus?
+
+Click **☰** › **Language** and choose a language. PTXprint saves the configuration and opens again in the new language, with the same project and configuration.
+
+See also: Main window.
+
+### How do I use projects from another Paratext folder?
+
+1. On the **Help** tab, click **Change...** next to **Base Projects Directory**.
+2. Choose a folder that PTXprint found, or click **Browse for a different folder…**. Choose the folder that *contains* the project folders.
+3. Click **Use Selected**, then choose a project on the **Basic** tab.
+
+See also: Help tab.
+
+### How do I free up disk space?
+
+On the **Help** tab, click **Tidy Up**. PTXprint deletes temporary working folders. Your settings and PDF files are kept.
+
+See also: Help tab.
+
+
+# 5. Problems and solutions
+
+## 5.1 How to use this chapter
+
+This chapter lists common problems, grouped by kind, in the words users often use. Each has **Why this happens** and **What to do**.
+
+First try these three quick checks. They solve many problems:
+
+1. **Print again.** Most changes appear in the PDF only after you click **Print (Make PDF)**.
+2. **Check the view level.** A setting can be hidden but still turned on. Click **☰** › **View Level** › **Full View** to see every setting.
+3. **Check the configuration name.** Look at **Name** on the **Basic** tab. Is it the configuration you think it is?
+
+"pt" means point. 1 pt is about 0.35 mm.
+
+## 5.2 Printing fails or no PDF appears
+
+### Nothing happens when I click Print, or the status line says "No books to print"
+
+**Why this happens:** No book is selected, or the book list is empty.
+
+**What to do:**
+
+1. On the **Basic** tab, in **What to Print**, click **Single Book** and choose a book. Or click **Select Multiple Books...**, choose books and click **OK**.
+2. Print again.
+
+### The status line says "One of more fonts have not been set yet"
+
+**Why this happens:** No font has been chosen for the main text.
+
+**What to do:** On the **Fonts+Script** tab, click **Select Font...** next to **Regular**, choose a font, and print.
+
+### The status line says "Printing busy"
+
+**Why this happens:** PTXprint is still making a PDF.
+
+**What to do:** Wait until the progress bar has finished, then print again.
+
+### PTXprint says "Cannot update PDF file while it is locked!"
+
+**Why this happens:** The old PDF is open in another program (for example Adobe Reader), so PTXprint cannot replace it.
+
+**What to do:**
+
+1. Close the PDF in the other program and click **Yes** to try again.
+2. To avoid this, click **☰** › **Show PDF** › **Preview Pane**. The preview does not lock the file.
+
+### The Print (Make PDF) and Save buttons are greyed out
+
+**Why this happens:** PTXprint cannot print yet. For example, no project is selected, or a diglot row has no project or configuration.
+
+**What to do:**
+
+1. Read the message in the status line above the bottom bar.
+2. Choose a project on the **Basic** tab.
+3. For a diglot, check that every row on the **Diglot** tab has a **Project** and a **Configuration**.
+
+### An error window says "Failed to create: … .pdf"
+
+**Why this happens:** The typesetting program stopped because of an error. The window shows the last lines of the log and often a hint. The hint is the most useful part (see the table below).
+
+**What to do:**
+
+1. Find the hint in the table below and follow the advice.
+2. Note any "References to check" or "File(s) to check" at the end of the message. They tell you where to look.
+3. If you changed a setting just before the error, change it back and print again.
+4. For more detail, open the **View+Edit** tab, **XeTeX Log** sub-tab, and scroll to the end. Error lines start with `!`.
+5. If you still cannot fix it, click **Tidy Up** on the **Help** tab and print again. If that does not help, send an archive (**Create Archive...** on the **Help** tab) to support.
+
+| Hint in the error window | What it usually means | What to do in PTXprint |
+|---|---|---|
+| "Cannot find the Font specified. Install it, restart PTXprint and try again" | A font in the configuration (on **Fonts+Script**, or in a style) is not installed. The message may name the marker that uses it. | Install the font for all users and restart PTXprint. Or choose an installed font on **Fonts+Script**, or in the named style on the **Styles** tab. |
+| "Fallback Font issue - set a font on the Fonts+Scripts tab" | **Use Fallback Font** is ticked, but no valid fallback font is chosen. | On **Fonts+Script**, choose a fallback font, or untick **Use Fallback Font**. |
+| "Fallback font probably being applied to text in a footnote (not permitted!)" | A character that needs the fallback font is in a footnote. | Choose a Regular font that has the character, or remove it from the fallback character list. |
+| "Check if picture file is located in 'Figures', 'local\figures' or a specified folder" | A picture file cannot be found or loaded. | On the **Pictures** tab, look for grey rows and fix the file name or folder. Or tick **Omit Missing Pictures**. |
+| "Check if image/PDF file is available on the system" | A front or back matter PDF, a watermark PDF or a picture is missing. | Check **Front Matter PDF(s)** and **Back Matter PDF(s)** (**Peripherals**) and **Apply Watermark PDF** (**Finishing**). Choose the file again with **Select...**, or untick the option. |
+| "This might be related to a USFM marker error (using an unsupported marker)" | A marker in the text is wrong or unknown, or a line in a mods file is wrong. | Run **Basic Checks** in Paratext. If you edited `ptxprint-mods.tex` (**Advanced** tab), untick **Apply Customized Settings (ptxprint-mods.tex)** and print again. |
+| "Failed due to an error in the generated USFM file. Run the Basic Checks in Paratext" | The text has a marker error that PTXprint cannot process. | Run **Basic Checks** in Paratext and fix the errors. If you use a changes file (**Advanced** tab), check the last rule you added. |
+| "Uh oh! You've pushed TeX too far! Try turning Hyphenation off" | The job is too big, often because of a very long hyphenation list. | On **Fonts+Script**, untick **Hyphenate**, or make a shorter list with **Limit Hyphenation List to Words Found in**. Print fewer books at once. |
+| "Possible fault in the hyphenation file" | The hyphenation list has a bad entry. | Untick **Hyphenate** on **Fonts+Script**. Click **Create List...** to make the list again. |
+| "You may have too many paragraphed footnotes on the page" | Too many run-on footnotes on one page. | On **Notes+Refs**, tick **Start Each Footnote on a New Line**. |
+| "Possibly a missing +/- value in the Adjust List" or "Check for errors in the Adjust List" | A row in the paragraph adjustment list has a wrong value. | On **View+Edit**, **Adj List** sub-tab, check the **Stretch** column. Each value must start with `+` or `-`. Delete the bad row if you are not sure. |
+| "One of the settings in the Stylesheet may be missing the units" | A value in a style or an extra stylesheet is not valid. | Undo your last change on the **Styles** tab. On the **Advanced** tab, untick extra stylesheets (**custom.sty**, **ptxprint-mods.sty**) one at a time to find the problem. |
+| "Font size setting issue. Check to see if the font size in a style … is incorrect (maybe it is set to 0.00)" | A style near the reference in the message has font size 0. | On the **Styles** tab, set that style's **Font Size Factor** to a normal value, or click its Reset button. |
+| "Expecting a number for \Color definition, not a color name" | A colour in a style was written as a word. | On the **Styles** tab, choose the colour again with the **Color** button. |
+| "Problem with Formatting Intro Outline" | The right-aligned outline references cause a problem. | On the **Body** tab, untick **Right-align \ior With Tabbed Leaders**. |
+| "Sorry! XeTeX was unable to complete the typesetting" | The typesetter could not place the text on a page. Common in diglots, or when a forgotten feature is on. | For a diglot, first print each text on its own. Check tabs with blue names (for example **Pictures**, **Diglot**, **Tabs+Borders**) and turn off features you do not need. Look for very large pictures. |
+| "To fix this error: Use a different font which is not a Variable Font" | The font is a "variable font", which PTXprint cannot use. | Choose a normal font on **Fonts+Script**. |
+| "Bad xdvi file, probably failed to load a picture or font" | A picture or font could not be loaded when the PDF was written. | Check missing pictures on **Pictures** and the fonts on **Fonts+Script**. |
+| "Possibly a faulty installation" | Files that come with PTXprint are missing. | Install PTXprint again. |
+| "Oops! Something unexpected happened…" or "Probably a TeX macro problem" | PTXprint does not recognise the error. | Click **Tidy Up** (**Help** tab) and print again. If it still fails, send an archive to support and say which setting you changed last. |
+
+### PTXprint says "PDF was created BUT… Layout problems were encountered on page(s)…"
+
+**Why this happens:** The PDF was made, but on the listed pages the typesetter had to break its own rules. Text may run over the bottom margin, or a picture may be lost.
+
+**What to do:**
+
+1. Look at the listed pages in the PDF.
+2. If there is a large picture on or near that page, make it smaller (**Scale** on the **Pictures** tab) or move it (change the **Anchor Ref**).
+3. If you adjusted paragraphs on those pages, reset them: in the **PDF Preview** window, right-click a paragraph › **Reset Adjustments** › **Page**.
+4. Print again.
+
+### The status line says "Rerun to fix: …"
+
+**Why this happens:** Some things depend on page numbers (the table of contents, picture credits, margin notes), and PTXprint learned new page numbers during this run. Most common with **Quick Run** ticked.
+
+**What to do:** Untick **Quick Run** at the bottom of the window, and print again.
+
+### PTXprint says "Unknown book code"
+
+**Why this happens:** The book list has a word that is not a 3-letter USFM book code, for example `John` instead of `JHN`.
+
+**What to do:** On the **Basic** tab, correct **Portions or Multiple Books** with codes such as `MAT`, `JHN`, `1CO`. Or click **Select Multiple Books...** and click the books.
+
+### Printing takes a very long time
+
+**Why this happens:** Some settings need much extra work: a **PDF Output Format** other than **Screen**, **Compare PDFs**, Strong's numbers in the text, very large cross-reference lists, many high-resolution pictures, or a whole Bible.
+
+**What to do:**
+
+1. While you work, tick **Quick Run** at the bottom of the window.
+2. On the **Finishing** tab, use **Screen (Quickest)** until the final PDF. Untick **Compare PDFs** when you do not need it.
+3. On the **Pictures** tab, choose **Low Resolution (Smaller File)** or **Use Place-holders** while you work.
+4. Print one book at a time, or use **SpeedSlice** in the **PDF Preview** window for long books.
+
+## 5.3 The PDF does not change
+
+### I changed a setting, but the PDF looks the same
+
+**Why this happens:**
+
+* You did not print again, or the last print failed. The preview still shows the old PDF.
+* The PDF is shown in another program that has not reloaded it.
+* Another setting overrides yours (for example a style, or an extra stylesheet).
+* You changed a different configuration, or the secondary text of a diglot.
+* **Layout Only** is ticked, so PTXprint did not process the text again.
+
+**What to do:**
+
+1. Print and wait for it to finish. The date and time in the title bar of the **PDF Preview** window must be the time of your last print.
+2. If an error message appeared, fix that first. The old PDF stays on the screen when printing fails.
+3. Check **Name** on the **Basic** tab.
+4. For a diglot, see "My change has no effect in a diglot" below.
+5. Untick **Layout Only** and **Quick Run**, and print again.
+6. For style and font changes, see "My change on the Styles tab has no effect" below.
+
+### My text changes in Paratext do not appear in the PDF
+
+**Why this happens:** Normally PTXprint notices that the text changed. With **Layout Only** ticked, it may not process the text again. Picture captions come from PTXprint's own picture list.
+
+**What to do:**
+
+1. Save the text in Paratext.
+2. Untick **Layout Only** and print.
+3. For picture captions, click **Refresh List** on the **Pictures** tab.
+4. If you use **SpeedSlice**, make sure it is not hiding the part that you changed.
+
+### My changes are not kept after I close PTXprint, or Save does nothing
+
+**Why this happens:** **Quit** does not save. Or the configuration is locked. A locked configuration is never saved, not even when you print.
+
+**What to do:**
+
+1. Click **Save** (or **Print (Make PDF)**) before **Quit**.
+2. If **Save**, **Delete** and **Notes** are greyed out, the configuration is locked. On the **Basic** tab, click the lock button and type the password.
+3. Or click **Save As** and make a new, unlocked configuration.
+
+### The PDF has only a few chapters, or it starts in the middle of a book
+
+**Why this happens:** **SpeedSlice** is still on. Or **From Chapter** and **To** limit the chapters.
+
+**What to do:**
+
+1. In the **PDF Preview** window, right-click a `\p` or `\m` paragraph, choose **SpeedSlice** and click **Disable**.
+2. On the **Basic** tab, check **From Chapter** and **To**, and print again.
+
+## 5.4 Text and fonts
+
+### Some letters print as empty boxes (☐) or question marks
+
+**Why this happens:** The font has no shape for these characters.
+
+**What to do:**
+
+1. On the **Fonts+Script** tab, tick **Use Fallback Font** (Regular and Full views).
+2. Click **Find Missing Characters** to see which characters are missing.
+3. Click **Select Font...** next to the list and choose a font that has them.
+4. Or choose a **Regular** font that supports your whole alphabet.
+5. If only numbers are boxes, check **Digit mapping** in the **Pick a Font** dialog. Set it to **Default** if the font has no digits for that script.
+6. In the **PDF Preview** window, tick **Layout Analysis**. Purple marks show missing characters.
+
+### Bold or italic text looks fake (thick, blurred or slanted wrongly)
+
+**Why this happens:** The font family has no real bold or italic typeface, so PTXprint makes one from the regular letters. The button on the **Fonts+Script** tab shows the style in brackets, for example *(bold)*.
+
+**What to do:**
+
+1. On the **Fonts+Script** tab, click **Select Font...** for **Regular** and choose a family shown in **bold** in the list. These families have all four typefaces.
+2. Or click **Select Font...** for **Bold** or **Italic** and choose a real bold or italic font.
+3. Or, in **Pick a Font**, change **Embolden** and **Slant** to improve the fake style.
+
+### Some text is in the wrong font
+
+**Why this happens:** The style for that text has its own font, or the characters come from the fallback font. In a diglot, the header can use the font of the other text.
+
+**What to do:**
+
+1. On the **Styles** tab, find the marker. A bold **Font** label means the style has its own font. Click the bold label to go back to the main font.
+2. On the **Fonts+Script** tab, check **Use Fallback Font** and the characters in its list.
+3. In a diglot, on the **Header+Footer** tab, choose **Pri** or **Sec** for each part of the header.
+4. If you chose a new **Regular** font, check **Bold**, **Italic** and **Bold Italic** again.
+
+### My font is not in the list
+
+**Why this happens:** The font is not installed, or only for one user, or PTXprint has not refreshed its list.
+
+**What to do:**
+
+1. Install the font for all users.
+2. On the **Fonts+Script** tab, click **Refresh Font List**.
+3. If it is still missing, restart PTXprint.
+
+### Letters do not join, or vowel marks are in the wrong place
+
+**Why this happens:** **Text Script** is wrong, or the font needs Graphite.
+
+**What to do:**
+
+1. On the **Fonts+Script** tab, set **Text Script** to your script.
+2. For a Graphite font, click **Select Font...** for **Regular**, tick **Graphite Rendering**, and click **OK**. Then print.
+
+### Hyphenation does not work
+
+**Why this happens:** There is no hyphenation list, the list is empty, **Hyphenate** is not ticked, or **Between Letters** spacing is on.
+
+**What to do:**
+
+1. On the **Fonts+Script** tab, click **Create List...** and read the message. It says how many words were used.
+2. If the number is 0, untick **Only Use Approved Hyphenation Words** and click **OK** again, or approve words in the Paratext Wordlist.
+3. Tick **Hyphenate**. Make sure **Between Letters** in **Spacing Adjustments** is unticked. Then print.
+
+### Long lines do not break in Thai, Khmer, Myanmar, Chinese or similar scripts
+
+**Why this happens:** PTXprint does not know where it may break a line.
+
+**What to do:**
+
+1. On the **Fonts+Script** tab, set **Text Script** to your script.
+2. Tick **Specify Line Break Locale** and type the language code, for example `th`, `km`, `my` or `zh`.
+3. Or mark the break points with `/` in the text (Thai, Lao, Myanmar, Tai Tham, New Tai Lue).
+
+### Coloured text prints in black
+
+**Why this happens:** **Enable Colored Text (as Specified in Stylesheet)** is not ticked, or **PDF Output Format** is **Print-Gray (B/W)**.
+
+**What to do:** Tick **Enable Colored Text (as Specified in Stylesheet)** on the **Fonts+Script** tab, and check **PDF Output Format** on the **Finishing** tab.
+
+### My change on the Styles tab has no effect
+
+**Why this happens:** You changed a different marker or level (for example `s1` instead of `s2`). Or another style or stylesheet wins. Or a setting on another tab controls it.
+
+**What to do:**
+
+1. Check which marker the text really uses. On the **Styles** tab, click the filter button next to **Find** to show only markers used in your books.
+2. `\p` gets its size and line spacing from the **Layout** tab (**Base Font Size** and **Base Line Spacing**).
+3. If you chose **Justified** but the text is ragged, tick **Justify Paragraphs** on the **Body** tab.
+4. On the **Advanced** tab, check **Apply Stylesheet Overrides (ptxprint-mods.sty)**. It is applied last and may set the same value.
+5. Print again.
+
+### Some text is missing from the PDF
+
+**Why this happens:** A setting removes it. For example **Include Contents of Marker** is unticked for its style, or a **Body** tab setting removes headings, introductions or empty verses.
+
+**What to do:**
+
+1. On the **Styles** tab, a marker with a line through it is not printed. Tick **Include Contents of Marker**.
+2. On the **Body** tab, check **Book Introductions**, **Introductory Outlines**, **Include Scripture Text**, **Headings**, **Parallel Passage Refs** and **Hide Empty Verses**.
+3. For study notes, tick **Extended Footnotes (\ef)** on the **Notes+Refs** tab (Full view).
+
+## 5.5 Layout and spacing
+
+### There is white space at the bottom of every page
+
+**Why this happens:** The text area does not hold a whole number of lines. The left-over part of a line is empty on every page.
+
+**What to do:**
+
+1. On the **Layout** tab, look at **Lines Per Page** (Regular and Full views). If it is red, this is the cause.
+2. Click **one** fine-tune button: next to **Base Line Spacing (pt)**, or next to the top or bottom margin.
+3. The number turns blue. Print again.
+
+### Some pages or columns end early, with empty lines at the bottom
+
+**Why this happens:** With **Align Text to Baseline**, all lines sit on a fixed grid. The typesetter will not leave one line of a paragraph alone at the top or bottom of a page, keeps a heading with the next lines, and keeps pictures and notes with their verse. So a page sometimes ends one or more lines early.
+
+**What to do:**
+
+1. Do this last, when all other settings are final.
+2. In the **PDF Preview** window, right-click a paragraph on this page or the page before and choose **Try Shrink -1 line** to pull text up. Or choose **Expand +1 line** on the page before to push a line down.
+3. Or use the **Auto Page Fill** tool (the lightning icon in the **PDF Preview** window).
+4. If a picture is near the gap, move it or make it smaller.
+5. In poetry books such as Psalms, try **Optimize Layout for Poetry Books** on the **Body** tab (see "Optimize Layout for Poetry Books has no effect").
+6. For a quick draft, move the switch on the **Layout** tab to **Variable Line Spacing**. This fills the columns, but the lines no longer line up on both sides of the paper.
+
+### The last page of a book has only a few lines
+
+**Why this happens:** The book is just a little too long to end on the page before.
+
+**What to do:**
+
+1. In the **PDF Preview** window, find paragraphs in the last few pages whose last line is short.
+2. Right-click each one and choose **Try Shrink -1 line** (or **Shrink Both**) until the lines move back. Or use the **Auto Page Fill** tool.
+3. If many lines must move, make a small change for the whole book (for example a slightly smaller **Base Font Size**, or **Min/Shrink** in **Spacing Adjustments** on **Fonts+Script**). Then check all pages again.
+4. To let the next book start on the same page, set **Where to start a new book** to **Same page** (**Advanced** tab, **Other** sub-tab, **Page Layout and Spacing**).
+
+### I asked to shrink a paragraph, but nothing changed
+
+**Why this happens:** The paragraph has no room to lose a line (common for short paragraphs, or when the last line is almost full). Or the PDF has not been updated yet.
+
+**What to do:**
+
+1. Wait a few seconds if **Auto-update** is ticked, or click **Print (Update PDF)**.
+2. Right-click again and choose **Shrink Both**.
+3. Or try a longer paragraph on the same page, or on the page before.
+
+### Fixing one page broke a later page
+
+**Why this happens:** Every change moves all the text after it.
+
+**What to do:**
+
+1. Make all other layout changes (fonts, margins, pictures) **before** you adjust paragraphs.
+2. Work from the front of the book to the back. Fix the first problem page, then use **Locate the next issue** in the **PDF Preview** window.
+
+### Text looks squashed, stretched or has big gaps between words
+
+**Why this happens:** Paragraph adjustments or the page filler made the letters narrower or wider. Or the word spacing range is too wide. Or **Keep Repeated Words Together** or **Prevent Orphan Words** forces bad line breaks.
+
+**What to do:**
+
+1. In the **PDF Preview** window, tick **Adjustments** to see changed paragraphs (coloured bars). Reset the worst ones (right-click › **Reset Adjustments** › **Paragraph**).
+2. On the **Advanced** tab, **Other** sub-tab, **Preview Pane: Adjustment and Analysis Settings**, raise **Minimum Text Shrink** (for example to 97%) and lower **Maximum Text Expand** (for example to 103%).
+3. On the **Fonts+Script** tab, check **Between Words** in **Spacing Adjustments**. A very high **Max/Stretch** allows big gaps.
+4. Turn on hyphenation to give the lines more break points.
+
+### Almost everything on the Layout, Fonts+Script and Styles tabs is greyed out
+
+**Why this happens:** **Lock UI Layout Settings** is ticked.
+
+**What to do:** Change to the **Full** view. On the **Advanced** tab, **Main** sub-tab, **General** area, untick **Lock UI Layout Settings**.
+
+### The font size changed when I changed the line spacing (or the other way round)
+
+**Why this happens:** **Lock Ratio** is ticked on the **Layout** tab. It keeps the two numbers in the same proportion.
+
+**What to do:** Untick **Lock Ratio**, then type the font size and line spacing you want.
+
+### The header or footer is cut off, or too close to the edge of the paper
+
+**Why this happens:** The header and footer sit inside the top and bottom margins. A large gap between the header and the text moves the header towards the edge.
+
+**What to do:**
+
+1. On the **Layout** tab, look at the blue numbers in the margin picture.
+2. Make **Start of Page to Top of Text (mm)** (or **Bottom of Text to End of Page (mm)**) larger.
+3. Or make **Bottom of Header to Top of Text (pt)** (or **Bottom of Text to Top of Footer (pt)**) smaller.
+
+### My PDF suddenly looks different, but I did not change anything on the main tabs
+
+**Why this happens:** An **Advanced** tab setting may have changed, or an extra file (changes file, mods file) may be on. Someone on the team may have changed the configuration through Paratext Send/Receive.
+
+**What to do:**
+
+1. On the **Advanced** tab, **Other** sub-tab, click the filter button. Only groups with changed settings are shown, with **bold** labels.
+2. On the **Main** sub-tab, check which boxes are ticked in **Text Processing & Stylesheets**.
+3. Check the **Notes** box on the **Basic** tab for comments from the team.
+
+### Coloured marks, bars or codes appear in the margins of my PDF
+
+**Why this happens:** A proof-reading option is on.
+
+**What to do:**
+
+1. On the **Advanced** tab, **Other** sub-tab, **PDF Options, Covers, Show/Hide**, untick the "show" options (for example **Show adjust points**, **Show USFM codes**, **Show Error Bars For Overfull Lines**, **Mark Trigger Points**).
+2. In the **Diglot** group, untick **Show Diglot Trace Marks**.
+
+The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Paragraph Boxes**, **Layout Analysis**) are only on the screen, not in the PDF.
+
+### "Optimize Layout for Poetry Books" has no effect
+
+**Why this happens:** It only works for the books listed beside **Use Special Features for These Books** on the **Body** tab, while that box is ticked. With an empty list, nothing is optimized.
+
+**What to do:** Change to the **Full** view. Tick **Use Special Features for These Books** and type the book codes (for example `PSA PRO`) in its list.
+
+## 5.6 Pictures
+
+### No pictures appear in the PDF
+
+**Why this happens:** Pictures are off, or the picture list (PicList) is empty, or place-holders are used.
+
+**What to do:**
+
+1. On the **Pictures** tab, **Global Options**, tick **Include Pictures (illustrations)**.
+2. Change to the **Regular** view to see the picture table. If it is empty, click **Generate...**. PTXprint uses only the pictures in its list, not the `\fig` lines in Paratext directly.
+3. Make sure **Use Place-holders (Smallest PDF File)** is not chosen.
+4. On the **Details** sub-tab, check that **Print** is ticked under **Media**.
+
+### Some pictures are missing
+
+**Why this happens:** PTXprint cannot find the picture file (grey row in the table), or the picture's book is not being printed, or **Image Types** excludes the file type.
+
+**What to do:**
+
+1. On the **Pictures** tab, look for grey rows and check the **Filename**.
+2. Put the file in the project's `figures` or `local\figures` folder, or tick **Use Other Location** and choose the folder with **Picture Folder...**. If the file is in a subfolder, make sure **Exclude Subfolders** is unticked.
+3. Clear the **Image Types** box if it only lists some types.
+4. After printing, check the missing-pictures count and list on **Global Options**. **Omit Missing Pictures** skips missing files without an error, so it can hide the problem.
+
+### A picture is on the wrong page or in the wrong place
+
+**Why this happens:** A picture goes on the page of its anchor verse only if there is room. Otherwise it moves to a later page. Large pictures move more often.
+
+**What to do:**
+
+1. In the **PDF Preview** window, right-click the picture, choose **Change Anchor Ref**, and choose a verse a little earlier (or later).
+2. Or right-click and choose another **Vertical Position** or **Horizontal Position**.
+3. Make the picture smaller with **Shrink by 1 line**, or with **Scale** on the **Pictures** tab, **Details** sub-tab. Then print.
+
+### A picture row is red in the table
+
+**Why this happens:** At this size and scale the picture is too tall for the page.
+
+**What to do:** On the **Details** sub-tab, make **Scale** smaller, or change **Frame Size** from **Span Width** to **Column Width**.
+
+### I cannot choose the picture position I want
+
+**Why this happens:** The position lists depend on each other. For example, **Span Width** only allows **Top**, **Bottom** and **Below Notes**, and no horizontal position.
+
+**What to do:** Choose **Frame Size** first, then **Vertical Position**, then **Horizontal Position**.
+
+### My caption changes in Paratext do not show
+
+**Why this happens:** PTXprint keeps its own copy of the captions in the picture list.
+
+**What to do:** On the **Pictures** tab, click **Refresh List** (size and position settings stay the same), and print.
+
+### The picture credits are missing or wrong
+
+**Why this happens:** The colophon or front matter has no `\zimagecopyrights`, or a picture is not from a known illustration series, or the page numbers are not yet known.
+
+**What to do:**
+
+1. On the **Peripherals** tab, tick **Colophon at End of Publication** and check that its text contains `\zimagecopyrights`. Or put `\pc \zimagecopyrights` in the front matter.
+2. On the **Pictures** tab, **Details** sub-tab, type the credit in **Copyright Attribution** for pictures that do not show **Automatic**.
+3. Print twice.
+
+### My picture checks, credits or notes are gone
+
+**Why this happens:** In older PTXprint versions, the **Checklist** answers, credits and picture notes were not read back when a configuration was opened. Saving could then overwrite them. This is fixed now, but answers lost before the fix cannot be recovered.
+
+**What to do:** On the **Pictures** tab, **Checklist** sub-tab (and **Copyright Attribution** on **Details**), enter the lost answers again. They are now kept.
+
+### The message "Image Anchor Not Found" appears when I right-click a picture
+
+**Why this happens:** PTXprint cannot match the picture in the PDF to a row in the picture list, for example after the list changed.
+
+**What to do:** Print again so the preview matches the picture list. Then make the change on the **Pictures** tab, **Details** sub-tab.
+
+## 5.7 Notes and cross-references
+
+### Footnote or cross-reference settings are greyed out
+
+**Why this happens:** Most settings need another setting first.
+
+**What to do:**
+
+1. Tick **Include Footnotes** on the **Notes+Refs** tab, **Footnotes** sub-tab.
+2. For the caller box, tick **Show Callers**.
+3. **End of Column** needs **Two Column Layout** on the **Layout** tab.
+4. **Side Margin** needs **Margin Notes Col Width (mm)** on the **Layout** tab.
+5. The **Source for References** settings need **Use External List of Cross-References** (Full view).
+
+### The callers in the PDF are not the ones I typed
+
+**Why this happens:** Each note in Paratext can ask for no caller (`\f -`) or a fixed caller. PTXprint obeys that.
+
+**What to do:** On the **Notes+Refs** tab, tick **Override hidden/automatic Footnote caller settings** (or the cross-reference version), and print.
+
+### The cross-reference placement changed by itself
+
+**Why this happens:** PTXprint keeps the footnote and cross-reference placements in step. For example, **End of Column** for one changes the other too.
+
+**What to do:** After you change one placement, check both the **Footnotes** and the **Cross-References** sub-tabs.
+
+### Changing the cross-reference rule settings does nothing
+
+**Why this happens:** PTXprint draws only one rule above the notes at the bottom of the page. It uses the footnote rule settings, unless the footnotes are at the **End of Book**.
+
+**What to do:** Change the rule on the **Footnotes** sub-tab instead.
+
+### The footnotes run into the footer
+
+**What to do:** On the **Notes+Refs** tab, **Footnotes** sub-tab, make **Space Above Rule** larger. Or, on the **Layout** tab, make **Bottom of Text to Top of Footer (pt)** larger.
+
+### Margin notes do not appear
+
+**Why this happens:** **Margin Notes Col Width (mm)** on the **Layout** tab only makes the space. The notes must also be sent there.
+
+**What to do:**
+
+1. On the **Notes+Refs** tab, set **Placement of Footnotes** (and/or **Placement of Cross-References**) to **Side Margin**.
+2. For headings in the margin, tick **In Margin** on the **Body** tab.
+
+### The external cross-references show the wrong book names
+
+**Why this happens:** PTXprint uses the short book names from the Paratext project's **Scripture Reference Settings** (these should match the `\toc3` lines).
+
+**What to do:** Correct the book names in Paratext, and print again.
+
+## 5.8 Diglot
+
+### My change has no effect in a diglot
+
+**Why this happens:** Each text has its own configuration. The second text's fonts, font size, styles and notes come from its own (secondary) configuration. Page settings (page size, margins, header and footer positions, the footnote rule and others) always come from the primary configuration.
+
+**What to do:**
+
+1. For the second text's fonts, styles or notes: on the **Diglot** tab, right-click its row and choose **Edit Settings…**. Make the change, then click **Return to Primary**.
+2. For page size, margins or headers: make sure you are in the primary configuration (the big button says **Print (Make PDF)**, not **Return to Primary**).
+3. Print from the primary configuration.
+
+### The big button says "Return to Primary" instead of "Print"
+
+**Why this happens:** You are in the secondary configuration of a diglot (after **Edit Settings…**).
+
+**What to do:** Click **Return to Primary**, then **Print (Make PDF)**. (The small **Print** button prints only the secondary text.)
+
+### PTXprint says "These books are not available in the secondary diglot project"
+
+**Why this happens:** You selected a book that the second project does not have.
+
+**What to do:** On the **Basic** tab, select only books that are in every project of the diglot.
+
+### PTXprint says "Failed to merge texts due to a Syntax Error" (Diglot Merge Error)
+
+**Why this happens:** One of the texts has a marker error.
+
+**What to do:**
+
+1. Run **Basic Checks** in Paratext for every project in the diglot, and fix the errors.
+2. If you use a changes file (**Advanced** tab), check that a rule has not caused the error.
+3. Print each text on its own first, then the diglot.
+
+### The status line says "No Config found for diglot", or Print is greyed out
+
+**Why this happens:** A row on the **Diglot** tab has no project or configuration.
+
+**What to do:** On the **Diglot** tab, choose a **Project** and then a **Configuration** in every row.
+
+### The diglot columns have big gaps, or the texts do not line up well
+
+**Why this happens:** One text needs more space than the other.
+
+**What to do:**
+
+1. Give the longer text more **% Width** (for example 55 and 45), or a smaller font size or line spacing in its row.
+2. Try **Auto-calculate optimum widths of diglot columns** with one short book selected (two texts only).
+3. Try another **Merging mode**, for example **Scored (Chapter)** or **Chapter Verse**.
+4. Then try the **Auto Page Fill** tool in the **PDF Preview** window (experimental for diglots and polyglots).
+
+### The secondary caption is missing under a picture
+
+**Why this happens:** **Captions** is not ticked in that text's row, or the texts use different picture files or verses, so the picture is not shared. Pictures are never shared in the books listed in **Use Serial Layout for These Books**.
+
+**What to do:** On the **Diglot** tab, tick **Captions** in that text's row. Check that both texts use the same picture file at the same verse.
+
+### The % Width numbers are red
+
+**Why this happens:** The widths of the texts on one page do not add up to 100.
+
+**What to do:** Change the numbers, or right-click a row and choose **Distribute Widths**.
+
+### I cannot untick Diglot (or Polyglot)
+
+**Why this happens:** This is on purpose, so that you do not lose your diglot settings. PTXprint opens the **Save As Monoglot** dialog instead.
+
+**What to do:** Type a new configuration name and click **OK**. PTXprint opens a one-text copy. The diglot configuration stays as it was.
+
+### Two Column Layout on the Layout tab is greyed out
+
+**Why this happens:** A diglot always uses columns, so PTXprint ticks this box and locks it while the diglot is on.
+
+## 5.9 Headers, footers and page numbers
+
+### There is no header on the first page of a book
+
+**Why this happens:** This is normal. PTXprint prints no header (or header rule) on the page where a book starts.
+
+**What to do:** For a page number on that page, tick **Print Page Number at Bottom of Intro Page(s)** on the **Header+Footer** tab (Regular and Full views).
+
+### The header references are empty on some pages
+
+**Why this happens:** This is normal on pages without verses, for example introduction or glossary pages.
+
+### The header shows the last verse where I expected the first verse
+
+**Why this happens:** **Mirror Pages** is ticked on the **Layout** tab. On left-hand pages PTXprint swaps **First Reference** and **Last Reference**, and also **Inner** and **Outer**.
+
+**What to do:** Choose the other item on the **Header+Footer** tab. Or untick **Mirror Pages** if every page should look the same.
+
+### My own header text prints wrongly, or the PDF fails after I typed a header
+
+**Why this happens:** In the header and footer boxes, spaces and the characters `# % & ^ ~ \` need a backslash before them.
+
+**What to do:** Type `\ ` (a backslash and a space) for each space, for example `DRAFT\ \isodate`. Type `\#`, `\%` and so on for those characters.
+
+### The footer shows "<Enter ID>" instead of the time
+
+**Why this happens:** Older PTXprint versions saved the footer item **Time (HH:MM)** wrongly.
+
+**What to do:** Update PTXprint. Configurations with this problem are corrected when they are opened. Then print again.
+
+### The page numbers do not start at the number I set
+
+**Why this happens:** **Starting Page Number (for Scripture Books)** applies at the first Scripture book when the front matter uses its own page numbering. If the front matter uses normal page numbers, numbering continues from the front matter.
+
+**What to do:** Check the page number codes (`\nopagenums`, `\resetpagenums`, `\dopagenums`) in the front matter on the **View+Edit** tab (advanced).
+
+### The table of contents is empty or has wrong page numbers
+
+**Why this happens:** PTXprint needs a first run to learn the page numbers. With **Quick Run** it runs only once.
+
+**What to do:**
+
+1. Untick **Quick Run**.
+2. Make sure **Table of Contents** is ticked on the **Peripherals** tab, and the front matter contains `\ztoc|main\*`.
+3. Print again.
+
+### A variable prints as "<Type Value Here>"
+
+**Why this happens:** The front matter uses a variable that has no value yet.
+
+**What to do:** On the **Peripherals** tab, type a value in the **Variables and Values** table, and print again.
+
+### The front matter does not appear in the PDF
+
+**What to do:** On the **Peripherals** tab, tick **Local Front Matter**, and print again.
+
+### My front matter changes disappeared
+
+**Why this happens:** **Generate** on the **Front Matter** sub-tab replaces the whole front matter. **Refresh** also throws away unsaved changes. **Finish** in the **Cover Wizard** replaces the cover sections. There is no Undo.
+
+**What to do:** Type the changes again. In future, copy important text to a safe place before you click **Generate**, and make cover text changes after you use the wizard.
+
+### The cover was turned off by itself
+
+**Why this happens:** PTXprint turns off **Create Cover Page** when you untick **Local Front Matter**. The status line says "The Cover is disabled because Local Front Matter is turned off."
+
+**What to do:** On the **Peripherals** tab, tick **Local Front Matter**, then **Create Cover Page** again.
+
+### No cover is made, or the Cover Wizard button is greyed out
+
+**Why this happens:** **Create Cover Page** is not ticked, or the front matter has no cover sections. The cover is also a **separate** PDF (name ending **_cover**), not part of the main PDF.
+
+**What to do:**
+
+1. On the **Peripherals** tab, tick **Local Front Matter** and **Create Cover Page**. The **Cover Wizard...** button then works.
+2. Run the **Cover Wizard** and click **Finish** to create the cover sections.
+3. Print. Look for the cover on the **Cover** tab of the **PDF Preview** window.
+
+### The Cover Wizard says "Existing cover settings found"
+
+**Why this happens:** The configuration has cover styles or cover sections that the wizard did not make, or that were changed by hand. The wizard cannot build on them.
+
+**What to do:** Click **Delete and Continue** to delete the old cover and start a new one with the wizard. Or click **Cancel (keep my settings)** to keep the cover as it is and change it by hand (the wizard does not open).
+
+### The Finish button in the Cover Wizard is greyed out
+
+**Why this happens:** **Finish** works only on the last (**Review**) step, and only when a title was typed in the front cover step.
+
+**What to do:** Type a title in the front cover step, then go to the **Review** step.
+
+### The colophon is missing
+
+**Why this happens:** **Colophon at End of Publication** is unticked. PTXprint unticks it when you tick **Local Front Matter**, and when you tick **Layout Only**.
+
+**What to do:** On the **Peripherals** tab, tick **Colophon at End of Publication** again. Untick **Layout Only** at the bottom of the window, and print again.
+
+## 5.10 Settings and configurations
+
+### I lost my changes after I chose another configuration
+
+**Why this happens:** When you choose another configuration in **Name**, PTXprint does **not** save the current one. (When you choose another **Project**, it does save first.)
+
+**What to do:** The lost changes cannot be recovered. Make them again. In future, click **Save** (or **Print (Make PDF)**) before you change configuration.
+
+### I deleted a configuration and want to know what is gone
+
+**Why this happens:** **Delete** (after **Yes**) removes the settings and working files of that one configuration. This cannot be undone. PTXprint then changes to **Default**. The PDFs you made are **not** deleted, and other configurations are not touched. (Older PTXprint versions also emptied the output folder of all configurations. This is fixed.)
+
+**What to do:**
+
+1. To get the settings back, use **Import Settings...** on the **Basic** tab with a PDF made with **Include Config Settings Within PDF**, or with a ZIP archive.
+2. If the status line lists files that could not be deleted, close them in other programs (for example the PDF viewer).
+
+### I clicked Reset and all my settings in Default are gone
+
+**Why this happens:** For the **Default** configuration, **Delete** is replaced by **Reset** (Regular and Full views). **Reset** does not ask first. It sets every setting of **Default** back to the PTXprint defaults, and removes the saved files of **Default** (including its styles and picture list). Other configurations and PDFs are not changed.
+
+**What to do:**
+
+1. If the settings are in a PDF made with **Include Config Settings Within PDF**, use **Import Settings...** on the **Basic** tab to bring them back.
+2. Or import them from another configuration, or from a ZIP archive.
+3. In future, use **Save As** to keep your work in a named configuration, not in **Default**.
+
+### The lock button or the Copy configuration button is greyed out
+
+**Why this happens:** The **Default** configuration is selected. It cannot be locked, and it is never copied to other projects.
+
+**What to do:** Use **Save As** to make a named configuration, then lock or copy that one.
+
+### I cannot lock or unlock my configuration
+
+**Why this happens:** To unlock, the password must be the same as when you locked. To lock, the password box must not be empty. **Cancel** never locks or unlocks.
+
+**What to do:**
+
+1. Click the lock button, type the password and click **OK**. If it is wrong, the status line says "Incorrect password".
+2. If you cannot unlock it, use **Save As** to make a new, unlocked copy.
+
+### The OK button in "Save Current Configuration As..." is greyed out
+
+**Why this happens:** The name is empty, has spaces or special characters, or is already used.
+
+**What to do:**
+
+1. Read the message below the box. Use only letters a–z and A–Z, numbers, `(`, `)`, `_` and `-`.
+2. To replace an existing configuration with that name, tick **Replace it if it already exists**. (**Default** can never be replaced.)
+
+### Copy Configuration changed the titles in the other projects
+
+**Why this happens:** **Keep each project's own language-specific variables** was unticked, so the target projects got this project's titles and language name.
+
+**What to do:** Copy again with that box ticked, or correct the values in the **Variables and Values** table on the **Peripherals** tab of each target project.
+
+### Import Settings says "Cannot find any settings to import from the selected file"
+
+**Why this happens:** The PDF was made without **Include Config Settings Within PDF** (on the **Finishing** tab), or with a very old PTXprint version.
+
+**What to do:** Use another source, for example a ZIP archive made with **Create Archive...**, or a saved configuration. In future, keep **Include Config Settings Within PDF** ticked.
+
+### I imported only one group of settings, but everything changed
+
+**Why this happens:** **Everything** was still ticked. In the **Basic** view the **Everything** tab is hidden but still ticked. Also, when the target is a **new** configuration name or an external folder, PTXprint always ticks **Everything**.
+
+**What to do:**
+
+1. Choose an existing configuration as the target.
+2. Change to the **Regular** view, open **Import Settings...** again, and untick **Everything** before you tick the groups you want.
+
+### Imported styles did not change
+
+**Why this happens:** PTXprint only updates styles that you have not changed in the target configuration. The fonts inside styles come with **Fonts+Script**, not with **Styles**.
+
+**What to do:** In the **Import Settings** dialog, tick **Override ALL Style Settings**. For style fonts, also tick **Fonts+Script**.
+
+### A setting changed by itself
+
+**Why this happens:** Some settings change others to keep them working together. For example:
+
+* **Hyphenate** unticks **Between Letters**.
+* **Right-to-Left** ticks **RTL Book Binding**.
+* **Variable Line Spacing** ticks **Fill Columns** and **Allow Unbalanced Columns**.
+* Changing between one and two columns halves or doubles the **Base Indent**.
+* **Print-CMYK**, **Print-Gray** and **Print-Spot** tick **Only Show on Odd Pages** for thumb tabs.
+* The footnote and cross-reference placements change together.
+* **Local Front Matter** and **Layout Only** untick the colophon.
+* **Compare PDFs** keeps the previous PDF even if **Number of Previous PDFs to be Kept** is 0.
+
+**What to do:** Read the status line. PTXprint often says what it changed. Change the setting back if you need to.
+
+## 5.11 Comparing PDFs
+
+### Compare PDFs does not show a diff PDF
+
+**Why this happens:** No differences were found, or the comparison could not be made.
+
+**What to do:** Read the status line at the bottom of the window:
+
+* **No differences found** – the two PDFs look the same.
+* **Nothing to compare with yet: make a change and print again** – there is no previous PDF yet. Print once more.
+* **Cannot find the PDF to compare with: ...** – the file chosen with **Select...** is gone. Choose it again.
+* **Cannot compare PDFs: the pages are different sizes** – the page size changed. Only pages of the same size can be compared.
+* **No pages could be compared. Check the Start Page Offset** – make **Start Page Offset** smaller.
+* **No differences found, but the old Diff PDF is open and cannot be removed** – close the old diff PDF in your PDF program.
+
+### Every page shows as changed in the diff PDF
+
+**Why this happens:** The pages are probably not lined up, or something changed on every page (margins, headers, page numbers).
+
+**What to do:** Change to the **Full** view. On the **Finishing** tab, in **Compare PDFs**:
+
+1. If one PDF has extra pages at the start (for example a cover), set **Start Page Offset**.
+2. If you changed only the margins or the gutter, tick **Smart Check**.
+3. If only headers, footers or page numbers changed, tick **Headers + Footers** under **Ignore When Comparing**.
+
+Extra pages at the end of the longer PDF always show as changed. This is correct.
+
+## 5.12 I cannot find a setting
+
+### A tab or setting that I used before has disappeared
+
+**Why this happens:** The view level is lower than before. Lower view levels hide many settings. (The **Peripherals** and **Finishing** tabs show only their main settings in the **Basic** view. The **Publications** tab is only in the **Full** view.)
+
+**What to do:**
+
+1. Click **☰** › **View Level** › **Regular View** or **Full View**.
+2. Or type the name of the setting in **Search for settings** (bottom-left, or **Ctrl+F**). PTXprint raises the view level if the setting is hidden.
+
+### The PDF has pictures (or a diglot, borders, thumb tabs …) but I cannot find the setting
+
+**Why this happens:** The feature was turned on in a higher view level. Hidden settings still work.
+
+**What to do:**
+
+1. Change to **Full View**.
+2. Look for tabs with blue names. A blue tab name means a feature on that tab is on.
+3. Turn the feature off on that tab.
+
+### A setting is greyed out
+
+**Why this happens:** It needs another setting first, or another setting blocks it. Common examples:
+
+| Greyed-out setting | What it needs |
+|---|---|
+| Almost all of **Layout**, **Fonts+Script** and **Styles** | Untick **Lock UI Layout Settings** (**Advanced** tab, Full view). |
+| **Save**, **Delete**, **Notes** | Unlock the configuration (lock button on the **Basic** tab). |
+| Lock button, **Copy configuration to other projects** | Choose a configuration other than **Default**. |
+| **Reset** (Basic tab) | Regular or Full view. |
+| **Two Column Layout** | Turn off the diglot. A diglot always uses columns. |
+| **Verse** (header references) | Tick **Chapter** first. |
+| **Pri** / **Sec** (header) | Turn on **Diglot (or Polyglot)**. |
+| **Parallel Passage Refs** | Tick **Headings** on the **Body** tab. |
+| **Hanging Poetry Verse Numbers** | Untick **Marginal Verses**. |
+| **Optimize Layout for Poetry Books** | Tick **Use Special Features for These Books** (**Body** tab). |
+| **Between Letters** | Untick **Interlinear** on the **Advanced** tab. |
+| **End of Column** (notes) | Tick **Two Column Layout**. |
+| **Side Margin** (notes) | Tick **Margin Notes Col Width (mm)** on the **Layout** tab. |
+| An **Edit...** button on the **Advanced** tab | Tick the check box for that file first. |
+| **Scale to fit** (Finishing) | Set **Pages Per Spread** to **1-up**. |
+| **Color Hue**, **Tolerance** | Choose **Print-Spot** as **PDF Output Format**. |
+| **Locate...** (PDF Preview) | Tick **Layout Analysis**. |
+| Fine-tune buttons (Layout) | Nothing to fix: **Lines Per Page** is already blue. |
+| **Mirror** (picture) | Choose **OK to mirror** on the picture's **Checklist** sub-tab. |
+| **Generate** (Front Matter) | Unlock the configuration. |
+| **Cover Wizard...** | Tick **Create Cover Page** (**Peripherals** tab). |
+| **Auto-calculate optimum widths of diglot columns** | A diglot with exactly two texts, and **Print** must be available. |
+| **Custom Script** (Import Settings) | Import from a ZIP archive or a saved configuration, not a PDF. |
+| **Include Transcelerator Questions** | The project needs Transcelerator data. |
+
+**What to do:** Hover the mouse over the greyed-out setting; the tooltip often explains it. See also the chapter about that tab.
+
+### The Help tab has very few links, or links do not open
+
+**Why this happens:** **Disable ALL Internet Use** is ticked on the **Advanced** tab. PTXprint shows "Internet Access Disabled" when you click a web link.
+
+**What to do:** On the **Advanced** tab, **Main** sub-tab, **General** area, untick **Disable ALL Internet Use**.
+
+### PTXprint does not show my projects
+
+**Why this happens:** The **Base Projects Directory** points to the wrong folder.
+
+**What to do:** On the **Help** tab, click **Change...** next to **Base Projects Directory**. Choose the folder that *contains* your Paratext project folders, and click **Use Selected**.
+
+## 5.13 Getting more help
+
+If your problem is not in this chapter:
+
+1. Read **Common problems** in the chapter for the tab you are using.
+2. On the **Help** tab, click **Create Report...** and read the warnings and errors.
+3. Ask the **Support Agent** or the **PTXprint User Community** (links on the **Help** tab).
+4. Make an archive with **Create Archive...** (choose only the book that shows the problem), and email it to **ptxprint_support@sil.org** with a clear description, your PTXprint version and screenshots.
+
+
+# 6. Basic tab
+
+## 6.1 What this tab is for
 
 The **Basic** tab is the first tab in PTXprint. You come here to:
 
@@ -1193,7 +3275,7 @@ The **Basic** tab is the first tab in PTXprint. You come here to:
 
 Start here every time. Most other settings depend on the project and configuration that you choose here.
 
-## 4.2 Project
+## 6.2 Project
 
 Choose your Paratext project in the **Project** list. PTXprint shows the full name of the project next to the list.
 
@@ -1209,7 +3291,7 @@ Choose your Paratext project in the **Project** list. PTXprint shows the full na
 
 PTXprint puts these texts into the front matter (for example on the back of the title page) through the variables `\zcopyright` and `\zlicense`. Special codes work in both boxes: `(c)` becomes ©, `(r)` becomes ®, `(tm)` becomes ™, `~` is a non-breaking space, and `//` forces a new line.
 
-## 4.3 Layout Configuration
+## 6.3 Layout Configuration
 
 A **configuration** (or layout) is a named set of settings. One project can have many configurations, for example one for a draft and one for the final book. See the chapter about the main window for more about configurations and saving.
 
@@ -1224,7 +3306,7 @@ A **configuration** (or layout) is a named set of settings. One project can have
 
 When you choose another configuration in the **Name** list, PTXprint does **not** save the current one. Click **Save** first.
 
-## 4.4 What to Print
+## 6.4 What to Print
 
 Choose one of three ways to say what goes into the PDF:
 
@@ -1236,7 +3318,7 @@ If you type in **From Chapter** or **To**, PTXprint changes to **Single Book**. 
 
 The FRT (front matter) book is not in the book lists. Set up the front matter on the **Peripherals** tab instead.
 
-## 4.5 Dialogs on this tab
+## 6.5 Dialogs on this tab
 
 ### Save Current Configuration As...
 
@@ -1296,7 +3378,7 @@ PTXprint asks you to confirm before something that cannot be undone:
 * **"You are about to REMOVE the '...' configuration"** – appears when you click **Delete**. It names the configuration. Click **Yes** to delete it, or **No** to keep it. Its settings and working files are deleted. PDF files that you made from it are **not** deleted.
 * **"You are about to CREATE a diglot (or polyglot) configuration"** – appears when you turn on a diglot. PTXprint suggests that you first use **Save As...** to make a new configuration for the diglot.
 
-## 4.6 Common tasks
+## 6.6 Common tasks
 
 ### Start a new publication from an existing configuration
 
@@ -1360,7 +3442,7 @@ A tutorial is a file with a list of steps (a .json file, or a recorded test in a
 4. Click **Step** (or press **Space**) to do the next step, **Skip** (or **S**) to leave it out, or **Play** (or **P**) to do the steps one after another. **Run to end** does all the remaining steps.
 5. Close the tutorial window to stop. If the tutorial needed a higher view level, PTXprint changes the view level while it runs and changes it back when you close the window.
 
-## 4.7 Common problems
+## 6.7 Common problems
 
 ### My recent changes were lost when I chose another configuration
 
@@ -1402,7 +3484,7 @@ A tutorial is a file with a list of steps (a .json file, or a recorded test in a
 
 **Cause:** The **Default** configuration is selected. PTXprint never copies **Default** to other projects. **What to do:** Use **Save As** to save the settings under another name, then copy that configuration.
 
-## 4.8 Settings reference
+## 6.8 Settings reference
 
 ### Import Scripture... (dialog)
 
@@ -1989,9 +4071,9 @@ Also: Edit Bible module
 Only works after you have chosen a module. You can look at the module there or change it.
 
 
-# 5. Layout tab
+# 7. Layout tab
 
-## 5.1 What this tab is for
+## 7.1 What this tab is for
 
 The **Layout** tab sets the shape of every page: page size, margins (the empty space around the text), one or two columns, the size of the main text and the space between lines.
 
@@ -2005,7 +4087,7 @@ Some words used in this chapter:
 * **Gutter** – an extra empty space. A *binding gutter* is extra space at the spine of the book. A *column gutter* is the space between two columns of text.
 * **Text area** – the part of the page where the main text goes. The margins are outside it.
 
-## 5.2 Page Setup
+## 7.2 Page Setup
 
 This area holds **Page Size**, **Base Font Size (pt)**, **Base Line Spacing (pt)**, **Base Indent**, the binding gutter and the page-layout options.
 
@@ -2074,7 +4156,7 @@ If too many notes do not fit beside the text in one column, PTXprint moves the e
 
 These settings are shown in the **Regular** and **Full** views.
 
-## 5.3 Two Column Layout
+## 7.3 Two Column Layout
 
 Tick **Two Column Layout** for two columns of main text; untick it for one. When you change this, PTXprint halves (two columns) or doubles (one column) **Base Indent**, because a narrow column needs a smaller indent.
 
@@ -2089,7 +4171,7 @@ Most settings in this area only work with two columns:
 
 A diglot (two languages side by side) needs two columns, so the **Two Column Layout** box is then greyed out.
 
-## 5.4 Margins
+## 7.4 Margins
 
 The **Margins** area sets the empty space around the text, and the position of the header (the line at the top of the page, often with the book name and page number) and the footer (the line at the bottom).
 
@@ -2119,7 +4201,7 @@ Tick **Horizontal Rule** to draw a line under the header. Set its position with 
 
 To see the margins, header and footer areas on the page, tick **Guides and Baselines** on the **Content** tab of the **PDF Preview** window.
 
-## 5.5 Change the Grid Settings dialog (graph paper)
+## 7.5 Change the Grid Settings dialog (graph paper)
 
 PTXprint can show a "graph paper" grid over the pages in the **PDF Preview**, to measure things such as a margin or a picture.
 
@@ -2129,13 +4211,13 @@ Open the **PDF Preview**, go to its **Content** tab and tick **Graph Paper**. Cl
 * **Minor Divisions** – how many thinner lines between two major lines, plus their colour and thickness.
 * **Place Grid** – **Whole Page**, **In Margin Areas** or **Only in Text Area**.
 
-## 5.6 Lock UI Layout Settings
+## 7.6 Lock UI Layout Settings
 
 When the typesetting is almost finished, you can protect the layout from accidental changes. On the **Advanced** tab, **Main** tab, **General** area, tick **Lock UI Layout Settings**. (This is only shown in the **Full** view.)
 
 While it is ticked, most of the **Layout** tab is greyed out (page size, font size, line spacing, columns, gutter, margins and more). The whole **Fonts+Script** tab and the **Styles** tab are also greyed out. Untick it to make changes again.
 
-## 5.7 Common tasks
+## 7.7 Common tasks
 
 ### How do I change the page size?
 
@@ -2198,7 +4280,7 @@ While it is ticked, most of the **Layout** tab is greyed out (page size, font si
 2. On the preview's **Content** tab, tick **Graph Paper**.
 3. Click **Settings** next to it to change units, colours and where the grid is drawn. Click **OK**.
 
-## 5.8 Common problems
+## 7.8 Common problems
 
 ### Almost everything on the Layout tab is greyed out
 
@@ -2266,7 +4348,7 @@ While it is ticked, most of the **Layout** tab is greyed out (page size, font si
 
 **Cause:** It is only shown when **Notelines** is ticked.
 
-## 5.9 Settings reference
+## 7.9 Settings reference
 
 ### Change the Grid Settings (dialog)
 
@@ -2776,9 +4858,9 @@ Greyed out by: “Lock UI Layout Settings”
 Calculated; you cannot type in it. Shown by the blue arrow at the top of the diagram. If it is very small or negative, make the top margin larger or the header gap smaller.
 
 
-# 6. Fonts+Script tab
+# 8. Fonts+Script tab
 
-## 6.1 What this tab is for
+## 8.1 What this tab is for
 
 The **Fonts+Script** tab controls *how the letters look* and *how the writing system behaves*: the fonts, the script (writing system), the writing direction, hyphenation and spacing.
 
@@ -2797,7 +4879,7 @@ Some words used in this chapter:
 
 If the whole tab is greyed out, **Lock UI Layout Settings** is ticked on the **Advanced** tab (see the **Layout tab** chapter).
 
-## 6.2 Font Configuration
+## 8.2 Font Configuration
 
 PTXprint uses four fonts for the main text: **Regular**, **Bold**, **Italic** and **Bold Italic**. Each has a **Select Font...** button that shows the font now in use.
 
@@ -2812,7 +4894,7 @@ Click **Refresh Font List** if a newly installed font is not in the list.
 
 **Script for Numbers** is a link that opens the **Pick a Font** dialog with **Digit mapping** highlighted (see below).
 
-## 6.3 Pick a Font (and Typeface) dialog
+## 8.3 Pick a Font (and Typeface) dialog
 
 This dialog opens when you click any **Select Font...** button.
 
@@ -2850,7 +4932,7 @@ Many scripts have their own digits, for example Arabic-Indic ٠١٢٣, Devanagar
 
 Choosing a different font in the list clears the font features.
 
-## 6.4 Use Fallback Font
+## 8.4 Use Fallback Font
 
 Some fonts do not contain every character in your text, for example special quotation marks or the glossary markers. These print as empty boxes (tofu). A *fallback font* is a second font used only for those characters.
 
@@ -2862,7 +4944,7 @@ You can add characters to the list by hand, separated by spaces. You can type a 
 
 These settings are shown in the **Regular** and **Full** views.
 
-## 6.5 Writing System
+## 8.5 Writing System
 
 This area tells PTXprint how your script works. It is very important for non-Latin scripts.
 
@@ -2902,7 +4984,7 @@ Some scripts (for example Thai, Lao, Khmer, Myanmar, Tai Tham, New Tai Lue, Chin
 
 These options are shown in the **Regular** and **Full** views.
 
-## 6.6 Hyphenation
+## 8.6 Hyphenation
 
 PTXprint can hyphenate using your Paratext project's hyphenation list. In Paratext, the Wordlist tool suggests where words can be broken, and you approve the suggestions. PTXprint turns that list into one it can use.
 
@@ -2926,7 +5008,7 @@ Ticking **Hyphenate** unticks **Between Letters** in **Spacing Adjustments**, be
 * **Add Syllable-Based Hyphenated Words** – only for scripts where **Syllable line breaking** is ticked in **Additional Script Settings...**. Adds break points for more words using the syllable rules.
 * **Advanced** – limits on which words are added: **Minimum affix**, **Minimum length** and **Min non-hyphen**.
 
-## 6.7 Spacing Adjustments
+## 8.7 Spacing Adjustments
 
 When text is justified (both edges straight), PTXprint stretches or shrinks the spaces in each line. This area controls how much.
 
@@ -2937,7 +5019,7 @@ When text is justified (both edges straight), PTXprint stretches or shrinks the 
 
 These settings are shown in the **Regular** and **Full** views.
 
-## 6.8 Add Tatweel (kashida) Rules dialog
+## 8.8 Add Tatweel (kashida) Rules dialog
 
 In Arabic script, a *tatweel* (also *kashida*, the character ـ) is a joining stroke that makes a word longer, to make lines look better or to fill a line. This dialog writes a *change rule* that adds tatweels to one word at one verse. The rule goes into the project's changes file (changes.txt), which PTXprint applies every time it prints.
 
@@ -2951,7 +5033,7 @@ To open it (advanced): on the **View+Edit** tab, open the changes file. In the *
 6. Click **Insert Rule**. The rule is added at the cursor in the file open on the **View+Edit** tab.
 7. Save the file and click **Print**.
 
-## 6.9 Common tasks
+## 8.9 Common tasks
 
 ### How do I change the main font?
 
@@ -3005,7 +5087,7 @@ To open it (advanced): on the **View+Edit** tab, open the changes file. In the *
 2. Or, in the **Pick a Font** dialog, set **Stretch** slightly below 1.00 (for example 0.97).
 3. Click **Print** and check that the text is still easy to read.
 
-## 6.10 Common problems
+## 8.10 Common problems
 
 ### The whole Fonts+Script tab is greyed out
 
@@ -3074,7 +5156,7 @@ To open it (advanced): on the **View+Edit** tab, open the changes file. In the *
 
 **Cause:** **Enable Colored Text (as Specified in Stylesheet)** is not ticked.
 
-## 6.11 Settings reference
+## 8.11 Settings reference
 
 ### Create List (dialog)
 
@@ -3655,9 +5737,9 @@ Also: Set the binding to Right (for RTL publications) · Greyed out by: “Lock 
 Affects where the binding gutter goes, how PDF viewers show the pages, and the cover. Ticked automatically when you choose **Right-to-Left** text direction.
 
 
-# 7. Body tab
+# 9. Body tab
 
-## 7.1 What this tab is for
+## 9.1 What this tab is for
 
 The **Body** tab controls *what* is printed from each book, and some of *how* the main text looks.
 Come here when you want to:
@@ -3676,7 +5758,7 @@ the section headings are taken out completely. Each section below says which kin
 The tab has three areas: **Beginning and Ending Material**, **Include Scripture Text** and
 **Other Features**. Some settings are only shown in the **Regular** or **Full** view.
 
-## 7.2 Beginning and Ending Material
+## 9.2 Beginning and Ending Material
 
 These settings deal with the introduction at the start of each book, and with the glossary.
 
@@ -3693,7 +5775,7 @@ These settings deal with the introduction at the start of each book, and with th
 * **Start 1st Chapter on a New Page** and **Start All Other Chapters on a New Page** add page breaks.
   They do not remove text.
 
-## 7.3 Include Scripture Text
+## 9.3 Include Scripture Text
 
 The checkbox **Include Scripture Text** is the title of this area. Leave it ticked. Unticking it
 **removes** everything from the first chapter onwards in every book, so only the introductions (and
@@ -3738,7 +5820,7 @@ greyed out.
 The small links **\s**, **\r**, **\c** and **\v** open the **Styles** tab at that marker, to change
 the font, size or spacing of section headings, parallel references, chapter numbers or verse numbers.
 
-## 7.4 Other Features
+## 9.4 Other Features
 
 This area is for special treatment of some books, and for glossary words.
 
@@ -3756,7 +5838,7 @@ This area is for special treatment of some books, and for glossary words.
 * The links **\w** and **\zglm** open the **Styles** tab for the glossary word style and for the
   glossary bracket characters.
 
-## 7.5 Common tasks
+## 9.5 Common tasks
 
 ### How do I print only the book introductions?
 
@@ -3809,7 +5891,7 @@ On the **Body** tab, untick **Hide First Verse Number** (shown in the **Regular*
 3. For your own formatting, choose **\w ...\w\* char style** and click the **\w** link to edit that
    style on the **Styles** tab.
 
-## 7.6 Common problems
+## 9.6 Common problems
 
 **The parallel references disappeared.**
 Cause: **Headings** was unticked. This also unticks and greys out **Parallel Passage Refs**.
@@ -3848,7 +5930,7 @@ Cause: it needs **Margin Notes** turned on (on the **Layout** tab) and **Heading
 Cause: by default PTXprint removes chapter numbers from non-Scripture books. Fix: tick
 **Non-Scripture Books** under **Show Chapter Numbers In**.
 
-## 7.7 Settings reference
+## 9.7 Settings reference
 
 ### Body
 
@@ -4269,9 +6351,9 @@ Link · Regular+ · `lb_style_zglm`
 For example, to make the brackets smaller or a different colour.
 
 
-# 8. Notes+Refs tab
+# 10. Notes+Refs tab
 
-## 8.1 What this tab is for
+## 10.1 What this tab is for
 
 The **Notes+Refs** tab controls the extra information that sits outside the main Bible text. It has three sub-tabs: **Footnotes**, **Cross-References** and **Study Notes + Questions**. Come here to show or hide notes, change where they appear on the page, change the small marks that point to them, or add thousands of cross-references from a ready-made list.
 
@@ -4290,7 +6372,7 @@ Some words used in this chapter:
 
 The **Notes+Refs** tab is shown in the **Basic** view and above. Many settings are only shown in the **Regular** or **Full** view. External cross-reference lists and extended study notes are only shown in the **Full** view.
 
-## 8.2 Footnotes
+## 10.2 Footnotes
 
 On the **Footnotes** sub-tab, the top area decides *whether* footnotes are printed and *where* they go.
 
@@ -4327,7 +6409,7 @@ This area (only in the **Full** view) has small text changes that PTXprint makes
 * the minimum and maximum horizontal space between run-on notes,
 * the vertical space between the footnote block and the cross-reference block.
 
-## 8.3 Cross-References
+## 10.3 Cross-References
 
 The **Cross-References** sub-tab works like the **Footnotes** sub-tab, but it also lets you add cross-references from an external list.
 
@@ -4385,7 +6467,7 @@ These settings are only available when the placement is **Column Cross-Reference
 
 These settings are for the cross-reference rule. PTXprint uses them only when footnotes or cross-references are at the **End of Book** (see **Footnotes** above).
 
-## 8.4 Study Notes + Questions
+## 10.4 Study Notes + Questions
 
 This sub-tab is for study Bibles and for comprehension testing.
 
@@ -4403,7 +6485,7 @@ Transcelerator is a Paratext plugin from SIL for making comprehension-checking q
 
 In a study Bible, notes and sidebars can have a category, for example `\cat History\cat*`. **Filter Categories** (only in the **Full** view) shows a list of the categories in the project, with a tick box for extended notes and for sidebars. In this version, PTXprint does not save this list with the configuration, and it does not use it when it makes the PDF.
 
-## 8.5 Generate Strong's Index dialog
+## 10.5 Generate Strong's Index dialog
 
 To open this dialog, go to **Notes+Refs** › **Cross-References** and tick **Use External List of Cross-References**. Choose a **Strong's list** in **External Refs**, and then click **Generate Index...**.
 
@@ -4418,7 +6500,7 @@ When you click **Create Index**, PTXprint writes the index into the chosen book 
 
 The renderings come from your project's Biblical Terms renderings in Paratext. Fill those in first for a useful index.
 
-## 8.6 Common tasks
+## 10.6 Common tasks
 
 ### Hide all footnotes (or all cross-references)
 
@@ -4485,7 +6567,7 @@ The renderings come from your project's Biblical Terms renderings in Paratext. F
 5. Check **Create Index in Book** (normally **XXS**). Anything already in that book will be replaced.
 6. Click **Create Index**, then click **Print**.
 
-## 8.7 Common problems
+## 10.7 Common problems
 
 **The footnote or cross-reference settings are greyed out.**
 Most footnote settings need **Include Footnotes**. The caller box and related settings need **Show Callers**. **End of Column** needs **Two Column Layout** on the **Layout** tab. **Side Margin** needs **Margin Notes Col Width (mm)** on the **Layout** tab. The **Source for References** settings need **Use External List of Cross-References**. The **Column Cross-References** settings need the **Column Cross-References** placement.
@@ -4520,7 +6602,7 @@ PTXprint cannot find Transcelerator data for this project. Use the Transcelerato
 **The study notes do not appear.**
 Tick **Extended Footnotes (\ef)** on the **Study Notes + Questions** sub-tab (only shown in the **Full** view). If it is not ticked, PTXprint removes all `\ef` notes.
 
-## 8.8 Settings reference
+## 10.8 Settings reference
 
 ### Generate Strong's Index... (dialog)
 
@@ -5803,9 +7885,9 @@ Also: Filter study note sidebars
 Shows the category list. If the list is empty, PTXprint searches the project for categories. In this version, the filter does not change the PDF.
 
 
-# 9. Header+Footer tab
+# 11. Header+Footer tab
 
-## 9.1 What this tab is for
+## 11.1 What this tab is for
 
 The **Header+Footer** tab decides what is printed in the running header (the line at the top of
 each page) and the footer (the line at the bottom). Come here to:
@@ -5820,7 +7902,7 @@ The **position** of the header and footer, the rule (line) under the header, and
 are set on the **Layout** tab. The font and size of the header text are set by the `\h` style on the
 **Styles** tab (click the **\h** link on this tab).
 
-## 9.2 Header
+## 11.2 Header
 
 The header has three places: **Inner (Left)**, **Center** and **Outer (Right)**. Each has a
 drop-down list: choose a ready-made item or type your own text.
@@ -5895,7 +7977,7 @@ Rules:
   gives "This is page #1".
 * Put square brackets around a code to print brackets: `[\pagenumber]` gives "[12]".
 
-## 9.3 Other
+## 11.3 Other
 
 This area is only shown in the **Regular** and **Full** views.
 
@@ -5905,7 +7987,7 @@ This area is only shown in the **Regular** and **Full** views.
   choose what goes in the footer of the first page of each book. Only one can be ticked; ticking one
   unticks the other.
 
-## 9.4 Footer
+## 11.4 Footer
 
 The footer has one place: **Center Footer**. Many Bibles leave it empty and put the page number in
 the header. It is useful for a page number at the bottom of every page, or a "DRAFT" message with
@@ -5924,7 +8006,7 @@ In a diglot, the **Pri** and **Sec** buttons choose which text's font the footer
 To move the footer up or down, use the **Layout** tab, **Margins** area (**Bottom of Text to Top of
 Footer** and **Place Footer Text Above the Bottom Margin**).
 
-## 9.5 Common tasks
+## 11.5 Common tasks
 
 ### How do I put the page number in the outer corner and the references in the center?
 
@@ -5972,7 +8054,7 @@ Footer** and **Place Footer Text Above the Bottom Margin**).
    secondary text.
 4. Decide on **Mirror Pages** on the **Layout** tab. With it ticked, the primary text is next to the spine.
 
-## 9.6 Common problems
+## 11.6 Common problems
 
 **There is no header on the first page of a book.**
 This is normal: PTXprint prints no header (or rule) on the page where a book starts. Tick **Print
@@ -6008,7 +8090,7 @@ The number is applied when the first Scripture book starts, if the pages before 
 front matter numbering (as PTXprint sets up by default). If the front matter has normal page
 numbers, the numbering simply continues from the front matter.
 
-## 9.7 Settings reference
+## 11.7 Settings reference
 
 ### Header+Footer
 
@@ -6276,9 +8358,9 @@ Also: Use formatting from primary project (center footer) · Needs: “Diglot (o
 Uses the primary text's font (and references) for the footer.
 
 
-# 10. Pictures tab
+# 12. Pictures tab
 
-## 10.1 What this tab is for
+## 12.1 What this tab is for
 
 Use the **Pictures** tab when your publication has pictures (illustrations) or maps. Here you can:
 
@@ -6309,7 +8391,7 @@ Some words used in this chapter:
 * **Credit overlay** – a small copyright line printed on top of the picture itself.
 * **Image set** – a downloadable collection of Bible illustrations that you can use in the catalogue.
 
-## 10.2 The picture table (PicList)
+## 12.2 The picture table (PicList)
 
 The top half of the tab shows the PicList as a table. Each row is one picture. The columns shown change with the sub-tab: **Global Options** and **Checklist** show only a few columns; **Details** shows them all.
 
@@ -6333,7 +8415,7 @@ The buttons next to the table:
 
 When the **Checklist** sub-tab is open, the buttons are replaced by a **Filter Checklist** area. Use it to show only the pictures that still need checking, or only the approved ones.
 
-## 10.3 Global Options
+## 12.3 Global Options
 
 This sub-tab has the settings for all the pictures in the publication.
 
@@ -6364,7 +8446,7 @@ The PicList only stores the file **name**, not the folder. If several files have
 
 **Permissions.** **Request Access...** (only with **High Resolution**) and **Get Permission...** open online forms that PTXprint fills in with the list of pictures used in this configuration.
 
-## 10.4 Details
+## 12.4 Details
 
 This sub-tab shows the settings of the picture selected in the table. It is only shown in the **Regular** and **Full** views.
 
@@ -6422,7 +8504,7 @@ Some artists require a small credit printed **on** each picture. Click **© ...*
 
 **Extra** is for advanced options such as rotating a picture (`rotated 90`, `rotate=edge`, `rotate=binding`) or choosing a page of a multi-page PDF (`page=2`).
 
-## 10.5 Checklist
+## 12.5 Checklist
 
 This sub-tab helps the team think about whether each picture is right for the readers. It is only shown in the **Regular** and **Full** views. The answers are stored with the picture's file, not with the anchor. So if the same picture is used twice, both uses share the answers. PTXprint saves the answers, the approval and the notes, and loads them again the next time you open the project.
 
@@ -6433,7 +8515,7 @@ This sub-tab helps the team think about whether each picture is right for the re
 
 Use the **Filter Checklist** area above the table to show, for example, only the pictures where some questions are still **Unknown**.
 
-## 10.6 Generate PicList dialog
+## 12.6 Generate PicList dialog
 
 This dialog opens when you click **Generate...** and a PicList already exists. (If there is no PicList yet, PTXprint makes one at once without asking.)
 
@@ -6442,7 +8524,7 @@ This dialog opens when you click **Generate...** and a PicList already exists. (
 * **Randomly Position Pictures on Page** – give new pictures a random corner (top-left, top-right, bottom-left or bottom-right). Without it, new pictures go top-left in two-column layout and at the top in single-column layout.
 * **Protect existing PicList settings** – keep the size and position of pictures that are already in the PicList, and only add new ones. Untick it only if you want to start again from the Paratext text.
 
-## 10.7 Select Images dialog (the catalogue)
+## 12.7 Select Images dialog (the catalogue)
 
 Click **Show Catalogue...** to open this dialog. It shows thumbnails of the pictures in an **Image Set**. If you have no image set yet, the **Download & Install Image Sets** dialog opens first.
 
@@ -6458,13 +8540,13 @@ Click **Show Catalogue...** to open this dialog. It shows thumbnails of the pict
 
 The new pictures are anchored at their Bible reference, with **Column Width** and top-left position. Then go to the **Details** sub-tab and type a caption for each one.
 
-## 10.8 Download & Install Image Sets dialog
+## 12.8 Download & Install Image Sets dialog
 
 This dialog lists the image sets that PTXprint can download. Tick the sets you want and click **OK**. Sets that are already installed show **Installed** and cannot be ticked. Some sets show their terms of use; you must agree to the terms before the set is installed. You need an internet connection, and some sets are large.
 
 **Install from ZIP file...** installs a set from a ZIP file on your computer. This is useful at a workshop: download the file once and share it. A ZIP file that contains only pictures (and no image-set information) is unpacked into the project's `local\figures` folder.
 
-## 10.9 Illustration Credit Overlay dialog
+## 12.9 Illustration Credit Overlay dialog
 
 Open this dialog with the **© ...** button on the **Details** sub-tab. It sets a small credit line that is printed on top of the picture. Some artists (for example David C Cook) require this.
 
@@ -6477,7 +8559,7 @@ Open this dialog with the **© ...** button on the **Details** sub-tab. It sets 
 
 The credit is stored with the picture file, so it applies in all configurations of the project. The font, size and colour come from the `x-credit` style; click the **\x-credit** link to change it on the **Styles** tab.
 
-## 10.10 Add Map dialog
+## 12.10 Add Map dialog
 
 Click **Add Maps...** to add map pages at the end of the publication.
 
@@ -6489,7 +8571,7 @@ Click **Add Maps...** to add map pages at the end of the publication.
 
 PTXprint adds each map to the PicList (anchors `XXM map01`, `XXM map02` ...), writes one page for each map into the map book, ticks **Include Maps** on the **Peripherals** tab, and adds the map book to the list of books to print. Use **Edit Maps...** to look at the map book on the **View+Edit** tab.
 
-## 10.11 Common tasks
+## 12.11 Common tasks
 
 ### Show the pictures that are in the Paratext text
 
@@ -6551,7 +8633,7 @@ PTXprint adds each map to the PicList (anchors `XXM map01`, `XXM map02` ...), wr
 2. Follow the steps in the "Add Map dialog" section above.
 3. Click **OK - Done!**, then print.
 
-## 10.12 Common problems
+## 12.12 Common problems
 
 **The Pictures tab shows no table, or no Details sub-tab.**
 The table and the **Details** and **Checklist** sub-tabs are only shown in the **Regular** and **Full** views. Change the view level. Also check that **Include Pictures (illustrations)** is ticked.
@@ -6601,7 +8683,7 @@ This is normal. PTXprint never changes the Paratext text. To copy a picture into
 **I want the caption above the picture, or the reference before the caption.**
 On the **Advanced** tab, **Other** sub-tab, in the **Pictures, Figures, Images, Sidebars** area, tick **Show Caption Before Image** or **Ref Before Caption**.
 
-## 10.13 Settings reference
+## 12.13 Settings reference
 
 ### Generate PicList (dialog)
 
@@ -7851,9 +9933,9 @@ Needs: “Include Pictures (illustrations)” · Shown when: “Include Pictures
 > Use the notes area below to record anything about this picture, or to dialog with the consultant. The notes entered here are saved with this configuration only (other configurations have their own).
 
 
-# 11. Diglot tab (two or more languages)
+# 13. Diglot tab (two or more languages)
 
-## 11.1 What this tab is for
+## 13.1 What this tab is for
 
 A **diglot** is a publication with two texts side by side on the page. The texts can be two languages, two scripts of the same language, or two translations. A **polyglot** has three or more texts. PTXprint lines the texts up so that the same verses (or paragraphs) start at the same height in each column.
 
@@ -7863,7 +9945,7 @@ Come to this tab to turn a configuration into a diglot, choose the other project
 
 **Important:** turning a diglot on cannot simply be undone. Before you start, go to the **Basic** tab, **Layout Configuration** area, and use **Save As** to make a new configuration for the diglot, so your normal (single-text) configuration stays as it is.
 
-## 11.2 Diglot (or Polyglot)
+## 13.2 Diglot (or Polyglot)
 
 The **Diglot (or Polyglot)** checkbox is in the frame title. All other settings on the tab are hidden until it is ticked.
 
@@ -7876,7 +9958,7 @@ When you tick it:
 
 If you later untick the box, PTXprint does not turn the diglot off. Instead it opens the **Save As Monoglot** dialog (see below).
 
-## 11.3 The texts table
+## 13.3 The texts table
 
 The table lists one row for each text. Left-click a cell to change it. Right-click anywhere in the table to open a menu. You can have up to 9 texts (codes L, R, A–G).
 
@@ -7904,7 +9986,7 @@ The right-click menu has these items:
 
 Next to the table, a small picture shows how the texts will sit on the page, using the widths and colours from the table.
 
-## 11.4 Layout
+## 13.4 Layout
 
 The **Layout** text box describes where each text goes. PTXprint fills it in for you from the **1|2** column, so most people never need to type in it.
 
@@ -7914,7 +9996,7 @@ The **Layout** text box describes where each text goes. PTXprint fills it in for
 
 Every code in the table must appear in the layout, and L and R must always be there. If the layout has a problem, the preview shows a red **Layout Error** box with the reason, for example "Missing: A", "L or R missing", "Spaces not allowed" or "Comma required for multi-page spread". The check runs when you leave the box.
 
-## 11.5 Merging mode
+## 13.5 Merging mode
 
 Before printing, PTXprint merges the texts into one file, in "chunks" that should line up across the columns. **Merging mode** chooses how the chunks are made:
 
@@ -7925,20 +10007,20 @@ Before printing, PTXprint merges the texts into one file, in "chunks" that shoul
 
 For a polyglot (three or more texts), only the three **Scored** options are offered.
 
-## 11.6 Column widths and auto-balance
+## 13.6 Column widths and auto-balance
 
 Two texts rarely take the same amount of space. One language may need 20% more words than the other. If both columns are 50% wide, the shorter text has white space under every chunk. To fix this, give the longer text more width in the **% Width** column (for example 55 and 45), or make its font size or line spacing a little smaller.
 
 The **Auto-calculate optimum widths of diglot columns** button does this for you. It prints the job 10 or more times, trying widths near the current ones, and keeps the widths that give the fewest pages. So select one short book on the main window before you click it. The button only works for a diglot with exactly two texts, and only when the **Print** button is available. When it has finished, the button is released, and you can use it again (for example after you change a font size).
 
-## 11.7 Notes, headers and other options
+## 13.7 Notes, headers and other options
 
 * **Separate Notes in Two Columns** (ticked by default) keeps each text's footnotes under its own column. If you untick it, the footnotes of all texts are put together in one notes area, one after another. This can be useful when only one of the texts has footnotes.
 * **Vertical Rule in Notes Area** draws a line between the separate notes columns. **Join with Rule Above** makes this line meet the line between the text columns, so there is no small gap. The text-column line itself is **Vertical Rule in Gutter** on the **Layout** tab.
 * **Adjust Center Header Based on Column Widths** moves the centre part of the header (and footer) so that it sits above the gutter, when the two columns have different widths.
 * **Use Serial Layout for These Books** lists books that should not be merged. For these books PTXprint prints the whole book in the primary text, then the whole book in the secondary text, one after the other. Use this for front matter, introductions, glossaries and other back matter. The default list is **FRT BAK GLO XXA XXB**.
 
-## 11.8 Changing the settings of a secondary text
+## 13.8 Changing the settings of a secondary text
 
 The look of each secondary text (fonts, font size, line spacing, footnote settings, styles, and so on) comes from its own configuration. To change it:
 
@@ -7950,7 +10032,7 @@ The look of each secondary text (fonts, font size, line spacing, footnote settin
 
 Some settings always come from the primary configuration, whatever the secondary configuration says. These include the page size, margins, header and footer positions, the footnote rule, where cross-references go, page breaks before chapter 1, book introductions and the outline, parallel passage references and the chapter range. The page border and the centre footer of the secondary text are also turned off. So change these in the primary configuration.
 
-## 11.9 What happens to pictures, notes and headers
+## 13.9 What happens to pictures, notes and headers
 
 **Pictures.** Pictures come from each text's own picture list. If both texts have the same picture file at the same verse, PTXprint prints it once. The primary caption is used, and the secondary caption is added if **Captions** is ticked for that text. If a picture is only in one text, or uses a different file, it is printed in that text's column. Pictures are not shared in the books listed in **Use Serial Layout for These Books**, because those books are printed one text after the other. There, each text keeps its own pictures and captions. On the **Pictures** tab, the picture list shows the secondary caption in the **Sec.Caption** column, and pictures that belong only to a secondary text have the text's code after the book code in the anchor (for example **MATR 5.3**).
 
@@ -7960,20 +10042,20 @@ Some settings always come from the primary configuration, whatever the secondary
 
 **Front matter.** The **Generate Front Matter** dialog (Peripherals tab) offers a **DIGLOT** template when diglot is on.
 
-## 11.10 Auto Page Fill for diglots and polyglots (experimental)
+## 13.10 Auto Page Fill for diglots and polyglots (experimental)
 
 The **Auto Page Fill** tool in the PDF Preview window (see the chapter on the PDF Preview window) also works for a diglot or polyglot. When **Diglot (or Polyglot)** is ticked, PTXprint uses a special version of the tool. It tries to fill each page, and it also tries to keep the texts side by side at the same height, so that each chunk ends at about the same line in every column. This version is new and experimental. Check the result carefully, and fix the pages it could not fill by hand.
 
 On the **Advanced** tab, **Other** sub-tab, in the **Automatic Page Filler** area, **The cost of imbalance in a polyglot slice** sets how important it is that the columns end at the same height. A higher value makes the tool try harder to keep the columns even. A lower value lets it accept columns of different heights if the paragraphs look better. This setting is only used for diglots and polyglots.
 
-## 11.11 Save As Monoglot
+## 13.11 Save As Monoglot
 
 You cannot just switch a diglot off, because that would lose all the diglot settings. When you untick **Diglot (or Polyglot)**, the **Save As Monoglot** dialog opens instead:
 
 * Click **Cancel** to keep the diglot as it is.
 * Or type a name for a new configuration and click **OK**. PTXprint saves a copy of the current settings under that name, with diglot turned off, and opens it. Your diglot configuration is left unchanged.
 
-## 11.12 Common tasks
+## 13.12 Common tasks
 
 ### Set up a diglot
 
@@ -8034,7 +10116,7 @@ To change only the font size or line spacing, you do not need to switch: type th
 2. Type a new configuration name (letters, numbers, `-`, `_` and brackets only, no spaces).
 3. Click **OK**. PTXprint opens the new single-text configuration. The diglot configuration is still there if you need it again.
 
-## 11.13 Common problems
+## 13.13 Common problems
 
 **The Print button is greyed out, or the status bar says "No Config found for diglot".**
 The secondary row has no valid project or configuration. In the **R** row (and any other rows), choose a **Project** and then a **Configuration**.
@@ -8090,7 +10172,7 @@ You have three or more texts. Only the **Scored** modes work for a polyglot.
 **The Diglot tab is missing.**
 The tab is only shown in the **Regular** and **Full** views. Change the view level.
 
-## 11.14 Settings reference
+## 13.14 Settings reference
 
 ### Save As Monoglot... (dialog)
 
@@ -8254,9 +10336,9 @@ Also: Diglot: Join notes rule with gutter rule · Needs: “Separate Notes in Tw
 Makes one continuous line from the gutter line down through the notes area.
 
 
-# 12. Tabs+Borders tab
+# 14. Tabs+Borders tab
 
-## 12.1 What this tab is for
+## 14.1 What this tab is for
 
 This tab adds two kinds of decoration:
 
@@ -8269,7 +10351,7 @@ This chapter also describes the **Border Settings** dialog, which sets the look 
 
 "pt" means point; 1 pt is about 0.35 mm. Thumb tab sizes are in mm.
 
-## 12.2 Thumb Tabs
+## 14.2 Thumb Tabs
 
 **Where the tabs go.** Each Scripture book gets a tab position, counting down from the top of the page: the first book at position 1 (top), the next at position 2, and so on. When the positions run out, the next book starts again at the top. Front matter, glossaries and other non-Scripture books get no tab. Positions are worked out from all the books in the multiple-book list on the main window, even if you print only one book. So the tab for Mark is in the same place whether you print the whole NT or only Mark.
 
@@ -8289,7 +10371,7 @@ This chapter also describes the **Border Settings** dialog, which sets the look 
 
 The **\toc3** and **\zthumbtab** options choose where the tab text comes from. If the **Table of Contents** on the **Peripherals** tab is on but does not use `\toc3`, PTXprint selects **\zthumbtab** and greys out both options.
 
-## 12.3 Ornamental Decorations
+## 14.3 Ornamental Decorations
 
 Tick each kind of decoration you want. A file name next to a **Select...** button shows which graphic is used. Choosing a file ticks that decoration's checkbox for you. The **Select...** buttons open PTXprint's own border-art folder, but you can pick a PDF file from anywhere.
 
@@ -8321,7 +10403,7 @@ The `\v` link opens the verse number style. You may need a smaller font size or 
 
 A border around the book title (`\mt1` and `\mt2`), controlled by the special style `cat:titlebox|esb`. The link opens it on the **Styles** tab to change its colours and border.
 
-## 12.4 Border Settings dialog
+## 14.4 Border Settings dialog
 
 The dialog belongs to a style on the **Styles** tab. To open it, select the style (for example a sidebar style, `textborder`, `cat:headingsbox|esb` or `cat:titlebox|esb`), open **Sidebar Settings**, and click **Borders...**. **OK** saves the changes in that style; **Cancel** leaves the style as it was.
 
@@ -8338,7 +10420,7 @@ The dialog belongs to a style on the **Styles** tab. To open it, select the styl
 
 Each tab has four values in a cross: top, bottom, left (or inner) and right (or outer), in pt. **Uniform Box Padding** / **Uniform Border Padding** use the top value for all four sides and grey out the other three. Negative values are allowed. The picture in the dialog shows the effect.
 
-## 12.5 Common tasks
+## 14.5 Common tasks
 
 ### Add thumb tabs to a Bible or New Testament
 
@@ -8400,7 +10482,7 @@ Tick **Restart Tabs at MAT** and print.
 4. Change the background colour, and click **Borders...** in **Sidebar Settings** to change the border.
 5. Print.
 
-## 12.6 Common problems
+## 14.6 Common problems
 
 **I cannot see the thumb tab or ornament settings.**
 Tick **Thumb Tabs** or **Ornamental Decorations**. If the whole tab is missing, change the view level to **Regular** or **Full**.
@@ -8447,7 +10529,7 @@ Choose **PDF border (Legacy)** or **Verse Border Graphic** first.
 **Clicking the \pageborder link does nothing.**
 This link does not open the style. Go to the **Styles** tab and select the page border style yourself. (The **\textborder** link does open the `textborder` style.)
 
-## 12.7 Settings reference
+## 14.7 Settings reference
 
 ### Border Settings (dialog)
 
@@ -9115,9 +11197,9 @@ Needs: “Book Title Borders”, “Ornamental Decorations” · Hidden until: �
 Change the background colour there, and use **Borders...** in **Sidebar Settings** for the border.
 
 
-# 13. Styles tab
+# 15. Styles tab
 
-## 13.1 What this tab is for
+## 15.1 What this tab is for
 
 Your Paratext text uses **markers** to say what each piece of text is. A marker is a short code that starts with a backslash. For example, `\p` starts a normal paragraph, `\s1` is a section heading, `\v` is a verse number, `\f` is a footnote and `\nd` is the name of God ("LORD"). These are called **USFM markers**.
 
@@ -9129,7 +11211,7 @@ Many other tabs have small blue links with a marker name (for example next to th
 
 Changes show in the PDF only after you click **Print (Make PDF)** again. Style changes are saved with the current configuration.
 
-## 13.2 The marker list
+## 15.2 The marker list
 
 The left side lists all markers, grouped into categories such as **Chapters & Verses**, **Paragraphs**, **Poetry**, **Titles & Headings**, **Footnotes**, **Cross References**, **Character Styling** and **Peripheral Materials** (category names in bold blue). Click the small arrow beside a category to open it. Click a marker to show its settings on the right.
 
@@ -9147,7 +11229,7 @@ Below the marker name and description are these buttons:
 * **Edit** – change the name, description, type and end marker.
 * **More Info...** – open the USFM documentation page for this marker on the internet. Only shown in the **Full** view, and only when **Disable ALL Internet Use** on the **Advanced** tab is not ticked.
 
-## 13.3 Bold setting names: what has changed
+## 15.3 Bold setting names: what has changed
 
 PTXprint reads several stylesheets in order. Later ones override earlier ones:
 
@@ -9161,7 +11243,7 @@ A setting name in **bold** (for example **Font Size Factor**) means you changed 
 
 Hover over **Why are some parameters bold?** and **How are Stylesheets applied?** at the bottom of the tab for a short reminder.
 
-## 13.4 Include Contents of Marker
+## 15.4 Include Contents of Marker
 
 Untick it to leave the text of this marker out of the PDF. The marker then has a line through it in the list, and its other settings are greyed out. The text stays in your Paratext project; only the PDF changes.
 
@@ -9169,7 +11251,7 @@ Some markers, such as `\rem` (remarks) or the identification lines, are not prin
 
 The automatic boxes around headings and titles (`cat:headingsbox|esb`, `cat:titlebox|esb`) and the text border (`textborder`) also use this setting. Normally you turn these on from the **Tabs+Borders** tab, which ticks this box for you.
 
-## 13.5 Character Settings
+## 15.5 Character Settings
 
 This area controls how the letters look.
 
@@ -9184,7 +11266,7 @@ For `\p`, **Font Size Factor**, **Line Spacing Factor** and **Use Absolute Spaci
 
 For a character marker (one that styles a few words inside a paragraph, like `\nd` or `\wj`), PTXprint opens only **Character Settings**. For paragraph markers it also opens **Paragraph Settings**. Click an area's title to open or close it yourself.
 
-## 13.6 Paragraph Settings
+## 15.6 Paragraph Settings
 
 This area controls the shape of the paragraph.
 
@@ -9194,7 +11276,7 @@ This area controls the shape of the paragraph.
 * **Space Before Factor**, **Space After Factor** – extra space above and below, as a multiple of the base line spacing. 1.0 is about one empty line, 0.5 about half a line.
 * **Maximum Ragged Space** – for non-justified paragraphs, how much of the line may stay empty at the ragged edge.
 
-## 13.7 Other Settings
+## 15.7 Other Settings
 
 Settings used only by some markers. PTXprint opens the part that fits the selected marker.
 
@@ -9202,7 +11284,7 @@ Settings used only by some markers. PTXprint opens the part that fits the select
 * **Table Settings** (table cells `\tc`): where text sits from top to bottom when the cells in a row have different heights.
 * **Sidebar Settings** (sidebar categories and the text border): see the next section.
 
-## 13.8 Sidebars
+## 15.8 Sidebars
 
 A **sidebar** is a box of extra text, separate from the Scripture text, for example a study note about a place or a person. In USFM it starts with `\esb`, then a category such as `\cat people\cat*`, and ends with `\esbe`. All sidebars with the same category share one style; for "people" the marker name is `cat:people|esb`. PTXprint also uses sidebar styles itself, for example for the parts of the cover, the automatic boxes around headings and titles, and `cat:box|esb` for simple boxes.
 
@@ -9217,7 +11299,7 @@ Selecting a sidebar style opens **Sidebar Settings**:
 
 The text inside a sidebar can have its own styles. For example, paragraphs inside "people" sidebars use `cat:people|p`. If such a style exists, change it like any other style; if not, you can add it (see **Common tasks**).
 
-## 13.9 Size and Position Settings (dialog)
+## 15.9 Size and Position Settings (dialog)
 
 Opens from **Size and Position...** in **Sidebar Settings**. (The same dialog is used for maps on the **Pictures** tab.) A small picture shows roughly where the box will go.
 
@@ -9233,7 +11315,7 @@ Click **OK** to save.
 
 A **cutout** is a notch in the text: the text flows around the box at the side of the column.
 
-## 13.10 Sidebar Image Settings (dialog)
+## 15.10 Sidebar Image Settings (dialog)
 
 Opens from **Foreground Image...** or **Background Image...**; the title shows which.
 
@@ -9243,7 +11325,7 @@ Opens from **Foreground Image...** or **Background Image...**; the title shows w
 * For a background image, **Background Image Advanced Settings** set transparency, layer order, what happens if it is too big, and which part of the box it fills.
 * To take the image away, click **Remove Image**, then **OK**.
 
-## 13.11 Add/Edit Style (dialog)
+## 15.11 Add/Edit Style (dialog)
 
 Opens from **Add** or **Edit**. It describes a marker: code, name, description, type and end marker. The formatting itself is then set on the **Styles** tab as usual. Creating markers is an advanced task. Most users only need it for special markers their project already uses (for example markers starting with `z`), or for cases such as a sidebar category.
 
@@ -9251,7 +11333,7 @@ Opens from **Add** or **Edit**. It describes a marker: code, name, description, 
 * **Edit**: the **Marker** box is greyed out (a marker cannot be renamed). For standard USFM markers **Type** is also greyed out.
 * **Name** controls where the marker appears in the list, for example `zpeople - Paragraph - Paragraph about people` goes into **Paragraphs**.
 
-## 13.12 Common tasks
+## 15.12 Common tasks
 
 ### Find the style for some text
 
@@ -9308,7 +11390,7 @@ Opens from **Add** or **Edit**. It describes a marker: code, name, description, 
 3. Click **Size and Position...** to choose where the box goes, and **Borders...** for a border.
 4. Print again.
 
-## 13.13 Common problems
+## 15.13 Common problems
 
 **My change on the Styles tab has no effect.**
 * You may have changed the wrong marker. Check which marker the text really uses (for example `\s2` instead of `\s1`, or `\q2` instead of `\q1`).
@@ -9346,7 +11428,7 @@ Only styles you added yourself can be deleted. Use Reset to remove your changes 
 **The More Info... link is missing or greyed out.**
 It is only shown in the **Full** view, and only when internet use is allowed on the **Advanced** tab. Combined or custom markers have no documentation page, so the link is greyed out.
 
-## 13.14 Settings reference
+## 15.14 Settings reference
 
 ### Size and Position Settings (dialog)
 
@@ -10150,9 +12232,9 @@ Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Sett
 The dialog has a preview picture.
 
 
-# 14. Advanced tab
+# 16. Advanced tab
 
-## 14.1 What this tab is for
+## 16.1 What this tab is for
 
 The **Advanced** tab holds settings for experienced users. Most people never need it. Come here when another tab cannot give you the result you need, or when the support team asks you to change a specific setting.
 
@@ -10163,7 +12245,7 @@ The tab has two sub-tabs:
 
 The tab is only shown in the **Regular** and **Full** views. Some **Main** settings are only shown in the **Full** view (noted below).
 
-## 14.2 Before you change anything here
+## 16.2 Before you change anything here
 
 A small change here can move text on many pages. Follow these rules:
 
@@ -10180,7 +12262,7 @@ PTXprint saves a TeXpert setting in the configuration only when it differs from 
 
 To find a TeXpert setting quickly, type part of its name in the **Search for settings** box at the bottom of the main window (Ctrl+F).
 
-## 14.3 Main sub-tab: Text Processing & Stylesheets
+## 16.3 Main sub-tab: Text Processing & Stylesheets
 
 Here you change the text, or how it is styled, with files you edit yourself. Each option has a check box (to turn it on) and an **Edit...** button, which is only active when the box is ticked. **Edit...** opens the file on the **View+Edit** tab, where you can type in it and save it.
 
@@ -10200,7 +12282,7 @@ PTXprint changes the text in this order:
 3. **Auto-Correct USFM** and other changes PTXprint makes for settings on other tabs.
 4. A custom script, if **end** is chosen.
 
-## 14.4 Main sub-tab: General
+## 16.4 Main sub-tab: General
 
 Settings that do not fit anywhere else:
 
@@ -10212,11 +12294,11 @@ Settings that do not fit anywhere else:
 * **Plugins** – loads extra parts of the typesetting code for special features. (**Full** view only.)
 * **Lock XeTeX Layout Level** and **Lock UI Layout Settings** – protect a finished layout from changes. (**Full** view only.)
 
-## 14.5 Main sub-tab: Capture tests?
+## 16.5 Main sub-tab: Capture tests?
 
 Only shown in the **Full** view. A developer tool that records what you click to make an automatic test. Normal users do not need it.
 
-## 14.6 Other sub-tab: the TeXpert settings
+## 16.6 Other sub-tab: the TeXpert settings
 
 Click a group name to open or close it. The filter button at the top shows only the groups that have changed settings; it is only active while the **Other** sub-tab is shown.
 
@@ -10279,7 +12361,7 @@ The page filler tool in the PDF Preview window stretches or shrinks paragraphs a
 
 Thumb tab text, the tilde (~) character, unwanted reference links from DBL text, and the space above the end-of-book decoration.
 
-## 14.7 Common tasks
+## 16.7 Common tasks
 
 ### Apply a search-and-replace rule to the text (advanced)
 
@@ -10346,7 +12428,7 @@ If PTXprint reports an error in the changes file, look at the last rule you adde
 3. Print and check the PDF.
 4. Untick these options before you make the final PDF.
 
-## 14.8 Common problems
+## 16.8 Common problems
 
 **The Advanced tab is missing.** It is only shown in the **Regular** and **Full** views. Change the view level (see the chapter on the main window).
 
@@ -10374,7 +12456,7 @@ If PTXprint reports an error in the changes file, look at the last rule you adde
 
 **Coloured marks or labels appear in the margins of my PDF.** One of the "show" options in **PDF Options, Covers, Show/Hide** is ticked (**Show adjust points**, **Mark Trigger Points**, **Show USFM codes**, **Show Error Bars For Overfull Lines**), or **Show Diglot Trace Marks** in the **Diglot** group. Untick it.
 
-## 14.9 Settings reference
+## 16.9 Settings reference
 
 ### Advanced
 
@@ -11818,9 +13900,9 @@ Values: -10–50 (default -2)
 Moves the text on rotated thumb tabs (in points) to centre it on the tab. Thumb tabs and **Rotate Tabs** are on the **Tabs+Borders** tab.
 
 
-# 15. View+Edit tab
+# 17. View+Edit tab
 
-## 15.1 What this tab is for
+## 17.1 What this tab is for
 
 The **View+Edit** tab shows the files that PTXprint uses and creates. You can edit two of
 them here: the **front matter** (the pages before the Scripture text, such as the title page
@@ -11836,7 +13918,7 @@ Come here to:
 The tab is only shown in the **Regular** and **Full** views. In the **Basic** view PTXprint
 still uses the front matter and Adj List that you made before.
 
-## 15.2 The sub-tabs: which files you may edit
+## 17.2 The sub-tabs: which files you may edit
 
 Each small tab (sub-tab) along the top shows one file.
 
@@ -11859,7 +13941,7 @@ to use PTXprint.
 Very long log files are cut short on the screen. Click **View/Edit...** to see the whole file
 in your computer's text editor.
 
-## 15.3 The buttons at the top of the tab
+## 17.3 The buttons at the top of the tab
 
 The buttons change with the open sub-tab. Buttons that do not apply are greyed out.
 
@@ -11889,7 +13971,7 @@ To throw away your changes, click **Refresh** (or press F5) before you click els
 If the configuration is locked (see the **Basic** tab), you cannot generate or save front
 matter, and **Autosave** is turned off.
 
-## 15.4 The Generate button
+## 17.4 The Generate button
 
 **Generate** does a different job on each sub-tab:
 
@@ -11901,7 +13983,7 @@ matter, and **Autosave** is turned off.
 
 On the other sub-tabs **Generate** is greyed out.
 
-## 15.5 The Generate Front Matter dialog
+## 17.5 The Generate Front Matter dialog
 
 Click **Generate** on the **Front Matter** sub-tab and choose one of four starting points:
 
@@ -11919,7 +14001,7 @@ lost. If you have worked on your front matter, click **Cancel**.
 After **OK**, PTXprint also finds any new variables (`\zvar|...\*` codes) in the new front
 matter and adds them to the variables table on the **Peripherals** tab.
 
-## 15.6 The front matter and its special codes (advanced)
+## 17.6 The front matter and its special codes (advanced)
 
 The front matter uses USFM markers, as in Paratext (for example `\mt1` for a main title and
 `\pc` for a centred paragraph). PTXprint also understands extra codes that start with `\z`,
@@ -11999,7 +14081,7 @@ snippet buttons for the type of file that is open.
 * Ctrl+minus / Ctrl+equals – make the text in the editor smaller or larger.
 * Alt+X – show the Unicode values of the selected characters in the status bar.
 
-## 15.7 The Adj List (adjustment list)
+## 17.7 The Adj List (adjustment list)
 
 Sometimes a page ends badly: for example, one line of a paragraph is alone at the top of the
 next page, or the two columns do not end at the same height. You can often fix this by asking
@@ -12034,7 +14116,7 @@ choose to shrink or expand it. PTXprint writes those changes into this same Adj 
 **Do paragraph adjustments last.** Any change to fonts, margins, pictures or other layout
 settings moves the text, and your adjustments may then be wrong.
 
-## 15.8 Common tasks
+## 17.8 Common tasks
 
 ### Create front matter for the first time
 
@@ -12089,7 +14171,7 @@ settings moves the text, and your adjustments may then be wrong.
 2. Scroll to the end. Error messages usually start with `!`.
 3. If the log is cut short, click **View Only...** to open the whole file.
 
-## 15.9 Common problems
+## 17.9 Common problems
 
 **My changes to the front matter disappeared.**
 You probably clicked **Generate** and then **OK**, which replaces the whole front matter. Or you
@@ -12125,7 +14207,7 @@ list of books to print. Choose a book that you are printing, or add the book on 
 The layout has changed since you made them (for example a new font size or new pictures).
 Check the adjustments again, or generate a new Adj List.
 
-## 15.10 Settings reference
+## 17.10 Settings reference
 
 ### Generate Front Matter (dialog)
 
@@ -12396,9 +14478,9 @@ Also: Link to deeper technical help
 Mostly for advanced users who work with the settings files on the **Advanced** tab.
 
 
-# 16. Peripherals tab (front and back matter)
+# 18. Peripherals tab (front and back matter)
 
-## 16.1 What this tab is for
+## 18.1 What this tab is for
 
 The **Peripherals** tab controls everything printed **around** the Scripture text:
 
@@ -12418,7 +14500,7 @@ Front Matter** and the variables table. Everything else needs the **Regular** or
 view. When one of the main options on this tab is on, the tab name is shown in a different
 colour.
 
-## 16.2 Cover
+## 18.2 Cover
 
 PTXprint can make a cover: a back cover, a spine (the narrow back edge of a bound book) and a
 front cover, all on one wide page (the "cover spread"). The cover is saved in its **own PDF
@@ -12492,7 +14574,7 @@ were when you opened the wizard.
 If the publication is printed from the **Publications** tab, PTXprint works out the spine
 width from the page count of each publication (see the **Publications** tab chapter).
 
-## 16.3 Front Matter PDF(s) and Back Matter PDF(s)
+## 18.3 Front Matter PDF(s) and Back Matter PDF(s)
 
 Use these when part of the book already exists as a PDF file, for example a title page made in
 another program, or maps or an index made elsewhere.
@@ -12506,7 +14588,7 @@ the full paths. Several files are added in the alphabetical order of their file 
 order you clicked them). For a different order, name the files for example `01-title.pdf`,
 `02-preface.pdf`. The PDF pages must have the same page size as your publication.
 
-## 16.4 Table of Contents
+## 18.4 Table of Contents
 
 Tick **Table of Contents** to make a list of the books with their page numbers. It is useful
 when you print several books.
@@ -12528,7 +14610,7 @@ The page numbers are only known after typesetting, so PTXprint typesets more tha
 click **Print**. With **Quick Run** ticked it typesets only once; the status line then says
 "Rerun to fix: table of contents", and you must click **Print** again.
 
-## 16.5 Local Front Matter
+## 18.5 Local Front Matter
 
 PTXprint does not print your Paratext project's FRT (front matter) book directly. It keeps its
 own copy for each configuration, which you change on the **View+Edit** tab. Tick **Local Front
@@ -12572,13 +14654,13 @@ front of the first book of its group. The ids that PTXprint knows are:
 A section is only printed when a book of its group is in the list of books to print.
 **Force Page Break at each Periph** also decides whether these sections start on a new page.
 
-## 16.6 Maps
+## 18.6 Maps
 
 * **Add Maps...** opens the **Add Map** dialog (explained in the **Pictures** tab chapter).
 * **Include Maps** adds the map book to the list of books to print.
 * **Edit...** shows the map book on the **View+Edit** tab.
 
-## 16.7 Colophon at End of Publication
+## 18.7 Colophon at End of Publication
 
 A colophon is a short text at the very end of the book, for example the copyright, the
 licence and the picture credits. Tick **Colophon at End of Publication** to show the text box.
@@ -12593,7 +14675,7 @@ The colophon is printed after the end of the last book.
 The picture credits (`\zimagecopyrights`) need the page numbers of the pictures. Click
 **Print** a second time to get them right.
 
-## 16.8 Variables and Values
+## 18.8 Variables and Values
 
 This table lists the **variables** used in the front matter (and in the colophon and cover).
 A variable is a place-holder such as `\zvar|maintitle\*`. When you print, PTXprint puts the
@@ -12618,7 +14700,7 @@ Buttons:
 The variable `toctitle` is special: it always uses the **Title** of the **Table of Contents**,
 so it is not in this table.
 
-## 16.9 Common tasks
+## 18.9 Common tasks
 
 ### Add a title page and a copyright page
 
@@ -12677,7 +14759,7 @@ To change the layout of these pages, click **Edit...** (see the **View+Edit** ta
 2. On the **Peripherals** tab, tick **Use Peripheral Introductory Sections**.
 3. Print a set of books that includes a book of that group (for example MAT for `intnt`).
 
-## 16.10 Common problems
+## 18.10 Common problems
 
 **The cover is not created.**
 Check that **Local Front Matter** and **Create Cover Page** are both ticked. The front matter
@@ -12735,7 +14817,7 @@ Untick **Include Maps**.
 **Most of the settings on this tab are missing.**
 You are using the **Basic** view. Change to the **Regular** or **Full** view.
 
-## 16.11 Settings reference
+## 18.11 Settings reference
 
 ### Peripherals
 
@@ -13115,9 +15197,9 @@ Without it, the colophon follows the last lines of the last book on the same pag
 is room).
 
 
-# 17. Publications tab
+# 19. Publications tab
 
-## 17.1 What this tab is for
+## 19.1 What this tab is for
 
 Use this tab to make several similar books from one project with the same design, without
 making a new configuration for each. For example: one PDF for each Gospel, or a New Testament
@@ -13136,7 +15218,7 @@ current configuration. Make a list of publications, tick the ones you want, and 
 This tab is only shown in the **Full** view. (In the other views the **Pub** column in the
 variables table on the **Peripherals** tab is hidden too.)
 
-## 17.2 The list of publications
+## 19.2 The list of publications
 
 The list has three columns:
 
@@ -13188,7 +15270,7 @@ changed. The front matter (or the cover) must use the variables, for example
 If the book has a cover with a spine, there is also a **pagecount** field: the number of pages
 of that publication. PTXprint uses it to work out the spine width for that publication's cover.
 
-## 17.3 The buttons
+## 19.3 The buttons
 
 * **Add** makes a new publication from the current settings.
 * **Duplicate** copies the highlighted publication, called "Copy of ...". This is the quickest
@@ -13200,7 +15282,7 @@ of that publication. PTXprint uses it to work out the spine width for that publi
 The line at the bottom shows how many publications are ticked, and how many have books that
 PTXprint cannot understand.
 
-## 17.4 Printing the publications
+## 19.4 Printing the publications
 
 When you click **Print Selected**, PTXprint:
 
@@ -13219,7 +15301,7 @@ not shown in the PDF preview. Open them from the folder.
 Each configuration saves its own list of publications. When you switch configuration, the list
 shows the publications of that configuration (empty if it has none).
 
-## 17.5 Common tasks
+## 19.5 Common tasks
 
 ### Make one PDF for each Gospel
 
@@ -13250,7 +15332,7 @@ shows the publications of that configuration (empty if it has none).
 1. Click the publication (or one of its fields).
 2. Click **Delete**, then confirm.
 
-## 17.6 Common problems
+## 19.6 Common problems
 
 **Print Selected is greyed out.**
 No publication is ticked, or PTXprint is still printing the last set.
@@ -13283,7 +15365,7 @@ Change the view level to **Full**.
 **My publications have gone.**
 Check that you are using the right configuration. Each configuration keeps its own list.
 
-## 17.7 Settings reference
+## 19.7 Settings reference
 
 ### Publications
 
@@ -13347,9 +15429,9 @@ Prints several publications at the same time. Publications with wrong books are 
 asking you. Greyed out when nothing is ticked or while printing.
 
 
-# 18. Finishing tab
+# 20. Finishing tab
 
-## 18.1 What this tab is for
+## 20.1 What this tab is for
 
 The **Finishing** tab controls what happens to the PDF *after* the pages are typeset. Come here when you prepare the book for a printer, or want to print it yourself as a folded booklet.
 
@@ -13383,7 +15465,7 @@ Most settings here do not change the text layout, only the finished PDF file. Cl
 
 If your printer gives you a list of requirements, look for: trim size, bleed, crop marks (yes or no), colour (CMYK, grey, or RGB), and PDF type (PDF/X-1a or PDF/X-4). Set these on the **Layout** tab and on this tab. If you are not sure, ask the printer for a sample "print-ready PDF specification".
 
-## 18.2 PDF Details
+## 20.2 PDF Details
 
 This area sets the type of PDF that PTXprint makes. (Shown in the **Regular** and **Full** views; some settings only in **Full**.)
 
@@ -13413,7 +15495,7 @@ With **Print-CMYK**, **Print-Gray** or **Print-Spot**, if thumb tabs are on, PTX
 * **Extract Color Inserts** and **Extra XDV Processing** are special tools. (Only in the **Full** view.)
 * **Apply Watermark PDF** puts a PDF (for example "DRAFT") on every page.
 
-## 18.3 Booklet Pagination
+## 20.3 Booklet Pagination
 
 Print several book pages on one larger sheet, arranged so that you can fold the sheets into a booklet (imposition). (Shown in the **Basic**, **Regular** and **Full** views; some settings only in **Full**.)
 
@@ -13431,7 +15513,7 @@ When **Pages Per Spread** is more than 1-up:
 
 If the pages do not fit on the chosen paper, PTXprint shows a **Paper Size Error**. Choose a larger **Physical Paper Size** or fewer pages per spread.
 
-## 18.4 Compare PDFs
+## 20.4 Compare PDFs
 
 This makes a "diff" PDF that shows what changed between the new PDF and an older one. It is very useful after a late correction, to check that only the expected pages changed.
 
@@ -13459,7 +15541,7 @@ Options for special cases (only in the **Full** view):
 * The ignored areas are shaded grey in the diff PDF. These two options are not used when **Pages Per Spread** is more than 1-up, or when **Scale to fit** is ticked, because the pages have then moved on the sheet.
 * **Smart Check** – use it after you changed only the margins (for example added a binding gutter, or moved the text block up or down), not the text. Normally every line would then show as different, because it moved. With **Smart Check**, PTXprint first lines up each old page with the new one, and then shows only real changes: changed words, different line breaks, and so on. If the text block changed size, lines break differently, and those changes are still shown. On a page that had to be moved, **Smart Check** is a little less sensitive, so a very small change (such as a comma in place of a full stop) may not be shown.
 
-## 18.5 Common tasks
+## 20.5 Common tasks
 
 ### Make a PDF for a commercial printer who asks for PDF/X-1a in CMYK
 
@@ -13520,7 +15602,7 @@ Click in the **Physical Paper Size** box and type the width and height, separate
 2. Click **Print** and send the PDF.
 3. The other person loads your settings from that PDF with **Import Settings** (see the chapter on importing settings).
 
-## 18.6 Common problems
+## 20.6 Common problems
 
 **The colours look different in the printed book from on screen.**
 Screens use RGB. Printing presses use CMYK, which cannot show some bright colours. Choose **Print-CMYK** (or the format your printer asks for), click **Print**, and check the result before you send it. Ask the printer for a printed proof if colour is important.
@@ -13573,7 +15655,7 @@ Choose a watermark PDF with the same page size as your book. If the watermark fi
 **Thumb tabs now appear only on odd pages.**
 Choosing **Print-CMYK**, **Print-Gray** or **Print-Spot** turned on **Only Show on Odd Pages** for thumb tabs. You can change it back on the **Tabs+Borders** tab.
 
-## 18.7 Settings reference
+## 20.7 Settings reference
 
 ### Finishing
 
@@ -13905,9 +15987,9 @@ Also: Finishing: Select watermark to apply · Needs: “Apply Watermark PDF”
 Opens PTXprint's own folder of ready-made watermarks (for example **A4-Draft.pdf**, **A5-Draft.pdf**, **A5-CopyrightWatermark.pdf**). Choose one that matches your page size, or your own one-page PDF from anywhere on your computer.
 
 
-# 19. Printers tab
+# 21. Printers tab
 
-## 19.1 What this tab is for
+## 21.1 What this tab is for
 
 The **Printers** tab helps you plan the printing of your book. It gives a rough **price estimate** from several print companies, shows how thick the book will be, and lets you **compare prices** between printers in a graph. For one printer (Pretore), you can also get an exact quotation and start an order from PTXprint.
 
@@ -13923,7 +16005,7 @@ The tab has three parts:
 2. The **printer list** – one row per printer, with an estimated price per copy.
 3. The **printer details** panel – options and price details for the printer you click in the list.
 
-## 19.2 Book & Job Specification
+## 21.2 Book & Job Specification
 
 These settings describe the job, for all printers. Every change recalculates all prices.
 
@@ -13935,7 +16017,7 @@ These settings describe the job, for all printers. Every change recalculates all
 * **Trim size** – the finished page size (in mm), from the page size on the **Layout** tab. You cannot change it here.
 * **Thickness** – the estimated book (spine) thickness for the printer selected in the list. It depends on the number of pages, that printer's paper, and the binding. Useful for a cover design, because the spine width must match the book thickness.
 
-## 19.3 The printer list
+## 21.3 The printer list
 
 Each row shows:
 
@@ -13970,7 +16052,7 @@ In this window you can:
 
 Printers with no price model cannot be ticked for comparison. For Pretore, PTXprint asks Pretore's server for prices; this needs a Pretore account (see below).
 
-## 19.4 The printer details panels
+## 21.4 The printer details panels
 
 Each printer has its own panel. Its options only affect that printer's estimate.
 
@@ -14006,7 +16088,7 @@ Pretore accepts books of 120 to 2000 pages. It does not offer saddle-stitching (
 
 No price information yet, so it is left out of comparisons. Use the link in the panel to ask for a quotation.
 
-## 19.5 Common tasks
+## 21.5 Common tasks
 
 ### Get a quick price estimate for my book
 
@@ -14040,7 +16122,7 @@ No price information yet, so it is left out of comparisons. Use the link in the 
 6. Click **Create Order**. PTXprint makes the ZIP file and shows the order reference.
 7. Click **Complete Order & Payment via website** to upload the ZIP file and pay.
 
-## 19.6 Common problems
+## 21.6 Common problems
 
 **I cannot see the Printers tab.**
 Change the view level to **Full**.
@@ -14069,7 +16151,7 @@ That printer has no price model.
 **Prices are shown in the wrong currency, or not converted.**
 Exchange rates are downloaded from the internet. Without a connection (or when **Disable ALL Internet Use** is ticked on the **Advanced** tab), prices from another country may be shown in that printer's own currency, or left out of the comparison graph.
 
-## 19.7 Settings reference
+## 21.7 Settings reference
 
 ### Printers
 
@@ -14140,9 +16222,9 @@ Drop-down · Full · `fcb_prn_currency`
 The printer will still charge in its own currency.
 
 
-# 20. PDF Preview window, layout analysis and page filling
+# 22. PDF Preview window, layout analysis and page filling
 
-## 20.1 What this window is for
+## 22.1 What this window is for
 
 The **PDF Preview** window shows the PDF that PTXprint has just made. It opens by itself after you click **Print**. Use it to:
 
@@ -14155,7 +16237,7 @@ It is a separate window that you can keep open beside the main window. Changes m
 
 In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the text size; in 10 pt text, 1 em is 10 pt.
 
-## 20.2 Opening and closing the Preview window
+## 22.2 Opening and closing the Preview window
 
 * The window opens after each **Print** if the main menu (☰) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
 * Closing the window with its **X** button only hides it. It comes back the next time you print.
@@ -14164,7 +16246,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 
 The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Reference** shows reference documents such as the Ornaments Catalogue. Tabs without a PDF are hidden.
 
-## 20.3 Moving around: pages, spreads and zoom
+## 22.3 Moving around: pages, spreads and zoom
 
 The navigation controls are in the top bar.
 
@@ -14180,7 +16262,7 @@ The navigation controls are in the top bar.
 
 The **Contents** list on the left shows the PDF bookmarks (books, and often chapters). Double-click a line to jump to that page.
 
-## 20.4 The Content tab: what to show on the preview
+## 22.4 The Content tab: what to show on the preview
 
 These options only change the preview, not the PDF.
 
@@ -14196,7 +16278,7 @@ When **Auto-update** is ticked, PTXprint makes a new PDF by itself a few seconds
 
 When **Auto-update** is not ticked, your changes are stored but nothing happens until you click **Print (Update PDF)** (**Ctrl+P**). The right-click menu then also has a **Print (Update PDF)** item.
 
-## 20.5 Layout Analysis and finding issues
+## 22.5 Layout Analysis and finding issues
 
 Tick **Layout Analysis** (on the **Content** tab, **Regular** and **Full** views) to check the text in the PDF. On a long book this takes some time. A small window says "Analysing text. Press Cancel to stop".
 
@@ -14226,7 +16308,7 @@ The limits that decide what counts as an issue are on the main window: **Advance
 
 **Layout Analysis** turns itself off when you change book, configuration or project, and in some other cases. Tick it again when you need it.
 
-## 20.6 Adjusting paragraphs with the right-click menu
+## 22.6 Adjusting paragraphs with the right-click menu
 
 You can change how many lines a paragraph uses without editing the text. This is the main way to fix a page that is too short or too long:
 
@@ -14282,7 +16364,7 @@ There is no Undo button. Instead:
 
 The change appears in the PDF after the next print.
 
-## 20.7 Moving and resizing pictures with the right-click menu
+## 22.7 Moving and resizing pictures with the right-click menu
 
 Right-click a picture in the preview. The menu shows its anchor ("Anchored at: MRK 1.10"), the verse the picture is attached to. The menu has:
 
@@ -14301,7 +16383,7 @@ These changes are stored in the picture list (on the **Pictures** tab), not in t
 
 Type the new verse as `JHN 3.16` (book code, space, chapter.verse). **OK** only becomes active when the reference is in the right form and no picture is already at that verse. A red message explains what is wrong.
 
-## 20.8 SpeedSlice: work on one part of a long book quickly
+## 22.8 SpeedSlice: work on one part of a long book quickly
 
 Each print of a long book (for example Psalms or Isaiah) can take a long time. When you fix pages in the middle of such a book, you must wait for the whole book after every change. **SpeedSlice** typesets only a "slice": it starts at the page you are working on and continues for a few chapters. Each print is then fast.
 
@@ -14316,7 +16398,7 @@ To open it, right-click a `\p` or `\m` paragraph near the top of the page where 
 
 **Important:** SpeedSlice stays on until you turn it off. While it is on, your PDF contains only the slice, and its page numbers are not the real page numbers. Always **Disable** the slice before you make the final PDF.
 
-## 20.9 Auto Page Fill and the progress monitor
+## 22.9 Auto Page Fill and the progress monitor
 
 The **Auto Page Fill** tool tries to fill every page of every book, so that the text reaches the bottom margin. It uses the same two methods you use by hand: it changes the number of lines in some paragraphs and the width of their text. It does not move pictures or stretch the space between lines. It stores its results in the Adj List, where you can see and change them later.
 
@@ -14356,7 +16438,7 @@ The **Automatic Page Filler** settings decide how hard the tool tries (speed) an
 
 The text width limits come from **Minimum Text Shrink** and **Maximum Text Expand** (normally 95% and 105%). The number of books worked on at the same time comes from **Maximum parallel processes** (**Advanced** > **Other** > **Page Layout and Spacing**).
 
-## 20.10 The buttons at the bottom of the window
+## 22.10 The buttons at the bottom of the window
 
 * **Show Report Information** – makes a report about the current configuration and opens it in your web browser.
 * **Open the PDF in Default PDF Viewer** – opens the PDF in your normal PDF program.
@@ -14364,7 +16446,7 @@ The text width limits come from **Minimum Text Shrink** and **Maximum Text Expan
 * **Save the PDF with a different name** – saves a copy of the PDF anywhere you like.
 * **Print the PDF on paper** – sends the PDF to a printer connected to your computer.
 
-## 20.11 Common tasks
+## 22.11 Common tasks
 
 ### Find and fix a page that is not full (manual method)
 
@@ -14423,7 +16505,7 @@ The text width limits come from **Minimum Text Shrink** and **Maximum Text Expan
 1. On the **Content** tab, tick **Book View** (or press **Ctrl+B**).
 2. Use the arrows to move one spread at a time.
 
-## 20.12 Common problems
+## 22.12 Common problems
 
 **The right-click menu does not appear, or it has no shrink/expand items.**
 The menu needs information that PTXprint writes during printing. Print once with the current configuration. The menu only appears on paragraphs that have a verse reference, so it does not work on most front matter, headers or footers. Right-click the body text of a paragraph.
@@ -14467,7 +16549,7 @@ Check the date and time in the title bar. If the last print failed, the old PDF 
 **Most of the controls described here are missing.**
 Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (☰).
 
-## 20.13 Settings reference
+## 22.13 Settings reference
 
 ### PDF Preview > Issue types popup
 
@@ -14867,9 +16949,9 @@ Values: 1–10 (default 3)
 A short slice prints faster. Make it long enough for all the pages you want to work on. In books with long chapters, 1 or 2 may be enough.
 
 
-# 21. Importing settings
+# 23. Importing settings
 
-## 21.1 What this dialog is for
+## 23.1 What this dialog is for
 
 The **Import Settings** dialog copies settings from somewhere else into a configuration. Use it when:
 
@@ -14883,7 +16965,7 @@ To open it: on the **Basic** tab, in the **Layout Configuration** area, click **
 
 The dialog has three parts: **Source of Settings** (where the settings come from), **Target** (where they go), and a row of **category tabs** (what to bring in).
 
-## 21.2 Source of Settings
+## 23.2 Source of Settings
 
 Choose one of two sources:
 
@@ -14892,7 +16974,7 @@ Choose one of two sources:
   * A **ZIP archive** is the kind of file made with **Create Archive...** on the **Help** tab.
 * **A Previously Saved Configuration** – choose the **Project** and then the **Configuration** to copy from. Settings are read from the saved files, so if the source is the configuration that is open now, click **Save** first.
 
-## 21.3 Target
+## 23.3 Target
 
 Choose where the settings go:
 
@@ -14901,7 +16983,7 @@ Choose where the settings go:
 
 **OK** stays greyed out until the choices are complete: a file or source configuration, a target folder or target configuration, and at least one category ticked. It is also greyed out when the source and target are the same configuration, and when the target **Project** name you typed is not one of your projects.
 
-## 21.4 What to import: the category tabs
+## 23.4 What to import: the category tabs
 
 Each tab has a check box in its label: tick it to import that group. Click the tab to see its options.
 
@@ -14934,11 +17016,11 @@ When **Everything** is ticked, everything is imported, whatever the other boxes 
 
 There is no Undo. If you are not sure, import into a **new** configuration name first, and check the result there.
 
-## 21.5 RESET
+## 23.5 RESET
 
 **RESET** at the bottom of the dialog sets all settings of the **current** configuration back to the PTXprint defaults, at once and without asking. It does not reset the style settings. The dialog stays open, and nothing is saved until you click **Save** or **Print (Make PDF)** (or until an import saves the configuration). Use it when you want the target to have only the imported settings, for example before you import styles.
 
-## 21.6 Common tasks
+## 23.6 Common tasks
 
 ### Get back the settings that were used for a PDF
 
@@ -14977,7 +17059,7 @@ There is no Undo. If you are not sure, import into a **new** configuration name 
 3. Choose the source, untick **Everything**, and tick **Styles** (and other groups you need).
 4. Click **OK**.
 
-## 21.7 Common problems
+## 23.7 Common problems
 
 ### "Cannot find any settings to import from the selected file"
 
@@ -15015,7 +17097,7 @@ There is no Undo. If you are not sure, import into a **new** configuration name 
 
 **Cause:** The target is a configuration that does not exist yet (you typed a new name), or an external folder. A new configuration starts from the PTXprint defaults, so everything is imported. **What to do:** To import only some groups, choose an existing configuration as the target.
 
-## 21.8 Settings reference
+## 23.8 Settings reference
 
 ### Import Settings... (dialog)
 
@@ -15407,9 +17489,9 @@ Needs: “Other”
 PDF output format, watermark, crop marks, grid, pages per sheet and sheet size, the compare-PDF settings, and whether settings are included in the PDF.
 
 
-# 22. Help tab and getting support
+# 24. Help tab and getting support
 
-## 22.1 What this tab is for
+## 24.1 What this tab is for
 
 The **Help** tab is where you go when you need help, or need to find your files. It is shown in every view level.
 
@@ -15425,7 +17507,7 @@ On this tab you can:
 
 Many links on this tab open web pages. They are only shown when internet use is allowed. If **Disable ALL Internet Use** is ticked on the **Advanced** tab, the internet links and the **About** button are hidden. Untick it to see them again. Some items are only shown in the **Full** view; this is noted for each one.
 
-## 22.2 Links and Help
+## 24.2 Links and Help
 
 ### Folders
 
@@ -15456,7 +17538,7 @@ These links open web pages or documents:
 * **Tidy Up** – deletes temporary files.
 * **About** – shows the version number and the names of the developers.
 
-## 22.3 How to ask for help
+## 24.3 How to ask for help
 
 If PTXprint does not do what you expect, you can get help here:
 
@@ -15497,17 +17579,17 @@ The text of your project is inside the archive. If the text is sensitive, check 
 
 An archive is also useful as a long-term record of how a publication was made.
 
-## 22.4 Log tab
+## 24.4 Log tab
 
 The **Log** tab is not normally shown in PTXprint. To read the messages from the typesetting program, use the **XeTeX Log** tab on the **View+Edit** tab, or use **Create Report...**.
 
-## 22.5 About dialog
+## 24.5 About dialog
 
 The **About** window shows the PTXprint version number, the copyright, a link to the PTXprint home page, the list of developers, and the licence (MIT). Click **Credits** or **License** to see more, and **Close** to return. Give the version number when you ask for help.
 
 The **About** button is only shown when **Disable ALL Internet Use** is unticked on the **Advanced** tab.
 
-## 22.6 Common tasks
+## 24.6 Common tasks
 
 ### Find the PDF that PTXprint made
 
@@ -15541,7 +17623,7 @@ On the **Help** tab, click **Tidy Up**. PTXprint deletes the temporary working f
 2. Untick **Disable ALL Internet Use**.
 3. Return to the **Help** tab. The links are now shown.
 
-## 22.7 Common problems
+## 24.7 Common problems
 
 **The Help tab has very few links.**
 **Disable ALL Internet Use** is ticked on the **Advanced** tab. Untick it to see the links. Some items (for example the **Technical Reference** and the **PTXprint Program Path**) are only shown in the **Full** view.
@@ -15564,7 +17646,7 @@ A file in the folder is still open, for example the PDF in a PDF viewer. Close i
 **PTXprint does not show my projects.**
 The **Base Projects Directory** may point to the wrong folder. Click **Change...** and choose the folder that contains your Paratext projects.
 
-## 22.8 Settings reference
+## 24.8 Settings reference
 
 ### Help
 
@@ -15815,2064 +17897,6 @@ Opens the slides in your web browser. Trainers can use them to teach PTXprint. O
 Text area · not shown · `tv_logging`
 
 The text area on the **Log** tab, which is not normally shown. See **Log tab** above.
-
-
-# 23. How do I...? (step-by-step tasks)
-
-## 23.1 How to use this chapter
-
-This chapter gives short, step-by-step answers to the questions people ask most often. A task often uses more than one tab. **See also** names the chapter with more detail.
-
-For every task:
-
-* Most changes appear in the PDF only after you click **Print (Make PDF)** again.
-* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **☰** (top-left) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
-* Click **Save** before you change to another configuration. PTXprint does not save the current configuration when you choose another one.
-* "pt" means point. 1 pt is about 0.35 mm.
-
-## 23.2 Printing: what goes into the PDF
-
-### How do I make a PDF?
-
-1. On the **Basic** tab, choose the **Project**, the configuration (**Name**) and the books.
-2. Click **Print (Make PDF)** at the bottom of the window (or press **Ctrl+P**).
-3. Wait for the progress bar to finish. The PDF opens in the **PDF Preview** window.
-
-See also: Main window; Basic tab.
-
-### How do I print one book?
-
-1. On the **Basic** tab, in **What to Print**, click **Single Book**.
-2. Choose the book, then click **Print (Make PDF)**.
-
-See also: Basic tab.
-
-### How do I print only some chapters of a book?
-
-1. On the **Basic** tab, click **Single Book** and choose the book.
-2. Type the first chapter in **From Chapter** and the last in **To**.
-3. Click **Print (Make PDF)**.
-
-When you choose another book, PTXprint sets the chapters back to the whole book.
-
-See also: Basic tab.
-
-### How do I print several books?
-
-1. On the **Basic** tab, click **Select Multiple Books...**.
-2. Click each book, or a group button: **All Books**, **Old Testament**, **New Testament**, **Deuterocanon** or **Extra Material**. Click a group button again to unselect that group. **Toggle Books** reverses the selection and **Reset All** unselects all. Hold **Shift** and click to select all books between two books.
-3. Click **OK**, then **Print (Make PDF)**.
-
-See also: Basic tab.
-
-### How do I print only some passages (for example Psalm 23 and Luke 15)?
-
-1. On the **Basic** tab, click in the box beside **Portions or Multiple Books** (or press **Ctrl+B**).
-2. Type references with 3-letter book codes, for example `PSA 23; 100 LUK 15:11-32`. Ranges such as `MAT-ACT` or `GEN 1:1-2:3` also work.
-3. Click **Print (Make PDF)**.
-
-Use book codes such as `JHN`, not names such as `John`.
-
-See also: Basic tab.
-
-### How do I make the PDF faster while I am still working on the layout?
-
-1. At the bottom of the window, tick **Quick Run** (or press **Ctrl+Q**).
-2. If you only change layout settings (spacing, margins, styles), also tick **Layout Only** (Regular and Full views).
-3. For the final PDF, untick both and print again, so the table of contents and page references are correct.
-
-See also: Main window.
-
-### How do I find the PDF file on my computer?
-
-Click **Open folder containing the PDF** at the bottom of the window (Regular and Full views), or **☰** › **Show PDF** › **Output Folder**. Or click the blue link next to **Output PDF Location** on the **Help** tab.
-
-The PDF name starts with the project name, then the configuration name and the books, for example `ABC_NT_A5_MAT-REV_ptxp.pdf`.
-
-See also: Main window; Help tab.
-
-### How do I open the PDF in my normal PDF program instead of the preview?
-
-Click **☰** › **Show PDF** › **System Viewer**. Or, in the **PDF Preview** window, click **Open the PDF in Default PDF Viewer**.
-
-Close the PDF in the other program before you print again. Otherwise PTXprint cannot replace the file.
-
-See also: Main window; PDF Preview window.
-
-### How do I get a Bible text to practise with?
-
-1. On the **Basic** tab, open the **Project** list and choose **Import...** (the last item).
-2. Click **Install BSB**. PTXprint installs the Berean Standard Bible and opens it.
-
-In the same dialog you can also install a Scripture text bundle (.zip) from the Digital Bible Library or Open.Bible.
-
-See also: Basic tab.
-
-### How do I learn PTXprint with a tutorial?
-
-1. Choose a practice project and configuration (make one with **Save As**). The tutorial changes its settings.
-2. On the **Basic** tab, click **Run Tutorial...** (Basic, Regular and Full views) and choose the tutorial file (.json, or a recorded test in a .zip). You may get one from a trainer.
-3. A small tutorial window shows the next step, and PTXprint highlights the control it uses.
-4. Click **Step** (or press **Space**) for the next step, **Skip** (**S**) to leave it out, **Play** (**P**) to run the steps one after another, or **Run to end**.
-5. Close the tutorial window to stop. If PTXprint raised the view level for the tutorial, it changes it back.
-
-See also: Basic tab.
-
-## 23.3 Page size, margins and columns
-
-### How do I change the page size (for example to A5)?
-
-1. On the **Layout** tab, in **Page Setup**, choose a **Page Size**, for example **148mm, 210mm (A5)**.
-2. If **Lines Per Page** is red, click one fine-tune button (see "How do I stop wasting space at the bottom of every page?").
-3. Click **Print (Make PDF)**.
-
-Ask your printer for the exact trim size before you start. A change of page size moves every line in the book.
-
-See also: Layout tab.
-
-### How do I use a page size that is not in the list?
-
-1. On the **Layout** tab, click in the **Page Size** box.
-2. Type the width, a comma, and the height, for example `140mm, 216mm`. You can use `mm`, `cm` or `in`.
-3. Click **Print (Make PDF)**.
-
-The size is saved when you save or print. After that it is in the **Page Size** list for all your projects. To remove a saved size, select it, right-click in the box and choose **Remove**.
-
-See also: Layout tab.
-
-### How do I make the margins smaller?
-
-1. On the **Layout** tab, in **Margins**, make **Side Margin Width (mm)** smaller for the left and right margins.
-2. Make **Start of Page to Top of Text (mm)** and **Bottom of Text to End of Page (mm)** smaller for the top and bottom.
-3. Check the blue numbers in the margin picture. A very small one means the header or footer is too close to the paper edge.
-4. Click **Print (Make PDF)**.
-
-Many printers cannot print closer than about 10 mm to the edge. Ask your printer.
-
-See also: Layout tab.
-
-### How do I change from two columns to one column (or back)?
-
-1. On the **Layout** tab, tick or untick **Two Column Layout**.
-2. For two columns, set **Gutter Width (mm)** (the space between the columns) and choose whether you want a **Vertical Rule in Gutter**.
-3. Check **Base Indent**. PTXprint halves or doubles it for you.
-4. Click **Print (Make PDF)**.
-
-If **Two Column Layout** is greyed out, a diglot is on. A diglot always uses columns.
-
-See also: Layout tab.
-
-### How do I print some books in one column and the rest in two columns?
-
-1. Change to the **Full** view.
-2. On the **Body** tab, in **Other Features**, tick **Use One Column Layout for These Books** (it says **Use Two Column Layout** if the publication is one column).
-3. Type the book codes in the box beside it, for example `GLO PSA`, and print.
-
-See also: Body tab.
-
-### How do I add extra space at the spine for binding?
-
-1. On the **Layout** tab, in **Page Setup**, tick **Binding Gutter (mm)**.
-2. Type the extra space, for example 5 mm. Thicker books need more. Ask your printer.
-3. Leave **Outer Gutter** unticked, and print.
-
-See also: Layout tab.
-
-### How do I stop wasting space at the bottom of every page?
-
-1. On the **Layout** tab, look at **Lines Per Page** (Regular and Full views). If it is red, part of a line is empty at the bottom of each page.
-2. Click **one** fine-tune button: next to **Base Line Spacing (pt)**, or next to the top or bottom margin in **Margins**.
-3. The number turns blue. Click **Print (Make PDF)**.
-
-If **Lock Ratio** is ticked, the line-spacing button also changes the font size a little. Use a margin button to keep the font size.
-
-See also: Layout tab.
-
-### How do I make a journaling Bible with a wide margin for notes?
-
-1. On the **Layout** tab, tick **Notelines** (Regular and Full views).
-2. PTXprint ticks **Binding Gutter** and **Outer Gutter** and sets a wide gutter (at least 40 mm).
-3. Change the gutter width if needed, choose the line colour with the colour button, and print.
-
-See also: Layout tab; Advanced tab.
-
-## 23.4 Fonts and text size
-
-### How do I change the font?
-
-1. On the **Fonts+Script** tab, click **Select Font...** next to **Regular**.
-2. Type part of the font name in the search box, and click the font.
-3. Click **OK**. PTXprint fills in **Bold**, **Italic** and **Bold Italic** from the same family.
-4. Click **Print (Make PDF)**.
-
-Choose a different bold or italic font **after** the Regular font. Choosing the Regular font again replaces the other three.
-
-See also: Fonts+Script tab.
-
-### How do I make the text bigger or smaller?
-
-1. On the **Layout** tab, in **Page Setup**, make sure **Lock Ratio** is ticked.
-2. Change **Base Font Size (pt)**. The line spacing changes with it.
-3. If **Lines Per Page** turns red, click one fine-tune button, then print.
-
-All other text (headings, footnotes, verse numbers) changes by the same proportion.
-
-See also: Layout tab.
-
-### How do I put more space between the lines but keep the same letter size?
-
-1. On the **Layout** tab, untick **Lock Ratio**.
-2. Make **Base Line Spacing (pt)** larger, for example from 14 to 15.
-3. Tick **Lock Ratio** again if you want to keep the new ratio, and print.
-
-See also: Layout tab.
-
-### How do I change the size or font of one kind of text (for example section headings or footnotes)?
-
-1. Open the **Styles** tab (Regular and Full views).
-2. Type the marker in **Find**, for example `s1` for section headings, `f` for footnotes or `v` for verse numbers.
-3. In **Character Settings**, change **Font Size Factor** (1.0 = normal, 1.2 = 20% bigger). Tick **Bold** or **Italic** if you want.
-4. For a different font for this marker only, click **Select Font...**.
-5. Click **Print (Make PDF)**.
-
-Each level has its own style: a change to `s1` does not change `s2`. To undo all your changes to a style, click its Reset (circular-arrows) button.
-
-See also: Styles tab.
-
-### How do I fix empty boxes (missing characters) in the PDF?
-
-1. On the **Basic** tab, select as many books as possible.
-2. On the **Fonts+Script** tab, tick **Use Fallback Font** (Regular and Full views).
-3. Click **Find Missing Characters**. PTXprint lists the characters that the Regular font does not have.
-4. Click **Select Font...** next to the list and choose a font that has them. If the label turns red, that font lacks some of them too.
-5. Click **Print (Make PDF)**.
-
-A Regular font that has your whole alphabet is often the better solution.
-
-See also: Fonts+Script tab; Problems and solutions.
-
-### How do I get real bold and italic instead of fake ones?
-
-1. On the **Fonts+Script** tab, look at the **Bold**, **Italic** and **Bold Italic** buttons. A style in brackets, for example *(bold)*, is faked.
-2. Click **Select Font...** for **Regular** and choose a family that has all four typefaces. **Pick a Font** shows these families in **bold**.
-3. Or click **Select Font...** for **Bold** (or **Italic**) and choose a real bold (or italic) typeface from another family.
-4. Click **Print (Make PDF)**.
-
-See also: Fonts+Script tab.
-
-### How do I print numbers in my own script's digits?
-
-1. On the **Fonts+Script** tab, click the **Script for Numbers** link.
-2. In **Pick a Font**, choose your script in **Digit mapping**. Click **OK**, then print.
-3. Check that the font has those digits. If not, you will see empty boxes.
-
-See also: Fonts+Script tab.
-
-### How do I print some text in colour (for example red verse numbers)?
-
-1. On the **Styles** tab, find the marker, for example `v` (verse numbers) or `wj` (words of Jesus).
-2. Click the button next to **Color** and choose a colour.
-3. PTXprint ticks **Enable Colored Text (as Specified in Stylesheet)** on the **Fonts+Script** tab. Keep it ticked.
-4. Click **Print (Make PDF)**.
-
-See also: Styles tab; Fonts+Script tab.
-
-## 23.5 Scripts, languages and hyphenation
-
-### How do I set up a right-to-left script (for example Arabic or Hebrew)?
-
-1. On the **Fonts+Script** tab, choose a font made for your script.
-2. In **Writing System**, set **Text Flow Direction** to **Right-to-Left**. PTXprint ticks **RTL Book Binding**.
-3. Set **Text Script**, for example **Arabic** or **Hebrew**.
-4. If the font needs Graphite, click **Select Font...** for **Regular**, tick **Graphite Rendering**, and click **OK**.
-5. Click **Print (Make PDF)**.
-
-See also: Fonts+Script tab.
-
-### How do I set up a script that has no spaces between words (for example Thai or Khmer)?
-
-1. On the **Fonts+Script** tab, set **Text Script** to your script.
-2. If your text marks word breaks with `/` (Thai, Lao, Myanmar, Tai Tham, New Tai Lue), nothing more is needed. The `/` marks become invisible break points.
-3. Otherwise, tick **Specify Line Break Locale** (Regular and Full views) and type the code, for example `th`, `km`, `my`, `zh`, `ja` or `ko`.
-4. Click **Print (Make PDF)**.
-
-See also: Fonts+Script tab.
-
-### How do I turn on hyphenation?
-
-1. In Paratext, approve the hyphenation points in the Wordlist tool.
-2. On the **Fonts+Script** tab, in **Hyphenation**, click **Create List...**.
-3. Click **OK** in the **Create List** dialog. The message says how many words were used.
-4. Tick **Hyphenate**, and print.
-
-If the list is empty, untick **Only Use Approved Hyphenation Words** in the dialog and try again.
-
-See also: Fonts+Script tab.
-
-### How do I choose a different form of a letter that my font offers?
-
-1. On the **Fonts+Script** tab, click **Select Font...** for **Regular**, then **Select Features...**.
-2. Choose your language in **Language** (if listed). Then tick or choose the feature.
-3. Click **OK** in both dialogs, then print.
-
-See also: Fonts+Script tab.
-
-### How do I print an interlinear text (glosses under each word)?
-
-1. In Paratext, approve the interlinear glosses.
-2. Change to the **Full** view.
-3. On the **Advanced** tab, **Main** sub-tab, **General** area, tick **Interlinear** and type the language code of the glosses beside it, for example `en`.
-4. Click **Print (Make PDF)**.
-
-See also: Advanced tab.
-
-## 23.6 Making the text fit
-
-### How do I make the book fit on fewer pages?
-
-Try these one at a time. Print after each change and compare the page count.
-
-1. **Layout** tab: make **Base Font Size (pt)** a little smaller (with **Lock Ratio** ticked).
-2. **Layout** tab: make the margins a little smaller, or tick **Two Column Layout**.
-3. **Fonts+Script** tab, **Spacing Adjustments**: make **Min/Shrink** (Between Words) a little smaller.
-4. **Notes+Refs** tab: untick **Start Each Footnote on a New Line**. On the **Cross-References** sub-tab, choose **Blend with Footnotes**.
-5. **Pictures** tab: make large pictures smaller with **Scale**, or use **Column Width** instead of **Span Width**.
-6. **Advanced** tab, **Other** sub-tab, **Page Layout and Spacing**: set **Where to start a new book** to **Same page**.
-7. **PDF Preview** window: shrink paragraphs on short last pages (see "How do I fix a page that is not full?").
-
-See also: Layout tab; Fonts+Script tab; Notes+Refs tab.
-
-### How do I fit more text on each line?
-
-1. On the **Fonts+Script** tab, in **Spacing Adjustments**, make **Min/Shrink** (Between Words) a little smaller.
-2. Or click **Select Font...** for **Regular** and set **Stretch** a little below 1.00, for example 0.97.
-3. Print and check that the text is still easy to read.
-
-See also: Fonts+Script tab.
-
-### How do I start each book on a right-hand page?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Advanced** tab, **Other** sub-tab, open **Page Layout and Spacing**.
-3. Set **Where to start a new book** to **Odd page**, and print. PTXprint adds blank pages where needed.
-
-See also: Advanced tab.
-
-### How do I let a new book start on the same page as the end of the previous book?
-
-1. On the **Advanced** tab, **Other** sub-tab, open **Page Layout and Spacing**.
-2. Set **Where to start a new book** to **Same page**.
-3. If a book still starts on a new page, increase **Page full factor** a little (for example from 0.65 to 0.75), and print.
-
-See also: Advanced tab.
-
-## 23.7 Scripture text: headings, numbers and other content
-
-### How do I remove (or add back) the section headings?
-
-On the **Body** tab, in **Include Scripture Text**, untick (or tick) **Headings**, and print. Unticking **Headings** also removes the parallel passage references.
-
-See also: Body tab.
-
-### How do I hide the verse numbers or the chapter numbers?
-
-On the **Body** tab, untick **Verse Numbers** or **Chapter numbers**, and print. The header references still work.
-
-See also: Body tab.
-
-### How do I show verse number 1 at the start of each chapter?
-
-On the **Body** tab, untick **Hide First Verse Number** (Regular and Full views), and print.
-
-See also: Body tab.
-
-### How do I leave out the book introductions?
-
-1. On the **Body** tab, in **Beginning and Ending Material**, untick **Book Introductions**.
-2. Also untick **Introductory Outlines** to remove the outline. Then print.
-
-To print **only** the introductions, untick **Include Scripture Text** instead. Remember to tick it again later.
-
-See also: Body tab.
-
-### How do I print a draft that has many untranslated verses?
-
-1. On the **Body** tab, in **Include Scripture Text**, tick **Hide Empty Verses**.
-2. Tick **Show '...'** if readers should see where text is missing. Then print.
-
-See also: Body tab.
-
-### How do I print "Psalm 1", "Psalm 2" … instead of big chapter numbers?
-
-1. Change to the **Full** view.
-2. On the **Body** tab, in **Other Features**, tick **Use Special Features for These Books**.
-3. Type `PSA` in the box beside it. (An empty box means **all** books.)
-4. In **Chapter Label**, type the word for "Psalm" in your language, and print.
-
-For the books in this list you can also tick **Optimize Layout for Poetry Books**. It lets the columns end at different heights, which often removes large white gaps in Psalms.
-
-See also: Body tab.
-
-### How do I put the verse numbers in the margin?
-
-1. On the **Body** tab, tick **Marginal Verses**.
-2. In **Position on Page**, choose **Left**, **Right**, **Inner** or **Outer**.
-3. In **Col Width (pts)**, type a width that fits the longest verse number, for example 12–16. Then print.
-
-See also: Body tab.
-
-### How do I change how glossary words are marked in the text?
-
-1. On the **Body** tab, in **Other Features**, open **Glossary Word Appearance**.
-2. Choose a style, for example **format as bold**, **star \*before word**, or **star \*before and after\*** for a star on both sides.
-3. Click **Print (Make PDF)**.
-
-See also: Body tab.
-
-### How do I leave out one kind of text (for example remarks or a special marker)?
-
-1. On the **Styles** tab, find the marker in **Find**.
-2. Untick **Include Contents of Marker**. The marker is now shown with a line through it. Then print.
-
-The text stays in Paratext. Only the PDF changes.
-
-See also: Styles tab.
-
-## 23.8 Footnotes and cross-references
-
-### How do I hide all footnotes?
-
-On the **Notes+Refs** tab, **Footnotes** sub-tab, untick **Include Footnotes**, and print.
-
-See also: Notes+Refs tab.
-
-### How do I remove (or add back) the cross-references?
-
-1. On the **Notes+Refs** tab, **Cross-References** sub-tab, untick (or tick) **Include Cross-References (From Project Text)**.
-2. To remove all cross-references, also untick **Use External List of Cross-References** if it is ticked. Then print.
-
-See also: Notes+Refs tab.
-
-### How do I put the footnotes at the end of each book?
-
-On the **Notes+Refs** tab, **Footnotes** sub-tab, under **Placement of Footnotes**, choose **End of Book**, and print. The notes appear after the last chapter of each book.
-
-See also: Notes+Refs tab.
-
-### How do I start each footnote on a new line?
-
-1. On the **Notes+Refs** tab, **Footnotes** sub-tab, tick **Start Each Footnote on a New Line**.
-2. For cross-references, tick **Start Each Cross-Reference on a New Line** on the **Cross-References** sub-tab. Then print.
-
-Notes on new lines use more space.
-
-See also: Notes+Refs tab.
-
-### How do I change the footnote callers (the small letters or symbols)?
-
-1. On the **Notes+Refs** tab, **Footnotes** sub-tab, make sure **Show Callers** is ticked.
-2. In the box beside it, type the marks separated by commas, with no spaces, for example `*,†,‡,§`.
-3. If some notes still show other marks, tick **Override hidden/automatic Footnote caller settings**.
-4. Tick **Reset Callers on Page** if the sequence should start again on each page.
-5. Print. If the reset does not look right, print a second time.
-
-See also: Notes+Refs tab.
-
-### How do I save space by mixing cross-references with the footnotes?
-
-1. On the **Notes+Refs** tab, **Cross-References** sub-tab, under **Placement of Cross-References**, choose **Blend with Footnotes**.
-2. Make sure **Include Footnotes** is ticked on the **Footnotes** sub-tab, and print.
-
-See also: Notes+Refs tab.
-
-### How do I add a column of cross-references from a ready-made list?
-
-1. Change to the **Full** view.
-2. On the **Notes+Refs** tab, **Cross-References** sub-tab, tick **Use External List of Cross-References**.
-3. Under **Placement of Cross-References**, choose **Column Cross-References**.
-4. In **Source for References**, choose a list in **External Refs**, for example **Standard list**.
-5. In **Include Refs for Books in**, choose which books the references may point to, for example **New Testament**. Then print.
-
-See also: Notes+Refs tab.
-
-### How do I put footnotes in the side margin, next to their verse?
-
-1. On the **Layout** tab, tick **Margin Notes Col Width (mm)** (Regular and Full views) and type the width of the margin column.
-2. On the **Notes+Refs** tab, set **Placement of Footnotes** (and/or **Placement of Cross-References**) to **Side Margin**. Then print.
-
-See also: Layout tab; Notes+Refs tab.
-
-## 23.9 Pictures and maps
-
-### How do I print the pictures that are in my Paratext text?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Pictures** tab, **Global Options** sub-tab, tick **Include Pictures (illustrations)**.
-3. Click **Generate...**. If a dialog opens, choose **Append Pictures to PicList From These Books**, keep **Protect existing PicList settings** ticked, and click **OK**.
-4. Look for grey rows in the picture table. A grey row means PTXprint cannot find that picture file.
-5. Click **Print (Make PDF)**.
-
-See also: Pictures tab.
-
-### How do I add a new picture from the illustration catalogue?
-
-1. On the **Pictures** tab, click **Show Catalogue...**. If you have no image set yet, download one first.
-2. Choose the **Image Set**. Type a word in **Search**, or check **Limit to Range of References**, then click **Search + Update Images**.
-3. Click the pictures you want, then **Add Images to PicList**.
-4. On the **Details** sub-tab, type a **Caption** for each new picture and check its **Anchor Ref**. Then print.
-
-See also: Pictures tab.
-
-### How do I make a picture bigger or smaller?
-
-1. On the **Pictures** tab, click the picture's row, then open the **Details** sub-tab.
-2. Change **Frame Size** (**Column Width**, **Span Width**, **Page (in Margins)** or **Page (to Edge)**).
-3. Change **Scale**. 100% is the full width of the frame. Then print.
-
-Or, in the **PDF Preview** window, right-click the picture and choose **Shrink by 1 line** or **Grow by 1 line**. A red row in the table means the picture is too tall for the page: make **Scale** smaller.
-
-See also: Pictures tab; PDF Preview window.
-
-### How do I change where a picture sits on the page?
-
-1. Select the picture in the table and open the **Details** sub-tab.
-2. Set **Frame Size** first, then **Vertical Position** (for example **Top** or **Bottom**), then **Horizontal Position** (for example **Left**, **Right**, **Inner** or **Outer**). Then print.
-
-Or, in the **PDF Preview** window, right-click the picture and choose **Vertical Position** or **Horizontal Position**.
-
-See also: Pictures tab; PDF Preview window.
-
-### How do I move a picture to an earlier or later page?
-
-1. Select the picture and open the **Details** sub-tab.
-2. Change **Anchor Ref** to a verse a few verses earlier (to move it back) or later (to move it forward). Keep the dot: `LUK 2.7`. Then print.
-
-Or right-click the picture in the **PDF Preview** window and choose **Change Anchor Ref**.
-
-See also: Pictures tab; PDF Preview window.
-
-### How do I make the text flow around a small picture?
-
-1. Select the picture. On the **Details** sub-tab, set **Frame Size** to **Column Width**.
-2. Set **Vertical Position** to **Cutout** and **Horizontal Position** to **Left** or **Right** (or **Inner**/**Outer**).
-3. Set **Scale** to about 40%.
-4. Set **Number of Lines** to the line where the picture should start (0 = first line of the paragraph). Then print.
-
-See also: Pictures tab.
-
-### How do I use high-quality pictures for the final PDF?
-
-1. Put the high-resolution files in the project's `local\figures` folder, or tick **Use Other Location** and click **Picture Folder...** to choose their folder.
-2. On the **Pictures** tab, **Global Options**, choose **High Resolution (Larger File)**.
-3. Print and check that the missing-pictures count is 0.
-
-See also: Pictures tab.
-
-### How do I make a small PDF to send by email?
-
-1. On the **Pictures** tab, **Global Options**, choose **Low Resolution (Smaller File)**. For an even smaller file, choose **Use Place-holders (Smallest PDF File)**: each picture becomes an empty box.
-2. On the **Finishing** tab, make sure **PDF Output Format** is **Screen (Quickest)**. Then print.
-
-See also: Pictures tab; Finishing tab.
-
-### How do I add maps?
-
-1. On the **Pictures** tab, click **Add Maps...** (or on the **Peripherals** tab, tick **Include Maps** and click **Add Maps...**).
-2. Check **Book Code for Maps** (usually **XXM**).
-3. Click **Select Map...** and choose the map file. Type a **Caption** if you want one.
-4. Click **Size and Position...** to choose the frame size and position.
-5. Click **Add Another Map** for the next map, or **OK - Done!** to finish. Then print.
-
-See also: Pictures tab; Peripherals tab.
-
-### How do I print the copyright credits for the pictures?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Peripherals** tab, tick **Colophon at End of Publication**. Its text normally contains `\zimagecopyrights`. If not, add the line `\pc \zimagecopyrights` (or put it on the copyright page of the front matter).
-3. On the **Pictures** tab, **Details** sub-tab, check each picture. Known illustration series show **Automatic**. For other pictures, type the credit in **Copyright Attribution**.
-4. Print twice. The first run finds the page of each picture.
-
-See also: Pictures tab; Peripherals tab; View+Edit tab.
-
-### How do I print a small credit line on top of a picture?
-
-1. Select the picture on the **Pictures** tab and open the **Details** sub-tab.
-2. Click **© ...**. The **Illustration Credit Overlay** dialog opens.
-3. Type the **Image Credit Text**, choose the position, click **OK**, and print.
-
-See also: Pictures tab.
-
-## 23.10 Diglot (two texts side by side)
-
-### How do I make a diglot (two languages side by side)?
-
-1. Make sure both projects print well on their own.
-2. Open the primary project. On the **Basic** tab, click **Save As** and give the diglot its own configuration name, for example `Diglot`.
-3. On the **Diglot** tab (Regular and Full views), tick **Diglot (or Polyglot)**. Click **Yes** in the message.
-4. In the **R** row of the table, choose the second **Project**, then its **Configuration**.
-5. Check that the **% Width** values add up to 100 (for example 50 and 50).
-6. Choose one short book that is in both projects, and print.
-
-See also: Diglot tab.
-
-### How do I change the column widths in a diglot?
-
-1. On the **Diglot** tab, click the **% Width** cell of each text and type a new value, for example 55 and 45. The numbers must add up to 100.
-2. Print and compare the number of pages. Give more width to the text that needs more space.
-3. Or select one short book and click **Auto-calculate optimum widths of diglot columns** (diglots with exactly two texts). It prints many times, so it takes a while.
-
-See also: Diglot tab.
-
-### How do I change the font of the second text in a diglot?
-
-1. On the **Diglot** tab, right-click the **R** row and choose **Edit Settings…**.
-2. The window now shows the second text's configuration. On the **Fonts+Script** tab, change the font.
-3. Click **Return to Primary** (the big button at the bottom), then print.
-
-To change only the font size or line spacing, type it in the **Font Size** or **Spacing** cell of that row on the **Diglot** tab.
-
-See also: Diglot tab.
-
-### How do I print the captions of both texts under a shared picture?
-
-1. On the **Diglot** tab, tick **Captions** in the row of the secondary text. (The **L** text always shows its captions.)
-2. Make sure both texts use the same picture file at the same verse. Only then is the picture shared.
-3. Print.
-
-Pictures are not shared in the books listed in **Use Serial Layout for These Books**.
-
-See also: Diglot tab.
-
-### How do I put the two texts on facing pages?
-
-1. On the **Diglot** tab, in the **R** row, change **1|2** to **2**.
-2. Check that the **Layout** box shows **L,R**.
-3. Set **% Width** to 100 for each text, and print.
-
-See also: Diglot tab.
-
-### How do I add a third text (polyglot)?
-
-1. On the **Diglot** tab, right-click in the table and choose **Add a row/text**.
-2. Choose the **Project** and **Configuration** for the new row.
-3. Right-click a row and choose **Distribute Widths**, then print.
-
-See also: Diglot tab.
-
-### How do I turn a diglot back into a normal (one text) configuration?
-
-1. On the **Diglot** tab, untick **Diglot (or Polyglot)**. The **Save As Monoglot** dialog opens.
-2. Type a new configuration name (no spaces) and click **OK**.
-3. PTXprint opens the new one-text configuration. The diglot configuration is still there.
-
-See also: Diglot tab.
-
-## 23.11 Thumb tabs, borders and decorations
-
-### How do I add thumb tabs?
-
-1. On the **Basic** tab, select all the books of the publication.
-2. On the **Tabs+Borders** tab (Regular and Full views), tick **Thumb Tabs**.
-3. Set **Height** and **Length** (for example 8 mm and 15 mm), and choose a dark **Tab Color**.
-4. Click **Edit Style** and set a light text colour, for example white. Then print.
-
-See also: Tabs+Borders tab.
-
-### How do I put a decorative border around the text?
-
-1. On the **Tabs+Borders** tab, tick **Ornamental Decorations**, then **Border**.
-2. Choose **Dynamic Border**.
-3. Click the **\textborder** link. The **Styles** tab opens with the `textborder` style.
-4. In **Sidebar Settings**, click **Borders...**. Choose the **Type of Border**, the colours and the **Border Width** (at least 10 pt for ornaments). Click **OK**.
-5. On the **Layout** tab, make the margins larger if the border is too close to the text or the paper edge. Then print.
-
-For a ready-made frame, choose **PDF border (Legacy)** in step 2 and click **Select...** to choose the PDF.
-
-See also: Tabs+Borders tab; Styles tab.
-
-### How do I add a decoration at the end of each book?
-
-On the **Tabs+Borders** tab, tick **Ornamental Decorations**, then **End of Book Decoration**. Click **Select...**, choose a PDF graphic, and print.
-
-See also: Tabs+Borders tab.
-
-### How do I put a border around book titles or section headings?
-
-1. On the **Tabs+Borders** tab, tick **Ornamental Decorations**.
-2. Tick **Book Title Borders**, or tick **Section Headings** and choose **Dynamic Border**.
-3. Click the style link next to it. The **Styles** tab opens.
-4. Choose a background colour, and click **Borders...** in **Sidebar Settings** for the border. Then print.
-
-With **PDF border (Legacy)** for section headings, **Shift** moves the graphic: a positive number moves it up.
-
-See also: Tabs+Borders tab.
-
-### How do I decorate the verse numbers?
-
-1. On the **Tabs+Borders** tab, tick **Ornamental Decorations**, then **Verse Number Decorator**.
-2. Choose **Verse Border Graphic** and click **Select...** to choose a small PDF graphic. (For Arabic script you can choose **End of Ayah**.)
-3. Print. Change **Scale** and **Shift** if the number does not fit.
-
-See also: Tabs+Borders tab.
-
-## 23.12 Front matter, back matter and covers
-
-### How do I add a title page, copyright page and table of contents?
-
-1. On the **Peripherals** tab, tick **Local Front Matter**. If there is no front matter yet, PTXprint makes a **BASIC** one: a title page, a copyright and licence page, and a table of contents.
-2. In the **Variables and Values** table, type the values, for example **maintitle** and **subtitle**.
-3. Print twice. The table of contents needs two runs.
-
-See also: Peripherals tab; View+Edit tab.
-
-### How do I start the front matter from a different template?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **View+Edit** tab, click the **Front Matter** sub-tab.
-3. Click **Generate**. Choose **BASIC**, **ADVANCED**, **DIGLOT** or **PARATEXT** (a copy of the FRT book in Paratext), and click **OK**.
-4. Click **Edit Variables...**, fill in the values, and print.
-
-**Warning:** **Generate** replaces all of the current front matter. If you have already changed it, click **Cancel**.
-
-See also: View+Edit tab.
-
-### How do I change the text of the title page?
-
-1. On the **View+Edit** tab, click the **Front Matter** sub-tab.
-2. If the line says `\mt1 \zvar|maintitle\*`, the title comes from a variable. Click **Edit Variables...** and change **maintitle**.
-3. If the line has normal text, change it in the editor.
-4. Click outside the text area to save, then print.
-
-See also: View+Edit tab; Peripherals tab.
-
-### How do I set the copyright and licence text?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Basic** tab, click **Copyright & Licensing** to open it.
-3. Type the copyright text (type `(c)` for ©), or click **Reload copyright from Paratext project**.
-4. Choose or type the **License**.
-5. Make sure the front matter or the colophon contains `\zcopyright` and `\zlicense` (the BASIC template has them). Then print.
-
-See also: Basic tab; View+Edit tab.
-
-### How do I turn on the table of contents?
-
-1. On the **Peripherals** tab, tick **Table of Contents** and type the heading in the **Title** box beside it.
-2. Choose which book names to show (`\toc1`, `\toc2`, `\toc3`) and the **Leaders** (the dots between the name and the page number) (Regular and Full views).
-3. Make sure the front matter contains `\ztoc|main\*` (the BASIC template has it).
-4. Print twice.
-
-See also: Peripherals tab; View+Edit tab.
-
-### How do I add a colophon at the end of the book?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Peripherals** tab, tick **Colophon at End of Publication**.
-3. Change the text in the colophon box if needed. The button beside it reloads the default text.
-4. Tick **Force Page Break Before Colophon** if it must start on a new page. Then print.
-
-When you tick **Local Front Matter** or **Layout Only**, PTXprint unticks the colophon. Check it again afterwards.
-
-See also: Peripherals tab.
-
-### How do I add an existing PDF at the front or the back of the book?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Peripherals** tab, tick **Front Matter PDF(s)** (or **Back Matter PDF(s)**).
-3. Click **Select...** beside it and choose one or more PDF files. Then print.
-
-Several files are added in alphabetical order of their file names. Name them `01-title.pdf`, `02-preface.pdf` and so on to control the order. Make the PDF pages the same size as your book pages.
-
-See also: Peripherals tab.
-
-### How do I make a cover?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Peripherals** tab, tick **Local Front Matter** (a cover needs it), then tick **Create Cover Page**.
-3. Click **Cover Wizard...**. If the message **Existing cover settings found** appears, click **Delete and Continue** to start a new cover, or **Cancel (keep my settings)** to keep the old cover (the wizard then does not open).
-4. Go through the steps: book and spine, picture, background, front cover text, spine text, back cover. Click **Finish** on the **Review** step.
-5. Print. The cover is a separate PDF whose name ends with **_cover**. It is shown on the **Cover** tab of the **PDF Preview** window.
-
-**Finish** replaces the cover sections of the front matter, and puts the title, subtitle, language name and ISBN into the variables table. PTXprint keeps your wizard answers, so you can open the wizard again later to change the cover. To fine-tune colours, borders or pictures, click **Front Cover**, **Spine**, **Back Cover** or **Cover Spread** on the **Peripherals** tab.
-
-The spine must be as wide as the book is thick. The wizard can work it out from the page count and paper, and the **Printers** tab (Full view) gives an estimate. Ask your printer for the exact spine width.
-
-See also: Peripherals tab; Printers tab.
-
-## 23.13 Headers, footers and page numbers
-
-### How do I put the page number in the outer corner and the references in the centre?
-
-1. On the **Layout** tab, in **Page Setup**, tick **Mirror Pages**.
-2. On the **Header+Footer** tab, set **Outer (Right)** to **Page Number**, **Center** to **Reference Range**, and **Inner (Left)** to **-empty-**.
-3. Click **Print (Make PDF)**.
-
-See also: Header+Footer tab.
-
-### How do I mirror the headers for double-sided printing?
-
-1. On the **Layout** tab, in **Page Setup**, tick **Mirror Pages**.
-2. On the **Header+Footer** tab, use **Inner (Left)** for the spine side and **Outer (Right)** for the page-edge side. Then print.
-
-With **Mirror Pages** ticked, the inner and outer items change sides on left-hand pages, and **First Reference** and **Last Reference** are swapped there.
-
-See also: Header+Footer tab; Layout tab.
-
-### How do I show verse numbers in the header references?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Header+Footer** tab, under **Include in References**, make sure **Chapter** is ticked.
-3. Tick **Verse**, choose **Colon (ch:vs)** or **Period (ch.vs)**, and print.
-
-See also: Header+Footer tab.
-
-### How do I put the page number at the bottom of the page?
-
-1. On the **Header+Footer** tab, set **Center Footer** to **Page Number**.
-2. Set the header place that had **Page Number** to **-empty-**, and print.
-
-See also: Header+Footer tab.
-
-### How do I add "DRAFT" and the date (or time) to every page?
-
-1. On the **Header+Footer** tab, open **Center Footer** (or a header place).
-2. Choose **Printed on YYYY-MM-DD**, **Date (YYYY-MM-DD)**, **Time (HH:MM)**, or **Date and Time** (useful when you print several drafts on one day).
-3. Or type your own text, for example `DRAFT\ \isodate`. Type `\ ` (a backslash and a space) for each space.
-4. Click **Print (Make PDF)**. The date and time are those of printing.
-
-For a large "DRAFT" across each page, use a watermark (see "How do I put DRAFT across every page?").
-
-See also: Header+Footer tab.
-
-### How do I start the page numbers at a given number?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Header+Footer** tab, in **Other**, set **Starting Page Number (for Scripture Books)**, for example to 101, and print.
-
-In the front matter you can also use `\resetpagenums` (advanced; see the View+Edit chapter).
-
-See also: Header+Footer tab; View+Edit tab.
-
-### How do I print a page number on the first page of each book?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Header+Footer** tab, in **Other**, tick **Print Page Number at Bottom of Intro Page(s)**, and print.
-
-PTXprint never prints a header on the first page of a book. This setting puts the page number in its footer.
-
-See also: Header+Footer tab.
-
-### How do I put a line under the header?
-
-On the **Layout** tab, in **Margins**, tick **Horizontal Rule**, set **Space between Rule and Top of Text (pt)**, and print.
-
-See also: Layout tab.
-
-## 23.14 Fixing the page layout
-
-### How do I fix a page that is not full (too much white space at the bottom)?
-
-1. Print. The **PDF Preview** window opens.
-2. Go to the page. Or tick **Layout Analysis** on the **Content** tab, click **Locate...**, tick **Underfilled Pages**, and click **Locate the next issue**.
-3. Find a paragraph on this page or the page before whose last line is very short.
-4. Right-click it and choose **Try Shrink -1 line** (or **Shift + left-click** it). This pulls text up from the next page.
-5. Wait a few seconds for the update (if **Auto-update** is ticked), or click **Print (Update PDF)**.
-6. If nothing changed, try **Shrink Both**, or another paragraph.
-
-Do this last, when all other layout settings are final. Work from the front of the book to the back.
-
-See also: PDF Preview window.
-
-### How do I fix a page that is too full (make text go to the next page)?
-
-1. In the **PDF Preview** window, find a paragraph on that page whose last line is nearly full.
-2. Right-click it and choose **Expand +1 line** (or **Shift + right-click** it).
-3. Wait for the update, then check this page and the following pages.
-
-See also: PDF Preview window.
-
-### How do I fill all pages automatically?
-
-1. On the **Basic** tab, choose the books to fill, and print once.
-2. In the **PDF Preview** window, click the lightning icon (**Show/hide Page Fill tool with progress monitor**) (Regular and Full views).
-3. Click **Start Fill** for a fresh start, or **Resume Fill** to keep the existing adjustments. **Start Fill** removes your earlier adjustments for these books.
-4. Wait. This can take from minutes to hours.
-5. When it has finished, use **Locate the next issue** to find pages that could not be filled, and fix them by hand.
-
-The tool also works for a diglot or polyglot (experimental). It then also tries to keep the columns at the same height. **The cost of imbalance in a polyglot slice** (**Advanced** tab › **Other** › **Automatic Page Filler**) sets how important that is. Check the result carefully.
-
-See also: PDF Preview window; Diglot tab.
-
-### How do I undo paragraph adjustments?
-
-1. In the **PDF Preview** window, right-click the paragraph.
-2. Choose **Reset Adjustments**, then **Paragraph**, **Column**, **Page**, **Spread** or **End of Book**.
-3. Or, on the **View+Edit** tab, **Adj List** sub-tab, choose the book, select the rows and press **Delete**.
-4. Click **Print (Make PDF)**.
-
-See also: PDF Preview window; View+Edit tab.
-
-### How do I work quickly on pages in the middle of a long book?
-
-1. In the **PDF Preview** window, go to the page.
-2. Right-click a `\p` or `\m` paragraph at the top of the page and choose **SpeedSlice** (not available for diglots).
-3. Type the first word on the page in **First Word on This Page**, and set **Length of Slice** (for example 3 chapters).
-4. Click **Enable**. Now each print makes only this part of the book.
-5. When you have finished, open **SpeedSlice** again and click **Disable**. Then print the whole book.
-
-Always disable SpeedSlice before you make the final PDF.
-
-See also: PDF Preview window.
-
-### How do I find spacing problems, letters that touch, or missing characters?
-
-1. In the **PDF Preview** window, on the **Content** tab, tick **Layout Analysis**.
-2. Look at the coloured marks: red = letters that touch, purple = missing characters, yellow = rivers of white space, light blue-green = wide spaces.
-3. Click **Locate...** and tick the kinds of issue you want. Use the arrow buttons to go from page to page.
-
-See also: PDF Preview window.
-
-### How do I see two facing pages together?
-
-In the **PDF Preview** window, tick **Book View** (or press **Ctrl+B**).
-
-See also: PDF Preview window.
-
-## 23.15 Preparing the PDF for a printer
-
-### How do I make a print-ready PDF for a commercial printer (PDF/X, CMYK)?
-
-1. Ask the printer for their requirements: trim size, colour (CMYK, grey or RGB), PDF type (PDF/X-1a or PDF/X-4), crop marks and bleed.
-2. On the **Layout** tab, check that **Page Size** is the trim size.
-3. On the **Pictures** tab, choose **High Resolution (Larger File)**.
-4. On the **Finishing** tab, in **PDF Details**, set **PDF Output Format**. For PDF/X-1a in CMYK, choose **Print-CMYK**. For PDF/X-4, choose **Digital-CMYK (Transparency)** or **Digital-RGB**.
-5. Tick **Crop Marks** only if the printer asks for them.
-6. Make sure **Pages Per Spread** is **1-up (No booklet)**.
-7. Print. The PDF name ends with the format, for example **_CMYK**.
-
-See also: Finishing tab.
-
-### How do I make a black-and-white PDF for printing?
-
-On the **Finishing** tab, set **PDF Output Format** to **Print-Gray (B/W)**, and print. The file name ends with **_BW**.
-
-See also: Finishing tab.
-
-### How do I add crop marks?
-
-On the **Finishing** tab, in **PDF Details**, tick **Crop Marks**, and print.
-
-Each PDF page becomes 0.5 inch (about 12.7 mm) larger on every side, to make room for the marks. Many print-on-demand printers do not want crop marks.
-
-See also: Finishing tab.
-
-### How do I set the bleed for the cover?
-
-1. Change to the **Regular** or **Full** view.
-2. On the **Advanced** tab, **Other** sub-tab, open **PDF Options, Covers, Show/Hide**.
-3. Set **Cover Bleed (mm)** to the value your printer asks for (often 3–5 mm), and print.
-
-See also: Advanced tab; Finishing tab.
-
-### How do I print an A5 booklet on A4 paper?
-
-1. On the **Layout** tab, set **Page Size** to A5.
-2. On the **Finishing** tab, in **Booklet Pagination**, set **Pages Per Spread** to **2-up**.
-3. Set **Physical Paper Size** to **210mm, 297mm (A4)**.
-4. Print. The new PDF ends with **_2up**.
-5. Print it double-sided ("flip on short edge"). Fold the sheets in the middle and staple.
-
-Commercial printers want single pages (**1-up**), not a booklet.
-
-See also: Finishing tab.
-
-### How do I put "DRAFT" across every page?
-
-1. On the **Finishing** tab, in **PDF Details**, tick **Apply Watermark PDF**.
-2. Click **Select...** and choose a watermark that matches your page size, for example **A5-Draft.pdf**. Then print.
-
-See also: Finishing tab.
-
-### How do I see what changed since the last PDF?
-
-1. On the **Finishing** tab, tick **Compare PDFs** (or press **Ctrl+R**). PTXprint now always keeps the previous PDF (**_1.pdf**), even if **Number of Previous PDFs to be Kept** is 0.
-2. Make your corrections, then print.
-3. If there are differences, the **Diff** tab of the **PDF Preview** window shows them in colour: added text in the **New Text** colour (blue at first), removed text in the **Old Text** colour (red at first). Otherwise the status line says why, for example **No differences found**.
-4. Untick **Compare PDFs** when you have finished. It makes printing slower.
-
-See also: Finishing tab.
-
-### How do I compare with an older proof, or ignore changes in the margins or headers?
-
-1. To compare with an older PDF (not the last run), click **Select...** in the **Compare PDFs** area and choose it. To go back to the last run, click **Select...** and then **Cancel**.
-2. Change to the **Full** view for these options:
-   * **Start Page Offset** – when one PDF has extra pages at the start (for example a cover). A positive number skips pages of the **old** PDF, a negative number skips pages of the **new** PDF.
-   * **Ignore When Comparing: Headers + Footers** or **Side Margins** – those areas are not compared (shaded grey in the diff PDF). Not used with booklets (more than 1-up) or **Scale to fit**.
-   * **Smart Check** – after you changed only the margins or gutter, it lines up each old page with the new one and shows only real changes (words, line breaks).
-3. Tick **Compare PDFs** and print.
-
-Both PDFs must have the same page size.
-
-See also: Finishing tab.
-
-### How do I get a price estimate for printing?
-
-1. Make the PDF of the whole book first, so that the page count is right.
-2. Change to the **Full** view and open the **Printers** tab.
-3. Check **Pages** and **Trim size**. Type the number of **Copies**, and choose **Interior**, **Binding** and **Currency**.
-4. Read the **Est. per copy** column. These are estimates only. Always ask the printer for a real quotation.
-
-See also: Printers tab.
-
-## 23.16 Configurations and settings
-
-### How do I save my settings as a new configuration?
-
-1. Click **Save** first, so the new configuration starts from your latest settings.
-2. On the **Basic** tab, in **Layout Configuration**, click the **Save As** button (the icon next to **Name**).
-3. Type a name, for example `NT_A5`. Use only letters, numbers, `(`, `)`, `_` and `-`. No spaces.
-4. Click **OK**. PTXprint changes to the new configuration. The old one stays as it was.
-
-See also: Basic tab.
-
-### How do I replace an existing configuration with my current settings?
-
-1. Click **Save**, then click the **Save As** button on the **Basic** tab.
-2. Type the name of the configuration to replace, and tick **Replace it if it already exists**.
-3. Click **OK**. PTXprint deletes the old configuration and saves the current settings in its place. This cannot be undone.
-
-The **Default** configuration can never be replaced. The box is unticked each time the dialog opens.
-
-See also: Basic tab.
-
-### How do I change to another configuration without losing my changes?
-
-1. Click **Save** (or **Print (Make PDF)**, which also saves).
-2. On the **Basic** tab, choose the other configuration in **Name**.
-
-See also: Basic tab; Main window.
-
-### How do I copy a configuration to other projects?
-
-1. Choose the configuration (not **Default** – it is never copied) and click **Save**.
-2. On the **Basic** tab, click **Copy configuration to other projects** (Regular and Full views).
-3. Click the target project(s).
-4. Choose **Do NOT Replace Existing Config** (the safe choice the first time).
-5. Leave **Keep each project's own language-specific variables** ticked, so each project keeps its own titles and language name. Click **OK**.
-6. Choose the target project in **Project** and check the copied configuration.
-
-Adjust lists (paragraph adjustments) are not copied.
-
-See also: Basic tab.
-
-### How do I get back the settings that were used to make a PDF?
-
-1. On the **Basic** tab, click **Import Settings...**.
-2. Click **PDF file (with embedded settings) or ZIP archive file**, then **Select...**, and choose the PDF.
-3. Under **Target**, choose **A New/Existing Project and/or Configuration** and type a new configuration name, for example `FromPDF`. PTXprint ticks **Everything** for a new name.
-4. Click **OK**.
-
-This only works if the PDF was made with **Include Config Settings Within PDF** ticked on the **Finishing** tab.
-
-See also: Importing settings; Finishing tab.
-
-### How do I import settings from a ZIP archive?
-
-1. On the **Basic** tab, click **Import Settings...**.
-2. Click **PDF file (with embedded settings) or ZIP archive file**, then **Select...**, and choose the ZIP file.
-3. Choose the **Target** configuration. A new name is safest.
-4. Tick **Everything**, or only the groups you want (into an existing configuration). Click **OK**.
-
-See also: Importing settings.
-
-### How do I copy only some settings (for example only the pictures or the headers) from another configuration?
-
-1. On the **Basic** tab, click **Import Settings...**.
-2. Click **A Previously Saved Configuration** and choose the source **Project** and **Configuration**.
-3. Choose an **existing** target configuration. (For a new name PTXprint always imports everything.)
-4. Change to the **Regular** view if needed, and untick **Everything**.
-5. Tick only the group you want, for example **Pictures**, or **Other** and then **Header+Footer settings** on the **Other** tab. Click **OK**.
-
-There is no Undo. If you are not sure, first try it on a copy made with **Save As**.
-
-See also: Importing settings.
-
-### How do I lock a configuration so nobody changes it?
-
-1. On the **Basic** tab, choose the configuration in **Name** (not **Default** – it cannot be locked).
-2. Click the **lock** button, type a password (it cannot be empty), and click **OK**. Remember the password.
-
-To unlock, click the lock button again and type the same password. **Cancel** never locks or unlocks.
-
-See also: Basic tab.
-
-### How do I protect a finished layout from accidental changes?
-
-1. Change to the **Full** view.
-2. On the **Advanced** tab, **Main** sub-tab, **General** area, tick **Lock UI Layout Settings**. Most **Layout**, **Fonts+Script** and **Styles** settings are now greyed out.
-3. Also tick **Lock XeTeX Layout Level** if future PTXprint versions must give exactly the same layout.
-4. Untick these boxes when you need to change the layout again.
-
-See also: Advanced tab.
-
-### How do I delete a configuration I do not need?
-
-1. On the **Basic** tab, choose the configuration in **Name**.
-2. Click **Delete**. Check that the message names the right configuration, then click **Yes**.
-3. PTXprint changes to **Default** and deletes the settings and working files of the old configuration. This cannot be undone.
-
-The PDFs you made from it stay in the output folder. Other configurations are not touched.
-
-See also: Basic tab.
-
-### How do I go back to the PTXprint default settings?
-
-* **Default** configuration: choose **Default** in **Name** and click **Reset** (Regular and Full views; it replaces **Delete**). PTXprint does not ask first. It also removes the files of **Default**, such as its styles and picture list.
-* Another configuration: click **Import Settings...** and then **RESET**. Style settings are not reset. Click **Save** if you want to keep the result.
-
-See also: Basic tab; Importing settings.
-
-## 23.17 Finding settings and getting help
-
-### How do I find a setting that I cannot see?
-
-1. Click in the **Search for settings** box at the bottom-left (or press **Ctrl+F**).
-2. Type a word, for example `margin` or `footnote`, and press **Enter**.
-3. Click the setting in the list. PTXprint opens the right tab, highlights the setting, and raises the view level if needed.
-
-See also: Main window.
-
-### How do I see more (or fewer) settings?
-
-Click **☰** (top-left) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
-
-Hidden settings still work and still change the PDF.
-
-See also: Main window.
-
-### How do I send my project to the support team?
-
-1. Choose the project, configuration and only the book(s) that show the problem.
-2. If the problem is not about pictures, untick **Include Pictures (illustrations)** on the **Pictures** tab to make the file smaller.
-3. On the **Help** tab, click **Create Archive...**.
-4. Choose where to save the ZIP file and click **Save**. PTXprint prints again and then makes the ZIP file.
-5. Email it to **ptxprint_support@sil.org** with a description of the problem, your PTXprint version (from **About**) and screenshots.
-
-The archive contains the text of your project. If the text is sensitive, ask your project leader first.
-
-See also: Help tab.
-
-### How do I check the last PDF for warnings and errors?
-
-1. Click **Print (Make PDF)**.
-2. On the **Help** tab, click **Create Report...** (or **Show Report Information** in the **PDF Preview** window).
-3. The report opens in your web browser. Read the warnings and errors.
-
-See also: Help tab; PDF Preview window.
-
-### How do I change the language of PTXprint's menus?
-
-Click **☰** › **Language** and choose a language. PTXprint saves the configuration and opens again in the new language, with the same project and configuration.
-
-See also: Main window.
-
-### How do I use projects from another Paratext folder?
-
-1. On the **Help** tab, click **Change...** next to **Base Projects Directory**.
-2. Choose a folder that PTXprint found, or click **Browse for a different folder…**. Choose the folder that *contains* the project folders.
-3. Click **Use Selected**, then choose a project on the **Basic** tab.
-
-See also: Help tab.
-
-### How do I free up disk space?
-
-On the **Help** tab, click **Tidy Up**. PTXprint deletes temporary working folders. Your settings and PDF files are kept.
-
-See also: Help tab.
-
-
-# 24. Problems and solutions
-
-## 24.1 How to use this chapter
-
-This chapter lists common problems, grouped by kind, in the words users often use. Each has **Why this happens** and **What to do**.
-
-First try these three quick checks. They solve many problems:
-
-1. **Print again.** Most changes appear in the PDF only after you click **Print (Make PDF)**.
-2. **Check the view level.** A setting can be hidden but still turned on. Click **☰** › **View Level** › **Full View** to see every setting.
-3. **Check the configuration name.** Look at **Name** on the **Basic** tab. Is it the configuration you think it is?
-
-"pt" means point. 1 pt is about 0.35 mm.
-
-## 24.2 Printing fails or no PDF appears
-
-### Nothing happens when I click Print, or the status line says "No books to print"
-
-**Why this happens:** No book is selected, or the book list is empty.
-
-**What to do:**
-
-1. On the **Basic** tab, in **What to Print**, click **Single Book** and choose a book. Or click **Select Multiple Books...**, choose books and click **OK**.
-2. Print again.
-
-### The status line says "One of more fonts have not been set yet"
-
-**Why this happens:** No font has been chosen for the main text.
-
-**What to do:** On the **Fonts+Script** tab, click **Select Font...** next to **Regular**, choose a font, and print.
-
-### The status line says "Printing busy"
-
-**Why this happens:** PTXprint is still making a PDF.
-
-**What to do:** Wait until the progress bar has finished, then print again.
-
-### PTXprint says "Cannot update PDF file while it is locked!"
-
-**Why this happens:** The old PDF is open in another program (for example Adobe Reader), so PTXprint cannot replace it.
-
-**What to do:**
-
-1. Close the PDF in the other program and click **Yes** to try again.
-2. To avoid this, click **☰** › **Show PDF** › **Preview Pane**. The preview does not lock the file.
-
-### The Print (Make PDF) and Save buttons are greyed out
-
-**Why this happens:** PTXprint cannot print yet. For example, no project is selected, or a diglot row has no project or configuration.
-
-**What to do:**
-
-1. Read the message in the status line above the bottom bar.
-2. Choose a project on the **Basic** tab.
-3. For a diglot, check that every row on the **Diglot** tab has a **Project** and a **Configuration**.
-
-### An error window says "Failed to create: … .pdf"
-
-**Why this happens:** The typesetting program stopped because of an error. The window shows the last lines of the log and often a hint. The hint is the most useful part (see the table below).
-
-**What to do:**
-
-1. Find the hint in the table below and follow the advice.
-2. Note any "References to check" or "File(s) to check" at the end of the message. They tell you where to look.
-3. If you changed a setting just before the error, change it back and print again.
-4. For more detail, open the **View+Edit** tab, **XeTeX Log** sub-tab, and scroll to the end. Error lines start with `!`.
-5. If you still cannot fix it, click **Tidy Up** on the **Help** tab and print again. If that does not help, send an archive (**Create Archive...** on the **Help** tab) to support.
-
-| Hint in the error window | What it usually means | What to do in PTXprint |
-|---|---|---|
-| "Cannot find the Font specified. Install it, restart PTXprint and try again" | A font in the configuration (on **Fonts+Script**, or in a style) is not installed. The message may name the marker that uses it. | Install the font for all users and restart PTXprint. Or choose an installed font on **Fonts+Script**, or in the named style on the **Styles** tab. |
-| "Fallback Font issue - set a font on the Fonts+Scripts tab" | **Use Fallback Font** is ticked, but no valid fallback font is chosen. | On **Fonts+Script**, choose a fallback font, or untick **Use Fallback Font**. |
-| "Fallback font probably being applied to text in a footnote (not permitted!)" | A character that needs the fallback font is in a footnote. | Choose a Regular font that has the character, or remove it from the fallback character list. |
-| "Check if picture file is located in 'Figures', 'local\figures' or a specified folder" | A picture file cannot be found or loaded. | On the **Pictures** tab, look for grey rows and fix the file name or folder. Or tick **Omit Missing Pictures**. |
-| "Check if image/PDF file is available on the system" | A front or back matter PDF, a watermark PDF or a picture is missing. | Check **Front Matter PDF(s)** and **Back Matter PDF(s)** (**Peripherals**) and **Apply Watermark PDF** (**Finishing**). Choose the file again with **Select...**, or untick the option. |
-| "This might be related to a USFM marker error (using an unsupported marker)" | A marker in the text is wrong or unknown, or a line in a mods file is wrong. | Run **Basic Checks** in Paratext. If you edited `ptxprint-mods.tex` (**Advanced** tab), untick **Apply Customized Settings (ptxprint-mods.tex)** and print again. |
-| "Failed due to an error in the generated USFM file. Run the Basic Checks in Paratext" | The text has a marker error that PTXprint cannot process. | Run **Basic Checks** in Paratext and fix the errors. If you use a changes file (**Advanced** tab), check the last rule you added. |
-| "Uh oh! You've pushed TeX too far! Try turning Hyphenation off" | The job is too big, often because of a very long hyphenation list. | On **Fonts+Script**, untick **Hyphenate**, or make a shorter list with **Limit Hyphenation List to Words Found in**. Print fewer books at once. |
-| "Possible fault in the hyphenation file" | The hyphenation list has a bad entry. | Untick **Hyphenate** on **Fonts+Script**. Click **Create List...** to make the list again. |
-| "You may have too many paragraphed footnotes on the page" | Too many run-on footnotes on one page. | On **Notes+Refs**, tick **Start Each Footnote on a New Line**. |
-| "Possibly a missing +/- value in the Adjust List" or "Check for errors in the Adjust List" | A row in the paragraph adjustment list has a wrong value. | On **View+Edit**, **Adj List** sub-tab, check the **Stretch** column. Each value must start with `+` or `-`. Delete the bad row if you are not sure. |
-| "One of the settings in the Stylesheet may be missing the units" | A value in a style or an extra stylesheet is not valid. | Undo your last change on the **Styles** tab. On the **Advanced** tab, untick extra stylesheets (**custom.sty**, **ptxprint-mods.sty**) one at a time to find the problem. |
-| "Font size setting issue. Check to see if the font size in a style … is incorrect (maybe it is set to 0.00)" | A style near the reference in the message has font size 0. | On the **Styles** tab, set that style's **Font Size Factor** to a normal value, or click its Reset button. |
-| "Expecting a number for \Color definition, not a color name" | A colour in a style was written as a word. | On the **Styles** tab, choose the colour again with the **Color** button. |
-| "Problem with Formatting Intro Outline" | The right-aligned outline references cause a problem. | On the **Body** tab, untick **Right-align \ior With Tabbed Leaders**. |
-| "Sorry! XeTeX was unable to complete the typesetting" | The typesetter could not place the text on a page. Common in diglots, or when a forgotten feature is on. | For a diglot, first print each text on its own. Check tabs with blue names (for example **Pictures**, **Diglot**, **Tabs+Borders**) and turn off features you do not need. Look for very large pictures. |
-| "To fix this error: Use a different font which is not a Variable Font" | The font is a "variable font", which PTXprint cannot use. | Choose a normal font on **Fonts+Script**. |
-| "Bad xdvi file, probably failed to load a picture or font" | A picture or font could not be loaded when the PDF was written. | Check missing pictures on **Pictures** and the fonts on **Fonts+Script**. |
-| "Possibly a faulty installation" | Files that come with PTXprint are missing. | Install PTXprint again. |
-| "Oops! Something unexpected happened…" or "Probably a TeX macro problem" | PTXprint does not recognise the error. | Click **Tidy Up** (**Help** tab) and print again. If it still fails, send an archive to support and say which setting you changed last. |
-
-### PTXprint says "PDF was created BUT… Layout problems were encountered on page(s)…"
-
-**Why this happens:** The PDF was made, but on the listed pages the typesetter had to break its own rules. Text may run over the bottom margin, or a picture may be lost.
-
-**What to do:**
-
-1. Look at the listed pages in the PDF.
-2. If there is a large picture on or near that page, make it smaller (**Scale** on the **Pictures** tab) or move it (change the **Anchor Ref**).
-3. If you adjusted paragraphs on those pages, reset them: in the **PDF Preview** window, right-click a paragraph › **Reset Adjustments** › **Page**.
-4. Print again.
-
-### The status line says "Rerun to fix: …"
-
-**Why this happens:** Some things depend on page numbers (the table of contents, picture credits, margin notes), and PTXprint learned new page numbers during this run. Most common with **Quick Run** ticked.
-
-**What to do:** Untick **Quick Run** at the bottom of the window, and print again.
-
-### PTXprint says "Unknown book code"
-
-**Why this happens:** The book list has a word that is not a 3-letter USFM book code, for example `John` instead of `JHN`.
-
-**What to do:** On the **Basic** tab, correct **Portions or Multiple Books** with codes such as `MAT`, `JHN`, `1CO`. Or click **Select Multiple Books...** and click the books.
-
-### Printing takes a very long time
-
-**Why this happens:** Some settings need much extra work: a **PDF Output Format** other than **Screen**, **Compare PDFs**, Strong's numbers in the text, very large cross-reference lists, many high-resolution pictures, or a whole Bible.
-
-**What to do:**
-
-1. While you work, tick **Quick Run** at the bottom of the window.
-2. On the **Finishing** tab, use **Screen (Quickest)** until the final PDF. Untick **Compare PDFs** when you do not need it.
-3. On the **Pictures** tab, choose **Low Resolution (Smaller File)** or **Use Place-holders** while you work.
-4. Print one book at a time, or use **SpeedSlice** in the **PDF Preview** window for long books.
-
-## 24.3 The PDF does not change
-
-### I changed a setting, but the PDF looks the same
-
-**Why this happens:**
-
-* You did not print again, or the last print failed. The preview still shows the old PDF.
-* The PDF is shown in another program that has not reloaded it.
-* Another setting overrides yours (for example a style, or an extra stylesheet).
-* You changed a different configuration, or the secondary text of a diglot.
-* **Layout Only** is ticked, so PTXprint did not process the text again.
-
-**What to do:**
-
-1. Print and wait for it to finish. The date and time in the title bar of the **PDF Preview** window must be the time of your last print.
-2. If an error message appeared, fix that first. The old PDF stays on the screen when printing fails.
-3. Check **Name** on the **Basic** tab.
-4. For a diglot, see "My change has no effect in a diglot" below.
-5. Untick **Layout Only** and **Quick Run**, and print again.
-6. For style and font changes, see "My change on the Styles tab has no effect" below.
-
-### My text changes in Paratext do not appear in the PDF
-
-**Why this happens:** Normally PTXprint notices that the text changed. With **Layout Only** ticked, it may not process the text again. Picture captions come from PTXprint's own picture list.
-
-**What to do:**
-
-1. Save the text in Paratext.
-2. Untick **Layout Only** and print.
-3. For picture captions, click **Refresh List** on the **Pictures** tab.
-4. If you use **SpeedSlice**, make sure it is not hiding the part that you changed.
-
-### My changes are not kept after I close PTXprint, or Save does nothing
-
-**Why this happens:** **Quit** does not save. Or the configuration is locked. A locked configuration is never saved, not even when you print.
-
-**What to do:**
-
-1. Click **Save** (or **Print (Make PDF)**) before **Quit**.
-2. If **Save**, **Delete** and **Notes** are greyed out, the configuration is locked. On the **Basic** tab, click the lock button and type the password.
-3. Or click **Save As** and make a new, unlocked configuration.
-
-### The PDF has only a few chapters, or it starts in the middle of a book
-
-**Why this happens:** **SpeedSlice** is still on. Or **From Chapter** and **To** limit the chapters.
-
-**What to do:**
-
-1. In the **PDF Preview** window, right-click a `\p` or `\m` paragraph, choose **SpeedSlice** and click **Disable**.
-2. On the **Basic** tab, check **From Chapter** and **To**, and print again.
-
-## 24.4 Text and fonts
-
-### Some letters print as empty boxes (☐) or question marks
-
-**Why this happens:** The font has no shape for these characters.
-
-**What to do:**
-
-1. On the **Fonts+Script** tab, tick **Use Fallback Font** (Regular and Full views).
-2. Click **Find Missing Characters** to see which characters are missing.
-3. Click **Select Font...** next to the list and choose a font that has them.
-4. Or choose a **Regular** font that supports your whole alphabet.
-5. If only numbers are boxes, check **Digit mapping** in the **Pick a Font** dialog. Set it to **Default** if the font has no digits for that script.
-6. In the **PDF Preview** window, tick **Layout Analysis**. Purple marks show missing characters.
-
-### Bold or italic text looks fake (thick, blurred or slanted wrongly)
-
-**Why this happens:** The font family has no real bold or italic typeface, so PTXprint makes one from the regular letters. The button on the **Fonts+Script** tab shows the style in brackets, for example *(bold)*.
-
-**What to do:**
-
-1. On the **Fonts+Script** tab, click **Select Font...** for **Regular** and choose a family shown in **bold** in the list. These families have all four typefaces.
-2. Or click **Select Font...** for **Bold** or **Italic** and choose a real bold or italic font.
-3. Or, in **Pick a Font**, change **Embolden** and **Slant** to improve the fake style.
-
-### Some text is in the wrong font
-
-**Why this happens:** The style for that text has its own font, or the characters come from the fallback font. In a diglot, the header can use the font of the other text.
-
-**What to do:**
-
-1. On the **Styles** tab, find the marker. A bold **Font** label means the style has its own font. Click the bold label to go back to the main font.
-2. On the **Fonts+Script** tab, check **Use Fallback Font** and the characters in its list.
-3. In a diglot, on the **Header+Footer** tab, choose **Pri** or **Sec** for each part of the header.
-4. If you chose a new **Regular** font, check **Bold**, **Italic** and **Bold Italic** again.
-
-### My font is not in the list
-
-**Why this happens:** The font is not installed, or only for one user, or PTXprint has not refreshed its list.
-
-**What to do:**
-
-1. Install the font for all users.
-2. On the **Fonts+Script** tab, click **Refresh Font List**.
-3. If it is still missing, restart PTXprint.
-
-### Letters do not join, or vowel marks are in the wrong place
-
-**Why this happens:** **Text Script** is wrong, or the font needs Graphite.
-
-**What to do:**
-
-1. On the **Fonts+Script** tab, set **Text Script** to your script.
-2. For a Graphite font, click **Select Font...** for **Regular**, tick **Graphite Rendering**, and click **OK**. Then print.
-
-### Hyphenation does not work
-
-**Why this happens:** There is no hyphenation list, the list is empty, **Hyphenate** is not ticked, or **Between Letters** spacing is on.
-
-**What to do:**
-
-1. On the **Fonts+Script** tab, click **Create List...** and read the message. It says how many words were used.
-2. If the number is 0, untick **Only Use Approved Hyphenation Words** and click **OK** again, or approve words in the Paratext Wordlist.
-3. Tick **Hyphenate**. Make sure **Between Letters** in **Spacing Adjustments** is unticked. Then print.
-
-### Long lines do not break in Thai, Khmer, Myanmar, Chinese or similar scripts
-
-**Why this happens:** PTXprint does not know where it may break a line.
-
-**What to do:**
-
-1. On the **Fonts+Script** tab, set **Text Script** to your script.
-2. Tick **Specify Line Break Locale** and type the language code, for example `th`, `km`, `my` or `zh`.
-3. Or mark the break points with `/` in the text (Thai, Lao, Myanmar, Tai Tham, New Tai Lue).
-
-### Coloured text prints in black
-
-**Why this happens:** **Enable Colored Text (as Specified in Stylesheet)** is not ticked, or **PDF Output Format** is **Print-Gray (B/W)**.
-
-**What to do:** Tick **Enable Colored Text (as Specified in Stylesheet)** on the **Fonts+Script** tab, and check **PDF Output Format** on the **Finishing** tab.
-
-### My change on the Styles tab has no effect
-
-**Why this happens:** You changed a different marker or level (for example `s1` instead of `s2`). Or another style or stylesheet wins. Or a setting on another tab controls it.
-
-**What to do:**
-
-1. Check which marker the text really uses. On the **Styles** tab, click the filter button next to **Find** to show only markers used in your books.
-2. `\p` gets its size and line spacing from the **Layout** tab (**Base Font Size** and **Base Line Spacing**).
-3. If you chose **Justified** but the text is ragged, tick **Justify Paragraphs** on the **Body** tab.
-4. On the **Advanced** tab, check **Apply Stylesheet Overrides (ptxprint-mods.sty)**. It is applied last and may set the same value.
-5. Print again.
-
-### Some text is missing from the PDF
-
-**Why this happens:** A setting removes it. For example **Include Contents of Marker** is unticked for its style, or a **Body** tab setting removes headings, introductions or empty verses.
-
-**What to do:**
-
-1. On the **Styles** tab, a marker with a line through it is not printed. Tick **Include Contents of Marker**.
-2. On the **Body** tab, check **Book Introductions**, **Introductory Outlines**, **Include Scripture Text**, **Headings**, **Parallel Passage Refs** and **Hide Empty Verses**.
-3. For study notes, tick **Extended Footnotes (\ef)** on the **Notes+Refs** tab (Full view).
-
-## 24.5 Layout and spacing
-
-### There is white space at the bottom of every page
-
-**Why this happens:** The text area does not hold a whole number of lines. The left-over part of a line is empty on every page.
-
-**What to do:**
-
-1. On the **Layout** tab, look at **Lines Per Page** (Regular and Full views). If it is red, this is the cause.
-2. Click **one** fine-tune button: next to **Base Line Spacing (pt)**, or next to the top or bottom margin.
-3. The number turns blue. Print again.
-
-### Some pages or columns end early, with empty lines at the bottom
-
-**Why this happens:** With **Align Text to Baseline**, all lines sit on a fixed grid. The typesetter will not leave one line of a paragraph alone at the top or bottom of a page, keeps a heading with the next lines, and keeps pictures and notes with their verse. So a page sometimes ends one or more lines early.
-
-**What to do:**
-
-1. Do this last, when all other settings are final.
-2. In the **PDF Preview** window, right-click a paragraph on this page or the page before and choose **Try Shrink -1 line** to pull text up. Or choose **Expand +1 line** on the page before to push a line down.
-3. Or use the **Auto Page Fill** tool (the lightning icon in the **PDF Preview** window).
-4. If a picture is near the gap, move it or make it smaller.
-5. In poetry books such as Psalms, try **Optimize Layout for Poetry Books** on the **Body** tab (see "Optimize Layout for Poetry Books has no effect").
-6. For a quick draft, move the switch on the **Layout** tab to **Variable Line Spacing**. This fills the columns, but the lines no longer line up on both sides of the paper.
-
-### The last page of a book has only a few lines
-
-**Why this happens:** The book is just a little too long to end on the page before.
-
-**What to do:**
-
-1. In the **PDF Preview** window, find paragraphs in the last few pages whose last line is short.
-2. Right-click each one and choose **Try Shrink -1 line** (or **Shrink Both**) until the lines move back. Or use the **Auto Page Fill** tool.
-3. If many lines must move, make a small change for the whole book (for example a slightly smaller **Base Font Size**, or **Min/Shrink** in **Spacing Adjustments** on **Fonts+Script**). Then check all pages again.
-4. To let the next book start on the same page, set **Where to start a new book** to **Same page** (**Advanced** tab, **Other** sub-tab, **Page Layout and Spacing**).
-
-### I asked to shrink a paragraph, but nothing changed
-
-**Why this happens:** The paragraph has no room to lose a line (common for short paragraphs, or when the last line is almost full). Or the PDF has not been updated yet.
-
-**What to do:**
-
-1. Wait a few seconds if **Auto-update** is ticked, or click **Print (Update PDF)**.
-2. Right-click again and choose **Shrink Both**.
-3. Or try a longer paragraph on the same page, or on the page before.
-
-### Fixing one page broke a later page
-
-**Why this happens:** Every change moves all the text after it.
-
-**What to do:**
-
-1. Make all other layout changes (fonts, margins, pictures) **before** you adjust paragraphs.
-2. Work from the front of the book to the back. Fix the first problem page, then use **Locate the next issue** in the **PDF Preview** window.
-
-### Text looks squashed, stretched or has big gaps between words
-
-**Why this happens:** Paragraph adjustments or the page filler made the letters narrower or wider. Or the word spacing range is too wide. Or **Keep Repeated Words Together** or **Prevent Orphan Words** forces bad line breaks.
-
-**What to do:**
-
-1. In the **PDF Preview** window, tick **Adjustments** to see changed paragraphs (coloured bars). Reset the worst ones (right-click › **Reset Adjustments** › **Paragraph**).
-2. On the **Advanced** tab, **Other** sub-tab, **Preview Pane: Adjustment and Analysis Settings**, raise **Minimum Text Shrink** (for example to 97%) and lower **Maximum Text Expand** (for example to 103%).
-3. On the **Fonts+Script** tab, check **Between Words** in **Spacing Adjustments**. A very high **Max/Stretch** allows big gaps.
-4. Turn on hyphenation to give the lines more break points.
-
-### Almost everything on the Layout, Fonts+Script and Styles tabs is greyed out
-
-**Why this happens:** **Lock UI Layout Settings** is ticked.
-
-**What to do:** Change to the **Full** view. On the **Advanced** tab, **Main** sub-tab, **General** area, untick **Lock UI Layout Settings**.
-
-### The font size changed when I changed the line spacing (or the other way round)
-
-**Why this happens:** **Lock Ratio** is ticked on the **Layout** tab. It keeps the two numbers in the same proportion.
-
-**What to do:** Untick **Lock Ratio**, then type the font size and line spacing you want.
-
-### The header or footer is cut off, or too close to the edge of the paper
-
-**Why this happens:** The header and footer sit inside the top and bottom margins. A large gap between the header and the text moves the header towards the edge.
-
-**What to do:**
-
-1. On the **Layout** tab, look at the blue numbers in the margin picture.
-2. Make **Start of Page to Top of Text (mm)** (or **Bottom of Text to End of Page (mm)**) larger.
-3. Or make **Bottom of Header to Top of Text (pt)** (or **Bottom of Text to Top of Footer (pt)**) smaller.
-
-### My PDF suddenly looks different, but I did not change anything on the main tabs
-
-**Why this happens:** An **Advanced** tab setting may have changed, or an extra file (changes file, mods file) may be on. Someone on the team may have changed the configuration through Paratext Send/Receive.
-
-**What to do:**
-
-1. On the **Advanced** tab, **Other** sub-tab, click the filter button. Only groups with changed settings are shown, with **bold** labels.
-2. On the **Main** sub-tab, check which boxes are ticked in **Text Processing & Stylesheets**.
-3. Check the **Notes** box on the **Basic** tab for comments from the team.
-
-### Coloured marks, bars or codes appear in the margins of my PDF
-
-**Why this happens:** A proof-reading option is on.
-
-**What to do:**
-
-1. On the **Advanced** tab, **Other** sub-tab, **PDF Options, Covers, Show/Hide**, untick the "show" options (for example **Show adjust points**, **Show USFM codes**, **Show Error Bars For Overfull Lines**, **Mark Trigger Points**).
-2. In the **Diglot** group, untick **Show Diglot Trace Marks**.
-
-The coloured bars and boxes in the **PDF Preview** window (**Adjustments**, **Paragraph Boxes**, **Layout Analysis**) are only on the screen, not in the PDF.
-
-### "Optimize Layout for Poetry Books" has no effect
-
-**Why this happens:** It only works for the books listed beside **Use Special Features for These Books** on the **Body** tab, while that box is ticked. With an empty list, nothing is optimized.
-
-**What to do:** Change to the **Full** view. Tick **Use Special Features for These Books** and type the book codes (for example `PSA PRO`) in its list.
-
-## 24.6 Pictures
-
-### No pictures appear in the PDF
-
-**Why this happens:** Pictures are off, or the picture list (PicList) is empty, or place-holders are used.
-
-**What to do:**
-
-1. On the **Pictures** tab, **Global Options**, tick **Include Pictures (illustrations)**.
-2. Change to the **Regular** view to see the picture table. If it is empty, click **Generate...**. PTXprint uses only the pictures in its list, not the `\fig` lines in Paratext directly.
-3. Make sure **Use Place-holders (Smallest PDF File)** is not chosen.
-4. On the **Details** sub-tab, check that **Print** is ticked under **Media**.
-
-### Some pictures are missing
-
-**Why this happens:** PTXprint cannot find the picture file (grey row in the table), or the picture's book is not being printed, or **Image Types** excludes the file type.
-
-**What to do:**
-
-1. On the **Pictures** tab, look for grey rows and check the **Filename**.
-2. Put the file in the project's `figures` or `local\figures` folder, or tick **Use Other Location** and choose the folder with **Picture Folder...**. If the file is in a subfolder, make sure **Exclude Subfolders** is unticked.
-3. Clear the **Image Types** box if it only lists some types.
-4. After printing, check the missing-pictures count and list on **Global Options**. **Omit Missing Pictures** skips missing files without an error, so it can hide the problem.
-
-### A picture is on the wrong page or in the wrong place
-
-**Why this happens:** A picture goes on the page of its anchor verse only if there is room. Otherwise it moves to a later page. Large pictures move more often.
-
-**What to do:**
-
-1. In the **PDF Preview** window, right-click the picture, choose **Change Anchor Ref**, and choose a verse a little earlier (or later).
-2. Or right-click and choose another **Vertical Position** or **Horizontal Position**.
-3. Make the picture smaller with **Shrink by 1 line**, or with **Scale** on the **Pictures** tab, **Details** sub-tab. Then print.
-
-### A picture row is red in the table
-
-**Why this happens:** At this size and scale the picture is too tall for the page.
-
-**What to do:** On the **Details** sub-tab, make **Scale** smaller, or change **Frame Size** from **Span Width** to **Column Width**.
-
-### I cannot choose the picture position I want
-
-**Why this happens:** The position lists depend on each other. For example, **Span Width** only allows **Top**, **Bottom** and **Below Notes**, and no horizontal position.
-
-**What to do:** Choose **Frame Size** first, then **Vertical Position**, then **Horizontal Position**.
-
-### My caption changes in Paratext do not show
-
-**Why this happens:** PTXprint keeps its own copy of the captions in the picture list.
-
-**What to do:** On the **Pictures** tab, click **Refresh List** (size and position settings stay the same), and print.
-
-### The picture credits are missing or wrong
-
-**Why this happens:** The colophon or front matter has no `\zimagecopyrights`, or a picture is not from a known illustration series, or the page numbers are not yet known.
-
-**What to do:**
-
-1. On the **Peripherals** tab, tick **Colophon at End of Publication** and check that its text contains `\zimagecopyrights`. Or put `\pc \zimagecopyrights` in the front matter.
-2. On the **Pictures** tab, **Details** sub-tab, type the credit in **Copyright Attribution** for pictures that do not show **Automatic**.
-3. Print twice.
-
-### My picture checks, credits or notes are gone
-
-**Why this happens:** In older PTXprint versions, the **Checklist** answers, credits and picture notes were not read back when a configuration was opened. Saving could then overwrite them. This is fixed now, but answers lost before the fix cannot be recovered.
-
-**What to do:** On the **Pictures** tab, **Checklist** sub-tab (and **Copyright Attribution** on **Details**), enter the lost answers again. They are now kept.
-
-### The message "Image Anchor Not Found" appears when I right-click a picture
-
-**Why this happens:** PTXprint cannot match the picture in the PDF to a row in the picture list, for example after the list changed.
-
-**What to do:** Print again so the preview matches the picture list. Then make the change on the **Pictures** tab, **Details** sub-tab.
-
-## 24.7 Notes and cross-references
-
-### Footnote or cross-reference settings are greyed out
-
-**Why this happens:** Most settings need another setting first.
-
-**What to do:**
-
-1. Tick **Include Footnotes** on the **Notes+Refs** tab, **Footnotes** sub-tab.
-2. For the caller box, tick **Show Callers**.
-3. **End of Column** needs **Two Column Layout** on the **Layout** tab.
-4. **Side Margin** needs **Margin Notes Col Width (mm)** on the **Layout** tab.
-5. The **Source for References** settings need **Use External List of Cross-References** (Full view).
-
-### The callers in the PDF are not the ones I typed
-
-**Why this happens:** Each note in Paratext can ask for no caller (`\f -`) or a fixed caller. PTXprint obeys that.
-
-**What to do:** On the **Notes+Refs** tab, tick **Override hidden/automatic Footnote caller settings** (or the cross-reference version), and print.
-
-### The cross-reference placement changed by itself
-
-**Why this happens:** PTXprint keeps the footnote and cross-reference placements in step. For example, **End of Column** for one changes the other too.
-
-**What to do:** After you change one placement, check both the **Footnotes** and the **Cross-References** sub-tabs.
-
-### Changing the cross-reference rule settings does nothing
-
-**Why this happens:** PTXprint draws only one rule above the notes at the bottom of the page. It uses the footnote rule settings, unless the footnotes are at the **End of Book**.
-
-**What to do:** Change the rule on the **Footnotes** sub-tab instead.
-
-### The footnotes run into the footer
-
-**What to do:** On the **Notes+Refs** tab, **Footnotes** sub-tab, make **Space Above Rule** larger. Or, on the **Layout** tab, make **Bottom of Text to Top of Footer (pt)** larger.
-
-### Margin notes do not appear
-
-**Why this happens:** **Margin Notes Col Width (mm)** on the **Layout** tab only makes the space. The notes must also be sent there.
-
-**What to do:**
-
-1. On the **Notes+Refs** tab, set **Placement of Footnotes** (and/or **Placement of Cross-References**) to **Side Margin**.
-2. For headings in the margin, tick **In Margin** on the **Body** tab.
-
-### The external cross-references show the wrong book names
-
-**Why this happens:** PTXprint uses the short book names from the Paratext project's **Scripture Reference Settings** (these should match the `\toc3` lines).
-
-**What to do:** Correct the book names in Paratext, and print again.
-
-## 24.8 Diglot
-
-### My change has no effect in a diglot
-
-**Why this happens:** Each text has its own configuration. The second text's fonts, font size, styles and notes come from its own (secondary) configuration. Page settings (page size, margins, header and footer positions, the footnote rule and others) always come from the primary configuration.
-
-**What to do:**
-
-1. For the second text's fonts, styles or notes: on the **Diglot** tab, right-click its row and choose **Edit Settings…**. Make the change, then click **Return to Primary**.
-2. For page size, margins or headers: make sure you are in the primary configuration (the big button says **Print (Make PDF)**, not **Return to Primary**).
-3. Print from the primary configuration.
-
-### The big button says "Return to Primary" instead of "Print"
-
-**Why this happens:** You are in the secondary configuration of a diglot (after **Edit Settings…**).
-
-**What to do:** Click **Return to Primary**, then **Print (Make PDF)**. (The small **Print** button prints only the secondary text.)
-
-### PTXprint says "These books are not available in the secondary diglot project"
-
-**Why this happens:** You selected a book that the second project does not have.
-
-**What to do:** On the **Basic** tab, select only books that are in every project of the diglot.
-
-### PTXprint says "Failed to merge texts due to a Syntax Error" (Diglot Merge Error)
-
-**Why this happens:** One of the texts has a marker error.
-
-**What to do:**
-
-1. Run **Basic Checks** in Paratext for every project in the diglot, and fix the errors.
-2. If you use a changes file (**Advanced** tab), check that a rule has not caused the error.
-3. Print each text on its own first, then the diglot.
-
-### The status line says "No Config found for diglot", or Print is greyed out
-
-**Why this happens:** A row on the **Diglot** tab has no project or configuration.
-
-**What to do:** On the **Diglot** tab, choose a **Project** and then a **Configuration** in every row.
-
-### The diglot columns have big gaps, or the texts do not line up well
-
-**Why this happens:** One text needs more space than the other.
-
-**What to do:**
-
-1. Give the longer text more **% Width** (for example 55 and 45), or a smaller font size or line spacing in its row.
-2. Try **Auto-calculate optimum widths of diglot columns** with one short book selected (two texts only).
-3. Try another **Merging mode**, for example **Scored (Chapter)** or **Chapter Verse**.
-4. Then try the **Auto Page Fill** tool in the **PDF Preview** window (experimental for diglots and polyglots).
-
-### The secondary caption is missing under a picture
-
-**Why this happens:** **Captions** is not ticked in that text's row, or the texts use different picture files or verses, so the picture is not shared. Pictures are never shared in the books listed in **Use Serial Layout for These Books**.
-
-**What to do:** On the **Diglot** tab, tick **Captions** in that text's row. Check that both texts use the same picture file at the same verse.
-
-### The % Width numbers are red
-
-**Why this happens:** The widths of the texts on one page do not add up to 100.
-
-**What to do:** Change the numbers, or right-click a row and choose **Distribute Widths**.
-
-### I cannot untick Diglot (or Polyglot)
-
-**Why this happens:** This is on purpose, so that you do not lose your diglot settings. PTXprint opens the **Save As Monoglot** dialog instead.
-
-**What to do:** Type a new configuration name and click **OK**. PTXprint opens a one-text copy. The diglot configuration stays as it was.
-
-### Two Column Layout on the Layout tab is greyed out
-
-**Why this happens:** A diglot always uses columns, so PTXprint ticks this box and locks it while the diglot is on.
-
-## 24.9 Headers, footers and page numbers
-
-### There is no header on the first page of a book
-
-**Why this happens:** This is normal. PTXprint prints no header (or header rule) on the page where a book starts.
-
-**What to do:** For a page number on that page, tick **Print Page Number at Bottom of Intro Page(s)** on the **Header+Footer** tab (Regular and Full views).
-
-### The header references are empty on some pages
-
-**Why this happens:** This is normal on pages without verses, for example introduction or glossary pages.
-
-### The header shows the last verse where I expected the first verse
-
-**Why this happens:** **Mirror Pages** is ticked on the **Layout** tab. On left-hand pages PTXprint swaps **First Reference** and **Last Reference**, and also **Inner** and **Outer**.
-
-**What to do:** Choose the other item on the **Header+Footer** tab. Or untick **Mirror Pages** if every page should look the same.
-
-### My own header text prints wrongly, or the PDF fails after I typed a header
-
-**Why this happens:** In the header and footer boxes, spaces and the characters `# % & ^ ~ \` need a backslash before them.
-
-**What to do:** Type `\ ` (a backslash and a space) for each space, for example `DRAFT\ \isodate`. Type `\#`, `\%` and so on for those characters.
-
-### The footer shows "<Enter ID>" instead of the time
-
-**Why this happens:** Older PTXprint versions saved the footer item **Time (HH:MM)** wrongly.
-
-**What to do:** Update PTXprint. Configurations with this problem are corrected when they are opened. Then print again.
-
-### The page numbers do not start at the number I set
-
-**Why this happens:** **Starting Page Number (for Scripture Books)** applies at the first Scripture book when the front matter uses its own page numbering. If the front matter uses normal page numbers, numbering continues from the front matter.
-
-**What to do:** Check the page number codes (`\nopagenums`, `\resetpagenums`, `\dopagenums`) in the front matter on the **View+Edit** tab (advanced).
-
-### The table of contents is empty or has wrong page numbers
-
-**Why this happens:** PTXprint needs a first run to learn the page numbers. With **Quick Run** it runs only once.
-
-**What to do:**
-
-1. Untick **Quick Run**.
-2. Make sure **Table of Contents** is ticked on the **Peripherals** tab, and the front matter contains `\ztoc|main\*`.
-3. Print again.
-
-### A variable prints as "<Type Value Here>"
-
-**Why this happens:** The front matter uses a variable that has no value yet.
-
-**What to do:** On the **Peripherals** tab, type a value in the **Variables and Values** table, and print again.
-
-### The front matter does not appear in the PDF
-
-**What to do:** On the **Peripherals** tab, tick **Local Front Matter**, and print again.
-
-### My front matter changes disappeared
-
-**Why this happens:** **Generate** on the **Front Matter** sub-tab replaces the whole front matter. **Refresh** also throws away unsaved changes. **Finish** in the **Cover Wizard** replaces the cover sections. There is no Undo.
-
-**What to do:** Type the changes again. In future, copy important text to a safe place before you click **Generate**, and make cover text changes after you use the wizard.
-
-### The cover was turned off by itself
-
-**Why this happens:** PTXprint turns off **Create Cover Page** when you untick **Local Front Matter**. The status line says "The Cover is disabled because Local Front Matter is turned off."
-
-**What to do:** On the **Peripherals** tab, tick **Local Front Matter**, then **Create Cover Page** again.
-
-### No cover is made, or the Cover Wizard button is greyed out
-
-**Why this happens:** **Create Cover Page** is not ticked, or the front matter has no cover sections. The cover is also a **separate** PDF (name ending **_cover**), not part of the main PDF.
-
-**What to do:**
-
-1. On the **Peripherals** tab, tick **Local Front Matter** and **Create Cover Page**. The **Cover Wizard...** button then works.
-2. Run the **Cover Wizard** and click **Finish** to create the cover sections.
-3. Print. Look for the cover on the **Cover** tab of the **PDF Preview** window.
-
-### The Cover Wizard says "Existing cover settings found"
-
-**Why this happens:** The configuration has cover styles or cover sections that the wizard did not make, or that were changed by hand. The wizard cannot build on them.
-
-**What to do:** Click **Delete and Continue** to delete the old cover and start a new one with the wizard. Or click **Cancel (keep my settings)** to keep the cover as it is and change it by hand (the wizard does not open).
-
-### The Finish button in the Cover Wizard is greyed out
-
-**Why this happens:** **Finish** works only on the last (**Review**) step, and only when a title was typed in the front cover step.
-
-**What to do:** Type a title in the front cover step, then go to the **Review** step.
-
-### The colophon is missing
-
-**Why this happens:** **Colophon at End of Publication** is unticked. PTXprint unticks it when you tick **Local Front Matter**, and when you tick **Layout Only**.
-
-**What to do:** On the **Peripherals** tab, tick **Colophon at End of Publication** again. Untick **Layout Only** at the bottom of the window, and print again.
-
-## 24.10 Settings and configurations
-
-### I lost my changes after I chose another configuration
-
-**Why this happens:** When you choose another configuration in **Name**, PTXprint does **not** save the current one. (When you choose another **Project**, it does save first.)
-
-**What to do:** The lost changes cannot be recovered. Make them again. In future, click **Save** (or **Print (Make PDF)**) before you change configuration.
-
-### I deleted a configuration and want to know what is gone
-
-**Why this happens:** **Delete** (after **Yes**) removes the settings and working files of that one configuration. This cannot be undone. PTXprint then changes to **Default**. The PDFs you made are **not** deleted, and other configurations are not touched. (Older PTXprint versions also emptied the output folder of all configurations. This is fixed.)
-
-**What to do:**
-
-1. To get the settings back, use **Import Settings...** on the **Basic** tab with a PDF made with **Include Config Settings Within PDF**, or with a ZIP archive.
-2. If the status line lists files that could not be deleted, close them in other programs (for example the PDF viewer).
-
-### I clicked Reset and all my settings in Default are gone
-
-**Why this happens:** For the **Default** configuration, **Delete** is replaced by **Reset** (Regular and Full views). **Reset** does not ask first. It sets every setting of **Default** back to the PTXprint defaults, and removes the saved files of **Default** (including its styles and picture list). Other configurations and PDFs are not changed.
-
-**What to do:**
-
-1. If the settings are in a PDF made with **Include Config Settings Within PDF**, use **Import Settings...** on the **Basic** tab to bring them back.
-2. Or import them from another configuration, or from a ZIP archive.
-3. In future, use **Save As** to keep your work in a named configuration, not in **Default**.
-
-### The lock button or the Copy configuration button is greyed out
-
-**Why this happens:** The **Default** configuration is selected. It cannot be locked, and it is never copied to other projects.
-
-**What to do:** Use **Save As** to make a named configuration, then lock or copy that one.
-
-### I cannot lock or unlock my configuration
-
-**Why this happens:** To unlock, the password must be the same as when you locked. To lock, the password box must not be empty. **Cancel** never locks or unlocks.
-
-**What to do:**
-
-1. Click the lock button, type the password and click **OK**. If it is wrong, the status line says "Incorrect password".
-2. If you cannot unlock it, use **Save As** to make a new, unlocked copy.
-
-### The OK button in "Save Current Configuration As..." is greyed out
-
-**Why this happens:** The name is empty, has spaces or special characters, or is already used.
-
-**What to do:**
-
-1. Read the message below the box. Use only letters a–z and A–Z, numbers, `(`, `)`, `_` and `-`.
-2. To replace an existing configuration with that name, tick **Replace it if it already exists**. (**Default** can never be replaced.)
-
-### Copy Configuration changed the titles in the other projects
-
-**Why this happens:** **Keep each project's own language-specific variables** was unticked, so the target projects got this project's titles and language name.
-
-**What to do:** Copy again with that box ticked, or correct the values in the **Variables and Values** table on the **Peripherals** tab of each target project.
-
-### Import Settings says "Cannot find any settings to import from the selected file"
-
-**Why this happens:** The PDF was made without **Include Config Settings Within PDF** (on the **Finishing** tab), or with a very old PTXprint version.
-
-**What to do:** Use another source, for example a ZIP archive made with **Create Archive...**, or a saved configuration. In future, keep **Include Config Settings Within PDF** ticked.
-
-### I imported only one group of settings, but everything changed
-
-**Why this happens:** **Everything** was still ticked. In the **Basic** view the **Everything** tab is hidden but still ticked. Also, when the target is a **new** configuration name or an external folder, PTXprint always ticks **Everything**.
-
-**What to do:**
-
-1. Choose an existing configuration as the target.
-2. Change to the **Regular** view, open **Import Settings...** again, and untick **Everything** before you tick the groups you want.
-
-### Imported styles did not change
-
-**Why this happens:** PTXprint only updates styles that you have not changed in the target configuration. The fonts inside styles come with **Fonts+Script**, not with **Styles**.
-
-**What to do:** In the **Import Settings** dialog, tick **Override ALL Style Settings**. For style fonts, also tick **Fonts+Script**.
-
-### A setting changed by itself
-
-**Why this happens:** Some settings change others to keep them working together. For example:
-
-* **Hyphenate** unticks **Between Letters**.
-* **Right-to-Left** ticks **RTL Book Binding**.
-* **Variable Line Spacing** ticks **Fill Columns** and **Allow Unbalanced Columns**.
-* Changing between one and two columns halves or doubles the **Base Indent**.
-* **Print-CMYK**, **Print-Gray** and **Print-Spot** tick **Only Show on Odd Pages** for thumb tabs.
-* The footnote and cross-reference placements change together.
-* **Local Front Matter** and **Layout Only** untick the colophon.
-* **Compare PDFs** keeps the previous PDF even if **Number of Previous PDFs to be Kept** is 0.
-
-**What to do:** Read the status line. PTXprint often says what it changed. Change the setting back if you need to.
-
-## 24.11 Comparing PDFs
-
-### Compare PDFs does not show a diff PDF
-
-**Why this happens:** No differences were found, or the comparison could not be made.
-
-**What to do:** Read the status line at the bottom of the window:
-
-* **No differences found** – the two PDFs look the same.
-* **Nothing to compare with yet: make a change and print again** – there is no previous PDF yet. Print once more.
-* **Cannot find the PDF to compare with: ...** – the file chosen with **Select...** is gone. Choose it again.
-* **Cannot compare PDFs: the pages are different sizes** – the page size changed. Only pages of the same size can be compared.
-* **No pages could be compared. Check the Start Page Offset** – make **Start Page Offset** smaller.
-* **No differences found, but the old Diff PDF is open and cannot be removed** – close the old diff PDF in your PDF program.
-
-### Every page shows as changed in the diff PDF
-
-**Why this happens:** The pages are probably not lined up, or something changed on every page (margins, headers, page numbers).
-
-**What to do:** Change to the **Full** view. On the **Finishing** tab, in **Compare PDFs**:
-
-1. If one PDF has extra pages at the start (for example a cover), set **Start Page Offset**.
-2. If you changed only the margins or the gutter, tick **Smart Check**.
-3. If only headers, footers or page numbers changed, tick **Headers + Footers** under **Ignore When Comparing**.
-
-Extra pages at the end of the longer PDF always show as changed. This is correct.
-
-## 24.12 I cannot find a setting
-
-### A tab or setting that I used before has disappeared
-
-**Why this happens:** The view level is lower than before. Lower view levels hide many settings. (The **Peripherals** and **Finishing** tabs show only their main settings in the **Basic** view. The **Publications** tab is only in the **Full** view.)
-
-**What to do:**
-
-1. Click **☰** › **View Level** › **Regular View** or **Full View**.
-2. Or type the name of the setting in **Search for settings** (bottom-left, or **Ctrl+F**). PTXprint raises the view level if the setting is hidden.
-
-### The PDF has pictures (or a diglot, borders, thumb tabs …) but I cannot find the setting
-
-**Why this happens:** The feature was turned on in a higher view level. Hidden settings still work.
-
-**What to do:**
-
-1. Change to **Full View**.
-2. Look for tabs with blue names. A blue tab name means a feature on that tab is on.
-3. Turn the feature off on that tab.
-
-### A setting is greyed out
-
-**Why this happens:** It needs another setting first, or another setting blocks it. Common examples:
-
-| Greyed-out setting | What it needs |
-|---|---|
-| Almost all of **Layout**, **Fonts+Script** and **Styles** | Untick **Lock UI Layout Settings** (**Advanced** tab, Full view). |
-| **Save**, **Delete**, **Notes** | Unlock the configuration (lock button on the **Basic** tab). |
-| Lock button, **Copy configuration to other projects** | Choose a configuration other than **Default**. |
-| **Reset** (Basic tab) | Regular or Full view. |
-| **Two Column Layout** | Turn off the diglot. A diglot always uses columns. |
-| **Verse** (header references) | Tick **Chapter** first. |
-| **Pri** / **Sec** (header) | Turn on **Diglot (or Polyglot)**. |
-| **Parallel Passage Refs** | Tick **Headings** on the **Body** tab. |
-| **Hanging Poetry Verse Numbers** | Untick **Marginal Verses**. |
-| **Optimize Layout for Poetry Books** | Tick **Use Special Features for These Books** (**Body** tab). |
-| **Between Letters** | Untick **Interlinear** on the **Advanced** tab. |
-| **End of Column** (notes) | Tick **Two Column Layout**. |
-| **Side Margin** (notes) | Tick **Margin Notes Col Width (mm)** on the **Layout** tab. |
-| An **Edit...** button on the **Advanced** tab | Tick the check box for that file first. |
-| **Scale to fit** (Finishing) | Set **Pages Per Spread** to **1-up**. |
-| **Color Hue**, **Tolerance** | Choose **Print-Spot** as **PDF Output Format**. |
-| **Locate...** (PDF Preview) | Tick **Layout Analysis**. |
-| Fine-tune buttons (Layout) | Nothing to fix: **Lines Per Page** is already blue. |
-| **Mirror** (picture) | Choose **OK to mirror** on the picture's **Checklist** sub-tab. |
-| **Generate** (Front Matter) | Unlock the configuration. |
-| **Cover Wizard...** | Tick **Create Cover Page** (**Peripherals** tab). |
-| **Auto-calculate optimum widths of diglot columns** | A diglot with exactly two texts, and **Print** must be available. |
-| **Custom Script** (Import Settings) | Import from a ZIP archive or a saved configuration, not a PDF. |
-| **Include Transcelerator Questions** | The project needs Transcelerator data. |
-
-**What to do:** Hover the mouse over the greyed-out setting; the tooltip often explains it. See also the chapter about that tab.
-
-### The Help tab has very few links, or links do not open
-
-**Why this happens:** **Disable ALL Internet Use** is ticked on the **Advanced** tab. PTXprint shows "Internet Access Disabled" when you click a web link.
-
-**What to do:** On the **Advanced** tab, **Main** sub-tab, **General** area, untick **Disable ALL Internet Use**.
-
-### PTXprint does not show my projects
-
-**Why this happens:** The **Base Projects Directory** points to the wrong folder.
-
-**What to do:** On the **Help** tab, click **Change...** next to **Base Projects Directory**. Choose the folder that *contains* your Paratext project folders, and click **Use Selected**.
-
-## 24.13 Getting more help
-
-If your problem is not in this chapter:
-
-1. Read **Common problems** in the chapter for the tab you are using.
-2. On the **Help** tab, click **Create Report...** and read the warnings and errors.
-3. Ask the **Support Agent** or the **PTXprint User Community** (links on the **Help** tab).
-4. Make an archive with **Create Archive...** (choose only the book that shows the problem), and email it to **ptxprint_support@sil.org** with a clear description, your PTXprint version and screenshots.
 
 
 # 25. Glossary of terms

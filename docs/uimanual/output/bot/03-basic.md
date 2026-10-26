@@ -1,6 +1,6 @@
-# 4. Basic tab
+# 6. Basic tab
 
-## 4.1 What this tab is for
+## 6.1 What this tab is for
 
 The **Basic** tab is the first tab in PTXprint. You come here to:
 
@@ -11,7 +11,7 @@ The **Basic** tab is the first tab in PTXprint. You come here to:
 
 Start here every time. Most other settings depend on the project and configuration that you choose here.
 
-## 4.2 Project
+## 6.2 Project
 
 Choose your Paratext project in the **Project** list. PTXprint shows the full name of the project next to the list.
 
@@ -27,7 +27,7 @@ Choose your Paratext project in the **Project** list. PTXprint shows the full na
 
 PTXprint puts these texts into the front matter (for example on the back of the title page) through the variables `\zcopyright` and `\zlicense`. Special codes work in both boxes: `(c)` becomes ©, `(r)` becomes ®, `(tm)` becomes ™, `~` is a non-breaking space, and `//` forces a new line.
 
-## 4.3 Layout Configuration
+## 6.3 Layout Configuration
 
 A **configuration** (or layout) is a named set of settings. One project can have many configurations, for example one for a draft and one for the final book. See the chapter about the main window for more about configurations and saving.
 
@@ -42,7 +42,7 @@ A **configuration** (or layout) is a named set of settings. One project can have
 
 When you choose another configuration in the **Name** list, PTXprint does **not** save the current one. Click **Save** first.
 
-## 4.4 What to Print
+## 6.4 What to Print
 
 Choose one of three ways to say what goes into the PDF:
 
@@ -54,7 +54,7 @@ If you type in **From Chapter** or **To**, PTXprint changes to **Single Book**. 
 
 The FRT (front matter) book is not in the book lists. Set up the front matter on the **Peripherals** tab instead.
 
-## 4.5 Dialogs on this tab
+## 6.5 Dialogs on this tab
 
 ### Save Current Configuration As...
 
@@ -114,7 +114,7 @@ PTXprint asks you to confirm before something that cannot be undone:
 * **"You are about to REMOVE the '...' configuration"** – appears when you click **Delete**. It names the configuration. Click **Yes** to delete it, or **No** to keep it. Its settings and working files are deleted. PDF files that you made from it are **not** deleted.
 * **"You are about to CREATE a diglot (or polyglot) configuration"** – appears when you turn on a diglot. PTXprint suggests that you first use **Save As...** to make a new configuration for the diglot.
 
-## 4.6 Common tasks
+## 6.6 Common tasks
 
 ### Start a new publication from an existing configuration
 
@@ -178,7 +178,7 @@ A tutorial is a file with a list of steps (a .json file, or a recorded test in a
 4. Click **Step** (or press **Space**) to do the next step, **Skip** (or **S**) to leave it out, or **Play** (or **P**) to do the steps one after another. **Run to end** does all the remaining steps.
 5. Close the tutorial window to stop. If the tutorial needed a higher view level, PTXprint changes the view level while it runs and changes it back when you close the window.
 
-## 4.7 Common problems
+## 6.7 Common problems
 
 ### My recent changes were lost when I chose another configuration
 
@@ -220,7 +220,7 @@ A tutorial is a file with a list of steps (a .json file, or a recorded test in a
 
 **Cause:** The **Default** configuration is selected. PTXprint never copies **Default** to other projects. **What to do:** Use **Save As** to save the settings under another name, then copy that configuration.
 
-## 4.8 Settings reference
+## 6.8 Settings reference
 
 ### Import Scripture... (dialog)
 

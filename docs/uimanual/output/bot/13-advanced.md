@@ -1,6 +1,6 @@
-# 14. Advanced tab
+# 16. Advanced tab
 
-## 14.1 What this tab is for
+## 16.1 What this tab is for
 
 The **Advanced** tab holds settings for experienced users. Most people never need it. Come here when another tab cannot give you the result you need, or when the support team asks you to change a specific setting.
 
@@ -11,7 +11,7 @@ The tab has two sub-tabs:
 
 The tab is only shown in the **Regular** and **Full** views. Some **Main** settings are only shown in the **Full** view (noted below).
 
-## 14.2 Before you change anything here
+## 16.2 Before you change anything here
 
 A small change here can move text on many pages. Follow these rules:
 
@@ -28,7 +28,7 @@ PTXprint saves a TeXpert setting in the configuration only when it differs from 
 
 To find a TeXpert setting quickly, type part of its name in the **Search for settings** box at the bottom of the main window (Ctrl+F).
 
-## 14.3 Main sub-tab: Text Processing & Stylesheets
+## 16.3 Main sub-tab: Text Processing & Stylesheets
 
 Here you change the text, or how it is styled, with files you edit yourself. Each option has a check box (to turn it on) and an **Edit...** button, which is only active when the box is ticked. **Edit...** opens the file on the **View+Edit** tab, where you can type in it and save it.
 
@@ -48,7 +48,7 @@ PTXprint changes the text in this order:
 3. **Auto-Correct USFM** and other changes PTXprint makes for settings on other tabs.
 4. A custom script, if **end** is chosen.
 
-## 14.4 Main sub-tab: General
+## 16.4 Main sub-tab: General
 
 Settings that do not fit anywhere else:
 
@@ -60,11 +60,11 @@ Settings that do not fit anywhere else:
 * **Plugins** – loads extra parts of the typesetting code for special features. (**Full** view only.)
 * **Lock XeTeX Layout Level** and **Lock UI Layout Settings** – protect a finished layout from changes. (**Full** view only.)
 
-## 14.5 Main sub-tab: Capture tests?
+## 16.5 Main sub-tab: Capture tests?
 
 Only shown in the **Full** view. A developer tool that records what you click to make an automatic test. Normal users do not need it.
 
-## 14.6 Other sub-tab: the TeXpert settings
+## 16.6 Other sub-tab: the TeXpert settings
 
 Click a group name to open or close it. The filter button at the top shows only the groups that have changed settings; it is only active while the **Other** sub-tab is shown.
 
@@ -127,7 +127,7 @@ The page filler tool in the PDF Preview window stretches or shrinks paragraphs a
 
 Thumb tab text, the tilde (~) character, unwanted reference links from DBL text, and the space above the end-of-book decoration.
 
-## 14.7 Common tasks
+## 16.7 Common tasks
 
 ### Apply a search-and-replace rule to the text (advanced)
 
@@ -194,7 +194,7 @@ If PTXprint reports an error in the changes file, look at the last rule you adde
 3. Print and check the PDF.
 4. Untick these options before you make the final PDF.
 
-## 14.8 Common problems
+## 16.8 Common problems
 
 **The Advanced tab is missing.** It is only shown in the **Regular** and **Full** views. Change the view level (see the chapter on the main window).
 
@@ -222,7 +222,7 @@ If PTXprint reports an error in the changes file, look at the last rule you adde
 
 **Coloured marks or labels appear in the margins of my PDF.** One of the "show" options in **PDF Options, Covers, Show/Hide** is ticked (**Show adjust points**, **Mark Trigger Points**, **Show USFM codes**, **Show Error Bars For Overfull Lines**), or **Show Diglot Trace Marks** in the **Diglot** group. Untick it.
 
-## 14.9 Settings reference
+## 16.9 Settings reference
 
 ### Advanced
 

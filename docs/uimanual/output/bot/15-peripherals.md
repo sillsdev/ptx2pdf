@@ -1,6 +1,6 @@
-# 16. Peripherals tab (front and back matter)
+# 18. Peripherals tab (front and back matter)
 
-## 16.1 What this tab is for
+## 18.1 What this tab is for
 
 The **Peripherals** tab controls everything printed **around** the Scripture text:
 
@@ -20,7 +20,7 @@ Front Matter** and the variables table. Everything else needs the **Regular** or
 view. When one of the main options on this tab is on, the tab name is shown in a different
 colour.
 
-## 16.2 Cover
+## 18.2 Cover
 
 PTXprint can make a cover: a back cover, a spine (the narrow back edge of a bound book) and a
 front cover, all on one wide page (the "cover spread"). The cover is saved in its **own PDF
@@ -94,7 +94,7 @@ were when you opened the wizard.
 If the publication is printed from the **Publications** tab, PTXprint works out the spine
 width from the page count of each publication (see the **Publications** tab chapter).
 
-## 16.3 Front Matter PDF(s) and Back Matter PDF(s)
+## 18.3 Front Matter PDF(s) and Back Matter PDF(s)
 
 Use these when part of the book already exists as a PDF file, for example a title page made in
 another program, or maps or an index made elsewhere.
@@ -108,7 +108,7 @@ the full paths. Several files are added in the alphabetical order of their file 
 order you clicked them). For a different order, name the files for example `01-title.pdf`,
 `02-preface.pdf`. The PDF pages must have the same page size as your publication.
 
-## 16.4 Table of Contents
+## 18.4 Table of Contents
 
 Tick **Table of Contents** to make a list of the books with their page numbers. It is useful
 when you print several books.
@@ -130,7 +130,7 @@ The page numbers are only known after typesetting, so PTXprint typesets more tha
 click **Print**. With **Quick Run** ticked it typesets only once; the status line then says
 "Rerun to fix: table of contents", and you must click **Print** again.
 
-## 16.5 Local Front Matter
+## 18.5 Local Front Matter
 
 PTXprint does not print your Paratext project's FRT (front matter) book directly. It keeps its
 own copy for each configuration, which you change on the **View+Edit** tab. Tick **Local Front
@@ -174,13 +174,13 @@ front of the first book of its group. The ids that PTXprint knows are:
 A section is only printed when a book of its group is in the list of books to print.
 **Force Page Break at each Periph** also decides whether these sections start on a new page.
 
-## 16.6 Maps
+## 18.6 Maps
 
 * **Add Maps...** opens the **Add Map** dialog (explained in the **Pictures** tab chapter).
 * **Include Maps** adds the map book to the list of books to print.
 * **Edit...** shows the map book on the **View+Edit** tab.
 
-## 16.7 Colophon at End of Publication
+## 18.7 Colophon at End of Publication
 
 A colophon is a short text at the very end of the book, for example the copyright, the
 licence and the picture credits. Tick **Colophon at End of Publication** to show the text box.
@@ -195,7 +195,7 @@ The colophon is printed after the end of the last book.
 The picture credits (`\zimagecopyrights`) need the page numbers of the pictures. Click
 **Print** a second time to get them right.
 
-## 16.8 Variables and Values
+## 18.8 Variables and Values
 
 This table lists the **variables** used in the front matter (and in the colophon and cover).
 A variable is a place-holder such as `\zvar|maintitle\*`. When you print, PTXprint puts the
@@ -220,7 +220,7 @@ Buttons:
 The variable `toctitle` is special: it always uses the **Title** of the **Table of Contents**,
 so it is not in this table.
 
-## 16.9 Common tasks
+## 18.9 Common tasks
 
 ### Add a title page and a copyright page
 
@@ -279,7 +279,7 @@ To change the layout of these pages, click **Edit...** (see the **View+Edit** ta
 2. On the **Peripherals** tab, tick **Use Peripheral Introductory Sections**.
 3. Print a set of books that includes a book of that group (for example MAT for `intnt`).
 
-## 16.10 Common problems
+## 18.10 Common problems
 
 **The cover is not created.**
 Check that **Local Front Matter** and **Create Cover Page** are both ticked. The front matter
@@ -337,7 +337,7 @@ Untick **Include Maps**.
 **Most of the settings on this tab are missing.**
 You are using the **Basic** view. Change to the **Regular** or **Full** view.
 
-## 16.11 Settings reference
+## 18.11 Settings reference
 
 ### Peripherals
 

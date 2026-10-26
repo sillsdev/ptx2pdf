@@ -1,6 +1,6 @@
-# 12. Tabs+Borders tab
+# 14. Tabs+Borders tab
 
-## 12.1 What this tab is for
+## 14.1 What this tab is for
 
 This tab adds two kinds of decoration:
 
@@ -13,7 +13,7 @@ This chapter also describes the **Border Settings** dialog, which sets the look 
 
 "pt" means point; 1 pt is about 0.35 mm. Thumb tab sizes are in mm.
 
-## 12.2 Thumb Tabs
+## 14.2 Thumb Tabs
 
 **Where the tabs go.** Each Scripture book gets a tab position, counting down from the top of the page: the first book at position 1 (top), the next at position 2, and so on. When the positions run out, the next book starts again at the top. Front matter, glossaries and other non-Scripture books get no tab. Positions are worked out from all the books in the multiple-book list on the main window, even if you print only one book. So the tab for Mark is in the same place whether you print the whole NT or only Mark.
 
@@ -33,7 +33,7 @@ This chapter also describes the **Border Settings** dialog, which sets the look 
 
 The **\toc3** and **\zthumbtab** options choose where the tab text comes from. If the **Table of Contents** on the **Peripherals** tab is on but does not use `\toc3`, PTXprint selects **\zthumbtab** and greys out both options.
 
-## 12.3 Ornamental Decorations
+## 14.3 Ornamental Decorations
 
 Tick each kind of decoration you want. A file name next to a **Select...** button shows which graphic is used. Choosing a file ticks that decoration's checkbox for you. The **Select...** buttons open PTXprint's own border-art folder, but you can pick a PDF file from anywhere.
 
@@ -65,7 +65,7 @@ The `\v` link opens the verse number style. You may need a smaller font size or 
 
 A border around the book title (`\mt1` and `\mt2`), controlled by the special style `cat:titlebox|esb`. The link opens it on the **Styles** tab to change its colours and border.
 
-## 12.4 Border Settings dialog
+## 14.4 Border Settings dialog
 
 The dialog belongs to a style on the **Styles** tab. To open it, select the style (for example a sidebar style, `textborder`, `cat:headingsbox|esb` or `cat:titlebox|esb`), open **Sidebar Settings**, and click **Borders...**. **OK** saves the changes in that style; **Cancel** leaves the style as it was.
 
@@ -82,7 +82,7 @@ The dialog belongs to a style on the **Styles** tab. To open it, select the styl
 
 Each tab has four values in a cross: top, bottom, left (or inner) and right (or outer), in pt. **Uniform Box Padding** / **Uniform Border Padding** use the top value for all four sides and grey out the other three. Negative values are allowed. The picture in the dialog shows the effect.
 
-## 12.5 Common tasks
+## 14.5 Common tasks
 
 ### Add thumb tabs to a Bible or New Testament
 
@@ -144,7 +144,7 @@ Tick **Restart Tabs at MAT** and print.
 4. Change the background colour, and click **Borders...** in **Sidebar Settings** to change the border.
 5. Print.
 
-## 12.6 Common problems
+## 14.6 Common problems
 
 **I cannot see the thumb tab or ornament settings.**
 Tick **Thumb Tabs** or **Ornamental Decorations**. If the whole tab is missing, change the view level to **Regular** or **Full**.
@@ -191,7 +191,7 @@ Choose **PDF border (Legacy)** or **Verse Border Graphic** first.
 **Clicking the \pageborder link does nothing.**
 This link does not open the style. Go to the **Styles** tab and select the page border style yourself. (The **\textborder** link does open the `textborder` style.)
 
-## 12.7 Settings reference
+## 14.7 Settings reference
 
 ### Border Settings (dialog)
 

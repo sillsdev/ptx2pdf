@@ -29,36 +29,48 @@ leaders and support staff. You do not need to know about typesetting or computer
 
 ## 1.3 How this manual is organised
 
-Two general chapters come first. Then there is one chapter for each tab of the PTXprint window,
-in the same order as the tabs. Then come chapters about the PDF Preview window, importing settings
-and getting help. The manual ends with step-by-step tasks, solutions to problems, and a glossary.
+The manual has four parts.
 
-1. **About this manual** – this chapter.
-2. **Getting started with PTXprint** – a first walk-through: from opening PTXprint to your first PDF.
-3. **The main window, menu and view levels** – the parts of the window, configurations, view
-   levels, and how PTXprint saves your settings.
-4. **Basic tab** – choose the project, the configuration and the books to print.
-5. **Layout tab** – page size, margins, columns, font size and line spacing.
-6. **Fonts+Script tab** – fonts, writing system, hyphenation and spacing.
-7. **Body tab** – what is printed from each book (introductions, headings, verse numbers…).
-8. **Notes+Refs tab** – footnotes, cross-references and study notes.
-9. **Header+Footer tab** – the running header and footer, and page numbers.
-10. **Pictures tab** – illustrations and maps.
-11. **Diglot tab (two or more languages)** – two or more texts side by side.
-12. **Tabs+Borders tab** – thumb tabs and decorative borders.
-13. **Styles tab** – the look of each kind of text (each USFM marker).
-14. **Advanced tab** – settings for experienced users.
-15. **View+Edit tab** – front matter, the adjustment list, and the files PTXprint makes.
-16. **Peripherals tab (front and back matter)** – front matter, table of contents, colophon, maps and covers.
-17. **Publications tab** – a list of publications that you can print together.
-18. **Finishing tab** – PDF type for the printer, crop marks, booklets and comparing PDFs.
-19. **Printers tab** – price estimates and orders from print companies.
-20. **PDF Preview window, layout analysis and page filling** – look at the PDF and fix the layout of pages.
-21. **Importing settings** – copy settings from a PDF, an archive or another configuration.
-22. **Help tab and getting support** – find your files, and ask for help.
-23. **How do I...? (step-by-step tasks)** – short instructions for common jobs.
-24. **Problems and solutions** – what to do when something goes wrong.
-25. **Glossary of terms** – the meaning of the words used in this manual.
+**Part 1: Start here**
+
+* **About this manual** – this chapter.
+* **Getting started with PTXprint** – a first walk-through: from opening PTXprint to your first PDF.
+* **The main window, menu and view levels** – the parts of the window, configurations, view
+  levels, and how PTXprint saves your settings.
+
+**Part 2: Find an answer**
+
+* **How do I...? (step-by-step tasks)** – short instructions for common jobs.
+* **Problems and solutions** – what to do when something goes wrong.
+
+**Part 3: Reference, tab by tab**
+
+One chapter for each tab of the PTXprint window, in the same order as the tabs. Then come chapters
+about the PDF Preview window, importing settings and getting help.
+
+* **Basic tab** – choose the project, the configuration and the books to print.
+* **Layout tab** – page size, margins, columns, font size and line spacing.
+* **Fonts+Script tab** – fonts, writing system, hyphenation and spacing.
+* **Body tab** – what is printed from each book (introductions, headings, verse numbers…).
+* **Notes+Refs tab** – footnotes, cross-references and study notes.
+* **Header+Footer tab** – the running header and footer, and page numbers.
+* **Pictures tab** – illustrations and maps.
+* **Diglot tab (two or more languages)** – two or more texts side by side.
+* **Tabs+Borders tab** – thumb tabs and decorative borders.
+* **Styles tab** – the look of each kind of text (each USFM marker).
+* **Advanced tab** – settings for experienced users.
+* **View+Edit tab** – front matter, the adjustment list, and the files PTXprint makes.
+* **Peripherals tab (front and back matter)** – front matter, table of contents, colophon, maps and covers.
+* **Publications tab** – a list of publications that you can print together.
+* **Finishing tab** – PDF type for the printer, crop marks, booklets and comparing PDFs.
+* **Printers tab** – price estimates and orders from print companies.
+* **PDF Preview window, layout analysis and page filling** – look at the PDF and fix the layout of pages.
+* **Importing settings** – copy settings from a PDF, an archive or another configuration.
+* **Help tab and getting support** – find your files, and ask for help.
+
+**Part 4: Glossary**
+
+* **Glossary of terms** – the meaning of the words used in this manual.
 
 Most tab chapters have the same parts:
 

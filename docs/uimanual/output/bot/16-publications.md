@@ -1,6 +1,6 @@
-# 17. Publications tab
+# 19. Publications tab
 
-## 17.1 What this tab is for
+## 19.1 What this tab is for
 
 Use this tab to make several similar books from one project with the same design, without
 making a new configuration for each. For example: one PDF for each Gospel, or a New Testament
@@ -19,7 +19,7 @@ current configuration. Make a list of publications, tick the ones you want, and 
 This tab is only shown in the **Full** view. (In the other views the **Pub** column in the
 variables table on the **Peripherals** tab is hidden too.)
 
-## 17.2 The list of publications
+## 19.2 The list of publications
 
 The list has three columns:
 
@@ -71,7 +71,7 @@ changed. The front matter (or the cover) must use the variables, for example
 If the book has a cover with a spine, there is also a **pagecount** field: the number of pages
 of that publication. PTXprint uses it to work out the spine width for that publication's cover.
 
-## 17.3 The buttons
+## 19.3 The buttons
 
 * **Add** makes a new publication from the current settings.
 * **Duplicate** copies the highlighted publication, called "Copy of ...". This is the quickest
@@ -83,7 +83,7 @@ of that publication. PTXprint uses it to work out the spine width for that publi
 The line at the bottom shows how many publications are ticked, and how many have books that
 PTXprint cannot understand.
 
-## 17.4 Printing the publications
+## 19.4 Printing the publications
 
 When you click **Print Selected**, PTXprint:
 
@@ -102,7 +102,7 @@ not shown in the PDF preview. Open them from the folder.
 Each configuration saves its own list of publications. When you switch configuration, the list
 shows the publications of that configuration (empty if it has none).
 
-## 17.5 Common tasks
+## 19.5 Common tasks
 
 ### Make one PDF for each Gospel
 
@@ -133,7 +133,7 @@ shows the publications of that configuration (empty if it has none).
 1. Click the publication (or one of its fields).
 2. Click **Delete**, then confirm.
 
-## 17.6 Common problems
+## 19.6 Common problems
 
 **Print Selected is greyed out.**
 No publication is ticked, or PTXprint is still printing the last set.
@@ -166,7 +166,7 @@ Change the view level to **Full**.
 **My publications have gone.**
 Check that you are using the right configuration. Each configuration keeps its own list.
 
-## 17.7 Settings reference
+## 19.7 Settings reference
 
 ### Publications
 

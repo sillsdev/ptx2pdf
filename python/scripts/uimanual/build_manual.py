@@ -32,9 +32,12 @@ import sys
 from collections import OrderedDict
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from chapters import chapters, chapterFor
+from chapters import chapters, chapterFor, orderedChapters, partOf
+from chapters import parts as partList
+import htmlmanual
 
 levelShort = {2: "Mini+", 4: "Basic+", 5: "Regular+", 6: "Full"}
+levelHuman = {2: "all views", 4: "Basic, Regular and Full views", 5: "Regular and Full views", 6: "Full view only"}
 
 typeShort = {"Radio button": "Radio", "Number box": "Number", "Drop-down list": "Drop-down",
              "Toggle button": "Toggle", "Colour picker": "Colour"}
@@ -126,19 +129,32 @@ def renderControl(c, note, human, hlevel="#####"):
     """One setting: heading, a compact facts line (or two), the tooltip as a quote, then the explanation."""
     title = controlTitle(c)
     esc = mdEscape if human else (lambda s: s)
-    out = [f"{hlevel} {esc(title)}", ""]
+    marker = f" {{#{htmlmanual.ctrlAnchor(c['id'])}}}" if human and c.get("id") else ""
+    out = [f"{hlevel} {esc(title)}{marker}", ""]
 
     # line 1: type, default state, view level, ids
-    typ = typeShort.get(c["type"], c["type"])
-    if c.get("defaultOn") is not None and c["type"] in ("Checkbox", "Toggle button"):
-        typ += ", on" if c["defaultOn"] else ", off"
-    first = [typ]
-    if c.get("visibility") == "hidden":
-        first.append("not shown")
-    elif c.get("visibility") == "experimental":
-        first.append("experimental")
-    elif c.get("viewLevel"):
-        first.append(levelShort[c["viewLevel"]])
+    if human:       # words, not the shorthand of the AI edition
+        typ = c["type"]
+        if c.get("defaultOn") is not None and c["type"] in ("Checkbox", "Toggle button"):
+            typ += " (ticked by default)" if c["defaultOn"] else " (not ticked by default)"
+        first = [typ]
+        if c.get("visibility") == "hidden":
+            first.append("not normally shown")
+        elif c.get("visibility") == "experimental":
+            first.append("experimental")
+        elif c.get("viewLevel"):
+            first.append("shown in: " + levelHuman[c["viewLevel"]])
+    else:
+        typ = typeShort.get(c["type"], c["type"])
+        if c.get("defaultOn") is not None and c["type"] in ("Checkbox", "Toggle button"):
+            typ += ", on" if c["defaultOn"] else ", off"
+        first = [typ]
+        if c.get("visibility") == "hidden":
+            first.append("not shown")
+        elif c.get("visibility") == "experimental":
+            first.append("experimental")
+        elif c.get("viewLevel"):
+            first.append(levelShort[c["viewLevel"]])
     if not human:
         if c.get("id"):
             first.append(f"`{c['id']}`")
@@ -275,7 +291,9 @@ def build(repo, dopdf=True, skeleton=False):
     chapterTexts = {False: [], True: []}
     contents = ["## Contents", ""]
     num = 0
-    for cid, title, places in chapters:
+    chapterInfos = []
+    lastPart = None
+    for cid, title, places in orderedChapters():
         prose, notes = parseContent(os.path.join(base, "content", cid + ".md"))
         ctrls = bych[cid]
         for k in notes:
@@ -289,6 +307,9 @@ def build(repo, dopdf=True, skeleton=False):
         num += 1
         prose, secTitles = numberSections(prose or "", num)
         refnum = f"{num}.{len(secTitles) + 1}"
+        if partOf(cid) != lastPart:
+            lastPart = partOf(cid)
+            contents += ["", f"**Part {lastPart + 1}: {partList[lastPart][0]}** – {partList[lastPart][1]}", ""]
         contents.append(f"{num}. **{title}**")
         subs = [f"{num}.{i + 1} {t}" for i, t in enumerate(secTitles)]
         if ctrls:
@@ -306,6 +327,8 @@ def build(repo, dopdf=True, skeleton=False):
                 parts.append(renderReference(ctrls, notes, human))
             text = "\n".join(parts).rstrip() + "\n"
             chapterTexts[human].append(text)
+            if human:
+                chapterInfos.append(dict(cid=cid, num=num, title=title, part=partOf(cid), text=text))
             if not human:
                 with open(os.path.join(outdir, "bot", cid + ".md"), "w", encoding="utf-8") as outf:
                     outf.write(text)
@@ -342,11 +365,19 @@ def build(repo, dopdf=True, skeleton=False):
                 revs.append(f"## {f[:-3]}\n\n{txt.strip()}\n")
         with open(os.path.join(outdir, "Tooltip-Issues.md"), "w", encoding="utf-8") as outf:
             outf.write("\n\n".join(revs))
-    htmlText = makeHtml(humanText)
+    ctrlKeys = []
+    for c in controls:
+        if c.get("id") and not c.get("visibility"):
+            own = stripColon(c.get("label"))
+            keys = [own] if own else [stripColon(c.get("fieldLabel"))]
+            ctrlKeys.append(dict(anchor=htmlmanual.ctrlAnchor(c["id"]), keys=[k for k in keys if k]))
+    pageHtml, linker = htmlmanual.build(chapterInfos, ctrlKeys, partList, "PTXprint User Manual", today)
     with open(os.path.join(outdir, "PTXprint-User-Manual.html"), "w", encoding="utf-8") as outf:
-        outf.write(htmlText)
+        outf.write(pageHtml)
+    print(f"HTML edition: {len(chapterInfos)} chapters, {linker.count} cross-reference links")
     if dopdf:
-        makePdf(htmlText, os.path.join(outdir, "PTXprint-User-Manual.pdf"))
+        pdfText = re.sub(r" ?\{#[A-Za-z0-9-]+\}", "", humanText)       # setting anchors are for the HTML edition
+        makePdf(makeHtml(pdfText), os.path.join(outdir, "PTXprint-User-Manual.pdf"))
     print(f"Wrote {outdir}")
 
 

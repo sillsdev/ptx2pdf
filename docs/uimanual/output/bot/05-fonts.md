@@ -1,6 +1,6 @@
-# 6. Fonts+Script tab
+# 8. Fonts+Script tab
 
-## 6.1 What this tab is for
+## 8.1 What this tab is for
 
 The **Fonts+Script** tab controls *how the letters look* and *how the writing system behaves*: the fonts, the script (writing system), the writing direction, hyphenation and spacing.
 
@@ -19,7 +19,7 @@ Some words used in this chapter:
 
 If the whole tab is greyed out, **Lock UI Layout Settings** is ticked on the **Advanced** tab (see the **Layout tab** chapter).
 
-## 6.2 Font Configuration
+## 8.2 Font Configuration
 
 PTXprint uses four fonts for the main text: **Regular**, **Bold**, **Italic** and **Bold Italic**. Each has a **Select Font...** button that shows the font now in use.
 
@@ -34,7 +34,7 @@ Click **Refresh Font List** if a newly installed font is not in the list.
 
 **Script for Numbers** is a link that opens the **Pick a Font** dialog with **Digit mapping** highlighted (see below).
 
-## 6.3 Pick a Font (and Typeface) dialog
+## 8.3 Pick a Font (and Typeface) dialog
 
 This dialog opens when you click any **Select Font...** button.
 
@@ -72,7 +72,7 @@ Many scripts have their own digits, for example Arabic-Indic ٠١٢٣, Devanagar
 
 Choosing a different font in the list clears the font features.
 
-## 6.4 Use Fallback Font
+## 8.4 Use Fallback Font
 
 Some fonts do not contain every character in your text, for example special quotation marks or the glossary markers. These print as empty boxes (tofu). A *fallback font* is a second font used only for those characters.
 
@@ -84,7 +84,7 @@ You can add characters to the list by hand, separated by spaces. You can type a 
 
 These settings are shown in the **Regular** and **Full** views.
 
-## 6.5 Writing System
+## 8.5 Writing System
 
 This area tells PTXprint how your script works. It is very important for non-Latin scripts.
 
@@ -124,7 +124,7 @@ Some scripts (for example Thai, Lao, Khmer, Myanmar, Tai Tham, New Tai Lue, Chin
 
 These options are shown in the **Regular** and **Full** views.
 
-## 6.6 Hyphenation
+## 8.6 Hyphenation
 
 PTXprint can hyphenate using your Paratext project's hyphenation list. In Paratext, the Wordlist tool suggests where words can be broken, and you approve the suggestions. PTXprint turns that list into one it can use.
 
@@ -148,7 +148,7 @@ Ticking **Hyphenate** unticks **Between Letters** in **Spacing Adjustments**, be
 * **Add Syllable-Based Hyphenated Words** – only for scripts where **Syllable line breaking** is ticked in **Additional Script Settings...**. Adds break points for more words using the syllable rules.
 * **Advanced** – limits on which words are added: **Minimum affix**, **Minimum length** and **Min non-hyphen**.
 
-## 6.7 Spacing Adjustments
+## 8.7 Spacing Adjustments
 
 When text is justified (both edges straight), PTXprint stretches or shrinks the spaces in each line. This area controls how much.
 
@@ -159,7 +159,7 @@ When text is justified (both edges straight), PTXprint stretches or shrinks the 
 
 These settings are shown in the **Regular** and **Full** views.
 
-## 6.8 Add Tatweel (kashida) Rules dialog
+## 8.8 Add Tatweel (kashida) Rules dialog
 
 In Arabic script, a *tatweel* (also *kashida*, the character ـ) is a joining stroke that makes a word longer, to make lines look better or to fill a line. This dialog writes a *change rule* that adds tatweels to one word at one verse. The rule goes into the project's changes file (changes.txt), which PTXprint applies every time it prints.
 
@@ -173,7 +173,7 @@ To open it (advanced): on the **View+Edit** tab, open the changes file. In the *
 6. Click **Insert Rule**. The rule is added at the cursor in the file open on the **View+Edit** tab.
 7. Save the file and click **Print**.
 
-## 6.9 Common tasks
+## 8.9 Common tasks
 
 ### How do I change the main font?
 
@@ -227,7 +227,7 @@ To open it (advanced): on the **View+Edit** tab, open the changes file. In the *
 2. Or, in the **Pick a Font** dialog, set **Stretch** slightly below 1.00 (for example 0.97).
 3. Click **Print** and check that the text is still easy to read.
 
-## 6.10 Common problems
+## 8.10 Common problems
 
 ### The whole Fonts+Script tab is greyed out
 
@@ -296,7 +296,7 @@ To open it (advanced): on the **View+Edit** tab, open the changes file. In the *
 
 **Cause:** **Enable Colored Text (as Specified in Stylesheet)** is not ticked.
 
-## 6.11 Settings reference
+## 8.11 Settings reference
 
 ### Create List (dialog)
 

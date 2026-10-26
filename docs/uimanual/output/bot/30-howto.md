@@ -1,6 +1,6 @@
-# 23. How do I...? (step-by-step tasks)
+# 4. How do I...? (step-by-step tasks)
 
-## 23.1 How to use this chapter
+## 4.1 How to use this chapter
 
 This chapter gives short, step-by-step answers to the questions people ask most often. A task often uses more than one tab. **See also** names the chapter with more detail.
 
@@ -11,7 +11,7 @@ For every task:
 * Click **Save** before you change to another configuration. PTXprint does not save the current configuration when you choose another one.
 * "pt" means point. 1 pt is about 0.35 mm.
 
-## 23.2 Printing: what goes into the PDF
+## 4.2 Printing: what goes into the PDF
 
 ### How do I make a PDF?
 
@@ -99,7 +99,7 @@ See also: Basic tab.
 
 See also: Basic tab.
 
-## 23.3 Page size, margins and columns
+## 4.3 Page size, margins and columns
 
 ### How do I change the page size (for example to A5)?
 
@@ -177,7 +177,7 @@ See also: Layout tab.
 
 See also: Layout tab; Advanced tab.
 
-## 23.4 Fonts and text size
+## 4.4 Fonts and text size
 
 ### How do I change the font?
 
@@ -258,7 +258,7 @@ See also: Fonts+Script tab.
 
 See also: Styles tab; Fonts+Script tab.
 
-## 23.5 Scripts, languages and hyphenation
+## 4.5 Scripts, languages and hyphenation
 
 ### How do I set up a right-to-left script (for example Arabic or Hebrew)?
 
@@ -307,7 +307,7 @@ See also: Fonts+Script tab.
 
 See also: Advanced tab.
 
-## 23.6 Making the text fit
+## 4.6 Making the text fit
 
 ### How do I make the book fit on fewer pages?
 
@@ -347,7 +347,7 @@ See also: Advanced tab.
 
 See also: Advanced tab.
 
-## 23.7 Scripture text: headings, numbers and other content
+## 4.7 Scripture text: headings, numbers and other content
 
 ### How do I remove (or add back) the section headings?
 
@@ -419,7 +419,7 @@ The text stays in Paratext. Only the PDF changes.
 
 See also: Styles tab.
 
-## 23.8 Footnotes and cross-references
+## 4.8 Footnotes and cross-references
 
 ### How do I hide all footnotes?
 
@@ -483,7 +483,7 @@ See also: Notes+Refs tab.
 
 See also: Layout tab; Notes+Refs tab.
 
-## 23.9 Pictures and maps
+## 4.9 Pictures and maps
 
 ### How do I print the pictures that are in my Paratext text?
 
@@ -583,7 +583,7 @@ See also: Pictures tab; Peripherals tab; View+Edit tab.
 
 See also: Pictures tab.
 
-## 23.10 Diglot (two texts side by side)
+## 4.10 Diglot (two texts side by side)
 
 ### How do I make a diglot (two languages side by side)?
 
@@ -648,7 +648,7 @@ See also: Diglot tab.
 
 See also: Diglot tab.
 
-## 23.11 Thumb tabs, borders and decorations
+## 4.11 Thumb tabs, borders and decorations
 
 ### How do I add thumb tabs?
 
@@ -696,7 +696,7 @@ See also: Tabs+Borders tab.
 
 See also: Tabs+Borders tab.
 
-## 23.12 Front matter, back matter and covers
+## 4.12 Front matter, back matter and covers
 
 ### How do I add a title page, copyright page and table of contents?
 
@@ -780,7 +780,7 @@ The spine must be as wide as the book is thick. The wizard can work it out from 
 
 See also: Peripherals tab; Printers tab.
 
-## 23.13 Headers, footers and page numbers
+## 4.13 Headers, footers and page numbers
 
 ### How do I put the page number in the outer corner and the references in the centre?
 
@@ -849,7 +849,7 @@ On the **Layout** tab, in **Margins**, tick **Horizontal Rule**, set **Space bet
 
 See also: Layout tab.
 
-## 23.14 Fixing the page layout
+## 4.14 Fixing the page layout
 
 ### How do I fix a page that is not full (too much white space at the bottom)?
 
@@ -919,7 +919,7 @@ In the **PDF Preview** window, tick **Book View** (or press **Ctrl+B**).
 
 See also: PDF Preview window.
 
-## 23.15 Preparing the PDF for a printer
+## 4.15 Preparing the PDF for a printer
 
 ### How do I make a print-ready PDF for a commercial printer (PDF/X, CMYK)?
 
@@ -1005,7 +1005,7 @@ See also: Finishing tab.
 
 See also: Printers tab.
 
-## 23.16 Configurations and settings
+## 4.16 Configurations and settings
 
 ### How do I save my settings as a new configuration?
 
@@ -1113,7 +1113,7 @@ See also: Basic tab.
 
 See also: Basic tab; Importing settings.
 
-## 23.17 Finding settings and getting help
+## 4.17 Finding settings and getting help
 
 ### How do I find a setting that I cannot see?
 

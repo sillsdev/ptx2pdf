@@ -1,6 +1,6 @@
-# 10. Pictures tab
+# 12. Pictures tab
 
-## 10.1 What this tab is for
+## 12.1 What this tab is for
 
 Use the **Pictures** tab when your publication has pictures (illustrations) or maps. Here you can:
 
@@ -31,7 +31,7 @@ Some words used in this chapter:
 * **Credit overlay** – a small copyright line printed on top of the picture itself.
 * **Image set** – a downloadable collection of Bible illustrations that you can use in the catalogue.
 
-## 10.2 The picture table (PicList)
+## 12.2 The picture table (PicList)
 
 The top half of the tab shows the PicList as a table. Each row is one picture. The columns shown change with the sub-tab: **Global Options** and **Checklist** show only a few columns; **Details** shows them all.
 
@@ -55,7 +55,7 @@ The buttons next to the table:
 
 When the **Checklist** sub-tab is open, the buttons are replaced by a **Filter Checklist** area. Use it to show only the pictures that still need checking, or only the approved ones.
 
-## 10.3 Global Options
+## 12.3 Global Options
 
 This sub-tab has the settings for all the pictures in the publication.
 
@@ -86,7 +86,7 @@ The PicList only stores the file **name**, not the folder. If several files have
 
 **Permissions.** **Request Access...** (only with **High Resolution**) and **Get Permission...** open online forms that PTXprint fills in with the list of pictures used in this configuration.
 
-## 10.4 Details
+## 12.4 Details
 
 This sub-tab shows the settings of the picture selected in the table. It is only shown in the **Regular** and **Full** views.
 
@@ -144,7 +144,7 @@ Some artists require a small credit printed **on** each picture. Click **© ...*
 
 **Extra** is for advanced options such as rotating a picture (`rotated 90`, `rotate=edge`, `rotate=binding`) or choosing a page of a multi-page PDF (`page=2`).
 
-## 10.5 Checklist
+## 12.5 Checklist
 
 This sub-tab helps the team think about whether each picture is right for the readers. It is only shown in the **Regular** and **Full** views. The answers are stored with the picture's file, not with the anchor. So if the same picture is used twice, both uses share the answers. PTXprint saves the answers, the approval and the notes, and loads them again the next time you open the project.
 
@@ -155,7 +155,7 @@ This sub-tab helps the team think about whether each picture is right for the re
 
 Use the **Filter Checklist** area above the table to show, for example, only the pictures where some questions are still **Unknown**.
 
-## 10.6 Generate PicList dialog
+## 12.6 Generate PicList dialog
 
 This dialog opens when you click **Generate...** and a PicList already exists. (If there is no PicList yet, PTXprint makes one at once without asking.)
 
@@ -164,7 +164,7 @@ This dialog opens when you click **Generate...** and a PicList already exists. (
 * **Randomly Position Pictures on Page** – give new pictures a random corner (top-left, top-right, bottom-left or bottom-right). Without it, new pictures go top-left in two-column layout and at the top in single-column layout.
 * **Protect existing PicList settings** – keep the size and position of pictures that are already in the PicList, and only add new ones. Untick it only if you want to start again from the Paratext text.
 
-## 10.7 Select Images dialog (the catalogue)
+## 12.7 Select Images dialog (the catalogue)
 
 Click **Show Catalogue...** to open this dialog. It shows thumbnails of the pictures in an **Image Set**. If you have no image set yet, the **Download & Install Image Sets** dialog opens first.
 
@@ -180,13 +180,13 @@ Click **Show Catalogue...** to open this dialog. It shows thumbnails of the pict
 
 The new pictures are anchored at their Bible reference, with **Column Width** and top-left position. Then go to the **Details** sub-tab and type a caption for each one.
 
-## 10.8 Download & Install Image Sets dialog
+## 12.8 Download & Install Image Sets dialog
 
 This dialog lists the image sets that PTXprint can download. Tick the sets you want and click **OK**. Sets that are already installed show **Installed** and cannot be ticked. Some sets show their terms of use; you must agree to the terms before the set is installed. You need an internet connection, and some sets are large.
 
 **Install from ZIP file...** installs a set from a ZIP file on your computer. This is useful at a workshop: download the file once and share it. A ZIP file that contains only pictures (and no image-set information) is unpacked into the project's `local\figures` folder.
 
-## 10.9 Illustration Credit Overlay dialog
+## 12.9 Illustration Credit Overlay dialog
 
 Open this dialog with the **© ...** button on the **Details** sub-tab. It sets a small credit line that is printed on top of the picture. Some artists (for example David C Cook) require this.
 
@@ -199,7 +199,7 @@ Open this dialog with the **© ...** button on the **Details** sub-tab. It sets 
 
 The credit is stored with the picture file, so it applies in all configurations of the project. The font, size and colour come from the `x-credit` style; click the **\x-credit** link to change it on the **Styles** tab.
 
-## 10.10 Add Map dialog
+## 12.10 Add Map dialog
 
 Click **Add Maps...** to add map pages at the end of the publication.
 
@@ -211,7 +211,7 @@ Click **Add Maps...** to add map pages at the end of the publication.
 
 PTXprint adds each map to the PicList (anchors `XXM map01`, `XXM map02` ...), writes one page for each map into the map book, ticks **Include Maps** on the **Peripherals** tab, and adds the map book to the list of books to print. Use **Edit Maps...** to look at the map book on the **View+Edit** tab.
 
-## 10.11 Common tasks
+## 12.11 Common tasks
 
 ### Show the pictures that are in the Paratext text
 
@@ -273,7 +273,7 @@ PTXprint adds each map to the PicList (anchors `XXM map01`, `XXM map02` ...), wr
 2. Follow the steps in the "Add Map dialog" section above.
 3. Click **OK - Done!**, then print.
 
-## 10.12 Common problems
+## 12.12 Common problems
 
 **The Pictures tab shows no table, or no Details sub-tab.**
 The table and the **Details** and **Checklist** sub-tabs are only shown in the **Regular** and **Full** views. Change the view level. Also check that **Include Pictures (illustrations)** is ticked.
@@ -323,7 +323,7 @@ This is normal. PTXprint never changes the Paratext text. To copy a picture into
 **I want the caption above the picture, or the reference before the caption.**
 On the **Advanced** tab, **Other** sub-tab, in the **Pictures, Figures, Images, Sidebars** area, tick **Show Caption Before Image** or **Ref Before Caption**.
 
-## 10.13 Settings reference
+## 12.13 Settings reference
 
 ### Generate PicList (dialog)
 

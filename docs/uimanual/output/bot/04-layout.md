@@ -1,6 +1,6 @@
-# 5. Layout tab
+# 7. Layout tab
 
-## 5.1 What this tab is for
+## 7.1 What this tab is for
 
 The **Layout** tab sets the shape of every page: page size, margins (the empty space around the text), one or two columns, the size of the main text and the space between lines.
 
@@ -14,7 +14,7 @@ Some words used in this chapter:
 * **Gutter** – an extra empty space. A *binding gutter* is extra space at the spine of the book. A *column gutter* is the space between two columns of text.
 * **Text area** – the part of the page where the main text goes. The margins are outside it.
 
-## 5.2 Page Setup
+## 7.2 Page Setup
 
 This area holds **Page Size**, **Base Font Size (pt)**, **Base Line Spacing (pt)**, **Base Indent**, the binding gutter and the page-layout options.
 
@@ -83,7 +83,7 @@ If too many notes do not fit beside the text in one column, PTXprint moves the e
 
 These settings are shown in the **Regular** and **Full** views.
 
-## 5.3 Two Column Layout
+## 7.3 Two Column Layout
 
 Tick **Two Column Layout** for two columns of main text; untick it for one. When you change this, PTXprint halves (two columns) or doubles (one column) **Base Indent**, because a narrow column needs a smaller indent.
 
@@ -98,7 +98,7 @@ Most settings in this area only work with two columns:
 
 A diglot (two languages side by side) needs two columns, so the **Two Column Layout** box is then greyed out.
 
-## 5.4 Margins
+## 7.4 Margins
 
 The **Margins** area sets the empty space around the text, and the position of the header (the line at the top of the page, often with the book name and page number) and the footer (the line at the bottom).
 
@@ -128,7 +128,7 @@ Tick **Horizontal Rule** to draw a line under the header. Set its position with 
 
 To see the margins, header and footer areas on the page, tick **Guides and Baselines** on the **Content** tab of the **PDF Preview** window.
 
-## 5.5 Change the Grid Settings dialog (graph paper)
+## 7.5 Change the Grid Settings dialog (graph paper)
 
 PTXprint can show a "graph paper" grid over the pages in the **PDF Preview**, to measure things such as a margin or a picture.
 
@@ -138,13 +138,13 @@ Open the **PDF Preview**, go to its **Content** tab and tick **Graph Paper**. Cl
 * **Minor Divisions** – how many thinner lines between two major lines, plus their colour and thickness.
 * **Place Grid** – **Whole Page**, **In Margin Areas** or **Only in Text Area**.
 
-## 5.6 Lock UI Layout Settings
+## 7.6 Lock UI Layout Settings
 
 When the typesetting is almost finished, you can protect the layout from accidental changes. On the **Advanced** tab, **Main** tab, **General** area, tick **Lock UI Layout Settings**. (This is only shown in the **Full** view.)
 
 While it is ticked, most of the **Layout** tab is greyed out (page size, font size, line spacing, columns, gutter, margins and more). The whole **Fonts+Script** tab and the **Styles** tab are also greyed out. Untick it to make changes again.
 
-## 5.7 Common tasks
+## 7.7 Common tasks
 
 ### How do I change the page size?
 
@@ -207,7 +207,7 @@ While it is ticked, most of the **Layout** tab is greyed out (page size, font si
 2. On the preview's **Content** tab, tick **Graph Paper**.
 3. Click **Settings** next to it to change units, colours and where the grid is drawn. Click **OK**.
 
-## 5.8 Common problems
+## 7.8 Common problems
 
 ### Almost everything on the Layout tab is greyed out
 
@@ -275,7 +275,7 @@ While it is ticked, most of the **Layout** tab is greyed out (page size, font si
 
 **Cause:** It is only shown when **Notelines** is ticked.
 
-## 5.9 Settings reference
+## 7.9 Settings reference
 
 ### Change the Grid Settings (dialog)
 

@@ -1,6 +1,6 @@
-# 20. PDF Preview window, layout analysis and page filling
+# 22. PDF Preview window, layout analysis and page filling
 
-## 20.1 What this window is for
+## 22.1 What this window is for
 
 The **PDF Preview** window shows the PDF that PTXprint has just made. It opens by itself after you click **Print**. Use it to:
 
@@ -13,7 +13,7 @@ It is a separate window that you can keep open beside the main window. Changes m
 
 In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the text size; in 10 pt text, 1 em is 10 pt.
 
-## 20.2 Opening and closing the Preview window
+## 22.2 Opening and closing the Preview window
 
 * The window opens after each **Print** if the main menu (☰) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
 * Closing the window with its **X** button only hides it. It comes back the next time you print.
@@ -22,7 +22,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 
 The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Reference** shows reference documents such as the Ornaments Catalogue. Tabs without a PDF are hidden.
 
-## 20.3 Moving around: pages, spreads and zoom
+## 22.3 Moving around: pages, spreads and zoom
 
 The navigation controls are in the top bar.
 
@@ -38,7 +38,7 @@ The navigation controls are in the top bar.
 
 The **Contents** list on the left shows the PDF bookmarks (books, and often chapters). Double-click a line to jump to that page.
 
-## 20.4 The Content tab: what to show on the preview
+## 22.4 The Content tab: what to show on the preview
 
 These options only change the preview, not the PDF.
 
@@ -54,7 +54,7 @@ When **Auto-update** is ticked, PTXprint makes a new PDF by itself a few seconds
 
 When **Auto-update** is not ticked, your changes are stored but nothing happens until you click **Print (Update PDF)** (**Ctrl+P**). The right-click menu then also has a **Print (Update PDF)** item.
 
-## 20.5 Layout Analysis and finding issues
+## 22.5 Layout Analysis and finding issues
 
 Tick **Layout Analysis** (on the **Content** tab, **Regular** and **Full** views) to check the text in the PDF. On a long book this takes some time. A small window says "Analysing text. Press Cancel to stop".
 
@@ -84,7 +84,7 @@ The limits that decide what counts as an issue are on the main window: **Advance
 
 **Layout Analysis** turns itself off when you change book, configuration or project, and in some other cases. Tick it again when you need it.
 
-## 20.6 Adjusting paragraphs with the right-click menu
+## 22.6 Adjusting paragraphs with the right-click menu
 
 You can change how many lines a paragraph uses without editing the text. This is the main way to fix a page that is too short or too long:
 
@@ -140,7 +140,7 @@ There is no Undo button. Instead:
 
 The change appears in the PDF after the next print.
 
-## 20.7 Moving and resizing pictures with the right-click menu
+## 22.7 Moving and resizing pictures with the right-click menu
 
 Right-click a picture in the preview. The menu shows its anchor ("Anchored at: MRK 1.10"), the verse the picture is attached to. The menu has:
 
@@ -159,7 +159,7 @@ These changes are stored in the picture list (on the **Pictures** tab), not in t
 
 Type the new verse as `JHN 3.16` (book code, space, chapter.verse). **OK** only becomes active when the reference is in the right form and no picture is already at that verse. A red message explains what is wrong.
 
-## 20.8 SpeedSlice: work on one part of a long book quickly
+## 22.8 SpeedSlice: work on one part of a long book quickly
 
 Each print of a long book (for example Psalms or Isaiah) can take a long time. When you fix pages in the middle of such a book, you must wait for the whole book after every change. **SpeedSlice** typesets only a "slice": it starts at the page you are working on and continues for a few chapters. Each print is then fast.
 
@@ -174,7 +174,7 @@ To open it, right-click a `\p` or `\m` paragraph near the top of the page where 
 
 **Important:** SpeedSlice stays on until you turn it off. While it is on, your PDF contains only the slice, and its page numbers are not the real page numbers. Always **Disable** the slice before you make the final PDF.
 
-## 20.9 Auto Page Fill and the progress monitor
+## 22.9 Auto Page Fill and the progress monitor
 
 The **Auto Page Fill** tool tries to fill every page of every book, so that the text reaches the bottom margin. It uses the same two methods you use by hand: it changes the number of lines in some paragraphs and the width of their text. It does not move pictures or stretch the space between lines. It stores its results in the Adj List, where you can see and change them later.
 
@@ -214,7 +214,7 @@ The **Automatic Page Filler** settings decide how hard the tool tries (speed) an
 
 The text width limits come from **Minimum Text Shrink** and **Maximum Text Expand** (normally 95% and 105%). The number of books worked on at the same time comes from **Maximum parallel processes** (**Advanced** > **Other** > **Page Layout and Spacing**).
 
-## 20.10 The buttons at the bottom of the window
+## 22.10 The buttons at the bottom of the window
 
 * **Show Report Information** – makes a report about the current configuration and opens it in your web browser.
 * **Open the PDF in Default PDF Viewer** – opens the PDF in your normal PDF program.
@@ -222,7 +222,7 @@ The text width limits come from **Minimum Text Shrink** and **Maximum Text Expan
 * **Save the PDF with a different name** – saves a copy of the PDF anywhere you like.
 * **Print the PDF on paper** – sends the PDF to a printer connected to your computer.
 
-## 20.11 Common tasks
+## 22.11 Common tasks
 
 ### Find and fix a page that is not full (manual method)
 
@@ -281,7 +281,7 @@ The text width limits come from **Minimum Text Shrink** and **Maximum Text Expan
 1. On the **Content** tab, tick **Book View** (or press **Ctrl+B**).
 2. Use the arrows to move one spread at a time.
 
-## 20.12 Common problems
+## 22.12 Common problems
 
 **The right-click menu does not appear, or it has no shrink/expand items.**
 The menu needs information that PTXprint writes during printing. Print once with the current configuration. The menu only appears on paragraphs that have a verse reference, so it does not work on most front matter, headers or footers. Right-click the body text of a paragraph.
@@ -325,7 +325,7 @@ Check the date and time in the title bar. If the last print failed, the old PDF 
 **Most of the controls described here are missing.**
 Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (☰).
 
-## 20.13 Settings reference
+## 22.13 Settings reference
 
 ### PDF Preview > Issue types popup
 

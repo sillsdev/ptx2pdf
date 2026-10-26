@@ -1,6 +1,6 @@
-# 19. Printers tab
+# 21. Printers tab
 
-## 19.1 What this tab is for
+## 21.1 What this tab is for
 
 The **Printers** tab helps you plan the printing of your book. It gives a rough **price estimate** from several print companies, shows how thick the book will be, and lets you **compare prices** between printers in a graph. For one printer (Pretore), you can also get an exact quotation and start an order from PTXprint.
 
@@ -16,7 +16,7 @@ The tab has three parts:
 2. The **printer list** – one row per printer, with an estimated price per copy.
 3. The **printer details** panel – options and price details for the printer you click in the list.
 
-## 19.2 Book & Job Specification
+## 21.2 Book & Job Specification
 
 These settings describe the job, for all printers. Every change recalculates all prices.
 
@@ -28,7 +28,7 @@ These settings describe the job, for all printers. Every change recalculates all
 * **Trim size** – the finished page size (in mm), from the page size on the **Layout** tab. You cannot change it here.
 * **Thickness** – the estimated book (spine) thickness for the printer selected in the list. It depends on the number of pages, that printer's paper, and the binding. Useful for a cover design, because the spine width must match the book thickness.
 
-## 19.3 The printer list
+## 21.3 The printer list
 
 Each row shows:
 
@@ -63,7 +63,7 @@ In this window you can:
 
 Printers with no price model cannot be ticked for comparison. For Pretore, PTXprint asks Pretore's server for prices; this needs a Pretore account (see below).
 
-## 19.4 The printer details panels
+## 21.4 The printer details panels
 
 Each printer has its own panel. Its options only affect that printer's estimate.
 
@@ -99,7 +99,7 @@ Pretore accepts books of 120 to 2000 pages. It does not offer saddle-stitching (
 
 No price information yet, so it is left out of comparisons. Use the link in the panel to ask for a quotation.
 
-## 19.5 Common tasks
+## 21.5 Common tasks
 
 ### Get a quick price estimate for my book
 
@@ -133,7 +133,7 @@ No price information yet, so it is left out of comparisons. Use the link in the 
 6. Click **Create Order**. PTXprint makes the ZIP file and shows the order reference.
 7. Click **Complete Order & Payment via website** to upload the ZIP file and pay.
 
-## 19.6 Common problems
+## 21.6 Common problems
 
 **I cannot see the Printers tab.**
 Change the view level to **Full**.
@@ -162,7 +162,7 @@ That printer has no price model.
 **Prices are shown in the wrong currency, or not converted.**
 Exchange rates are downloaded from the internet. Without a connection (or when **Disable ALL Internet Use** is ticked on the **Advanced** tab), prices from another country may be shown in that printer's own currency, or left out of the comparison graph.
 
-## 19.7 Settings reference
+## 21.7 Settings reference
 
 ### Printers
 

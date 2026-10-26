@@ -1,6 +1,6 @@
-# 22. Help tab and getting support
+# 24. Help tab and getting support
 
-## 22.1 What this tab is for
+## 24.1 What this tab is for
 
 The **Help** tab is where you go when you need help, or need to find your files. It is shown in every view level.
 
@@ -16,7 +16,7 @@ On this tab you can:
 
 Many links on this tab open web pages. They are only shown when internet use is allowed. If **Disable ALL Internet Use** is ticked on the **Advanced** tab, the internet links and the **About** button are hidden. Untick it to see them again. Some items are only shown in the **Full** view; this is noted for each one.
 
-## 22.2 Links and Help
+## 24.2 Links and Help
 
 ### Folders
 
@@ -47,7 +47,7 @@ These links open web pages or documents:
 * **Tidy Up** – deletes temporary files.
 * **About** – shows the version number and the names of the developers.
 
-## 22.3 How to ask for help
+## 24.3 How to ask for help
 
 If PTXprint does not do what you expect, you can get help here:
 
@@ -88,17 +88,17 @@ The text of your project is inside the archive. If the text is sensitive, check 
 
 An archive is also useful as a long-term record of how a publication was made.
 
-## 22.4 Log tab
+## 24.4 Log tab
 
 The **Log** tab is not normally shown in PTXprint. To read the messages from the typesetting program, use the **XeTeX Log** tab on the **View+Edit** tab, or use **Create Report...**.
 
-## 22.5 About dialog
+## 24.5 About dialog
 
 The **About** window shows the PTXprint version number, the copyright, a link to the PTXprint home page, the list of developers, and the licence (MIT). Click **Credits** or **License** to see more, and **Close** to return. Give the version number when you ask for help.
 
 The **About** button is only shown when **Disable ALL Internet Use** is unticked on the **Advanced** tab.
 
-## 22.6 Common tasks
+## 24.6 Common tasks
 
 ### Find the PDF that PTXprint made
 
@@ -132,7 +132,7 @@ On the **Help** tab, click **Tidy Up**. PTXprint deletes the temporary working f
 2. Untick **Disable ALL Internet Use**.
 3. Return to the **Help** tab. The links are now shown.
 
-## 22.7 Common problems
+## 24.7 Common problems
 
 **The Help tab has very few links.**
 **Disable ALL Internet Use** is ticked on the **Advanced** tab. Untick it to see the links. Some items (for example the **Technical Reference** and the **PTXprint Program Path**) are only shown in the **Full** view.
@@ -155,7 +155,7 @@ A file in the folder is still open, for example the PDF in a PDF viewer. Close i
 **PTXprint does not show my projects.**
 The **Base Projects Directory** may point to the wrong folder. Click **Change...** and choose the folder that contains your Paratext projects.
 
-## 22.8 Settings reference
+## 24.8 Settings reference
 
 ### Help
 

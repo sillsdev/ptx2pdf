@@ -1,6 +1,6 @@
-# 7. Body tab
+# 9. Body tab
 
-## 7.1 What this tab is for
+## 9.1 What this tab is for
 
 The **Body** tab controls *what* is printed from each book, and some of *how* the main text looks.
 Come here when you want to:
@@ -19,7 +19,7 @@ the section headings are taken out completely. Each section below says which kin
 The tab has three areas: **Beginning and Ending Material**, **Include Scripture Text** and
 **Other Features**. Some settings are only shown in the **Regular** or **Full** view.
 
-## 7.2 Beginning and Ending Material
+## 9.2 Beginning and Ending Material
 
 These settings deal with the introduction at the start of each book, and with the glossary.
 
@@ -36,7 +36,7 @@ These settings deal with the introduction at the start of each book, and with th
 * **Start 1st Chapter on a New Page** and **Start All Other Chapters on a New Page** add page breaks.
   They do not remove text.
 
-## 7.3 Include Scripture Text
+## 9.3 Include Scripture Text
 
 The checkbox **Include Scripture Text** is the title of this area. Leave it ticked. Unticking it
 **removes** everything from the first chapter onwards in every book, so only the introductions (and
@@ -81,7 +81,7 @@ greyed out.
 The small links **\s**, **\r**, **\c** and **\v** open the **Styles** tab at that marker, to change
 the font, size or spacing of section headings, parallel references, chapter numbers or verse numbers.
 
-## 7.4 Other Features
+## 9.4 Other Features
 
 This area is for special treatment of some books, and for glossary words.
 
@@ -99,7 +99,7 @@ This area is for special treatment of some books, and for glossary words.
 * The links **\w** and **\zglm** open the **Styles** tab for the glossary word style and for the
   glossary bracket characters.
 
-## 7.5 Common tasks
+## 9.5 Common tasks
 
 ### How do I print only the book introductions?
 
@@ -152,7 +152,7 @@ On the **Body** tab, untick **Hide First Verse Number** (shown in the **Regular*
 3. For your own formatting, choose **\w ...\w\* char style** and click the **\w** link to edit that
    style on the **Styles** tab.
 
-## 7.6 Common problems
+## 9.6 Common problems
 
 **The parallel references disappeared.**
 Cause: **Headings** was unticked. This also unticks and greys out **Parallel Passage Refs**.
@@ -191,7 +191,7 @@ Cause: it needs **Margin Notes** turned on (on the **Layout** tab) and **Heading
 Cause: by default PTXprint removes chapter numbers from non-Scripture books. Fix: tick
 **Non-Scripture Books** under **Show Chapter Numbers In**.
 
-## 7.7 Settings reference
+## 9.7 Settings reference
 
 ### Body
 

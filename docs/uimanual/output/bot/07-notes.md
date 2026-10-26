@@ -1,6 +1,6 @@
-# 8. Notes+Refs tab
+# 10. Notes+Refs tab
 
-## 8.1 What this tab is for
+## 10.1 What this tab is for
 
 The **Notes+Refs** tab controls the extra information that sits outside the main Bible text. It has three sub-tabs: **Footnotes**, **Cross-References** and **Study Notes + Questions**. Come here to show or hide notes, change where they appear on the page, change the small marks that point to them, or add thousands of cross-references from a ready-made list.
 
@@ -19,7 +19,7 @@ Some words used in this chapter:
 
 The **Notes+Refs** tab is shown in the **Basic** view and above. Many settings are only shown in the **Regular** or **Full** view. External cross-reference lists and extended study notes are only shown in the **Full** view.
 
-## 8.2 Footnotes
+## 10.2 Footnotes
 
 On the **Footnotes** sub-tab, the top area decides *whether* footnotes are printed and *where* they go.
 
@@ -56,7 +56,7 @@ This area (only in the **Full** view) has small text changes that PTXprint makes
 * the minimum and maximum horizontal space between run-on notes,
 * the vertical space between the footnote block and the cross-reference block.
 
-## 8.3 Cross-References
+## 10.3 Cross-References
 
 The **Cross-References** sub-tab works like the **Footnotes** sub-tab, but it also lets you add cross-references from an external list.
 
@@ -114,7 +114,7 @@ These settings are only available when the placement is **Column Cross-Reference
 
 These settings are for the cross-reference rule. PTXprint uses them only when footnotes or cross-references are at the **End of Book** (see **Footnotes** above).
 
-## 8.4 Study Notes + Questions
+## 10.4 Study Notes + Questions
 
 This sub-tab is for study Bibles and for comprehension testing.
 
@@ -132,7 +132,7 @@ Transcelerator is a Paratext plugin from SIL for making comprehension-checking q
 
 In a study Bible, notes and sidebars can have a category, for example `\cat History\cat*`. **Filter Categories** (only in the **Full** view) shows a list of the categories in the project, with a tick box for extended notes and for sidebars. In this version, PTXprint does not save this list with the configuration, and it does not use it when it makes the PDF.
 
-## 8.5 Generate Strong's Index dialog
+## 10.5 Generate Strong's Index dialog
 
 To open this dialog, go to **Notes+Refs** › **Cross-References** and tick **Use External List of Cross-References**. Choose a **Strong's list** in **External Refs**, and then click **Generate Index...**.
 
@@ -147,7 +147,7 @@ When you click **Create Index**, PTXprint writes the index into the chosen book 
 
 The renderings come from your project's Biblical Terms renderings in Paratext. Fill those in first for a useful index.
 
-## 8.6 Common tasks
+## 10.6 Common tasks
 
 ### Hide all footnotes (or all cross-references)
 
@@ -214,7 +214,7 @@ The renderings come from your project's Biblical Terms renderings in Paratext. F
 5. Check **Create Index in Book** (normally **XXS**). Anything already in that book will be replaced.
 6. Click **Create Index**, then click **Print**.
 
-## 8.7 Common problems
+## 10.7 Common problems
 
 **The footnote or cross-reference settings are greyed out.**
 Most footnote settings need **Include Footnotes**. The caller box and related settings need **Show Callers**. **End of Column** needs **Two Column Layout** on the **Layout** tab. **Side Margin** needs **Margin Notes Col Width (mm)** on the **Layout** tab. The **Source for References** settings need **Use External List of Cross-References**. The **Column Cross-References** settings need the **Column Cross-References** placement.
@@ -249,7 +249,7 @@ PTXprint cannot find Transcelerator data for this project. Use the Transcelerato
 **The study notes do not appear.**
 Tick **Extended Footnotes (\ef)** on the **Study Notes + Questions** sub-tab (only shown in the **Full** view). If it is not ticked, PTXprint removes all `\ef` notes.
 
-## 8.8 Settings reference
+## 10.8 Settings reference
 
 ### Generate Strong's Index... (dialog)
 

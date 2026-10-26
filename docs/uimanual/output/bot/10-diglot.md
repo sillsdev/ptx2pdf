@@ -1,6 +1,6 @@
-# 11. Diglot tab (two or more languages)
+# 13. Diglot tab (two or more languages)
 
-## 11.1 What this tab is for
+## 13.1 What this tab is for
 
 A **diglot** is a publication with two texts side by side on the page. The texts can be two languages, two scripts of the same language, or two translations. A **polyglot** has three or more texts. PTXprint lines the texts up so that the same verses (or paragraphs) start at the same height in each column.
 
@@ -10,7 +10,7 @@ Come to this tab to turn a configuration into a diglot, choose the other project
 
 **Important:** turning a diglot on cannot simply be undone. Before you start, go to the **Basic** tab, **Layout Configuration** area, and use **Save As** to make a new configuration for the diglot, so your normal (single-text) configuration stays as it is.
 
-## 11.2 Diglot (or Polyglot)
+## 13.2 Diglot (or Polyglot)
 
 The **Diglot (or Polyglot)** checkbox is in the frame title. All other settings on the tab are hidden until it is ticked.
 
@@ -23,7 +23,7 @@ When you tick it:
 
 If you later untick the box, PTXprint does not turn the diglot off. Instead it opens the **Save As Monoglot** dialog (see below).
 
-## 11.3 The texts table
+## 13.3 The texts table
 
 The table lists one row for each text. Left-click a cell to change it. Right-click anywhere in the table to open a menu. You can have up to 9 texts (codes L, R, A–G).
 
@@ -51,7 +51,7 @@ The right-click menu has these items:
 
 Next to the table, a small picture shows how the texts will sit on the page, using the widths and colours from the table.
 
-## 11.4 Layout
+## 13.4 Layout
 
 The **Layout** text box describes where each text goes. PTXprint fills it in for you from the **1|2** column, so most people never need to type in it.
 
@@ -61,7 +61,7 @@ The **Layout** text box describes where each text goes. PTXprint fills it in for
 
 Every code in the table must appear in the layout, and L and R must always be there. If the layout has a problem, the preview shows a red **Layout Error** box with the reason, for example "Missing: A", "L or R missing", "Spaces not allowed" or "Comma required for multi-page spread". The check runs when you leave the box.
 
-## 11.5 Merging mode
+## 13.5 Merging mode
 
 Before printing, PTXprint merges the texts into one file, in "chunks" that should line up across the columns. **Merging mode** chooses how the chunks are made:
 
@@ -72,20 +72,20 @@ Before printing, PTXprint merges the texts into one file, in "chunks" that shoul
 
 For a polyglot (three or more texts), only the three **Scored** options are offered.
 
-## 11.6 Column widths and auto-balance
+## 13.6 Column widths and auto-balance
 
 Two texts rarely take the same amount of space. One language may need 20% more words than the other. If both columns are 50% wide, the shorter text has white space under every chunk. To fix this, give the longer text more width in the **% Width** column (for example 55 and 45), or make its font size or line spacing a little smaller.
 
 The **Auto-calculate optimum widths of diglot columns** button does this for you. It prints the job 10 or more times, trying widths near the current ones, and keeps the widths that give the fewest pages. So select one short book on the main window before you click it. The button only works for a diglot with exactly two texts, and only when the **Print** button is available. When it has finished, the button is released, and you can use it again (for example after you change a font size).
 
-## 11.7 Notes, headers and other options
+## 13.7 Notes, headers and other options
 
 * **Separate Notes in Two Columns** (ticked by default) keeps each text's footnotes under its own column. If you untick it, the footnotes of all texts are put together in one notes area, one after another. This can be useful when only one of the texts has footnotes.
 * **Vertical Rule in Notes Area** draws a line between the separate notes columns. **Join with Rule Above** makes this line meet the line between the text columns, so there is no small gap. The text-column line itself is **Vertical Rule in Gutter** on the **Layout** tab.
 * **Adjust Center Header Based on Column Widths** moves the centre part of the header (and footer) so that it sits above the gutter, when the two columns have different widths.
 * **Use Serial Layout for These Books** lists books that should not be merged. For these books PTXprint prints the whole book in the primary text, then the whole book in the secondary text, one after the other. Use this for front matter, introductions, glossaries and other back matter. The default list is **FRT BAK GLO XXA XXB**.
 
-## 11.8 Changing the settings of a secondary text
+## 13.8 Changing the settings of a secondary text
 
 The look of each secondary text (fonts, font size, line spacing, footnote settings, styles, and so on) comes from its own configuration. To change it:
 
@@ -97,7 +97,7 @@ The look of each secondary text (fonts, font size, line spacing, footnote settin
 
 Some settings always come from the primary configuration, whatever the secondary configuration says. These include the page size, margins, header and footer positions, the footnote rule, where cross-references go, page breaks before chapter 1, book introductions and the outline, parallel passage references and the chapter range. The page border and the centre footer of the secondary text are also turned off. So change these in the primary configuration.
 
-## 11.9 What happens to pictures, notes and headers
+## 13.9 What happens to pictures, notes and headers
 
 **Pictures.** Pictures come from each text's own picture list. If both texts have the same picture file at the same verse, PTXprint prints it once. The primary caption is used, and the secondary caption is added if **Captions** is ticked for that text. If a picture is only in one text, or uses a different file, it is printed in that text's column. Pictures are not shared in the books listed in **Use Serial Layout for These Books**, because those books are printed one text after the other. There, each text keeps its own pictures and captions. On the **Pictures** tab, the picture list shows the secondary caption in the **Sec.Caption** column, and pictures that belong only to a secondary text have the text's code after the book code in the anchor (for example **MATR 5.3**).
 
@@ -107,20 +107,20 @@ Some settings always come from the primary configuration, whatever the secondary
 
 **Front matter.** The **Generate Front Matter** dialog (Peripherals tab) offers a **DIGLOT** template when diglot is on.
 
-## 11.10 Auto Page Fill for diglots and polyglots (experimental)
+## 13.10 Auto Page Fill for diglots and polyglots (experimental)
 
 The **Auto Page Fill** tool in the PDF Preview window (see the chapter on the PDF Preview window) also works for a diglot or polyglot. When **Diglot (or Polyglot)** is ticked, PTXprint uses a special version of the tool. It tries to fill each page, and it also tries to keep the texts side by side at the same height, so that each chunk ends at about the same line in every column. This version is new and experimental. Check the result carefully, and fix the pages it could not fill by hand.
 
 On the **Advanced** tab, **Other** sub-tab, in the **Automatic Page Filler** area, **The cost of imbalance in a polyglot slice** sets how important it is that the columns end at the same height. A higher value makes the tool try harder to keep the columns even. A lower value lets it accept columns of different heights if the paragraphs look better. This setting is only used for diglots and polyglots.
 
-## 11.11 Save As Monoglot
+## 13.11 Save As Monoglot
 
 You cannot just switch a diglot off, because that would lose all the diglot settings. When you untick **Diglot (or Polyglot)**, the **Save As Monoglot** dialog opens instead:
 
 * Click **Cancel** to keep the diglot as it is.
 * Or type a name for a new configuration and click **OK**. PTXprint saves a copy of the current settings under that name, with diglot turned off, and opens it. Your diglot configuration is left unchanged.
 
-## 11.12 Common tasks
+## 13.12 Common tasks
 
 ### Set up a diglot
 
@@ -181,7 +181,7 @@ To change only the font size or line spacing, you do not need to switch: type th
 2. Type a new configuration name (letters, numbers, `-`, `_` and brackets only, no spaces).
 3. Click **OK**. PTXprint opens the new single-text configuration. The diglot configuration is still there if you need it again.
 
-## 11.13 Common problems
+## 13.13 Common problems
 
 **The Print button is greyed out, or the status bar says "No Config found for diglot".**
 The secondary row has no valid project or configuration. In the **R** row (and any other rows), choose a **Project** and then a **Configuration**.
@@ -237,7 +237,7 @@ You have three or more texts. Only the **Scored** modes work for a polyglot.
 **The Diglot tab is missing.**
 The tab is only shown in the **Regular** and **Full** views. Change the view level.
 
-## 11.14 Settings reference
+## 13.14 Settings reference
 
 ### Save As Monoglot... (dialog)
 

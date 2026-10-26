@@ -1,6 +1,6 @@
-# 18. Finishing tab
+# 20. Finishing tab
 
-## 18.1 What this tab is for
+## 20.1 What this tab is for
 
 The **Finishing** tab controls what happens to the PDF *after* the pages are typeset. Come here when you prepare the book for a printer, or want to print it yourself as a folded booklet.
 
@@ -34,7 +34,7 @@ Most settings here do not change the text layout, only the finished PDF file. Cl
 
 If your printer gives you a list of requirements, look for: trim size, bleed, crop marks (yes or no), colour (CMYK, grey, or RGB), and PDF type (PDF/X-1a or PDF/X-4). Set these on the **Layout** tab and on this tab. If you are not sure, ask the printer for a sample "print-ready PDF specification".
 
-## 18.2 PDF Details
+## 20.2 PDF Details
 
 This area sets the type of PDF that PTXprint makes. (Shown in the **Regular** and **Full** views; some settings only in **Full**.)
 
@@ -64,7 +64,7 @@ With **Print-CMYK**, **Print-Gray** or **Print-Spot**, if thumb tabs are on, PTX
 * **Extract Color Inserts** and **Extra XDV Processing** are special tools. (Only in the **Full** view.)
 * **Apply Watermark PDF** puts a PDF (for example "DRAFT") on every page.
 
-## 18.3 Booklet Pagination
+## 20.3 Booklet Pagination
 
 Print several book pages on one larger sheet, arranged so that you can fold the sheets into a booklet (imposition). (Shown in the **Basic**, **Regular** and **Full** views; some settings only in **Full**.)
 
@@ -82,7 +82,7 @@ When **Pages Per Spread** is more than 1-up:
 
 If the pages do not fit on the chosen paper, PTXprint shows a **Paper Size Error**. Choose a larger **Physical Paper Size** or fewer pages per spread.
 
-## 18.4 Compare PDFs
+## 20.4 Compare PDFs
 
 This makes a "diff" PDF that shows what changed between the new PDF and an older one. It is very useful after a late correction, to check that only the expected pages changed.
 
@@ -110,7 +110,7 @@ Options for special cases (only in the **Full** view):
 * The ignored areas are shaded grey in the diff PDF. These two options are not used when **Pages Per Spread** is more than 1-up, or when **Scale to fit** is ticked, because the pages have then moved on the sheet.
 * **Smart Check** – use it after you changed only the margins (for example added a binding gutter, or moved the text block up or down), not the text. Normally every line would then show as different, because it moved. With **Smart Check**, PTXprint first lines up each old page with the new one, and then shows only real changes: changed words, different line breaks, and so on. If the text block changed size, lines break differently, and those changes are still shown. On a page that had to be moved, **Smart Check** is a little less sensitive, so a very small change (such as a comma in place of a full stop) may not be shown.
 
-## 18.5 Common tasks
+## 20.5 Common tasks
 
 ### Make a PDF for a commercial printer who asks for PDF/X-1a in CMYK
 
@@ -171,7 +171,7 @@ Click in the **Physical Paper Size** box and type the width and height, separate
 2. Click **Print** and send the PDF.
 3. The other person loads your settings from that PDF with **Import Settings** (see the chapter on importing settings).
 
-## 18.6 Common problems
+## 20.6 Common problems
 
 **The colours look different in the printed book from on screen.**
 Screens use RGB. Printing presses use CMYK, which cannot show some bright colours. Choose **Print-CMYK** (or the format your printer asks for), click **Print**, and check the result before you send it. Ask the printer for a printed proof if colour is important.
@@ -224,7 +224,7 @@ Choose a watermark PDF with the same page size as your book. If the watermark fi
 **Thumb tabs now appear only on odd pages.**
 Choosing **Print-CMYK**, **Print-Gray** or **Print-Spot** turned on **Only Show on Odd Pages** for thumb tabs. You can change it back on the **Tabs+Borders** tab.
 
-## 18.7 Settings reference
+## 20.7 Settings reference
 
 ### Finishing
 

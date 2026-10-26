@@ -1,6 +1,6 @@
-# 21. Importing settings
+# 23. Importing settings
 
-## 21.1 What this dialog is for
+## 23.1 What this dialog is for
 
 The **Import Settings** dialog copies settings from somewhere else into a configuration. Use it when:
 
@@ -14,7 +14,7 @@ To open it: on the **Basic** tab, in the **Layout Configuration** area, click **
 
 The dialog has three parts: **Source of Settings** (where the settings come from), **Target** (where they go), and a row of **category tabs** (what to bring in).
 
-## 21.2 Source of Settings
+## 23.2 Source of Settings
 
 Choose one of two sources:
 
@@ -23,7 +23,7 @@ Choose one of two sources:
   * A **ZIP archive** is the kind of file made with **Create Archive...** on the **Help** tab.
 * **A Previously Saved Configuration** – choose the **Project** and then the **Configuration** to copy from. Settings are read from the saved files, so if the source is the configuration that is open now, click **Save** first.
 
-## 21.3 Target
+## 23.3 Target
 
 Choose where the settings go:
 
@@ -32,7 +32,7 @@ Choose where the settings go:
 
 **OK** stays greyed out until the choices are complete: a file or source configuration, a target folder or target configuration, and at least one category ticked. It is also greyed out when the source and target are the same configuration, and when the target **Project** name you typed is not one of your projects.
 
-## 21.4 What to import: the category tabs
+## 23.4 What to import: the category tabs
 
 Each tab has a check box in its label: tick it to import that group. Click the tab to see its options.
 
@@ -65,11 +65,11 @@ When **Everything** is ticked, everything is imported, whatever the other boxes 
 
 There is no Undo. If you are not sure, import into a **new** configuration name first, and check the result there.
 
-## 21.5 RESET
+## 23.5 RESET
 
 **RESET** at the bottom of the dialog sets all settings of the **current** configuration back to the PTXprint defaults, at once and without asking. It does not reset the style settings. The dialog stays open, and nothing is saved until you click **Save** or **Print (Make PDF)** (or until an import saves the configuration). Use it when you want the target to have only the imported settings, for example before you import styles.
 
-## 21.6 Common tasks
+## 23.6 Common tasks
 
 ### Get back the settings that were used for a PDF
 
@@ -108,7 +108,7 @@ There is no Undo. If you are not sure, import into a **new** configuration name 
 3. Choose the source, untick **Everything**, and tick **Styles** (and other groups you need).
 4. Click **OK**.
 
-## 21.7 Common problems
+## 23.7 Common problems
 
 ### "Cannot find any settings to import from the selected file"
 
@@ -146,7 +146,7 @@ There is no Undo. If you are not sure, import into a **new** configuration name 
 
 **Cause:** The target is a configuration that does not exist yet (you typed a new name), or an external folder. A new configuration starts from the PTXprint defaults, so everything is imported. **What to do:** To import only some groups, choose an existing configuration as the target.
 
-## 21.8 Settings reference
+## 23.8 Settings reference
 
 ### Import Settings... (dialog)
 

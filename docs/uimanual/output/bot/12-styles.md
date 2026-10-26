@@ -1,6 +1,6 @@
-# 13. Styles tab
+# 15. Styles tab
 
-## 13.1 What this tab is for
+## 15.1 What this tab is for
 
 Your Paratext text uses **markers** to say what each piece of text is. A marker is a short code that starts with a backslash. For example, `\p` starts a normal paragraph, `\s1` is a section heading, `\v` is a verse number, `\f` is a footnote and `\nd` is the name of God ("LORD"). These are called **USFM markers**.
 
@@ -12,7 +12,7 @@ Many other tabs have small blue links with a marker name (for example next to th
 
 Changes show in the PDF only after you click **Print (Make PDF)** again. Style changes are saved with the current configuration.
 
-## 13.2 The marker list
+## 15.2 The marker list
 
 The left side lists all markers, grouped into categories such as **Chapters & Verses**, **Paragraphs**, **Poetry**, **Titles & Headings**, **Footnotes**, **Cross References**, **Character Styling** and **Peripheral Materials** (category names in bold blue). Click the small arrow beside a category to open it. Click a marker to show its settings on the right.
 
@@ -30,7 +30,7 @@ Below the marker name and description are these buttons:
 * **Edit** – change the name, description, type and end marker.
 * **More Info...** – open the USFM documentation page for this marker on the internet. Only shown in the **Full** view, and only when **Disable ALL Internet Use** on the **Advanced** tab is not ticked.
 
-## 13.3 Bold setting names: what has changed
+## 15.3 Bold setting names: what has changed
 
 PTXprint reads several stylesheets in order. Later ones override earlier ones:
 
@@ -44,7 +44,7 @@ A setting name in **bold** (for example **Font Size Factor**) means you changed 
 
 Hover over **Why are some parameters bold?** and **How are Stylesheets applied?** at the bottom of the tab for a short reminder.
 
-## 13.4 Include Contents of Marker
+## 15.4 Include Contents of Marker
 
 Untick it to leave the text of this marker out of the PDF. The marker then has a line through it in the list, and its other settings are greyed out. The text stays in your Paratext project; only the PDF changes.
 
@@ -52,7 +52,7 @@ Some markers, such as `\rem` (remarks) or the identification lines, are not prin
 
 The automatic boxes around headings and titles (`cat:headingsbox|esb`, `cat:titlebox|esb`) and the text border (`textborder`) also use this setting. Normally you turn these on from the **Tabs+Borders** tab, which ticks this box for you.
 
-## 13.5 Character Settings
+## 15.5 Character Settings
 
 This area controls how the letters look.
 
@@ -67,7 +67,7 @@ For `\p`, **Font Size Factor**, **Line Spacing Factor** and **Use Absolute Spaci
 
 For a character marker (one that styles a few words inside a paragraph, like `\nd` or `\wj`), PTXprint opens only **Character Settings**. For paragraph markers it also opens **Paragraph Settings**. Click an area's title to open or close it yourself.
 
-## 13.6 Paragraph Settings
+## 15.6 Paragraph Settings
 
 This area controls the shape of the paragraph.
 
@@ -77,7 +77,7 @@ This area controls the shape of the paragraph.
 * **Space Before Factor**, **Space After Factor** – extra space above and below, as a multiple of the base line spacing. 1.0 is about one empty line, 0.5 about half a line.
 * **Maximum Ragged Space** – for non-justified paragraphs, how much of the line may stay empty at the ragged edge.
 
-## 13.7 Other Settings
+## 15.7 Other Settings
 
 Settings used only by some markers. PTXprint opens the part that fits the selected marker.
 
@@ -85,7 +85,7 @@ Settings used only by some markers. PTXprint opens the part that fits the select
 * **Table Settings** (table cells `\tc`): where text sits from top to bottom when the cells in a row have different heights.
 * **Sidebar Settings** (sidebar categories and the text border): see the next section.
 
-## 13.8 Sidebars
+## 15.8 Sidebars
 
 A **sidebar** is a box of extra text, separate from the Scripture text, for example a study note about a place or a person. In USFM it starts with `\esb`, then a category such as `\cat people\cat*`, and ends with `\esbe`. All sidebars with the same category share one style; for "people" the marker name is `cat:people|esb`. PTXprint also uses sidebar styles itself, for example for the parts of the cover, the automatic boxes around headings and titles, and `cat:box|esb` for simple boxes.
 
@@ -100,7 +100,7 @@ Selecting a sidebar style opens **Sidebar Settings**:
 
 The text inside a sidebar can have its own styles. For example, paragraphs inside "people" sidebars use `cat:people|p`. If such a style exists, change it like any other style; if not, you can add it (see **Common tasks**).
 
-## 13.9 Size and Position Settings (dialog)
+## 15.9 Size and Position Settings (dialog)
 
 Opens from **Size and Position...** in **Sidebar Settings**. (The same dialog is used for maps on the **Pictures** tab.) A small picture shows roughly where the box will go.
 
@@ -116,7 +116,7 @@ Click **OK** to save.
 
 A **cutout** is a notch in the text: the text flows around the box at the side of the column.
 
-## 13.10 Sidebar Image Settings (dialog)
+## 15.10 Sidebar Image Settings (dialog)
 
 Opens from **Foreground Image...** or **Background Image...**; the title shows which.
 
@@ -126,7 +126,7 @@ Opens from **Foreground Image...** or **Background Image...**; the title shows w
 * For a background image, **Background Image Advanced Settings** set transparency, layer order, what happens if it is too big, and which part of the box it fills.
 * To take the image away, click **Remove Image**, then **OK**.
 
-## 13.11 Add/Edit Style (dialog)
+## 15.11 Add/Edit Style (dialog)
 
 Opens from **Add** or **Edit**. It describes a marker: code, name, description, type and end marker. The formatting itself is then set on the **Styles** tab as usual. Creating markers is an advanced task. Most users only need it for special markers their project already uses (for example markers starting with `z`), or for cases such as a sidebar category.
 
@@ -134,7 +134,7 @@ Opens from **Add** or **Edit**. It describes a marker: code, name, description, 
 * **Edit**: the **Marker** box is greyed out (a marker cannot be renamed). For standard USFM markers **Type** is also greyed out.
 * **Name** controls where the marker appears in the list, for example `zpeople - Paragraph - Paragraph about people` goes into **Paragraphs**.
 
-## 13.12 Common tasks
+## 15.12 Common tasks
 
 ### Find the style for some text
 
@@ -191,7 +191,7 @@ Opens from **Add** or **Edit**. It describes a marker: code, name, description, 
 3. Click **Size and Position...** to choose where the box goes, and **Borders...** for a border.
 4. Print again.
 
-## 13.13 Common problems
+## 15.13 Common problems
 
 **My change on the Styles tab has no effect.**
 * You may have changed the wrong marker. Check which marker the text really uses (for example `\s2` instead of `\s1`, or `\q2` instead of `\q1`).
@@ -229,7 +229,7 @@ Only styles you added yourself can be deleted. Use Reset to remove your changes 
 **The More Info... link is missing or greyed out.**
 It is only shown in the **Full** view, and only when internet use is allowed on the **Advanced** tab. Combined or custom markers have no documentation page, so the link is greyed out.
 
-## 13.14 Settings reference
+## 15.14 Settings reference
 
 ### Size and Position Settings (dialog)
 

@@ -54,3 +54,44 @@ def chapterFor(breadcrumbs):
         if first in places:
             return cid
     return None
+
+
+# The manual is read in this order (and the numbering follows it). Each part groups chapters
+# for the contents lists. Chapter ids not listed here are an error (checked by orderedChapters).
+parts = [
+    ("Start here", "New to PTXprint? Read these first.",
+     ["00-introduction", "01-getting-started", "02-main-window"]),
+    ("Find an answer", "Step-by-step tasks, and what to do when something goes wrong.",
+     ["30-howto", "31-troubleshooting"]),
+    ("Reference: tab by tab", "Every setting in the PTXprint window, in the order of the tabs.",
+     ["03-basic", "04-layout", "05-fonts", "06-body", "07-notes", "08-headfoot", "09-pictures", "10-diglot",
+      "11-tabsborders", "12-styles", "13-advanced", "14-viewedit", "15-peripherals", "16-publications",
+      "17-finishing", "18-printers", "19-preview", "20-import", "21-help"]),
+    ("Glossary", "The meaning of the words used in this manual.", ["32-glossary"]),
+]
+
+# Other names that people use for a chapter (used to turn mentions into links in the HTML edition)
+chapterAliases = {
+    "pdf preview": "19-preview", "pdf preview window": "19-preview",
+    "import settings": "20-import", "importing settings": "20-import",
+    "main window": "02-main-window", "getting started": "01-getting-started",
+    "glossary": "32-glossary", "how do i": "30-howto", "problems and solutions": "31-troubleshooting",
+}
+
+
+def partOf(cid):
+    for i, (title, descr, cids) in enumerate(parts):
+        if cid in cids:
+            return i
+    raise KeyError(cid)
+
+
+def orderedChapters():
+    """The chapters in reading order: [(cid, title, places), ...]"""
+    byid = {c[0]: c for c in chapters}
+    order = [cid for _, _, cids in parts for cid in cids]
+    missing = set(byid) - set(order)
+    extra = set(order) - set(byid)
+    if missing or extra:
+        raise ValueError(f"parts and chapters disagree: missing {sorted(missing)}, unknown {sorted(extra)}")
+    return [byid[cid] for cid in order]

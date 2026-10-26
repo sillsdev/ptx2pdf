@@ -1,6 +1,6 @@
-# 9. Header+Footer tab
+# 11. Header+Footer tab
 
-## 9.1 What this tab is for
+## 11.1 What this tab is for
 
 The **Header+Footer** tab decides what is printed in the running header (the line at the top of
 each page) and the footer (the line at the bottom). Come here to:
@@ -15,7 +15,7 @@ The **position** of the header and footer, the rule (line) under the header, and
 are set on the **Layout** tab. The font and size of the header text are set by the `\h` style on the
 **Styles** tab (click the **\h** link on this tab).
 
-## 9.2 Header
+## 11.2 Header
 
 The header has three places: **Inner (Left)**, **Center** and **Outer (Right)**. Each has a
 drop-down list: choose a ready-made item or type your own text.
@@ -90,7 +90,7 @@ Rules:
   gives "This is page #1".
 * Put square brackets around a code to print brackets: `[\pagenumber]` gives "[12]".
 
-## 9.3 Other
+## 11.3 Other
 
 This area is only shown in the **Regular** and **Full** views.
 
@@ -100,7 +100,7 @@ This area is only shown in the **Regular** and **Full** views.
   choose what goes in the footer of the first page of each book. Only one can be ticked; ticking one
   unticks the other.
 
-## 9.4 Footer
+## 11.4 Footer
 
 The footer has one place: **Center Footer**. Many Bibles leave it empty and put the page number in
 the header. It is useful for a page number at the bottom of every page, or a "DRAFT" message with
@@ -119,7 +119,7 @@ In a diglot, the **Pri** and **Sec** buttons choose which text's font the footer
 To move the footer up or down, use the **Layout** tab, **Margins** area (**Bottom of Text to Top of
 Footer** and **Place Footer Text Above the Bottom Margin**).
 
-## 9.5 Common tasks
+## 11.5 Common tasks
 
 ### How do I put the page number in the outer corner and the references in the center?
 
@@ -167,7 +167,7 @@ Footer** and **Place Footer Text Above the Bottom Margin**).
    secondary text.
 4. Decide on **Mirror Pages** on the **Layout** tab. With it ticked, the primary text is next to the spine.
 
-## 9.6 Common problems
+## 11.6 Common problems
 
 **There is no header on the first page of a book.**
 This is normal: PTXprint prints no header (or rule) on the page where a book starts. Tick **Print
@@ -203,7 +203,7 @@ The number is applied when the first Scripture book starts, if the pages before 
 front matter numbering (as PTXprint sets up by default). If the front matter has normal page
 numbers, the numbering simply continues from the front matter.
 
-## 9.7 Settings reference
+## 11.7 Settings reference
 
 ### Header+Footer
 

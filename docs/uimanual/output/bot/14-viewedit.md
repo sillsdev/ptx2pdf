@@ -1,6 +1,6 @@
-# 15. View+Edit tab
+# 17. View+Edit tab
 
-## 15.1 What this tab is for
+## 17.1 What this tab is for
 
 The **View+Edit** tab shows the files that PTXprint uses and creates. You can edit two of
 them here: the **front matter** (the pages before the Scripture text, such as the title page
@@ -16,7 +16,7 @@ Come here to:
 The tab is only shown in the **Regular** and **Full** views. In the **Basic** view PTXprint
 still uses the front matter and Adj List that you made before.
 
-## 15.2 The sub-tabs: which files you may edit
+## 17.2 The sub-tabs: which files you may edit
 
 Each small tab (sub-tab) along the top shows one file.
 
@@ -39,7 +39,7 @@ to use PTXprint.
 Very long log files are cut short on the screen. Click **View/Edit...** to see the whole file
 in your computer's text editor.
 
-## 15.3 The buttons at the top of the tab
+## 17.3 The buttons at the top of the tab
 
 The buttons change with the open sub-tab. Buttons that do not apply are greyed out.
 
@@ -69,7 +69,7 @@ To throw away your changes, click **Refresh** (or press F5) before you click els
 If the configuration is locked (see the **Basic** tab), you cannot generate or save front
 matter, and **Autosave** is turned off.
 
-## 15.4 The Generate button
+## 17.4 The Generate button
 
 **Generate** does a different job on each sub-tab:
 
@@ -81,7 +81,7 @@ matter, and **Autosave** is turned off.
 
 On the other sub-tabs **Generate** is greyed out.
 
-## 15.5 The Generate Front Matter dialog
+## 17.5 The Generate Front Matter dialog
 
 Click **Generate** on the **Front Matter** sub-tab and choose one of four starting points:
 
@@ -99,7 +99,7 @@ lost. If you have worked on your front matter, click **Cancel**.
 After **OK**, PTXprint also finds any new variables (`\zvar|...\*` codes) in the new front
 matter and adds them to the variables table on the **Peripherals** tab.
 
-## 15.6 The front matter and its special codes (advanced)
+## 17.6 The front matter and its special codes (advanced)
 
 The front matter uses USFM markers, as in Paratext (for example `\mt1` for a main title and
 `\pc` for a centred paragraph). PTXprint also understands extra codes that start with `\z`,
@@ -179,7 +179,7 @@ snippet buttons for the type of file that is open.
 * Ctrl+minus / Ctrl+equals – make the text in the editor smaller or larger.
 * Alt+X – show the Unicode values of the selected characters in the status bar.
 
-## 15.7 The Adj List (adjustment list)
+## 17.7 The Adj List (adjustment list)
 
 Sometimes a page ends badly: for example, one line of a paragraph is alone at the top of the
 next page, or the two columns do not end at the same height. You can often fix this by asking
@@ -214,7 +214,7 @@ choose to shrink or expand it. PTXprint writes those changes into this same Adj 
 **Do paragraph adjustments last.** Any change to fonts, margins, pictures or other layout
 settings moves the text, and your adjustments may then be wrong.
 
-## 15.8 Common tasks
+## 17.8 Common tasks
 
 ### Create front matter for the first time
 
@@ -269,7 +269,7 @@ settings moves the text, and your adjustments may then be wrong.
 2. Scroll to the end. Error messages usually start with `!`.
 3. If the log is cut short, click **View Only...** to open the whole file.
 
-## 15.9 Common problems
+## 17.9 Common problems
 
 **My changes to the front matter disappeared.**
 You probably clicked **Generate** and then **OK**, which replaces the whole front matter. Or you
@@ -305,7 +305,7 @@ list of books to print. Choose a book that you are printing, or add the book on 
 The layout has changed since you made them (for example a new font size or new pictures).
 Check the adjustments again, or generate a new Adj List.
 
-## 15.10 Settings reference
+## 17.10 Settings reference
 
 ### Generate Front Matter (dialog)
 
