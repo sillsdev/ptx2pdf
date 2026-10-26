@@ -24,7 +24,7 @@ from ptxprint.version import VersionStr, GitVersionStr, ConfigVersion
 from ptxprint.report import Report
 import ptxprint.pdfrw.errors
 from configparser import NoSectionError, NoOptionError, _UNSET
-import pathlib
+import pathlib, posixpath
 import tempfile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO, BytesIO
@@ -2493,7 +2493,7 @@ class ViewModel:
             try:
                 with open(script, encoding="utf-8") as inf:
                     scripttext = inf.read()
-            except OSError:
+            except (OSError, UnicodeDecodeError):   # e.g. an .exe
                 scripttext = ""
             sdir = os.path.dirname(str(script))
             for m in re.finditer(r"^\s*(?:from\s+(\w+)|import\s+([\w \t,]+))", scripttext, flags=re.M):
@@ -2832,6 +2832,57 @@ set stack_size=32768""".format(self.cfgid)
         finally:
             view.loadingConfig = wasLoading
 
+    def _importScriptFiles(self, view, fzip, prefix, fname):
+        ''' Copies the process script, and the modules it imports from beside it, out of an archive (or
+            settings folder) into the target config folder. The archive's selectscript is a ${prjdir}/...
+            path that means nothing here, so find it by name: first in the config folder, then at the
+            project root (where an archive keeps it), then anywhere. Returns the new path or None. '''
+        if not fname:
+            return None
+        base = os.path.basename(fname.replace("\\", "/"))
+        names = {n.replace("\\", "/"): n for n in fzip.namelist()}
+        projroot = posixpath.normpath(posixpath.join(prefix, "../../.."))
+        projroot = "" if projroot == "." or not prefix else projroot + "/"
+        def find(name, dirs):
+            for d in dirs:
+                if d + name in names:
+                    return names[d + name]
+            return None
+        archname = find(base, [prefix, projroot])
+        if archname is None:
+            archname = next((n for k, n in names.items() if posixpath.basename(k) == base), None)
+        if archname is None:
+            logger.warning(f"Missing script {fname} in imported archive")
+            return None
+        archdir = posixpath.dirname(archname.replace("\\", "/"))
+        if archdir:
+            archdir += "/"
+        cfgdir = view.project.srcPath(view.cfgid)
+        copied = {}
+        def copyin(aname, fname):
+            with fzip.open(aname) as inf:
+                dat = inf.read()
+            with open(os.path.join(cfgdir, fname), "wb") as outf:
+                outf.write(dat)
+            copied[fname] = dat
+        copyin(archname, base)
+        if os.name != "nt":     # runConversion runs anything but a python script as a command
+            os.chmod(os.path.join(cfgdir, base), os.stat(os.path.join(cfgdir, base)).st_mode | 0o111)
+        # the modules a python script imports from beside it (the archive keeps them next to the script)
+        firstline = copied[base].decode("utf-8", errors="replace").lstrip("﻿").split("\n", 1)[0]
+        ispython = base.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python3?", firstline)
+        todo = [base] if ispython else []
+        while todo:
+            scripttext = copied[todo.pop()].decode("utf-8", errors="replace")
+            for m in re.finditer(r"^\s*(?:from\s+(\w+)|import\s+([\w \t,]+))", scripttext, flags=re.M):
+                for mod in (m.group(1) or m.group(2)).split(","):
+                    mod = mod.strip() + ".py"
+                    sibling = names.get(archdir + mod)
+                    if mod != ".py" and mod not in copied and sibling is not None:
+                        copyin(sibling, mod)
+                        todo.append(mod)
+        return os.path.join(cfgdir, base)
+
     def _importConfigInto(self, view, fzip, prefix):
         # assemble list of categories to import from ptxprint.cfg
         impAll = self.get("c_impEverything", False)
@@ -2957,17 +3008,11 @@ set stack_size=32768""".format(self.cfgid)
         if impAll or (hasOther and self.get("c_oth_customScript")):
             if config.getboolean("project", "processscript", fallback=False):
                 fname = config.get("project", "selectscript", fallback=None)
-                try:
-                    zipscript = zipopentext(fzip, fname, prefix=prefix)
-                except (KeyError, FileNotFoundError):
-                    logger.warn(f"Missing script {fname} in imported archive")
-                    zipscript = None
-                if zipscript is not None:
-                    localscript = os.path.join(view.project.srcPath(view.cfgid), os.path.basename(fname))
-                    with open(localscript, "w", encoding="utf-8") as outf:
-                        dat = zipscript.read()
-                        outf.write(dat)
+                localscript = self._importScriptFiles(view, fzip, prefix, fname)
+                if localscript is not None:
                     view.set(ModelMap["project/processscript"].widget, True)
+                    # loadConfig set customScript from the archive's ${prjdir}/..., which is not here
+                    view.customScript = Path(localscript)
                     view.set(ModelMap["project/selectscript"].widget, localscript)
                     # when2processscript comes in with the 'customscript' category via loadConfig
 
