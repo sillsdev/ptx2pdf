@@ -324,7 +324,7 @@
 }
 \def\p@lystate{pre:\p@lypr@fix, pg:\the\p@lyp@geno, gr:\the\p@lygr@upno, r:\the\p@lyr@wno}%
 \def\@@cplx@p@rsebgroup{%SHARED with parse, check, fwd  and rev
-  \message{> \p@lystate}
+  \trace{dmc}{> \p@lystate}
   \bgroup
     \trace{dmcl}{starting group (at depth \the\p@lygr@updp): \the\p@lygr@upno}%
     \advance\p@lygr@updp by 1
@@ -356,7 +356,7 @@
       \let\d@=\complexfwd@polyrows
       \x@\cstackdown\tmp,\E
     \fi
-    \message{< \p@lystate}%
+    \trace{dmc}{< \p@lystate}%
   \egroup
   \advance\p@lygr@upno by 1
 }  
@@ -370,7 +370,7 @@
     \x@\let\x@\tmp\csname \grp@nam\endcsname
     \let\d@=\complexr@vpolyrows
     \x@\cstackdown\tmp,\E
-    \message{< \p@lystate}%
+    \trace{dmc}{< \p@lystate}%
   \egroup
   \advance\p@lygr@upno by -1
 }  
@@ -379,7 +379,7 @@
     \ifnum\p@lygr@updp<1 \errmessage{Cannot close an unopened group}\fi 
     \@cplx@chk@dependency
   \egroup
-  \message{< \p@lystate}%
+  \trace{dmc}{< \p@lystate}%
   \advance\p@lygr@upno by 1
 }
 \def\@cplx@chk@p@rseegroup{%
@@ -876,7 +876,7 @@
   \global\p@lylastp@ge=\p@lyp@geno% This serves as an endstop. 
   \xdef\p@lyp@ges{\the\p@lyp@geno}% Another (historic) endstop.
   \@cplx@vrfygrpzero
-  \message{Parsed:\r@wstrings (top level:\r@wstringstop)}%
+  \trace{dmc}{Parsed:\r@wstrings (top level:\r@wstringstop)}%
   % Now turn column contents into unique columns and generate height calcs.
   \let\d@=\complexfwd@polyrows
   %\tracingmacros=1
@@ -939,7 +939,7 @@
   \fi
   \ifnum \count255 >\MaxComplexLines 
     \def\MaxComplexLines{\the\count255}%
-    \message{#1 has \the\numexpr #2\relax lines. That's more than the code expected. Ideally, alter \MaxComplexLines.}%
+    \trace{dmc}{#1 has \the\numexpr #2\relax lines. That's more than the code expected. Ideally, alter \MaxComplexLines.}%
     % FIXME if this is the only place they're used, we should deallocate/move the old blocks. Otherwise ensure they're only local definitions.
     % Current bodge is to just force reallocation, which will probably work, with code only getting called from within an output group.
     % A re-write to not allocate the same number of lines per chunk would be one option. *Also*, never allocating for more lines than can fit on the page(s).
@@ -1875,12 +1875,12 @@
       %\edef\cplx@path{\cplx@path,\this@p@lyr@wstring:\the\this@c@cut}%
       %\let\col@do\try@cut %Cut all the columns
       %\x@\x@\x@\each@col\csname p@lyp@gecols\this@p@lyr@wstring\endcsname\E
-      \message{<\this@p@lyr@wstring}%
+      \trace{dmc}{<\this@p@lyr@wstring}%
       % First, remember the pre-entry conditions
       \o@cplx@trycost=\cplx@trycost
       \o@p@gehtloss=\p@gehtloss
       \@cplx@trycosts % and see if we go deeper in
-      \message{>}%
+      \trace{dmc}{>}%
     \fi
   \egroup
 }
@@ -1898,7 +1898,7 @@
   \let\v@list\empty
   \let\col@do\cplx@minmaxv
   \x@\each@col\digl@tc@ntentlist\E
-  \message{@\cplx@path}%
+  \trace{dmc}{@\cplx@path}%
   \ifnum\cplx@minv=9999 
     \xdef\cplx@verses{noV}%
   \else
