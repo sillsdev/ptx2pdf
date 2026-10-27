@@ -1,6 +1,6 @@
 # PTXprint User Interface Manual (AI support edition)
 
-Generated 2026-10-26 from the PTXprint source code and the explanations in docs/uimanual/content.
+Generated 2026-10-27 from the PTXprint source code and the explanations in docs/uimanual/content.
 
 ## Notes for the AI support assistant
 

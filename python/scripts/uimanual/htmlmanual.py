@@ -407,7 +407,8 @@ def decorate(ch, linker, chapters, parts, taskIndex):
 
 def sidebar(chapters, parts):
     out = ['<div class="sb-search"><input id="q" type="search" placeholder="Search the manual   ( / )" '
-           'autocomplete="off" aria-label="Search the manual"></div><div id="results" hidden></div>',
+           'autocomplete="off" aria-label="Search the manual"></div>',
+           '<div id="sbscroll"><div id="results" hidden></div>',
            '<div id="toc">']
     lastPart = None
     for ch in chapters:
@@ -424,7 +425,7 @@ def sidebar(chapters, parts):
         out.append(f'<details class="chap" data-ch="{ch.id}"><summary><a href="#{ch.id}">'
                    f'<span class="n">{ch.num}.</span> {esc(ch.title)}</a></summary>'
                    f'<ul>{"".join(items)}</ul></details>')
-    out.append("</div>")
+    out.append("</div></div>")
     return "\n".join(out)
 
 
@@ -467,10 +468,11 @@ a{color:var(--accent)}[id]{scroll-margin-top:4.2rem}
 .topbar .tt{font-weight:600}#crumb{color:var(--muted);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
 #navtoggle{display:none;font:inherit;padding:.3rem .7rem;border:1px solid var(--line);background:var(--accent2);color:var(--fg);border-radius:6px;cursor:pointer}
 .layout{display:flex;align-items:flex-start}
-#sidebar{position:sticky;top:3.1rem;flex:0 0 22rem;max-height:calc(100vh - 3.1rem);overflow:auto;background:var(--side);border-right:1px solid var(--line);padding:.6rem .5rem 3rem;font-size:.92rem}
+#sidebar{position:sticky;top:3.1rem;flex:0 0 22rem;height:calc(100vh - 3.1rem);display:flex;flex-direction:column;overflow:hidden;background:var(--side);border-right:1px solid var(--line);font-size:.92rem}
+.sb-search{flex:none;padding:.6rem .5rem;border-bottom:1px solid var(--line);background:var(--side)}#sbscroll{flex:1;min-height:0;overflow:auto;padding:.4rem .5rem 3rem}
 main{flex:1;min-width:0;max-width:60rem;padding:1rem 2rem 6rem}
 .sb-search input{width:100%;font:inherit;padding:.45rem .6rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
-#results{margin:.4rem 0 .8rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);max-height:60vh;overflow:auto}
+#results{margin:.1rem 0 .8rem;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
 #results a{display:block;padding:.35rem .6rem;text-decoration:none;color:var(--fg);border-bottom:1px solid var(--line)}
 #results a:hover,#results a.sel{background:var(--accent2)}#results small{display:block;color:var(--muted)}
 #results .rh{padding:.25rem .6rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--tip)}
@@ -503,14 +505,14 @@ p.facts{margin:.1rem 0 .4rem;color:var(--muted);font-size:.88rem}
 code{background:var(--code);padding:.05rem .3rem;border-radius:4px;font-size:.9em}pre{background:var(--code);padding:.7rem;border-radius:6px;overflow:auto}
 table{border-collapse:collapse;margin:.6rem 0;display:block;overflow-x:auto}td,th{border:1px solid var(--line);padding:.35rem .6rem;vertical-align:top}th{background:var(--accent2);text-align:left}
 #totop{position:fixed;right:1.2rem;bottom:1.2rem;padding:.5rem .8rem;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s}#totop.on{opacity:.92;pointer-events:auto}
-@media (max-width:900px){#navtoggle{display:inline-block}#sidebar{position:fixed;z-index:30;top:3.1rem;bottom:0;left:0;width:min(88vw,22rem);max-height:none;transform:translateX(-102%);transition:transform .2s;box-shadow:2px 0 12px rgba(0,0,0,.25)}body.navopen #sidebar{transform:none}main{padding:.5rem 1rem 6rem}.topbar .tt{display:none}}
+@media (max-width:900px){#navtoggle{display:inline-block}#sidebar{position:fixed;z-index:30;top:3.1rem;bottom:0;left:0;height:auto;width:min(88vw,22rem);transform:translateX(-102%);transition:transform .2s;box-shadow:2px 0 12px rgba(0,0,0,.25)}body.navopen #sidebar{transform:none}main{padding:.5rem 1rem 6rem}.topbar .tt{display:none}}
 @media print{.topbar,#sidebar,.secnav,#totop,.mini-toc,a.pl{display:none!important}main{max-width:none;padding:0}h1{page-break-before:always}a{color:inherit;text-decoration:none}}
 """
 
 JS = r"""
 (function(){
 var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
-var side=$('#sidebar'),q=$('#q'),res=$('#results'),crumb=$('#crumb'),totop=$('#totop');
+var side=$('#sidebar'),sc=$('#sbscroll'),q=$('#q'),res=$('#results'),crumb=$('#crumb'),totop=$('#totop');
 $('#navtoggle').addEventListener('click',function(){document.body.classList.toggle('navopen')});
 side.addEventListener('click',function(e){if(e.target.closest('a')&&window.matchMedia('(max-width:900px)').matches)document.body.classList.remove('navopen')});
 /* ---- follow the reader: highlight the current place in the contents ---- */
@@ -531,8 +533,8 @@ function update(){
  active=a;if(!a)return;a.classList.add('active');
  var d=a.closest('details');
  if(d&&d!==activeCh){if(activeCh)activeCh.open=false;d.open=true;activeCh=d}
- var r=a.getBoundingClientRect(),s=side.getBoundingClientRect();
- if(r.top<s.top+60||r.bottom>s.bottom-20)side.scrollTop+=r.top-s.top-side.clientHeight/3;
+ var r=a.getBoundingClientRect(),s=sc.getBoundingClientRect();
+ if(r.top<s.top+40||r.bottom>s.bottom-20)sc.scrollTop+=r.top-s.top-sc.clientHeight/3;
 }
 window.addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(update)}},{passive:true});
 window.addEventListener('resize',function(){measure();update()});
