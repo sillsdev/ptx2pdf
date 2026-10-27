@@ -207,8 +207,10 @@ appropriately. i.e. a book bound for LTR readers (e.g. English-speaking
 audience) might have
 `\polyglotpages{LLA/R}`, with L2->Z
 The forward and back display sequence is then: LZA/R and ALZ/R respectively.
+
 For RTL readers,
 the forward and back display sequence will be: ZLA/R and AZL/R respectively. Thus reversal must happen at the row level.
+
 
 ## Footnotes and repeated columns
 It is worth considering what to do with footnotes. If the repeated
@@ -340,6 +342,7 @@ It is also clear that the `{page}-{row}` cut heights must set hard limits on any
 
 * Generating the code for (efficient) decisions about  subrow heights  is probably going to be a pain.
 
+
 ##  Multi-row layouts
 Consider the layout  `L/R/AB/ee`, with the contents of `e` coming from `A`. If `0-0ht + 0-1ht` remains constant, then the height of `0-0` has no direct effect on the content of `A` or `e`; it would be entirely wasteful to re-calculate `A` for every change to `0-0ht`.
 
@@ -350,11 +353,10 @@ This is of course a deviation from the initial approach of the processing order 
 
 1. On configuration:
     1. Read the layout list and distinguish between the 4 column types.
-    2. Determine the mirrored layout:
-        1. groups and subgroups get replaced by a token e.g. `:` which indicates '(sub)group here'.
-        2. In RtoL order, invert the individual row sequences.
-    3. Generate pseudo-columns for the follow-on columns.
-    4. Build a processing-order list of  and follow-on columns, and (demoted) secondary columns.
+    2. writing an intermediate layout in 'meta' notation as the rows are divided.  Groups and subgroups get replaced by a token e.g. `:` which indicates '(sub)group here'.  I.e. `x(L/xx)(R/A)`  gives `0-0` a content of `x::`, with  `r@wstrings-0-0-0`, the first group's rows being (`0-0-0-0` and `0-0-0-1`)  and the contents of those then being `L` and `xx` respectively, similarly for `r@wstrings-0-0-1`. 
+    2. Generate pseudo-columns for the follow-on columns. (Assigning virtual IDs must occur recursively (on reaching each `:`), so that L->R or R->L sequencing is correct.)
+    3. Determine the mirrored layout (see below).
+    4. Build a processing-order list of normal and follow-on columns, and (demoted) secondary columns.
     5. Build processing steps for the different columns, and basic row-height calcs.
     
 2. On reading and measuring the input:
@@ -362,7 +364,37 @@ This is of course a deviation from the initial approach of the processing order 
     2 Develop row-height definitions.
     2. Pull together exact functions, etc. to apply scores, etc.
 
+### Reversing rows-of-columns-of-rows-of-columns
+Reversing the page requires:
 
+* During initial parsing, the count of groups on each row must be preserved.
+* Assigning reverse IDs must:
+    * Reverse each individual row, and recursively process it (assigning pseudo-columns)
+    * Get the row-content from the correct group.
+ (if `groupcount` is the number of groups in row `0-0`, then the first group encountered in the reversed list must draw from `r@wstrings0-0-(groupcount)`, not `0-0-0`, and the second must draw from `r@wstrings0-0-(groupcount-1)`, and so on).
+   * Subgroups behave similarly.
+ 
+ The mapping of `r@wstrings0-0-N` to subrows is not affected.
+ 
+Thus, the forward mapping `x(L/xx)(R/ABB)` will give:
+
+* `0-0` -> `x::` => `x::`
+    * `0-0-0` -> 
+         * `0-0-0-0` -> `L` => `L`
+         *  `0-0-0-1` -> `xx` => `ZY`
+    * `0-0-1` -> 
+        * `0-0-1-0`  -> `R` => `R`
+        * `0-0-1-1` -> `ABB` => `ABX`
+        
+And, in reversed order:
+* `rev0-0` -> `::x` => `::Y`
+   * `0-0-1` -> 
+        * `rev0-0-1-0`  -> `R` => `R`
+        * `rev0-0-1-1` -> `BBA` => `BXA`
+    * `0-0-0` -> 
+         * `rev0-0-0-0` -> `L` => `L`
+         *  `rev0-0-0-1` -> `xx` => `xZ`
+   
 -----
 
 

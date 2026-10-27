@@ -5,7 +5,7 @@
 \input paratext2.tex
 \tracing{dmc}
 \tracing{dmcr}
-\tracing{dmcl}
+%\tracing{dmcl}
 %\tracing{s}
 %\tracing{o}
 \def\DiglotLFraction{0.2}
@@ -18,10 +18,12 @@
 %\tracing{De}
 \newPolyglotCol{A}
 \newPolyglotCol{B}
+\newPolyglotCol{C}
+\iftrue
 \polyglotpages{LLR/ALR}
-% Result shows forward/reverse as mirrored pair.
+%% Result shows forward/reverse as mirrored pair.
 \checkpolypages{LZR/AYX}{RLZ/XYA}
-%\tracingassigns=1 \tracingmacros=1
+%%\tracingassigns=1 \tracingmacros=1
 \polyglotpages{LR,AB}
 \checkpolypages{LR,AB}{BA,RL}
 \polyglotpages{LL/A,RR/B}
@@ -32,9 +34,12 @@
 \BookOpenLeftfalse
 \polyglotpages{LL(A/R)}
 \checkpolypages{LZ(A/R)}{(A/R)LZ}
-\MSG{----}
+%\MSG{----}
 \polyglotpages{L(L/R)}
 \checkpolypages{L(Z/R)}{(L/R)Z}
+\BookOpenLefttrue
+\polyglotpages{LRAB}
+\checkpolypages{LRAB}{BARL}
 \BookOpenLefttrue
 \polyglotpages{LL(A/RR)}
 \checkpolypages{ZL(A/YR)}{(A/YR)ZL}
@@ -43,14 +48,22 @@
 \checkpolypages{x(L/ZY)X}{x(L/ZY)X}
 \polyglotpages{x(L/xx)}
 \checkpolypages{x(L/ZY)}{(L/xZ)Y}
+\fi
+\message{Multiple cols of rows}
+\polyglotpages{(L/R)(A/R)}
+\checkpolypages{(L/R)(A/Z)}{(A/R)(L/Z)}
+\iftrue
+\message{RTL layouts}
 \BookOpenLefttrue
 \polyglotpages{x(L/xx)x}
 \checkpolypages{X(L/YZ)x}{X(L/YZ)x}
-\bye
 \polyglotpages{x(L/xx)}
 \checkpolypages{Y(L/Zx)}{(L/YZ)x}
-\polyglotpages{(L/R)(A/R)}
-\checkpolypages{(L/R)(A/Z)}{(A/R)(L/Z)}
+\fi
+\BookOpenLeftfalse
+\message{Subgroups}
+\polyglotpages{(L/R(AA/xx))x}
+\checkpolypages{(L/R(AZ/xY))X}{x(L/(AZ/YX)R)}
 
 %\tracing{a}
 \showboxbreadth=100
