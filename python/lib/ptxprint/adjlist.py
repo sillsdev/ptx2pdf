@@ -152,6 +152,7 @@ class AdjList:
         allvals = []
         dbvals = []
         self.liststore.clear()
+        self.db = []
         with open(fname, "r", encoding="utf-8") as inf:
             for i,l in enumerate(inf.readlines()):
                 val, dbval = self.parseline(l, lineno=i+1)
@@ -161,12 +162,12 @@ class AdjList:
         for a in sorted(range(len(allvals)), key=lambda x:self.calckey(allvals[x])):
             self.liststore.append(allvals[a])
             self.db.append(dbvals[a])
-        self.ftime = os.lstat(fname).st_ctime
+        self.ftime = os.stat(fname).st_mtime
 
     def genline(self, i):
         r = self.liststore[i]
         d = self.db[i]
-        if r[3] == 0 and r[5] == self.centre and not len(d):
+        if r[3] in (0, "0") and r[5] == self.centre and not len(d) and not (r[7] or "").strip():   # nothing to adjust
             return None
         cv = r[1].replace(":", ".").replace(" ", "")
         if r[2] > 1:
@@ -204,7 +205,7 @@ class AdjList:
                 if line is not None:
                     count += 1
                     outf.write(line + "\n")
-        self.ftime = os.lstat(fname).st_ctime
+        self.ftime = os.stat(fname).st_mtime
 
     def cleanup(self):
         lastk = [None] * 3
@@ -260,6 +261,25 @@ class AdjList:
             pass  # File does not exist, no action needed
         except PermissionError:
             self.model.statusMsg(_(f"Warning! File: {fname} is locked. Could not be deleted."))
+
+    def reloadIfChanged(self):
+        """ Re-reads the file if it was changed (or deleted) outside PTXprint since it was last read or written,
+            so that a hand edit is not overwritten by the next save. Unsaved changes made in PTXprint win. """
+        if self.adjfile is None or self.changed:
+            return False
+        exists = os.path.exists(self.adjfile)
+        if self.ftime is None:
+            if not exists or len(self.liststore):
+                return False
+        elif exists and os.stat(self.adjfile).st_mtime == self.ftime:
+            return False
+        logger.debug(f"{self.adjfile} changed on disk: reloading")
+        if exists:
+            self.readAdjlist(self.adjfile)
+        else:
+            self.clear()
+            self.ftime = None
+        return True
 
     def save(self):
         if self.adjfile is None:

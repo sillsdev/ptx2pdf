@@ -1884,11 +1884,7 @@ class ViewModel:
     def get_adjlist(self, bk, save=True, gtk=None):
         if bk in self.adjlists:
             adj = self.adjlists[bk]
-        #    if adj.adjfile is not None and os.path.exists(adj.adjfile):
-        #        adjt = os.lstat(adj.adjfile).st_ctime
-        #        if adjt <= adj.ftime:
-        #            return adj
-        #    else:
+            adj.reloadIfChanged()       # pick up hand edits to the file, in place (the viewer holds this object)
             return adj
         fname = self.getAdjListFilename(bk)
         if fname is None:

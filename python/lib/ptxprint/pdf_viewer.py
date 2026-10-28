@@ -2387,20 +2387,24 @@ class PDFContentViewer(PDFFileViewer):
         self.disableLayoutOnly()
         if self.adjlist is None:
             return
+        def adjKey(p):
+            # A paragraph with no number is paragraph 1, as when an adjustment is added (see getinfo)
+            return (p.ref, getattr(p, 'parnum', 0) or 1)
+
         refs2del = []
         if scope == 'para':
-            refs2del.append((parref.ref, getattr(parref, 'parnum', '')))
+            refs2del.append(adjKey(parref))
         elif scope == 'col':
             for p, r in self.parlocs.getParasByColumnOrParref(parref=parref):
-                refs2del.append((p.ref, getattr(p, 'parnum', '')))
+                refs2del.append(adjKey(p))
         elif scope in ('page', 'doc'):
             for p, r in self.parlocs.getParas(pgindx, inclafter = scope=='doc'):
                 if scope != "doc" or (p.book() == parref.book() and p.ref >= parref.ref):
-                    refs2del.append((p.ref, getattr(p, 'parnum', '')))
+                    refs2del.append(adjKey(p))
         elif scope == 'sprd':
             for pg in self.get_spread(pgindx):
                 for p, r in self.parlocs.getParas(pg):
-                    refs2del.append((p.ref, getattr(p, 'parnum', '')))
+                    refs2del.append(adjKey(p))
         
         # Remove duplicates while preserving order
         refs2del = list(dict.fromkeys(refs2del)) 
@@ -2413,8 +2417,9 @@ class PDFContentViewer(PDFFileViewer):
             row_ref = (row[0] + str(row[1]), int(row[2]))
             if row_ref in refs2del:
                 row[3] = "0"    # stretch
-                row[5] = 100    # expand
-            
+                row[5] = self.adjlist.centre    # expand: the font's own width (100 unless the font is extended)
+                self.adjlist.changed = True
+
         self.show_pdf()
         self.hitPrint()
 
