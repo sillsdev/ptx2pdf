@@ -98,9 +98,24 @@ jobs:
         retention-days: 7
 
   build-macos:
-    runs-on: macos-latest
     environment: ${{ startsWith(github.ref_name, 'refs/tags/v') && 'release' || 'prerelease' }}
+    runs-on: macos-latest
     steps:
+    - name: Set up Homebrew
+      id: set-up-homebrew
+      uses: Homebrew/actions/setup-homebrew@23156a3d9674d7f52f74f1a58979ec4d77847166 # 2026.08.04
+    
+    - name: Setup ptxprint prerequisites
+      run: >-
+        brew install
+          adwaita-icon-theme
+          gtksourceview3
+          poppler
+          py3cairo
+          pygobject3
+          fonttools
+          numpy
+
     - name: Checkout repository
       uses: actions/checkout@v7
 
