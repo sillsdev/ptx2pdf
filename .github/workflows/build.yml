@@ -108,13 +108,13 @@ jobs:
     - name: Setup ptxprint prerequisites
       run: >-
         brew install
-          adwaita-icon-theme
-          gtksourceview3
-          poppler
-          py3cairo
-          pygobject3
-          fonttools
-          numpy
+        adwaita-icon-theme
+        gtksourceview3
+        poppler
+        py3cairo
+        pygobject3
+        fonttools
+        numpy
 
     - name: Checkout repository
       uses: actions/checkout@v7
