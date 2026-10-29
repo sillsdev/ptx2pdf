@@ -126,6 +126,10 @@ jobs:
     - name: Build installer
       env:
         SKIP_CODESIGN: 0 
+        NOTARIZATION_CODESIGN_IDENTITY: ${{ vars.SIL_APPLE_CODESIGN_IDENTITY }}
+        NOTARIZATION_USERNAME:  ${{ secrets.SIL_APPLE_NOTARIZATION_USERNAME }}
+        NOTARIZATION_PASSWORD: ${{ secrets.SIL_APPLE_NOTARIZATION_PASSWORD }}
+        NOTARIZATION_TEAM: 3YE4W86L3G
         # ${{ vars.SKIP_CODESIGN }}
       run: ./mac-build.sh
 
