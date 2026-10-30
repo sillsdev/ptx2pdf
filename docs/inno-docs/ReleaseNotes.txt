@@ -1,7 +1,53 @@
-PTXprint 3.1.4 Release Notes
-21 Oct 2026
+PTXprint 3.1.5 Release Notes
+31 Oct 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.5 - (31 Oct 2026)
+
+  * Compare PDFs
+    - PDFs with and without crop marks can now be compared (#994)
+    - New options (Full view): ignore headers/footers or margin notes
+      and thumb tabs, and a start page offset
+    - New "Smart Check": a text block that has only moved (e.g. after
+      changing the margins or adding a gutter) is not flagged
+    - Clearer status messages; a missing "compare with" PDF falls back
+      to the previous PDF (_1)
+    - Works even when no previous PDFs are being kept (#1207)
+
+  * Automatic Page Filler (experimental)
+    - Polyglots: pictures that don't fit are held over to the next page
+    - Overfull polyglot slices are flagged instead of crashing
+    - Better balance between filling a slice and over-stretching
+
+  * UI and usability
+    - Custom page sizes are remembered; right-click one to remove it (#1180)
+    - Copying a configuration to other projects keeps each project's own
+      variables (#1193); the Default configuration can't be copied
+    - Saving a configuration can now replace an existing one
+    - The Publications tab is shown only in Full view (#1247)
+    - Tooltips explain why the Margin Notes options may be disabled
+    - New "Run Tutorial..." steps through a recorded set of actions
+    - Localization: all languages updated
+
+  * Bug fixes
+    - Import Settings now brings in the custom script from an archive (#917)
+    - Reset Adjustments in the preview now resets as expected
+    - Hand-edited AdjList files are no longer overwritten
+    - Adding a style based on another now copies all its settings (#789)
+    - Picture Media settings are remembered (#997)
+    - The first picture credit is no longer lost (#1049)
+    - Bridged-verse cross-reference labels include the end verse (#1239)
+    - A Strong's number no longer breaks from the word after it (#1238)
+    - Create Archive includes more of the files a project needs
+    - Seek-arrow page navigation fixed (#1028)
+    - Fixed about 50 crashes found by a new automated test suite
+
+  * Build
+    - Windows build moved from MINGW64 to UCRT64
+    - macOS: code signing and notarization; Homebrew packages updated
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.1.4 - (21 Oct 2026)
