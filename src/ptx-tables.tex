@@ -457,15 +457,14 @@
     %\ifx\the@lign\empty \let\the@lign\cell@l\fi
     \trace{t}{Pre(\c@tprefix \tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \edef\l@drsl{}\edef\l@drsr{}%
+    \parfillskip=0pt
     \ifx\the@lign\cell@r
-      \parfillskip=0pt
       \edef\l@drsl{r}%
       \ifRTL \let\n@xt=\rightskip \else
         \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
       \fi
     \else\ifx\the@lign\cell@c
-      %\parfillskip=0pt
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
       \edef\l@drsr{r}%
