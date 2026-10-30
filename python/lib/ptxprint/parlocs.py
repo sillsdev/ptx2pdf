@@ -252,6 +252,7 @@ class Paragraphs(list):
         self.rect_cache = (None, None)
         self.colcount = {}
         self.polycols = []      # (pnum, glot, ColInfo) for each polyglot column start (page slice)
+        self.lostdata = []      # (ref, glot, where, pnum) for each place TeX lost text
         if fname is None:
             return
         currp = None
@@ -510,6 +511,9 @@ class Paragraphs(list):
                         if p[1] == "heightlimit":
                             currpic.limit = True
                 
+            elif c == "lostdata":       # ref, polycode (may be empty), where
+                logger.warning(f"TeX lost text near {p[0]} ({p[2]}) on page {pnum}")
+                self.lostdata.append((p[0], p[1], p[2], pnum))
             # "parnote":        # type, caller, ref, index, callerx, callery
             # "notebox":        # type, width, height
             # "noteid":         # noteid, type, c=caller n=note, pageno, startx, starty
@@ -520,6 +524,8 @@ class Paragraphs(list):
         for k, v in colcount.items():   # include the last page
             if v > self.colcount.get(k, 0):
                 self.colcount[k] = v
+        if len(self.lostdata):
+            self.drop_lost()
         #self.sort(key=lambda x:x.sortKey())    # keep in document order given some odd paragraphs that change index halfway
         if gui and keepgoing:
             dlg.response(Gtk.ResponseType.OK)
@@ -527,6 +533,30 @@ class Paragraphs(list):
         logger.log(7, f"{self.pindex=}  parlocs=" + "\n".join([str(p) for p in self]))
         logger.debug(f"{self.pnums=}, {self.pnumorder=}")
         return True
+
+    def drop_lost(self):
+        """ Remove each paragraph whose ref is that of some lost text: its layout can't be
+            trusted. A polyglot ref (MATR1.0) matches only its glot; a bare one (MAT1.1) matches
+            every glot. """
+        lost = set()
+        for (ref, glot, where, pnum) in self.lostdata:
+            m = re.match(r"^(\w{3})([A-Z]?)(\d.*)$", ref)
+            if m is None:
+                lost.add((ref, None))
+            else:
+                lost.add((m.group(1)+m.group(3), m.group(2) or glot or None))
+        def islost(p):
+            if not isinstance(p, ParInfo):
+                return False
+            m = re.match(r"^(\w{3})([A-Z]?)(\d.*)$", p.ref)
+            base = p.ref if m is None else m.group(1)+m.group(3)
+            return (base, None) in lost or (m is not None and (base, m.group(2)) in lost)
+        drop = [islost(p) for p in self]
+        kept = [0]      # kept[i] = how many paragraphs before index i are kept
+        for d in drop:
+            kept.append(kept[-1] + (not d))
+        self.pindex = [kept[i] for i in self.pindex]
+        self[:] = [p for p, d in zip(self, drop) if not d]
 
     def numPages(self):
         return len(self.pindex)

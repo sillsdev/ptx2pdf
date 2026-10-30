@@ -629,6 +629,16 @@
 \fi}
 
 \newif\ifhaveb@ckedup
+\newif\iftri@lfits
+\def\tri@lsplits#1{% Does anything split from the top of \@whl to fit #1? An empty trial never ends: its end penalty is discarded at the top of the page
+  \begingroup
+    \vfuzz=\maxdimen
+    \setbox0\copy\@whl \setbox1\vsplit0 to #1\setbox1\vbox{\unvbox1}%
+    \ifdim\ht1<1sp \ifdim\dp1<1sp
+      \trace{D}{Nothing positive wants to split from top of whole\c@rrdstat: no trial}%
+      \global\tri@lfitsfalse
+    \fi\fi
+  \endgroup}
 \def\run@a@trial{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
   \traceNum{d}{run@a@trial \show@dstat, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty \iflate@stage@reflow LSR\fi}%
@@ -648,7 +658,9 @@
   \let\after@run@a@trial=\relax
   \s@tbaseline{p}{p}%
   \trace{D}{baseline: \the\baselineskip, av:\the\availht, av\c@rrdstat:\the\csname availht\c@rrdstat\endcsname}%
-  \ifdim\availht>\baselineskip
+  \tri@lfitsfalse
+  \ifdim\availht>\baselineskip \tri@lfitstrue \tri@lsplits{\iflate@stage@reflow\availht\else\csname availht\c@rrdstat\endcsname\fi}\fi
+  \iftri@lfits
     \trace{D}{Preparing for trial}%
     \global\trialheight=\csname availht\c@rrdstat\endcsname %Non-notes version
     \global\let\whichtrial=\after@a@trial
@@ -1282,6 +1294,14 @@
   \ifversion{10}{\dglt@s@tvsize}{\global\vsize=\csname availht\c@rrdstat\endcsname}%
   \whichtrial
 }
+\def\l@stdataflag#1{% mark the parlocs: the layout near here cannot be trusted
+  \immediate\write\p@rlocs{\string\@lostdata{\c@rref}{\c@rrdstat}{#1}}}
+\def\l@stdata#1{% text in \box255 that cannot be placed: show it in the log, flag it in the parlocs and drop it (\box255 empties it for good)
+  \message{!!! LOST DATA (#1) near \c@rref: its text follows in the log, as an overfull box}%
+  \begingroup \showboxdepth=\maxdimen \showboxbreadth=\maxdimen \vfuzz=\z@ \tracingonline=\z@
+    \setbox0\vbox to \z@{\box255}%
+  \endgroup
+  \l@stdataflag{#1}}
 \newcount\unprint@ble
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
@@ -1289,6 +1309,7 @@
   \ifintrial
     %\Showlists
     \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}% (expected penalty \the\endtri@lpen@lty)}%
+    \l@stdataflag{trial}%
     %\endgraf\vfill\penalty\endtri@lpen@lty % Doesn't help 
     \relax
     %\setbox0\vbox{\pagediscards}%
@@ -3138,9 +3159,7 @@
   %\ifintrial\Showlists\fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount\Showbox{255}\fi
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
-  \ifx\destb@x\relax
-    \errmessage{! ERROR! Improper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
-  \fi
+  \ifx\destb@x\relax \x@\diglotC@llectL@st \fi
   \ifnum\outputpenalty=-10000 %User-pagebreak
     \x@\global\csname partial\c@rrdstat penalty\endcsname=\outputpenalty% Borrow partialXpenalty
   \fi
@@ -3180,6 +3199,13 @@
     \tmpcount=0
   \fi\fi
   \global\x@\csname partial\c@rrdstat penalty\endcsname=\tmpcount
+  \diglotC@llectEnd
+}
+\def\diglotC@llectL@st#1\diglotC@llectEnd{%
+  \message{! ERROR! Improper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
+  \l@stdata{collect}%
+  \diglotC@llectEnd}
+\def\diglotC@llectEnd{%
   \ifnum\outputpenalty=\dgl@tPenColSwap\relax %Got to the end of the \lefttext
     \trace{D}{Reached end of diglotCollect. \ifallNeedEmptying Running trials soon\fi\ifintrial IN trial??\fi}%
     \global\@@collectedtrue
