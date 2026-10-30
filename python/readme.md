@@ -56,7 +56,8 @@ cd ptx2pdf
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip setuptools wheel build
-pip install .[gui]
+pip install ".[gui]"
 ```
+
 
 Configuration files (like the default path to the translation project files) are stored in `~/.config/ptxprint/`
