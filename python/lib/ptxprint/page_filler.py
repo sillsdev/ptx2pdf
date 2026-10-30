@@ -740,7 +740,8 @@ class TypesetterSolver:
             if delta > 0:
                 pos_high = min(pos_high, exp)
                 pos_delta_achieved = max(pos_delta_achieved, delta)
-            else:
+            elif strch >= 1 or (p_probes.get((exp, 1)) is not None and p_probes[exp, 1] <= 0):
+                # no gain here only rules out exp once looseness +1 has been tried there too
                 pos_low = max(pos_low, exp)
 
         pos_span = pos_high - pos_low
@@ -753,7 +754,7 @@ class TypesetterSolver:
             if delta < 0:
                 neg_low = max(neg_low, exp)
                 neg_delta_achieved = min(neg_delta_achieved, delta)
-            else:
+            elif strch <= -1 or (p_probes.get((exp, -1)) is not None and p_probes[exp, -1] >= 0):
                 neg_high = min(neg_high, exp)
 
         neg_span = neg_high - neg_low
