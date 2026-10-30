@@ -71,6 +71,10 @@ class ViewPrinter:
         else:
             self.view.set("ecb_booklist", str(books))
             self.view.set("r_book", "multiple")
+        for bk in self.view.getBooks():
+            adj = self.view.get_adjlist(bk, save=False)
+            if adj is not None:
+                adj.createTriggerlist()
 
         runjob = RunJob(
             self.view,
