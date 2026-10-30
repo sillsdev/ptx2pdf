@@ -51,7 +51,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | Issue | Title | Notes | Senior |
 |---|---|---|---|
 | [#764](https://github.com/sillsdev/ptx2pdf/issues/764) | Possibly unexpected behaviour from ranged milestones with paragraph styles | May end as a docs fix or a design decision. | 🔺 |
-| [#917](https://github.com/sillsdev/ptx2pdf/issues/917) | Import Settings from ZIP archive - with custom .py script | Path remapping and script copy. | |
+| ~~[#917](https://github.com/sillsdev/ptx2pdf/issues/917)~~ | ~~Import Settings from ZIP archive - with custom .py script~~ | ~~Path remapping and script copy.~~ **DONE** 2026-10-26 (`54ec806e6`, not yet pushed): reproduced first. The archive's `selectscript` is `${prjdir}/name`, which the importer looked up literally inside the config folder, so nothing was copied and the saved path pointed at a missing file. The script (any type: .py, .bat, .sh, .exe) is now found by name, copied with the modules a python script imports into the config folder, and `selectscript` is repointed there. Regression test: `test/test_import_script.py`. | |
 | [#992](https://github.com/sillsdev/ptx2pdf/issues/992) | Copyright overlay should be recorded per piclist-entry | Data-model change; `picInfo.txt` becomes defaults only. | |
 | ~~[#994](https://github.com/sillsdev/ptx2pdf/issues/994)~~ | ~~Make it possible to compare PDFs where some have cropmarks~~ | ~~Also needs a page-offset option.~~ **DONE** 2026-10-23: the diff compares each page's TrimBox, so PDFs with and without crop marks line up; a start page offset (positive skips old pages, negative skips new ones); ignore headers/footers and margin notes/tabs (the ignored areas are shaded in the Diff PDF); and Smart Check, which lines up a moved text block (changed margins or gutter) before comparing. Also fixed while testing: rendering noise made identical documents differ, pages present in only one PDF were ignored, failures were reported as "no differences", and stale or junk comparison file names in old configs are reset to the previous PDF (_1). New row in the Compare frame (Finishing tab), `--diffignore`, `--diffoffset`, `--diffsmart`; tests in `test/test_pdfdiff.py` and `test/test_diffpdfcheck.py`. | |
 | [#998](https://github.com/sillsdev/ptx2pdf/issues/998) | Covers and diglots (work-around) | Side-less periphs for covers. | |
@@ -144,7 +144,7 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | Issue | Title | Size | Senior |
 |---|---|---|---|
 | ~~[#789](https://github.com/sillsdev/ptx2pdf/issues/789)~~ | ~~Copying setting from an old style (Borders)~~ | ~~S~~ **DONE** | |
-| [#917](https://github.com/sillsdev/ptx2pdf/issues/917) | Import settings from ZIP with custom .py script | M | |
+| ~~[#917](https://github.com/sillsdev/ptx2pdf/issues/917)~~ | ~~Import settings from ZIP with custom .py script~~ | ~~M~~ **DONE** | |
 | [#991](https://github.com/sillsdev/ptx2pdf/issues/991) | Problem removing footnote from module | S | |
 | [#992](https://github.com/sillsdev/ptx2pdf/issues/992) | Copyright overlay per piclist entry | M | |
 | ~~[#994](https://github.com/sillsdev/ptx2pdf/issues/994)~~ | ~~Compare PDFs with cropmarks / page offset~~ | ~~M~~ **DONE** | |
