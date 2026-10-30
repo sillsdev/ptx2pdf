@@ -2166,6 +2166,16 @@ class ViewModel:
                 allfonts.add(f.filename)
         return allfonts
 
+    def getallmappings(self):
+        """ Returns the TECkit mappings (as given in mapping=) that our fonts and styles ask for """
+        fontrefs = [self.get(v[0]) for v in TexModel._fonts.values() if v[1] is None or self.get(v[1])]
+        for k, v in self.styleEditor.sheet.items():
+            font_info = v.get('font', self.styleEditor.basesheet.get(k, {}).get('font', None))
+            if font_info is None and 'fontname' in v:
+                font_info = FontRef.fromTeXStyle(v)
+            fontrefs.append(font_info)
+        return set(f.feats['mapping'] for f in fontrefs if f is not None and f.feats.get('mapping', None))
+
     def _getProject(self, prjwname):
         impgui = self.get(prjwname, sub=1)
         if impgui is None or not len(impgui):
@@ -2249,7 +2259,7 @@ class ViewModel:
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
                   'c_usePrintDraftChanges': "PrintDraftChanges.txt",
-                  'c_strongsShowInText': ["TermRenderings.xml", "WordAnalysis.xml"],
+                  'c_strongsShowInText': ["TermRenderings.xml", "WordAnalyses.xml"],
                   None: "picChecks.txt"}
         res = {}
         cfgchanges = {}
@@ -2264,6 +2274,7 @@ class ViewModel:
         baseprjid = baseprj.prjid
         basecfpath = baseprjid + "/shared/ptxprint/" + self.cfgid
         interlang = self.get("t_interlinearLang") if self.get("c_interlinear") else None
+        txldir = os.path.join("pluginData", "Transcelerator", "Transcelerator")
 
         def bname(s, prefix=''):
             res = os.path.basename(s)
@@ -2296,6 +2307,14 @@ class ViewModel:
                 intpath = "Interlinear_{}".format(interlang)
                 intfile = "{}_{}.xml".format(intpath, bk)
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(baseprjid, intpath, intfile)
+            if self.get("c_txlQuestionsInclude"):
+                txlfile = os.path.join(txldir, "Translated Checking Questions for {}.xml".format(bk))
+                res[os.path.join(fpath, txlfile)] = baseprjid + "/" + txlfile.replace("\\", "/")
+        # glossary footnotes are taken from the GLO book, even if it isn't printed
+        if self.get("c_glossaryFootnotes"):
+            fname = self.getBookSrcPath("GLO", baseprjid, project=baseprj)
+            if fname is not None:
+                res[fname] = bname(fname, baseprjid)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
         if self.picinfos is not None:
             self.setupPicinfos()
@@ -2304,8 +2323,9 @@ class ViewModel:
             cfgchanges["btn_selectFigureFolder"] = (Path("figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
         pathkey = 'srcpath'
+        picbooks = set(books + ["FRT", "COV", "MOD"])  # as RunJob gathers pictures
         if self.picinfos is not None:
-            for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in books):
+            for f in (p[pathkey] for p in self.picinfos.get_pics() if pathkey in p and p['anchor'][:3] in picbooks):
                     res[f] = bname(f, prjid+"/local/figures")
         xrfile = self.customXRfile
         if xrfile is not None and os.path.isfile(str(xrfile)):
@@ -2347,12 +2367,15 @@ class ViewModel:
         # even those of a diglot's other project.
         fontprjid = fontprjid or prjid
         allfonts.update(self.getallfonts())
+        mappings = self.getallmappings()
         # Stylesheets other than ours (custom.sty, ptxprint-mods.sty) can ask for fonts too.
         for sty in self.getStyleSheets()[:-1]:
             if saferelpath(sty, self.scriptsdir).startswith(".."):
                 for k, v in self.styleEditor._read_styfile(sty).items():
                     if v.get('font', None) is None:
                         continue
+                    if v['font'].feats.get('mapping', None):
+                        mappings.add(v['font'].feats['mapping'])
                     f = v['font'].getTtfont()
                     if f is None or f.filename is None:
                         logger.warning(f"Can't find font {v.get('fontname')} for {k} in {sty} to archive")
@@ -2370,6 +2393,16 @@ class ViewModel:
                     if f == ".uuid":
                         continue
                     res[os.path.join(mdir, f)] = fontprjid + "/shared/fonts/mappings/" + f
+
+        # mappings the fonts ask for, as XeTeX finds them: relative to shared/fonts, or ours
+        sfonts = os.path.join(self.project.path, "shared", "fonts")
+        for m in mappings:
+            m = m.replace("\\", "/")
+            mfile = m if m.lower().endswith(".tec") else m + ".tec"
+            if os.path.isfile(os.path.join(sfonts, mfile)):
+                res[os.path.join(sfonts, mfile)] = fontprjid + "/shared/fonts/" + mfile
+            elif os.path.isabs(m) or not os.path.isfile(os.path.join(self.scriptsdir, mfile)):
+                logger.warning(f"Can't find font mapping {m} to archive")
 
         # Files that TeX and the changes reader find from references in other files. Those inside
         # the project keep their place. Those outside it are moved into the config's external/
@@ -2480,6 +2513,10 @@ class ViewModel:
 
         if interlang is not None:
             res[os.path.join(fpath, 'Lexicon.xml')] = baseprjid + '/Lexicon.xml' 
+
+        # cross references from the project's Strong's renderings
+        if self.get("fcb_xRefExtListSource") == "strongs_proj":
+            res[os.path.join(fpath, 'TermRenderings.xml')] = baseprjid + '/TermRenderings.xml'
 
         script = self.customScript
         if script and os.path.isfile(str(script)):     # only a real script, not a folder or a stale name
@@ -2622,9 +2659,9 @@ class ViewModel:
                     v._archiveForTest = for_test
                     v._archiveAdd(self.zf, self.getBooks(files=True) + ['INT'], parent=v.project, parentcfg=self.cfgid,
                                   fontprjid=self.project.prjid)
-                ipf = os.path.join(working_dir, f"diglot{k}.sty")
+                ipf = os.path.join(working_dir, f"diglot_{k}.sty")
                 if os.path.exists(ipf):
-                    self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, f"diglot.sty{k}"), for_test=True)
+                    self._writearchive(self.zf, ipf, os.path.join(self.project.prjid, saferelpath(ipf, self.project.path)), for_test=True)
         for f in set(self.tempFiles + ([] if runjob is None else runjob.picfiles) + temps):
             pf = os.path.join(working_dir, f)
             if os.path.exists(pf):
@@ -2638,6 +2675,16 @@ class ViewModel:
                 for f in fs:
                     if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
                         self._writearchive(self.zf, os.path.join(dp, f), self.project.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f), for_test=True)
+            # and the ornaments the job used, as TeX logged inputting them
+            for t in self.tempFiles:
+                logf = os.path.join(working_dir, t[:-4] + ".log") if t.endswith(".tex") else None
+                if logf is None or not os.path.exists(logf):
+                    continue
+                with open(logf, encoding="utf-8", errors="replace") as inf:
+                    for m in re.finditer(r'\(("?)([^()"\n]+?\.pgf)\1', inf.read()):
+                        fpath = os.path.join(working_dir, m.group(2))
+                        if os.path.isfile(fpath):
+                            self._writearchive(self.zf, fpath, self.project.prjid+"/src/contrib/ornaments/"+os.path.basename(fpath), for_test=True)
         self._archiveSupportAdd(self.zf, [x for x in self.tempFiles if x.endswith(".tex")])
 
         test_userconfig = copy.deepcopy(self.userconfig)
@@ -2720,7 +2767,8 @@ class ViewModel:
         for t in texfiles:
             if t.endswith("_FRT.SFM"):
                 continue
-            scriptlines.append("hyph_size=32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../../../fonts.conf TEXINPUTS=../../../src:. xetex {}".format(os.path.basename(t)))
+            scriptlines.append("hyph_size=32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../../../fonts.conf TEXINPUTS=../../../src//:. "
+                               "MISCFONTS=../../../shared/fonts:../../../src: xetex {}".format(os.path.basename(t)))
         zinfo = ZipInfo("{}/runtex.sh".format(self.project.prjid))
         zinfo.external_attr = 0o755 << 16
         zinfo.create_system = 3
