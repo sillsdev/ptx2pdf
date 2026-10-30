@@ -48,7 +48,7 @@ class XdvSpaceMeasure(XDViPositionedReader):
             if r == self.currect:
                 if self.v - self.liney > p.baseline * 0.7:
                     r.parwhite += (max(0, r.xend - self.textend) + max(0, self.h - r.xstart)) / fsize
-                    if self.trackp:
+                    if self.trackp and hasattr(p, "pid"):     # p may be a figure
                         logging.log(15, f"{p.pid()}: {r.xend}-{self.textend} = {r.parwhite=}")
                 elif self.h > self.textend:
                     r.white += (self.h - self.textend) / fsize
@@ -58,7 +58,7 @@ class XdvSpaceMeasure(XDViPositionedReader):
             self.textend = self.h
         else:
             res = self._skip_xglyphs(opcode, parm, data)
-        if p is not None and self.trackp:
+        if p is not None and self.trackp and hasattr(p, "pid"):     # p may be a figure
             logging.log(15, f"{p.pid()}: ({self.h}, {self.v}) from ({otextend}, {self.liney}) {r=} lines={r.lines if r is not None else 0}, width={self.h-bstart} -> {res}")
         elif self.trackp:
             logging.log(15, f"Unknown para at {self.h}, {self.v} from {self.liney}")
