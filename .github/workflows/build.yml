@@ -22,7 +22,6 @@ jobs:
         cache: true
         pacboy: >-
           adwaita-icon-theme:p
-          gcc:p
           glade:p
           glib2:p
           gtk3:p
@@ -34,7 +33,6 @@ jobs:
           python-cairo:p
           python-fonttools:p
           python-gobject:p
-          python-lxml:p
           python-numpy:p
           python-pillow:p
           python-pip:p
@@ -117,12 +115,13 @@ jobs:
       run: >-
         brew install
         adwaita-icon-theme
-        gtksourceview3
-        poppler
-        py3cairo
-        pygobject3
         fonttools
+        gtksourceview3
+        libffi
         numpy
+        pillow
+        poppler
+        pygobject3
 
     - name: Checkout repository
       uses: actions/checkout@v7
