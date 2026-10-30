@@ -85,7 +85,15 @@
 \newtoks\st@rtptxhooks
 \newtoks\@ndptxhooks
 \let\s@ve@nd=\end
-\def\end{\ifsk@pping\egroup\fi\par\vfill\supereject\ifvoid\partial\else\box\partial\eject\fi \the\@ndhooks \s@ve@nd}
+\def\end{\ifsk@pping\egroup\fi\par\vfill\supereject\ifvoid\partial\else\box\partial\eject\fi
+  \fl@shheldinserts \the\@ndhooks \s@ve@nd}
+% Inserts held over from the last page (e.g. a picture) are back on the page once output finishes, so
+% \pagegoal is set. Ship them before the end hooks close files (picpages) that their pages write to.
+\newcount\fl@shcount
+\def\fl@shheldinserts{\fl@shcount=0
+  \loop\ifdim\ifnum\fl@shcount<10 \pagegoal\else\maxdimen\fi<\maxdimen
+    \advance\fl@shcount by 1 \hbox{}\kern-\topskip\nobreak\vfill\supereject
+  \repeat}
 
 %: `\addtoinithooks` is for stuff we do during one-time-setup before the first PTX file
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}

@@ -53,13 +53,31 @@
 %toprightins, bottomleftins etc. are now aliases
 \edef\ins@rts{\columnins@rts\pageins@rts}
 
-\def\s@veclasses{col,chunk,nxtpg,} % diglot needs to save three distinct states per box.
+\def\s@veclasses{col,chunk,nxtpg,colnx,chunknx,ovr,} % diglot saves several distinct states per box.
+% colnx and chunknx hold the next-page store (nxtpg) as it was when col or chunk was saved, so that restoring
+% col or chunk (a rejected trial or chunk, which runs again from its galley) also drops pictures it held over.
+% ovr is scratch for \coll@ct@overrun.
 \def\s@veins@class@name#1#2{save#1#2}
 \def\s@veclass@name#1{\s@veins@class@name{#1}{\s@veclass}}
-\def\m@kes@veb@x#1\E{\x@\newb@x\csname \s@veins@class@name{\ins@base}{#1}\endcsname}
+% Save boxes are numerous (inserts x save classes, x pages for polyglots), so they are numbered above
+% plain's 255-box limit (XeTeX has 32768).
+\newcount\s@veb@xc@unt \s@veb@xc@unt=1000
+\def\m@kes@veb@x#1\E{\global\advance\s@veb@xc@unt by 1
+  \x@\global\x@\mathchardef\csname \s@veins@class@name{\ins@base}{#1}\endcsname=\s@veb@xc@unt}
 \def\s@veins#1\E{\trace{gI}{s@veins #1 \l@gdims{\csname #1\endcsname}}\x@\global\x@\setbox\csname \s@veclass@name{#1}\x@\endcsname\x@\@@action\csname #1\endcsname}
 \def\r@strins#1\E{\x@\setbox\x@3\x@\@@action\csname \s@veclass@name{#1}\endcsname\ifvoid3\else\trace{gI}{Restoring #1 \l@gdims{3}}\fi\x@\global\x@\setbox\csname #1\endcsname\box3}
 \def\sh@winsertdim#1\E{\x@\let\x@\tmp\csname \v@lpfx#1\v@lsfx\endcsname\ifx\tmp\relax\else\ifvoid\tmp\else\immediate\write-1{\v@lpfx#1\v@lsfx: \the\ht\tmp+\the\dp\tmp\space x \the\wd\tmp}\fi\fi}
+
+\def\nx@c@pyins#1\E{\x@\global\x@\setbox\csname save#1\nx@to\endcsname\x@\copy\csname save#1\nx@from\endcsname}
+\def\nx@c@py#1#2{\edef\nx@from{#1}\edef\nx@to{#2}\let\nx@D=\d@\let\d@=\nx@c@pyins\x@\cstackdown\ins@rts\E\let\d@=\nx@D}
+\def\nx@saves@col{}\def\nx@saves@chunk{}% save classes that carry the next-page store with them
+\def\@ppendins#1\E{\x@\ifvoid\csname #1\endcsname\else
+  \trace{gI}{Appending #1 \l@gdims{\csname #1\endcsname} to \s@veclass@name{#1}}%
+  \x@\global\x@\setbox\csname \s@veclass@name{#1}\endcsname\vbox{%
+    \x@\ifvoid\csname \s@veclass@name{#1}\endcsname\else\x@\unvbox\csname \s@veclass@name{#1}\endcsname\fi
+    \x@\unvbox\csname #1\endcsname}%
+  \x@\global\x@\setbox\csname #1\endcsname\box\voidb@x
+\fi}
 
 \def\m@keinsertsaveboxes#1\E{\edef\ins@base{#1}\let\D@=\d@\let\d@=\m@kes@veb@x
   \x@\cstackdown\s@veclasses\E
@@ -72,7 +90,51 @@
   \let\@@action\copy
   \let\d@=\s@veins
   \x@\cstackdown\ins@rts\E
+  \ifcsname nx@saves@#1\endcsname\nx@c@py{nxtpg}{#1nx}\fi
 }
+
+\def\@ppendinserts#1{%loop through \ins@rts, adding them to the end of save class #1 (destructively)
+  \trace{gI}{Appending inserts to (#1)}%
+  \edef\s@veclass{#1}%
+  \let\d@=\@ppendins
+  \x@\cstackdown\ins@rts\E
+}
+% Put whatever is waiting in save class #1 back on the main vertical list as inserts, so that TeX places it
+% on this page or holds it over to the next (diglot: the next-page store at the end of a book).
+\def\fl@shins#1\E{\x@\ifvoid\csname \s@veclass@name{#1}\endcsname\else
+  \trace{gI}{Flushing \s@veclass@name{#1} \l@gdims{\csname \s@veclass@name{#1}\endcsname} as insert}%
+  \x@\insert\csname #1\endcsname{\x@\copy\csname \s@veclass@name{#1}\endcsname}%
+  \x@\global\x@\setbox\csname \s@veclass@name{#1}\endcsname\box\voidb@x
+\fi}
+\def\fl@shinserts#1{%
+  \edef\s@veclass{#1}%
+  \let\d@=\fl@shins
+  \x@\cstackdown\ins@rts\E
+}
+\newif\ifh@ldinserts
+\def\ch@ckh@ld#1\E{\x@\ifvoid\csname \s@veclass@name{#1}\endcsname\else\global\h@ldinsertstrue\fi}
+\def\ch@ckheldinserts#1{% sets \ifh@ldinserts if anything is waiting in save class #1
+  \global\h@ldinsertsfalse
+  \edef\s@veclass{#1}%
+  \let\d@=\ch@ckh@ld
+  \x@\cstackdown\ins@rts\E
+}
+% At the end of a book, pictures held over from its last diglot page (the next-page store). They cannot
+% join that page (no room) nor the next book's first trials (diglot collects with \vsize=\maxdimen, so it
+% takes them all and leaves no room for text). So the book's last page goes out as it is, then the pictures:
+% on pages of their own, or, if books share pages, waiting in the insert boxes for the page the next book starts on.
+\def\fl@shheldp@ges{%
+  \ch@ckheldinserts{nxtpg}%
+  \ifh@ldinserts
+    \trace{o}{Book end: writing the last page, then the pictures held over from it}%
+    \ifdim\dimexpr \ht\partial+\dp\partial\relax>\z@ {\everypar={}\ZWSP\baselineskip=\z@\noindent}\eject\fi
+    \ifnum\ifendbooknoeject 0\else\ifx\PageAlign\val@MULTI 1\else 0\fi\fi=1
+      \r@storeinsertsNS{nxtpg}\s@veinserts{chunk}\s@veinserts{col}% as at a diglot page turn
+    \else
+      \fl@shinserts{nxtpg}%
+      \ifendbooknoeject\else\fl@shheldinserts\fi
+    \fi
+  \fi}
 
 \def\st@shinserts#1{%loop through \ins@rts and save them
   \trace{gI}{Saving inserts (#1) (destructively)}%
@@ -93,6 +155,7 @@
   %\else
     %\x@\cstackdown\tmp\E
   %\fi
+  \ifcsname nx@saves@#1\endcsname\nx@c@py{#1nx}{nxtpg}\fi
 }
 
 \def\r@storeinsertsNS#1{%loop through \ins@rts and restore(\box) them

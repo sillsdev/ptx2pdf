@@ -40,14 +40,11 @@
 \def\b@xbotmark{}
 \newcount\r@a@trialdepth
 \r@a@trialdepth=0
-% \topins and \bottomins have \count=1000, so if a trial is too short for one of their inserts, TeX's page
-% builder holds the insert over to the next page. The trial is then discarded, but the held-over copy survives
-% alongside the copy still in the saved galley, so the picture appears twice. Trials compute availht from the
-% actual insert box heights, so zero the counts while a trial runs, which stops TeX holding them over.
-\def\z@roTrialInsCounts{%
-  \xdef\r@storeTrialInsCounts{\global\count\topins=\the\count\topins\relax \global\count\bottomins=\the\count\bottomins\relax}%
-  \global\count\topins=0 \global\count\bottomins=0 }
-\let\r@storeTrialInsCounts\relax
+% \topins and \bottomins have \count=1000, so in a trial TeX's page builder decides whether a page-wide
+% picture fits with the text up to its anchor; if not it holds the picture over and the trial goes on
+% with the text. \coll@ct@overrun moves held-over pictures to the next-page store (save<ins>nxtpg).
+% A trial or chunk that is then rejected runs again from its galley, which still has the picture, so
+% saving and restoring col or chunk inserts saves and restores the next-page store too (ptx-figure.tex).
 
 \xdef\f@rstb@dy{0pt}%
 \def\TextBorderColumns{} % If unset, then border all scripture. If set, only border the ones set. E.g. for when a 
@@ -593,6 +590,7 @@
   \global\holdinginserts=0
   \global\trialfailedfalse
   \global\intrialtrue
+  \dglt@calc@vailht % the inserts were restored after \availht was last worked out, so the failed trial's pictures still count in it
   \ifversion{10}{\dglt@s@tvsize}{\global\vsize=\availht}%
   \global\setbox\trialbox=\box\voidb@x
   \global\output={\diglot@any@trial}%calls \whichtrial on success
@@ -611,7 +609,24 @@
  \dimen0=\csname availht\c@rrdstat\endcsname% Use the pre-notes version of available space, or they get double-counted.
  \advance\dimen0  by -\csname baselineDelta\c@rrdstat\endcsname\relax% Topskip correction
  \global\vsize=\dimen0
+ \tri@linsskips
 }}% let grouping restore dimen0
+% \availht already excludes the pictures in \box\topins and \box\bottomins, but TeX takes their height off
+% \pagegoal again when the first insert of that class reaches the trial page, and then no text fits.
+% So while a trial page is built, \skip of a class with pictures waiting cancels their height.
+% The output routines put the real skips back.
+\newskip\tri@ltopskip \newskip\tri@lbotskip
+\newif\iftri@lskips
+\def\tri@linsskips{%
+  \iftri@lskips\else
+    \global\tri@ltopskip=\skip\topins \global\tri@lbotskip=\skip\bottomins \global\tri@lskipstrue
+  \fi
+  \global\skip\topins=\ifvoid\topins\tri@ltopskip\else-\dimexpr\ht\topins+\dp\topins\relax\fi
+  \global\skip\bottomins=\ifvoid\bottomins\tri@lbotskip\else-\dimexpr\ht\bottomins+\dp\bottomins\relax\fi
+}
+\def\untri@linsskips{\iftri@lskips
+  \global\skip\topins=\tri@ltopskip \global\skip\bottomins=\tri@lbotskip \global\tri@lskipsfalse
+\fi}
 
 \newif\ifhaveb@ckedup
 \def\run@a@trial{%
@@ -736,7 +751,6 @@
     \global\output{\diglot@any@trial}%
     \trace{D}{TRIAL! \the\ht\galley+\the\dp\galley}%
     \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
-    \ifnum\r@a@trialdepth=1 \z@roTrialInsCounts\fi
     \unvcopy\galley
     \unpenalty
     \traceifset{run@a@trial\the\r@a@trialdepth}%
@@ -746,7 +760,6 @@
     %\iflate@stage@reflow \showlists\fi
     \traceifcheck{run@a@trial\the\r@a@trialdepth}%
     \advance\r@a@trialdepth by -1
-    \ifnum\r@a@trialdepth=0 \r@storeTrialInsCounts\fi
     \relax\relax
     \let\after@run@a@trial=\relax
   \else
@@ -976,6 +989,7 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \excessX (and \whole)
+  \untri@linsskips
   \tracetimcheck{any@trial}{output}%
   \traceifset{diglot@any@trial}%
   \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles,  vs:\the\vsize, th:\the\trialheight, pg:\the\pagegoal, pt:\the\pagetotal, p:\the\ht\p@rtl, split inserts:\the\insertpenalties, td:\the\tri@ldelta}%
@@ -1243,7 +1257,7 @@
   %\global\@@debugnotestrue
   \s@venotes{\c@rrdstat}{3}%
   \clearn@tes
-  \st@shinserts{chunk}%
+  \st@shinserts{ovr}% (not chunk: that is what a rejected chunk goes back to)
   \global\output={\@coll@ct@overrun}%
   \global\vsize=\maxdimen
   \vfill
@@ -1252,6 +1266,7 @@
   \penalty\dgl@tPenOverrun
 }
 \def\@coll@ct@overrun{%Collect insert overrun
+  \untri@linsskips
   \trace{d}{@coll@ct@overrun: \the\insertpenalties, vs:\the\vsize, pg:\the\pagegoal}%
   %\Showbox{255}%
   \ifnum\outputpenalty=\dgl@tPenOverrun\else
@@ -1259,8 +1274,8 @@
   \fi
   \s@venotes{\c@rrdstat}{2}%Save notes for next page
   \r@storenotes{\c@rrdstat}{3}%
-  \st@shinserts{nxtpg}%
-  \r@storeinserts{chunk}%
+  \@ppendinserts{nxtpg}% add to what is already waiting for the next page
+  \r@storeinsertsNS{ovr}%
   \setbox0\box255
   \setbox255\box10
   %\global\@@debugnotesfalse
@@ -3118,6 +3133,7 @@
   % assumes: \availht is correct, 
   % Fills: \excessX and \wholeX
   % Empties: \box255
+  \untri@linsskips
   \traceNum{D}{diglotCollect \c@rrdstat O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize, pt:\the\pagetotal. \ifintrial IN trial\fi}%
   %\ifintrial\Showlists\fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount\Showbox{255}\fi
