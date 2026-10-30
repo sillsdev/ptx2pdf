@@ -338,6 +338,7 @@ class PolySolver(TypesetterSolver):
     def fill_page(self, state, page):
         """ Try combos on page until it is full or its budget is spent; commit the result """
         self.prepare_slices(state.parlocs)
+        # foreach slice on the page count the paragraphs in it that can change shape
         movable = sum(1 for sl, pg in self.sliceheights.items() if page in pg
                       for g in self.hooks.printer.glots for p in self.slicepars.get(sl, {}).get(g, [])
                       if page in self.parpages.get(p, ()) and self.shape_deltas.get(p))
@@ -354,6 +355,7 @@ class PolySolver(TypesetterSolver):
         glots = self.hooks.printer.glots
         gap0 = self._gap(state, page)
         memo = self._tried(state, page)
+        self.cap_scale = 1      # used in page_candidates
         cands = [c for c in self.page_candidates(state, page, gap0) if frozenset(c[3].items()) not in memo]
         self._slicetries = {}
         on_page = [sl for sl, pg in self.sliceheights.items() if page in pg]

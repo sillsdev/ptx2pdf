@@ -827,7 +827,7 @@ class TypesetterSolver:
         sweep_count = 0
         all_pids = self.hooks.get_paragraphs_for_pages(page, page + npages)
         last_page = -1 if page + npages >= self.numpages else page + npages
-        for (lim, strch) in ((1, -1), (2, 1)):        # (minexp, -1), (maxexp, 1)
+        for (lim, strch) in ((1, -1), (2, 1), (2, 2)):        # (minexp, -1), (maxexp, 1), (maxexp, 2)
             sweep_params = {pid: (self.limits(pid)[lim], strch) for pid in all_pids}
             layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
             self.collect_probes(layout, all_pids, sweep_params, page=page)

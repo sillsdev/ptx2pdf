@@ -13,9 +13,14 @@ pacman -Syu
 Don't run any of the other steps, and DON'T run this (as suggested): pacman -S --needed base-devel mingw-w64-x86_64-toolchain
 The key issue here is NOT to have an installation of python under MSYS2, but to only have python under UCRT64 (or MINGW64 as was) otherwise nothing works.
 
-4. Install the necessary packages:
+4. Install the necessary packages to build ptxprint:
 ```
-pacman -S mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-python-pip mingw-w64-ucrt-x86_64-python-setuptools mingw-w64-ucrt-x86_64-gtksourceview3 mingw-w64-ucrt-x86_64-python-pillow mingw-w64-ucrt-x86_64-python-fonttools mingw-w64-ucrt-x86_64-python-regex mingw-w64-ucrt-x86_64-python-cairo mingw-w64-ucrt-x86_64-python-gobject mingw-w64-ucrt-x86_64-gtk3 mingw-w64-ucrt-x86_64-glib2 mingw-w64-ucrt-x86_64-libffi mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-glade mingw-w64-ucrt-x86_64-python-pyopenssl mingw-w64-ucrt-x86_64-poppler mingw-w64-ucrt-x86_64-python-numpy mingw-w64-ucrt-x86_64-adwaita-icon-theme mingw-w64-ucrt-x86_64-python-lxml mingw-w64-ucrt-x86_64-python-psutil mingw-w64-ucrt-x86_64-pyinstaller
+pacman -S mingw-w64-ucrt-x86_64-python mingw-w64-ucrt-x86_64-python-pip mingw-w64-ucrt-x86_64-python-setuptools mingw-w64-ucrt-x86_64-gtksourceview3 mingw-w64-ucrt-x86_64-python-pillow mingw-w64-ucrt-x86_64-python-fonttools mingw-w64-ucrt-x86_64-python-regex mingw-w64-ucrt-x86_64-python-cairo mingw-w64-ucrt-x86_64-python-gobject mingw-w64-ucrt-x86_64-gtk3 mingw-w64-ucrt-x86_64-glib2 mingw-w64-ucrt-x86_64-libffi mingw-w64-ucrt-x86_64-python-pyopenssl mingw-w64-ucrt-x86_64-poppler mingw-w64-ucrt-x86_64-python-numpy mingw-w64-ucrt-x86_64-adwaita-icon-theme mingw-w64-ucrt-x86_64-python-lxml mingw-w64-ucrt-x86_64-python-psutil mingw-w64-ucrt-x86_64-pyinstaller
+```
+
+4a. Install the development packages if you want to do development:
+```
+pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-glade 
 ```
 
 5. Install ptxprint and its dependencies not yet covered
