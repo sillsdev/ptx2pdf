@@ -17,7 +17,7 @@ class SliceOutcome:
     heights:    tuple       # per glot content height (pt), in glot order
     cost:       float       # badness of the paragraph shapes above their unadjusted shapes
     imbalance:  int         # (max - min) height in lines of the largest baseline
-    badness:    float       # cost + imbalance weight * imbalance
+    badness:    float       # cost + imbalance_cost(imbalance)
     assignment: tuple       # ((pid, delta), ...) for paragraphs not at their unadjusted shape
 
     @property
@@ -298,14 +298,13 @@ class PolySolver(TypesetterSolver):
         def imbalance(hts):
             return round((max(hts) - min(hts)) / maxb) if ends else 0
         imb0 = imbalance([h.get(g, 0) for g in glots])
-        weight = self.imbalance_weight()
         best = {}
         for choice in itertools.product(*per):
             hts = [h.get(g, 0) + ch[0] * b[g] for g, ch in zip(glots, choice)]
             dh = round(max(hts) - base)
             if dh == 0:
                 continue
-            dbad = sum(ch[1] for ch in choice) + weight * (imbalance(hts) - imb0)
+            dbad = sum(ch[1] for ch in choice) + self.imbalance_cost(imbalance(hts)) - self.imbalance_cost(imb0)
             sig = (dh, tuple(ch[0] for ch in choice))
             if sig not in best or dbad < best[sig][0]:
                 combo = {}
@@ -527,22 +526,32 @@ class PolySolver(TypesetterSolver):
         if cur_imb == 0:
             return None
         params = state.paragraph_params
-        # only its paragraphs that reach the next page move where it ends: changing those wholly
-        # on page just changes page (and text pulled back brings its notes with it)
-        movable = {g: [p for p in self.slicepars.get(sl, {}).get(g, [])
-                       if min(self.parpages.get(p, {-1})) >= page and max(self.parpages.get(p, {-1})) > page]
-                   for g in glots}
+        # its paragraphs that reach the next page move where it ends. Shrinking one wholly on page
+        # just changes page (and text pulled back brings its notes with it), but growing one in a
+        # glot that runs on to the next page pushes a line over, as that glot's column is full.
+        movable = {}
+        growable = {}       # pid: fewest lines it may have (relative to its unadjusted shape)
+        for g in glots:
+            movable[g] = []
+            crosses = total[g] - upto[g] > 0.5 * b[g]
+            for p in self.slicepars.get(sl, {}).get(g, []):
+                pp = self.parpages.get(p, {-1})
+                if min(pp) >= page and max(pp) > page:
+                    movable[g].append(p)
+                elif crosses and pp == {page}:
+                    movable[g].append(p)
+                    growable[p] = min(0, self.current_delta(p, params))
         allpids = [p for g in glots for p in movable[g]]
-        options = [self._glot_options(movable[g]) for g in glots]
+        options = [self._glot_options(movable[g], growable) for g in glots]
         cur = {g: sum(self.current_delta(p, params) for p in movable[g]) for g in glots}
         curcost = sum(self.shape_cost(p, self.current_delta(p, params)) or 0. for p in allpids)
-        weight = self.imbalance_weight()
         cands = []
         for tots in itertools.product(*[o.keys() for o in options]):
             imb = end_imbalance({g: total[g] + (t - cur[g]) * b[g] for g, t in zip(glots, tots)})
             if imb >= cur_imb:
                 continue
-            dbad = sum(o[t][0] for o, t in zip(options, tots)) - curcost + weight * (imb - cur_imb)
+            dbad = sum(o[t][0] for o, t in zip(options, tots)) - curcost \
+                    + self.imbalance_cost(imb) - self.imbalance_cost(cur_imb)
             if dbad < -0.01:
                 cands.append((dbad, imb, tuple(pd for o, t in zip(options, tots) for pd in o[t][1])))
         cands.sort(key=lambda c: (c[0], len(c[2])))
@@ -567,14 +576,16 @@ class PolySolver(TypesetterSolver):
                 return new
         return None
 
-    def _glot_options(self, pids):
+    def _glot_options(self, pids, growonly={}):
         """ Returns {total delta: (cost, ((pid, delta), ...))}, the cheapest way to change the
-            lines of these paragraphs by each total, from their unadjusted shapes. """
+            lines of these paragraphs by each total, from their unadjusted shapes. growonly
+            {pid: delta} keeps those paragraphs at that delta or more. """
         res = {0: (0., ())}
         for p in pids:
             if self.hooks.is_header(p):
                 continue
-            opts = [(d, c) for d in self.shape_deltas.get(p, ()) if (c := self.shape_cost(p, d)) is not None]
+            opts = [(d, c) for d in self.shape_deltas.get(p, ())
+                    if d >= growonly.get(p, d) and (c := self.shape_cost(p, d)) is not None]
             if not opts:
                 continue
             new = dict(res)
@@ -598,11 +609,19 @@ class PolySolver(TypesetterSolver):
 
     def maxbad(self):
         """ Paragraph shapes worse than this are not used to change a slice """
-        return self.hooks.badness_balance_maxbad * self.maxbad_scale * getattr(self, 'cap_scale', 1)
+        return max(self.hooks.badness_balance_maxbad * self.maxbad_scale, self.imbalance_weight()) * getattr(self, 'cap_scale', 1)
 
     def imbalance_weight(self):
-        """ Badness of one line of imbalance in a slice """
+        """ Badness of the first line of imbalance in a slice: what balancing it exactly is worth """
         return self.hooks.badness_imbalance_weight * self.imbalance_scale
+
+    def imbalance_cost(self, imb):
+        """ Badness of imb lines of imbalance in a slice. The first line costs imbalance_weight,
+            each further line its own smaller amount: going from 1 line to 0 is worth bending
+            paragraphs for, going from 2 to 1 leaves a gap anyway and is worth much less. """
+        if imb <= 0:
+            return 0
+        return self.imbalance_weight() + self.hooks.badness_imbalance_narrow * self.imbalance_scale * (imb - 1)
 
     def shape_cost(self, pid, d):
         """ Badness of paragraph pid at line delta d above its unadjusted shape, or None if unusable """
@@ -625,7 +644,7 @@ class PolySolver(TypesetterSolver):
         assign = tuple((p, d) for g in glots for p in pids.get(g, []) if (d := self.current_delta(p, params)))
         cost = sum(self.shape_cost(p, d) or 0. for p, d in assign)
         imb = round((max(hts) - min(hts)) / max(self.baselines[g] for g in glots))
-        return SliceOutcome(hts, cost, imb, cost + self.imbalance_weight() * imb, assign)
+        return SliceOutcome(hts, cost, imb, cost + self.imbalance_cost(imb), assign)
 
     def slice_outcomes(self, sl, params):
         """ All the ways the paragraphs of slice sl can be set, as SliceOutcomes sorted by
@@ -643,7 +662,6 @@ class PolySolver(TypesetterSolver):
             cur = sum(self.current_delta(p, params) for p in pids.get(g, []))
             neutral[g] = h - cur * self.baselines.get(g, 0)
         maxb = max(self.baselines[g] for g in glots)
-        weight = self.imbalance_weight()
         options = [self._glot_options(pids.get(g, [])) for g in glots]
         res = []
         for tots in itertools.product(*[o.keys() for o in options]):
@@ -651,7 +669,7 @@ class PolySolver(TypesetterSolver):
             cost = sum(o[t][0] for o, t in zip(options, tots))
             imb = round((max(hts) - min(hts)) / maxb)
             assign = tuple(pd for o, t in zip(options, tots) for pd in o[t][1])
-            res.append(SliceOutcome(hts, cost, imb, cost + weight * imb, assign))
+            res.append(SliceOutcome(hts, cost, imb, cost + self.imbalance_cost(imb), assign))
         res.sort(key=lambda x: (x.badness, len(x.assignment)))
         return res
 

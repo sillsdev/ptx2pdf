@@ -335,6 +335,14 @@ texpertOptions = {
     "pbpolyimbalance":    O("pbpolyimbalance", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("The cost of imbalance in a polyglot slice"),
                             _("How bad is it for a polyglot slice to not be balanced. This the multiplier of that cost\n"
                               "Only relevant to diglot and polyglot projects")),
+    "pbpolyimbnarrow":    O("pbpolyimbnarrow", "APF", (0.5, 0, 10, 0.1, 1, 1), "", _("Effort to narrow a big imbalance"),
+                            _("The cost of each line of imbalance in a polyglot slice after the first.\n"
+                              "The cost of imbalance sets what it is worth to balance a slice exactly; this sets\n"
+                              "what each further line is worth, so the two do not affect each other.\n"
+                              "Higher: paragraphs are stretched or shrunk to narrow even a slice that cannot balance.\n"
+                              "0: only a slice that balances exactly gains anything, so slices that cannot\n"
+                              "balance keep their paragraphs' best shapes.\n"
+                              "Only relevant to diglot and polyglot projects")),
 
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),
