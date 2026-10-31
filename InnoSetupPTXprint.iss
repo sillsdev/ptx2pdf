@@ -1,6 +1,6 @@
 ; Inno Setup Script
 #define MyAppName "PTXprint"
-#define MyAppVersion "3.1.4"
+#define MyAppVersion "3.1.5"
 #define MyAppPublisher "SIL Global"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -14,8 +14,8 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
-ArchitecturesInstallIn64BitMode=x64 arm64
-ArchitecturesAllowed=x64 arm64
+ArchitecturesInstallIn64BitMode=x64compatible
+ArchitecturesAllowed=x64compatible
 
 ; Skips the "Choose Install Location" page
 DisableDirPage=yes
