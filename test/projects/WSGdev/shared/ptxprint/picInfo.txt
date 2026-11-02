@@ -5,6 +5,3 @@ picreverse = OK
 piccreditbox = 
 piccredit = 
 
-[cn01656]
-approved = false
-

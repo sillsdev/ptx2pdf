@@ -42,8 +42,9 @@ def pytest_generate_tests(metafunc):
     # A config with a standard PDF over 1MB is slow
     jobs = [pytest.param(*j[:2], marks=pytest.mark.slow) if j[2] > 1000000 else j[:2]
                 for j in sorted(jobs, key=lambda x:(-x[2], x[0], x[1]))]
-    metafunc.parametrize("projectsdir", [basedir], scope="module")
-    if len(jobs):
+    if "projectsdir" in metafunc.fixturenames:
+        metafunc.parametrize("projectsdir", [basedir], scope="module")
+    if len(jobs) and "project" in metafunc.fixturenames:
         metafunc.parametrize(("project", "config"), jobs, scope="module")
 
 def pytest_configure(config):
