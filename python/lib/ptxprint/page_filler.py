@@ -188,6 +188,7 @@ class Hooks:
             logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
         self.badness_imbalance_narrow = max(0., float(printer.view.get("s_pbpolyimbnarrow", default="0.5")))
+        self.fill_slices = bool(printer.view.get("c_pbpolyfillslices", False))
         # setattr(self, "strictness", printer.view.get("c_pbstrict", False))
         vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
         self.tracing = logger.isEnabledFor(14)

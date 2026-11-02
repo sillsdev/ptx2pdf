@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class SliceOutcome:
-    heights:    tuple       # per glot content height (pt), in glot order
+    heights:    tuple       # per glot height (pt) in glot order: its text plus what TeX adds to align the slice
     cost:       float       # badness of the paragraph shapes above their unadjusted shapes
-    imbalance:  int         # (max - min) height in lines of the largest baseline
+    imbalance:  float       # whitespace where its glots end, in column-lines (see empty_lines)
     badness:    float       # cost + imbalance_cost(imbalance)
     assignment: tuple       # ((pid, delta), ...) for paragraphs not at their unadjusted shape
 
@@ -130,22 +130,31 @@ class PolySolver(TypesetterSolver):
                     final.failures = self.failed_pages
                     printer.report(final)
                     return HumanFixRequest(final, p + 1, f"Cannot fill page {p+1}")
-            params = dict(cur.paragraph_params)
-            if self.balance_page(cur, p, params):
-                # Same height is not quite no change (breaks, notes), so check it: keep it only if
-                # no page done so far that was full has become short
-                checked = self._layout(params, cur, p + 2)
-                if checked is not None and not any(self._page_short(checked, q) for q in range(p + 1)
-                                                   if q not in self.failed_pages):
-                    cur = checked
-                else:
-                    logger.log(15, f"p{p+1}: balance changes undone, they made a page short")
+            cur = self.balance_and_check(cur, p)
             evened = self.balance_crossing(cur, p)
             if evened is not None:
                 cur = evened
             p += 1
             if self.hooks.cancelled:
                 return HumanFixRequest(cur, p, "Stopped")
+        # Filling a page may reset slices balanced on the pages before it (a backtrack): balance
+        # every page again (the last too, which needs no filling), now that where pages break
+        # is settled
+        before = self.itercount
+        q = self.floor
+        while q < len(cur.layout.pages):
+            if q >= len(cur.layout.pages) - 1 and not cur.layout.complete:
+                more = self._layout(cur.paragraph_params, cur, q + 2)     # a layout that reaches q
+                if more is None:
+                    break
+                cur = more
+            cur = self.balance_and_check(cur, q)
+            # a page filled after the slice crossing onto it was evened may have moved its end
+            evened = self.balance_crossing(cur, q, single_only=True)
+            if evened is not None:
+                cur = evened
+            q += 1
+        logger.log(15, f"{self.bk}: final balance took {self.itercount - before} runs")
         cur.failures = self.failed_pages
         # The report, adjlist and PDF need a layout of the whole book
         final = self._layout(cur.paragraph_params, cur, -1)
@@ -244,7 +253,8 @@ class PolySolver(TypesetterSolver):
                 new[k] = sorted(new[k], key=lambda x: (x[0], len(x[1])))[:self.per_net]
             totals = new
         # the last slice, per short glot: its lines on this page (a full glot's change only
-        # alters what spills to the next page)
+        # alters what spills to the next page). Filling each short glot to the foot of the page
+        # leaves the slice level there.
         private = {g: [(0, 0., {})] for g in glots}
         for i, g in enumerate(glots):
             if gap is not None and gap[i] <= 0:
@@ -262,6 +272,11 @@ class PolySolver(TypesetterSolver):
             for dbad, combo, desc in entries:
                 for choice in itertools.product(*[private[g] for g in glots]):
                     effects = [net + ch[0] * b[g] for g, ch in zip(glots, choice)]
+                    # a last slice that ends here, changed glot by glot, must end level: at the
+                    # foot of the page, each glot's gap filled exactly
+                    if not crossing and gap is not None and any(ch[0] for ch in choice) \
+                            and any(abs(e - n * b[g]) >= 0.5 * b[g] for e, n, g in zip(effects, gap, glots)):
+                        continue
                     c = dict(combo)
                     pbad = dbad
                     pdesc = list(desc)
@@ -281,30 +296,35 @@ class PolySolver(TypesetterSolver):
         """ For slice sl continuing onto page from the one before: {change in its height on this
             page (pt): (change in badness, combo)}, using only its paragraphs wholly on this page """
         glots = self.hooks.printer.glots
-        b = self.baselines
-        h = self.sliceheights.get(sl, {}).get(page, {})
         per = []
+        fixed = []      # per glot, whether its paragraphs not wholly on this page are changed
         for g in glots:
-            pids = [p for p in self.slicepars.get(sl, {}).get(g, []) if self.parpages.get(p) == {page}]
+            allpids = self.slicepars.get(sl, {}).get(g, [])
+            pids = [p for p in allpids if self.parpages.get(p) == {page}]
+            fixed.append(any(p not in pids and self.current_delta(p, params) for p in allpids))
             cur = {p: self.current_delta(p, params) for p in pids}
             curtot = sum(cur.values())
             curcost = sum(self.shape_cost(p, d) or 0. for p, d in cur.items())
-            per.append([(tot - curtot, cost - curcost, self._combo(pids, assign, params))
+            curtext = self.text_delta(cur.items())
+            per.append([(tot - curtot, cost - curcost, self._combo(pids, assign, params), bool(assign),
+                         self.text_delta(assign) - curtext)
                         for tot, (cost, assign) in self._glot_options(pids).items()])
-        base = max(h.get(g, 0) for g in glots)
+        # this page's part of the slice: its text
+        text0 = self.content(sl, {page})
         # where the slice ends on this page, its glots' parts should end level
         ends = max(self.sliceheights.get(sl, {page: None})) == page
-        maxb = max(b[g] for g in glots)
-        def imbalance(hts):
-            return round((max(hts) - min(hts)) / maxb) if ends else 0
-        imb0 = imbalance([h.get(g, 0) for g in glots])
+        def imbalance(text):
+            return self.empty_lines(text) if ends else 0
+        imb0 = imbalance(text0)
         best = {}
         for choice in itertools.product(*per):
-            hts = [h.get(g, 0) + ch[0] * b[g] for g, ch in zip(glots, choice)]
-            dh = round(max(hts) - base)
+            text = [t + ch[4] for t, ch in zip(text0, choice)]
+            dh = round(max(text) - max(text0))
             if dh == 0:
                 continue
-            dbad = sum(ch[1] for ch in choice) + self.imbalance_cost(imbalance(hts)) - self.imbalance_cost(imb0)
+            if ends and not self.allowed(text, [f or ch[3] for f, ch in zip(fixed, choice)], sl):
+                continue
+            dbad = sum(ch[1] for ch in choice) + self.imbalance_cost(imbalance(text), sl) - self.imbalance_cost(imb0, sl)
             sig = (dh, tuple(ch[0] for ch in choice))
             if sig not in best or dbad < best[sig][0]:
                 combo = {}
@@ -468,27 +488,59 @@ class PolySolver(TypesetterSolver):
 
     def balance_page(self, state, page, params):
         """ Give each slice wholly on page a same height outcome with less badness (better
-            balance at no cost to the page). Changes params; returns whether anything changed. """
+            balance at no cost to the page). Changes params; returns the changes made as
+            [(slice, outcome, {pid: its params before})]. """
         glots = self.hooks.printer.glots
         self.prepare_slices(state.parlocs)
-        changed = False
+        changes = []
         for sl, pg in self.sliceheights.items():
             if set(pg) != {page}:
                 continue
             cur = self.current_outcome(sl, params)
-            for o in self.slice_outcomes(sl, params):
-                if abs(o.height - cur.height) < 0.5 and o.badness < cur.badness - 0.01:
-                    self.apply_outcome(o, params, [p for g in glots for p in self.slicepars.get(sl, {}).get(g, [])])
-                    logger.log(15, f"p{page+1} balance s{sl}: badness {cur.badness:.2f} -> {o.badness:.2f}")
-                    changed = True
-                    break
-        return changed
+            o = self._same_height(sl, params, cur)
+            if o is None and self.single_gap(sl, cur.imbalance):
+                # a 1 line gap is worse than a looser paragraph: allow looser shapes, as filling does
+                self.cap_scale = self.relax_caps[0]
+                o = self._same_height(sl, params, cur)
+                self.cap_scale = 1
+            if o is not None:
+                pids = [p for g in glots for p in self.slicepars.get(sl, {}).get(g, [])]
+                changes.append((sl, o, {p: params.get(p) for p in pids}))
+                self.apply_outcome(o, params, pids)
+                logger.log(15, f"p{page+1} balance s{sl}: badness {cur.badness:.2f} -> {o.badness:.2f}")
+        return changes
 
-    def balance_crossing(self, state, page):
+    def _same_height(self, sl, params, cur):
+        """ The best outcome of slice sl with its current height and less badness, or None """
+        # glots' text extents differ by fractions of a point; less than a quarter line is no change
+        tol = 0.25 * max(self.baselines[g] for g in self.hooks.printer.glots)
+        for o in self.slice_outcomes(sl, params):
+            if abs(o.height - cur.height) < tol and o.badness < cur.badness - 0.01:
+                return o
+        return None
+
+    def balance_and_check(self, cur, p):
+        """ Balance the slices on page p of cur (balance_page) and lay it out again to check.
+            Same height is not quite no change (breaks, notes), so the result is kept only if no
+            page done so far that was full has become short. Returns the new state. """
+        params = dict(cur.paragraph_params)
+        if not self.balance_page(cur, p, params):
+            return cur
+        checked = self._layout(params, cur, p + 2)
+        if checked is None or self._shortened(checked, p):
+            logger.log(15, f"p{p+1}: balance changes undone, they made a page short")
+            return cur
+        return checked
+
+    def _shortened(self, state, p):
+        """ Whether a page up to p that was full is short in state """
+        return any(self._page_short(state, q) for q in range(p + 1) if q not in self.failed_pages)
+
+    def balance_crossing(self, state, page, single_only=False):
         """ The slice running from page onto the next: if its glots end unevenly there, one
             column has a gap at the top of the next page that no underfill shows. Try the
             outcomes that even its ends, changing its paragraphs that reach the next page.
-            Returns a better state or None. """
+            single_only: only if its ends are a line apart. Returns a better state or None. """
         glots = self.hooks.printer.glots
         self.prepare_slices(state.parlocs)
         on_page = [sl for sl, pg in self.sliceheights.items() if page in pg]
@@ -499,19 +551,33 @@ class PolySolver(TypesetterSolver):
         if max(pages) <= page:
             return None
         b = self.baselines
-        maxb = max(b[g] for g in glots)
         upto = {g: sum(v.get(g, 0) for q, v in pages.items() if q <= page) for g in glots}
         total = {g: sum(v.get(g, 0) for v in pages.values()) for g in glots}
 
-        def end_imbalance(tot):
-            """ Predicted imbalance where the slice ends, for these total heights """
-            # a glot carries over nothing or at least a few lines (no widows)
-            tails = [tot[g] - upto[g] for g in glots]
-            if any(t > 0.5 * b[g] for g, t in zip(glots, tails)):
-                hts = [0. if t <= 0.5 * b[g] else max(t, self.min_carry * b[g]) for g, t in zip(glots, tails)]
-            else:       # it ends on page
-                hts = [pages[page].get(g, 0) + t for g, t in zip(glots, tails)]
-            return round((max(hts) - min(hts)) / maxb)
+        endtext = self.content(sl, {max(pages)})
+        # a glot whose text fills its column on page (it runs on, or ends at the foot of the page
+        # level with one that does) gains or loses lines where the slice ends
+        ontext = self.content(sl, {page})
+        runs_on = [total[g] - upto[g] > 0.5 * b[g] or t >= max(ontext) - 0.5 * b[g]
+                   for g, t in zip(glots, ontext)]
+
+        def end_heights(delta):
+            """ Predicted text heights per glot where the slice ends, if its glots gain delta (pt):
+                a glot running on over the page gains or loses it at its end, its column on page
+                being full. None if a glot would carry fewer than min_carry lines over: TeX's widow
+                and club penalties would not set it so, and what it would do instead is not
+                predicted. Nor may one glot have nothing there while another has some: the
+                others would start the page alone. """
+            res = []
+            for g, e0, d, on in zip(glots, endtext, delta, runs_on):
+                e = e0 + d
+                if on and 0.5 * b[g] < e < (self.min_carry - 0.5) * b[g]:
+                    return None
+                res.append(max(0., e))
+            empty = [e < 0.5 * b[g] for g, e in zip(glots, res)]
+            if any(empty) and not all(empty):
+                return None
+            return res
 
         def measured(st):
             """ Imbalance where the slice ends in st """
@@ -519,11 +585,10 @@ class PolySolver(TypesetterSolver):
             pg = self.sliceheights.get(sl)
             if not pg:
                 return 0
-            hts = [pg[max(pg)].get(g, 0) for g in glots]
-            return round((max(hts) - min(hts)) / maxb)
+            return self.empty_lines(self.content(sl, {max(pg)}))
 
-        cur_imb = end_imbalance(total)
-        if cur_imb == 0:
+        cur_imb = self.empty_lines(self.content(sl, {max(pages)}))     # as measured
+        if cur_imb == 0 or single_only and not self.single_gap(sl, cur_imb):
             return None
         params = state.paragraph_params
         # its paragraphs that reach the next page move where it ends. Shrinking one wholly on page
@@ -533,7 +598,7 @@ class PolySolver(TypesetterSolver):
         growable = {}       # pid: fewest lines it may have (relative to its unadjusted shape)
         for g in glots:
             movable[g] = []
-            crosses = total[g] - upto[g] > 0.5 * b[g]
+            crosses = runs_on[glots.index(g)]
             for p in self.slicepars.get(sl, {}).get(g, []):
                 pp = self.parpages.get(p, {-1})
                 if min(pp) >= page and max(pp) > page:
@@ -542,19 +607,31 @@ class PolySolver(TypesetterSolver):
                     movable[g].append(p)
                     growable[p] = min(0, self.current_delta(p, params))
         allpids = [p for g in glots for p in movable[g]]
+        # a gap at the top of a page is worse than a looser paragraph, as when filling a page
+        self.cap_scale = self.relax_caps[0]
         options = [self._glot_options(movable[g], growable) for g in glots]
+        curcosts = {p: self.shape_cost(p, self.current_delta(p, params)) for g in glots for p in movable[g]}
+        self.cap_scale = 1
         cur = {g: sum(self.current_delta(p, params) for p in movable[g]) for g in glots}
-        curcost = sum(self.shape_cost(p, self.current_delta(p, params)) or 0. for p in allpids)
+        curcost = sum(curcosts[p] or 0. for p in allpids)
+        # changes to its other paragraphs count too in whether a glot is changed
+        fixed = [any(p not in movable[g] and self.current_delta(p, params)
+                     for p in self.slicepars.get(sl, {}).get(g, [])) for g in glots]
         cands = []
         for tots in itertools.product(*[o.keys() for o in options]):
-            imb = end_imbalance({g: total[g] + (t - cur[g]) * b[g] for g, t in zip(glots, tots)})
-            if imb >= cur_imb:
+            hts = end_heights([(t - cur[g]) * b[g] for g, t in zip(glots, tots)])
+            if hts is None or not self.allowed(hts, [f or bool(o[t][1]) for f, o, t in zip(fixed, options, tots)], sl):
+                continue
+            imb = self.empty_lines(hts)
+            if self.imbalance_cost(imb, sl) >= self.imbalance_cost(cur_imb, sl):
                 continue
             dbad = sum(o[t][0] for o, t in zip(options, tots)) - curcost \
-                    + self.imbalance_cost(imb) - self.imbalance_cost(cur_imb)
+                    + self.imbalance_cost(imb, sl) - self.imbalance_cost(cur_imb, sl)
             if dbad < -0.01:
                 cands.append((dbad, imb, tuple(pd for o, t in zip(options, tots) for pd in o[t][1])))
         cands.sort(key=lambda c: (c[0], len(c[2])))
+        if not cands:
+            logger.log(15, f"p{page+1} even s{sl} end: imbalance {cur_imb}, nothing to try")
         nextgap = sum(self._gap(state, page + 1) or [0])
         for dbad, imb, assign in cands[:self.early_crossing_budget if self.early else self.crossing_budget]:
             combo = self._combo(allpids, assign, params)
@@ -568,10 +645,13 @@ class PolySolver(TypesetterSolver):
                 continue
             got = measured(new)
             # no page done may go short, nor the next page get shorter: it may then not fill
-            ok = got < cur_imb and sum(self._gap(new, page + 1) or [0]) <= nextgap \
-                    and not any(self._page_short(new, q) for q in range(page + 1) if q not in self.failed_pages)
+            shorter = sum(self._gap(new, page + 1) or [0]) - nextgap
+            short = [q for q in range(page + 1) if q not in self.failed_pages and self._page_short(new, q)]
+            better = self.imbalance_cost(got, sl) < self.imbalance_cost(cur_imb, sl)
+            ok = better and shorter <= 0 and not short
+            why = "" if ok else f", undone ({'not evened' if not better else 'p%d short' % (short[0]+1) if short else 'next page %+d' % shorter})"
             logger.log(15, f"p{page+1} even s{sl} end: {combo} imbalance {cur_imb} -> predicted {imb}, "
-                           f"measured {got}{'' if ok else ', undone'}")
+                           f"measured {got}{why}")
             if ok:
                 return new
         return None
@@ -579,7 +659,8 @@ class PolySolver(TypesetterSolver):
     def _glot_options(self, pids, growonly={}):
         """ Returns {total delta: (cost, ((pid, delta), ...))}, the cheapest way to change the
             lines of these paragraphs by each total, from their unadjusted shapes. growonly
-            {pid: delta} keeps those paragraphs at that delta or more. """
+            {pid: delta} keeps those paragraphs at that delta or more. Headings are left as they
+            are: a gap is better than making one wrap differently. """
         res = {0: (0., ())}
         for p in pids:
             if self.hooks.is_header(p):
@@ -615,13 +696,75 @@ class PolySolver(TypesetterSolver):
         """ Badness of the first line of imbalance in a slice: what balancing it exactly is worth """
         return self.hooks.badness_imbalance_weight * self.imbalance_scale
 
-    def imbalance_cost(self, imb):
-        """ Badness of imb lines of imbalance in a slice. The first line costs imbalance_weight,
-            each further line its own smaller amount: going from 1 line to 0 is worth bending
-            paragraphs for, going from 2 to 1 leaves a gap anyway and is worth much less. """
-        if imb <= 0:
+    def empty_lines(self, hts):
+        """ The whitespace glots with heights hts (pt) leave where a slice ends, in column-lines
+            (a line of the largest baseline across a column of the glots' mean width): each
+            glot's gap below the tallest times its column width, to a tenth of a line """
+        glots = self.hooks.printer.glots
+        widths = [self.colwidths.get(g) or 1. for g in glots]
+        top = max(hts)
+        area = sum((top - h) * w for h, w in zip(hts, widths))
+        return round(area / (max(self.baselines[g] for g in glots) * sum(widths) / len(widths)), 1)
+
+    def content(self, sl, pages=None):
+        """ Per glot, the height of slice sl's text (see get_slicecontent), summed over pages """
+        parts = self.slicecontent.get(sl, {})
+        return [sum(v.get(g, 0) for p, v in parts.items() if pages is None or p in pages)
+                for g in self.hooks.printer.glots]
+
+    def _heights(self, sl, cont, text):
+        """ Per glot heights (pt) slice sl would have with text heights text, where cont is its
+            text now. TeX sets the glots of a slice to its tallest, so the slice changes height
+            by what its tallest text does; each glot is its text plus that common offset. """
+        box = max(sum(pg.get(g, 0) for pg in self.sliceheights.get(sl, {}).values())
+                  for g in self.hooks.printer.glots)
+        off = box - max(cont)
+        return tuple(t + off for t in text)
+
+    def text_delta(self, assign):
+        """ The change in text height (pt) of setting paragraphs as in assign ((pid, delta), ...) """
+        return sum(d * self.parbase.get(p, 0.) for p, d in assign)
+
+    def allowed(self, hts, changed, sl):
+        """ Whether slice sl, its glots' text with heights hts, changed (per glot) from their
+            unadjusted shapes, may be set so: each changed glot ends level with the slice (unless
+            the user fills slices regardless), and a change never leaves a 1 line gap that looks
+            like a mistake (see single_gap) """
+        if not any(changed):
+            return True
+        if not self.hooks.fill_slices and not self.levelled(hts, changed):
+            return False
+        return not self.single_gap(sl, self.empty_lines(hts))
+
+    def single_gap(self, sl, imb):
+        """ Whether imb lines of whitespace where slice sl ends is a 1 line gap that looks like a
+            mistake. Not in a slice of headings, nor above one (the slice before a heading): they
+            have space above them anyway, so a little more does no harm and is better than forcing
+            a heading onto another line or a paragraph to stretch. Nor if the
+            user fills slices as much as possible regardless (pbpolyfillslices). """
+        return 0.5 <= imb < 1.5 and not self.hooks.fill_slices and sl not in self.headgaps
+
+    def levelled(self, hts, changed):
+        """ Whether every glot whose paragraphs are changed (changed, per glot) ends within half
+            a line of the top: a glot is stretched or shrunk to end level with its slice, or not
+            at all, so a gap is never just narrowed """
+        tol = 0.5 * max(self.baselines[g] for g in self.hooks.printer.glots)
+        top = max(hts)
+        return not any(c and top - h > tol for h, c in zip(hts, changed))
+
+    def imbalance_cost(self, imb, sl):
+        """ Badness of imb lines of imbalance where slice sl ends. A gap costs imbalance_weight
+            for its first line and its own smaller amount for each further one: less whitespace
+            is better. A 1 line gap that looks like a mistake (see single_gap) costs twice
+            imbalance_weight, and at least the loosest shape that may level it (see balance_page),
+            so any shape that can level it does. A 1 line gap in a slice of headings, or above
+            one, costs nothing: it is better than making a heading wrap differently. """
+        if imb < 0.5 or imb < 1.5 and sl in self.headgaps:
             return 0
-        return self.imbalance_weight() + self.hooks.badness_imbalance_narrow * self.imbalance_scale * (imb - 1)
+        if self.single_gap(sl, imb):
+            cap = max(self.hooks.badness_balance_maxbad * self.maxbad_scale, self.imbalance_weight())
+            return max(2 * self.imbalance_weight(), self.relax_caps[0] * cap)
+        return self.imbalance_weight() + self.hooks.badness_imbalance_narrow * self.imbalance_scale * max(0, imb - 1)
 
     def shape_cost(self, pid, d):
         """ Badness of paragraph pid at line delta d above its unadjusted shape, or None if unusable """
@@ -638,13 +781,13 @@ class PolySolver(TypesetterSolver):
     def current_outcome(self, sl, params):
         """ The SliceOutcome of slice sl as currently laid out """
         glots = self.hooks.printer.glots
-        pages = self.sliceheights.get(sl, {})
         pids = self.slicepars.get(sl, {})
-        hts = tuple(sum(pg.get(g, 0) for pg in pages.values()) for g in glots)
+        cont = self.content(sl)
+        hts = self._heights(sl, cont, cont)
         assign = tuple((p, d) for g in glots for p in pids.get(g, []) if (d := self.current_delta(p, params)))
         cost = sum(self.shape_cost(p, d) or 0. for p, d in assign)
-        imb = round((max(hts) - min(hts)) / max(self.baselines[g] for g in glots))
-        return SliceOutcome(hts, cost, imb, cost + self.imbalance_cost(imb), assign)
+        imb = self.empty_lines(cont)
+        return SliceOutcome(hts, cost, imb, cost + self.imbalance_cost(imb, sl), assign)
 
     def slice_outcomes(self, sl, params):
         """ All the ways the paragraphs of slice sl can be set, as SliceOutcomes sorted by
@@ -656,20 +799,20 @@ class PolySolver(TypesetterSolver):
         if not pages:
             return []
         pids = self.slicepars.get(sl, {})
-        neutral = {}
-        for g in glots:
-            h = sum(pg.get(g, 0) for pg in pages.values())
-            cur = sum(self.current_delta(p, params) for p in pids.get(g, []))
-            neutral[g] = h - cur * self.baselines.get(g, 0)
-        maxb = max(self.baselines[g] for g in glots)
-        options = [self._glot_options(pids.get(g, [])) for g in glots]
+        cont = self.content(sl)
+        neutral = [c - self.text_delta((p, self.current_delta(p, params)) for p in pids.get(g, []))
+                   for g, c in zip(glots, cont)]
         res = []
+        options = [self._glot_options(pids.get(g, [])) for g in glots]
         for tots in itertools.product(*[o.keys() for o in options]):
-            hts = tuple(neutral[g] + t * self.baselines[g] for g, t in zip(glots, tots))
+            chosen = [o[t][1] for o, t in zip(options, tots)]
+            text = [n + self.text_delta(ch) for n, ch in zip(neutral, chosen)]
+            if not self.allowed(text, [bool(ch) for ch in chosen], sl):
+                continue
             cost = sum(o[t][0] for o, t in zip(options, tots))
-            imb = round((max(hts) - min(hts)) / maxb)
-            assign = tuple(pd for o, t in zip(options, tots) for pd in o[t][1])
-            res.append(SliceOutcome(hts, cost, imb, cost + self.imbalance_cost(imb), assign))
+            imb = self.empty_lines(text)
+            res.append(SliceOutcome(self._heights(sl, cont, text), cost, imb,
+                                    cost + self.imbalance_cost(imb, sl), tuple(pd for ch in chosen for pd in ch)))
         res.sort(key=lambda x: (x.badness, len(x.assignment)))
         return res
 
@@ -700,7 +843,16 @@ class PolySolver(TypesetterSolver):
         printer = self.hooks.printer
         if parlocs is None:
             parlocs = printer.parlocs
-        self.sliceheights, self.baselines = printer.get_sliceheights(parlocs)
+        self.sliceheights, self.baselines, self.colwidths = printer.get_sliceheights(parlocs)
+        missing = [g for g in printer.glots if g not in self.baselines]
+        if missing:     # a layout with no slices of a glot (or none at all): use any baseline
+            dflt = max(self.baselines.values(), default=0.) or float(printer.view.get("s_linespacing") or 12.)
+            self.baselines.update({g: dflt for g in missing})
+        self.slicecontent, self.parbase = printer.get_slicecontent(parlocs)
+        self.headslices = printer.get_headslices(parlocs)
+        # slices whose gaps are by a heading: headings, and the slice just before one
+        order = sorted(self.sliceheights)
+        self.headgaps = self.headslices | {a for a, b in zip(order, order[1:]) if b in self.headslices}
         self.shape_deltas = {}      # pid -> line deltas it has shapes for
         for (pid, d) in self.shape_cache:
             if d:
@@ -791,11 +943,14 @@ class PolyFiller(PTXFiller):
         return slices, parslice
 
     def get_sliceheights(self, parlocs=None):
-        """ Returns (heights, baselines) for a layout (default the latest):
-                heights[slice][page][glot] = content height (pt) of that glot in that page slice
-                baselines[glot] = baselineskip (pt) """
+        """ Returns (heights, baselines, widths) for a layout (default the latest):
+                heights[slice][page][glot] = column height (pt) of that glot in that page slice,
+                    as TeX set it (glots padded to align; see get_slicecontent for the text)
+                baselines[glot] = baselineskip (pt)
+                widths[glot] = column width (pt) """
         heights = {}
         baselines = {}
+        widths = {}
         for pnum, g, ci in (parlocs or self.parlocs).polycols:
             if not ci.slice:
                 continue
@@ -803,25 +958,63 @@ class PolyFiller(PTXFiller):
             pg[g] = pg.get(g, 0) + ci.height + ci.depth
             if ci.baseline:
                 baselines[g] = ci.baseline
-        return heights, baselines
+            widths[g] = max(widths.get(g, 0.), ci.width)
+        return heights, baselines, widths
+
+    def get_slicecontent(self, parlocs=None):
+        """ Returns (content, parbase) for a layout (default the latest):
+                content[slice][page][glot] = height (pt) from the top of that glot's first
+                    paragraph in that page slice to the bottom of its last: where its text is.
+                    Unlike the column heights, this sees space TeX adds to align the glots
+                    (above a heading that wraps to fewer lines than in another glot).
+                parbase[pid] = the paragraph's baselineskip (pt) """
+        ext = {}
+        parbase = {}
+        for p in (parlocs or self.parlocs):
+            if not isinstance(p, ParInfo) or not p.slice or not p.rects:
+                continue
+            parbase[p.pid()] = p.baseline
+            for r in p.rects:
+                if r.col < 0:       # not a column of text
+                    continue
+                e = ext.setdefault((p.slice, r.pagenum - 1, p.glot), [r.ystart, r.yend])
+                e[0] = max(e[0], r.ystart)
+                e[1] = min(e[1], r.yend)
+        content = {}
+        for (sl, pg, g), (top, bot) in ext.items():
+            content.setdefault(sl, {}).setdefault(pg, {})[g] = top - bot
+        return content, parbase
+
+    def get_headslices(self, parlocs=None):
+        """ The slices of a layout (default the latest) whose paragraphs are all headings """
+        heads = {}
+        for p in (parlocs or self.parlocs):
+            if isinstance(p, ParInfo) and p.slice:
+                heads[p.slice] = heads.get(p.slice, True) and self.isheader(p.mrk)
+        return {sl for sl, h in heads.items() if h}
 
     def report(self, state):
         """ Summarise per glot underfill and slice balance for the current layout """
-        heights, baselines = self.get_sliceheights()
+        heights, baselines, widths = self.get_sliceheights()
+        content, parbase = self.get_slicecontent()
+        # a gap in a slice of headings, or just above one, does no harm: not counted
+        heads = self.get_headslices()
+        order = sorted(heights)
+        heads |= {a for a, b in zip(order, order[1:]) if b in heads}
         npages = self.parlocs.numPages()
         crossing = [s for s, v in heights.items() if len(v) > 1]
         imbalance = Counter()       # slices wholly on a page with every glot: imbalance in lines -> count
         for s, v in heights.items():
-            if len(v) > 1:
+            if len(v) > 1 or s in heads:
                 continue
-            h = list(v.values())[0]
+            h = content.get(s, {}).get(list(v)[0], {})
             if any(g not in h for g in self.glots):
                 continue
             hts = [h[g] for g in self.glots]
             imbalance[round((max(hts) - min(hts)) / max(baselines[g] for g in self.glots))] += 1
         holes = {}      # page -> lines of gap per glot where a slice crossing onto it ends
         for s, v in heights.items():
-            if len(v) > 1 and all(g in baselines for g in self.glots):
+            if len(v) > 1 and s not in heads and all(g in baselines for g in self.glots):
                 gaps = [int(x + 0.05) for x in end_gaps(v, baselines, self.glots)]
                 if any(gaps):
                     holes.setdefault(max(v), []).append(gaps)
@@ -830,10 +1023,10 @@ class PolyFiller(PTXFiller):
             logger.log(15, f"{self.bk} page {i+1}: underfill " + ", ".join(f"{g}={n}" for g, n in zip(self.glots, u)))
         logger.log(15, f"{self.bk}: slice imbalance (lines: count) {sorted(imbalance.items())}")
         print(f"\n{self.bk}: {npages} pages, {len(heights)} slices ({len(crossing)} cross a page), "
-              f"imbalance (lines:slices) {' '.join(f'{k}:{v}' for k, v in sorted(imbalance.items()))}, "
+              f"imbalance (lines:slices, not counting {len(heads)} of or before headings) {' '.join(f'{k}:{v}' for k, v in sorted(imbalance.items()))}, "
               f"{len(underfull)} pages underfilled: "
               + " ".join(f"{i+1}[" + ",".join(f"{g}{n}" for g, n in zip(self.glots, u) if n) + "]"
                          for i, u in underfull.items()), flush=True)
         print(f"{self.bk}: {sum(sum(x) for h in holes.values() for x in h)} lines of gap at slice ends "
-              f"after a page break: " + " ".join(f"{i+1}[" + ",".join(f"{g}{n}" for x in h for g, n in zip(self.glots, x) if n) + "]"
+              f"after a page break (not before headings): " + " ".join(f"{i+1}[" + ",".join(f"{g}{n}" for x in h for g, n in zip(self.glots, x) if n) + "]"
                                                    for i, h in sorted(holes.items())), flush=True)

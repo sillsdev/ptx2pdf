@@ -336,12 +336,18 @@ texpertOptions = {
                             _("How bad is it for a polyglot slice to not be balanced. This the multiplier of that cost\n"
                               "Only relevant to diglot and polyglot projects")),
     "pbpolyimbnarrow":    O("pbpolyimbnarrow", "APF", (0.5, 0, 10, 0.1, 1, 1), "", _("Effort to narrow a big imbalance"),
-                            _("The cost of each line of imbalance in a polyglot slice after the first.\n"
-                              "The cost of imbalance sets what it is worth to balance a slice exactly; this sets\n"
-                              "what each further line is worth, so the two do not affect each other.\n"
-                              "Higher: paragraphs are stretched or shrunk to narrow even a slice that cannot balance.\n"
-                              "0: only a slice that balances exactly gains anything, so slices that cannot\n"
-                              "balance keep their paragraphs' best shapes.\n"
+                            _("The cost of each line of whitespace in a polyglot slice after the first.\n"
+                              "A glot is only stretched or shrunk to end level with its slice, so this does not\n"
+                              "narrow gaps; it chooses between slice heights that leave different amounts of\n"
+                              "whitespace in glots that cannot reach them.\n"
+                              "Higher: prefer less whitespace, even at the cost of looser paragraphs.\n"
+                              "0: any amount of whitespace is as bad as one line.\n"
+                              "Only relevant to diglot and polyglot projects")),
+    "pbpolyfillslices":   O("pbpolyfillslices", "APF", False, "", _("Fill polyglot slices regardless of 1 line gaps"),
+                            _("Normally a glot is only stretched or shrunk to end level with its slice, and never\n"
+                              "so as to leave a gap of 1 line, which looks like a mistake.\n"
+                              "On: fill slices as much as possible: a gap may be narrowed, even to 1 line.\n"
+                              "Headings are never made to wrap differently just to narrow a gap.\n"
                               "Only relevant to diglot and polyglot projects")),
 
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),

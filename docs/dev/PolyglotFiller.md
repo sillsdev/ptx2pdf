@@ -120,11 +120,16 @@ In priority order:
 
 1. **Balanced pages.** Every glot reaches the bottom of the frame, to within
    its own baseline. This is the primary aim.
-2. **Balanced slices.** Within each slice the glots should end as close
-   together as possible. This is an optimisation: slack in a shorter glot is
-   imbalance to reduce, usually by stretching the short glot or shrinking the
-   long one. It is used to choose between configurations that fill the frame
-   equally well.
+2. **Balanced slices.** Within each slice the glots should end level. A glot
+   is stretched or shrunk only to end level with the slice; one that cannot
+   is left as it is, so a gap is never just narrowed (a 1 line gap made by
+   stretching looks like a mistake, a gap left alone does not). Between
+   configurations that fill the frame equally well, less whitespace is
+   better: `pbpolyimbalance` is what levelling a slice is worth and
+   `pbpolyimbnarrow` what each further line of whitespace costs. Whitespace
+   is an area, in column-lines (a line of the largest baseline across a
+   column of the glots' mean width), so glots of different widths count
+   fairly.
 
 Clarifications:
 
@@ -167,7 +172,8 @@ A slice is treated as a monoglot paragraph is. Paragraph probes give each
 glot's possible line changes; within a slice these are combined to give, for
 each change in slice height, the best way to set the slice's paragraphs: the
 lowest badness, counting both the shapes' badness and the slice's imbalance
-(the slice outcomes of patch 05b). A slice's height change is in points, not
+(the slice outcomes of patch 05b). An outcome where a changed glot ends more
+than half a line short of the slice is not used (`levelled`). A slice's height change is in points, not
 lines: with glots on different baselines it changes in uneven steps, which
 gives more options, and options are what is needed.
 
@@ -234,11 +240,46 @@ layout runs is used up.
 
 ### 4.4 Balance
 
-There is no separate balancing pass over the book: in the first design that
-made page filling worse before page filling could start. Instead, once a page
-is committed, each of its slices takes any outcome with the same height and
-lower badness (better balance at no page cost, since slice positions follow
-from heights). This applies to every page, full or not.
+Balance is judged by where each glot's text is, not by the slice's column
+heights. TeX sets the glots of a slice to its tallest, padding the others: in
+a slice of headings it puts the space above the shorter heading, so the
+columns come out equal while one glot shows a blank line. The text height of
+a glot in a slice (`get_slicecontent`: from the top of its first paragraph
+to the bottom of its last, from the parlocs' paragraph rectangles) shows it.
+A paragraph changed by d lines changes its glot's text by d times its own
+baseline (a heading's is smaller than the body's), and the slice changes
+height by what its tallest text does.
+
+Rather than separately balancing the book first (in the first design that
+made page filling worse before page filling could start), once a page is
+committed each of its slices takes any outcome with the same height and lower
+badness (better balance at no page cost, since slice positions follow from
+heights). This applies to every page, full or not. A layout checks the
+changes, which are undone if a page done so far goes short. Headings never
+change shape to balance a slice: a gap is better than making one wrap
+differently.
+
+Filling later pages can undo balancing (a backtrack resets the slices of the
+pages it changes), so once every page is filled the filler balances every
+page again.
+
+A slice's paragraphs change only to make their glot end level with the slice
+(`allowed`): a gap is never just narrowed, and no change may leave a gap of
+one line, which looks like a mistake. A 1 line gap left as it is costs at
+least as much as the loosest shape that may level it (twice the shape cap: a
+slice with a 1 line gap may use shapes up to that, as filling a page may), so
+any shape that can level it does; a larger gap costs `pbpolyimbalance` and
+`pbpolyimbnarrow` for each further line.
+
+A 1 line gap in a slice of headings (every paragraph of the slice is a
+heading), or in the slice just before one (the gap is then above the heading),
+is not a mistake (`single_gap`): headings have space above them anyway, so a
+little more does no harm and is better than making a heading wrap
+differently. It costs nothing, and the report counts no gap of either.
+
+`pbpolyfillslices` (off by default) lets the user fill slices as much as
+possible instead: a glot may be stretched or shrunk to narrow a gap, even to
+1 line, and a 1 line gap costs only what any gap's first line does.
 
 A slice crossing the bottom of the page needs more. If its glots end unevenly
 on the next page, the shorter one leaves a gap there, often a whole column
@@ -249,10 +290,18 @@ committed, the filler tries a few outcomes of that slice that even its ends
 (`balance_crossing`), changing only its paragraphs that reach the next page:
 changing those wholly on this page just changes this page, since TeX carries
 over at least two lines of a paragraph or none, and text pulled back brings
-its notes. A change is kept if the measured ends are more even, no page done
+its notes. The exception is a glot whose column is full on this page (it runs
+on, or ends at the foot of the page level with one that does): growing any
+of its paragraphs pushes a line over. A gap at the top of a page is worse
+than a looser paragraph, so these outcomes may use shapes up to twice the
+shape cap, as filling a page may. A change is kept if the measured ends are more even, no page done
 so far goes short and the next page is no shorter. When the next page is
 filled, a change to the slice's paragraphs there counts the imbalance where
 the slice ends against its badness, so the fill does not undo the evening.
+A change that would carry fewer than two lines of a glot over the page is
+not predicted: TeX's widow and club penalties would not set it so. Nor is one
+that leaves a glot with nothing on the next page while another has some, so
+that the others start the page alone; all of them ending on the page is fine.
 
 ### 4.5 Failure and backtracking
 

@@ -274,6 +274,7 @@ class Paragraphs(list):
         self._parloc_dlg = None
         self_append = self.append       # fast access to method
         par_ref_map = {}                # (polycol, ref) -> ParInfo (saves searching)
+        endcounts = {}                  # (polycol, ref) -> parnum of the last paragraph ending there
         if gui:
             def dlgresponse(rid):
                 nonlocal keepgoing
@@ -439,9 +440,12 @@ class Paragraphs(list):
                     currp.ref = p[0]
                 if currp.lastref == currp.ref:
                     currp.parnum = int(p[1])
-                prev_p = par_ref_map.get((polycol, currp.ref), None)
-                if prev_p and prev_p is not currp:
-                    currp.parnum = getattr(prev_p, 'parnum', 0) + 1
+                else:
+                    # TeX numbered it by the paragraphs that ended in its first verse before it
+                    n = endcounts.get((polycol, currp.ref), 0) + 1
+                    if n > 1:
+                        currp.parnum = n
+                endcounts[(polycol, currp.lastref)] = int(p[1])
                 currp.lines += int(p[2]) # this seems to be the current number of lines in para
                 # currp.badness = p[4]  # current p[4] = p[1] = parnum (badness not in @parlen yet)
                 logger.log(5, f"Stopping para {p[0]}={currp}")
