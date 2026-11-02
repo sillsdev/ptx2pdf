@@ -103,6 +103,7 @@ class Job:
     log_config: Optional[dict] = None
     stop: bool = False
     cfgid: Optional[str] = None
+    chapters: Optional[tuple] = None  # fill: (first, last) chapter, else the whole book
 
 
 class GLibCompatQueue:
@@ -255,7 +256,8 @@ class WorkerContext:
                 res = printer.solve(
                     target_id,
                     stop=job.stop,
-                    restart=job.build_params.args.restart
+                    restart=job.build_params.args.restart,
+                    chapters=job.chapters
                 )
             else:
                 res = printer.solve(job.books)
@@ -333,8 +335,10 @@ class MultiPrint:
             self.pending_futures[fut] = job
         return fut
 
-    def submit_fill_jobs(self, books: list[str], build_params: BuildParams, log_config: Optional[dict] = None, stop: bool = False):
-        """Enqueues fill jobs (sorted longest-first) in non-blocking fashion."""
+    def submit_fill_jobs(self, books: list[str], build_params: BuildParams, log_config: Optional[dict] = None, stop: bool = False,
+                         chapters: Optional[dict] = None):
+        """Enqueues fill jobs (sorted longest-first) in non-blocking fashion.
+           chapters: {book: (first, last)} to fill only those chapters of a book."""
         if not self.executor:
             self.start()
         if self.cancel_event is not None:
@@ -344,7 +348,8 @@ class MultiPrint:
 
         logging.debug(f"adding fill for {books}, {build_params=}")
         for bk in sorted_books:
-            job = Job(action='fill', books=[bk], build_params=build_params, log_config=log_config, stop=stop)
+            job = Job(action='fill', books=[bk], build_params=build_params, log_config=log_config, stop=stop,
+                      chapters=(chapters or {}).get(bk))
             self._dispatch_job(job)
 
     def submit_print_job(self, books: RefList|str, build_params: BuildParams, log_config: Optional[dict] = None) -> Future:

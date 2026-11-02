@@ -5,7 +5,7 @@ from shutil import rmtree
 from zipfile import ZipFile, is_zipfile
 
 import ptxprint
-from ptxprint.utils import saferelpath, appdirs, bookcodes
+from ptxprint.utils import saferelpath, appdirs, bookcodes, parseBookList
 from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
@@ -693,7 +693,14 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                     timeout = tout if tout >= 1 else None,
                     loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
                 mprint = MultiPrint(numproc=args.jobs or None)
-                mprint.submit_fill_jobs(mainw.getBooks(), bparms, stop=args.stop)
+                # -b may limit a book to some chapters, e.g. "MAT 1-11"
+                chapters = {}
+                bl, err = parseBookList(args.books or "", sep=" ", strict=False)
+                for r in (bl or []):
+                    first, last = getattr(r, 'first', r), getattr(r, 'last', r)
+                    if first.chapter is not None and first.book == last.book:
+                        chapters[first.book] = (first.chapter, last.chapter or first.chapter)
+                mprint.submit_fill_jobs(mainw.getBooks(), bparms, stop=args.stop, chapters=chapters)
                 results = mprint.wait()
                 mprint.teardown()
                 print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))

@@ -68,7 +68,7 @@ elif sys.platform == "darwin":
         return subprocess.Popen(*a, **kw)
 
     def child_cpu_time(runner):
-        usage = resource.getrusage(resource.RESOURCE_CHILDREN)
+        usage = resource.getrusage(resource.RUSAGE_CHILDREN)
         return (usage.ru_utime + usage.ru_stime)
 
 elif sys.platform == "win32":

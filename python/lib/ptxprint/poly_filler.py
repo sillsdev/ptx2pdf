@@ -894,10 +894,10 @@ class PolyFiller(PTXFiller):
         """ glot letter -> (expand, minexp, maxexp) """
         return {g: expansion_limits(v) for g, v in self.glotviews().items()}
 
-    def solve(self, bk, stop=False, restart=False):
+    def solve(self, bk, stop=False, restart=False, chapters=None):
         self.glots = list(self.glotviews().keys())
         logger.log(15, f"{bk}: glot settings {self.glot_settings()}")
-        return super().solve(bk, stop=stop, restart=restart)
+        return super().solve(bk, stop=stop, restart=restart, chapters=chapters)
 
     def run_layout(self, *a, **kw):
         res = super().run_layout(*a, **kw)

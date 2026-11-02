@@ -1327,7 +1327,7 @@ class PTXFiller:
         if progress:
             self.hooks.progress(ProgressEvent(bk, None, "page", ""))
 
-    def solve(self, bk, stop=False, restart=False):
+    def solve(self, bk, stop=False, restart=False, chapters=None):
         self.bk = bk        # needed by run()
         if bk not in self.view.getAllBooks().keys():
             return None
@@ -1339,9 +1339,12 @@ class PTXFiller:
                     c_cropmarks c_extractInserts c_printArchive c_quickRun""".split():
             oldvals[a] = self.view.get(a)
             self.view.set(a, False)
+        # the whole book unless chapters (first, last) are given: a chapter range for a single
+        # book in the view must not apply to every book filled
+        first, last = chapters or (1, chaps.get(bk, 200))
         for k,v in (("fcb_pagesPerSpread", 1), ("fcb_outputFormat", "Screen"), ("c_allowUnbalanced", True),
-                    ("r_book", "single"), ("ecb_book", bk), ("t_chapfrom", "1"),
-                    ("t_chapto", str(chaps.get(bk, 200)))):
+                    ("r_book", "single"), ("ecb_book", bk), ("t_chapfrom", str(first)),
+                    ("t_chapto", str(last))):
             oldvals[k] = self.view.get(k)
             self.view.set(k, v)
         # Don't save pics/styles here: parallel workers share those files and rewriting
@@ -1349,6 +1352,7 @@ class PTXFiller:
         self.hooks = self.hooks_class(self, None)
         self.job = None
         self.hascash = False
+        self.init_adjs = None       # the previous book's, which would be saved under its name
         #print(f"Filling {bk}")
         if restart:
             adjlist = self.view.get_adjlist(bk, save=False)
@@ -1444,7 +1448,7 @@ class PTXFiller:
         tname = self.view.getLocalTriggerFilename(self.bk)
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
-        if not hasattr(self, 'init_adjs'):
+        if getattr(self, 'init_adjs', None) is None:
             self.adjs = AdjList(int(self.expand*100), int(self.minexp*100), int(self.maxexp*100), fname=adjfname, gtk=None)
             doappend = True
         else:
