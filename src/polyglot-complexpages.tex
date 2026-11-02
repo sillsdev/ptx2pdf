@@ -545,7 +545,7 @@
   \trace{dmc}{blank \ifBookOpenLeft rev\fi p@lyp@gecols\p@lyr@wstringrev}%
   \xdef@cseq{\ifBookOpenLeft \else rev\fi p@lyp@gecols\p@lyr@wstringrev}{}%
   \def\rev@tmp@list{}\def\list@type{tmp}%
-  \edef\tmporder{#1}%
+  \edef\mporder{#1}%
   \ifBookOpenLeft\else
     \let\col@do=\mkrev@list
     \x@\each@col\tmporder\E
@@ -737,7 +737,6 @@
 
 \def\@@complexs@tprocseq#1{% register a new column, in (forward) sequence
   \trace{dmcr}{@@csps #1 \the\currentgrouplevel}%
-  \edef\x@fch@r{#1}% The expanded field char.
   \ifcsname #1isDiglotColumn\endcsname
     \x@\let\x@\tmp\csname @columns@#1\endcsname
     \ifnum 0=\ifx \tmp\undefined 0\else\tmp \fi
@@ -749,8 +748,9 @@
       \ifcsname #1test\endcsname\else
         \x@\mkn@wht\csname #1test\endcsname\E
       \fi
+      \edef\x@fch@r{#1}% The expanded field char.
     \else
-      \trace{dmcr}{#1 has \tmp columns already}%
+      \trace{dmc}{#1 has \tmp columns already}%
       \x@\xdef\csname @columns@#1\endcsname{\the\numexpr \tmp +1\relax}% How many sub-columns is this split into?
       \new@followon{#1}%
     \fi
@@ -760,6 +760,12 @@
     \edef\@tmpnam{decode@#1\the\count255}%
     \trace{dmc}{... #1\the\count255\space -> \x@fch@r}%
     \x@\xdef\csname \@tmpnam\endcsname{\x@fch@r}% L0->Z (etc) mapping, needed for reverse-order version
+    \x@\xdef\csname lastcol#1-\the\p@lyp@geno\endcsname{\x@fch@r} % Where do notes for L/R go on this page?
+    \trace{dmc}{lastcol#1-\the\p@lyp@geno\space is \x@fch@r}%
+    \x@\xdef\csname ther@wno\x@fch@r\endcsname{\the\p@lyr@wno}%
+    \x@\xdef\csname thep@geno\x@fch@r\endcsname{\the\p@lyp@geno}%
+    \x@\xdef\csname thec@ll\x@fch@r\endcsname{\p@lyr@wstring}%
+    \trace{dmc}{\x@fch@r\space is on page \the\p@lyp@geno}% 
     \xdef@cseq{@tmpnum@#1}{\the\count255}%
     \ifcplx@deps % Dependant columns go into a secondary list.
       \xdef@cseq{cplx@procII\p@lyr@wstring}{\csname cplx@procII\p@lyr@wstring\endcsname\x@fch@r}%
@@ -807,11 +813,6 @@
       \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
     \fi
     \x@\xdef\csname lastcell#1-\the\p@lyp@geno\endcsname{\p@lyr@wstring} % Where do notes for L/R go on this page?
-    \x@\xdef\csname lastcol#1-\the\p@lyp@geno\endcsname{\x@fch@r} % Where do notes for L/R go on this page?
-    %\trace{dmc}{lastcol#1-\the\p@lyp@geno\space is \x@fch@r}%
-    \x@\xdef\csname ther@wno\x@fch@r\endcsname{\the\p@lyr@wno}%
-    \x@\xdef\csname thep@geno\x@fch@r\endcsname{\the\p@lyp@geno}%
-    \x@\xdef\csname thec@ll\x@fch@r\endcsname{\p@lyr@wstring}%
   \else
     \ifcsname @f@p@rse#1\endcsname
       \csname @f@p@rse#1\endcsname
@@ -1339,7 +1340,29 @@
   \x@\def\csname tst#1htfn\x@\x@\x@\x@\x@\x@\x@\endcsname\x@\x@\x@\x@\x@\x@\x@{\x@\x@\x@\tmp\x@\the\x@\fntoks\x@\edef\csname tmp#1ht\endcsname{\the\tmpdim}}% This one for layout testing.
   \trace{dmc}{tst#1htfn defined as \x@\meaning\csname tst#1htfn\endcsname}%
 }
-\def\us@tmphtfn#1{\relax\x@\let\x@\tmp\csname \htfntyp #1htfn\endcsname\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
+\def\g@ngrphtfunctions#1{%for each group,generate a height function which will calculate the group row heights and then sum them together. Assumes htfntyp will be valid when used.
+  \edef\htn@m{htfunction-#1}%Name for the height function
+  \let\htfntyp\relax
+  \x@\let\csname \htn@m\endcsname\empty
+  \let\tmp\empty
+  \def\@p{}%
+  \edef\grp@nam{r@wstrings-#1}%name for list of rows for this group.
+  \let\d@\@g@ngrphtfunctions
+  \x@\x@\x@\cstackdown\csname \grp@nam\endcsname,\E
+  \x@\def\csname\htn@m\x@\x@\x@\endcsname\x@{\x@\dimexpr \csname \htn@m\endcsname\relax}%
+  \trace{dmc}{\htn@m\space defined as \x@\meaning\csname \htn@m\endcsname}%
+}
+\def\@g@ngrphtfunctions#1\E{%
+  \x@\def\csname\htn@m\x@\endcsname\x@{\csname \htn@m\x@\endcsname\x@\@p\csname #1@ht\endcsname}%
+  \x@\edef\csname\pgn@m\endcsname{\csname pgn@m\endcsname\@p\ht\csname excess#1\endcsname+\dp\csname excess#1}%
+}
+
+\def\us@htfn#1{\relax
+  \if:#1\relax
+    \x@\def\x@\tmp\x@{\csname htfunction-\this@p@lyr@wstring-\the\p@lygr@upno\endcsname}\x@\x@\x@\fntoks\x@\x@\x@{\x@\tmp\the\fntoks}%
+  \else
+    \x@\let\x@\tmp\csname \htfntyp #1htfn\endcsname\x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
+  \fi
 }
 
 \def\add@tr@iling#1{%add tr@iling#1 to contents of fntoks
@@ -1358,7 +1381,7 @@
 
 % Determine the tallest box in a row
 \def\rowm@x#1{\x@\x@\x@\@rowm@x\x@{\csname \p@lyr@wstring @ht\x@\endcsname\x@}\x@{\csname tmp#1ht\endcsname}{\r@wminht}}% For col@do
-\def\@rowm@x#1#2#3{%
+\def\@rowm@x#1#2#3{%#1=max #2=column #3=min
   \trace{dmc}{@rowm@x #1 #2}%
   \x@\fntoks\x@{\the\fntoks \ifdim #2 > #1 #1=#2\relax\fi \ifdim #3 > #2 #3=#2\relax\fi}%
 }
@@ -1371,14 +1394,16 @@
   \trace{dmc}{resetting fntoks}%
   \fntoks{}%
   \def\htfntyp{tst}% Mainly we need the test height functions, not the page-height functions
-  \let\col@do\us@tmphtfn \edef\tmp{#1#2}\x@\each@col\tmp\E
+  \edef\this@p@lyr@wstring{\p@lyr@wstring}%
+  \p@lygr@upno=0
+  \let\col@do\us@htfn \edef\tmp{#1#2}\x@\each@col\tmp\E
   \x@\let\csname tmp#1ht\endcsname\relax
   \def\tmpb{#2}%
   \ifx\tmpb\empty
-    \edef\tmp{\csname \p@lyr@wstring @ht\endcsname=\tmpdim}%
+    \edef\tmp{\csname \thisp@lyr@wstring @ht\endcsname=\tmpdim}%
     \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
   \else %Extend the function
-    \edef\tmp{\csname \p@lyr@wstring @ht\endcsname=\csname tmp#1ht\endcsname\relax}%
+    \edef\tmp{\csname \thisp@lyr@wstring @ht\endcsname=\csname tmp#1ht\endcsname\relax}%
     \x@\x@\x@\fntoks\x@\x@\x@{\x@\the\x@\fntoks\tmp}%
     \trace{dmc}{fntoks(\p@lyr@wstring):\the\fntoks}%
     \let\col@do\rowm@x 
@@ -1386,12 +1411,14 @@
   \fi
   \trace{dmc}{htfunction-\p@lyr@wstring:\the\fntoks}%
   \x@\def\csname htfunction-\p@lyr@wstring\x@\endcsname\x@{\the\fntoks}%
-  \edef\tmp{\x@\advance\csname p@gehtloss-\the\p@lyp@geno\endcsname by \csname \p@lyr@wstring @ht\endcsname}%
-  \x@\def\csname p@gehtcalcs\x@\x@\x@\endcsname\x@\x@\x@{\x@\p@gehtcalcs\csname htfunction-\p@lyr@wstring\x@\endcsname \tmp}%
-  \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\p@gehtcalcs\relax % Save the possibly-updated version
-  %\fntoks{\textheight - \dimexpr }%
-  \relax
-  \let\d@\gchd@
+  \ifnum\p@lygr@updp=0
+    \edef\tmp{\x@\advance\csname p@gehtloss-\the\p@lyp@geno\endcsname by \csname \p@lyr@wstring @ht\endcsname}%
+    \x@\def\csname p@gehtcalcs\x@\x@\x@\endcsname\x@\x@\x@{\x@\p@gehtcalcs\csname htfunction-\p@lyr@wstring\x@\endcsname \tmp}%
+    \x@\let\csname p@gehtcalcs-\the\p@lyp@geno\endcsname\p@gehtcalcs\relax % Save the possibly-updated version
+    %\fntoks{\textheight - \dimexpr }%
+    \relax
+    \let\d@\gchd@
+  \fi
 }
 
 \def\@genhtfunction#1{%
@@ -1544,9 +1571,13 @@
   \fi
   \let\col@do\g@ncolhtfunctions 
   \x@\each@col\all@list\E % step (b)
+  \ifx\gr@upstrings\empty\else
+    \let\d@\g@ngrphtfunctions%Generate the combined-height functions for groups
+    \x@\cstackdown\gr@upstrings,\E %step(c)
+  \fi
   \let\d@\polyr@wstack 
   \let\pd@\g@nchunkhtfunctions
-  \x@\cstackdown\r@wstrings,\E %step(c)
+  \x@\cstackdown\r@wstringstop,\E %step(c)
   \trace{dmc}{Page height calcs [me@sure\ifme@sure true\else false\fi] (last page):\meaning\p@gehtcalcs}%
   %TODO: Currently no column reflow at all at all!
   %FIXME: Reflow columns intelegently.
