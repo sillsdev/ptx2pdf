@@ -141,6 +141,22 @@ msgstr "最小非连字符长度："
 msgid "Advanced"
 msgstr "高级"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "字体"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "文字"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "笔记+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "参照"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "创建连字符词表时"

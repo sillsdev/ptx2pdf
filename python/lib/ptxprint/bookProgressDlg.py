@@ -142,7 +142,7 @@ class BookProgressCell:
                 self._bar.set_text(self._barStatusText(event.msg) + f"({self._total})")
                 self._applyColor(STATUS_WARNING)
             else:
-                self._bar.set_text(self._barStatusText(_(f"Complete ({self._total})")))
+                self._bar.set_text(self._barStatusText(_("Complete ({self._total})").format(self=self)))
                 self._applyColor(STATUS_GOOD)
 
         elif mode == "failed":

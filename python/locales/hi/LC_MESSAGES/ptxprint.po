@@ -144,6 +144,22 @@ msgstr "कम से कम बिना-हाइफ़न:"
 msgid "Advanced"
 msgstr "एडवांस्ड"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "फ़ॉन्ट"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "स्क्रिप्ट"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "नोट्स+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "रेफ़"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "हाइफ़न सूची बनाते समय"

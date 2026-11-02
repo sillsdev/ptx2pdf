@@ -147,6 +147,22 @@ msgstr "Min non-hyphen:"
 msgid "Advanced"
 msgstr "Advanced"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "Fonts"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "Script"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "Note+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "Ref"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "Taim Kamapim Hyphenation Lis"

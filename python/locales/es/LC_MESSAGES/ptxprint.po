@@ -149,6 +149,22 @@ msgstr "Min sin guion:"
 msgid "Advanced"
 msgstr "Avanzado"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "Fuentes"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "Escritura"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "Notas+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "Refs"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "Al crear la lista de separación silábica"

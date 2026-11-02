@@ -147,6 +147,22 @@ msgstr "الحد الأدنى بلا واصلة:"
 msgid "Advanced"
 msgstr "متقدم"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "الخطوط"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "النص"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "ملاحظات+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "مراجع"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "عند إنشاء قائمة التقطيع"

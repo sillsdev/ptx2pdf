@@ -2200,7 +2200,7 @@ class ViewModel:
         cfg = self.polyglots[suffix].cfg
         if prj is None or cfg is None:
             raise ValueError(f"No Config found for Diglot [{suffix}]")
-            self.setPrintBtnStatus(2, _(f"No Config found for Diglot [{suffix}]"))
+            self.setPrintBtnStatus(2, _("No Config found for Diglot [{suffix}]").format(suffix=suffix))
             digview = None
         else:
             digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
@@ -2209,7 +2209,7 @@ class ViewModel:
             if cfg is None or cfg == "" or not digview.setConfigId(cfg):
                 digview = None
         if digview is None:
-            self.setPrintBtnStatus(2, _(f"No Config found for diglot: {cfg}"))
+            self.setPrintBtnStatus(2, _("No Config found for diglot: {cfg}").format(cfg=cfg))
         else:
             digview.isDiglot = True
             digview.digSuffix = suffix

@@ -3082,10 +3082,15 @@ class GtkViewModel(ViewModel):
                 lb.set_markup(stylize(text, is_active_fn(self)))
 
         # --- Handle labels with more complex markup structure ---
+        # The _() calls are outside the f-strings so that xgettext can find these strings
         font_active = self.get("c_colorfonts")
-        self.builder.get_object("lb_Font").set_markup(f"{stylize(_('Fonts'), font_active)}+{_('Scripts')}")
+        fontsText = _('Fonts')
+        scriptsText = _('Scripts')
+        self.builder.get_object("lb_Font").set_markup(f"{stylize(fontsText, font_active)}+{scriptsText}")
         xref_active = self.get("c_useXrefList")
-        self.builder.get_object("lb_NotesRefs").set_markup(f"{_('Notes+')}{stylize(_('Refs'), xref_active)}")
+        notesText = _('Notes+')
+        refsText = _('Refs')
+        self.builder.get_object("lb_NotesRefs").set_markup(f"{notesText}{stylize(refsText, xref_active)}")
 
         # --- Special Case: Tabs + Borders (logic is unique) ---
         fr_tabs = self.builder.get_object("fr_tabs")
@@ -5830,7 +5835,7 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(self._incrementProgress)
         currMsg = self.builder.get_object("t_find").get_placeholder_text()
         if stage == 'lo' and run > 0:
-            msg = _(f"Redoing layout {run}...")
+            msg = _("Redoing layout {run}...").format(run=run)
         elif stage is None:
             msg = ""
         else:
@@ -6115,7 +6120,7 @@ class GtkViewModel(ViewModel):
         gclass = getattr(scriptsnippets, script.lower(), None)
         if gclass is None or gclass.dialogstruct is None:
             return
-        d = MiniDialog(self, gclass.dialogstruct, _(f"{script} Script Settings"))
+        d = MiniDialog(self, gclass.dialogstruct, _("{script} Script Settings").format(script=script))
         response = d.run()
         d.destroy()
         

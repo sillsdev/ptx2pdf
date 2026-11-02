@@ -847,6 +847,22 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr ""
+
 #: lib/ptxprint/gtkview.py:3097
 msgid "Tabs"
 msgstr ""

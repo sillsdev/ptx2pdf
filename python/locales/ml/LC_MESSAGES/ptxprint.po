@@ -151,6 +151,22 @@ msgstr "കുറഞ്ഞ നോൺ-ഹൈഫൻ:"
 msgid "Advanced"
 msgstr "വിപുലമായത്"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "ഫോണ്ടുകൾ"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "സ്ക്രിപ്റ്റുകൾ"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "കുറിപ്പുകൾ+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "റഫറൻസുകൾ"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "ഹൈഫനേഷൻ ലിസ്റ്റ് സൃഷ്ടിക്കുമ്പോൾ"

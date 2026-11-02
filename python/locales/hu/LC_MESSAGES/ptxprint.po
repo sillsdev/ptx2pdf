@@ -147,6 +147,22 @@ msgstr "Min. kötőjel nélküli:"
 msgid "Advanced"
 msgstr "Haladó"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "Betűtípusok"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "Szkriptek"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "Megjegyzések+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "Hivatkozások"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "A kötőjeles lista létrehozásakor"

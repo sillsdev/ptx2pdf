@@ -195,7 +195,7 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
             lines.append(text)
         if secondary is not None and len(secondary):
             lines.append(secondary)
-        s = _(f"Mailto: <{who2email}>") + "\n{}".format("\n".join(lines))
+        s = _("Mailto: <{who2email}>").format(who2email=who2email) + "\n{}".format("\n".join(lines))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed

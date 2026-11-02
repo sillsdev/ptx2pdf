@@ -260,7 +260,7 @@ class AdjList:
         except FileNotFoundError:
             pass  # File does not exist, no action needed
         except PermissionError:
-            self.model.statusMsg(_(f"Warning! File: {fname} is locked. Could not be deleted."))
+            self.model.statusMsg(_("Warning! File: {fname} is locked. Could not be deleted.").format(fname=fname))
 
     def reloadIfChanged(self):
         """ Re-reads the file if it was changed (or deleted) outside PTXprint since it was last read or written,

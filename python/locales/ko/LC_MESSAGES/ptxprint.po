@@ -145,6 +145,22 @@ msgstr "하이픈 없는 최소 길이:"
 msgid "Advanced"
 msgstr "고급"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "글꼴"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "스크립트"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "메모+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "참조"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "하이픈 목록 생성 시"

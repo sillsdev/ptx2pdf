@@ -148,6 +148,22 @@ msgstr "အနည်းဆုံး မဖြတ်ရ:"
 msgid "Advanced"
 msgstr "အဆင့်မြင့်"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "ဖောင့်"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "စာလုံးစနစ်"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "မှတ်စု+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "ကိုးကား"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "ဟိုက်ဖန်ဖြတ်စာရင်း ပြုလုပ်သည့်အခါ"

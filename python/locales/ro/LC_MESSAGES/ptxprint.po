@@ -147,6 +147,22 @@ msgstr "Min. fără cratimă:"
 msgid "Advanced"
 msgstr "Avansat"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "Fonturi"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "Scriere"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "Note+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "Referințe"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "La crearea listei de cratime"
@@ -1420,7 +1436,7 @@ msgstr "Specificați grosimea liniilor\n"
 
 #: lib/ptxprint/gtkview.py:3098
 msgid "Borders"
-msgstr "Chenare"
+msgstr "Chenar"
 
 #: temp.glade:5981
 msgid "Top padding (pts). When Uniform Box Padding\n"
@@ -15090,7 +15106,7 @@ msgstr "Unele fișiere nu au putut fi șterse (este posibil să fie deschise în
 
 #: lib/ptxprint/gtkview.py:3097
 msgid "Tabs"
-msgstr "File de indexare"
+msgstr "Filă"
 
 #: lib/ptxprint/gtkview.py:3179
 msgid "The Cover is disabled because Local Front Matter is turned off."

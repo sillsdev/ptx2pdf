@@ -147,6 +147,22 @@ msgstr "Мин. без переноса:"
 msgid "Advanced"
 msgstr "Расширенные"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "Шрифты"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "письмо"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "Сноски+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "ссылки"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "При создании списка переносов"

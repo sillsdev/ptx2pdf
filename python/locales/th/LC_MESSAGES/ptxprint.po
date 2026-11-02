@@ -124,6 +124,22 @@ msgstr "ขั้นต่ำที่ไม่ใส่ยัติภังค
 msgid "Advanced"
 msgstr "ระดับสูง"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "ฟอนต์"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "สคริปต์"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "หมายเหตุ+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "อ้างอิง"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "เมื่อสร้างรายการลิงก์"

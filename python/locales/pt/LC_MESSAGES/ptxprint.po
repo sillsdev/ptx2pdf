@@ -147,6 +147,22 @@ msgstr "Mínimo não-hífen:"
 msgid "Advanced"
 msgstr "Avançado"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "Fontes"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "Sistemas de Escrita"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "Notas+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "Refs"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "Ao Criar a Lista de Hifenização"
@@ -15134,7 +15150,7 @@ msgstr "Alguns arquivos não puderam ser excluídos (podem estar abertos em outr
 
 #: lib/ptxprint/gtkview.py:3097
 msgid "Tabs"
-msgstr "Abas/Linguetas da Bíblia"
+msgstr "Abas"
 
 #: lib/ptxprint/gtkview.py:3179
 msgid "The Cover is disabled because Local Front Matter is turned off."

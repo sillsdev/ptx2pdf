@@ -150,6 +150,22 @@ msgstr "Min. tanpa tanda hubung:"
 msgid "Advanced"
 msgstr "Lanjutan"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "Font"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "Tulisan"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "Catatan+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "Referensi"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "Waktu Membuat Daftar Pemenggalan Kata"

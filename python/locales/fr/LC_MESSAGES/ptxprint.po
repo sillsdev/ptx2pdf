@@ -148,6 +148,22 @@ msgstr "Min sans trait d'union :"
 msgid "Advanced"
 msgstr "Avancé"
 
+#: lib/ptxprint/gtkview.py:3087
+msgid "Fonts"
+msgstr "Polices"
+
+#: lib/ptxprint/gtkview.py:3088
+msgid "Scripts"
+msgstr "Écriture"
+
+#: lib/ptxprint/gtkview.py:3091
+msgid "Notes+"
+msgstr "Notes+"
+
+#: lib/ptxprint/gtkview.py:3092
+msgid "Refs"
+msgstr "Références"
+
 #: temp.glade:701
 msgid "When Creating Hyphenation List"
 msgstr "Lors de la création d'une liste de césures"
