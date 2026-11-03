@@ -763,6 +763,7 @@
     \global\output{\diglot@any@trial}%
     \trace{D}{TRIAL! \the\ht\galley+\the\dp\galley}%
     \advance\r@a@trialdepth by 1 % run@a@trial can end up reentrant. Ensure we don't needlessly warn of if-depth errors which are just recursion
+    \ifnum\r@a@trialdepth=1 \tri@lprepinscounts \fi
     \unvcopy\galley
     \unpenalty
     \traceifset{run@a@trial\the\r@a@trialdepth}%
@@ -771,6 +772,7 @@
     \relax
     %\iflate@stage@reflow \showlists\fi
     \traceifcheck{run@a@trial\the\r@a@trialdepth}%
+    \ifnum\r@a@trialdepth=1 \tri@lrestorinscounts \fi
     \advance\r@a@trialdepth by -1
     \relax\relax
     \let\after@run@a@trial=\relax
@@ -782,6 +784,13 @@
   \fi
   \trace{D}{End of run@a@trial}%
   \after@run@a@trial
+}
+
+\def\@tri@lprepinscount#1\E{\edef\tmp{\count\csname #1\endcsname=\the\count\csname #1\endcsname}\x@\x@\x@\def\x@\x@\x@\tri@lrestorinscounts\x@\x@\x@{\x@\tri@lrestorinscounts\tmp\relax}%
+  \count\csname#1\endcsname=0 
+}%
+\def\tri@lprepinscounts{%\tracingassigns=1 
+  \let\tri@lrestorinscounts\empty\let\d@\@tri@lprepinscount\x@\cstackdown\ins@rts\E%\message{tric:\tri@lrestorinscounts}%
 }
 
 

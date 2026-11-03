@@ -306,7 +306,7 @@
     \addto@macro\l@tcategories{#1,}%
     \x@\def\csname L@T#1\endcsname{}%
   \fi
-  \x@\addto@macro\csname L@T#1\x@\endcsname\x@{\detokenize{\string\doTOCline{#2}{#3}{}{}{#4}}^^J}%
+  \x@\addto@macro\csname L@T#1\x@\endcsname\x@{\detokenize{\doTOCline{#2}{#3}{}{}{#4}}^^J}%
   \catcode`\%=\tmpc@tc
 }
 \def\writel@t#1{%
