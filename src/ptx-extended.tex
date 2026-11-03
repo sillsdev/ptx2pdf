@@ -522,9 +522,11 @@
   \@@sbar{esb}%
 }
 
+\newcount\sb@rnest
+%\sb@rnest=0
 \newif\ifble@dthisbar
 \def\@@sbar#1{%
-  \trace{e}{Starting side bar (#1/\sb@rmarker) from \m@rker, \the\lastdepth}%
+  \trace{e}{Starting side bar (#1/\sb@rmarker) from \m@rker, \the\lastdepth, nesting=\the\sb@rnest}%
   \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
   \ble@dthisbarfalse
   %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. NO, because we might be triggered from a verse
@@ -547,6 +549,7 @@
   \fi
   \mcpush{\ss@Sbar}{#1}\trace{e}{ESB \the\@numcuts}\setbox\extb@x\vbox\bgroup\cancelcutouts
     \edef\sb@rnum{\the\im@gecount}%
+    \advance\sb@rnest by 1
     \edef\sb@rfirstskip{0pt}% If the sidebar starts with a heading, how much skip did it have?
     \let\thisp@rclass\empty % Signal to gridbox that there's nothing above this.
     \let\lastp@rclass\empty % Signal to gridbox that there's nothing above this.

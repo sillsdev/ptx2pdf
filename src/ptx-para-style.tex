@@ -356,7 +356,7 @@
 %-cpar_par
 % No blank line here!
 %+cpar_doendofthispar
-\def\seteotpn@me{\edef\eotpn@me{at@ndofthispar\c@rrdstat}}% Which endofthispar macro?
+\def\seteotpn@me{\edef\eotpn@me{at@ndofthispar\the\sb@rnest-\c@rrdstat}\ifcsname \eotpn@me\endcsname\else\x@\let\csname\eotpn@me\endcsname\empty\fi}% Which endofthispar macro?
 \def\addtopreeotp#1{\seteotpn@me\edef\peotpn@me{pre\eotpn@me}%
   \trace{g}{\peotpn@me\space set}%
   \ifcsname \peotpn@me\endcsname\else\x@\let\csname \peotpn@me\endcsname\empty\fi
