@@ -16,7 +16,7 @@ And the adjust list:
        P (optional) is the paragraph within the note, defaults to 1
 ```
 
-The piclist form is also used in trigger files.
+The piclist form (excluding the space between book and chapter) is also used in trigger files.
 
 Sidebars and marginal notes, however,  are not included in either of these systems, leading to ambiguity.
 
@@ -50,7 +50,7 @@ K      := key of this frame within the enclosing paragraph (1-based, see below)
 - **K** is the ordinal of TYPE within the enclosing paragraph (1-based, counted in input order, separately for each TYPE), unless the type defines its own key:
   - `tc`: the cell's starting column (`\tablec@l`). A cell that spans columns takes the column it starts in. All cell markers (`tc`, `tcr`, `tcc`) use the type `tc`.
   - `fig` from a piclist: the piclist suffix (`\p@clistsuff`), so BASE + K identifies the piclist entry.
-- **K, N and TYPE** never contain spaces, dots or `]`.
+- **No spaces** are ever included in the format
 
 Examples:
 
@@ -60,6 +60,7 @@ Examples:
 | `MAT1.5[2]` | Body paragraph 2 of verse 5 (new format) |
 | `MAT1.5[2][f.1][1]` | First paragraph of the first `\f` in that paragraph (similar to historic adjust-list syntax) |
 | `MAT1.5[2][esb.2][3]` | Paragraph 3 of the second sidebar opened in paragraph 2 |
+| `MAT1.5[2][esb.2]=3` | Paragraph 3 of the second sidebar opened in paragraph 2 (old format still acceptable for final paragraph number) |
 | `MAT1.5[2][esb.1][2][f.1][1]` | A footnote in paragraph 2 of the first sidebar |
 | `MAT1.5[4][tc.3]` | The cell in column 3 of the row that is paragraph 4. A table cell cannot have multiple paragraphs.
 | `MAT1.8[1][fig.2][1]` | First caption paragraph of the 2nd piclist picture at MAT 1:8 |
@@ -77,4 +78,9 @@ Piclist and trigger-file supplied content are processed as soon as `\v` (or othe
 * Triggers, piclist and adjlist compare with `\c@rref` and `\dc@rref` 
 
 ### Potential optimisation?
-It would be possible to maintain a cache of `BASE` locations for which triggers/piclists/adjustments exist. If there is nothing for an `BASE`, then there is nothing for `BASE SUBID` either, in which case generating the SUBID could be skipped. Given there is a non-linear relationship between TeX's memory use and lookup-speed once extended storage is in use, this is probably not worth it. 
+It would be possible to maintain a cache of `BASE` locations for which triggers/piclists/adjustments exist. If there is nothing for an `BASE`, then there is nothing for `BASE SUBID` either, in which case generating the SUBID could be skipped. Given there is a non-linear relationship between TeX's memory use and lookup-speed once extended storage is in use, this is probably not worth it.
+
+# Unresolved
+
+* Should the proposed change affect only the contents of piclists and trigger files (an extension of capabilities) or also adjust lists, where it would be a conflicting format.
+* Should the space currently found in piclists and adjustlists between book and chapter be removed or preserved?
