@@ -1,6 +1,6 @@
 from ptxprint.runner import fclist, checkoutput
 from ptxprint.utils import saferelpath
-import struct, re, os, sys
+import struct, re, os, sys, time
 # from gi.repository import Pango
 from pathlib import Path
 from threading import Thread
@@ -102,11 +102,31 @@ def writefontsconf(extras, archivedir=None, testsuite=None):
     if archivedir is not None:
         return res
     os.makedirs(os.path.dirname(fname), exist_ok=True)
+    # Usually unchanged, so don't touch it while another ptxprint may be reading it.
+    try:
+        with open(fname, encoding="utf-8") as inf:
+            if inf.read() == res:
+                return fname
+    except OSError:
+        pass
     # Write it whole, since another ptxprint may be reading it. Each job also writes its own.
     tmpname = f"{fname}.{os.getpid()}"
-    with open(tmpname, "w", encoding="utf=8") as outf:
+    with open(tmpname, "w", encoding="utf-8") as outf:
         outf.write(res)
-    os.replace(tmpname, fname)
+    # On Windows the replace fails while another process has fonts.conf open, so retry
+    for i in range(10):
+        try:
+            os.replace(tmpname, fname)
+            return fname
+        except PermissionError:
+            time.sleep(0.1 * (i + 1))
+    try:
+        os.remove(tmpname)
+    except OSError:
+        pass
+    if not os.path.exists(fname):
+        raise PermissionError(f"Unable to write {fname}")
+    logger.warning(f"Could not update {fname} (in use by another process); using the existing file")
     return fname
 
 #pango_styles = {Pango.Style.ITALIC: "italic",
