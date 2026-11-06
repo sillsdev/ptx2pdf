@@ -37461,11 +37461,10 @@ show/edit the Maps module.</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">6</property>
-                            <property name="vexpand">False</property>
                             <property name="label-xalign">0.009999999776482582</property>
                             <property name="shadow-type">none</property>
                             <child>
-                              <!-- n-columns=3 n-rows=3 -->
+                              <!-- n-columns=3 n-rows=4 -->
                               <object class="GtkGrid" id="gr_colophon">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -37559,7 +37558,7 @@ but :// used in URLs will still be preserved</property>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
                                     <property name="width">2</property>
-                                    <property name="height">3</property>
+                                    <property name="height">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -37613,6 +37612,18 @@ on its own page - regardless of this setting. </property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <!-- takes the spare height, so the controls on the left stay together at the top -->
+                                  <object class="GtkBox" id="bx_colophonFiller">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="vexpand">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                               </object>
@@ -37725,7 +37736,7 @@ file is selected, then these will appear in alphabetical order.</property>
                           </packing>
                         </child>
                         <child>
-                          <!-- n-columns=2 n-rows=3 -->
+                          <!-- n-columns=2 n-rows=4 -->
                           <object class="GtkGrid" id="gr_frontmatter">
                             <property name="width-request">710</property>
                             <property name="visible">True</property>
@@ -37769,7 +37780,7 @@ table of variable names and values.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="hexpand">True</property>
-                                <property name="vexpand">False</property>
+                                <property name="vexpand">True</property>
                                 <property name="shadow-type">none</property>
                                 <child>
                                   <object class="GtkScrolledWindow" id="scr_zvarlist">
@@ -37777,7 +37788,7 @@ table of variable names and values.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="hexpand">True</property>
-                                    <property name="vexpand">False</property>
+                                    <property name="vexpand">True</property>
                                     <property name="vscrollbar-policy">always</property>
                                     <property name="shadow-type">in</property>
                                     <property name="overlay-scrolling">False</property>
@@ -37785,7 +37796,7 @@ table of variable names and values.</property>
                                       <object class="GtkTreeView" id="tv_zvarEdit">
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
-                                        <property name="vexpand">False</property>
+                                        <property name="vexpand">True</property>
                                         <property name="hadjustment">a_zvarListadjustment1</property>
                                         <property name="vadjustment">a_zvarListadjustment2</property>
                                         <property name="vscroll-policy">natural</property>
@@ -37865,7 +37876,7 @@ table of variable names and values.</property>
                               <packing>
                                 <property name="left-attach">1</property>
                                 <property name="top-attach">0</property>
-                                <property name="height">3</property>
+                                <property name="height">4</property>
                               </packing>
                             </child>
                             <child>
@@ -37955,9 +37966,21 @@ selected variable(s).</property>
                                 <property name="top-attach">1</property>
                               </packing>
                             </child>
+                            <child>
+                              <!-- takes the spare height, so the buttons on the left stay together at the top -->
+                              <object class="GtkBox" id="bx_zvarFiller">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="vexpand">True</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">3</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
+                            <property name="expand">True</property>
                             <property name="fill">True</property>
                             <property name="position">8</property>
                           </packing>

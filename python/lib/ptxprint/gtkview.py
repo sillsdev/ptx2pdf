@@ -3176,11 +3176,13 @@ class GtkViewModel(ViewModel):
             self.pauseNoUpdate()
 
     def onLocalFRTclicked(self, w):
-        # w is None when PTXprint calls this itself (e.g. the Cover Wizard after writing the cover periphs).
         # Only a click by the user may switch the Colophon: a user may want both, and has chosen so earlier.
+        # Setting the check box from code (e.g. the Cover Wizard turning Local Front Matter on) fires this
+        # signal too, and passes the button as w, so w being set does not mean the user clicked it.
+        # A real click or key press leaves the check box with the keyboard focus; a set() never does.
         if self.loadingConfig:
             return
-        byUser = w is not None
+        byUser = w is not None and w.has_focus()
         coverOffMsg = _("The Cover is disabled because Local Front Matter is turned off.")
         if self.get('c_frontmatter'):
             if self.get("l_statusLine") == coverOffMsg:
@@ -7839,6 +7841,11 @@ Thank you,
     def onNoUpdateClicked(self, w):
         if w.get_inconsistent():
             w.set_inconsistent(False)
+        # PTXprint pauses and restores this check box from code (at the end of every config load, around
+        # prints and errors), which fires this too. Only the user ticking it may switch the Colophon off,
+        # or the saved setting is lost on every restart (#1270). A real click leaves the box focused.
+        if not w.has_focus():
+            return
         if self.get("c_noupdate") and self.get("c_colophon"):
             self.set("c_colophon", False)
             self.doStatus(_("Colophon updates have also been disabled in 'Layout Only' mode"))
