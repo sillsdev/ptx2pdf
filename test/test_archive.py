@@ -65,6 +65,9 @@ class TestArchiveContents(unittest.TestCase):
         shutil.copy(os.path.join(prj, "figures", "alpha.png"), os.path.join(ext, "outbg.png"))
         with open(os.path.join(cfgdir, "ptxprint.sty"), "a", encoding="utf-8") as outf:
             outf.write('\n\\Marker cat:fgtest|esb\n\\FgImage "../../../figures/text.png"\n')
+            # as in #1137: a cover front with an absolute image path, in the config's own stylesheet
+            outf.write(f'\n\\Marker cat:coverfront|esb\n\\BgImage "{ext}/final_front_cover.png"\n')
+        shutil.copy(os.path.join(prj, "figures", "alpha.png"), os.path.join(ext, "final_front_cover.png"))
 
         # a process script outside the project, with a module of its own
         write(os.path.join(ext, "procscript.py"), 'import sys\nimport archhelper\narchhelper.run(sys.argv)\n')
@@ -160,7 +163,7 @@ class TestArchiveContents(unittest.TestCase):
                     m = re.match(r'^\\([BF]gImage)\s+"?([^"]*?)"?\s*$', l)
                     if m:
                         found[mrk] = m.group(2)     # ptxprint.sty is read last, so it wins
-        for mrk in ("cat:bgtest|esb", "cat:fgtest|esb"):
+        for mrk in ("cat:bgtest|esb", "cat:fgtest|esb", "cat:coverfront|esb"):
             self.assertIn(mrk, found)
             self.assertResolves(os.path.normpath(os.path.join(self.workdir, found[mrk])), mrk)
 
