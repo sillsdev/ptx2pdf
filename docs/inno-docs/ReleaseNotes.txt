@@ -1,7 +1,34 @@
-PTXprint 3.1.5 Release Notes
-31 Oct 2026
+PTXprint 3.1.6 Release Notes
+6 Nov 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.6 - (6 Nov 2026)
+
+  * Peripherals tab
+    - The Colophon is no longer switched off by the Cover Wizard or by
+      Layout Only; the colophon and variables now resize better (#1270)
+
+  * Automatic Page Filler (experimental)
+    - Polyglot filler reworked to give better results
+    - Chapter ranges can be given on the command line; fixed on macOS
+
+  * Bug fixes
+    - Fixed automatic note numbering when some notes have their own
+      caller (#1285)
+    - Fixed a crash while listing picture copyright credits (#1282)
+    - Sidebars positioned "p" in the same paragraph no longer nest
+    - Diglot: inserts are no longer duplicated during layout trials
+    - Publications: adjustment lists now apply in each publication build
+    - No more stray .tex files when there is no table of contents
+    - Windows: no more crash (PermissionError on fonts.conf) when several
+      print jobs run at once
+
+  * Localization
+    - The "Fonts+Scripts" and "Notes+Refs" tab labels and several
+      messages can now be translated
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.1.5 - (31 Oct 2026)
