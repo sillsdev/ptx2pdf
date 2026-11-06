@@ -1501,6 +1501,12 @@ class ViewModel:
         if config.get("covergen", "borderstyle", fallback=None) == "c86out":
             self._configset(config, "covergen/borderstyle", "v86out")
 
+        # Spine overlap now lives on the Advanced tab; carry over any old [cover] value the Advanced tab hasn't got
+        for k in ("spineoverlapback", "spineoverlapfront"):
+            old = config.get("cover", k, fallback="")
+            if old not in ("", "0", "None") and not config.has_option("texpert", k):
+                self._configset(config, f"texpert/{k}", old)
+
         # Fixup ALL old configs which had a True/False setting here instead of the colon/period radio button
         if config.get("header", "chvseparator", fallback="None") == "False":
             self._configset(config, "header/chvseparator", "period")
