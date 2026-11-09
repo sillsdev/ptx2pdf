@@ -1420,7 +1420,8 @@ class PTXFiller:
             self.progress(ProgressEvent(bk, res.page, 'complete', res.message, -1))
             self.printbk(bk, "T", progress=False)
         else:
-            retval = (True, f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
+            retval = (res.failures is None or not len(res.failures),
+                    f"Complete {bk}, failures={res.failures}, after {solver.itercount} runs after {endtime-starttime}s")
             msg = f"Failed from {res.failures[0]+1}" if res.failures else _("All done")
             pages = -1 if res.failures else res.numPages()
             self.progress(ProgressEvent(bk, 0, "complete", msg, pages))
