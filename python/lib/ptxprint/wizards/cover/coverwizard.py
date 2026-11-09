@@ -367,7 +367,7 @@ class WorkingCoverState:
                     self.langname_enabled = True
                     self.langname_position_pct = max(0, min(100,
                         int(round(cum_mm / pheight * 100))))
-                elif re.search(r'\\fig ?\|', line) and 'pgpos="pc"' in line:
+                elif re.search(r'\\fig ?\|', line) and 'pgpos="hc"' in line:
                     self.fgimage_enabled = True
                     self.fgimage_position_pct = max(0, min(100,
                         int(round(cum_mm / pheight * 100))))
@@ -394,7 +394,7 @@ class WorkingCoverState:
             if logo_m:
                 self.logo_enabled = True
                 self.logo_path = logo_m.group(1)
-                pgpos_rev = {"qr": "inner", "p": "outer", "pc": "centre"}
+                pgpos_rev = {"hr": "inner", "h": "outer", "hc": "centre"}
                 self.logo_hpos = pgpos_rev.get(logo_m.group(2), "centre")
                 if logo_m.group(3):
                     try:
@@ -561,7 +561,7 @@ class WorkingCoverState:
                     bits.append((theight * self.langname_position_pct / 100, langname_height * linefactor, r"\mt3 \zvar|languagename\*"))
                 if self.fgimage_enabled:
                     fgimage_height = self.get_image_height(self.fgimage_path, twidth, theight)
-                    bits.append((theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig |src="{texPath(self.fgimage_path)}" size="col" pgpos="pc"\fig*'))
+                    bits.append((theight * self.fgimage_position_pct / 100, fgimage_height, fr'\fig |src="{texPath(self.fgimage_path)}" size="col" pgpos="hc"\fig*'))
                 basepos = 0
                 for b in sorted(bits):
                     if b[0] > basepos:
@@ -585,7 +585,7 @@ class WorkingCoverState:
                 res.append(r"\mt2 " + " - ".join(parts) if parts else r"\p")
             elif a == "back":
                 back_height = view.styleEditor.getval(f"cat:cover{a}|m", "LineSpacing", 1.0)
-                positions = {"inner": "qr", "centre": "pc", "outer": "p"}
+                positions = {"inner": "hr", "centre": "hc", "outer": "h"}
                 res.append(r"\zgap|1in\*")
                 res.append(rf"\m {self.backtext}")
                 if self.logo_enabled:
