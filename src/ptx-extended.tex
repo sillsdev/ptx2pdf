@@ -584,13 +584,19 @@
   \trace{C}{@numcuts now \the\@numcuts}%
   \kill@PossParamCache
   \sb@rchunkh@ight=\maxdimen
-  \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
-   \trace{e}{break:\cp@ram}%
+  \sb@rsplit=0
+  \getsbp@ram{break}\ifx\cp@ram\relax
+  \else \if F\cp@ram \else
+   \sb@rsplit=-1
    \ifx\cp@ram\tr@e
      \sb@rchunkh@ight=0.2\textheight
    \else
      \sb@rchunkh@ight=\cp@ram\textheight\relax
+     \ifdim\sb@rchunkh@ight<\textheight \else
+       \sb@rchunkh@ight=\cp@ram\onel@neunit
+     \fi
    \fi
+   \trace{e}{break:\cp@ram -> \the\sb@rchunkh@ight}%
    \floatingpenalty=500\insertpenalties=0
   \fi\fi
   %\egroup\setbox\extb@x\vbox\bgroup
@@ -802,6 +808,7 @@
   %\edef\bleed@ref@rskip{\the\dimexpr - \outer@ref@lskip - \lble@d\relax plus 1 fil}%
 }
 \newif\ifsm@rtgrid %true if smart gridding means the box should be treated gridstyle none.
+\newcount\sb@rsplit % state counter. 0=no split, -1 top chunk, 1=mid chunk, 2=last chunk. -> [ even: final skip, <1: top skip ] 
 \def\@@sbe{%The real meat of an esbe
    \traceifset{esbe}%
    \getsbp@ram{posn}%
@@ -832,6 +839,7 @@
    \global\let\c@t@gory=\c@tegory
    \global\let\@@sb@rfirstskip\sb@rfirstskip
    \global\let\@@sb@rgrid\sb@rgrid
+   \xdef\@@sb@rsplit{\the\sb@rsplit}%
    %\getwh@chpage % Needed?
    \xdef\@@whichp@ge{\the\whichp@ge}%
    \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
@@ -878,8 +886,6 @@
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
   \getsbp@ram{spacebeside}\ifx\cp@ram\relax\x@\let\x@\sp@cebeside\ifx\tempc\loc@M \z@ropt\else\DefaultSpaceBeside\fi\else\let\sp@cebeside\cp@ram\fi
-  \let\s@vedtpadding=\fb@tpadding%%Preserve old value
-  \let\s@vedbpadding=\fb@bpadding%%Preserve old value
   \prepb@rderdims
   \tempfalse
   \trace{e}{= \bgf@gsp@c}%
@@ -1019,8 +1025,8 @@
       \unvbox\extb@x}%
     \xdef\@@sb@rfirstskip{0pt}%
   \fi
-  \ifdoIntskip
-    \trace{eg}{Initial skip: \the\dimen4}%
+  \ifdoIntskip\ifnum \@@sb@rsplit <1
+    \trace{eg}{Initial skip: \the\dimen4, state:\@@sb@rsplit}%
     \advance\dimen4 by -\ht\extb@x
     \loop\ifdim\dimen4> \onel@neunit
       \advance\dimen4 by -\onel@neunit
@@ -1043,7 +1049,9 @@
         \kern\b@xgridadj
         \unvbox\extb@x}%
     \fi
-  \fi
+  \else
+    \trace{eg}{No intskip - middle of split}%
+  \fi\fi
   \ifearlybgim@ge
     %modify the esbbox to include the picture
     \trace{e}{Including background image below contents: \t@mpfigspec}%
@@ -1074,25 +1082,45 @@
       {% 
         \@LOOP
           \setbox2=\copy\extb@x
+          \vfuzz=\textheight
+          %\splittopskip=\baselineskip 
+          \savingvdiscards=1
           \global\setbox\extchunkb@x=\vsplit\extb@x to \dimen1
+          %Put lost skips back.
+          \global\setbox\extb@x\vbox{\splitdiscards\unvbox\extb@x}%
+          \t@mpfalse
           \ifnum\badness>999999
-            \setbox\extb@x=\box2
+            \t@mptrue
+          \fi
+          \global\setbox\extchunkb@x\vbox{\unvbox\extchunkb@x}%
+          \ifdim\ht\extchunkb@x=0pt
+            \t@mptrue
+          \fi
+          \ift@mp
+            \global\setbox\extb@x=\box2
             \advance\dimen1 by \baselineskip %Couldnt split, make the chunk bigger.
             \trace{e}{Chunk grown to \the\dimen1}%
         \@REPEAT
       }%
+      \def\fb@bpadding{0pt}%
       \setbox\extchunkb@x=\vbox\sb@rheightspec{\unvbox\extchunkb@x}% Reset to natural size
-      \let\b@drbottom=\relax
+      \trace{e}{Chunk cut at \the\ht\extchunkb@x, \the\badness}%
+      \ifdim\ht\extb@x=0pt
+        \edef\@@sb@rsplit{\the\numexpr \@@sb@rsplit +1\relax}% -1 -> 0 (no split), 1->2 (final chunk).
+        \trace{e}{Remains is empty: \@@sb@rsplit}% 
+      \else
+        \let\b@drbottom=\relax
+      \fi
     \else
+      \ifnum\@@sb@rsplit=0 \else
+        \edef\@@sb@rsplit{\the\numexpr \@@sb@rsplit +1\relax}% -1 -> 0 (no split), 1->2 (final chunk).
+      \fi
       \setbox\extchunkb@x=\vbox\sb@rheightspec{\unvbox\extb@x}%
-      \let\fb@tpadding=\s@vedtpadding
-      \let\fb@bpadding=\s@vedbpadding
       \let\b@drbottom=\lstb@drbot
     \fi
     %\showbox\extchunkb@x
     % Shift text for side image(s) 
     \ifdim\sb@leftshift>0pt
-      \setbox0\vbox to\ht\extchunkb@x{\sb@leftedge}%
       \trace{e}{Adding \sb@leftshift to left of box}%
       \setbox\extchunkb@x\vbox{\hbox{\hbox to \sb@leftshift{\hss\box0\hskip\fb@rpadding}\box\extchunkb@x}}\fi
     \ifdim\sb@rightshift>0pt
@@ -1100,7 +1128,7 @@
       \trace{e}{Adding \sb@rightshift to right of box}%
       \setbox\extchunkb@x\vbox{%
         \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@lpadding\box0\hss}}}\fi
-    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x) in insert \the\p@cinswid}%
+    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\ifvoid\extb@x void\else\the\ht\extb@x+\the\dp\extb@x*\the\wd\extb@x) in insert \the\p@cinswid, state:\@@sb@rsplit\fi}%
     \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
     \getsbp@ram{spaceafter}%
     \ifx\cp@ram\relax
@@ -1116,6 +1144,7 @@
           \vbox to 0pt{\vbox to\ht\extchunkb@x{\vss\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vss}\vss}%
         \fi
         \let\fb@htadjust=\lstch@nkdp
+        \def\fb@htadjust{0pt}%
         \trace{cov}{Space removal around feintbox (\ifble@d bleed: \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax\else none\fi)}%
         \ifble@d
           %\hbox{\hskip-\lble@d\vrule width 1pt \vbox{\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}\hskip-\rble@d}%
@@ -1123,6 +1152,7 @@
           \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}%
           \vskip -\dimexpr \bble@d\relax
         \else
+          \ifnum\@@sb@rsplit=1 \def\fb@tskip{0pt}\fi
           \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}%
         \fi
       }%
@@ -1138,20 +1168,12 @@
     \let\b@drtop=\fstb@drtop
     \ch@ckhasb@rder
     \prepb@rderbox\extchunkb@x 
-    %\ifx\picl@c\loc@Inl
-    %  \headingtopspace=0pt %-\oldlastdepth ?
-    %\else
-      \headingtopspace=0pt
-    %\fi
-    %\ifble@d
-      %%\advance\headingtopspace -\tble@d
-    %\fi
-    %\ifhasb@rder\ifsb@rfillpage
-        %%\advance\headingtopspace \fb@tpadding
-    %\fi\fi
+    \headingtopspace=0pt
     \trace{e}{heading topspace=\the\headingtopspace}%
-    \getsbp@ram{spacebefore}\ifx\cp@ram\relax\else
-      \advance\headingtopspace by \cp@ram\verticalsp@ceunit
+    \ifnum\sb@rsplit<1
+      \getsbp@ram{spacebefore}\ifx\cp@ram\relax\else
+        \advance\headingtopspace by \cp@ram\verticalsp@ceunit
+      \fi
     \fi
     \ifhasb@rder % any border
       \dob@rder % Actually generate the border
@@ -1163,7 +1185,7 @@
           \doIntskipfalse
           \advance\dimen1 by \b@xgridadj
       \fi\fi
-      %\message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
+      \trace{e}{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1, \@@sb@rsplit}%
       \@LOOP\ifdim\dimen1 <0.01\onel@neunit     % only wanted if want gridding
         \advance\dimen1 by \onel@neunit
       \@REPEAT
@@ -1178,13 +1200,21 @@
           \dimen1=0pt
         \fi\fi
       \fi
-      \trace{e}{Border Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
+      \ifnum\@@sb@rsplit=1 \edef\b@dr@top@pad{0.001pt}\fi
+      \ifodd\@@sb@rsplit \dimen1=0pt \def\b@xextadj{0pt}\def\b@xintadj{0pt}\fi
+      \trace{e}{Border Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace+\b@dr@top@pad (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1. State:\@@sb@rsplit}%
       \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xintadj / \b@xextadj,  \ifdoIntskip 1st \else 2nd\fi}%
       \x@\setbox\extchunkb@x\vbox{\lineskiplimit=0pt \lineskip=0pt \baselineskip=0pt
-        \vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi
-        \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox
-        \kern\dimen1
-        \vskip\dimexpr \sp@ceafter \ifb@dr@b@os +\border@bmargin\fi\relax
+        %\hrule
+        %\vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi
+        \vbox to 0pt{\vskip\b@dr@top@pad\relax
+          \hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox
+        \trace{e}{sb@rsplit is \@@sb@rsplit (bdr: \b@drwidth * \b@drvsides)}%
+        \ifodd\@@sb@rsplit \else
+          \kern\dimen1
+          \vskip\dimexpr \sp@ceafter \ifb@dr@b@os +\border@bmargin\fi\relax
+        \fi
+        %\vskip\dimexpr \sp@ceafter \ifb@dr@b@os +\border@bmargin\fi\relax
       }%
     \else
       \ifBoxLikeBorder
@@ -1203,7 +1233,9 @@
       \@LOOP\ifdim\dimen1 <0.1\onel@neunit      % gridding again!
         \advance\dimen1 by \onel@neunit
       \@REPEAT
-      \trace{e}{Borderless Box \the\ht\extchunkb@x +\the\dp\extchunkb@x x \the\wd\extchunkb@x is offset \the\headingtopspace+\ifdoIntskip\b@xintadj\else\b@xextadj\fi+\b@dr@top@pad (v) \ifBoxLikeBorder and <\b@dr@left@pad|\b@dr@right@pad> (h)\fi. Final adjust\the\dimen1,\sp@ceafter}%
+      \ifnum\@@sb@rsplit=1 \edef\b@dr@top@pad{0.001pt}\fi
+      \ifodd\@@sb@rsplit \dimen1=0pt \def\b@xextadj{0pt}\def\b@xintadj{0pt}\fi
+      \trace{e}{Borderless Box \the\ht\extchunkb@x +\the\dp\extchunkb@x x \the\wd\extchunkb@x is offset \the\headingtopspace+\ifdoIntskip\b@xintadj\else\b@xextadj\fi+\b@dr@top@pad (v) \ifBoxLikeBorder and <\b@dr@left@pad|\b@dr@right@pad> (h)\fi. Final adjust\the\dimen1,\sp@ceafter. State:\@@sb@rsplit}%
       \x@\setbox\extchunkb@x\vbox{\lineskiplimit=0pt \baselineskip=0pt \vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi%
           \ifBoxLikeBorder
             \vbox{\vskip\b@dr@top@pad
@@ -1236,6 +1268,7 @@
     %\fi
     %\let\r@tSet\r@cwSet%FIXME
     %\setbox\extchunkb@x\hbox{\rot@tebz}%
+    \ifnum\@@sb@rsplit=-1 \edef\@@sb@rsplit{1}\fi
     \ifpicUsesIns
       \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
       \trace{g}{Sidebar aligned into hbox \the\p@cinswid (\pic@lign)}%
@@ -1274,6 +1307,7 @@
           %\headingtopspace=\oldlastdepth
 	  %\vskip -\oldlastdepth
           \lastdepth=\oldlastdepth
+          \dogr@dfalse
           \d@figureInl\extchunkb@x
           \ifhmode\else
            \lastdepth=\oldlastdepth
@@ -1283,7 +1317,9 @@
           \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
           \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
           \lastdepth=0pt
-          \setbox\extchunkb@x\vbox{\unvbox\extchunkb@x\kern -1sp \kern 1sp}% Add a marker to tell it to grid
+          \ifnum\@@sb@rsplit=0
+            \setbox\extchunkb@x\vbox{\unvbox\extchunkb@x\kern -1sp \kern 1sp}% Add a marker to tell it to grid
+          \fi
           \d@figurePar\extchunkb@x
         \fi
         \ifx\picl@c\loc@Page
@@ -1312,7 +1348,6 @@
     \fi
     \ifdim\ht\extb@x>0pt
       \def\fb@tpadding{0pt}%
-      \def\fb@bpadding{0pt}%
   \repeat
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
@@ -1364,7 +1399,7 @@
 }
 \def\Position   #1\relax{\initc@t\setsbp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
 \def\Scale      #1\relax{\initc@t\setsbp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
-\def\Breakable   #1\relax{\initc@t\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setsbp@ram{break}{#1}\else\setsbp@ram{break}{\uppercase{#1}}\fi} %Can the box page-break?
+\def\Breakable   #1\relax{\initc@t\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setsbp@ram{break}{#1}\else\uppercase{\def\tmp{#1}}\setsbp@ram{break}{\tmp}\fi} %Can the box page-break?
 \def\FgImage      #1\relax{\initc@t\stripqu@te{#1}\setsbp@ram{fgfigname}{\@@result}\GenC@tFig{fg}}
 \def\FgImagePos   #1\relax{\initc@t\setsbp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
 \def\FgImageScale   #1\relax{\initc@t\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}

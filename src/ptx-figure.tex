@@ -429,12 +429,12 @@
     \InlBelowfalse
   \fi
   \ifx\l@cspec@a\loc@InText
-    \trace{g}{Experimental intext \w@tsit in \m@rker, \the\dimexpr 1em\relax, \the\dimexpr \c@rrfontsize\FontSizeUnit\relax}%
+    \trace{g}{Intext \w@tsit in \m@rker, \the\dimexpr 1em\relax, \the\dimexpr \c@rrfontsize\FontSizeUnit\relax}%
     \global\let\picl@c\loc@InText\xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse\p@cinswid=\hsize
     \picNarrowtrue
   \fi
   \ifx\l@cspec@a\loc@Inl
-    \trace{g}{Experimental inline \w@tsit}%
+    \trace{g}{Inline \w@tsit}%
     \global\let\picl@c\loc@Inl\xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse\p@cinswid=\hsize
     \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
     \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
@@ -445,7 +445,7 @@
     \ifx\l@cspec@c\empty\gdef\c@tskip{0}\gdef\c@tskipfrac{0}\else
       \x@\c@tskipparse\l@cspec@c...\E %split c@tskip into whole and fractional parts.
     \fi
-    \trace{g}{Experimental \w@tsit in cutout, after \c@tskip lines}%
+    \trace{g}{\w@tsit in cutout, after \c@tskip lines}%
   \fi
   \ifx\l@cspec@a\loc@Par
     \global\let\picl@c=\loc@Par\p@cinswid=\hsize
@@ -455,7 +455,7 @@
     \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else
       \x@\p@rskipparse\l@cspec@c...\E
     \fi%We Borrow cutskip for parskip
-    \trace{g}{Experimental after-paragraph \w@tsit, delay: \c@tskip}%
+    \trace{g}{After-paragraph \w@tsit, delay: \c@tskip}%
   \fi
   % full-page options
   \tempfalse
@@ -463,7 +463,7 @@
   \ifx\l@cspec@a\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue \p@cinswid=\PaperWidth\fi
   \iftemp
     \xdef\pic@lign{\l@cspec@b}\xdef\picV@lign{\l@cspec@c}%
-    \trace{g}{Experimental page / full-page \w@tsit (\pic@lign|\picV@lign)}%
+    \trace{g}{Page / full-page \w@tsit (\pic@lign|\picV@lign)}%
   \fi
   \ifx\l@cspec@a\loc@M\global\picUsesInsfalse\fi
 }
@@ -821,6 +821,7 @@
   \ifdim\hsize=0pt
     \hsize=\colwidth
   \fi
+  \dogr@dtrue% enable gridding where it's normal
   \trace{g}{In d@figure #1 (hsz=\the\hsize)}\usfmthreefalse
   \t@gempty{Anchor}{fig}%
   \rotimagefalse
@@ -1292,6 +1293,7 @@
   \xdef\t@mp{\string\@parpicstop\string{\ifdiglot\dc@rref\else\c@rref\fi\string}\string{\w@tsitid\string}\string{\the\wd#1\string}\string{\the\ht#1\string}}%
 }
 
+\newif\ifdogr@d\dogr@dtrue
 \def\d@figureInText#1{%
   %\showbox #1
   %\vrule height 10pt depth 0pt width 10pt
@@ -1324,7 +1326,11 @@
     \trace{g}{Before gridbox \the\ht#1+\the\dp#1 (inn@te\ifinn@te true\else false\fi)}%
     %\lastdepth=0pt
     %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
-    \gridb@x#1%
+    \ifdogr@d
+      \gridb@x#1%
+    \else
+      \box#1
+    \fi
     \pdfsavepos\x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
     \iftemp
       \dimen9=\lastdepth \kern\dimen9
@@ -1371,7 +1377,11 @@
       \iftemp
         \@lignpic{#1}%
       \fi
-      \gridb@x#1%
+      \ifdogr@d
+        \gridb@x#1%
+      \else
+        \box#1
+      \fi
       \lastdepth=0pt
       %\kern 0pt
       \ifearlyeotpskip\kern -1sp\kern 1sp\fi

@@ -459,22 +459,34 @@ The above were all created using `\s1` with `\SpaceBefore 4` and `\SpaceAfter 4`
 \BgColor 0.50 0.50 0
 ```
 ## Other options (in testing)
-`\Breakable option`   **!!!DO NOT USE!!!**
+`\Breakable option`   **Use is NOT recommended!**
 
-*  Options: T, F, value(0-1)
+*  Options: T, F, value(0.01-99)
 *  Default: F
-*  Incompatible with: Background images.
+*  Incompatible with: Background images, most ornament-based borders.
 
-Should the contents of this box be forced to be on one page or can it be broken? (Not compatible with background images)
-With a background colour, the box will be broken into sections and these sections will be added one chunk at a time. Descenders 
-may be lost at these joints if a non-transparent background colour is given.
+Should the contents of this sidebar be forced to be on one page or can it be
+broken? (Not compatible with background images)
+With a border or background colour, the block of colour / border will be broken
+into sections and these sections will be added one chunk at a time. 
 
-If a value is given, rather than a simple 't', this is the smallest fraction of the pageheight that the sections will be, if 't' is given, the fraction 
-will be 0.2 of the page height. If splitting a given chunk of the box is impossible, the algorithm will increase the chunk-size until 
- a break IS possible. 
+Descenders will determine the lower edge of the border / colour blocks, with
+any additional space being added at the top of the following line. 
 
-*NB:* At the last time of testing, `\Breakable` in out-of-body positions 
-triggers a bug in the page output mechanism and *things go  horribly wrong* if this option is used.
+If 'T' is given, the chunks will be 0.2 of the page height. 
+If a value is given, rather than a simple 'T', and this value is less than 1,
+this is the smallest fraction of the pageheight that the sections will be.
+If a value of 1 or more is given, then the measurement is in lines (according
+to the basic page layout).
+
+If splitting a given chunk of the box is impossible, the algorithm will
+increase the chunk-size (by an integer number of lines) until a break IS
+possible. 
+
+While this option has long been *available*, it is still considered very
+unreliable.  As of mid-nov 2026, *some* tests show perfect behaviour, but others
+show unexpected gaps or overlaps between chunks. There are also sometimes
+significant implications on gridding.
 
 ## Ending the category
 
