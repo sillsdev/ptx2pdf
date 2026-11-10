@@ -46,6 +46,18 @@ def testLocation(fname):
         return None
     return (os.path.dirname(shared), os.path.basename(cfgdir))
 
+# Replays watching dialogs. A dialog that is run again after it answered (asking until the
+# answers are acceptable) is waiting for a person again, so they must forget its answer.
+_replays = []
+_dialogRun = Gtk.Dialog.run
+
+def _runDialog(dlg, *a, **kw):
+    for r in _replays:
+        r.responded.discard(dlg)
+    return _dialogRun(dlg, *a, **kw)
+
+Gtk.Dialog.run = _runDialog
+
 class GtkTester:
     def __init__(self, fname, view, full_archive=False, lean=False):
         self.fname = fname
@@ -509,6 +521,7 @@ class GtkTester:
         self.inflight = []
         self.responded = set()
         GObject.add_emission_hook(Gtk.Dialog, "response", self._dialogResponded)
+        _replays.append(self)
 
     def _dialogResponded(self, dlg, *a):
         self.responded.add(dlg)
@@ -633,7 +646,9 @@ class GtkTester:
         p = Gtk.TreePath.new_from_string(a[0])
         if w == "tv_Styles":
             if len(a) > 2:
-                self.view.styleEditor.selectMarker(a[2])
+                # someone can only pick a style they can see
+                if not self.view.styleEditor.selectMarker(a[2]):
+                    raise ValueError(f"Style {a[2]} isn't in the list of styles (is it filtered out?)")
             else:
                 sel = widget.get_selection()
                 sel.select_path(p)

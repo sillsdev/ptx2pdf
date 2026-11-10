@@ -1,7 +1,7 @@
 from gi.repository import Gtk, Pango, GLib
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.styleditor import StyleEditor, aliases
-from ptxprint.usxutils import mrktype
+from ptxprint.styleditor import StyleEditor, aliases, fromBool, asFloatPts
+from ptxprint.usxutils import mrktype, typesFromMrk
 from ptxprint.utils import _, coltotex, textocol, asfloat
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
 from ptxprint.borderstyle import borderStyleFromStyle, BorderStyle
@@ -416,13 +416,14 @@ class StyleEditorView(StyleEditor):
         root = self.treestore.get_iter_first()
         it = self._searchMarker(self.treestore, root, marker)
         if it is None:
-            return
+            return False
         path = self.filter.convert_child_path_to_path(self.treestore.get_path(it))
         if path is None:        # filtered out
-            return
+            return False
         self.treeview.expand_to_path(path)
         self.treeview.get_selection().select_path(path)
         self.treeview.scroll_to_cell(path, None, False, 0, 0)
+        return True
 
     def _searchMarker(self, model, it, marker, findall=False):
         while it is not None:
@@ -599,22 +600,25 @@ class StyleEditorView(StyleEditor):
         # return res
 
     def getStyleType(self, mrk):
-        """valid returns are: Character, Milestone, Note, Paragraph"""
+        """valid returns are: Character, Milestone, Note, Paragraph, Standalone"""
         # what the .sty says
         mtype = self.getval(mrk, 'mrktype', '')
         # what the USFM grammar says for this marker
         cat = Grammar.marker_categories.get(mrk, '')
         # If mrktype is empty OR the default placeholder "Paragraph",
         # use the grammar category when available.
-        if not mtype or mtype == 'Paragraph':
-            if cat:
-                return cat
-        # Otherwise honor the explicit mrktype
+        if (not mtype or mtype == 'Paragraph') and cat:
+            mtype = cat
+        # Both are type ids (char, versepara, footnote, milestone, ...), not style types
         if mtype:
-            return mtype
+            stype = typesFromMrk(mtype)[0]
+            if stype is not None:
+                return stype.title()
+            if mtype.title() in ('Character', 'Milestone', 'Note', 'Paragraph', 'Standalone'):
+                return mtype.title()
         # Last fallbacks: any saved StyleType, or Standalone
         st = self.getval(mrk, 'StyleType')
-        return st or 'Standalone'
+        return st.title() if st else 'Standalone'
 
     def editMarker(self):
         if self.marker is None:
@@ -837,18 +841,20 @@ class StyleEditorView(StyleEditor):
                 add, rem = "", "non"
             else:
                 add, rem = "non", ""
-            props = set((self.sheet.setdefault(mkr, {}).setdefault('TextProperties', "") or "").split())
-            if props is None:
-                props = set()
-                # self.sheet[mkr]['TextProperties'] = props
-            try:
-                props.remove(rem+'publishable')
-            except KeyError:
-                pass
-            props.add(add+'publishable')
-            self.sheet[mkr]['TextProperties'] = " ".join(sorted(props))
+            # Change just (non)publishable, keeping the other properties (paragraph, vernacular,
+            # diglotsync, ...) and their order. Style keys are stored lowercase.
+            props = self.getval(mkr, 'TextProperties', None, includebase=True) or {}
+            if isinstance(props, dict):
+                props = sorted(props, key=lambda p: props[p])
+            elif isinstance(props, str):
+                props = props.split()
+            props = [add+'publishable' if p.lower() == rem+'publishable' else p for p in props]
+            if add+'publishable' not in (p.lower() for p in props):
+                props.append(add+'publishable')
+            super(self.__class__, self).setval(mkr, 'TextProperties', {p: i for i, p in enumerate(props)}, mapin=False)
             (model, selecti) = self.treeview.get_selection().get_selected()
-            model.set_value(selecti, 3, not val)
+            if selecti is not None:
+                model.set_value(selecti, 3, not val)
             return
         elif key in self.stylediverts:
             newk = self.stylediverts[key][0]
@@ -889,6 +895,8 @@ class StyleEditorView(StyleEditor):
 
         if not key.startswith("_"):
             super(self.__class__, self).setval(mkr, key, value, mapin=False)
+            if key == "Superscript":
+                self._superscriptRaise(mkr, value)
             if key in ("font", "FontSize", "FontName", "Bold", "Italic"): # ask MH if OK to add 'font'
                 fref = self.getval(mkr, 'font')
                 if fref is None:
@@ -981,14 +989,21 @@ class StyleEditorView(StyleEditor):
             key = re.sub(r"\\", "|", re.sub(r"^\\", "", self.model.get(dialogKeys['Marker']).strip()))
             if key == "":
                 break
-            tryme = False
-            (d, selecti) = self.treeview.get_selection().get_selected()
             name = self.model.get(dialogKeys['Name'], '')
-            if key.lower() not in self.sheet:
-                selecti = self.addMarker(key, name)
+            if newkey and key in self.allStyles():
+                # Adding a style that already exists would overwrite what identifies it
+                self.model.doStatus(_("There is already a style for \\{}. Choose another marker, or Cancel.").format(key),
+                                    warning=True)
+                continue
+            tryme = False
+            if newkey or key not in self.sheet:
+                self.addMarker(key, name)
                 self.copyMarkerValues(self.marker, key)
             else:
-                self.treestore.set_value(selecti, 1, name)
+                # the tree holds the marker's row in the underlying store, not the (filtered) view's
+                it = self._searchMarker(self.treestore, self.treestore.get_iter_first(), key)
+                if it is not None:
+                    self.treestore.set_value(it, 1, name)
             for k, v in dialogKeys.items():
                 if k == 'Marker':
                     continue
@@ -1005,16 +1020,62 @@ class StyleEditorView(StyleEditor):
                 self.setval(key, 'EndMarker', key + "*")
                 self.resolveEndMarker(key, None)
             elif st == 'Milestone':
+                # keep the end marker the user gave, as usfm.sty does for \qt-s ... \qt-e
                 self.resolveEndMarker(key, self.getval(key, 'EndMarker'))
-                self.setval(key, 'EndMarker', None)
             self.set_legacy_types(key)
             self.marker = key
-            self.treeview.get_selection().select_iter(selecti)
             self.selectMarker(key)
         dialog.hide()
 
+    # From ptx-char-style.tex: \\Superscript shrinks the font by \\SuperscriptFactor and raises it by
+    # \\SuperscriptRaise, in ex of that shrunk font. \\Superscript - only puts the size back.
+    superscriptFactor = 0.75
+    superscriptRaise = 0.85
+
+    def _superscriptRaise(self, mkr, sup):
+        """ Turning off a superscript that comes from the stylesheets changes nothing on the page:
+            the shrinking and raising that \\Superscript did become an explicit font size and \\Raise,
+            which the user can then change. Turning it back on undoes that. For a style that is not
+            superscript in the stylesheets, the checkbox just turns superscript on and off. """
+        basesup = self.getval(mkr, 'Superscript', baseonly=True)
+        basesup = basesup is not None and fromBool(self, basesup)
+        if sup:
+            # the raise control is insensitive while superscript is on: superscript does the raising
+            self.clearUserKeys(mkr, ['Raise'])
+            if basesup:
+                self._scaleFontSize(mkr, 1. / self.superscriptFactor)
+        elif basesup:
+            size = self._scaleFontSize(mkr, self.superscriptFactor)
+            fref = self.getval(mkr, 'font') or self.model.get("bl_fontR")
+            f = fref.getTtfont() if fref is not None else None
+            # an ex in XeTeX: the OS/2 sxHeight, or else half the ascent
+            if f is None:
+                xheight = 0.5
+            elif f.xheight:
+                xheight = f.xheight / f.upem
+            else:
+                xheight = f.ascent / 2. / f.upem
+            raisept = self.superscriptRaise * xheight * size * float(self.model.get("s_fontsize", 12.))
+            super(self.__class__, self).setval(mkr, 'Raise', round(raisept, 2), mapin=False)
+        else:
+            # back to the stylesheet's plain style, rather than writing \\Superscript -
+            self.clearUserKeys(mkr, ['Superscript'])
+        if mkr == self.marker:
+            self.editMarker()
+
+    def _scaleFontSize(self, mkr, factor):
+        """ Multiply the style's FontScale, or else FontSize, by factor and return the new value """
+        key = 'FontScale' if self.getval(mkr, 'FontScale', includebase=True) is not None else 'FontSize'
+        size = float(self.getval(mkr, key, 1., includebase=True)) * factor
+        base = self.getval(mkr, key, baseonly=True)
+        if base is not None and abs(float(base) - size) < 0.0001:
+            size = base         # so setval drops it as the same as the stylesheet
+        super(self.__class__, self).setval(mkr, key, size, mapin=False)
+        return float(size)
+
     def resolveEndMarker(self, key, newval):
-        endm = self.getval(self.marker, key, ' endMilestone')
+        # key is the style being made or edited; self.marker is still the one selected before
+        endm = self.getval(key, ' endMilestone')
         if endm is not None and endm != ' None' and endm != newval:
             derivation = self.getval(endm, 'zDerived')
             if derivation is not None:
@@ -1022,13 +1083,13 @@ class StyleEditorView(StyleEditor):
                     del self.sheet[endm]
                 if endm in self.basesheet:
                     del self.basesheet[endm]
-        st = self.getval(self.marker, 'StyleType')
+        st = self.getval(key, 'StyleType')
         if st == 'Milestone':
             if newval is None:
-                if self.getval(self.marker, ' endMarker') is not None:
-                    self.setval(self.marker, ' endMarker', ' None')
+                if self.getval(key, ' endMarker') is not None:
+                    self.setval(key, ' endMarker', ' None')
             elif newval != endm:
-                self.setval(self.marker, ' endMarker', newval)
+                self.setval(key, ' endMarker', newval)
 
     def sidebarImageDialog(self, isbg=False):
         sb = imageStyleFromStyle(self, self.marker, isbg)
@@ -1064,13 +1125,13 @@ class StyleEditorView(StyleEditor):
             key = self.marker
         if self.sheet.get(key, {}).get(" deletable", False):
             del self.sheet[key]
-            selection = self.treeview.get_selection()
-            model, i = selection.get_selected()
-            if isinstance(model, Gtk.TreeModelFilter):
-                i = model.convert_iter_to_child_iter(i)
-                model = model.get_model()
-            model.remove(i)
-            self.onSelected(selection)
+            it = self._searchMarker(self.treestore, self.treestore.get_iter_first(), key)
+            if it is not None:
+                self.treestore.remove(it)
+            # Show another style, or the editor's fields would go on editing (and so recreate)
+            # the one just deleted
+            self.marker = None
+            self.selectMarker("p")
 
     def onStyleRefresh(self, *a):
         if self.marker in self.sheet and self.marker in self.basesheet:

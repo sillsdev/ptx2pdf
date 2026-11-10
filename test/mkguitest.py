@@ -116,7 +116,10 @@ def build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name):
             return origrun(view, callback)
         GtkViewModel.run = run
 
-        argsline = shlex.join(["-q", "-N", "-C", outfile, "--lean", "-p", os.path.dirname(os.path.join(tree, prjid)),
+        # the same fonts as test_gui.py runs it with, so results don't depend on the machine's fonts
+        fontsdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+        argsline = shlex.join(["-q", "-N", "--testsuite", "--nofontcache", "-f", fontsdir,
+                               "-C", outfile, "--lean", "-p", os.path.dirname(os.path.join(tree, prjid)),
                                "-c", cfgid, prjid])
         sys.argv[1:] = []       # main() parses these as well as argsline
         try:

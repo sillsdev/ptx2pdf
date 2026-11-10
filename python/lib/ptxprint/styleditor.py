@@ -68,7 +68,7 @@ constraints = {
     'styletype': _CEnum('paragraph', 'character', 'note', 'milestone', 'standalone', ''),
     'fontsize': _CRange(0.1, 10.),
     'fontscale': _CRange(0.1, 4.),
-    'raise': _CNot(_CValue(0.)),
+    # no constraint on 'raise': \Raise 0 overrides a raise from \Superscript or an underlying stylesheet
     'linespacing': _CRange(0.01, 2.5),
 }
 
@@ -100,6 +100,7 @@ absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
 aliases = {"q", "s", "mt", "to", "imt", "imte", "io", "iq", "is", "ili", "pi",
            "qm", "sd", "ms", "mt", "mte", "li", "lim", "liv", }
 _defFields = {"Marker", "EndMarker", "Name", "Description", "OccursUnder", "TextProperties", "TextType", "StyleType"}
+_defFieldsLower = {f.lower() for f in _defFields}
 
 def asFloatPts(self, s, mrk=None, model=None):
     if isinstance(s, float):
@@ -130,10 +131,11 @@ def asFloatPts(self, s, mrk=None, model=None):
             bfsize = float(self.model.get("s_fontsize"))
         except TypeError:
             return v
+        # FontSize is held as a factor of the body font size (s_fontsize); an ex is taken as half an em
         if units == "ex":
-            return v * fsize / 12. / 2.
+            return v * fsize * bfsize / 2.
         elif units == "em":
-            return v * fsize / 12.
+            return v * fsize * bfsize
         return v
     else:
         try:
@@ -394,7 +396,7 @@ class StyleEditor:
         if not includebase and mrk not in self.sheet:
             return default
         res = self.sheet.get(mrk, {}).get(key.lower(), None) if not baseonly else None
-        if res is None or (mrk in _defFields and not len(res)):
+        if res is None or (key.lower() in _defFieldsLower and not len(res)):
             res = self.basesheet.get(mrk, {}).get(key.lower(), default) if mrk in self.basesheet else default
         logger.log(8, f"Getting {mrk=} {key=} {res=}")
         return res

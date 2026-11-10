@@ -6229,9 +6229,10 @@ class GtkViewModel(ViewModel):
                 ex.set_expanded(False)
 
     def onEditMarkerChanged(self, mkrw):
-        m = mkrw.get_text()
+        # people type the marker with its backslash; and milestone markers have - in them
+        m = mkrw.get_text().strip().lstrip("\\")
         t = self.get("t_styName")
-        self.set("t_styName", re.sub(r"^.*?-", m+" -", t), mod=False)
+        self.set("t_styName", re.sub(r"^\S*\s+-(?=\s)", lambda x: m + " -", t), mod=False)
 
     def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
         # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator and that _bk_ is upperCASE

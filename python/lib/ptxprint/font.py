@@ -89,6 +89,9 @@ def fontsconf_dirs(extras, archivedir=None, testsuite=None):
             abse = os.path.abspath(e)
             if os.path.exists(abse):
                 dirs.append(abse)
+    if testsuite and fname is not None:
+        # its own file, so a test run never takes the user's fonts away from a running ptxprint
+        fname = os.path.join(os.path.dirname(fname), "fonts_testsuite.conf")
     return dirs, fname
 
 def fontsconf_text(dirs, testsuite=None):
@@ -197,6 +200,7 @@ class TTFontCache:
 
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
+        primary = set()     # (family, style) set from a file whose own (first) style it is
         for f in files.split("\n"):
             logger.log(8, f"fc-list: {f}")
             if ": " not in f or f.endswith(": "):
@@ -221,10 +225,20 @@ class TTFontCache:
                     styles = [style]
             except ValueError:
                 raise SyntaxError("Can't parse: {}".format(f).encode("unicode_escape"))
-            styles = self.stylefilter(styles)
+            styles = [x.strip() for x in self.stylefilter(styles)]
+            # The first style is the file's own. The others are translations, or the legacy style
+            # that goes with a second family name: "Lato,Lato Hairline:style=Hairline,Regular" is
+            # Lato Hairline and "Lato Hairline" Regular, not Lato Regular. So those only fill a
+            # style that no file has as its own.
             for n in names:
-                for s in styles:
-                    self.cache.setdefault(n.strip(), {})[s.strip()] = path
+                n = n.strip()
+                fam = self.cache.setdefault(n, {})
+                for i, s in enumerate(styles):
+                    if i == 0 or s == styles[0]:
+                        fam[s] = path
+                        primary.add((n, s))
+                    elif (n, s) not in primary:
+                        fam.setdefault(s, path)
         if not len(self.cache):
             print("FClist failed:", files)
         self.fccache = {k: v.copy() for k,v in self.cache.items()}
@@ -303,6 +317,8 @@ class TTFontCache:
         if style is None or len(style) == 0:
             style = "Regular"
         res = f.get(style, None) or f.get(style.lower(), None)
+        if res is None and style == "Regular":
+            res = f.get("", None)       # addFontDir files a regular face under ""
         if res is None and "Oblique" in style:
             res = f.get(style.replace("Oblique", "Italic").lower(), None)
         return res
@@ -667,6 +683,7 @@ class TTFont:
         self.ascent = 0.
         self.descent = 0.
         self.upem = 1
+        self.xheight = None     # font units, from OS/2 sxHeight (version 2 on)
         self.isGraphite = False
         if self.filename is not None:
             if self.readfont():
@@ -732,7 +749,7 @@ class TTFont:
                     inf.seek(offset)
                     dat = inf.read(12)
                     numtables = struct.unpack(">H", dat[4:6])[0]
-                    self.dict = self.read_dir(inf, numtables)
+                    self.dict = self._read_dir(inf, numtables)
             else:
                 self.dict = self._read_dir(inf, numtables)
             if not len(self.dict):
@@ -744,6 +761,7 @@ class TTFont:
             self.readOTLangs(inf)
             self.readhhea(inf)
             self.readhead(inf)
+            self.readOS2(inf)
             if withglyphs:
                 self.readhmtx(inf)
                 if hasattr(self, 'advances') and len(self.advances) >= 3:
@@ -914,6 +932,14 @@ class TTFont:
         data = inf.read(36)
         self.ascent, self.descent = struct.unpack(b">Hh", data[4:8])
         self.numhmetrics = struct.unpack(b">H", data[34:])[0]
+
+    def readOS2(self, inf):
+        if 'OS/2' not in self.dict or self.dict['OS/2'][1] < 88:
+            return
+        inf.seek(self.dict['OS/2'][0])
+        data = inf.read(88)
+        if struct.unpack(b">H", data[:2])[0] >= 2:
+            self.xheight = struct.unpack(b">h", data[86:88])[0] or None
 
     def readhead(self, inf):
         if self.upem != 1:

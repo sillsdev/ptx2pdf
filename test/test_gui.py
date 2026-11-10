@@ -33,7 +33,7 @@ def test_gui(testfile, tmp_path):
         env[v] = str(tmp_path / d)
         os.makedirs(env[v], mode=0o700)
     args = [sys.executable, os.path.join(testsdir, "..", "python", "scripts", "ptxprint"),
-            "-q", "-N", "-t", testfile]
+            "-q", "-N", "--testsuite", "--nofontcache", "-f", os.path.join(testsdir, "fonts"), "-t", testfile]
     res = subprocess.run(args, env=env, capture_output=True, text=True, encoding="utf-8",
                          errors="replace", timeout=300)
     out = "\n".join(l for l in res.stdout.splitlines() if l.strip())
