@@ -1919,7 +1919,7 @@ class GtkViewModel(ViewModel):
         self.setupTeXOptions()
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
-            self.testing = GtkTester(self.args.capture, self, full_archive=True)
+            self.testing = GtkTester(self.args.capture, self, full_archive=True, lean=self.args.lean)
             self.testing.startRecording()
         el = self.userconfig.getboolean('init', 'englinks', fallback=False)
         self.set("c_useEngLinks", el)

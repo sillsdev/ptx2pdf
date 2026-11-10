@@ -1,0 +1,26 @@
+{
+    "title": "Style editor edits reach ptxprint.sty",
+    "project": "WSGlatin",
+    "config": "Default",
+    "uilevel": 6,
+    "events": [
+        ["", "note", "Edit \\p: first line indent, space before, justification"],
+        ["tv_Styles", "rowactivated", "0", "0", "p"],
+        ["s_styFirstLineIndent", "set", "1.5"],
+        ["s_stySpaceBefore", "set", "3"],
+        ["fcb_styJustification", "set", "Left"],
+        ["", "note", "Edit \\s1: not bold, italic, bigger, coloured, right aligned"],
+        ["tv_Styles", "rowactivated", "0", "0", "s1"],
+        ["c_styFaceBold", "set", false],
+        ["c_styFaceItalic", "set", true],
+        ["s_styFontSize", "set", "1.4"],
+        ["col_styColor", "set", "rgb(204,0,0)"],
+        ["fcb_styJustification", "set", "Right"],
+        ["", "note", "Edit \\nd: underline on (ptx2pdf.sty turns it off), superscript on"],
+        ["tv_Styles", "rowactivated", "0", "0", "nd"],
+        ["c_styFaceUnderline", "set", true],
+        ["c_styFaceSuperscript", "set", true],
+        ["", "note", "Save, which writes ptxprint.sty"],
+        ["btn_saveConfig", "signal", "clicked"]
+    ]
+}

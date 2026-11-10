@@ -221,6 +221,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-S', '--enablescripts',action='store_true',help="Enable process scripts in CLI use")
     parser.add_argument('-T', '--testing',action='store_true',help="Run in testing, output xdv. And don't clear zip trees")
     parser.add_argument('-C', '--capture', metavar='FILE', help="Capture interaction events from UI session to zip file")
+    parser.add_argument('--lean', action='store_true', help="With -C, record a lean test: just the actions and the files they "
+                        "change, not the project. Replaying it with -t copies the project from the -p directories")
     parser.add_argument('-t', '--test',help="test file (.zip) to replay and check, or a tutorial (.json) to step through on the project")
     parser.add_argument('--testwithgui',action='store_true',help="Run test with visible gui and don't exit")
     parser.add_argument('--tutorial', metavar='FILE', help="Start stepping through a tutorial (.json) on the project")
@@ -386,14 +388,17 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
     if args.test:
         savetreedirs = False
         from ptxprint.gtktesting import load_project_from_archive
-        # A test runs only on the project in its archive, never on the user's own projects
+        # A test runs only on the project in its archive, or on a copy of the one it names,
+        # never on the user's own projects
         try:
             with ZipFile(args.test) as zf:
-                test_project = load_project_from_archive(zf)
+                test_project = load_project_from_archive(zf, projectdirs=args.projects)
         except Exception as e:
             print(f"Can't use {args.test} as a test: {e}")
             return 2
         args.pid = test_project.prjid
+        if args.config is None:
+            args.config = getattr(test_project, 'testconfig', None)
         args.projects = []
         conffile = '{}/ptxprint_user.cfg'.format(test_project.path)
         # the tree that holds the project, not the project itself

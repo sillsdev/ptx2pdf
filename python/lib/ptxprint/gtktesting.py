@@ -2,7 +2,7 @@
 import gi
 gi.require_version("Gtk", '3.0')
 from gi.repository import Gtk, Gdk, GObject, GLib
-import os, sys, zipfile, json, tempfile, traceback, time, shutil
+import os, sys, zipfile, json, tempfile, traceback, time, shutil, subprocess
 from io import StringIO
 from configparser import ConfigParser
 from difflib import context_diff
@@ -31,8 +31,23 @@ _signals = {
     'row-activated': ("TreeView",),
 }
 
+def testsDir(project, cfgid):
+    """ Where a project's tests for a config live: <project>/shared/tests/<config> """
+    res = os.path.join(project.path, "shared", "tests", cfgid or "Default")
+    os.makedirs(res, exist_ok=True)
+    return res
+
+def testLocation(fname):
+    """ (project dir, config) for a test kept in <project>/shared/tests/<config>/, else None """
+    cfgdir = os.path.dirname(os.path.abspath(fname))
+    testsdir = os.path.dirname(cfgdir)
+    shared = os.path.dirname(testsdir)
+    if os.path.basename(testsdir) != "tests" or os.path.basename(shared) != "shared":
+        return None
+    return (os.path.dirname(shared), os.path.basename(cfgdir))
+
 class GtkTester:
-    def __init__(self, fname, view, full_archive=False):
+    def __init__(self, fname, view, full_archive=False, lean=False):
         self.fname = fname
         self.view = view
         self.events = []
@@ -44,10 +59,14 @@ class GtkTester:
         self.errors = []
         self.skipped = []
         self.full_archive = full_archive
+        # A lean recording holds just the actions and the files they changed, not the project.
+        # Replaying it starts from a copy of the same project, found with -p.
+        self.makelean = lean
         self.setid(view.project, view.cfgid)
+        self.lean = False
         if self.full_archive:
-            self.view.createArchive(fname, for_test=True, nobuild=True)
-            self.zip = self.view.zf
+            self.base = self.takeSnapshot()
+            self.zip = self.base is not None
         else:
             self.zip = None
 
@@ -57,7 +76,7 @@ class GtkTester:
         zip_file = view.fileChooser(_("Select the location and name for the test archive file"),
                 filters={"ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
                 multiple=False, folder=False, save=True,
-                basedir=os.path.join(view.project.printPath(view.cfgid), '..'))
+                basedir=testsDir(view.project, view.cfgid))
         if zip_file is None:
             return None
         res = cls(str(zip_file[0]), view, full_archive=True)
@@ -179,70 +198,32 @@ class GtkTester:
     def setid(self, project, cfgid):
         self.currid = (project, cfgid)
 
-    def mkzipdir(self, name):
-        if not name.endswith("/"):
-            name += "/"
-        try:
-            self.zip.getinfo(name)
-        except KeyError:
-            self.zip.mkdir(name)
-
-    def writefile(self, name, side, project, cfgid=None):
-        if cfgid is None:
-            fname = os.path.join(project.path, name)
-        else:
-            fname = os.path.join(project.configs[cfgid].path, name)
-        outpath = "{}/{}{}/{}".format(side, project.prjid, "/"+cfgid if cfgid else "", name)
-        exists = True
-        try:
-            self.zip.getinfo(outpath)
-        except KeyError:
-            exists = False
-        if os.path.exists(fname) and not exists:
-            self.zip.write(fname, outpath)
-            return True
-        return False
-
     def finalise(self):
         self.stopRecording()
-        if self.zip is None or self.paused:
+        if not self.zip or self.paused:
             return
         project = self.currid[0]
         self.pause()
-        self.mkzipdir("{}/test".format(project.prjid))
-
-        if self.full_archive:
-            after_archive = self.view.createArchive(in_memory=True, for_test=True, nobuild=True)
-            self.view.zf.close()
-
-            initial_files = {name: self.zip.read(name) for name in self.zip.namelist()}
-
-            after_archive.seek(0)
-            with zipfile.ZipFile(after_archive) as z_final:
-                final_files = {name: z_final.read(name)
-                            for name in z_final.namelist()}
-
-            modified_files = []
-            deleted_files = []
-
-            for name, content in final_files.items():
-                if name not in initial_files or initial_files[name] != content:
-                    modified_files.append(name)
-                    self.zip.writestr("{}/test/modified_files/{}".format(project.prjid, name), content)
-            testdir = "{}/test/".format(project.prjid)
-            for name in initial_files:
-                if name not in final_files and not name.startswith(testdir):
-                    deleted_files.append(name)
-
-            self.zip.writestr("{}/test/deleted_files.txt".format(project.prjid), '\n'.join(deleted_files))
-        else:
+        if not self.full_archive:
             # not implemented right now, but here it could be possible to have a more minimal test eg comparing only cfg files
             raise NotImplementedError
-
-        events = json.dumps({"events": self.events, "uilevel": getattr(self, 'uilevel', self.view.uilevel)},
-                            ensure_ascii=False, indent=4, cls=CustomJSONEncoder)
-        self.zip.writestr("{}/test/events.json".format(project.prjid), events)
-        self.zip.close()
+        final_files = self.takeSnapshot() or {}
+        testdir = "{}/test/".format(project.prjid)
+        with zipfile.ZipFile(self.fname, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+            if not self.makelean:
+                for name, content in sorted(self.base.items()):
+                    zf.writestr(name, content)
+            for name, content in sorted(final_files.items()):
+                if self.base.get(name) != content:
+                    zf.writestr(testdir + "modified_files/" + name, content)
+            deleted_files = sorted(n for n in self.base if n not in final_files)
+            zf.writestr(testdir + "deleted_files.txt", "\n".join(deleted_files))
+            events = json.dumps({"events": self.events,
+                                 "uilevel": getattr(self, 'uilevel', self.view.uilevel),
+                                 "project": project.prjid, "config": self.currid[1]},
+                                ensure_ascii=False, indent=4, cls=CustomJSONEncoder)
+            zf.writestr(testdir + "events.json", events)
+        self.zip = None
 
     def setuprun(self, fname, view):
         self.pause()
@@ -250,6 +231,10 @@ class GtkTester:
             self.fname = os.path.abspath(fname)
         self.runevents, self.runuilevel, self.runextra = readActions(fname)
         self.runeventidx = 0
+        # A lean test holds only its actions and the files they changed: the state they changed
+        # is that of the project at the start of the replay
+        with zipfile.ZipFile(self.fname) as zf:
+            self.lean = all("/test/" in n for n in zf.namelist() if not n.endswith("/"))
 
     @staticmethod
     def tidyEvents(events):
@@ -330,6 +315,8 @@ class GtkTester:
     def run_action(self, noclose, step=None):
         """ Replay the events. With step (seconds between events, 0 to wait for the Step button)
             show a control window and highlight each widget before acting on it. """
+        if self.runeventidx == 0 and getattr(self, 'lean', False) and getattr(self, 'base', None) is None:
+            self.base = self.takeSnapshot()
         if self.runeventidx == 0 and not hasattr(self, 'oldlevel'):
             self.ensureLevel()
         if step is not None:
@@ -546,6 +533,12 @@ class GtkTester:
         w = e[0]
         if e[1] == "set":
             self.view.set(w, e[2])
+            if w.startswith("col_"):
+                # setting a colour button's colour doesn't emit color-set, which is what
+                # its handlers listen for (and what the recording saw)
+                widget = self.view.builder.get_object(w)
+                if widget is not None:
+                    widget.emit("color-set")
             return False
         elif e[1] == "signal":
             widget = self.view.builder.get_object(w)
@@ -586,7 +579,10 @@ class GtkTester:
         with zipfile.ZipFile(self.fname) as zf:
             names = [n for n in zf.namelist() if not n.endswith("/")]
             testdirs = set(n[:n.index("/test/")+6] for n in names if "/test/" in n)
-            res = {n: zf.read(n) for n in names if not any(n.startswith(t) for t in testdirs)}
+            if getattr(self, 'lean', False):
+                res = dict(getattr(self, 'base', None) or {})
+            else:
+                res = {n: zf.read(n) for n in names if not any(n.startswith(t) for t in testdirs)}
             for t in testdirs:
                 mfiles = t + "modified_files/"
                 for n in names:
@@ -711,28 +707,97 @@ class GtkTester:
         res = context_diff(oldl, newl, fromfile="test/"+fname, tofile="result/"+fname, lineterm="")
         return res
 
-def load_project_from_archive(zf, dir_to_extract=None):
+def load_project_from_archive(zf, dir_to_extract=None, projectdirs=None):
     """
     zf is an open zipfile, containing an archive of a project created using the createArchive method
-    Will be extracted to dir_to_extract if specified, to a temporary directory if not
+    Will be extracted to dir_to_extract if specified, to a temporary directory if not.
+    A lean test archive holds no project, just test/: then the project is copied, so that the
+    test never changes the original. The project and config are the ones the test names, found
+    in one of projectdirs, or else where the test is kept (<project>/shared/tests/<config>/).
     """
     madedir = not dir_to_extract
     if madedir:
         dir_to_extract = tempfile.mkdtemp(prefix="ptxtest_")
-    zf.extractall(dir_to_extract)
-    # The project is the top level directory holding ptxSettings.xml. Take the prjid from the
-    # path relative to the extraction dir: an absolute path's depth depends on where TMPDIR is.
-    # Paratext projects have Settings.xml, ones PTXprint made have ptxSettings.xml
-    prjids = set(p.relative_to(dir_to_extract).parts[0] for a in ("Settings.xml", "ptxSettings.xml")
-                    for p in Path(dir_to_extract).glob("*/" + a))
-    if len(prjids) != 1:
-        if madedir:
-            shutil.rmtree(dir_to_extract, ignore_errors=True)
-        raise Exception("1 project was expected in the archive but {} were found.".format(len(prjids)))
-    prjid = prjids.pop()
+    names = [n for n in zf.namelist() if not n.endswith("/")]
+    testconfig = None
+    if names and all("/test/" in n for n in names):
+        try:
+            prjid, testconfig = _copyTestProject(zf, names, dir_to_extract, projectdirs or [],
+                                                 testLocation(zf.filename) if zf.filename else None)
+        except Exception:
+            if madedir:
+                shutil.rmtree(dir_to_extract, ignore_errors=True)
+            raise
+    else:
+        zf.extractall(dir_to_extract)
+        # The project is the top level directory holding ptxSettings.xml. Take the prjid from the
+        # path relative to the extraction dir: an absolute path's depth depends on where TMPDIR is.
+        # Paratext projects have Settings.xml, ones PTXprint made have ptxSettings.xml
+        prjids = set(p.relative_to(dir_to_extract).parts[0] for a in ("Settings.xml", "ptxSettings.xml")
+                        for p in Path(dir_to_extract).glob("*/" + a))
+        if len(prjids) != 1:
+            if madedir:
+                shutil.rmtree(dir_to_extract, ignore_errors=True)
+            raise Exception("1 project was expected in the archive but {} were found.".format(len(prjids)))
+        prjid = prjids.pop()
     project_dir = ProjectDir(prjid, None, os.path.join(dir_to_extract, prjid))
     project = Project(project_dir)
+    project.testconfig = testconfig
     return project
+
+# Outputs and working files a test doesn't need from the project it copies
+_ignorefiles = shutil.ignore_patterns("*.pdf", "*.zip", "*.xdv", "*.log", "*.parlocs", "*.delayed",
+                                      "*.notepages", "*.picpages", "__pycache__", ".git")
+
+def _copyignores(path, names):
+    res = _ignorefiles(path, names)
+    # nor the tests kept in the project
+    if os.path.basename(os.path.normpath(path)) == "shared" and "tests" in names:
+        res.add("tests")
+    return res
+
+def copyTestProject(src, dest):
+    """ Copy a project for a lean test to run on. In a git checkout (like the test suite's
+        projects) only the files git tracks are copied, so that what earlier runs left behind
+        in the project doesn't become part of the state the test starts from. """
+    try:
+        res = subprocess.run(["git", "-C", src, "ls-files", "-z", "--", "."],
+                             capture_output=True, check=True)
+        tracked = [f for f in res.stdout.decode("utf-8").split("\0") if f]
+    except (OSError, subprocess.CalledProcessError):
+        tracked = []
+    if not tracked:
+        shutil.copytree(src, dest, ignore=_copyignores, symlinks=True)
+        return
+    for f in tracked:
+        d, n = os.path.split(f)
+        if f.startswith("shared/tests/") or _ignorefiles(os.path.join(src, d), [n]):
+            continue
+        os.makedirs(os.path.join(dest, d), exist_ok=True)
+        shutil.copy2(os.path.join(src, f), os.path.join(dest, f), follow_symlinks=False)
+
+def _copyTestProject(zf, names, todir, projectdirs, location=None):
+    """ Copy the project a lean test runs on into todir. The test names its project and config.
+        The project is found in projectdirs, or else is the one the test is kept in (location:
+        (project dir, config)), which also gives the project and config if the test doesn't.
+        Returns (prjid, config) """
+    evname = next((n for n in names if n.endswith("/test/events.json")), None)
+    data = json.loads(zf.read(evname).decode("utf-8")) if evname is not None else {}
+    prjid = data.get("project")
+    cfgid = data.get("config")
+    if location is not None and (prjid is None or os.path.basename(location[0]) == prjid):
+        prjid = os.path.basename(location[0])
+        cfgid = cfgid or location[1]
+        srcs = [os.path.join(d, sub, prjid) for d in projectdirs for sub in ("", "_PTXprint")] + [location[0]]
+    else:
+        prjid = prjid or names[0].split("/", 1)[0]
+        srcs = [os.path.join(d, sub, prjid) for d in projectdirs for sub in ("", "_PTXprint")]
+    for src in srcs:
+        if os.path.isdir(src):
+            copyTestProject(src, os.path.join(todir, prjid))
+            return (prjid, cfgid)
+    raise Exception("The test runs on project {}, but it isn't in {}. Use -p to say where it is.".format(
+                        prjid, ", ".join(projectdirs) or "any projects directory given"))
 
 def readActions(fname):
     """ The actions in a tutorial (.json) or a recorded test (.zip), the view level they need (the
