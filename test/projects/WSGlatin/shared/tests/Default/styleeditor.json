@@ -35,12 +35,11 @@
         ["c_styAbsoluteLineSpacing", "set", true],
         ["c_styAbsoluteLineSpacing", "set", false],
 
-        ["", "note", "Character \\nd: underline on (ptx2pdf.sty turns it off), small caps, superscript, raise"],
+        ["", "note", "Character \\nd: underline on (ptx2pdf.sty turns it off), small caps, superscript"],
         ["tv_Styles", "rowactivated", "0", "0", "nd"],
         ["c_styFaceUnderline", "set", true],
         ["c_stySmallCap", "set", true],
         ["c_styFaceSuperscript", "set", true],
-        ["s_styRaise", "set", "2"],
 
         ["", "note", "Verse numbers in the margin, not raised: superscript off for \\v also writes Raise 0, since \\Superscript - keeps the superscript raise"],
         ["tv_Styles", "rowactivated", "0", "0", "v"],

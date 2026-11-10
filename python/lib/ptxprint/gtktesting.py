@@ -2,7 +2,7 @@
 import gi
 gi.require_version("Gtk", '3.0')
 from gi.repository import Gtk, Gdk, GObject, GLib
-import os, sys, zipfile, json, tempfile, traceback, time, shutil, subprocess
+import os, sys, zipfile, json, tempfile, traceback, time, shutil, subprocess, random
 from io import StringIO
 from configparser import ConfigParser
 from difflib import context_diff
@@ -23,13 +23,47 @@ class CustomJSONEncoder(json.JSONEncoder):
 # The signals recorded, and the widget classes they are recorded for
 _signals = {
     'clicked': ("Button",),
-    'changed': ("ComboBox", "Entry"),
+    'changed': ("ComboBox", "Entry", "TreeSelection"),
     'color-set': ("ColorButton",),
     'change-current-page': ("Notebook",),
+    'switch-page': ("Notebook",),       # clicking a tab
     'value-changed': ("SpinButton",),
     # 'state-set': ("Switch",),
     'row-activated': ("TreeView",),
 }
+
+def _picKey(row, model=None):
+    """ A picture's anchor, e.g. "JON 1.3", with its image ("JON 1.3|oi00185.jpg") if another
+        picture in the list has the same anchor """
+    if model is not None and sum(1 for r in model if r[0] == row[0]) > 1:
+        return f"{row[0]}|{row[2]}"
+    return row[0]
+
+def _picKeys(view, sel):
+    model, paths = sel.get_selected_rows()
+    return [_picKey(model[p], model) for p in paths]
+
+def _picRows(view, keys):
+    """ The picture list's rows (in its filtered model) for these keys. Each key takes the next row
+        that matches it, since even anchor and image together needn't be unique. """
+    model = view.picListView.model
+    used = set()
+    res = []
+    for k in keys:
+        anchor, _, src = k.partition("|")
+        for r in model:
+            if r[0] == anchor and (not src or r[2] == src) and r.path.to_string() not in used:
+                used.add(r.path.to_string())
+                res.append(r.iter)
+                break
+        else:
+            raise ValueError(f"There is no picture {k} in the list (is it filtered out?):"
+                             f" {', '.join(_picKey(r, model) for r in model)}")
+    return res
+
+# Lists whose selection is recorded and replayed: how to name the selected rows, and find them again
+_selectables = {"tv_picListEdit": _picKeys}
+_selectableRows = {"tv_picListEdit": _picRows}
 
 def testsDir(project, cfgid):
     """ Where a project's tests for a config live: <project>/shared/tests/<config> """
@@ -64,6 +98,8 @@ class GtkTester:
         self.view = view
         self.events = []
         self.currid = None
+        self.startid = None     # where the test starts: the project and config when the first event happened
+        self.others = set()     # other projects the test needs (e.g. the other side of a diglot)
         self.usedids = set()
         self.projects = {}
         self.paused = False
@@ -96,6 +132,7 @@ class GtkTester:
         return res
 
     def startRecording(self):
+        random.seed(0)          # e.g. random picture positions: so that a replay makes the same ones
         self.ownwindows = set()
         self.uilevel = self.view.uilevel        # the highest view level used while recording
         self.recordcontrol = RecordControl(self)
@@ -106,14 +143,59 @@ class GtkTester:
                 o = getattr(Gtk, w)
                 hook_id = GObject.add_emission_hook(o, k, self.emission_hook, k)
                 self.hook_ids.append((o, k, hook_id))
+        self._wrapFileChooser(record=True)
 
     def stopRecording(self):
         for obj, signal_name, hook_id in getattr(self, 'hook_ids', []):
             GObject.remove_emission_hook(obj, signal_name, hook_id)
         self.hook_ids = []
+        self.view.__dict__.pop('fileChooser', None)
         if getattr(self, 'recordcontrol', None) is not None:
             self.recordcontrol.close()
             self.recordcontrol = None
+
+    def _wrapFileChooser(self, record=False):
+        """ A file chooser is not a widget in the builder, so what was chosen is an event of its
+            own: ["", "choose", path, ...], with no paths for Cancel. Paths in the project are kept
+            relative to it, so the replay picks the same file in its copy of the project. A replay
+            queues the answer and the next file chooser gives it without showing a dialog. """
+        orig = type(self.view).fileChooser.__get__(self.view)
+        self.choices = []
+        def chooser(*a, **kw):
+            # a replay running while this records (as mkguitest does) gives the answer
+            replaying = [r for r in _replays if r is not self or not record]
+            if replaying:
+                for r in replaying:
+                    if r.choices:
+                        res = r.choices.pop(0)
+                        break
+                else:
+                    raise ValueError("A file chooser opened with no choose event before it")
+                if not record:
+                    return res
+            else:
+                res = orig(*a, **kw)
+            prjdir = os.path.abspath(self.view.project.path)
+            paths = []
+            for f in (res or []):
+                f = os.path.abspath(str(f))
+                paths.append(os.path.relpath(f, prjdir).replace("\\", "/") if f.startswith(prjdir + os.sep) else f)
+            # the click that opened the chooser is already recorded: the answer must come before it
+            i = len(self.events)
+            while i > 0 and self.events[i-1][1] != "signal":
+                i -= 1
+            self.events.insert(max(i-1, 0), ["", "choose"] + paths)
+            self.lastevent = None
+            return res
+        self.view.fileChooser = chooser
+
+    def _choose(self, w, *paths):
+        if not len(paths):
+            self.choices.append(None)
+        else:
+            prjdir = self.view.project.path
+            self.choices.append([Path(p if os.path.isabs(p) else os.path.join(prjdir, p)) for p in paths])
+        return False
 
     def addNote(self, text, widget=""):
         """ A note for someone stepping through the test, e.g. as a tutorial. Replays ignore it. """
@@ -123,6 +205,8 @@ class GtkTester:
             self.lastevent = None
 
     def emission_hook(self, w, *a):     # sigid, detail, self, *a):
+        if isinstance(w, Gtk.TreeSelection):
+            return self.selectionChanged(w)
         if self.paused or w.get_toplevel() in getattr(self, 'ownwindows', ()):
             return True
         sigid = a[-1]
@@ -141,6 +225,33 @@ class GtkTester:
         val = self.view.get(name, skipmissing=True)
         self.uilevel = max(getattr(self, 'uilevel', 0), self.view.uilevel)
         self.addEvent(name, sigid, time.time() - self.starttime, val, a[:-1])
+        return True
+
+    def selectionChanged(self, sel):
+        """ Picking rows in a list someone can select from: record what is selected, by the rows'
+            keys (row paths change with the list's filter and contents). Ctrl-clicking more rows
+            changes the selection several times, so keep just the last. """
+        tv = sel.get_tree_view()
+        name = Gtk.Buildable.get_name(tv) if tv is not None else None
+        keyfn = _selectables.get(name, None)
+        if self.paused or keyfn is None or not self.userInitiated(tv):
+            return True
+        e = (name, "select") + tuple(keyfn(self.view, sel))
+        if self.events and self.lastevent is not None and self.events[-1] is self.lastevent \
+                and self.lastevent[:2] == e[:2]:
+            self.events.pop()
+        self.events.append(e)
+        self.lastevent = e
+        return True
+
+    def _select(self, w, *keys):
+        rows = _selectableRows[w](self.view, keys)
+        def doit():
+            sel = self.view.builder.get_object(w).get_selection()
+            sel.unselect_all()
+            for it in rows:
+                sel.select_iter(it)
+        self._later(doit)
         return True
 
     def userInitiated(self, w):
@@ -198,6 +309,7 @@ class GtkTester:
             e = (w, 'signal', signal, *[str(x) for x in a])
         if e is not None:
             # print(e)
+            self.others.update(otherProjects(self.view))
             self.events.append(e)
             self.lastevent = e
 
@@ -209,12 +321,14 @@ class GtkTester:
 
     def setid(self, project, cfgid):
         self.currid = (project, cfgid)
+        if not self.events:
+            self.startid = self.currid
 
     def finalise(self):
         self.stopRecording()
         if not self.zip or self.paused:
             return
-        project = self.currid[0]
+        project, cfgid = self.startid or self.currid
         self.pause()
         if not self.full_archive:
             # not implemented right now, but here it could be possible to have a more minimal test eg comparing only cfg files
@@ -230,10 +344,13 @@ class GtkTester:
                     zf.writestr(testdir + "modified_files/" + name, content)
             deleted_files = sorted(n for n in self.base if n not in final_files)
             zf.writestr(testdir + "deleted_files.txt", "\n".join(deleted_files))
-            events = json.dumps({"events": self.events,
-                                 "uilevel": getattr(self, 'uilevel', self.view.uilevel),
-                                 "project": project.prjid, "config": self.currid[1]},
-                                ensure_ascii=False, indent=4, cls=CustomJSONEncoder)
+            info = {"events": self.events,
+                    "uilevel": getattr(self, 'uilevel', self.view.uilevel),
+                    "project": project.prjid, "config": cfgid}
+            others = sorted((self.others | set(otherProjects(self.view))) - {project.prjid})
+            if others:
+                info["projects"] = others
+            events = json.dumps(info, ensure_ascii=False, indent=4, cls=CustomJSONEncoder)
             zf.writestr(testdir + "events.json", events)
         self.zip = None
 
@@ -375,7 +492,16 @@ class GtkTester:
             self.errors.append(f"Creating the result archive: {type(ex).__name__}: {ex}\n" + traceback.format_exc())
             return None
         with zipfile.ZipFile(data) as zf:
-            return {n: zf.read(n) for n in zf.namelist() if not n.endswith("/")}
+            res = {n: zf.read(n) for n in zf.namelist() if not n.endswith("/")}
+        # The piclist a print makes from the config's one, with what printing does to it (positions,
+        # disabled and non-print pictures dropped, copied file names). It is the only file in local/
+        # that a test compares, and is there only if the test printed.
+        prj = self.view.project
+        if prj is not None and self.view.cfgid is not None:
+            for f in sorted(glob(os.path.join(prj.printPath(self.view.cfgid), "*.piclist"))):
+                with open(f, "rb") as inf:
+                    res["/".join([prj.prjid] + list(Path(os.path.relpath(f, prj.path)).parts))] = inf.read()
+        return res
 
     def replayOne(self):
         """ Replay the next event. Returns whether there are more. """
@@ -482,6 +608,10 @@ class GtkTester:
             return f"{label}: {e[2]}"
         elif e[1] == "rowactivated" and len(e) > 4:
             return f"Select the style {e[4]}"
+        elif e[1] == "select":
+            return _("Select {}").format(", ".join(e[2:])) if len(e) > 2 else _("Select nothing")
+        elif e[1] == "choose":
+            return _("In the file chooser, pick {}").format(", ".join(e[2:])) if len(e) > 2 else _("Cancel the file chooser")
         return f"{label}: {' '.join(str(x) for x in e[1:])}"
 
     def _note(self, w, *a):
@@ -490,6 +620,17 @@ class GtkTester:
     def _comment(self, w, *a):
         """ A comment for whoever edits the test or tutorial: never shown, never replayed """
         return False
+
+    def quietErrors(self):
+        """ During a replay nobody is there to close an error message: note it and carry on.
+            Awkward clicks are meant to bring some of these up. """
+        self.messages = []
+        def doError(txt, threaded=False, secondary=None, **kw):
+            msg = txt + (f" ({secondary})" if secondary else "")
+            idx = getattr(self, 'runeventidx', 0)
+            self.messages.append((idx - 1, msg))
+            print(f"Message at event {idx-1}: {msg}")
+        self.view.doError = doError
 
     def handlerError(self, tp, value, tb):
         """ Takes the place of the view's sys.excepthook during a replay: an exception in a
@@ -522,6 +663,7 @@ class GtkTester:
         self.responded = set()
         GObject.add_emission_hook(Gtk.Dialog, "response", self._dialogResponded)
         _replays.append(self)
+        self._wrapFileChooser()
 
     def _dialogResponded(self, dlg, *a):
         self.responded.add(dlg)
@@ -535,6 +677,9 @@ class GtkTester:
         """ Whether the next event can be replayed: every signal still being handled is
             waiting in a dialog it opened, so the events that follow belong to that dialog.
             Once the dialog has answered, wait for its handler to finish. """
+        from ptxprint.runjob import isLocked
+        if isLocked():
+            return False        # wait for a print to finish
         inflight = getattr(self, 'inflight', [])
         if not inflight:
             return True
@@ -543,17 +688,19 @@ class GtkTester:
 
     def _replay(self, e):
         """ Replay one event. Returns True if it was emitted later, so callers come back after it """
+        if getattr(self, 'runeventidx', 0) <= 1:
+            random.seed(0)      # as recording does when it starts
         w = e[0]
+        if e[1] in ("set", "signal"):
+            widget = self.view.builder.get_object(w)
+            if isinstance(widget, Gtk.Widget) and not widget.is_sensitive():
+                raise ValueError(f"{w} is greyed out, so nobody could change it")
         if e[1] == "set":
-            self.view.set(w, e[2])
-            if w.startswith("col_"):
-                # setting a colour button's colour doesn't emit color-set, which is what
-                # its handlers listen for (and what the recording saw)
-                widget = self.view.builder.get_object(w)
-                if widget is not None:
-                    widget.emit("color-set")
-            return False
-        elif e[1] == "signal":
+            # later, like a signal: setting a checkbox can run a handler that asks in a dialog,
+            # and the events that answer it must be able to run
+            self._later(self._set, w, e[2])
+            return True
+        if e[1] == "signal":
             widget = self.view.builder.get_object(w)
             if widget is None:
                 raise KeyError(f"No widget called {w}")
@@ -563,6 +710,24 @@ class GtkTester:
         if m is None:
             raise KeyError(f"Unknown event type {e[1]}")
         return m(w, *e[2:])
+
+    def _set(self, w, val):
+        self.view.set(w, val)
+        widget = self.view.builder.get_object(w)
+        if isinstance(widget, Gtk.ComboBox) and not widget.get_has_entry() and widget.get_id_column() >= 0 \
+                and widget.get_active_id() != str(val):
+            ids = [str(r[widget.get_id_column()]) for r in widget.get_model()]
+            raise ValueError(f"{w} has no choice {val!r} (it has {', '.join(ids)})")
+        if isinstance(widget, Gtk.Entry):      # spin buttons too
+            # someone typing moves on to something else, and handlers listen for that
+            ev = Gdk.Event.new(Gdk.EventType.FOCUS_CHANGE)
+            ev.window = widget.get_window()
+            ev.send_event = True
+            widget.emit("focus-out-event", ev)
+        if w.startswith("col_") and widget is not None:
+            # setting a colour button's colour doesn't emit color-set, which is what
+            # its handlers listen for (and what the recording saw)
+            widget.emit("color-set")
 
     test_ignores = set(["fonts.conf", "ptxprint_user.cfg", "runtex.sh", "runtex.txt"])
 
@@ -810,9 +975,27 @@ def _copyTestProject(zf, names, todir, projectdirs, location=None):
     for src in srcs:
         if os.path.isdir(src):
             copyTestProject(src, os.path.join(todir, prjid))
-            return (prjid, cfgid)
-    raise Exception("The test runs on project {}, but it isn't in {}. Use -p to say where it is.".format(
-                        prjid, ", ".join(projectdirs) or "any projects directory given"))
+            break
+    else:
+        raise Exception("The test runs on project {}, but it isn't in {}. Use -p to say where it is.".format(
+                            prjid, ", ".join(projectdirs) or "any projects directory given"))
+    # other projects the config uses, such as the other side of a diglot, from beside the test's one
+    for other in data.get("projects", []):
+        osrcs = [os.path.join(os.path.dirname(src), other)] \
+                + [os.path.join(d, sub, other) for d in projectdirs for sub in ("", "_PTXprint")]
+        osrc = next((x for x in osrcs if os.path.isdir(x)), None)
+        if osrc is None:
+            raise Exception(f"The test also needs project {other}, but it isn't beside {prjid}.")
+        copyTestProject(osrc, os.path.join(todir, other))
+    return (prjid, cfgid)
+
+def otherProjects(view):
+    """ The other projects a config uses, which a test of it needs: the other sides of a diglot """
+    res = set()
+    for pg in getattr(view, 'polyglots', {}).values():
+        if pg.prj and pg.prj != view.project.prjid:
+            res.add(pg.prj)
+    return sorted(res)
 
 def readActions(fname):
     """ The actions in a tutorial (.json) or a recorded test (.zip), the view level they need (the

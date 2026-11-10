@@ -144,6 +144,7 @@ def _runtest(prjTree, config, macrosdir, project, doit, args):
     mainw.replayer = tester
     if args.teststep is None:
         mainw.doSysError = tester.handlerError     # run() makes this sys.excepthook
+        tester.quietErrors()
     tester.project = project
     tester.setuprun(args.test, mainw)
     if args.pid:

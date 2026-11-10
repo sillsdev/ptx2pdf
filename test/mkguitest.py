@@ -13,7 +13,7 @@
     passes as long as PTXprint keeps doing whatever it did when the test was made.
 """
 
-import sys, os, json, argparse, tempfile, shutil, shlex
+import sys, os, json, argparse, tempfile, shutil
 
 testdir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(testdir, "..", "python", "lib"))
@@ -53,11 +53,11 @@ def main():
 
     work = tempfile.mkdtemp(prefix="mkguitest_")
     try:
-        return build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name)
+        return build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name, others=spec.get("projects", []))
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
-def build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name):
+def build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name, others=()):
     from ptxprint.main import start_test_display, main as ptxmain
     for d in projdirs:
         src = os.path.join(d, prjid)
@@ -84,6 +84,8 @@ def build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name):
         from ptxprint.gtktesting import copyTestProject
         tree = os.path.join(work, "projects")
         copyTestProject(src, os.path.join(tree, prjid))
+        for other in others:        # e.g. the other side of a diglot
+            copyTestProject(os.path.join(os.path.dirname(src), other), os.path.join(tree, other))
         from gi.repository import GLib
         from ptxprint.gtkview import GtkViewModel
         from ptxprint.gtktesting import GtkTester
@@ -96,6 +98,7 @@ def build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name):
                 return True         # recording hasn't started yet
             replayer = state['replayer']
             view.testing.events = [list(e) for e in events]
+            view.testing.others.update(others)
             if uilevel:
                 view.testing.uilevel = max(uilevel, view.testing.uilevel)
             GLib.idle_add(replayer.run_action, False)
@@ -111,6 +114,7 @@ def build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name):
             replayer.runeventidx = 0
             view.replayer = replayer
             view.doSysError = replayer.handlerError
+            replayer.quietErrors()
             state['replayer'] = replayer
             GLib.timeout_add(100, startReplay, view)
             return origrun(view, callback)
@@ -118,12 +122,14 @@ def build(work, projdirs, prjid, cfgid, events, uilevel, outfile, name):
 
         # the same fonts as test_gui.py runs it with, so results don't depend on the machine's fonts
         fontsdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
-        argsline = shlex.join(["-q", "-N", "--testsuite", "--nofontcache", "-f", fontsdir,
-                               "-C", outfile, "--lean", "-p", os.path.dirname(os.path.join(tree, prjid)),
-                               "-c", cfgid, prjid])
-        sys.argv[1:] = []       # main() parses these as well as argsline
+        argv = ["-q", "-N", "--testsuite", "--nofontcache", "-f", fontsdir,
+                "-C", outfile, "--lean", "-p", os.path.dirname(os.path.join(tree, prjid)),
+                "-c", cfgid, prjid]
+        # main() parses sys.argv after any argsline, and that resets the project (an optional
+        # positional) to None, so give them all as the command line
+        sys.argv[1:] = argv
         try:
-            ptxmain(argsline=argsline)
+            ptxmain()
         except SystemExit:
             pass
     finally:
