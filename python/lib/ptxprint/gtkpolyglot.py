@@ -1109,7 +1109,7 @@ class PolyglotSetup(Gtk.Box):
         ok_btn   = self.builder.get_object("btn_disableDiglot_ok")
         msg_lbl  = self.builder.get_object("l_diableDiglotNewCfgMsg")
         cleanCfg = re.sub('[^-a-zA-Z0-9_()]+', '', cfg)
-        cpath    = self.view.project.srcPath(cleanCfg) if cleanCfg and self.project else None
+        cpath    = self.view.project.srcPath(cleanCfg) if cleanCfg and self.view.project else None
         if cfg != cleanCfg:
             msg = _("Do not use spaces or special characters")
         elif not len(cfg):

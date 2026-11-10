@@ -1,0 +1,41 @@
+{
+    "title": "Picture list: Refresh List and Generate against what is already in the .piclist",
+    "project": "WSGlatin",
+    "config": "PicsJON",
+    "uilevel": 6,
+    "events": [
+        ["", "note", "An edit in the list that isn't saved yet, then Refresh List. None of these pictures is in the text, so nothing may change or go"],
+        ["tv_picListEdit", "select", "JON 1.3"],
+        ["s_plScale", "set", "70"],
+        ["btn_refreshCaptions", "signal", "clicked"],
+
+        ["", "note", "Generate, adding the pictures in JON's text and protecting what is in the list"],
+        ["btn_plGenerate", "signal", "clicked"],
+        ["r_generate_selected", "set", true],
+        ["c_protectPicList", "set", true],
+        ["btn_gnr8pl_ok", "signal", "clicked"],
+
+        ["", "note", "Change one of the pictures from the text: caption, size, and move it to another verse"],
+        ["tv_picListEdit", "select", "JON 2.10|co01415b.tif"],
+        ["t_plCaption", "set", "My own caption"],
+        ["fcb_plSize", "set", "span"],
+        ["t_plAnchor", "set", "JON 2.9"],
+
+        ["", "note", "Refresh List takes the caption back from the text, but keeps the size and where it was moved to"],
+        ["btn_refreshCaptions", "signal", "clicked"],
+
+        ["", "note", "Generate again, protected: the moved picture is still the same picture, so it isn't added again"],
+        ["btn_plGenerate", "signal", "clicked"],
+        ["r_generate_selected", "set", true],
+        ["c_protectPicList", "set", true],
+        ["btn_gnr8pl_ok", "signal", "clicked"],
+
+        ["", "note", "Awkward: open Generate and cancel it"],
+        ["btn_plGenerate", "signal", "clicked"],
+        ["r_generate_all", "set", true],
+        ["btn_gnr8pl_cancel", "signal", "clicked"],
+
+        ["", "note", "Save"],
+        ["btn_saveConfig", "signal", "clicked"]
+    ]
+}

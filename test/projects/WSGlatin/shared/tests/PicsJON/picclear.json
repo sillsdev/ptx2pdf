@@ -1,0 +1,18 @@
+{
+    "title": "Picture list: delete every picture, then load the list again",
+    "project": "WSGlatin",
+    "config": "PicsJON",
+    "uilevel": 6,
+    "events": [
+        ["", "note", "Awkward: select every picture and delete them all, then type into the empty form"],
+        ["tv_picListEdit", "select", "GEN 1.1", "JON 1.3", "JON 1.4", "JON 1.6", "JON 1.12", "JON 2.1", "JON 2.5", "JON 2.10", "JON 3.4", "JON 3.6", "JON 4.5", "JON 4.99"],
+        ["btn_plDel", "signal", "clicked"],
+        ["t_plCaption", "set", "Typed with nothing left"],
+        ["btn_saveConfig", "signal", "clicked"],
+
+        ["", "note", "Turn pictures off and on: the list is loaded again, and must still be empty, not made again from the text"],
+        ["c_includeillustrations", "set", false],
+        ["c_includeillustrations", "set", true],
+        ["btn_saveConfig", "signal", "clicked"]
+    ]
+}

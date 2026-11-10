@@ -121,8 +121,10 @@ class PicChecks:
         for cfg in (self.cfgShared, self.cfgProject):
             if cfg.getboolean(self.src, "approved", fallback=False):
                 self.parent.set("t_pubInits", cfg.get(self.src, "approved_by", fallback=""), mod=False)
-                self.parent.set("t_pubApprDate", cfg.get(self.src, "approved_date", fallback=""), mod=False)
-                self.parent.set("r_pubapprove", "scopeAny" if cfg == self.cfgProject else "scopeProject", mod=False)
+                # savepic writes approval_date; an approval in picInfo.txt (cfgShared) is for any publication
+                self.parent.set("t_pubApprDate", cfg.get(self.src, "approval_date",
+                                fallback=cfg.get(self.src, "approved_date", fallback="")), mod=False)
+                self.parent.set("r_pubapprove", "scopeAny" if cfg == self.cfgShared else "scopeThis", mod=False)
                 self.parent.set('c_pubApproved', True, mod=False)
                 break
         else: # this happens if we never got to the break above (neither was found)
@@ -517,7 +519,9 @@ class Piclist:
         for bk, bkp in bks.items():
             if os.path.exists(bkp):
                 self.read_sfm(bk, bkp, parent)
-        self.set_positions(cols=2, randomize=True)
+        # as generating the list from the Pictures tab does
+        self.set_positions(cols=2 if self.model.get("c_doublecolumn") else 1,
+                           randomize=bool(self.model.get("c_randomPicPosn")))
         if not nosave:
             self.model.savePics()
         self.inthread = False
@@ -595,14 +599,14 @@ class Piclist:
                             if self.model is not None else 65001) as inf:
             dat = inf.read()
             if isperiph:
-                self._readpics(dat, bk, 0, None, isperiph, parent, sync=sync)
+                self._readpics(dat, bk, 0, None, isperiph, parent, sync=sync, fn=fn)
             else:
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
                     m = re.match("(.*?)\\v ", t, re.S)
                     if m is not None:
                         s = m.group(1)
-                        self._readpics(s, bk, c, 0, isperiph, parent, sync=sync)
+                        self._readpics(s, bk, c, 0, isperiph, parent, sync=sync, fn=fn)
                     for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
                         lastv = v[0]
                         s = v[1]
@@ -756,7 +760,10 @@ class Piclist:
             with open(fpath, "w", encoding="utf-8") as outf:
                 outf.write(dat)
         elif os.path.exists(fpath):
-            os.unlink(fpath)
+            # Every picture has been taken out of the list. Keep the (now empty) file: without it
+            # the list is made again from the text the next time it is loaded.
+            with open(fpath, "w", encoding="utf-8") as outf:
+                outf.write("% All the pictures have been removed. Generate makes the list again from the text.\n")
 
     def updateView(self, view, bks=None, filtered=True):
         # if self.inthread:
@@ -807,6 +814,62 @@ class Piclist:
             if m[0][3:] == suffix and v.key not in merged:
                 self.remove(v)
         self.rmdups()
+
+    def updateCaptions(self, pics, suffix="", mergeCaptions=None, main="L"):
+        ''' Take the caption and ref of each picture in pics (read from the text of one side, suffix)
+            for the same picture here: same book, image and place in the text (srcref), wherever
+            it has been moved to and however it has been changed. Nothing is added or removed.
+            In a diglot, a side's caption goes into captionR (etc.) of a picture shared by the
+            sides (mergeCaptions(book) is True). Returns (pictures updated, text pictures not here) '''
+        def split(a):
+            b = a.split(" ", 1)
+            return (b[0][:3], b[0][3:], b[1] if len(b) > 1 else "")
+        bybook = {}
+        for p in self.get_pics():
+            bybook.setdefault(split(p['anchor'])[0], []).append(p)
+        updated = missing = 0
+        for v in pics.get_pics():
+            bk, _, _ = split(v['anchor'])
+            shared = mergeCaptions is not None and mergeCaptions(bk)
+            srb = v.get('srcref', '')
+            for s in bybook.get(bk, []):
+                side = split(s['anchor'])[1]
+                if side == suffix or (side == "" and suffix in ("", main)):
+                    ext = ""                # the picture is this side's (or a monoglot one)
+                elif shared and side in ("", main):
+                    ext = suffix            # the main side's picture, shared with this side
+                else:
+                    continue
+                if newBase(s.get('src', '')) != newBase(v.get('src', '')):
+                    continue
+                sra = s.get('srcref', '')
+                if sra and srb and split(sra)[::2] != split(srb)[::2]:
+                    continue
+                for f in ('caption', 'ref'):
+                    if v.get(f, ''):
+                        s[f + ext] = v[f]
+                updated += 1
+                break
+            else:
+                missing += 1
+        return (updated, missing)
+
+    def side(self, suffix="L"):
+        ''' The pictures for one side of a diglot as a monoglot list: those anchored to that side
+            or to either side, with the side taken off their anchors '''
+        res = Piclist(self.model)
+        for p in self.get_pics():
+            b = p['anchor'].split(" ", 1)
+            if b[0][3:] not in ("", suffix):
+                continue
+            c = p.copy()
+            c['anchor'] = b[0][:3] + (" " + b[1] if len(b) > 1 else "")
+            for f in list(c.fields):
+                if f[-1:].isupper() and f[:-1] in ('caption', 'ref'):     # the other sides' captions
+                    del c[f]
+            res.pics[c.key] = c
+        res.loaded = self.loaded
+        return res
 
     def unmerge(self, suffix):
         for v in list(self.get_pics()):

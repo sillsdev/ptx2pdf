@@ -1,0 +1,73 @@
+{
+    "title": "Picture editor: editing, adding, deleting, awkward clicks, and the .piclist",
+    "project": "WSGlatin",
+    "config": "PicsJON",
+    "uilevel": 6,
+    "events": [
+        ["", "note", "Edit one picture: caption, scale, size, position"],
+        ["tv_picListEdit", "select", "JON 1.3"],
+        ["t_plCaption", "set", "A new caption"],
+        ["s_plScale", "set", "90"],
+        ["fcb_plSize", "set", "span"],
+        ["fcb_plPgPos", "set", "b"],
+
+        ["", "note", "Two pictures at once: mirror both"],
+        ["tv_picListEdit", "select", "JON 1.4", "JON 1.6"],
+        ["fcb_plMirror", "set", "odd"],
+
+        ["", "note", "Delete the missing picture"],
+        ["tv_picListEdit", "select", "JON 3.4"],
+        ["btn_plDel", "signal", "clicked"],
+
+        ["", "note", "Awkward: delete with nothing selected"],
+        ["tv_picListEdit", "select"],
+        ["btn_plDel", "signal", "clicked"],
+
+        ["", "note", "Add a picture, choosing a file, and anchor it"],
+        ["", "choose", "figures/oi00170.jpg"],
+        ["btn_plAdd", "signal", "clicked"],
+        ["t_plAnchor", "set", "JON 2.2"],
+        ["t_plCaption", "set", "An added picture"],
+
+        ["", "note", "Awkward: Add, then cancel the file chooser"],
+        ["", "choose"],
+        ["btn_plAdd", "signal", "clicked"],
+
+        ["", "note", "Add with a full page, rotated picture selected: what does the new one take from it?"],
+        ["tv_picListEdit", "select", "JON 4.5"],
+        ["", "choose", "figures/oi00180.jpg"],
+        ["btn_plAdd", "signal", "clicked"],
+        ["t_plAnchor", "set", "jon 3:1"],
+
+        ["", "note", "Awkward: Add a picture and leave it without an anchor, then pick another picture"],
+        ["", "choose", "figures/oi00185.jpg"],
+        ["btn_plAdd", "signal", "clicked"],
+        ["tv_picListEdit", "select", "JON 1.12"],
+        ["t_plCaption", "set", "Typed after trying to pick JON 1.12"],
+
+        ["", "note", "PTXprint says the anchor is missing and stays on the new picture, so Delete removes that one, not JON 1.12"],
+        ["btn_plDel", "signal", "clicked"],
+
+        ["", "note", "Checklist: approve oi00170 for any publication, then move on to another picture"],
+        ["tv_picListEdit", "select", "JON 1.6"],
+        ["c_pubApproved", "set", true],
+        ["t_pubInits", "set", "TT"],
+        ["t_pubApprDate", "set", "10/11/2026"],
+        ["r_pubapprove_scopeAny", "set", true],
+        ["tv_picListEdit", "select", "JON 1.4"],
+
+        ["", "note", "Show only approved pictures, and edit one while the list is filtered"],
+        ["nbk_PicList", "set", 2],
+        ["fcb_chklstFilter", "set", "Approved"],
+        ["tv_picListEdit", "select", "JON 2.5"],
+        ["t_plCaption", "set", "Edited while the list was filtered"],
+        ["fcb_chklstFilter", "set", "All"],
+        ["nbk_PicList", "set", 1],
+
+        ["", "note", "Save"],
+        ["btn_saveConfig", "signal", "clicked"],
+
+        ["", "note", "Print: the piclist the print job makes in local/ drops what isn't printed (GEN)"],
+        ["b_print", "signal", "clicked"]
+    ]
+}

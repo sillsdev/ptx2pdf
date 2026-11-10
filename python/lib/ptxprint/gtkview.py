@@ -3387,25 +3387,25 @@ class GtkViewModel(ViewModel):
         self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
     def onUpdatePicCaptionsClicked(self, btn):
-        self.picListView.pause()
-        if len(self.diglotViews):
-            pref = "L"
-            self.picinfos = Piclist(self, diglot=True)
-        else:
-            pref = ""
-        newpics = Piclist(self)
-        newpics.threadUsfms(self, nosave=True)
-        self.picinfos.merge(newpics, pref, mergeCaptions=self.mergeCaptions, bkanchors=True)
-        if len(self.diglotViews):
-            for k, v in self.diglotViews.items():
-                if v is None:
-                    continue
-                digpics = Piclist(v)
-                digpics.threadUsfms(v, nosave=True)     # is this safe?
-                self.picinfos.merge(digpics, k, mergeCaptions=self.mergeCaptions, bkanchors=True)
+        """ Refresh List: take the captions and verse refs from the text for the pictures in the
+            list. Their size, position and other settings stay, and no picture is added or removed. """
+        if self.picinfos is None:
+            return
+        self.picListView.updateinfo(self.picinfos)      # keep what has been changed in the list
+        sides = [("L" if len(self.diglotViews) else "", self)] + [(k, v) for k, v in self.diglotViews.items() if v is not None]
+        updated = missing = 0
+        for suffix, view in sides:
+            textpics = Piclist(view)
+            textpics.threadUsfms(view, nosave=True)
+            u, m = self.picinfos.updateCaptions(textpics, suffix,
+                                                mergeCaptions=self.mergeCaptions if len(self.diglotViews) else None)
+            updated += u
+            missing += m
         self.updatePicList()
-        self.picListView.unpause()
-        self.doStatus(_("Done! Picture Captions have been updated."))
+        msg = _("Done! The captions of {} pictures have been updated.").format(updated)
+        if missing:
+            msg += " " + _("{} pictures in the text are not in the list: use Generate to add them.").format(missing)
+        self.doStatus(msg)
         self.changed()
 
     def onGeneratePicListClicked(self, btn):

@@ -718,7 +718,9 @@ class ViewModel:
         if newprj is not None:
             del jobs['AdjLists']
         else:
-            jobs["{}-{}.piclist".format(self.project.prjid, oldcfg)] = (self._copyfile, self._mergenothing, "{}-{}.piclist".format(self.project.prjid, newcfg))
+            for d in ("", "-diglot"):       # without the diglot one, a diglot copy makes its pictures again from the text
+                jobs["{}-{}{}.piclist".format(self.project.prjid, oldcfg, d)] = (self._copyfile, self._mergenothing,
+                                                    "{}-{}{}.piclist".format(self.project.prjid, newcfg, d))
         for f, a in jobs.items():
             srcp = os.path.join(oldp, f)
             destp = os.path.join(newp, a[2] if len(a) > 2 else f)
@@ -1818,7 +1820,8 @@ class ViewModel:
         if not force and self.configLocked():
             return False
         changed = False
-        pinfo = self.digbasepics.get('R', self.picinfos) if len(self.diglotViews) else self.picinfos
+        # In a diglot the config's own piclist gets just the main side, for when it is printed on its own
+        pinfo = self.picinfos.side("L") if len(self.diglotViews) and self.picinfos is not None else self.picinfos
         if pinfo is not None and pinfo.loaded:
             changed = changed or pinfo.out(os.path.join(self.project.srcPath(self.cfgid),
                                     "{}-{}.piclist".format(self.project.prjid, self.cfgid)))
@@ -1830,11 +1833,10 @@ class ViewModel:
     def loadPics(self, mustLoad=True, fromdata=True, force=False):
         if self.loadingConfig:
             return
-        if self.picinfos is None:
+        if self.picinfos is None or force:
+            # A fresh list: turning diglot on or off changes which file it is read from
+            # (and clear() would keep the pictures already read)
             self.picinfos = Piclist(self, diglot=len(self.diglotViews) != 0)
-        elif force:
-#            self.savePics(fromdata=fromdata)
-            self.picinfos.clear(self)
         if not self.get("c_includeillustrations"):
             return
         res = None

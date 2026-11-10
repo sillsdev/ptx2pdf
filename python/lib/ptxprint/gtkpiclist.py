@@ -47,7 +47,6 @@ _sizekeys = {"P": "page", "F": "full", "c": "col", "s": "span"}
 _comblist = ['pgpos', 'hpos', 'nlines']
 _comblistcr = ['crVpos', 'crHpos']
 
-newrowcounter = 1
 previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
 
 _PEACH = (1.0, 0.855, 0.725)   # peach puff #FFDAB9
@@ -335,6 +334,14 @@ class PicList:
                 w = self.builder.get_object("t_plAnchor")
                 w.get_style_context().add_class("highlighted")
                 self.parent.doError(_("Missing: 'Anchor Ref'"), secondary=_("You must provide a Book Ch.Vs reference as an anchor for the picture. For example: GEN 14.19"))
+                # Stay on the picture that needs an anchor, so the list shows the picture the form
+                # is editing: otherwise what is typed next, or Delete, goes to the wrong one
+                self.loading = True
+                try:
+                    selection.unselect_all()
+                    selection.select_iter(self.currows[-1][-1])
+                finally:
+                    self.loading = False
                 return
             for k, s in ((k, x) for k,x in _form_structure.items() if x is not None and x.startswith("s_")):
                 w = self.builder.get_object(s)
@@ -347,12 +354,10 @@ class PicList:
         model, paths = selection.get_selected_rows()
         self.currows = []
         for i, path in enumerate(paths):
-            cpath = model.convert_path_to_child_path(path)
-            cit = self.model.get_iter(cpath)
+            # the selection's paths are already in self.model, the filtered view of the pictures
+            cit = self.model.get_iter(path)
             if i == 0 and self.curriter != cit:
                 self.parent.savePicChecks()
-                if not self.model.do_visible(self.model, self.model.get_model(), cit):
-                    return
                 self.curriter = cit
             self.currows.append(self.model[cit][:])    # copy it so that any edits don't mess with the model if the iterator moves
             self.currows[-1].append(cit)
@@ -685,7 +690,6 @@ class PicList:
         return row
 
     def add_row(self, pic=None):
-        global newrowcounter
         model, sel = self.selection.get_selected_rows()
         #if sel is not None and len(sel):
         #    sel = model.convert_path_to_child_path(sel[0])
@@ -693,14 +697,14 @@ class PicList:
         #    row = self.model[self.model.get_iter(sel)][:]
         #else:
         if pic is None:
-            key = "row{}".format(newrowcounter)
-            newrowcounter += 1
+            # file it under the Picture's own key, which Piclist.remove (used by rmdups and merge) looks for
+            pic = Picture()
             row = self.get_row_from_items()
         else:
-            key = pic.key
             row = self._loadrow(pic)
+        key = pic.key
         row[_pickeys['key']] = key
-        self.picinfo[key] = pic or Picture()
+        self.picinfo[key] = pic
         logger.debug(f"{row[_pickeys['key']]}"+", ".join(sorted([k for k, v in self.picinfo.items()])))
         self.coremodel.append(row)
         self.select_row(len(self.model)-1)
@@ -710,20 +714,18 @@ class PicList:
         self.clearPreview()
         model, paths = self.selection.get_selected_rows()
         inds = [model.convert_path_to_child_path(i) for i in paths]
+        firstshown = min(p.get_indices()[0] for p in paths) if len(paths) else None
         for i in reversed(sorted(inds)):
             ci = self.coremodel.get_iter(i)
             del self.picinfo[self.coremodel[ci][_pickeys['key']]]
             del self.coremodel[ci]
-        if not len(inds):
-            indt = model.get_iter_first()
-            if indt is not None:
-                ind = model.get_path(indt)
-            else:
-                ind = None
-        else:
-            ind = inds[0]
-        if ind is not None:  # otherwise we have an empty list
-            self.select_row(ind.get_indices()[0])
+        if len(inds):
+            # the form was editing these: nothing to keep from them, and their rows are gone
+            self.currows = []
+            self.curriter = None
+        # select the picture now where the first deleted one was shown (select_row works in the
+        # filtered list), or the first one if nothing was selected
+        self.select_row(firstshown or 0)
 
     def clearPreview(self):
         pic = self.builder.get_object("img_picPreview")
@@ -896,7 +898,9 @@ class PicList:
         if picfile is not None:
             self.parent.set("nbk_PicList", 1)
             self.add_row()
-            for w in ["t_plAnchor", "t_plFilename", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright"]: 
+            # what belongs to the picture that was selected, not to the new one; its size,
+            # position, scale, mirroring and media are kept as a starting point
+            for w in ["t_plAnchor", "t_plFilename", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "t_picXetex"]:
                 self.parent.set(w, "", mod=False)
             self.set_src(os.path.basename(picfile[0]))
 
