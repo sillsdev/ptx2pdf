@@ -1193,6 +1193,55 @@ class PDFContentViewer(PDFFileViewer):
         pnum = tv.get_model()[path][1]
         self.show_pdf(pnum)
 
+    def _tocOnPage(self, model, it, cpage):
+        ''' Returns the sibling entries starting at it that have content on pdf page cpage '''
+        res = []
+        while it is not None:
+            if model[it][1] > cpage:
+                break
+            nxt = model.iter_next(it)
+            if nxt is None or model[nxt][1] >= cpage:
+                res.append(it)
+            it = nxt
+        return res
+
+    def highlightTocBook(self, cpage):
+        ''' Select (without activating) the outline entry for the book containing
+            pdf page index cpage, or the chapter if that book is expanded '''
+        model = self.toctv.get_model()
+        if model is None:
+            return
+        sel = self.toctv.get_selection()
+        smodel, siter = sel.get_selected()
+        spath = model.get_path(siter) if siter is not None and smodel is model else None
+
+        def pick(cands):
+            # Prefer the current selection (or its ancestor) if it is on this page,
+            # so a user's choice of e.g. ACT 21 isn't replaced by ACT 22 on the same page
+            if spath is not None:
+                for c in cands:
+                    cpath = model.get_path(c)
+                    if spath == cpath or spath.is_descendant(cpath):
+                        return c
+            return cands[-1] if cands else None
+
+        book = pick(self._tocOnPage(model, model.get_iter_first(), cpage))
+        if book is None:
+            sel.unselect_all()
+            return
+        target = book
+        bpath = model.get_path(book)
+        if self.toctv.row_expanded(bpath):
+            chap = pick(self._tocOnPage(model, model.iter_children(book), cpage))
+            if chap is not None:
+                target = chap
+        tpath = model.get_path(target)
+        if spath is not None and spath == tpath:
+            return
+        # select_path() does not emit row-activated, so this doesn't change page
+        sel.select_path(tpath)
+        self.toctv.scroll_to_cell(tpath, None, False, 0., 0.)
+
     def show_pdf(self, cpage=None, rtl=False, setpnum=True):
         """ cpage is a index (1 based) """
         if self.document is None:
@@ -1248,6 +1297,7 @@ class PDFContentViewer(PDFFileViewer):
             self.model.set("t_pgNum", str(page), mod=False)
         self.update_boxes(images)
         self.updatePageNavigation()
+        self.highlightTocBook(cpage)
 
     def _get_margins(self, pindex):
         margin = mm_pts(float(self.model.get("s_margins")))
