@@ -465,7 +465,7 @@
         \let\n@xt=\leftskip
       \fi
     \else\ifx\the@lign\cell@c
-      %\parfillskip=0pt
+      \ifRTL \parfillskip=0pt\fi
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
       \edef\l@drsr{r}%
