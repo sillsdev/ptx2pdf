@@ -1751,7 +1751,7 @@ class ViewModel:
 
     def saveAdjlists(self, force=False):
         changed = False
-        for bk in self.getBooks():
+        for bk in self.getAllBooks():
             adj = self.get_adjlist(bk, save=False)
             changed |= adj.save()
         if changed:

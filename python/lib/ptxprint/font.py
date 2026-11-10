@@ -755,6 +755,8 @@ class TTFont:
         return True
 
     def readFeat(self, inf):
+        if len(self.feats):
+            return
         self.feats = {}
         self.featvals = {}
         self.featnames = {}
@@ -1170,6 +1172,7 @@ class FontRef:
                 self.lang = v.strip()
                 continue
             elif self.isGraphite:
+                self.readFeats()
                 key = f.featnames.get(k.strip(), k.strip())
                 val = f.featvalnames.get(key, {}).get(v.strip(), v.strip())
             else:

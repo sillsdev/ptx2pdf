@@ -163,6 +163,7 @@ class AdjList:
             self.liststore.append(allvals[a])
             self.db.append(dbvals[a])
         self.ftime = os.stat(fname).st_mtime
+        self.changed = False
 
     def genline(self, i):
         r = self.liststore[i]
@@ -194,11 +195,16 @@ class AdjList:
             fname = self.adjfile
         if fname is None:
             return
+        os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
+        count = 0
+        if fname == self.adjfile and os.path.exists(fname):
+            ftime = os.stat(fname).st_mtime
+            if self.ftime is not None and self.ftime < ftime:
+                self.readAdjlist(fname)
+                return
         if not len(self.liststore):
             self.remove_file(fname)
             return
-        os.makedirs(os.path.dirname(fname), exist_ok=True) # Ensure the directory exists first
-        count = 0
         with open(fname, "w", encoding="utf-8") as outf:
             for i in range(len(self.liststore)):
                 line = self.genline(i)

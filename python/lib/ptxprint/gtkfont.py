@@ -287,6 +287,6 @@ class GtkFonts:
         dialog.hide()
 
     def onFontIsGraphiteClicked(self, btn):
-        self.onSimpleClicked(btn)
+        self.view.onSimpleClicked(btn)
         self.set("t_fontFeatures", "", mod=False)
 

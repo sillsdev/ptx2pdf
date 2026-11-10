@@ -1,6 +1,40 @@
 
-from ptxprint.xdv.xdv import XDViPositionedReader, opcodes
+from ptxprint.xdv.xdv import XDViPositionedReader, XDViReader, opcodes
 import logging
+
+# Characters whose glyphs count as word spaces when found inside a glyph run
+_spacechars = [0x20, 0xA0, 0x202F] + list(range(0x2000, 0x200B))
+_spacegids = {}
+
+def spacegids(font):
+    """ Glyph ids of the space glyphs in font, cached on the font object and,
+        since each reader makes new font objects, by font file. With
+        \\XeTeXinterwordspaceshaping a whole line is one glyph run and the
+        justification stretch goes into the space glyphs' positions. """
+    res = getattr(font, "spacegids", None)
+    if res is not None:
+        return res
+    key = (font.name, getattr(font, "ident", 0))
+    res = _spacegids.get(key)
+    if res is not None:
+        font.spacegids = res
+        return res
+    res = set()
+    try:
+        from fontTools.ttLib import TTFont
+        tt = TTFont(font.name, fontNumber=key[1] or 0, lazy=True)
+        cmap = tt.getBestCmap()
+        order = tt.getGlyphOrder()
+        hmtx = tt['hmtx']
+        for u in _spacechars:
+            g = cmap.get(u)
+            if g is not None and hmtx[g][0] > 0:
+                res.add(order.index(g))
+    except Exception as e:
+        logging.debug(f"No space glyphs for {font.name}: {e}")
+    _spacegids[key] = res
+    font.spacegids = res
+    return res
 
 class XdvSpaceMeasure(XDViPositionedReader):
 
@@ -53,8 +87,18 @@ class XdvSpaceMeasure(XDViPositionedReader):
                 elif self.h > self.textend:
                     r.white += (self.h - self.textend) / fsize
                     r.nspaces += 1
-            res = self._skip_xglyphs(opcode, parm, data)
-            r.black += (self.h - bstart) / fsize
+            (_, width, pos, glyphs, _) = XDViReader.xglyphs(self, opcode, parm, data)
+            self.h += self.topt(width)
+            res = (parm, width, [], [], "")
+            sgids = spacegids(self.fonts[self.currfont])
+            inner = 0.
+            if len(sgids):
+                for i, g in enumerate(glyphs[:-1]):
+                    if g in sgids:
+                        inner += max(0., self.topt(pos[i+1][0] - pos[i][0])) / fsize
+                        r.nspaces += 1
+            r.white += inner
+            r.black += (self.h - bstart) / fsize - inner
             self.textend = self.h
         else:
             res = self._skip_xglyphs(opcode, parm, data)

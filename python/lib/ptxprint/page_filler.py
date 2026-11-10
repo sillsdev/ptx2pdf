@@ -278,6 +278,9 @@ class Hooks:
     def is_header(self, paragraph: ParagraphRef):
         return self.printer.pid_isheader(paragraph)
 
+    def is_justified(self, paragraph: ParagraphRef):
+        return self.printer.pid_isjustified(paragraph)
+
     def analyse_bw(self, testfn, page, trackp=False):
         self.printer.analyse_bw(testfn, page, trackp=trackp or self.tracing)
 
@@ -959,7 +962,8 @@ class TypesetterSolver:
             if par.rects is not None:
                 blacks = sum(r.black for r in par.rects)
                 whites = sum(r.white for r in par.rects)
-                parwhites = sum(r.parwhite for r in par.rects)
+                # A justified paragraph's only rag is its last line, which is fine at any length
+                parwhites = 0. if self.hooks.is_justified(p) else sum(r.parwhite for r in par.rects)
                 nwhites = sum(r.nspaces for r in par.rects)
             else:
                 (blacks, whites, parwhites, nwhites) = (0, 0, 0, 0)
@@ -1290,6 +1294,7 @@ class PTXFiller:
         self.rtl = self.view.get("fcb_textDirection", "") == "rtl"
         self.macrosdir = build_params.scriptsdir
         self.stats = []
+        self.justified = {}     # marker -> is it justified
 
     def clear_book_files(self, bk):
         """ Delete the working files left from a previous run of this book only,
@@ -1684,12 +1689,15 @@ class PTXFiller:
 
     def pid_isjustified(self, pid):
         pind = self.get_para_ind(pid)
-        if pind < len(self.parlocs):
-            p = self.parlocs[pind]
-            just = self.view.styleEditor.getval(p.mrk, 'justification', None)
-            if just is not None and just.lower() != 'justified':
-                return False
-        return True
+        if pind is None or pind >= len(self.parlocs):
+            return True
+        mrk = self.parlocs[pind].mrk
+        res = self.justified.get(mrk)
+        if res is None:
+            just = self.view.styleEditor.getval(mrk, 'justification', None)
+            res = just is None or just.lower() == 'justified'
+            self.justified[mrk] = res
+        return res
 
     def isheader(self, mrk):
         return Grammar.marker_categories.get(mrk, '') in ("sectionpara", "title")
