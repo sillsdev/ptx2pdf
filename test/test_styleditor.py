@@ -48,7 +48,8 @@ def test_copyDoesNotCopyIdentity():
     se = makeEditor()
     se.sheet[src] = {'name': 'original', ' category': 'Other', 'description': 'orig desc',
                      'endmarker': 'x*', 'mrktype': 'internal', 'styletype': 'Paragraph',
-                     'texttype': 'Other', 'borderwidth': '0.2'}
+                     'texttype': 'Other', 'occursunder': 'id', 'textproperties': 'paragraph',
+                     'borderwidth': '0.2'}
     new = addCopy(se, "cat:copy|esb")
     assert new['name'] == "cat:copy|esb"
     assert new[' deletable'] is True
@@ -63,5 +64,5 @@ def test_copyAddsNothingExtra():
     se = makeEditor()
     se.sheet[src] = {'border': 'Bottom Right', 'borderwidth': '10'}
     new = addCopy(se, "cat:copy|esb")
-    expected = {k: v for k, v in se.asStyle(src).items() if k != 'name'}
+    expected = {k: v for k, v in se.asStyle(src).items() if k not in StyleEditor.identityKeys}
     assert {k: v for k, v in new.items() if k not in ('name', ' deletable')} == expected

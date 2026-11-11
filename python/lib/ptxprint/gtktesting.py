@@ -30,6 +30,8 @@ _signals = {
     'value-changed': ("SpinButton",),
     # 'state-set': ("Switch",),
     'row-activated': ("TreeView",),
+    'activate': ("MenuItem",),          # pop-up menus made in code: see _menus
+    'button-release-event': ("EventBox",),   # clicking a label to reset its setting: see labelClicked
 }
 
 def _picKey(row, model=None):
@@ -64,6 +66,9 @@ def _picRows(view, keys):
 # Lists whose selection is recorded and replayed: how to name the selected rows, and find them again
 _selectables = {"tv_picListEdit": _picKeys}
 _selectableRows = {"tv_picListEdit": _picRows}
+# Pop-up menus made in code: the widget they belong to, and how to make the menu again. Their
+# items are named mi_..., and choosing one is recorded as [owner, "menu", item name].
+_menus = {"tv_picListEdit": lambda view: view.picListView.buildMenu()}
 
 def testsDir(project, cfgid):
     """ Where a project's tests for a config live: <project>/shared/tests/<config> """
@@ -207,6 +212,10 @@ class GtkTester:
     def emission_hook(self, w, *a):     # sigid, detail, self, *a):
         if isinstance(w, Gtk.TreeSelection):
             return self.selectionChanged(w)
+        if isinstance(w, Gtk.MenuItem):
+            return self.menuChosen(w)
+        if isinstance(w, Gtk.EventBox):
+            return self.labelClicked(w)
         if self.paused or w.get_toplevel() in getattr(self, 'ownwindows', ()):
             return True
         sigid = a[-1]
@@ -243,6 +252,58 @@ class GtkTester:
         self.events.append(e)
         self.lastevent = e
         return True
+
+    def menuChosen(self, item):
+        """ Choosing from a pop-up menu that _menus can make again. Menus from the builder (and
+            the menus of combo boxes) aren't recorded this way. """
+        name = item.get_name()
+        menu = item.get_parent()
+        owner = menu.get_attach_widget() if isinstance(menu, Gtk.Menu) else None
+        oname = Gtk.Buildable.get_name(owner) if owner is not None else None
+        if self.paused or not name.startswith("mi_") or oname not in _menus \
+                or Gtk.get_current_event() is None:
+            return True
+        e = (oname, "menu", name)
+        self.events.append(e)
+        self.lastevent = e
+        return True
+
+    def labelClicked(self, box):
+        """ Clicking a label (in an unnamed event box) to reset what it labels: [label, "labelclick"] """
+        child = box.get_child()
+        name = Gtk.Buildable.get_name(child) if child is not None else None
+        if self.paused or name is None or name.startswith("___object_") \
+                or box.get_toplevel() in getattr(self, 'ownwindows', ()) or not self.userInitiated(box):
+            return True
+        e = (name, "labelclick")
+        self.events.append(e)
+        self.lastevent = e
+        return True
+
+    def _labelclick(self, w):
+        label = self.view.builder.get_object(w)
+        box = label.get_parent() if label is not None else None
+        if not isinstance(box, Gtk.EventBox):
+            raise ValueError(f"{w} isn't a label that can be clicked")
+        if not box.is_sensitive():
+            raise ValueError(f"{w} is greyed out, so nobody could click it")
+        ev = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+        ev.button = 1
+        ev.window = box.get_window()
+        ev.send_event = True
+        self._later(box.emit, "button-release-event", ev)
+        return True
+
+    def _menu(self, w, name):
+        menu = _menus[w](self.view)
+        for item in menu.get_children():
+            if item.get_name() == name:
+                if not item.is_sensitive():
+                    raise ValueError(f"{name} in the {w} menu is greyed out")
+                self._later(item.activate)
+                return True
+        raise ValueError(f"The {w} menu has no {name}: "
+                         + ", ".join(i.get_name() for i in menu.get_children() if i.get_name().startswith("mi_")))
 
     def _select(self, w, *keys):
         rows = _selectableRows[w](self.view, keys)
@@ -610,6 +671,12 @@ class GtkTester:
             return f"Select the style {e[4]}"
         elif e[1] == "select":
             return _("Select {}").format(", ".join(e[2:])) if len(e) > 2 else _("Select nothing")
+        elif e[1] == "labelclick":
+            return _("Click {} to reset it").format(label)
+        elif e[1] == "menu":
+            items = [i for i in _menus[e[0]](self.view).get_children() if i.get_name() == e[2]] \
+                        if e[0] in _menus else []
+            return _("Right-click {} and choose {}").format(label, items[0].get_label() if items else e[2])
         elif e[1] == "choose":
             return _("In the file chooser, pick {}").format(", ".join(e[2:])) if len(e) > 2 else _("Cancel the file chooser")
         return f"{label}: {' '.join(str(x) for x in e[1:])}"
@@ -680,6 +747,9 @@ class GtkTester:
         from ptxprint.runjob import isLocked
         if isLocked():
             return False        # wait for a print to finish
+        se = getattr(self.view, 'styleEditor', None)
+        if getattr(se, 'search_timer_id', None) is not None:
+            return False        # wait for the style search, which waits for typing to pause
         inflight = getattr(self, 'inflight', [])
         if not inflight:
             return True
@@ -718,6 +788,8 @@ class GtkTester:
                 and widget.get_active_id() != str(val):
             ids = [str(r[widget.get_id_column()]) for r in widget.get_model()]
             raise ValueError(f"{w} has no choice {val!r} (it has {', '.join(ids)})")
+        if isinstance(widget, Gtk.SearchEntry):
+            widget.emit("search-changed")       # now, rather than after GTK's own typing delay
         if isinstance(widget, Gtk.Entry):      # spin buttons too
             # someone typing moves on to something else, and handlers listen for that
             ev = Gdk.Event.new(Gdk.EventType.FOCUS_CHANGE)
@@ -812,7 +884,7 @@ class GtkTester:
         if w == "tv_Styles":
             if len(a) > 2:
                 # someone can only pick a style they can see
-                if not self.view.styleEditor.selectMarker(a[2]):
+                if not self.view.styleEditor.selectMarker(a[2], reveal=False):
                     raise ValueError(f"Style {a[2]} isn't in the list of styles (is it filtered out?)")
             else:
                 sel = widget.get_selection()
@@ -826,7 +898,8 @@ class GtkTester:
     def compare_cfg(self, old, new, **kw):
         options_to_ignore = ["gitversion", "config"]
         # other projects aren't in a test archive, so a reference to one can't survive loading
-        section_options_to_ignore = {"import": ["project"]}
+        # the preview's zoom follows the window size, which varies with how the test is run
+        section_options_to_ignore = {"import": ["project"], "config": ["pdfzoomlevel"]}
         res = []
         oldc = ConfigParser()
         oldc.read_file(old)

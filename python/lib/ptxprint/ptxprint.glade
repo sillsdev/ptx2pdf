@@ -1167,6 +1167,7 @@ to block hyphenation.</property>
     <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_styCallerRaise">
+    <property name="lower">-20</property>
     <property name="upper">20</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
@@ -1203,6 +1204,7 @@ to block hyphenation.</property>
     <property name="page-increment">0.05</property>
   </object>
   <object class="GtkAdjustment" id="a_styNoteCallerRaise">
+    <property name="lower">-20</property>
     <property name="upper">20</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
@@ -5800,7 +5802,7 @@ line, or an ornamental pattern.</property>
                     <property name="model">ls_borderStyle</property>
                     <property name="active">0</property>
                     <property name="id-column">1</property>
-                    <property name="active-id">1</property>
+                    <property name="active-id">none</property>
                     <signal name="changed" handler="onSBborderSettingsChanged" swapped="no"/>
                   </object>
                   <packing>
@@ -8623,7 +8625,7 @@ in the Windows system.</property>
                     <property name="model">ls_fontFaces</property>
                     <property name="active">0</property>
                     <property name="id-column">0</property>
-                    <property name="active-id">1</property>
+                    <property name="active-id">Regular</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -8969,7 +8971,7 @@ are using supports these digits too.)</property>
                     <property name="active">0</property>
                     <property name="popup-fixed-width">False</property>
                     <property name="id-column">0</property>
-                    <property name="active-id">0</property>
+                    <property name="active-id">Default</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -9613,7 +9615,7 @@ Inches as the major units.</property>
                         <property name="active">1</property>
                         <property name="entry-text-column">0</property>
                         <property name="id-column">1</property>
-                        <property name="active-id">1</property>
+                        <property name="active-id">in</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -9635,7 +9637,7 @@ of the Page, or at the top-left Margin.</property>
                         <property name="active">0</property>
                         <property name="entry-text-column">0</property>
                         <property name="id-column">1</property>
-                        <property name="active-id">1</property>
+                        <property name="active-id">page</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -10295,7 +10297,6 @@ Position:</property>
                     <property name="has-entry">True</property>
                     <property name="entry-text-column">0</property>
                     <property name="id-column">1</property>
-                    <property name="active-id">0</property>
                     <child internal-child="entry">
                       <object class="GtkEntry">
                         <property name="visible">True</property>
@@ -10336,7 +10337,6 @@ Position:</property>
                     <property name="has-entry">True</property>
                     <property name="entry-text-column">0</property>
                     <property name="id-column">1</property>
-                    <property name="active-id">0</property>
                     <child internal-child="entry">
                       <object class="GtkEntry">
                         <property name="visible">True</property>
@@ -13518,7 +13518,6 @@ which do not have a local rendering.</property>
                             <property name="has-entry">True</property>
                             <property name="entry-text-column">0</property>
                             <property name="id-column">0</property>
-                            <property name="active-id">0</property>
                             <child internal-child="entry">
                               <object class="GtkEntry">
                                 <property name="can-focus">False</property>
@@ -13744,7 +13743,7 @@ to be displayed, select an appropriate option.</property>
                         <property name="active">0</property>
                         <property name="entry-text-column">0</property>
                         <property name="id-column">1</property>
-                        <property name="active-id">0</property>
+                        <property name="active-id">keep</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -16678,7 +16677,7 @@ marker this is.</property>
                 <property name="has-entry">True</property>
                 <property name="entry-text-column">0</property>
                 <property name="id-column">1</property>
-                <property name="active-id">1</property>
+                <property name="active-id">title</property>
                 <child internal-child="entry">
                   <object class="GtkEntry">
                     <property name="visible">True</property>
@@ -20827,7 +20826,7 @@ lays out the vertical lines left to right.</property>
                                             <property name="model">ls_textDirection</property>
                                             <property name="active">0</property>
                                             <property name="id-column">1</property>
-                                            <property name="active-id">1</property>
+                                            <property name="active-id">ltr</property>
                                             <signal name="changed" handler="onDirectionChanged" swapped="no"/>
                                           </object>
                                           <packing>
@@ -20872,7 +20871,7 @@ the script when the project is opened.</property>
                                             <property name="active">0</property>
                                             <property name="popup-fixed-width">False</property>
                                             <property name="id-column">1</property>
-                                            <property name="active-id">0</property>
+                                            <property name="active-id">Latn</property>
                                             <signal name="changed" handler="onScriptChanged" swapped="no"/>
                                           </object>
                                           <packing>
@@ -22145,7 +22144,7 @@ such as Strong's numbers.</property>
                                         <property name="model">ls_glossaryMarkupStyle</property>
                                         <property name="active">0</property>
                                         <property name="id-column">1</property>
-                                        <property name="active-id">1</property>
+                                        <property name="active-id">no</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -22919,7 +22918,7 @@ This only matters when the Length is less than 100%.</property>
                                                             <property name="active">0</property>
                                                             <property name="entry-text-column">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">all</property>
+                                                            <property name="active-id">1</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left-attach">1</property>
@@ -24167,7 +24166,7 @@ references from the same prioritized list
                                                     <property name="active">1</property>
                                                     <property name="entry-text-column">0</property>
                                                     <property name="id-column">1</property>
-                                                    <property name="active-id">all</property>
+                                                    <property name="active-id">standard_2</property>
                                                     <signal name="changed" handler="onExtListSourceChanges" swapped="no"/>
                                                   </object>
                                                   <packing>
@@ -25100,7 +25099,7 @@ rule settings apply.)</property>
                                                         <property name="active">0</property>
                                                         <property name="entry-text-column">0</property>
                                                         <property name="id-column">1</property>
-                                                        <property name="active-id">all</property>
+                                                        <property name="active-id">1</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left-attach">1</property>
@@ -25652,7 +25651,7 @@ This only matters when the Length is less than 100%.</property>
                                                             <property name="active">0</property>
                                                             <property name="entry-text-column">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">all</property>
+                                                            <property name="active-id">1</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">1</property>
@@ -29887,7 +29886,7 @@ is acceptable in the receptor culture.</property>
                                                             <property name="model">ls_pic_accept</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">-1</property>
+                                                            <property name="active-id">Unknown</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">2</property>
@@ -29974,7 +29973,7 @@ illustration in this particular publication.</property>
                                                             <property name="model">ls_pub_usage</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">-1</property>
+                                                            <property name="active-id">Unknown</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">2</property>
@@ -30085,7 +30084,7 @@ illustration within this publication.</property>
                                                             <property name="model">ls_pub_accept</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">1</property>
+                                                            <property name="active-id">Unknown</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">2</property>
@@ -30881,7 +30880,7 @@ Note that for polyglots, only the Scored options are available to be used.</prop
                                         <property name="has-entry">True</property>
                                         <property name="entry-text-column">0</property>
                                         <property name="id-column">1</property>
-                                        <property name="active-id">1</property>
+                                        <property name="active-id">simple</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can-focus">False</property>
@@ -34312,7 +34311,7 @@ on whole lines.</property>
                                                             <property name="active">0</property>
                                                             <property name="entry-text-column">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">1</property>
+                                                            <property name="active-id">t</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">1</property>
@@ -39186,7 +39185,7 @@ the archive standard PDF/A-4.</property>
                                     <property name="active">0</property>
                                     <property name="entry-text-column">0</property>
                                     <property name="id-column">1</property>
-                                    <property name="active-id">None</property>
+                                    <property name="active-id">Screen</property>
                                     <signal name="changed" handler="outputFormatChanged" swapped="no"/>
                                     <signal name="grab-notify" handler="grab_notify_event" swapped="no"/>
                                   </object>

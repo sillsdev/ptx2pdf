@@ -160,6 +160,7 @@ class PolySolver(TypesetterSolver):
         final = self._layout(cur.paragraph_params, cur, -1)
         if final is not None:
             final.failures = self.failed_pages
+            final.wholebook = True      # so the filler needn't lay it out again
             cur = final
         printer.report(cur)
         return cur

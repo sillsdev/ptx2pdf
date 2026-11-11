@@ -214,6 +214,10 @@ class TexModel:
         self.printer.setDate()  # Update date/time to now
         cpath = self.printer.project.srcPath(self.printer.cfgid)
         self.updatefields(ModelMap.keys())
+        for a in ('bold', 'italic', 'bolditalic'):
+            # a config with only a regular font: use it, rather than a font with no name
+            if not self.dict.get('document/font'+a) and self.dict.get('document/fontregular'):
+                self.dict['document/font'+a] = self.dict['document/fontregular']
         self.dict['project/id'] = self.printer.project.prjid
         docdir, base = self.docdir(base=diglotbinfo)
         self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
@@ -480,6 +484,14 @@ class TexModel:
             if not self.dict['document/font{}'.format(a)]:
                 reasons.append(_("Missing font ({})").format(a))
             break
+        if self.printer.get("c_diglot") and "/" in (self.printer.get("t_layout") or ""):
+            # layouts with / (glots one above another) need a TeX plugin that doesn't exist yet
+            sdir = self.printer.scriptsdir
+            places = (sdir, os.path.join(sdir, "..", "src"), os.path.join(os.path.dirname(__file__), "ptx2pdf"),
+                      os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
+            if not any(os.path.exists(os.path.join(d, "polyglot-complexpages.tex")) for d in places):
+                reasons.append(_("Polyglot layouts with / ({}) are not supported yet").format(
+                                        self.printer.get("t_layout")))
         return reasons
 
     def processHdrFtr(self, printer):

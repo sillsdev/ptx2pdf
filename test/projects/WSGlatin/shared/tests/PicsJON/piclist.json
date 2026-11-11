@@ -35,6 +35,10 @@
         ["r_generate_all", "set", true],
         ["btn_gnr8pl_cancel", "signal", "clicked"],
 
+        ["", "note", "Delete two pictures from the right-click menu"],
+        ["tv_picListEdit", "select", "JON 1.4", "JON 4.5"],
+        ["tv_picListEdit", "menu", "mi_picDelete"],
+
         ["", "note", "Save"],
         ["btn_saveConfig", "signal", "clicked"]
     ]

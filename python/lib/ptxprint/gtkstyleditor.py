@@ -345,9 +345,6 @@ class StyleEditorView(StyleEditor):
             v = self.asStyle(k)
             if v.get('styletype', '') == 'Standalone' or v.get('mrktype', '') == "barems":
                 continue
-            if 'zderived' in v:
-                self.setval(v['zderived'], ' endMilestone', k)
-                continue
             if k not in self.basesheet:
                 self.setval(k, ' deletable', True)
             if k == "p":
@@ -412,12 +409,18 @@ class StyleEditorView(StyleEditor):
         self.marker = model[i][0]
         self.editMarker()
 
-    def selectMarker(self, marker):
+    def selectMarker(self, marker, reveal=True):
+        """ Select a style in the list. If the filter (styles used in the books) hides it, it is
+            shown as well (e.g. following a link to a caller style), unless reveal is False. """
         root = self.treestore.get_iter_first()
         it = self._searchMarker(self.treestore, root, marker)
         if it is None:
             return False
         path = self.filter.convert_child_path_to_path(self.treestore.get_path(it))
+        if path is None and reveal and self.filter_state:
+            self.mrkrlist = set(self.mrkrlist) | {marker}
+            self.filter.refilter()
+            path = self.filter.convert_child_path_to_path(self.treestore.get_path(it))
         if path is None:        # filtered out
             return False
         self.treeview.expand_to_path(path)
@@ -516,54 +519,6 @@ class StyleEditorView(StyleEditor):
         self.treeview.queue_draw()
         return True
 
-    def old_tree_search(self, model, colmn, key, rowiter):
-        root = model.get_iter_first()
-        norm_key = self.normalizeSearchKey(key)
-
-        # 1) Find the first match (keeps your existing behavior)
-        it = self._searchMarker(model, root, norm_key)
-        if it is None:
-            it = self._searchMarker(model, root, norm_key, findall=True)
-            if it is None:
-                return False
-
-        # 2) Collapse everything, then expand only top-level categories that match
-        self.treeview.collapse_all()
-
-        top = model.get_iter_first()
-        while top is not None:
-            top_matches = False
-
-            # Try to read the category label (column 1) safely
-            try:
-                label = str(model[top][1])
-            except Exception:
-                label = str(model.get_value(top, 1))
-
-            # a) top-level row's own label matches?
-            if norm_key and label and norm_key in label.lower():
-                top_matches = True
-            else:
-                # b) OR any descendant matches?
-                if model.iter_has_child(top):
-                    child = model.iter_children(top)
-                    if self._searchMarker(model, child, norm_key, findall=True) is not None:
-                        top_matches = True
-
-            if top_matches:
-                self.treeview.expand_row(model.get_path(top), False)
-
-            top = model.iter_next(top)
-
-        # 3) Jump to the first match as before
-        path = model.get_path(it)
-        if path is None:
-            return False
-        self.treeview.expand_to_path(path)
-        self.treeview.scroll_to_cell(path)
-        self.treeview.get_selection().select_path(path)
-        return True
-
     def add_filter(self, state, mrkrset):
         self.filter_state = state
         self.mrkrlist = mrkrset
@@ -631,8 +586,9 @@ class StyleEditorView(StyleEditor):
             self.model.testing.pause()
         # logger.debug(f"Start editing style {self.marker}, {oldisLoading}")
         self.isLoading = True
-        data = self.sheet.get(self.marker, {})
-        old = self.basesheet.get(self.marker, {})
+        # copies: the default line spacing filled in here is for showing, not for the sheets
+        data = dict(self.sheet.get(self.marker, {}))
+        old = dict(self.basesheet.get(self.marker, {}))
         # logger.debug(f"styles({self.marker}) = {old} + {data}")
         oldval = None
         if 'linespacing' not in old and 'baseline' not in old:
@@ -680,9 +636,9 @@ class StyleEditorView(StyleEditor):
                 for m, f in ((v[3](x), x) for x in (not v[2], v[2])):
                     if m.lower() in old:            # key in underlying?
                         olddat = f          # set the state and get the val
-                        oldval = self.getval(self.marker, m)
+                        oldval = self.getval(self.marker, m, old[m.lower()])
                     if m.lower() in data:
-                        val = self.getval(self.marker, m)
+                        val = self.getval(self.marker, m, data[m.lower()])
                         self._setFieldVal(m, v, olddat, f)
                         break
                 else:
@@ -693,7 +649,6 @@ class StyleEditorView(StyleEditor):
                 newlabel = self.stylediverts[controlk][2 if f else 1]
                 controlw = stylemap[controlk][1]
                 self.set(controlw, newlabel)
-                old[" "+k] = olddat
             else:
                 oldval = self.getval(self.marker, k, v[2], baseonly=True)
                 val = self.getval(self.marker, k, v[2])
@@ -709,8 +664,9 @@ class StyleEditorView(StyleEditor):
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
 
-        self.builder.get_object("ex_styTable").set_expanded("tc" in self.marker)
-        if "tc" in self.marker:
+        istable = re.fullmatch(r"t[hc][rc]?\d*(-\d+)?", self.marker) is not None    # \tc1, \thr2, \tcc3, ...
+        self.builder.get_object("ex_styTable").set_expanded(istable)
+        if istable:
             self.builder.get_object("ex_styPara").set_expanded(True)
         sb = (self.marker.startswith("cat:") and self.marker.endswith("esb")) or self.marker == "textborder"
         self.builder.get_object("ex_stySB").set_expanded(sb)
@@ -977,6 +933,9 @@ class StyleEditorView(StyleEditor):
             self.model.set(v, self.getval(self.marker, k, val) or "")
             # print(f"setting {self.marker}:{k} = {self.getval(self.marker, k, '')}")
         self.model.set(dialogKeys['Marker'], '' if newkey else self.marker)
+        if newkey:      # a new style gets the selected one's formatting, but not its name
+            for k in ('Name', 'Description'):
+                self.model.set(dialogKeys[k], "")
         for a in ('Marker', 'mrktype'):
             wid = self.builder.get_object(dialogKeys[a])
             if wid is not None:
@@ -1012,16 +971,15 @@ class StyleEditorView(StyleEditor):
                     val = val.replace("\\","")
                 if k == 'EndMarker' and not val:
                     continue    # don't write an empty \Endmarker
+                if not val:
+                    val = None  # an empty field isn't written (\Description with nothing after it)
                 # print(f"{k=} {v=} -> {val=}")
                 if k != "mrktype" or Grammar.marker_categories.get(key, '') == '':
                     self.setval(key, k, val)
             st = self.getStyleType(key)
             if st == 'Character' or st == 'Note':
                 self.setval(key, 'EndMarker', key + "*")
-                self.resolveEndMarker(key, None)
-            elif st == 'Milestone':
-                # keep the end marker the user gave, as usfm.sty does for \qt-s ... \qt-e
-                self.resolveEndMarker(key, self.getval(key, 'EndMarker'))
+            # a milestone keeps the end marker the user gave, as usfm.sty does for \qt-s ... \qt-e
             self.set_legacy_types(key)
             self.marker = key
             self.selectMarker(key)
@@ -1072,24 +1030,6 @@ class StyleEditorView(StyleEditor):
             size = base         # so setval drops it as the same as the stylesheet
         super(self.__class__, self).setval(mkr, key, size, mapin=False)
         return float(size)
-
-    def resolveEndMarker(self, key, newval):
-        # key is the style being made or edited; self.marker is still the one selected before
-        endm = self.getval(key, ' endMilestone')
-        if endm is not None and endm != ' None' and endm != newval:
-            derivation = self.getval(endm, 'zDerived')
-            if derivation is not None:
-                if endm in self.sheet:
-                    del self.sheet[endm]
-                if endm in self.basesheet:
-                    del self.basesheet[endm]
-        st = self.getval(key, 'StyleType')
-        if st == 'Milestone':
-            if newval is None:
-                if self.getval(key, ' endMarker') is not None:
-                    self.setval(key, ' endMarker', ' None')
-            elif newval != endm:
-                self.setval(key, ' endMarker', newval)
 
     def sidebarImageDialog(self, isbg=False):
         sb = imageStyleFromStyle(self, self.marker, isbg)
@@ -1148,18 +1088,24 @@ class StyleEditorView(StyleEditor):
         else:
             return
         if k in self.stylediverts:
+            # put the switch (e.g. absolute line spacing) back to whichever key the stylesheets use
             newk = self.stylediverts[k][0]
-            old = self.basesheet.get(self.marker, {})
-            newval = old.get(" "+newk, None)
+            sv = stylemap[newk]
+            base = self.basesheet.get(self.marker, {})
+            newval = next((f for f in (not sv[2], sv[2]) if sv[3](f).lower() in base), None)
             if newval is not None:
-                self._setFieldVal(k, stylemap[newk], newval, newval)
+                self._setFieldVal(k, sv, newval, newval)
         oldval = self.getval(self.marker, k, v[2], baseonly=True)
-        # breakpoint()
         self._setFieldVal(k, v, oldval, oldval)
         if k == 'font':
             self.setval(self.marker, k, oldval)
             if oldval is None:
                 self.setval(self.marker, 'fontname', None)
+        else:
+            # back to the stylesheets: showing their value may have written it (e.g. \SpaceBefore 0
+            # where they set nothing), so drop the user's setting (of either of a pair, e.g. FontScale)
+            dual = [m for m, n in dualmarkers.items() if n == k]
+            self.clearUserKeys(self.marker, [k] + dual)
 
 #### signal methods
 

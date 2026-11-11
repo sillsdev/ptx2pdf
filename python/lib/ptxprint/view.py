@@ -721,6 +721,7 @@ class ViewModel:
             for d in ("", "-diglot"):       # without the diglot one, a diglot copy makes its pictures again from the text
                 jobs["{}-{}{}.piclist".format(self.project.prjid, oldcfg, d)] = (self._copyfile, self._mergenothing,
                                                     "{}-{}{}.piclist".format(self.project.prjid, newcfg, d))
+            jobs['picChecks.txt'] = (self._copyfile, self._mergenothing)  # the config's picture approvals
         for f, a in jobs.items():
             srcp = os.path.join(oldp, f)
             destp = os.path.join(newp, a[2] if len(a) > 2 else f)
@@ -1076,9 +1077,12 @@ class ViewModel:
                     self.polyglots[k] = pg
                     if k != "L":
                         try:
-                            self.createDiglotView(k)
+                            dv = self.createDiglotView(k)
                         except ValueError:
-                            pass
+                            dv = None
+                        if dv is None:
+                            logger.warning(f"Can't load the {k} side of this polyglot: project {pg.prj}"
+                                           f" (config {pg.cfg}) isn't in {', '.join(self.prjTree.treedirs)}")
         else:
             self.setPrintBtnStatus(2)
         self.loadingConfig = False
@@ -1424,10 +1428,11 @@ class ViewModel:
 
         if v < 2.19: # transfer some settings to texpert
             for a in ('pagefullfactor', 'afterchapterspace', 'afterversespace', 'cutouterpadding',
-                        'underlinethickness', ' underlineposition', 'paragraph/linespacebase',
+                        'underlinethickness', 'underlineposition', 'paragraph/linespacebase',
                         'paragraph/useglyphmetrics'):
-                p = "document" + a if "/" not in a else a[:a.index("/")]
-                self._configset(config, p + "/" + a, config.get(p, a, fallback=""))
+                sect, name = a.split("/") if "/" in a else ("document", a)
+                if config.has_option(sect, name):
+                    self._configset(config, "texpert/" + name, config.get(sect, name))
 
         if v < 2.20: # transfer Max Unbalanced Lines (s_bottomRag) to texpert
             rag = config.get("paper", "bottomrag", fallback="3")
@@ -1436,7 +1441,7 @@ class ViewModel:
 
         if v < 2.21: # get rid of any erroneously created .adj files in the shared/adjlist folder
             if cfgpath is not None:
-                adjpath = os.path.join(cfgpath, "adjLists")
+                adjpath = os.path.join(cfgpath, "AdjLists")
                 self.clean_adj_files(adjpath)
 
         if v < 2.22: # transfer Show/Hide settings to Advanced > texpert
@@ -1570,6 +1575,35 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
+    def _resetMissing(self, config, setv):
+        """ Settings this config doesn't have go back to the UI's defaults, rather than keeping what
+            the config loaded before had (switching configs reuses the view) """
+        present = set()
+        for sect in config.sections():
+            for opt in config.options(sect):
+                v = ModelMap.get("{}/{}".format(sect, opt.strip("*")), None)
+                if v is not None and v.widget:
+                    present.add(v.widget)
+        defaults = getattr(self, '_uidefaults', None)
+        if defaults is None:
+            # what the controls hold before the first config is loaded: their defaults
+            defaults = {}
+            for v in ModelMap.values():
+                if v.widget and v.widget not in defaults and v.widget in gladeDefaults():
+                    defaults[v.widget] = self.get(v.widget, skipmissing=True)
+            self._uidefaults = defaults
+            return
+        done = set()
+        for v in ModelMap.values():
+            w = v.widget
+            if not w or w in present or w in done or w not in defaults or defaults[w] is None:
+                continue
+            done.add(w)
+            try:
+                setv(w, defaults[w])
+            except (ValueError, TypeError, AttributeError) as e:
+                logger.debug(f"Can't reset {w} to {defaults[w]}: {e}")
+
     def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False, clearvars=True, categories=None):
         if setv is None:
             def setv(k, v):
@@ -1578,6 +1612,8 @@ class ViewModel:
             def setvar(opt, val, dest, editable, colour): self.setvar(opt, val, dest=dest, editable=editable, colour=colour)
             if clearvars:
                 self.clearvars()
+                if categories is None and not dummyload:
+                    self._resetMissing(config, setv)
         varcolour = "#FFDAB9" if not clearvars else None
         # set publishable category first so when we read the var we can also set the publishable
         if categories is None or 'variables' in categories:
@@ -1798,7 +1834,7 @@ class ViewModel:
         serial = {b for b in re.split(r"[\s,]+", (self.get("t_diglotSerialBooks") or "").strip()) if b}
         return bk not in serial
 
-    def generatePicList(self, procbks=None, doclear=True):
+    def generatePicList(self, procbks=None):
         ab = self.getAllBooks()
         if procbks is None:
             procbks = ab.keys()
@@ -2366,8 +2402,16 @@ class ViewModel:
                     if not saferelpath(f.as_posix(), os.path.join(pycodedir(), "PDFassets")).startswith(".."):
                         newnames.append(f)      # ${pdfassets} comes with PTXprint
                         continue
-                    res[f.as_posix()] = baseprjid + "/shared/ptxprint/" + f.name
-                    newnames.append(Path("${prjdir}/shared/ptxprint/" + f.name))
+                    name = res.get(f.as_posix(), "").rsplit("/", 1)[-1] or f.name
+                    if f.as_posix() not in res:
+                        # files from different folders may have the same name: keep both
+                        used = set(res.values())
+                        i = 1
+                        while baseprjid + "/shared/ptxprint/" + name in used:
+                            i += 1
+                            name = "{}_{}{}".format(f.stem, i, f.suffix)
+                    res[f.as_posix()] = baseprjid + "/shared/ptxprint/" + name
+                    newnames.append(Path("${prjdir}/shared/ptxprint/" + name))
                 # FrontPDFs and BackPDFs are lists, and must stay so
                 cfgchanges[v[3]] = (newnames if multiple else newnames[0], v[0])
 
@@ -2630,11 +2674,20 @@ class ViewModel:
                 filename = os.path.join(self.project.printPath(self.cfgid), "ptxprintArchive.zip")
             if not filename.lower().endswith(".zip"):
                 filename += ".zip"
+            try:
+                os.makedirs(os.path.dirname(os.path.abspath(filename)), exist_ok=True)
+            except OSError as e:
+                self.doError(_("Error: Cannot create Archive!"),
+                             secondary=_("Can't make the folder for it: {}").format(e))
+                return
         self._archiveForTest = for_test
         try:
             self.zf = ZipFile(filename, mode="w", compression=ZIP_DEFLATED)  # need at least python 3.7 for: compresslevel=9
-        except OSError:
+        except PermissionError:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
+            return
+        except OSError as e:
+            self.doError(_("Error: Cannot create Archive!"), secondary=str(e))
             return
         temps = []
         if not nobuild:

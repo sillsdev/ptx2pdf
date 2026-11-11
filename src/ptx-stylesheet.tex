@@ -140,7 +140,11 @@
 \let \Rightmargin\RightMargin
 \def \Italic         #1\relax{\defbinp@ram{italic}{#1}}
 \def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
-\def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{fontfactor}{1}}}
+\def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{fontfactor}{1}\unsuperr@ise}}
+% \Superscript - also drops the raise that \Superscript gave, but not one set with \Raise
+\def\s@perraise{\SuperscriptRaise}
+\def\unsuperr@ise{\ifcsname\c@tprefix\@mkr:raise\endcsname
+  \x@\ifx\csname\c@tprefix\@mkr:raise\endcsname\s@perraise\defp@ram{raise}{0pt}\fi\fi}
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
 \def \Underline      #1\relax{\deftrip@ram{underline}{#1}}
 \let \underline\Underline

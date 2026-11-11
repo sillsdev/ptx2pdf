@@ -725,10 +725,10 @@
     \dimen1=\NoteLineY
     \dimen0=\topm@rgin
     %\advance\dimen3-
+    % in the binding gutter; with no gutter, in the right hand margin
+    \def\pr@line{\kern\dimexpr \textwidth + \SideMarginFactor\MarginUnit\relax}\def\p@stline{\hss}%\kern\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit+\NoteLineXoffset-\NoteLineXmargin\relax}
     \ifBindingGutter\if\g@tterside L
       \def\pr@line{\kern\dimexpr \NoteLineXmargin-\NoteLineXoffset\relax}\def\p@stline{\hss}
-    \else
-      \def\pr@line{\kern\dimexpr \textwidth + \SideMarginFactor\MarginUnit\relax}\def\p@stline{\hss}%\kern\dimexpr \BindingGutter+\SideMarginFactor\MarginUnit+\NoteLineXoffset-\NoteLineXmargin\relax}
     \fi\fi
     \setbox0\vbox{\kern\dimen1}%
     \gp@hrules

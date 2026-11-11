@@ -3426,13 +3426,9 @@ class GtkViewModel(ViewModel):
             response = dialog.run()
         if response == Gtk.ResponseType.OK:
             self.savePics()
-            if self.get("r_generate") == "all":
-                procbks = ab.keys()
-                doclear = True and not self.get("c_protectPicList", True)
-            else:
-                procbks = bks
-                doclear = False
-            self.generatePicList(procbks=procbks, doclear=doclear)
+            # Unless protected, the books' entries are replaced (read_books clears them first)
+            procbks = ab.keys() if self.get("r_generate") == "all" else bks
+            self.generatePicList(procbks=procbks)
             self.savePics()
             if self.get('r_generate') == 'all':
                 self.set("c_filterPicList", False)
@@ -4976,6 +4972,12 @@ class GtkViewModel(ViewModel):
         except OSError as e:
             self.doStatus(_("Could not replace the configuration {}: {}").format(cfg, e), warning=True)
             return False
+        # and its working files, as Delete does (its PDFs in local/ptxprint stay)
+        outPath = self.project.printPath(cfg, noext=True)
+        cwd, outAbs = (os.path.normcase(os.path.abspath(p)) for p in (os.getcwd(), outPath))
+        if cwd == outAbs or cwd.startswith(outAbs + os.sep):
+            os.chdir(self.project.printPath(None))
+        rmtree(outPath, ignore_errors=True)
         return True
 
     def onCfgFocusOutEvent(self, btn, *a):
@@ -7589,6 +7591,18 @@ Thank you,
         showPreview = getattr(self, "showPDFmode", None) == "preview"
 
         self._setupPreviewWindow(prvw, showPreview)
+        if showPreview:
+            # bring the main window in front of the preview as soon as it is on screen, rather than
+            # after both windows have been placed
+            win = self.mainapp.win
+            def raiseMain(*a):
+                win.disconnect(hid[0])
+                GLib.idle_add(lambda: win.present() and False)
+                return False
+            if win.get_mapped():
+                GLib.idle_add(lambda: win.present() and False)
+            else:
+                hid = [win.connect("map-event", raiseMain)]
 
         tasks = [("ptxprint", self.mainapp.win, None)]
         if showPreview:

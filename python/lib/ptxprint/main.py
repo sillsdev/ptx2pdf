@@ -275,10 +275,14 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         argsfn(parser)
 
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        from ptxprint.gtkutils import HelpTextViewWindow
-        tv = HelpTextViewWindow()
+        # made only when there is something to show: importing Gtk opens the display, and a test
+        # (-t) must first choose its own (broadway)
+        helpwin = []
         def print_message(message, file=None):
-            tv.print_message(message)
+            if not helpwin:
+                from ptxprint.gtkutils import HelpTextViewWindow
+                helpwin.append(HelpTextViewWindow())
+            helpwin[0].print_message(message)
         parser._print_message = print_message
         os.environ['PATH'] += os.pathsep + sys._MEIPASS.replace("/","\\")
 
@@ -294,7 +298,14 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     if argsline is not None:
         opts = shlex.split(argsline)
         args = parser.parse_args(opts, args)
+    linepos = (args.pid, args.cmd) if argsline is not None else (None, None)
     args = parser.parse_args(None, args)
+    # A positional missing from the command line is set to None, even if argsline gave it
+    if args.pid is None and args.cmd is None:
+        args.pid, args.cmd = linepos
+    if args.fontpath:
+        # from where ptxprint was started: a print job runs in another directory
+        args.fontpath = [os.path.abspath(f) for f in args.fontpath if f]
     if args.pid in commands and args.cmd is None:
         args.cmd = args.pid
         args.pid = None
@@ -303,6 +314,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             args.cmd = "print"
         elif args.action == "createArchive":
             args.cmd = "archive"
+        elif args.action:
+            args.cmd = "action"     # run headless: the action, then exit (not the GUI)
 
     testserver = None
     if args.test is not None and os.path.isfile(args.test) and not is_zipfile(args.test):

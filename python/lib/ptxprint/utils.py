@@ -914,6 +914,9 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
             base = self.as_posix()
         else:
             base = os.path.join(relto, self.as_posix())
+        if not os.path.isabs(base):
+            # e.g. a Windows C:/... path read on Linux: relative to nothing we know, so keep it
+            return self.as_posix()
         varlib = self.create_varlib(aView)
         bestr = base
         bestk = None

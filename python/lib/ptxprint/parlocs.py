@@ -144,6 +144,10 @@ class FigInfo:
     def __str__(self):
         return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
 
+    def pid(self):
+        """ For logging alongside ParInfo.pid() """
+        return f"Pic({self.ref})[{self.src}]"
+
     def __repr__(self):
         return self.__str__()
 

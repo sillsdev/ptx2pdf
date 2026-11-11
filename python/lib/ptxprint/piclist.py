@@ -381,6 +381,7 @@ class Piclist:
 
     def __init__(self, model=None, diglot=False):
         self.pics: Dict[str, Picture] = {}
+        self.unreadable = []    # lines of the .piclist that couldn't be read, kept when it is written
         self.model = model
         self.clear(model)
         self.inthread = False
@@ -398,6 +399,7 @@ class Piclist:
             c = p.copy()
             res.pics[c.key] = c
         res.keycounter = self.keycounter
+        res.unreadable = self.unreadable[:]
         res.mode = self.mode
         res.suffix = self.suffix
         return res
@@ -491,12 +493,16 @@ class Piclist:
             inf = fname
         # logger.debug("".join(traceback.format_stack()))
         for l in (x.strip() for x in inf.readlines()):
-            if not len(l) or l.startswith("%"):
+            if l.startswith(self.unreadablePrefix):
+                l = l[len(self.unreadablePrefix):]      # written back last time: maybe readable now
+            elif not len(l) or l.startswith("%"):
                 continue
             m = l.split("|")
             r = m[0].split(" ", 2)
             if len(r) < 2:
                 logger.warning(f"Skipping bad piclist line in {fname}: {l}")
+                if l not in self.unreadable:
+                    self.unreadable.append(l)
                 continue
             pic = {'anchor': "{} {}".format(r[0] if self.isdiglot else r[0][:3], r[1]), 'caption': r[2] if len(r) > 2 else ""}
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
@@ -581,6 +587,9 @@ class Piclist:
                                     pic[posparms[j]] = v
                             picture = Picture(**pic)
                             picture._fixPicinfo()
+                        if not picture.get('src', ''):
+                            logger.warning(f"Skipping \\fig with no image file at {r}: {f.group(0)[:60]}")
+                            continue
                         if fn is not None:
                             fn(picture)
                         else:
@@ -736,6 +745,8 @@ class Piclist:
         self.mode = mode
         return data
 
+    unreadablePrefix = "% Unreadable: "
+
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None, hiderefs=False):
         ''' Generate a picinfo file, with given date.
                 bks is a list of 3 letter bkids only to include. If empty, include all.
@@ -752,7 +763,9 @@ class Piclist:
 
         if fpath is None:
             return lines
-        elif len(lines):
+        # so a line PTXprint can't read is not lost when the list is saved
+        lines = [self.unreadablePrefix + l for l in self.unreadable] + lines
+        if len(lines):
             logger.debug(f"Saving pics to {fpath} with {len(lines)} lines")
             dat = "\n".join(lines)+"\n"
             if os.path.dirname(fpath):

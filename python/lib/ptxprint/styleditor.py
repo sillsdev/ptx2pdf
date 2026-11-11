@@ -309,7 +309,8 @@ _fieldmap = {
 
 class StyleEditor:
 
-    identityKeys = ('name', 'description', 'endmarker', 'mrktype', 'styletype', 'texttype')
+    identityKeys = ('name', 'description', 'endmarker', 'mrktype', 'styletype', 'texttype',
+                    'occursunder', 'textproperties')
 
     def __init__(self, model, basepath=None, copy=False):
         self.model = model
@@ -410,6 +411,8 @@ class StyleEditor:
             val = _fieldmap[key.lower()][0](self, val, mrk=mrk, model=self.model)
         # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
         oldval = self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None
+        if isinstance(val, str) and val == "-" and oldval is None and _fieldmap.get(key.lower(), (None,))[0] is fromBool:
+            val = None      # unticking what the stylesheets don't set goes back to them, not \Bold -
         if mrk in self.sheet and key.lower() in self.sheet[mrk] and (val is None or val == oldval):
             logger.log(7, f"{mrk}/{key} {val} == {oldval}")
             del self.sheet[mrk][key.lower()]
@@ -467,7 +470,7 @@ class StyleEditor:
     def copyMarkerValues(self, src, dest):
         ''' Copy the formatting of style src (base and user sheets merged) into the user's style dest,
             including settings that have no widget in the editor, such as Border and Padding.
-            What identifies the style (name, description, type, end marker) belongs to the new style
+            What identifies the style (name, description, type, end marker, where it occurs) belongs to the new style
             and is set from the dialog, so it is not copied. '''
         for k, v in self.asStyle(src).items():
             if k.startswith(" ") or k in self.identityKeys:
@@ -588,8 +591,6 @@ class StyleEditor:
             else:
                 sm = sheet.get(m, {})
             om = basesheet.get(m, {})
-            if 'zderived' in om or 'zderived' in sm:
-                continue
             if 'font' in sm:
                 v = _fieldmap['font'][1](self, sm['font'], am, model=self.model, parm=None)
             for k, v in sm.items():

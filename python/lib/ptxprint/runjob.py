@@ -555,7 +555,7 @@ class RunJob:
         miscfonts.append(ptxmacrospath)     # for mappings/ which must be in the fonts path
         if len(miscfonts):
             if nosysfonts:
-                fcs = "\n    ".join(['<dir>{}</dir>'.format(d) for d in miscfonts])
+                fcs = "\n    ".join(['<dir>{}</dir>'.format(os.path.abspath(d)) for d in miscfonts])
                 with open(os.path.join(self.tmpdir, 'fonts.conf'), "w") as outf:
                     outf.write(fontconfig_template_nofc.format(fontsdirs=fcs))
                 self.env["FONTCONFIG_FILE"] = os.path.join(self.tmpdir, "fonts.conf")
@@ -780,7 +780,7 @@ class RunJob:
                 with open(delayed, encoding="utf-8") as inf:
                     for l in inf.readlines():
                         if l.startswith(r"\Rerun{"):
-                            rerun = True
+                            rerun = rererun = True      # rererun decides whether to go round again
                             print(_("Rerunning because the delayed file asked us to"))
                             break
             if os.path.exists(tocfname):
@@ -1030,7 +1030,8 @@ class RunJob:
         try:
             with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                 for i, l in enumerate(logfile.readlines()):
-                    if rerunp and l.startswith("PARLOC: Rerun."):
+                    # "PARLOC: Rerun." and "PARLOC: Rerun with ..." (e.g. a RaiseItem changed)
+                    if rerunp and l.startswith("PARLOC: Rerun"):
                         rerunres = True
                     loglines.append(l)
                     if len(loglines) > lines:

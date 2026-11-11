@@ -1238,10 +1238,14 @@ class TypesetterSolver:
 
 
 class GrowList(list):
+    """ A list that grows to take any index set, and gives None for one past its end """
     def __setitem__(self, index, value):
-        self._ensure(index)
+        if not isinstance(index, slice):
+            self._ensure(index)
         super().__setitem__(index, value)
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            return [x or None for x in super().__getitem__(index)]
         if index >= len(self):
             return None
         return super().__getitem__(index) or None
@@ -1298,9 +1302,9 @@ class PTXFiller:
 
     def clear_book_files(self, bk):
         """ Delete the working files left from a previous run of this book only,
-            keeping other books' outputs in the shared worker directory. """
-        if self.nid is None:
-            return
+            keeping other books' outputs in the shared worker directory. Without a worker
+            (e.g. run from a script), that is the config's own print folder: a print's leftover
+            rerun files (.delayed, .picpages, ...) would otherwise change where filling starts. """
         d = self.view.project.printPath(self.view.cfgid)
         if not os.path.exists(d):
             return
@@ -1408,6 +1412,13 @@ class PTXFiller:
         else:
             state = res
             page = state.page
+        # The PDF is made from the last XeTeX run, which may have been a probe that was turned
+        # down, or that stopped at a chapter: lay out the whole book with what was chosen
+        try:
+            if not getattr(state, 'wholebook', False):
+                self.hooks.run_layout(solver, state.paragraph_params, state.float_anchors, -1, -1)
+        except TimeoutError:
+            logger.warning(f"{bk}: timed out laying out the whole book at the end")
         #if self.filter_params(state.paragraph_params, solver, page):
         self.createAdjs(state.paragraph_params, solver)
         endtime = time()
@@ -1535,8 +1546,10 @@ class PTXFiller:
         else:
             self.job.piclist = None
 
-        if not hasattr(self.job, 'outfname'):
-            raise FileNotFoundError(self.view.getBooks())
+        if getattr(self.job, 'outfname', None) is None:
+            # e.g. a polyglot book that one of its projects doesn't have (the job said which)
+            raise FileNotFoundError(f"Nothing to typeset for {' '.join(self.view.getBooks())}:"
+                                    " is a book missing from one of the projects?")
         self.job.run_xetex(self.job.outfname, self.job.pdffile)
         if self.cpu_q is not None:
             self.cpu_q.put((os.getpid(), self.job.cpu_seconds))

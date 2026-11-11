@@ -135,7 +135,6 @@ class PicList:
         self.curFpath = None
         self.bookfilters = None
         sel = self.view.get_selection()
-        sel.set_mode=Gtk.SelectionMode.SINGLE
         sel.connect("changed", self.row_select)
         self.view.connect("button-press-event", self._onRightClick)
         self.view.connect("drag-data-received", lambda *a: self.view.stop_emission_by_name("drag-data-received"))
@@ -654,15 +653,6 @@ class PicList:
             self.curFpath = fpath
             self.setPreview(pixbuf, tooltip=fpath)
 
-    def drawPreview(self, wid, cr):
-        if self.previewScales:
-            pixbuf = self.pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-        else:
-            pixbuf = self.pixbuf
-        cr.set_source_pixbuf(pixbuf, 0, 0)
-        cr.paint()
-        return False
-    
     def onRadioChanged(self):
         if self.loading or self.parent.loadingConfig:
             return
@@ -740,9 +730,6 @@ class PicList:
         if self.picinfo is not None:
             self.picinfo.clearSrcPaths()
 
-    def multiSelected(self, ismulti=False):
-        pass
-
     def _onRightClick(self, treeview, event):
         if event.button != 3:
             return False
@@ -756,24 +743,35 @@ class PicList:
                 self.selection.unselect_all()
                 self.selection.select_path(path)
             # else: multi-selection already in place — leave it for bulk action
+        menu = self.buildMenu()
+        menu.popup_at_pointer(event)
+        return True
+
+    def buildMenu(self):
+        """ The right-click menu. Its items are named so that tests can record and replay them. """
         menu = Gtk.Menu()
+        menu.attach_to_widget(self.view, None)
 
         item = Gtk.MenuItem(label=_('Copy \\fig String to Clipboard'))
+        item.set_name("mi_picCopyFig")
         item.connect('activate', self._copyFigToClipboard, True)
         menu.append(item)
 
         if sys.platform.startswith("win"):
             item = Gtk.MenuItem(label=_('Jump to Ref in Paratext'))
+            item.set_name("mi_picJumpToRef")
             item.connect('activate', self._jumpToAnchorInParatext)
             menu.append(item)
 
         menu.append(Gtk.SeparatorMenuItem())
 
         item = Gtk.MenuItem(label=_('Reveal in File Manager'))
+        item.set_name("mi_picReveal")
         item.connect('activate', self._revealInFileManager)
         menu.append(item)
 
         item = Gtk.MenuItem(label=_('Copy Image Filepath to Clipboard'))
+        item.set_name("mi_picCopyPath")
         item.connect('activate', self._copyImagePath)
         menu.append(item)
 
@@ -782,12 +780,12 @@ class PicList:
         count = len(self.currows)
         label = _('Delete Picture') if count <= 1 else _('Delete {} Pictures').format(count)
         item = Gtk.MenuItem(label=label)
+        item.set_name("mi_picDelete")
         item.connect('activate', self._deletePictures)
         menu.append(item)
 
         menu.show_all()
-        menu.popup_at_pointer(event)
-        return True
+        return menu
 
     def _deletePictures(self, menuitem):
         self.del_row()

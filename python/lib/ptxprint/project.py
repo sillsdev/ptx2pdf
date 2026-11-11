@@ -72,6 +72,9 @@ class ProjectList:
             p = os.path.join(path, s)
             if os.path.exists(p):
                 self.addTreedir(p)
+        if os.path.basename(path) in ("_projectById", "_PTXprint"):
+            # these live in a Paratext projects folder, where e.g. a polyglot's other projects are
+            self.addTreedir(os.path.dirname(path))
         return True
 
     def addProject(self, prjid, path, guid):
