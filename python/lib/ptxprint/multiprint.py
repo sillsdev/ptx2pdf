@@ -1,4 +1,4 @@
-import os, argparse
+import os, re, argparse
 import logging
 import time
 import traceback
@@ -12,11 +12,13 @@ import threading, queue, psutil
 from ptxprint.page_filler import PTXFiller, make_filler_view
 from ptxprint.poly_filler import PolyFiller
 from ptxprint.project import ProjectList
-from ptxprint.utils import BuildParams, ProgressEvent, f_
+from ptxprint.utils import BuildParams, ProgressEvent, f_, appdirs
 from ptxprint.view import ViewModel
 from ptxprint.runjob import RunJob
 from ptxprint.font import cachepath
 from usfmtc.reference import chaps, RefList
+
+logger = logging.getLogger(__name__)
 
 
 class ViewPrinter:
@@ -84,12 +86,13 @@ class ViewPrinter:
         )
         runjob.nothreads = True
         runjob.silent = True
+        runjob.stopcheck = lambda: self.timedout or self.cancelled
         if self.build_params.pubid:
             bks = self.build_params.pubid
         elif isinstance(books, str):
-            bks = re.sub(r"^(.*/)?(.*)(\..*)?$", r"\2", books.replace(" ", "_"))
+            bks = re.sub(r"^(.*/)?(.*?)(\.[^.]*)?$", r"\2", books.replace(" ", "_"))     # the module's name
         else:
-            bks = books.first.book + ("-"+books.last.book) if books.first.book != books.last.book else ""
+            bks = books.first.book + (("-"+books.last.book) if books.first.book != books.last.book else "")
         runjob.outfname = f"{self.build_params.pid}_{self.build_params.cfgid}_{bks}_ptxp.tex"
         runjob.pdffile = os.path.join(self.view.project.printPath(self.build_params.cfgid),
                                '..', '..', runjob.outfname[:-4]) + ".pdf"
@@ -288,9 +291,37 @@ class WorkerContext:
 
 _worker_ctx: Optional[WorkerContext] = None
 
+_slotfile = None
+
+def _claimSlot():
+    """ The lowest worker number no other worker (in any PTXprint) is using, so that a worker's
+        pbuild folder is reused rather than a new one made, and is never shared. The lock lasts as
+        long as this process does and is freed by the OS however the process ends. """
+    global _slotfile
+    if _slotfile is not None:
+        return _slotfile[1]
+    d = os.path.join(appdirs.user_cache_dir("ptxprint", "SIL"), "workers")
+    os.makedirs(d, exist_ok=True)
+    n = 1
+    while True:
+        f = open(os.path.join(d, f"slot{n}.lock"), "a+")
+        try:
+            if os.name == "nt":
+                import msvcrt
+                msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError:
+            f.close()
+            n += 1
+            continue
+        _slotfile = (f, f"Worker{n}")
+        return _slotfile[1]
+
 def _init_worker(progress_q, cpu_q, cancel_event):
     global _worker_ctx
-    nid = mp.current_process().name
+    nid = _claimSlot()
     _worker_ctx = WorkerContext(nid, progress_q, cpu_q, cancel_event)
 
 def _worker_dispatch(job: Job):
@@ -305,6 +336,9 @@ class MultiPrint:
     def __init__(self, numproc: Optional[int] = None, progress: bool = False):
         self.ctx = mp.get_context('spawn')
         self.numproc = numproc or max(1, mp.cpu_count() - 2)
+        # one job at a time in this process only from the command line: the GUI (progress) needs
+        # its own thread free, and Stop and the progress dialog only work with a worker process
+        self.inprocess = self.numproc == 1 and not progress
         self.progress_q = GLibCompatQueue(self.ctx) if progress else None
         self.cpu_q = GLibCompatQueue(self.ctx)
         self.cancel_event = self.ctx.Value('b', False)
@@ -315,7 +349,7 @@ class MultiPrint:
 
     def start(self):
         """Start the worker pool."""
-        if self.numproc == 1:
+        if self.inprocess:
             _init_worker(self.progress_q, self.cpu_q, self.cancel_event)
             return
         self.cancel_event.value = False
@@ -327,10 +361,15 @@ class MultiPrint:
         )
 
     def _dispatch_job(self, job: Job):
-        if self.numproc == 1:
-            res = _worker_dispatch(job)
+        if self.inprocess:
             fut = Future()
-            fut.set_result(res)
+            cwd = os.getcwd()
+            try:
+                fut.set_result(_worker_dispatch(job))
+            except Exception as e:      # as a worker process would: don't stop the other books
+                fut.set_exception(e)
+            finally:
+                os.chdir(cwd)           # the job works in its own folder
             self.pending_futures[fut] = job
         else:
             if not self.executor:
@@ -381,7 +420,8 @@ class MultiPrint:
                 results.append(future.result())
             except Exception as exc:
                 logging.warning(f"Job failed for {job.books}: {exc}\n{traceback.format_exc()}")
-                results.append((job.books, None, False, str(exc)))
+                bks = job.books if isinstance(job.books, str) else " ".join(job.books)
+                results.append((bks, None, False, str(exc)))
 
         self.pending_futures.clear()
         return results
@@ -452,6 +492,11 @@ class MultiPrint:
             processes = getattr(self.executor, '_processes', {})
             for pid, process in list(processes.items()):
                 if process.is_alive():
+                    try:        # its xetex and other children first, or they run on
+                        for child in psutil.Process(pid).children(recursive=True):
+                            child.kill()
+                    except psutil.Error:
+                        pass
                     process.terminate()  # Sends SIGTERM to kill worker immediately
             self.executor.shutdown(wait=False, cancel_futures=True)
             self.executor = None

@@ -138,8 +138,8 @@ class BookProgressCell:
             self._bar.set_fraction(1.0)
             if not self._total:
                 self._applyColor(STATUS_SKIPPED)
-            elif self._hadBadPage:
-                self._bar.set_text(self._barStatusText(event.msg) + f"({self._total})")
+            elif self._hadBadPage or event.total == -1:     # -1: the filler says some pages failed
+                self._bar.set_text(self._barStatusText(event.msg or _("Failed")) + f"({self._total})")
                 self._applyColor(STATUS_WARNING)
             else:
                 self._bar.set_text(self._barStatusText(_("Complete ({self._total})").format(self=self)))

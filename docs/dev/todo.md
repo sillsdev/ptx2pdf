@@ -184,54 +184,54 @@ not looked at yet.
 
 ### Print job, filler, parlocs, merge, PDF
 
-* `parlocs.py:765-768` `getnbadspaces`: iterates the 3-tuple from `has_badspace` as if a list
+* **[FIXED patches/bugs-printjob.patch]** `parlocs.py:765-768` `getnbadspaces`: iterates the 3-tuple from `has_badspace` as if a list
   of triples, and adds undefined `nspace`. Crashes layout analysis in the viewer (threshold 0)
   and the report (runjob then deletes the HTML report quietly) (tested).
-* `runjob.py:1318-1330` CMYK image conversion: uint8 `img[:,:,3] + dk` wraps, so the `>255`
+* **[FIXED patches/bugs-printjob.patch]** `runjob.py:1318-1330` CMYK image conversion: uint8 `img[:,:,3] + dk` wraps, so the `>255`
   mask never fires and rich black becomes ~40% grey; the mask branch uses `255-dk` for
   `255-k`; the 3-channel branch calls `img.concatenate` (no such method) with axis 3 (tested).
-* `main.py:725` with `multiprint.py:384`: a failed fill job reports `job.books` (a list), and
+* **[FIXED patches/bugs-printjob.patch]** `main.py:725` with `multiprint.py:384`: a failed fill job reports `job.books` (a list), and
   the results sort does `bookcodes.get(list)` → TypeError; the whole summary is lost.
-* `bookProgressDlg.py:137-146` with `page_filler.py:1434`: only "badpage" events mark a
+* **[FIXED patches/bugs-printjob.patch]** `bookProgressDlg.py:137-146` with `page_filler.py:1434`: only "badpage" events mark a
   failure; poly_filler sends no ProgressEvents and the final event's "Failed from N"/"Timed
   out" message is ignored, so failed polyglot fills show green "Complete".
-* `multiprint.py:291` worker folders named after `mp.current_process().name` pile up
+* **[FIXED patches/bugs-printjob.patch]** `multiprint.py:291` worker folders named after `mp.current_process().name` pile up
   (projects/ has pbuildSpawnProcess-1..30, ~100MB), two ptxprint processes share names (and
   clear each other's files), and terminate() leaves xetex children running.
-* `runjob.py:1350-1381` `carefulCopy` returns the target name even when the copy/convert
+* **[FIXED patches/bugs-printjob.patch]** `runjob.py:1350-1381` `carefulCopy` returns the target name even when the copy/convert
   failed, so a broken image is never "missing": TeX fails even with "omit missing pictures".
-* `usfmerge.py:1224-1240` merge config path is dirname^3 of the input: in a worker folder
+* **[FIXED patches/bugs-printjob.patch]** `usfmerge.py:1224-1240` merge config path is dirname^3 of the input: in a worker folder
   (pbuildX) it misses `shared/ptxprint/<cfg>/merge-*.cfg`, so fills ignore a custom merge cfg.
-* `usfmerge.py:1103-1105, 1217-1221` merge `settings` flags are a module global that scores
+* **[FIXED patches/bugs-printjob.patch]** `usfmerge.py:1103-1105, 1217-1221` merge `settings` flags are a module global that scores
   mode and custom cfgs change and never restore: later merges in the session differ.
-* `usfmerge.py:1256` `searchlist.extend((path, 0))` should be `append`.
-* `parlocs.py:496` `currp` isn't cleared at `@parlen`, so a picture after a finished paragraph
+* **[FIXED patches/bugs-printjob.patch]** `usfmerge.py:1256` `searchlist.extend((path, 0))` should be `append`.
+* **[FIXED patches/bugs-printjob.patch]** `parlocs.py:496` `currp` isn't cleared at `@parlen`, so a picture after a finished paragraph
   adds a rect to it; the filler then thinks it continues onto the picture's page (tested).
-* `parlocs.py:632` `getParas(inclast=True)`: `self[start:-1:-1]` is always empty; clicking
+* **[FIXED patches/bugs-printjob.patch]** `parlocs.py:632` `getParas(inclast=True)`: `self[start:-1:-1]` is always empty; clicking
   the continuation of a paragraph at a page top gives no reference. `setFigPids` (690) is also
   broken (no callers).
-* `parlocs.py:666, 818` last page skipped / pages off by one in `getParasByColumnOrParref`
+* **[FIXED patches/bugs-printjob.patch]** `parlocs.py:666, 818` last page skipped / pages off by one in `getParasByColumnOrParref`
   and `getstats`.
-* `pdf/procpdf.py:108` a ValueError from fixpdffile returns `{}` silently and runjob.procpdf
+* **[FIXED patches/bugs-printjob.patch]** `pdf/procpdf.py:108` a ValueError from fixpdffile returns `{}` silently and runjob.procpdf
   always returns True: CMYK/spot/burst output silently not made. Lines 188/202 read
   `kw["pdfdate_"]` but runjob passes `date`, so PieceInfo LastModified is "D:".
-* `multiprint.py:316-337` with numproc 1 (2-core machines) jobs run in the GUI thread: UI
+* **[FIXED patches/bugs-printjob.patch]** `multiprint.py:316-337` with numproc 1 (2-core machines) jobs run in the GUI thread: UI
   freezes, Stop/progress don't work, basicConfig(force) redirects the GUI's logging, cwd is
   left in pbuildMainProcess, and a worker exception stops the remaining books.
-* `multiprint.py:61, 90` `logger` and `re` not imported; line 92 precedence gives `bks=""`
+* **[FIXED patches/bugs-printjob.patch]** `multiprint.py:61, 90` `logger` and `re` not imported; line 92 precedence gives `bks=""`
   for a single book.
-* `runjob.py:723-731` `communicate()` has no timeout: `s_pbtimeout` and Stop can't stop a
+* **[FIXED patches/bugs-printjob.patch]** `runjob.py:723-731` `communicate()` has no timeout: `s_pbtimeout` and Stop can't stop a
   running xetex.
-* `runjob.py:753` a xetex killed by a signal (negative returncode) isn't a failure.
-* `runjob.py:982` xdvipdfmx log opened without encoding (UnicodeDecodeError on Windows).
-* `runjob.py:197` early return in `doit` (no project id) without `unlockme()`: every later
+* **[FIXED patches/bugs-printjob.patch]** `runjob.py:753` a xetex killed by a signal (negative returncode) isn't a failure.
+* **[FIXED patches/bugs-printjob.patch]** `runjob.py:982` xdvipdfmx log opened without encoding (UnicodeDecodeError on Windows).
+* **[FIXED patches/bugs-printjob.patch]** `runjob.py:197` early return in `doit` (no project id) without `unlockme()`: every later
   print says busy. Line 253: `digcfg.captions` on None when polyglots lacks the view.
-* `runjob.py:465-475` `digdojob`: unguarded `convertBook` (None → TypeError), `texfiles`
+* **[FIXED patches/bugs-printjob.patch]** `runjob.py:465-475` `digdojob`: unguarded `convertBook` (None → TypeError), `texfiles`
   undefined if every view is skipped, `project/bookids` and `project/books` misaligned for a
   module.
-* `page_filler.py:655` `lpars[-1]` IndexError on a page with no paragraphs (full-page picture).
-* `page_filler.py:414` inverted conditional → `range(None)` (only with start_page > 0).
-* `page_filler.py:1745` `read_badnesses` uses unimported `SpacingOddities` (no callers).
+* **[FIXED patches/bugs-printjob.patch]** `page_filler.py:655` `lpars[-1]` IndexError on a page with no paragraphs (full-page picture).
+* **[FIXED patches/bugs-printjob.patch]** `page_filler.py:414` inverted conditional → `range(None)` (only with start_page > 0).
+* **[FIXED patches/bugs-printjob.patch]** `page_filler.py:1745` `read_badnesses` uses unimported `SpacingOddities` (no callers).
 
 ### GUI (gtkview and friends)
 

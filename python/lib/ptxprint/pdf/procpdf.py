@@ -105,8 +105,10 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
             outpdfobj = fixpdffile((outpdfobj._trailer if outpdfobj else opath), None,
                         colour=colour,
                         parlocs = outfname.replace(".tex", ".parlocs"), **params)
-        except ValueError:
-            return {}
+        except ValueError as e:     # e.g. no colour profile: the PDF the user asked for wasn't made
+            logger.error(f"Unable to make the {colour} PDF: {e}")
+            doError(_("Unable to make the {} PDF").format(ispdfxa), secondary=str(e))
+            return None
 
     paper = []
     psize = (kw.get('sheetsize', None) or "210mm, 297mm (A4)").split(",")
@@ -185,7 +187,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                 outpdfobj.trailer.Root.PieceInfo = p
             else:
                 p = outpdfobj.trailer.Root.PieceInfo
-            pdict = PdfDict(LastModified= "D:" + kw.get("pdfdate_", ""))
+            pdict = PdfDict(LastModified= "D:" + kw.get("date", ""))
             pdict.Private = PdfDict()
             pdict.Private.stream = zio.getvalue()
             pdict.Private.Binary = True
@@ -199,7 +201,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                 else:
                     op = origobj.trailer.Root.PieceInfo
                 # Fresh dict — do NOT share pdict across writers
-                origpdict = PdfDict(LastModified= "D:" + kw.get("pdfdate_", ""))
+                origpdict = PdfDict(LastModified= "D:" + kw.get("date", ""))
                 origpdict.Private = PdfDict()
                 origpdict.Private.stream = zio.getvalue()
                 origpdict.Private.Binary = True
