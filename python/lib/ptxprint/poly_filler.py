@@ -7,7 +7,7 @@ from ptxprint.page_filler import PTXFiller, TypesetterSolver, Hooks, GrowList, E
                                  HumanFixRequest, expansion_limits
 from ptxprint.parlocs import ParInfo
 from ptxprint.texlog import readUnderfills
-from ptxprint.utils import refSort
+from ptxprint.utils import refSort, ProgressEvent
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
@@ -134,6 +134,8 @@ class PolySolver(TypesetterSolver):
             evened = self.balance_crossing(cur, p)
             if evened is not None:
                 cur = evened
+            self.hooks.progress(ProgressEvent(self.bk, p + 1, "badpage" if p in self.failed_pages else "goodpage",
+                                              "", len(cur.layout.pages)))
             p += 1
             if self.hooks.cancelled:
                 return HumanFixRequest(cur, p, "Stopped")

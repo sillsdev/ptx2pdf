@@ -1141,7 +1141,24 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
         
     return(SyncPoints[{synchronise}])
     
-def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
+def usfmerge2(*a, **kw):
+    """ The merge flags (settings) are changed by the mode and by custom merge configs: put them
+        back afterwards, so that they don't carry over into the next merge """
+    global settings
+    saved = settings
+    try:
+        return _usfmerge2(*a, **kw)
+    finally:
+        settings = saved
+
+def _confpaths(filepath):
+    """ (config name, project dir) for a folder of files being merged:
+        <project>/local/ptxprint/<config>[/pbuildX] """
+    if os.path.basename(filepath).startswith("pbuild"):     # a print worker's folder
+        filepath = os.path.dirname(filepath)
+    return (os.path.basename(filepath), os.path.dirname(os.path.dirname(os.path.dirname(filepath))))
+
+def _usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
     if debug:
       debugPrint = True
@@ -1227,8 +1244,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                 #Primary might be in a different place to other files, if run
                 # from command line. If so, that should take priority.
                 (prifilepath, filename) = os.path.split(os.path.abspath(infile))
-                priconfname = os.path.basename(prifilepath)
-                priptpath = os.path.dirname(os.path.dirname(os.path.dirname(prifilepath)))
+                priconfname, priptpath = _confpaths(prifilepath)
                 priconfpath = os.path.join(priptpath, "shared", "ptxprint", priconfname)
         for colkey,infile in zip(keyarr, infilearr):
                 #if (syncarr[colkey].startswith("custom")):
@@ -1241,8 +1257,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                     variety=syncarr[colkey][7:]
                     varfile = "merge-" + synchronise+variety + ".cfg"
                 (filepath,filename) = os.path.split(os.path.abspath(infile))
-                confname = os.path.basename(filepath)
-                ptpath = os.path.dirname(os.path.dirname(os.path.dirname(filepath)))
+                confname, ptpath = _confpaths(filepath)
                 confpath = os.path.join(ptpath, "shared", "ptxprint", confname)
                 searchlist = []
                 cfile="merge-" + synchronise + ".cfg"
@@ -1253,7 +1268,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                     
                 searchlist.extend(((os.path.join(prifilepath,cfile),1),(os.path.join(priconfpath,cfile),1),(os.path.join(priptpath,cfile),0)))
                 if (colkey!='L' and prifilepath != filepath):
-                    searchlist.extend((os.path.join(ptpath,cfile),0))
+                    searchlist.append((os.path.join(ptpath,cfile),0))
                 done=0
                 for searchpair in searchlist:
                     (confpath,useLR)=searchpair

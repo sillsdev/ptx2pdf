@@ -493,13 +493,14 @@ class Paragraphs(list):
                     continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
-                if currp is not None:
+                openp = currps.get(polycol, None)      # the paragraph the picture interrupts, if one is still open
+                if openp is not None:
                     currpr = currr
-                    if not len(currp.rects) or currp.rects[-1].xend > 0:
+                    if not len(openp.rects) or openp.rects[-1].xend > 0:
                         currr = ParRect(pnum, colcount[polycol], currpr.xstart, currpr.yend)
-                        currp.rects.append(currr)
+                        openp.rects.append(currr)
                     else:
-                        currr = currp.rects[-1]
+                        currr = openp.rects[-1]
                         currr.xstart = currpr.xstart
                         currr.ystart = currpr.yend
                 else:
@@ -629,7 +630,7 @@ class Paragraphs(list):
         #logger.info(f"{pnum=}, {start=}, {e=}, max={len(self)}, {self.pindex=}")
         if inclast and pnum > 1:        # pnum is 1 based
             done = False
-            for p in self[start:-1:-1]:
+            for p in reversed(self[:start]):     # back from the paragraphs before this page
                 if not isinstance(p, ParInfo):
                     continue
                 for r in reversed(p.rects):
@@ -663,7 +664,7 @@ class Paragraphs(list):
                 return
             pnum = parref.rects[0].pagenum
 
-        if not pnum or pnum >= len(self.pindex):
+        if not pnum or pnum > len(self.pindex):     # pages are 1 to len(pindex)
             return
         x_values = [r.xstart for p, r in self.getParas(pnum)]
         
@@ -686,15 +687,16 @@ class Paragraphs(list):
             return self.pnumorder[pindex - 1]
 
     def setFigPids(self):
-        pnum = 0
-        for i, p in self:
-            while i >= self.pindex[pnum]:
+        pnum = 1        # pages are 1 based: page n starts at self[self.pindex[n-1]]
+        for i, p in enumerate(self):
+            while pnum < len(self.pindex) and i >= self.pindex[pnum]:
                 pnum += 1
             if isinstance(p, FigInfo):
                 lastpa = None
-                for pa in self.getParas(pnum, inclast=True):
+                for pa, r in self.getParas(pnum, inclast=True):
                     if pa.ref > p.ref:
-                        p.anchor_pid = lastpa.pid()
+                        if lastpa is not None:
+                            p.anchor_pid = lastpa.pid()
                         break
                     lastpa = pa
 
@@ -762,19 +764,16 @@ class Paragraphs(list):
         for l, p, r in self.allxdvlines():
             # [[pnum, pos(x,y), width]]
             spaces = []
-            for b, nspaces, tspaces in l.has_badspace(curr):
+            bads, nspaces, tspaces = l.has_badspace(curr)
+            for b in bads:
                 spaces.append(BadSpace(r.pagenum, l, *b))
-                r.tspace += tspaces
-                r.nspace += nspace
-            spaces.sort(key=lambda s:s.width, reverse=True)
-            for s in spaces:
-                if not len(res):
-                    res.append(s)
+            r.tspace += tspaces
+            r.nspace += nspaces
+            for s in spaces:        # keep the n widest
+                if len(res) < n:
+                    heapq.heappush(res, s)
                 elif res[0] < s:
-                    if len(res) >= n:
-                        heapq.heapreplace(res, s)
-                    else:
-                        heapq.heappush(res, s)
+                    heapq.heapreplace(res, s)
         return res
 
     def _getlines(self, pnum):
@@ -785,7 +784,7 @@ class Paragraphs(list):
 
     def getbadspaces(self, pnum, threshold, char_threshold):
         for l in self._getlines(pnum):
-            spaces, tspaces, nspaces = l.has_badspace(threshold, char_threshold)
+            spaces, nspaces, tspaces = l.has_badspace(threshold, char_threshold)
             for s in spaces:
                 yield BadSpace(pnum, l, *s)
 
@@ -815,7 +814,7 @@ class Paragraphs(list):
         spaces = set()
         rivers = set()
         badglyphs = set()
-        for pnum in range(len(self.pindex)):
+        for pnum in range(1, len(self.pindex) + 1):     # pages are 1 based
             for l in self._getlines(pnum):
                 if (wanted & 1) == 1 and pnum not in spaces:
                     s, t, n = l.has_badspace(threshold, char_threshold)

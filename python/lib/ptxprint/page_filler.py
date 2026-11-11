@@ -411,7 +411,7 @@ class TypesetterSolver:
         if self.hooks.tracing:
             logger.log(15, f"{start_page=}, failing={state.layout.first_failing_page}")
         if start_page > 0 and (state.layout.first_failing_page is None or state.layout.first_failing_page >= start_page):
-            for i in range(state.layout.first_failing_page if state.layout.first_failing_page is None else state.numPages()):
+            for i in range(state.numPages() if state.layout.first_failing_page is None else state.layout.first_failing_page):
                 if not self.layout_checks(state, i-1):
                     start_page = i - 2
                     logging.log(17, f"Layout check failed at {i}")
@@ -652,8 +652,8 @@ class TypesetterSolver:
 
                 if not self.noprobe and (free is None or all(x == 0 for x in free)):
                     lpars = state.layout.get_pars(page)
-                    straddler = lpars[-1]
-                    if self.hooks.get_first_page_for_para(straddler) <= page \
+                    straddler = lpars[-1] if len(lpars) else None     # none on a full page picture
+                    if straddler is not None and self.hooks.get_first_page_for_para(straddler) <= page \
                             and straddler in self.probe_params \
                             and self.probe_params[straddler] != page_base_params.get(straddler, self.neutral(straddler)):
                         page_base_params[straddler] = self.probe_params[straddler]
@@ -1433,7 +1433,7 @@ class PTXFiller:
         logger.log(15, f"shape_cache={solver.shape_cache}")
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
-            self.progress(ProgressEvent(bk, res.page, 'complete', res.message, -1))
+            self.progress(ProgressEvent(bk, res.page, 'failed', res.message, -1))      # timed out or stopped
             self.printbk(bk, "T", progress=False)
         else:
             retval = (res.failures is None or not len(res.failures),
@@ -1522,6 +1522,7 @@ class PTXFiller:
             self.job.nopdf = True
             self.job.notracing = True
             self.job.silent = True
+            self.job.stopcheck = lambda: self.timedout or self.cancelled
             self.job.doit(noview=True, noaction=not genfiles)
             self.job.maxRuns = 0
 
@@ -1741,6 +1742,7 @@ class PTXFiller:
             logger.log(15, f"{pnum=} {self.underfills[pnum]}")
 
     def read_badnesses(self):
+        from ptxprint.xdv.spacing_oddities import SpacingOddities
         xdvname = self.job.outfname.replace(".tex", ".xdv")
         xdvreader = SpacingOddities(xdvname, parent=self.parlocs,
                                     fontsize=float(self.view.get("s_fontsize", 1)))

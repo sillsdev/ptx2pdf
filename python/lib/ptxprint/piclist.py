@@ -351,7 +351,12 @@ class Picture:
         fpath = self['srcpath']
         # print(fpath)
         origExt = os.path.splitext(fpath)[1]
-        self['destfile'] = fn(self, self['srcpath'], nB+origExt.lower())
+        dest = fn(self, self['srcpath'], nB+origExt.lower())
+        if dest is None:            # couldn't be copied or converted: it's missing
+            if 'destfile' in self:
+                del self['destfile']
+            return
+        self['destfile'] = dest
         self[' crop'] = cropme
         if 'media' in self and len(self['media']) and 'p' not in self['media']:
             self['disabled'] = True

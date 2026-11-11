@@ -5,7 +5,7 @@ from shutil import rmtree
 from zipfile import ZipFile, is_zipfile
 
 import ptxprint
-from ptxprint.utils import saferelpath, appdirs, bookcodes, parseBookList
+from ptxprint.utils import saferelpath, appdirs, booknumbers, parseBookList
 from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
@@ -722,7 +722,7 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                 mprint.submit_fill_jobs(mainw.getBooks(), bparms, stop=args.stop, chapters=chapters)
                 results = mprint.wait()
                 mprint.teardown()
-                print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))
+                print("\n".join(str(r) for r in sorted(results, key=lambda a:(booknumbers.get(str(a[0]).split(" ")[0], 1000), str(a)))))
             else:
                 job = doit(mainw, noview=True, nothreads=True)
                 res = 0 if job is None else job.res

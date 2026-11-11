@@ -135,6 +135,7 @@ def isLocked():
 class RunJob:
 
     def __init__(self, printer, scriptsdir, macrosdir, args, inArchive=False):
+        self.stopcheck = None       # a function that says to stop (timed out or Stop pressed)
         self.scriptsdir = scriptsdir
         self.printer = printer
         self.macrosdir = macrosdir
@@ -195,6 +196,7 @@ class RunJob:
         configid = self.info.dict["config/name"]
         self.prjdir = self.printer.project.path
         if self.prjid is None or not len(self.prjid):     # can't print no project
+            self.fail(_("No project"))      # also unlocks, or every later print says busy
             return
         self.tmpdir = self.printer.project.printPath(configid)
         os.makedirs(self.tmpdir, exist_ok=True)
@@ -250,7 +252,7 @@ class RunJob:
                 # digprjid = self.info.dict["document/diglotsecprj"]
                 # digcfg = self.info.dict["document/diglotsecconfig"]
                 digcfg = self.printer.polyglots.get(k, None)
-                if digcfg.captions:
+                if digcfg is not None and digcfg.captions:
                     captions.append(k)
                 digprjdir = dv.project.path
                 digptsettings = ParatextSettings(digprjdir)
@@ -343,10 +345,11 @@ class RunJob:
         if self.outfname is None:
             self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.dict.setdefault("diglots_", {})
+        texfiles = []
+        bookids = [r[0][0].first.book if r[1] else "MOD" for r in jobs]     # as dojob: one per job, like books
         for k, diginfo in diginfos.items():
-            texfiles = []
             digdonebooks = [None] * len(jobs)
-            diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
+            diginfo["project/bookids"] = bookids
             diginfo["project/books"] = digdonebooks
             diginfo["document/ifdiglot"] = "%"
             diginfo["footer/ftrcenter"] = "-empty-"
@@ -390,7 +393,7 @@ class RunJob:
             scorearr[k] = int(round(w)) if w is not None else defweight
         logger.debug(f"Diglot merge {scorearr=} from {keyarr=}")
 
-        donebooks = []
+        donebooks = [None] * len(jobs)     # one per job, as bookids
         versification = None
         reversifyinfo = None
         if self.info.dict['texpert/reversify']:
@@ -403,10 +406,16 @@ class RunJob:
             # logger.debug(f"Diglot[{k}]({b}): f{self.tmpdir} from f{self.prjdir}") # broken (missing k)
             inputfiles = []
             left = None
-            out = self.info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], noaction=self.noaction)
+            try:
+                out = self.info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], noaction=self.noaction)
+            except FileNotFoundError as e:
+                self.printer.doError(str(e))
+                out = None
+            if out is None:
+                continue
             left = os.path.join(self.tmpdir, out)
             inputfiles.append(left)
-            donebooks.append(out)
+            donebooks[i] = out
             texfiles.append(left)
             for k, diginfo in diginfos.items():
                 digprjdir = diginfo.printer.project.path
@@ -426,8 +435,7 @@ class RunJob:
             if left and b not in serialbooks: # nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^(.*)\.(.*?)$", r"\1-diglot.\2", left)
-                if len(donebooks):
-                    donebooks[-1] = os.path.basename(outFile)
+                donebooks[i] = os.path.basename(outFile)
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
 
                 mode = self.info["document/diglotmergemode"]
@@ -443,7 +451,7 @@ class RunJob:
                     usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, scorearr=scorearr, changes=self.info.changes.get("merged", []), book=b)
                 texfiles += [outFile, logFile]
         
-        if not len(donebooks): # or not len(digdonebooks):
+        if not any(donebooks): # or not len(digdonebooks):
             unlockme()
             return []
 
@@ -454,7 +462,7 @@ class RunJob:
                 "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
                 title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True)
 
-        self.info["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
+        self.info["project/bookids"] = bookids
         self.info["project/books"] = donebooks
         logger.debug(f"{donebooks=}")
 
@@ -723,15 +731,9 @@ class RunJob:
             self.cpu_seconds = child_cpu_time(None)
             self.runner = call(cmd + [action], cwd=self.tmpdir, env=self.env, **callkw)
             if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
-                procout = None
-                try:
-                    # must use communicate() not wait(): if stdout is a pipe, the child
-                    # blocks once the pipe buffer fills and we deadlock waiting for it
-                    (procout, procerr) = self.runner.communicate()
-                except subprocess.TimeoutExpired:
-                    print("Timed out!")
-                    self.runner.kill()
-                    (procout, procerr) = self.runner.communicate()
+                # must use communicate() not wait(): if stdout is a pipe, the child
+                # blocks once the pipe buffer fills and we deadlock waiting for it
+                (procout, procerr) = self._communicate()
                 self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
                 self.res = self.runner.returncode
                 if procout:
@@ -750,7 +752,7 @@ class RunJob:
             numruns += 1
             self.rerunReasons = []
             tocfname = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".toc"))
-            if self.res > 0:
+            if self.res != 0:       # < 0: killed by a signal
                 rerun = False
                 if os.path.exists(tocfname):
                     os.remove(tocfname)
@@ -822,14 +824,8 @@ class RunJob:
         if self.args.extras & 1:
             print(f"Subprocess return value: {self.runner}")
         if isinstance(self.runner, subprocess.Popen) and self.runner is not None:
-            procout = None
-            try:
-                # communicate() rather than wait(), so a piped stdout can't deadlock us
-                (procout, procerr) = self.runner.communicate()
-            except subprocess.TimeoutExpired:
-                print("Timed out!")
-                self.runner.kill()
-                (procout, procerr) = self.runner.communicate()
+            # communicate() rather than wait(), so a piped stdout can't deadlock us
+            (procout, procerr) = self._communicate()
             self.cpu_seconds = child_cpu_time(self.runner) - self.cpu_seconds
             self.res = 4 if self.runner.returncode else 0
             if procout:
@@ -979,7 +975,7 @@ class RunJob:
         elif self.res == 4:
             logpath = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".xdvi_log"))
             if os.path.exists(logpath):
-                with open(logpath) as inf:
+                with open(logpath, encoding="utf-8", errors="replace") as inf:
                     loglines = inf.readlines()
                     if "xdvipdfmx:fatal: Invalid font: -1 (0)\n" in loglines:
                         loglines.append("\n" + _("To fix this error: Use a different font which is not a Variable Font."))
@@ -1114,6 +1110,17 @@ class RunJob:
             finalLogLines.append("File(s) to check: {}".format(", ".join(files)))
         return finalLogLines
 
+    def _communicate(self):
+        """ Waits for self.runner, but kills it if stopcheck says to stop """
+        while True:
+            try:
+                return self.runner.communicate(timeout=1)
+            except subprocess.TimeoutExpired:
+                if self.stopcheck is not None and self.stopcheck():
+                    logger.warning(f"Stopping {self.runner.args[0] if self.runner.args else 'job'}")
+                    self.runner.kill()
+                    return self.runner.communicate()
+
     def procpdfFile(self, outfname, pdffile):
         opath = swapext(outfname, ext=".tex", withext=".prepress.pdf")
         if self.ispdfxa != "Screen":
@@ -1143,12 +1150,12 @@ class RunJob:
             z.close()
 
         self.extrafiles = procpdf(outfname, pdffile, self.ispdfxa, self.printer.doError, doSettingsZip, cover=cover, **kw)
-        return True
-        if cover:
+        if self.extrafiles is None:     # the finished PDF couldn't be made
+            self.extrafiles = {}
+            return False
+        if cover:       # no separate cover isn't a failure
             self.coverfile = self.extrafiles.get('cover', None)
-            return self.coverfile is not None
-        else:
-            return True
+        return True
 
     def createDiff(self, pdfname, basename, outname=None, **kw):
         from ptxprint.pdf.pdfdiff import createDiff
@@ -1315,20 +1322,17 @@ class RunJob:
         #    for x in range(im.width):
         #        im.putpixel((x, y), self._cmytocmyk(*im.getpixel((x, y))))
         #return im
-        img = np.asarray(im).copy()
+        # as _cmytocmyk for each pixel: move the grey common to c, m, y into k, in int16 so nothing wraps
+        img = np.asarray(im).astype(np.int16)
         if img.shape[-1] == 3:
-            z = np.zeros((img.shape[0], img.shape[1], 1), dtype=np.uint8)
-            img.concatenate((img, z), axis=3)
-            return im
-        dk = img.min(axis=2, where = [True, True, True, False], initial=255)
-        dko = 255 - dk
-        newk = img[:,:,3] + dk
-        bigmask = newk[:,:] > 255
-        dk[bigmask] = dko[bigmask]
-        newk[bigmask] = 255
-        img[:,:,3] = newk
+            img = np.concatenate((img, np.zeros(img.shape[:2] + (1,), dtype=np.int16)), axis=2)
+        dk = img[:,:,:3].min(axis=2)
+        k = img[:,:,3]
+        over = dk + k > 255
+        dk = np.where(over, 255 - k, dk)
+        img[:,:,3] = np.where(over, 255, k + dk)
         for i in range(3):
-            img[:,:,i] -= dk 
+            img[:,:,i] -= dk
         res = Image.fromarray(img.astype(np.uint8), 'CMYK')
         return res
 
@@ -1354,6 +1358,7 @@ class RunJob:
                 writer.write()
             except (PdfError, OSError, ValueError) as e:
                 print(_("Error: Unable to read PDF image {}: {}").format(srcpath, e))
+                return None         # a picture we can't use is missing
             return os.path.basename(tgtpath)
         try:
             im = Image.open(srcpath)
@@ -1361,7 +1366,7 @@ class RunJob:
             ih = im.size[1]
         except OSError:     # not an image we can read, so treat it as missing
             print(("Failed to get size of (image) file:"), srcpath)
-            return os.path.basename(tgtpath)
+            return None
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
         if cropme or (ratio is not None and ih and iw/ih < ratio) \
@@ -1373,11 +1378,13 @@ class RunJob:
                 print(_("Error: Unable to convert/resize image {}: {}").format(srcpath, e))
                 if os.path.exists(tgtpath):
                     os.remove(tgtpath)
+                return None
             return os.path.basename(tgtpath)
         try:
             copyfile(srcpath, tgtpath)
         except OSError:
-            print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
+            print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder").format(srcpath, tgtpath))
+            return None
         return os.path.basename(tgtpath)
 
     def usablePageRatios(self):
