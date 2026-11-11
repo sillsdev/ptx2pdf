@@ -119,14 +119,16 @@ class XrefFileXrefs(BaseXrefs):
         self.filters = filters
         self.xrlistsize = listsize
         self.xrefdat = cachedData(xrfile, self.readdat)
+        # kept in the (cached) data, since readdat isn't called when the cache is used
+        self.xrefcopyright = self.xrefdat.get(" copyright", None)
 
     def readdat(self, inf):
         xrefdat = {}
         for l in inf.readlines():
             if '=' in l:
                 (k, v) = l.split("=", maxsplit=1)
-                if k.strip().lower in ("attribution", "copyright"):
-                    self.xrefcopyright = v.strip()
+                if k.strip().lower() in ("attribution", "copyright"):
+                    xrefdat[" copyright"] = v.strip()     # can't clash with a book code
                 continue
             v = RefList()
             for d in re.sub(r"[{}]+", "", l).split():

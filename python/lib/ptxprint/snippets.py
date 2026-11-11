@@ -170,7 +170,7 @@ class PDFx1aOutput(Snippet):
         if pdftype in ("Screen", "Digital"):
             model.dict["/iccfpath"] = saferelpath(os.path.join(libpath, "sRGB.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "3"
-        if pdftype == "Gray":
+        elif pdftype == "Gray":
             model.dict['/iccfpath'] = saferelpath(os.path.join(libpath, "default_gray.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "1"
         else:
@@ -290,6 +290,7 @@ class FancyBorders(Snippet):
 
 
 """
+        res = res.format(**texmodel.dict)      # each glot's part below is formatted with its own settings
         if texmodel.dict.get("_isDiglot", False):
             repeats = [("L", texmodel)] + list(texmodel.dict["diglots_"].items())
         else:
@@ -319,8 +320,8 @@ class FancyBorders(Snippet):
 {fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\plainv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
 {fancy/versedecoratorisayah}\catcode`@=12\catcode`=12
 {fancy/versedecoratorisayah}\def\AdornVerseNumber%D%#1{{\hbox{{\char"06DD #1}}}}
-""".replace("%D%", k)
-        return res.format(**v.dict)
+""".replace("%D%", k).format(**v.dict)
+        return res
 
     unusedStuff = r"""
 % Some code to allow us to kern chapter numbers
@@ -516,7 +517,6 @@ class MarginalNotes(Snippet):
         if model.dict["paper/ifmarginnotes"] == "%":
             return ""
         mwidth = float(model.dict["paper/marginnoteswidth"])
-        print(f"{mwidth=}")
         if mwidth < 1:
             return ""
         res = [cls.texCode]

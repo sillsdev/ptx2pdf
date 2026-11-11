@@ -565,8 +565,9 @@ class TexModel:
                         self.dict[b] = (rhfil if swap else lhfil) + self.dict[b] + (lhfil if swap else rhfil)
 
     def _addLR(self, t, pri):
-        if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate" \
-                 r"\book", r"\bookalt"]:                
+        # those with L and R forms (\header@defs in ptx-references.tex); others go in \headfootL/R
+        if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate",
+                 r"\usdate", r"\ukdate", r"\timestamp"]:
             if pri:
                 t = t+'L'
             else:
@@ -636,7 +637,7 @@ class TexModel:
         outps = []
         for f in files:
             p = Path(f, self.printer)
-            outp = str(p).replace("/", "_")
+            outp = re.sub(r"[\\/:]", "_", str(p))      # a flat name, also for C:\... on Windows
             outpath = os.path.join(file_dir, outp)
             if not os.path.isfile(f):
                 logger.warning(f"Can't find PDF to include: {f}")
@@ -900,7 +901,7 @@ class TexModel:
         logger.debug(f"Using front matter from {infpath}")
         bydir = os.path.join(pycodedir(), "images").replace("\\", "/")
         fmt = self.dict['snippets/pdfoutput']
-        cmyk = fmt in ('CMYK', 'PDF/X-1A', 'PDF/A-1')
+        cmyk = fmt in ('CMYK', 'Transparent', 'Spot')
         if os.path.exists(infpath):
             fcontent = []
             with open(infpath, encoding="utf-8") as inf:
@@ -1754,7 +1755,9 @@ class TexModel:
                     msg = "\\{} {}".format(mkr, cinfo['templates']['openbible.info'].get(lang,
                                 cinfo['templates']['openbible.info']['en']).replace("_", "\u00A0"))
                 else:
-                    msg = getattr(self, 'xrefcopyright', None)
+                    xrefs = getattr(self.xrefs, 'xrefs', None)    # the books are converted (making self.xrefs) before this
+                    cpy = getattr(xrefs, 'xrefcopyright', None)
+                    msg = "\\{} {}".format(mkr, cpy) if cpy else None
                 if msg is not None:
                     crdts.append(msg)
             crdts.append("}")

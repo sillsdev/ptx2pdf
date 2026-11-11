@@ -13,7 +13,7 @@ from inspect import currentframe
 from struct import unpack
 from dataclasses import dataclass, field
 from typing import Any, Optional, Callable, Literal
-import contextlib, pickle, gzip
+import contextlib, pickle, gzip, hashlib
 import regex
 import threading
 from subprocess import check_output, call
@@ -770,7 +770,10 @@ def regex_localiser(r, script=None):
 def cachedData(filepath, fn):
     cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")
     os.makedirs(cfgdir, exist_ok=True)
-    cfgfilepath = os.path.join(cfgdir, os.path.basename("{}.pickle_{}.gz".format(filepath, DataVersion)))
+    # keyed on the whole path (same named files in two projects) and when it was changed (edits)
+    pathkey = hashlib.sha1(os.path.abspath(filepath).encode("utf-8")).hexdigest()[:10]
+    testbase = "{}.{}.pickle".format(os.path.basename(filepath), pathkey)
+    cfgfilepath = os.path.join(cfgdir, "{}_{}_{}.gz".format(testbase, DataVersion, int(os.stat(filepath).st_mtime)))
     logger.debug(f"Reading cache file {cfgfilepath}")
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
@@ -778,9 +781,9 @@ def cachedData(filepath, fn):
                 return pickle.load(inf)
             except:
                 pass        # if the pickle loading fails, rebuild the pickle file
-    testbase = os.path.basename("{}.pickle".format(filepath))
+    oldbase = os.path.basename("{}.pickle_".format(filepath))     # from before the path key
     for l in os.listdir(cfgdir):
-        if l.startswith(testbase):
+        if l.startswith((testbase, oldbase)):
             os.unlink(os.path.join(cfgdir, l))
     logger.debug(f"Writing cache file {filepath}")
     with open(filepath, "r", encoding="utf8") as inf:

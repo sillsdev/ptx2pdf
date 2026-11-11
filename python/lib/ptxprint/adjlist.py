@@ -24,6 +24,11 @@ class Liststore(list):
             r.iter = j
         return rl.iter
 
+    def delrow(self, i):
+        del self[i]
+        for j, r in enumerate(self[i:], i):
+            r.iter = j
+
     def append(self, row):
         rl = UserList(row)
         rl.iter = len(self)
@@ -70,13 +75,17 @@ class AdjList:
     def __len__(self):
         return len(self.liststore)
 
-    def find(self, *k):
+    def find(self, bk, cv, para):
+        """ Returns (index, found): the row for this paragraph, or where to insert it (-1 = at the end) """
+        key = None
         for i, r in enumerate(self.liststore):
-            if r[:len(k)] == k:
-                return r
-            elif r[1] > k[1] or r[1] == k[1] and r[2] > k[2]:
-                return i
-        return -1
+            if r[0] == bk and r[1] == cv and r[2] == para:
+                return (i, True)
+            if key is None:
+                key = self.calckey([bk, cv, para])
+            if self.calckey(r) > key:
+                return (i, False)
+        return (-1, False)
 
     def sort(self):
         allvals = [[*r] for r in self.liststore]
@@ -94,21 +103,20 @@ class AdjList:
             self.liststore.append(row)
             self.db.append(kw)
             return
-        i = self.find(bk, cv, para)
-        if isinstance(i, int):
+        i, found = self.find(bk, cv, para)
+        if not found:
             if i >= 0:
                 self.liststore.insert(i, row=row)
                 self.db.insert(i, kw)
             else:
                 self.liststore.append(row)
                 self.db.append(kw)
-        elif not force:       # got an iterator
-            for j, k in enumerate(i):
-                if row[j] != k:
-                    self.liststore.set_value(i.iter, j, row[j])
-        else:
-            self.liststore[i.iter] = row
-            self.db[i.iter] = comment
+            return
+        old = self.liststore[i]
+        for j, v in enumerate(row):
+            if force or old[j] != v:
+                old[j] = v
+        self.db[i] = kw
 
     def calckey(self, row):
         k = refKey("{0} {1}".format(*row))
@@ -214,16 +222,18 @@ class AdjList:
         self.ftime = os.stat(fname).st_mtime
 
     def cleanup(self):
-        lastk = [None] * 3
-        i = 0
+        """ Of rows for the same paragraph, keep the later one (sort is stable) """
+        self.sort()
+        i = 1
         while i < len(self.liststore):
-            r = self.liststore[i]
-            if lastk[:3] == r[:3]:
-                self.liststore.remove(lastk)
+            if list(self.liststore[i][:3]) == list(self.liststore[i-1][:3]):
+                if self.gtk is None:
+                    self.liststore.delrow(i-1)
+                else:
+                    self.liststore.remove(self.liststore[i-1].iter)
                 self.db.pop(i-1)
             else:
                 i += 1
-            last = r
 
     def _createUIExtensionLines(self, i):
         r = self.liststore[i]
@@ -266,7 +276,7 @@ class AdjList:
         except FileNotFoundError:
             pass  # File does not exist, no action needed
         except PermissionError:
-            self.model.statusMsg(_("Warning! File: {fname} is locked. Could not be deleted.").format(fname=fname))
+            logger.warning(f"File {fname} is locked. Could not be deleted.")
 
     def reloadIfChanged(self):
         """ Re-reads the file if it was changed (or deleted) outside PTXprint since it was last read or written,
@@ -317,7 +327,7 @@ class AdjList:
                 doit(self.liststore[i], i)
         elif insert:
         # book, c:v, para, stretch, mkr, expand, comment%
-            r = [cp[0], cp[1], cp[2], "0", "", 100, "", ""]
+            r = [cp[0], cp[1], cp[2], "0", "", self.centre, "", ""]
             self.liststore.insert(i, r)
             self.db.insert(i, {})
             r = self.liststore[i]         # since the row is turned into something else

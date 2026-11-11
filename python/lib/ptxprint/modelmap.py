@@ -24,7 +24,7 @@ _map = {
     "ifusediglotmodsty_":       ("_diglotmodsty", "diglot", lambda w,v: "%" if not v else ""),
     "ifdiglotincludefootnotes_":("_diglotincludefn", "diglot", lambda w,v: "%" if v else ""),
     "ifdiglotincludexrefs_":    ("_diglotincludexr", "diglot", lambda w,v: "%" if v else ""),
-    "transparency_":            ("fcb_outputFormat", "finish", lambda w,v: "false" if v in (None, "None", "PDF/X-4") else "true"),
+    "transparency_":            ("fcb_outputFormat", "finish", lambda w,v: "false" if v in (None, "None", "Screen", "Digital", "Transparent") else "true"),  # PDF/X-4 allows transparency
 
     "config/notes":             ("t_configNotes", "pubinfo", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", "meta", lambda w,v: v or ""),

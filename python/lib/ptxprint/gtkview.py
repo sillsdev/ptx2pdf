@@ -2459,10 +2459,11 @@ class GtkViewModel(ViewModel):
                 r[2] = editable
                 if colour is not None:
                     r[3] = colour
-                r[4] = pub
+                if dest is None:            # only the publication variables have a publishable column
+                    r[4] = pub
                 break
         else:
-            varlist.append([k, v, editable, colour, pub])
+            varlist.append([k, v, editable, colour] + ([pub] if dest is None else []))
 
     def on_zvarPubToggled(self, cr, path):
         self.pubvarlist[path][4] = not self.pubvarlist[path][4]

@@ -132,6 +132,13 @@ def doError(txt, secondary=None, **kw):
         print(secondary)
         logger.error(secondary)
 
+def _deepupdate(base, updates):
+    for k, v in updates.items():
+        if isinstance(v, dict) and isinstance(base.get(k), dict):
+            _deepupdate(base[k], v)
+        else:
+            base[k] = v
+
 class ViewModel:
     _attributes = {
         # modelname: (attribute, isMultiple, label)
@@ -227,15 +234,12 @@ class ViewModel:
         self.report.clear()
 
     def setDate(self):
-        t = datetime.datetime.now()
-        zd = datetime.timedelta(seconds=-(time.altzone if time.daylight else time.timezone))
-        tzhrs = zd.days * 24 + (zd.seconds // 3600)
-        tzmins = (zd.seconds % 3600) // 60
-        
-        if tzhrs == 0:
+        t = datetime.datetime.now().astimezone()     # the offset in effect now (DST or not)
+        offmins = int(t.utcoffset().total_seconds()) // 60
+        if offmins == 0:
             tzstr = "Z"
         else:
-            tzstr = "{0:+03}'{1:02}'".format(tzhrs, tzmins)
+            tzstr = "{0}{1:02}'{2:02}'".format("+" if offmins > 0 else "-", abs(offmins) // 60, abs(offmins) % 60)
         self.set("_pdfdate", t.strftime("%Y%m%d%H%M%S")+tzstr, skipmissing=True)
         self.set("_date", t.strftime("%Y-%m-%d %H:%M:%S ")+tzstr, skipmissing=True)
         self.set("_xmpdate", t.strftime("%Y-%m-%dT%H:%M:%S")+tzstr.replace("'", ":").rstrip(":"), skipmissing=True)
@@ -752,7 +756,8 @@ class ViewModel:
         else:
             os.makedirs(destp, exist_ok=True)
             for p in os.listdir(srcp):
-                op = p.replace(oldcfg, newcfg)
+                # rename only where the config name is a part of the name: WSGlatin-lat.piclist, not WSG*lat*in
+                op = re.sub(r"(?<=-)" + re.escape(oldcfg) + r"(?=[-._]|$)", newcfg.replace("\\", "\\\\"), p) if oldcfg else p
                 copyfile(os.path.join(srcp, p), os.path.join(destp, op))
 
     def _mergenothing(self, srcp, destp, mergep, **kw):
@@ -766,6 +771,9 @@ class ViewModel:
                 config.read_file(inf)
             configs.append(config)
         (this, new, base) = configs
+        for sect in new.sections():     # sections only the source has, unless the target removed them
+            if not this.has_section(sect) and not base.has_section(sect):
+                this.add_section(sect)
         for sect in this.sections():
             allopts = set(this.options(sect))
             if base.has_section(sect):
@@ -802,25 +810,31 @@ class ViewModel:
                 lines.append(list(inf.readlines()))
         this = [x for x in Differ().compare(lines[2], lines[0]) if x[0] != "?"]
         other = [x for x in Differ().compare(lines[2], lines[1]) if x[0] != "?"]
+        # Both diffs walk the same base lines in order (' ' keeps one, '-' drops one, '+' adds
+        # a line without using one up), so take the insertions from either side and keep a base
+        # line only if neither side deleted it.
         ti = 0
         oi = 0
         res = []
-        while ti < len(this) and oi < len(other):
-            if this[ti] == other[oi] and this[ti][0] in " +":  # both normal or insert the same
-                res.append(this[ti][2:])
+        while ti < len(this) or oi < len(other):
+            t = this[ti] if ti < len(this) else None
+            o = other[oi] if oi < len(other) else None
+            if t is not None and t[0] == "+":
+                res.append(t[2:])
+                ti += 1
+                if o == t:              # both inserted the same line
+                    oi += 1
+            elif o is not None and o[0] == "+":
+                res.append(o[2:])
+                oi += 1
+            elif t is None or o is None:    # can't happen: both use up all the base lines
+                res.extend(x[2:] for x in (this[ti:] if o is None else other[oi:]) if x[0] != "-")
+                break
+            else:
+                if t[0] == " " and o[0] == " ":
+                    res.append(t[2:])
                 ti += 1
                 oi += 1
-            elif this[ti][2:] == other[oi][2:] and (this[ti][0] == "-" or other[oi][0] == "-"):
-                ti += 1
-                oi += 1
-            elif this[ti][0] == "+": # and other[oi][0] == " ": default clash = this wins
-                res.append(this[ti][2:])
-                ti += 1
-            elif other[oi][0] == "+" and this[ti][0] == " ":
-                res.append(other[oi][2:])
-                oi += 1
-        res.extend([x[2:] for x in this[ti:]])
-        res.extend([x[2:] for x in other[oi:]])
         with open(destp, "w", encoding="utf-8") as outf:
             outf.write("".join(res))
         copyfile(srcp, mergep)
@@ -1000,7 +1014,7 @@ class ViewModel:
             with open(fname, encoding="utf-8", errors="ignore") as inf:
                 try:
                     cupdates = json.load(inf)
-                    self.copyrightInfo.update(cupdates)
+                    _deepupdate(self.copyrightInfo, cupdates)     # add to the built in artists, don't replace them
                 except json.decoder.JSONDecodeError as e:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
@@ -1306,7 +1320,7 @@ class ViewModel:
             self._configset(config, "notes/abovenotespace", f2s(config.getfloat("notes", "abovenotespace", fallback=6.0) - 3.0))
         if v < 1.7:
             if self._config_bool("document", "pdfx1aoutput", config, fallback=False):
-                self._configset(config, "document/pdfoutput", "PDF/X-1A")
+                self._configset(config, "snippets/pdfoutput", "CMYK")     # what PDF/X-1A became (read at 2.08)
         if v < 1.9:
             val = self._config_get(config, "scrmymr", "syllables", fallback="")
             self._configset(config, "scripts/mymr/syllables", self._config_bool("scrmymr", "syllables", config, fallback=False) if val else False)
@@ -1371,7 +1385,7 @@ class ViewModel:
                 self._configset(config, "snippets/pdfoutput", "Screen")
 
         if v < 2.09:
-            if config.get("finish", "pgsperspread", fallback="None") == "None":
+            if config.get("finishing", "pgsperspread", fallback="None") == "None":
                 self._configset(config, "finishing/pgsperspread", "1")
             if config.get("paper", "cropmarks", fallback="None") == "None":
                 self._configset(config, "paper/cropmarks", self._config_bool("paper", "ifcropmarks", config, fallback=False))
@@ -1671,11 +1685,11 @@ class ViewModel:
                             pass # ignore missing keys
                         except ValueError as e:
                             self.doError(f"{v.widget}: {e}")
-                elif sect in ("vars", "strongsvar") and (categories is None or 'variables' in categories):
+                elif sect in ("vars", "strongsvars", "strongsvar") and (categories is None or 'variables' in categories):
                     if opt is not None and editableOverride:
-                        setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
+                        setvar(opt[1:], val, "strongs" if sect.startswith("strongsvar") else None, True, varcolour)
                     else:
-                        setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock, None)
+                        setvar(opt or "", val, "strongs" if sect.startswith("strongsvar") else None, not lock, None)
                 elif sect in FontModelMap and (categories is None or 'fontscript' in categories):
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
@@ -1791,9 +1805,11 @@ class ViewModel:
         changed = False
         for bk in self.getAllBooks():
             adj = self.get_adjlist(bk, save=False)
-            changed |= adj.save()
+            if adj is not None:
+                changed |= adj.save()
         if changed:
             self.triggervcs = True
+        return changed
 
     def saveStyles(self, force=False):
         if not force and self.configLocked():
@@ -1945,11 +1961,11 @@ class ViewModel:
         try:
             minexp = float(self.get("s_shrinktextlimit", "95")) / 100 * expand
         except ValueError:
-            minexp = 0.95 * self.expand
+            minexp = 0.95 * expand
         try:
             maxexp = float(self.get("s_maxtextlimit", "105")) / 100 * expand
         except ValueError:
-            maxexp = 1.05 * self.expand
+            maxexp = 1.05 * expand
         centre = 100
         adj = AdjList(int(expand * 100), int(minexp * 100), int(maxexp * 100), gtk=gtk, fname=fpath, tname=tpath)
         if os.path.exists(fpath):
