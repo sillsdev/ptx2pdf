@@ -159,7 +159,7 @@ jobs:
         retention-days: 7
   
   publish:
-    if: startsWith(github.ref_name, 'refs/tags/') # Only run for releases which are tagged.
+    if: startsWith(github.ref_name, 'refs/tags/') && endsWith(github.ref_name, '-testing') # Only run for releases which are tagged.
     environment:
       name: release
       url: https://software.sil.org/ptxprint/download/
