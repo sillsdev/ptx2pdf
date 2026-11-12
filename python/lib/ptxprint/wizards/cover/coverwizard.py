@@ -119,6 +119,8 @@ class WorkingCoverState:
         self.isbn_enabled: bool = False
         self.isbn: str = ""
         self.isbn_hpos: str = "inner"   # inner | centre | outer
+        # Gap between the ISBN box and the spine (or outer edge), so it is not hard against the fold
+        self.isbn_gap_mm: float = 10.0
 
         # Summary of the cover styles and periphs as the wizard left them (see ViewModel.coverFingerprint).
         # If they no longer match, something else has changed the cover since.
@@ -245,30 +247,44 @@ class WorkingCoverState:
                 break
 
         # ── Styles: background image ──────────────────────────────────
-        img_whole = se.getval("cat:coverwhole|esb", "BgImage", None)
-        img_front = se.getval("cat:coverfront|esb", "BgImage", None)
-        if img_whole and str(img_whole) not in ("", "None"):
-            self.img_primary_path = str(img_whole)
+        def _bgImage(part):
+            v = se.getval(f"cat:cover{part}|esb", "BgImage", None)
+            return str(v) if v and str(v) not in ("", "None") else None
+
+        def _readImage(part, which):
+            setattr(self, f"img_{which}_path", _bgImage(part))
+            scale = str(se.getval(f"cat:cover{part}|esb", "BgImageScale", "1x1"))
+            ofs = str(se.getval(f"cat:cover{part}|esb", "BgImageCropOfs", "0.5x0.5"))
+            fits = {v: k for k, v in self.cropOffsets.items()}
+            setattr(self, f"img_{which}_fit", "stretch" if scale == "1x1" else fits.get(ofs, "crop_centre"))
+            a = se.getval(f"cat:cover{part}|esb", "BgImageAlpha", None)
+            if a is not None:
+                try:
+                    setattr(self, f"img_{which}_opacity", max(0, min(100, int(float(a) * 100))))
+                except (ValueError, TypeError):
+                    pass
+
+        if _bgImage("whole"):
             self.coverage_pattern = "wrap_all"
-            scale = str(se.getval("cat:coverwhole|esb", "BgImageScale", "1x1"))
-            self.img_primary_fit = "stretch" if scale == "1x1" else "crop_centre"
-            a = se.getval("cat:coverwhole|esb", "BgImageAlpha", None)
-            if a is not None:
-                try:
-                    self.img_primary_opacity = max(0, min(100, int(float(a) * 100)))
-                except (ValueError, TypeError):
-                    pass
-        elif img_front and str(img_front) not in ("", "None"):
-            self.img_primary_path = str(img_front)
+            _readImage("whole", "primary")
+        elif _bgImage("front") and _bgImage("back"):
+            self.coverage_pattern = "front_back_separate"
+            _readImage("front", "primary")
+            _readImage("back", "secondary")
+        elif _bgImage("front"):
             self.coverage_pattern = "front_only"
-            scale = str(se.getval("cat:coverfront|esb", "BgImageScale", "1x1"))
-            self.img_primary_fit = "stretch" if scale == "1x1" else "crop_centre"
-            a = se.getval("cat:coverfront|esb", "BgImageAlpha", None)
-            if a is not None:
-                try:
-                    self.img_primary_opacity = max(0, min(100, int(float(a) * 100)))
-                except (ValueError, TypeError):
-                    pass
+            _readImage("front", "primary")
+        elif _bgImage("back"):
+            self.coverage_pattern = "back_only"
+            _readImage("back", "primary")
+
+        # ── Styles: ISBN box gap from the spine/edge ──────────────────
+        ind = se.getval("cat:ISBNbox|esb", "FirstLineIndent", None)
+        if ind is not None:
+            try:
+                self.isbn_gap_mm = round(float(ind) * self.indentUnitMm(view), 1)
+            except (ValueError, TypeError):
+                pass
 
         # ── Styles: text colours and sizes ────────────────────────────
         base_mt1 = _float("mt1", "FontSize", 12.0)
@@ -350,6 +366,8 @@ class WorkingCoverState:
         # ── Front cover ───────────────────────────────────────────────
         front = sections.get("coverfront", "")
         if front:
+            if r'\zvar|maintitle\*' not in front:
+                self.title = ""         # title deliberately left off the cover (it's in the artwork)
             cum_mm = 0.0
             for line in front.splitlines():
                 line = line.strip()
@@ -428,8 +446,29 @@ class WorkingCoverState:
     # The style settings the wizard writes. They are cleared on every cover marker before being applied,
     # so nothing from an earlier layout (e.g. another coverage pattern) is left behind.
     managedStyleKeys = ("Alpha", "BgColor", "BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha",
-                        "Border", "BorderStyle", "BorderRef", "BorderColor", "BorderFillColor",
+                        "BgImageOversize", "BgImageCropOfs", "Border", "BorderStyle", "BorderRef", "BorderColor", "BorderFillColor",
                         "BorderMargin", "BorderWidth")
+
+    # \BgImageCropOfs XxY for each crop fit: 0x0 anchors the image's bottom-left corner, 1x1 its top-right
+    # (see docs/documentation/covers.md). Matches what the preview draws in _paintPixbuf.
+    cropOffsets = {"crop_centre": "0.5x0.5", "crop_top": "0.5x1", "crop_bottom": "0.5x0",
+                   "crop_left": "0x0.5", "crop_right": "1x0.5"}
+
+    @staticmethod
+    def indentUnitMm(view):
+        """The size of one IndentUnit (Layout tab, set in inches) in mm."""
+        try:
+            return float(view.get("s_indentUnit") or 1.0) * 25.4
+        except (ValueError, TypeError):
+            return 25.4
+
+    def isbnIndent(self, view):
+        """The ISBN box's gap from the spine/edge as a FirstLineIndent value (in IndentUnits)."""
+        return round(max(0.0, self.isbn_gap_mm) / self.indentUnitMm(view), 3)
+
+    def hasTitle(self):
+        """The title is optional: it can be left blank when it is already part of the cover artwork."""
+        return bool(self.title.strip())
 
     def isbnPosition(self):
         """The Position of the ISBN box on the back cover. Inner is the spine side: the right of the
@@ -442,7 +481,7 @@ class WorkingCoverState:
     def updateView(self, view):
         for part in ("whole", "front", "spine", "back"):
             view.styleEditor.clearUserKeys(f"cat:cover{part}|esb", self.managedStyleKeys)
-        view.styleEditor.clearUserKeys("cat:ISBNbox|esb", ("Position",))
+        view.styleEditor.clearUserKeys("cat:ISBNbox|esb", ("Position", "FirstLineIndent"))
         def setfront(k, v, all=False):
             view.styleEditor.setval("cat:coverwhole|esb" if all else "cat:coverfront|esb", k, v)
         if self.border_enabled:
@@ -464,28 +503,39 @@ class WorkingCoverState:
             setfront("BgColor", None, all=True)
             setfront("Alpha", "0", all=True)
         setfront("Alpha", self.bg_opacity / 100, all=True)
-        for d in (True, False):
-            for c in ("BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha"):
-                setfront(c, None, all=d)
-        if self.img_primary_path:
-            wrap_all = self.coverage_pattern=="wrap_all"
-            setfront("BgImage", self.img_primary_path, all=wrap_all)
-            setfront("BgImageScaleTo", "colbleed", all=wrap_all)
-            setfront("BgImageScale", "1x1" if self.img_primary_fit == "stretch" else "1", all=wrap_all)
-            setfront("BgImageAlpha", self.img_primary_opacity / 100, all=wrap_all)
-            setfront("BgImageAlpha", 1 - (self.img_primary_opacity / 100), all=not wrap_all)
-            # Set Alpha (background-colour opacity) inversely on whichever cover style(s) carry
-            # the image, so high image-opacity → low white-overlay → image shows through.
-            inv_alpha = 1 - self.img_primary_opacity / 100
-            for _tgt in {
-                "wrap_all":            ["coverwhole"],
-                "front_only":          ["coverfront"],
-                "front_spine":         ["coverfront", "coverspine"],
-                "back_only":           ["coverback"],
-                "back_spine":          ["coverback", "coverspine"],
-                "front_back_separate": ["coverfront"],
-            }.get(self.coverage_pattern, ["coverfront"]):
-                view.styleEditor.setval(f"cat:{_tgt}|esb", "Alpha", inv_alpha)
+        for part in ("whole", "front", "spine", "back"):
+            for c in ("BgImage", "BgImageScale", "BgImageScaleTo", "BgImageAlpha", "BgImageOversize", "BgImageCropOfs"):
+                view.styleEditor.setval(f"cat:cover{part}|esb", c, None)
+        # Which cover panel(s) each image goes on: (panel carrying the image, extra panels sharing its
+        # transparency, image path, fit, opacity). This must match what the preview draws (_drawImages).
+        primary = (self.img_primary_path, self.img_primary_fit, self.img_primary_opacity)
+        secondary = (self.img_secondary_path, self.img_secondary_fit, self.img_secondary_opacity)
+        placements = {
+            "wrap_all":            [("coverwhole", [], primary)],
+            "front_only":          [("coverfront", [], primary)],
+            "front_spine":         [("coverfront", ["coverspine"], primary)],
+            "back_only":           [("coverback", [], primary)],
+            "back_spine":          [("coverback", ["coverspine"], primary)],
+            "front_back_separate": [("coverfront", [], primary), ("coverback", [], secondary)],
+        }.get(self.coverage_pattern, [])
+        for target, shared, (path, fit, opacity) in placements:
+            if not path:
+                continue
+            mkr = f"cat:{target}|esb"
+            view.styleEditor.setval(mkr, "BgImage", path)
+            view.styleEditor.setval(mkr, "BgImageScaleTo", "colbleed")
+            if fit in self.cropOffsets:
+                # Scale to cover the whole panel, then crop; the offset picks which part stays visible
+                view.styleEditor.setval(mkr, "BgImageScale", "x")
+                view.styleEditor.setval(mkr, "BgImageOversize", "crop")
+                view.styleEditor.setval(mkr, "BgImageCropOfs", self.cropOffsets[fit])
+            else:   # stretch: fill the panel exactly, ignoring the image's shape
+                view.styleEditor.setval(mkr, "BgImageScale", "1x1")
+            view.styleEditor.setval(mkr, "BgImageAlpha", opacity / 100)
+            # Set Alpha (background-colour opacity) inversely on the cover style(s) carrying the image,
+            # so high image-opacity → low white-overlay → image shows through.
+            for t in [target] + shared:
+                view.styleEditor.setval(f"cat:{t}|esb", "Alpha", 1 - opacity / 100)
             # todo: cropping images
         for m in (('mt1', 'title'), ('mt2', 'subtitle')):
             sz = float(view.styleEditor.getval(m[0], 'FontSize', 1.0))
@@ -494,7 +544,9 @@ class WorkingCoverState:
             if self.spine_enabled:
                 view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'FontSize', sz * 0.65 * getattr(self, "spine_text_size_pct") / 100)
                 view.styleEditor.setval(f"cat:coverspine|{m[0]}", 'Color', getattr(self, "spine_text_color").replace("#", "x"))
-        view.setvar('maintitle', self.title)
+        if self.hasTitle():
+            # Left alone when blank: maintitle may be used elsewhere (e.g. the title page)
+            view.setvar('maintitle', self.title)
         if self.subtitle_enabled:
             view.setvar('subtitle', self.subtitle)
         if self.langname_enabled:
@@ -502,6 +554,13 @@ class WorkingCoverState:
         if self.isbn_enabled:
             view.setvar('isbn', self.isbn)
             view.styleEditor.setval("cat:ISBNbox|esb", "Position", self.isbnPosition())
+            # Gap between the box and the edge it is aligned to: for an hl/hr sidebar, FirstLineIndent
+            # (in IndentUnits) is kerned in on that side. Padding on coverback must NOT be used for this:
+            # it moves the back cover's background image too.
+            view.styleEditor.setval("cat:ISBNbox|esb", "FirstLineIndent", self.isbnIndent(view))
+        # An earlier version of the wizard put the gap on the back cover as padding; remove it
+        view.styleEditor.setval("cat:coverback|esb", "BoxHPadding", None)
+        view.styleEditor.setval("cat:coverback|esb", "BoxBPadding", None)
         if self.spine_enabled and self.spine_width_computed_mm > 0.:
             view.set("l_spineWidth", str(self.spine_width_computed_mm))
             view.set("c_inclSpine", True)
@@ -551,8 +610,9 @@ class WorkingCoverState:
                         hremove += float(self.getBorderVal(view, f"cat:cover{a}|esb", v, p))
                 theight = pheight - vremove
                 twidth = pwidth - hremove
-                title_height = float(view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0))
-                bits.append((theight * self.title_position_pct / 100, title_height * linefactor, r"\mt1 \zvar|maintitle\*"))
+                if self.hasTitle():     # optional: the title may already be part of the cover image
+                    title_height = float(view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0))
+                    bits.append((theight * self.title_position_pct / 100, title_height * linefactor, r"\mt1 \zvar|maintitle\*"))
                 if self.subtitle_enabled:
                     subtitle_height = float(view.styleEditor.getval(f"cat:cover{a}|mt2", "LineSpacing", 1.0))
                     bits.append((theight * self.subtitle_position_pct / 100, subtitle_height * linefactor, r"\mt2 \zvar|subtitle\*"))
@@ -576,7 +636,7 @@ class WorkingCoverState:
                 theight = self.spine_width_computed_mm
                 text_height = view.styleEditor.getval(f"cat:cover{a}|mt1", "LineSpacing", 1.0)
                 parts = []
-                if self.spine_title:
+                if self.spine_title and self.hasTitle():
                     parts.append(r"\zvar|maintitle\*")
                 if self.spine_subtitle and self.subtitle_enabled:
                     parts.append(r"\zvar|subtitle\*")
@@ -598,8 +658,7 @@ class WorkingCoverState:
                     res.append(r'\esb \cat ISBNbox\cat*')
                     res.append(r'\zISBNbarcode|var="isbn" height="medium"\*')
                     res.append(r'\esbe')
-                    res.append(r'\zgap|10pt\*')
-                    res.append(r'\ztruetext*')
+                    res.append(r'\ztruetext*')     # the gap below comes from the back cover's BoxBPadding
             view.periphs['cover'+a] = "\n".join(res)
             view.updateFrontMatter()
             view.onLocalFRTclicked(None)
@@ -1108,6 +1167,7 @@ class CoverWizardApp:
             self._rv_spine_pub_logo.set_reveal_child(s.spine_pub_logo_enabled)
 
             # ── Step 6 ────────────────────────────────────────────────
+            self._sp_isbn_gap.set_value(s.isbn_gap_mm)
             self._c_backtext_enable.set_active(s.backtext_enabled)
             self._t_backtext.get_buffer().set_text(s.backtext)
             self._rv_backtext.set_reveal_child(s.backtext_enabled)
@@ -1138,10 +1198,7 @@ class CoverWizardApp:
         self.btn_back.set_sensitive(self._stepIndex > 0)
         self.btn_next.set_sensitive(self._stepIndex < total - 1)
         onLast  = self._stepIndex == total - 1
-        titleOk = bool(self.state.title.strip())
-        self.btn_finish.set_sensitive(onLast and titleOk)
-        if self._steps[self._stepIndex] == "pg_step4_front" and not titleOk:
-            self.btn_next.set_sensitive(False)
+        self.btn_finish.set_sensitive(onLast)
         self._updateCoverageWidgets()
         self._updateSpineHorizVisibility()
         self._updateSummary()
@@ -1695,13 +1752,14 @@ class CoverWizardApp:
         p = 4
         self._pack(p, makeLabel("Step 4 — Front cover text and illustration", bold=True))
         self._pack(p, makeLabel(
-            "Set the book's title and optionally a subtitle and language name."
+            "Set the book's title and optionally a subtitle and language name. "
+            "Leave the title blank if it is already part of your cover image. "
             "Drag the Pos % slider on the right of each element to set its "
             "vertical position (0 = top, 100 = bottom).", dim=True))
 
-        # Title (required)
+        # Title (optional: may already be in the cover artwork)
         title_frame = self._makeTextElementBlock(
-            "title", "Title * (required)", "Enter the book title…",
+            "title", "Title (optional)", "Enter the book title…",
             self.state.title_color, self.state.title_size_pct,
             self.state.title_position_pct, size_hi=400)
         self._pack(p, title_frame)
@@ -2000,6 +2058,7 @@ class CoverWizardApp:
         p = 6
         self._pack(p, makeLabel("Step 6 — Back cover content", bold=True))
 
+
         # Back text
         self._c_backtext_enable = makeCheck("Include back cover text (blurb)")
         self._c_backtext_enable.connect("toggled", self.onBacktextEnableToggled)
@@ -2043,6 +2102,19 @@ class CoverWizardApp:
         self._cb_isbn_hpos.connect("changed", self.onIsbnHposChanged)
         row_isbn_hpos.pack_start(self._cb_isbn_hpos, True, True, 0)
         isbn_inner.pack_start(row_isbn_hpos, False, False, 0)
+
+        row_isbn_gap = makeHBox(8)
+        row_isbn_gap.pack_start(makeLabel("Gap from spine or edge:", wrap=False), False, False, 0)
+        self._sp_isbn_gap = makeSpinner(self.state.isbn_gap_mm, 0, 50, step=1.0, digits=1)
+        self._sp_isbn_gap.set_tooltip_text(
+            "How far the ISBN box stays from the spine (Inner) or the outer edge (Outer),\n"
+            "so it is not lost in the fold or trimmed off. Printers usually ask for\n"
+            "at least 6 mm; hardcover books, which wrap round the board, need about 15 mm.\n"
+            "Not used when the box is centred.")
+        self._sp_isbn_gap.connect("value-changed", self.onIsbnGapChanged)
+        row_isbn_gap.pack_start(self._sp_isbn_gap, False, False, 0)
+        row_isbn_gap.pack_start(makeLabel("mm", wrap=False), False, False, 0)
+        isbn_inner.pack_start(row_isbn_gap, False, False, 0)
 
         self._rv_isbn = makeRevealer(isbn_inner)
         self._pack(p, self._rv_isbn)
@@ -2451,6 +2523,10 @@ class CoverWizardApp:
     def onIsbnHposChanged(self, widget):
         self.state.isbn_hpos = widget.get_active_id() or "inner"
         self._refresh()
+
+    def onIsbnGapChanged(self, widget):
+        self.state.isbn_gap_mm = widget.get_value()
+        self._refresh()
         
     def onLogoEnableToggled(self, widget):
         self.state.logo_enabled = widget.get_active()
@@ -2626,7 +2702,8 @@ class CoverWizardApp:
         if s.spine_enabled:
             self._drawSpineText(cr, s, spineX, topY, spinePx, panelH)
             self._drawSpinePublisher(cr, s, spineX, topY, spinePx, panelH)
-        self._drawBackContent(cr, s, backX, topY, backW, panelH, rtl)
+        pxPerMm = panelH / pheight_mm if pheight_mm > 0 else 2.0    # preview scale, for real distances
+        self._drawBackContent(cr, s, backX, topY, backW, panelH, rtl, pxPerMm)
 
     # ── Sub-renderers ─────────────────────────────────────────────────
 
@@ -2765,8 +2842,9 @@ class CoverWizardApp:
             cr.set_source_rgba(r,g,b,0.92)
             cr.move_to(tx, ty+fsize); cr.show_text(text)
 
-        drawTextLine(s.title.strip() or "TITLE",
-                     s.title_position_pct, s.title_color, s.title_size_pct, is_bold=True)
+        if s.hasTitle():
+            drawTextLine(s.title.strip(),
+                         s.title_position_pct, s.title_color, s.title_size_pct, is_bold=True)
         if s.subtitle_enabled:
             drawTextLine(s.subtitle.strip() or "(subtitle)",
                          s.subtitle_position_pct, s.subtitle_color, s.subtitle_size_pct, is_bold=False)
@@ -2791,7 +2869,7 @@ class CoverWizardApp:
     def _drawSpineText(self, cr, s, sx, sy, sw, sh):
         """Draw the main spine text (title / subtitle / language name)."""
         parts = []
-        if s.spine_title:    parts.append(s.title.strip() or "Title")
+        if s.spine_title and s.hasTitle(): parts.append(s.title.strip())
         if s.spine_subtitle and s.subtitle_enabled:
             parts.append(s.subtitle.strip() or "Subtitle")
         if s.spine_langname: parts.append(s.langname.strip() or "Language")
@@ -2878,7 +2956,7 @@ class CoverWizardApp:
                 cr.paint()
                 cr.restore()
 
-    def _drawBackContent(self, cr, s, bx, by, bw, bh, rtl):
+    def _drawBackContent(self, cr, s, bx, by, bw, bh, rtl, pxPerMm=2.0):
         curY = by + 14
         PAD  = 10
 
@@ -2961,22 +3039,24 @@ class CoverWizardApp:
         # ISBN + barcode
         if s.isbn_enabled:
             blkW = min(55, bw // 2); blkH = 32
-            isbnY = by + bh - blkH - 10
+            # TeX leaves about 10 mm below the box; the gap from the spine/edge is the user's setting
+            isbnY = by + bh - blkH - 10 * pxPerMm
+            GAP = max(1, s.isbn_gap_mm * pxPerMm)
 
             # Back panel is on the LEFT in LTR, so inner = right (spine side),
             # outer = left (outer edge). Flipped for RTL.
             if not rtl:
                 if s.isbn_hpos == "inner":    # near spine = right of back panel
-                    isbnX = bx + bw - blkW - PAD
+                    isbnX = bx + bw - blkW - GAP
                 elif s.isbn_hpos == "outer":  # near outer edge = left of back panel
-                    isbnX = bx + PAD
+                    isbnX = bx + GAP
                 else:                          # centre
                     isbnX = bx + (bw - blkW) // 2
             else:
                 if s.isbn_hpos == "inner":    # near spine = left of back panel
-                    isbnX = bx + PAD
+                    isbnX = bx + GAP
                 elif s.isbn_hpos == "outer":  # near outer edge = right of back panel
-                    isbnX = bx + bw - blkW - PAD
+                    isbnX = bx + bw - blkW - GAP
                 else:                          # centre
                     isbnX = bx + (bw - blkW) // 2
 
