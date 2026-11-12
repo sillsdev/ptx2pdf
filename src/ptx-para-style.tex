@@ -635,8 +635,8 @@
  \trace{H}{Starting par style #1 and ending the previous}%
  \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
-  \ifx\thisp@rcl@ss\undefined\else
-    \let\lastp@rclass\thisp@rcl@ss
+  \ifx\thisp@rclass\undefined\else
+    \let\lastp@rclass\thisp@rclass
   \fi
   \op@ninghooks{between-\m@rker}{#1}{\styst@k}% OR: #1\ifx\styst@k\empty\else+\styst@k\fi}??% Run any between old par an current
   \traceifset{p@rstyle}%

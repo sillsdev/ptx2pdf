@@ -2360,7 +2360,7 @@
     \s@tpage
     \resetvsize % reset size of next page since it will not have any 1 column material
     \global\holdinginserts=1
-    \ifrerunsavepartialpaged
+    \ifrerunsavepartialpaget % (the three column flag, as \savepartialpaget sets it)
       \ifvoid\s@vedpage
         \trace{o}{Not rerunning void box}%
         %\showlists
@@ -2368,7 +2368,7 @@
         \penalty0
       \else
         \trace{o}{Rerunning \the\ht\s@vedpage+\the\dp\s@vedpage \space through savepartialpaget}%
-        \global\output={\savepartialpagetounce}\global\rerunsavepartialpagetfalse\unvbox\s@vedpage
+        \global\output={\savepartialpagetbounce}\global\rerunsavepartialpagetfalse\unvbox\s@vedpage
       \fi
     \else
       \global\output={\threecols}%

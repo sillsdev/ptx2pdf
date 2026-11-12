@@ -106,8 +106,8 @@
 % Manual setting of ornament scale based on a single ornament and 1 or 2 dimensions
 \def\setornscale#1#2#3#4{\bgroup
   \get@ornamentDim{#2}%
-  \ifx\dimen1=0pt
-    \@notpgfornamentdim{#2}%
+  \ifdim\dimen1=0pt
+    \MSG{Ornament #2 has no size (is it a pgfornament?): cannot set the ornament scale from it}%
   \fi
   \edef\ornamentwidth{#3}%
   \edef\ornamentheight{#4}%
@@ -1670,7 +1670,7 @@
 \def\m@b@fallbackT{H}\def\m@b@fallbackB{H}
 \def\orn@Side{}
 \def\zSEQ{%
-  \ifnum 1= 1\ifx\orn@Side\undefined 0\fi\ifx\ifx\orn@Side\relax 0\fi\ifx\orn@Side\empty 0\fi\else
+  \ifnum 1= 1\ifx\orn@Side\undefined 0\fi\ifx\orn@Side\relax 0\fi\ifx\orn@Side\empty 0\fi\else
     \trace{orn}{!zSEQ called without a defined side. Defaulting to H}
     \def\orn@Side{H}%
   \fi

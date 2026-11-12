@@ -167,7 +167,7 @@
 
 %\def\LinkBorderstyle{}
 
-\def\pdfURL#1{\set@URLLinkBorderstyle\trace{A}{Appyling PDFurl}\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\@URLLinkBorderstyle\empty\else/BS<<\@URLLinkBorderstyle>>\fi/H/I\ifx\@GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
+\def\pdfURL#1{\set@URLLinkBorderstyle\trace{A}{Appyling PDFurl}\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\@URLLinkBorderstyle\empty\else/BS<<\@URLLinkBorderstyle>>\fi/H/I\ifx\URLLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
 
 \edef\h@shcatcode{\the\catcode`\#}
 \catcode`\#=12

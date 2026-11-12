@@ -387,13 +387,13 @@
       \advance\nth@line by 1
       \line{\hskip\dimen0
         \ifRTL
-          \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftbal\hfil\fi\fi\fi
+          \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftb@l\hfil\fi\fi\fi
           \lochcaer@f{\getnth@line}%
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\r@ght\hfil\fi\fi
         \else
           \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\r@ght\hfil\fi\fi
           \f@reachcol{\getnth@line}%
-          \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftbal\hfil\fi\fi\fi
+          \ifx\tr@lign\c@nter\hfil\else\ifx\tr@lign\l@ft\hfil\else\ifx\tr@lign\l@ftb@l\hfil\fi\fi\fi
         \fi
         \hskip\trmargin}%
       \ifnum\nth@line<\linec@unt \nobreak \fi

@@ -365,27 +365,27 @@ not looked at yet.
 
 ### TeX macros
 
-* `ptx-stylesheet.tex:2237` `\ifnum\pagetotal>0pt`: a dimension in `\ifnum`, so "pt" is
+* **[FIXED patches/bugs-tex.patch]** `ptx-stylesheet.tex:2237` `\ifnum\pagetotal>0pt`: a dimension in `\ifnum`, so "pt" is
   typeset when a book ends on the page it started with material on it (tested construct).
-* `ptx-output.tex:2362-2371` three-column trial tests the two-column flag
+* **[FIXED patches/bugs-tex.patch]** `ptx-output.tex:2362-2371` three-column trial tests the two-column flag
   (`\ifrerunsavepartialpaged`; `...paget` is set but never tested) and installs undefined
   `\savepartialpagetounce` (for `...tbounce`).
-* `ptxplus-marginalverses.tex:11` redefines `\getnum` (ptx-figure.tex:302's): with marginal
+* **[FIXED patches/bugs-tex.patch]** `ptxplus-marginalverses.tex:11` redefines `\getnum` (ptx-figure.tex:302's): with marginal
   verses on, `x-xetex="rotate=odd=42"` errors.
-* `ptx-char-style.tex:458` `\let\shdw@y\shdw@x` should be `\@@shdw@y`/`\@@shdw@x`: a
+* **[FIXED patches/bugs-tex.patch]** `ptx-char-style.tex:458` `\let\shdw@y\shdw@x` should be `\@@shdw@y`/`\@@shdw@x`: a
   one-value `\Shadow` errors.
-* `ornaments.tex:109-110` `\ifx\dimen1=0pt` (should be `\ifdim`) and undefined
+* **[FIXED patches/bugs-tex.patch]** `ornaments.tex:109-110` `\ifx\dimen1=0pt` (should be `\ifdim`) and undefined
   `\@notpgfornamentdim`.
-* `ptx-tables.tex:390, 396` `\l@ftbal` undefined (it's `\l@ftb@l`): LeftBal rows unbalanced.
-* `ptx-para-style.tex:638` `\thisp@rcl@ss` typo (for `\thisp@rclass`): `\lastp@rclass` never
+* **[FIXED patches/bugs-tex.patch]** `ptx-tables.tex:390, 396` `\l@ftbal` undefined (it's `\l@ftb@l`): LeftBal rows unbalanced.
+* **[FIXED patches/bugs-tex.patch]** `ptx-para-style.tex:638` `\thisp@rcl@ss` typo (for `\thisp@rclass`): `\lastp@rclass` never
   updated, so in a sidebar a heading after paragraphs loses its space before.
-* `ptx-attribute.tex:170` `\pdfURL` tests undefined `\@GOTOLinkBorderCol` (for
+* **[FIXED patches/bugs-tex.patch]** `ptx-attribute.tex:170` `\pdfURL` tests undefined `\@GOTOLinkBorderCol` (for
   `\URLLinkBorderCol`): an empty colour still writes `/C[]`.
-* `ornaments.tex:1673` doubled `\ifx` in `\zSEQ`: the `\orn@Side`=`\relax` fallback never fires.
-* `ptx-diglot.tex:232-233` `\SSsetLRspecific` uses undefined `\@orig`, `\pr@cessSpecific`
+* **[FIXED patches/bugs-tex.patch]** `ornaments.tex:1673` doubled `\ifx` in `\zSEQ`: the `\orn@Side`=`\relax` fallback never fires.
+* **[NOT A BUG: \\SSsetLRspecific and \\triallist are gone already; the gridone joint calculation has no caller (dead, harmless)]** `ptx-diglot.tex:232-233` `\SSsetLRspecific` uses undefined `\@orig`, `\pr@cessSpecific`
   (no callers). `3894` `\triallist` for `\tri@llist` (harmless). `2009-2030` gridone joint
   calc needs undefined `\diglotgridcolumn` (dead).
-* Flags nothing sets: `\ifdiglotSwap` (setter commented out in snippets.py:208),
+* **[OPEN: features without a UI setting (settable from ptxprint-mods.tex): add UI or remove — your call]** Flags nothing sets: `\ifdiglotSwap` (setter commented out in snippets.py:208),
   `\ifDgltHdrOffsetCenter`, `\ifreftooltip`.
-- Undefined markers kill TeX with a bare "Undefined control sequence" instead of a helpful message: a milestone with no stylesheet entry (`\zcustom-s |who="x"\* … \zcustom-e\*`), and `\u0000` (marker name followed by digits). `\zunknown …\zunknown*` and `\xyz` are fine. Found when OddUSFM's JUD started reaching TeX (usfmtc e72a391); taken out of the test data in patches/oddusfm-cleanup.patch.
-- Unclosed `\f` running into an unclosed `\fig` ends in "Argument of \getonep@ram has an extra }" — no hint of the real cause (also cleaned out of OddUSFM).
+- **[OPEN: TeX never sees unknown markers like \\zunknown, because Python drops them in the conversion; undefined milestones (and \\u0000) get through. The fix belongs there: drop and warn as for other unknown markers]** Undefined markers kill TeX with a bare "Undefined control sequence" instead of a helpful message: a milestone with no stylesheet entry (`\zcustom-s |who="x"\* … \zcustom-e\*`), and `\u0000` (marker name followed by digits). `\zunknown …\zunknown*` and `\xyz` are fine. Found when OddUSFM's JUD started reaching TeX (usfmtc e72a391); taken out of the test data in patches/oddusfm-cleanup.patch.
+- **[OPEN: not looked into further (the test data was cleaned instead)]** Unclosed `\f` running into an unclosed `\fig` ends in "Argument of \getonep@ram has an extra }" — no hint of the real cause (also cleaned out of OddUSFM).
