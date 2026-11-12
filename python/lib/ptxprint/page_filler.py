@@ -1362,6 +1362,7 @@ class PTXFiller:
         self.job = None
         self.hascash = False
         self.init_adjs = None       # the previous book's, which would be saved under its name
+        self.restarting = restart
         #print(f"Filling {bk}")
         if restart:
             adjlist = self.view.get_adjlist(bk, save=False)
@@ -1486,6 +1487,12 @@ class PTXFiller:
                 if lastchap != 0 and lastchap <= int(c):
                     break
                 hasshapes = any((s, a) in solver.shape_cache for a in range(-2, 3))
+                # The unadjusted line count, against which the deltas are measured. On a restart
+                # the first layout already has adjustments in it, so keep what the full fill found.
+                orig = solver.baseline_lines.get(s)
+                if not getattr(self, 'restarting', False):
+                    self.adjs.setdb(f"{bk} {key}[{para}]", "base", None, insert=False)     # the earlier name
+                    self.adjs.setdb(f"{bk} {key}[{para}]", "orig", None if orig is None else str(orig), insert=False)
                 for a in range(-2, 3):
                     keyv = f"{'p' if a >= 0 else 'm'}{abs(a)}"
                     if a == 0 and s in solver.forced_delta:

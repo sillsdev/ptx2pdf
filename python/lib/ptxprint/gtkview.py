@@ -7935,7 +7935,7 @@ Thank you,
             GLib.source_remove(self._progress_watch_id)
         self._progress_watch_id = GLib.timeout_add(1000, self._pollFillProgress)
         if self.bkProgressDlg is None:
-            self.bkProgressDlg = BookProgressDialog(self.builder.get_object("ptxprint"), self)  
+            self.bkProgressDlg = BookProgressDialog(self.mainapp.win, self)  
         self.bkProgressDlg.populate(bks)
 
     def onResumeFillClicked(self, widget, *a):
@@ -7990,7 +7990,7 @@ Thank you,
 
     def onProgressMonitorToggle(self, widget, *a):
         if self.bkProgressDlg is None:
-            self.bkProgressDlg = BookProgressDialog(self.builder.get_object("ptxprint"), self)
+            self.bkProgressDlg = BookProgressDialog(self.mainapp.win, self)
         if widget.get_active():
             if not self.bkProgressDlg._cells:
                 self.bkProgressDlg.populate(self.getBooks(), stop_sensitive=False)

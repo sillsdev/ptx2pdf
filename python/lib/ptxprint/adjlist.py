@@ -59,6 +59,7 @@ class AdjList:
         logger.log(15, f"{self.adjfile} ({self.centre}, +{self.highdiff}, -{self.lowdiff})")
         self.ftime = None
         self.db = []
+        self.savedVals = {}     # (bk, c:v, para) -> (stretch, expand) as last read or saved (i.e. printed)
 
     def copy(self, gtk=None):
         res = self.__class__(self.centre, self.lowdiff, self.highdiff, 
@@ -66,11 +67,16 @@ class AdjList:
         for row in self.liststore:
             res.liststore.append(list(row))
         res.db = [d.copy() for d in self.db]
+        res.savedVals = dict(self.savedVals)
         return res
 
     def clear(self):
         self.liststore.clear()
         self.db = []
+        self.savedVals = {}
+
+    def _snapshot(self):
+        self.savedVals = {(r[0], r[1], r[2]): (r[3], r[5]) for r in self.liststore}
 
     def __len__(self):
         return len(self.liststore)
@@ -150,6 +156,8 @@ class AdjList:
                         elif k == "mrk":
                             val[4] = v
                         else:
+                            if k == "base":     # the earlier name for orig
+                                k = "orig"
                             dbval[k] = v
                     val[6] = " ".join(f"{k}={v}" for k, v in dbval.items())
             logger.log(7, f"{lineno}: {val}, {dbval}")
@@ -172,6 +180,7 @@ class AdjList:
             self.db.append(dbvals[a])
         self.ftime = os.stat(fname).st_mtime
         self.changed = False
+        self._snapshot()
 
     def genline(self, i):
         r = self.liststore[i]
@@ -303,6 +312,7 @@ class AdjList:
         self.cleanup()
         self.createAdjlist()
         self.createTriggerlist()
+        self._snapshot()
         # possibly loop through the poly-glot configs here and then call createChanges with 
         # the right diglot letter, L,R,A,B,C and appropriate chfile for the other config.
         chfile = self.adjfile.replace(".adj", "_changes.txt")
@@ -400,6 +410,62 @@ class AdjList:
                 shapes[(rk, d)] = (e, s, float(n.group(3)) if n.group(3) else None)
                 probes.setdefault(rk, {})[(e, s)] = d
         return shapes, probes
+
+    shapeKeyRe = re.compile(r"^([pm])([0-2])$")
+    shapeValRe = re.compile(r"^(\d+)([+-]\d+)?(?:@(-?[\d.]+))?$")
+
+    def getSmartRow(self, parref):
+        """ Page filler results for a paragraph, for making the least distorting change.
+            Returns (row index, original lines, {delta: (expand:int, stretch:int, badness:float|None)},
+            current delta, saved delta) or None if there is no usable data. Delta 0 is always present
+            (the neutral setting, unless the filler found a better one). A delta is None if that
+            setting is not one the filler found (e.g. hand edited). The saved delta is that of the
+            setting when last read or saved, which is what the current PDF was made with. """
+        res = []
+        def mydoit(r, i):
+            d = self.db[i]
+            try:
+                orig = int(d.get("orig", ""))
+            except ValueError:
+                return
+            shapes = {}
+            for k, v in d.items():
+                m = self.shapeKeyRe.match(k)
+                n = self.shapeValRe.match(str(v)) if m else None
+                if n is None:
+                    continue
+                delta = int(m.group(2)) * (1 if m.group(1) == "p" else -1)
+                shapes[delta] = (int(n.group(1)), int(n.group(2) or 0),
+                                 float(n.group(3)) if n.group(3) else None)
+            if 0 not in shapes:
+                shapes[0] = (self.centre, 0, None)
+            def findDelta(stretch, expand):
+                try:
+                    vals = (int(expand), int(str(stretch).replace("+", "") or 0))
+                except ValueError:
+                    return None
+                if vals == (self.centre, 0):
+                    return 0
+                for delta, s in shapes.items():
+                    if s[:2] == vals:
+                        return delta
+                return None
+            currDelta = findDelta(r[3], r[5])
+            saved = self.savedVals.get((r[0], r[1], r[2]))
+            savedDelta = currDelta if saved is None else findDelta(*saved)
+            res.append((i, orig, shapes, currDelta, savedDelta))
+        self.changeval(parref, mydoit, insert=False)
+        return res[0] if res else None
+
+    def applyShape(self, rowIndex, expand, stretch, mrk=None):
+        """ Sets a row's expand and stretch to the given (absolute) values """
+        def mydoit(r, i):
+            self.liststore.set_value(r.iter, 5, int(expand))
+            self.liststore.set_value(r.iter, 3, f"{stretch:+d}" if stretch else "0")
+            if mrk is not None and not self.liststore.get_value(r.iter, 4):
+                self.liststore.set_value(r.iter, 4, mrk)
+            self.changed = True
+        self.changeval(rowIndex, mydoit)
 
     def _setTriggersInComment(self, key, comment, triggers):
 

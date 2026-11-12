@@ -8,7 +8,7 @@ from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.version import VersionStr
 from ptxprint.utils import _, f2s, uiLangCode, coltoonemax, getcaller, \
-    cleanParatextRef, sendRefToParatext, startfile
+    cleanParatextRef, sendRefToParatext, startfile, refKey
 from ptxprint.gtkutils import background_msg, pump_gtk
 from ptxprint.piclist import Piclist
 from ptxprint.gtkpiclist import PicList
@@ -71,6 +71,13 @@ mstr = {
     'growpic':    _("Grow by 1 line"),
     'shwdtl':     _("Show Details..."),
     'custom':     _("Custom"),
+    'smshrinkpara': _("Shrink Paragraph"),
+    'smshrinkcol':  _("Shrink Column"),
+    'smshrinkpage': _("Shrink Page"),
+    'smgrowpara':   _("Grow Paragraph"),
+    'smgrowcol':    _("Grow Column"),
+    'smgrowpage':   _("Grow Page"),
+    'classic':      _("Classic Adjustments"),
 }
 
 def mm_pts(n):
@@ -1323,13 +1330,23 @@ class PDFContentViewer(PDFFileViewer):
         parnum = getattr(parInfo, "parnum", 1) or 1
         return f"{ref}[{parnum}]" if parnum > 1 else ref
     
+    def _hasCropMargin(self):
+        """ Whether the typeset pages have the 36pt crop mark margin. As in texmodel, they only
+            do when printing 1-up: for 2-up etc. the crop marks are added to the sheet later. """
+        if not self.model.get("c_cropmarks"):
+            return False
+        try:
+            return int(float(self.model.get("fcb_pagesPerSpread") or 1)) < 2
+        except (TypeError, ValueError):
+            return True
+
     def _draw_guides(self, page, pindex, context, zoomlevel):
         def drawline(x, y, width, height, col):
             context.set_source_rgba(col[0], col[1], col[2], 1)
             context.rectangle(x, y, width, height)
             context.fill()
 
-        haveCrop = self.model.get("c_cropmarks")
+        haveCrop = self._hasCropMargin()
         pwidth, pheight = page.get_size()
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos,
                 headerlabel, footerlabel, hfontsizemms) = self.model.getMargins()
@@ -1393,7 +1410,7 @@ class PDFContentViewer(PDFFileViewer):
             context.rectangle(x, y, width, height)
             context.fill()
 
-        haveCrop = self.model.get("c_cropmarks")
+        haveCrop = self._hasCropMargin()
         pwidth, pheight = page.get_size()
         units = self.model.get("fcb_gridUnits")
         minordivs = int(self.model.get("s_gridMinorDivisions"))
@@ -1853,9 +1870,11 @@ class PDFContentViewer(PDFFileViewer):
             pnum = self.current_index
         p = None
         a = self.hbox.get_allocation()
+        self.lastParRect = None
 
         if self.parlocs is not None:
             p, r, a = self.parlocs.findPos(pnum, x, self.psize[1] - y, rtl=self.rtl_mode)
+            self.lastParRect = r        # which column of the paragraph was clicked
         return p, pnum, a
 
     def addMenuItem(self, menu, label, fn, *args, sensitivity=None, tooltip=None):
@@ -1925,6 +1944,7 @@ class PDFContentViewer(PDFFileViewer):
         # Check the state of the modifier keys
         ctrl_pressed = event.state & Gdk.ModifierType.CONTROL_MASK
         shift_pressed = event.state & Gdk.ModifierType.SHIFT_MASK
+        alt_pressed = event.state & Gdk.ModifierType.MOD1_MASK
 
         # This handles the release of the middle-mouse button for panning or resetting
         if event.button == 2: # middle click
@@ -1942,12 +1962,22 @@ class PDFContentViewer(PDFFileViewer):
             return True
 
         # Check if we are in the main content viewer and if any modifier key was pressed
-        if (ctrl_pressed or shift_pressed):
+        if (ctrl_pressed or shift_pressed or alt_pressed):
             # Get the paragraph information at the click location
-            parref, _, _ = self.get_parloc(widget, event)
-            
+            parref, pgindx, _ = self.get_parloc(widget, event)
+
+            # With page filler data: Shift = paragraph, Ctrl = column, Alt = page;
+            # Left = shrink, Right = grow. Without it, the classic actions below.
+            singleMod = [bool(ctrl_pressed), bool(shift_pressed), bool(alt_pressed)].count(True) == 1
+            if isinstance(parref, ParInfo) and event.button in (1, 3) and singleMod:
+                scope = 'para' if shift_pressed else 'col' if ctrl_pressed else 'page'
+                if scope in [sc for sc, m in self.smartScopes()] and self.smartAdjustClick(parref, pgindx, scope, -1 if event.button == 1 else 1):
+                    return True
+                if alt_pressed:
+                    return True     # no classic action for Alt
+
             # Proceed only if we clicked on a valid paragraph
-            if isinstance(parref, ParInfo):
+            if isinstance(parref, ParInfo) and (ctrl_pressed or shift_pressed):
                 parnum = getattr(parref, 'parnum', 0) or 0
                 parnum = f"[{parnum}]" if parnum > 1 else ""
                 ref = parref.ref
@@ -1994,6 +2024,48 @@ class PDFContentViewer(PDFFileViewer):
         return
         # to be implemented when there are OTHER kinds of UI Extensions (apart from Triggers)
         
+    def addClassicItems(self, menu, info, parref, b_bar, r_bar, shortcuts=True):
+        """ The original shrink/expand items (used when there is no page filler data) """
+        shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
+        shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
+        
+        # Shrink Line: Blue bar
+        self.addMenuItem(menu, f"{b_bar}    {shrinkText} ({parref.lines - 1})", 
+                         self.on_shrink_paragraph, info, parref,
+                         tooltip=None if not shortcuts else "Shift + Left-Click")
+        
+        # Shrink Text: Red bar
+        self.addMenuItem(menu, f"{r_bar}    {mstr['st']} ({shrLim}%)", 
+                         self.on_shrink_text, info, parref, 
+                         sensitivity=not info[1] <= shrLim,
+                         tooltip=None if not shortcuts else "Ctrl + Left-Click")
+                         
+        # Shrink Both: Uses Blue and Red bar
+        self.addMenuItem(menu, f"{b_bar}{r_bar} {mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", 
+                         self.on_shrink_both, info, parref, 
+                         sensitivity=not info[1] <= shrLim,
+                         tooltip=None if not shortcuts else "Ctrl + Shift + Left-Click")
+        
+        self.addMenuItem(menu, None, None)
+        
+        # Expand Line: Blue bar
+        self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})       {b_bar}", 
+                         self.on_expand_paragraph, info, parref,
+                         tooltip=None if not shortcuts else "Shift + Right-Click")
+        
+        # Expand Text: Red bar
+        expLim = min(self.expandLimit, info[1]+self.expandStep)
+        self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)       {r_bar}", 
+                         self.on_expand_text, info, parref, 
+                         sensitivity=not info[1] >= expLim,
+                         tooltip=None if not shortcuts else "Ctrl + Right-Click")
+
+        # Expand Both: Uses Blue and Red bar
+        self.addMenuItem(menu, f"{mstr['expandboth']} ({int(info[1])+self.expandBothAmt(info)}%)   {r_bar}{b_bar}", 
+                         self.on_expand_both, info, parref, 
+                         sensitivity=not info[1] >= expLim,
+                         tooltip=None if not shortcuts else "Ctrl + Shift + Right-Click")
+
     def show_context_menu(self, widget, event):
         self.autoUpdateDelay = float(self.model.get('s_autoupdatedelay', 3.0))
         self.last_click_time = time.time()
@@ -2033,46 +2105,15 @@ class PDFContentViewer(PDFFileViewer):
                 self.addMenuItem(menu, hdr, None, info, sensitivity=False)
                 self.addMenuItem(menu, None, None)
 
-                shrLim = max(self.shrinkLimit, info[1]-self.shrinkStep)
-                shrinkText = mstr['yesminus'] if ("-" in str(info[0]) and str(info[0]) != "-1") else mstr['tryminus']
-                
-                # Shrink Line: Blue bar
-                self.addMenuItem(menu, f"{b_bar}    {shrinkText} ({parref.lines - 1})", 
-                                 self.on_shrink_paragraph, info, parref,
-                                 tooltip="Shift + Left-Click")
-                
-                # Shrink Text: Red bar
-                self.addMenuItem(menu, f"{r_bar}    {mstr['st']} ({shrLim}%)", 
-                                 self.on_shrink_text, info, parref, 
-                                 sensitivity=not info[1] <= shrLim,
-                                 tooltip="Ctrl + Left-Click")
-                                 
-                # Shrink Both: Uses Blue and Red bar
-                self.addMenuItem(menu, f"{b_bar}{r_bar} {mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", 
-                                 self.on_shrink_both, info, parref, 
-                                 sensitivity=not info[1] <= shrLim,
-                                 tooltip="Ctrl + Shift + Left-Click")
-                
-                self.addMenuItem(menu, None, None)
-                
-                # Expand Line: Blue bar
-                self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})       {b_bar}", 
-                                 self.on_expand_paragraph, info, parref,
-                                 tooltip="Shift + Right-Click")
-                
-                # Expand Text: Red bar
-                expLim = min(self.expandLimit, info[1]+self.expandStep)
-                self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)       {r_bar}", 
-                                 self.on_expand_text, info, parref, 
-                                 sensitivity=not info[1] >= expLim,
-                                 tooltip="Ctrl + Right-Click")
-
-                # Expand Both: Uses Blue and Red bar
-                self.addMenuItem(menu, f"{mstr['expandboth']} ({int(info[1])+self.expandBothAmt(info)}%)   {r_bar}{b_bar}", 
-                                 self.on_expand_both, info, parref, 
-                                 sensitivity=not info[1] >= expLim,
-                                 tooltip="Ctrl + Shift + Right-Click")
-                
+                if self.smartState(parref) is not None:
+                    # The page filler's data is good for this paragraph: offer the smart choices
+                    self.addSmartItems(menu, parref, pgindx)
+                    self.addMenuItem(menu, None, None)
+                    classicMenu = Gtk.Menu()
+                    self.addClassicItems(classicMenu, info, parref, b_bar, r_bar, shortcuts=False)
+                    self.addSubMenuItem(menu, mstr['classic'], classicMenu)
+                else:
+                    self.addClassicItems(menu, info, parref, b_bar, r_bar)
                 self.addMenuItem(menu, None, None)
 
                 # Custom submenu (only show if UIExtensions.json has entries)
@@ -2430,6 +2471,157 @@ class PDFContentViewer(PDFFileViewer):
         self.show_pdf()
         self.hitPrint()
 
+    # Smart adjustments: use what the page filler found (the least distorting setting for
+    # each line delta of each paragraph, stored in the adjlist) to shrink or grow by one line.
+
+    def parAdjRef(self, p):
+        parnum = getattr(p, 'parnum', 0) or 0
+        return p.ref + (f"[{parnum}]" if parnum > 1 else "")
+
+    def smartState(self, p):
+        """ (adjlist, row index, shapes, current delta) if the filler data for this paragraph
+            can be trusted, else None """
+        if not isinstance(p, ParInfo) or not re.search(r'[.:]', p.ref):
+            return None
+        adj = self.model.get_adjlist(p.ref[:3].upper(), gtk=Gtk)
+        if adj is None:
+            return None
+        res = adj.getSmartRow(self.parAdjRef(p))
+        if res is None or res[3] is None or res[4] is None:
+            return None
+        idx, orig, shapes, curr, printed = res
+        # The PDF shows the paragraph as it was when last saved (printed), which may differ
+        # from now if it has been adjusted or reset since
+        if p.lines != orig + printed:
+            return None         # text, font, width etc. changed since the filler ran
+        return (adj, idx, shapes, curr)
+
+    def smartScopeParas(self, parref, pgindx, scope):
+        """ Paragraphs to choose from, those that start in the clicked column or page first and
+            then any that only continue into it """
+        if scope == 'para':
+            return [parref], []
+        rect = getattr(self, 'lastParRect', None)
+        col = rect.col if rect is not None and rect.pagenum == pgindx else None
+        started, continuing, seen = [], [], set()
+        for p, r in self.parlocs.getParas(pgindx):
+            if not isinstance(p, ParInfo) or p.pid() in seen:
+                continue
+            if scope == 'col' and (col is None or r.col != col or p.glot != parref.glot):
+                continue
+            seen.add(p.pid())
+            first = p.rects[0]
+            if first.pagenum == pgindx and (scope == 'page' or first.col == col):
+                started.append(p)
+            else:
+                continuing.append(p)
+        return started, continuing
+
+    def pickSmartTarget(self, parref, pgindx, scope, direction):
+        """ The paragraph to change by one line (direction -1 shrink, +1 grow) and how:
+            (paragraph, adjlist, row index, current delta, (expand, stretch, badness)) or None.
+            Undoing an earlier change in the other direction comes first, then least badness. """
+        for paras in self.smartScopeParas(parref, pgindx, scope):
+            best = None
+            for p in paras:
+                st = self.smartState(p)
+                if st is None:
+                    continue
+                adj, idx, shapes, curr = st
+                shape = shapes.get(curr + direction)
+                if shape is None:
+                    continue
+                undo = abs(curr + direction) < abs(curr)
+                distortion = abs(shape[0] - adj.centre) + 2 * abs(shape[1])
+                rank = (not undo, shape[2] is None, shape[2] or 0., distortion)
+                if best is None or rank < best[0]:
+                    best = (rank, (p, adj, idx, curr, shape))
+            if best is not None:
+                return best[1]
+        return None
+
+    def applySmart(self, target):
+        p, adj, idx, curr, shape = target
+        self.disableLayoutOnly()
+        adj.applyShape(idx, shape[0], shape[1], mrk=p.mrk)
+        self.show_pdf()
+        self.hitPrint()
+
+    def on_smart_adjust(self, widget, target):
+        self.applySmart(target)
+
+    def smartAdjustClick(self, parref, pgindx, scope, direction):
+        """ For a modifier click: True if a smart adjustment was made """
+        if self.smartState(parref) is None:
+            return False
+        target = self.pickSmartTarget(parref, pgindx, scope, direction)
+        if target is None:
+            return False
+        self.applySmart(target)
+        return True
+
+    def smartIcon(self, scope):
+        blue, grey = "#1E6FD9", "#A8A8A8"
+        def blk(ch, c):
+            return f'<span foreground="{c}">{ch}</span>'
+        return {'para': blk("▖", blue) + blk("▌", grey),
+                'col':  blk("▌", blue) + blk("▌", grey),
+                'page': blk("▌", blue) + blk("▌", blue)}[scope]
+
+    def addSmartMenuItem(self, menu, icon, text, fn, target, iconRight=False, tooltip=None):
+        """ A menu item with its icon on the left, or with the text and icon at the right """
+        item = Gtk.MenuItem()
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        lbl = Gtk.Label(label=text)
+        ilbl = Gtk.Label()
+        ilbl.set_markup(icon)
+        if iconRight:
+            lbl.set_xalign(1.0)
+            lbl.set_hexpand(True)
+            box.pack_start(lbl, True, True, 0)
+            box.pack_end(ilbl, False, False, 0)
+        else:
+            lbl.set_xalign(0.0)
+            box.pack_start(ilbl, False, False, 0)
+            box.pack_start(lbl, True, True, 0)
+        item.add(box)
+        item.set_sensitive(target is not None)
+        if tooltip is not None:
+            item.set_tooltip_text(tooltip)
+        if target is not None:
+            item.connect("activate", fn, target)
+        item.show_all()
+        menu.append(item)
+        return item
+
+    def smartScopes(self):
+        """ Paragraph always; column if there is more than one (glots count as columns);
+            page except for diglots/polyglots """
+        res = [('para', 'Shift')]
+        if self.isdiglot or self.model.get("c_doublecolumn"):
+            res.append(('col', 'Ctrl'))
+        if not self.isdiglot:
+            res.append(('page', 'Alt'))
+        return res
+
+    def addSmartItems(self, menu, parref, pgindx):
+        scopes = self.smartScopes()
+        for direction, dirkey, button in ((-1, 'shrink', _("Left-Click")), (1, 'grow', _("Right-Click"))):
+            for scope, mod in scopes:
+                target = self.pickSmartTarget(parref, pgindx, scope, direction)
+                text = mstr['sm' + dirkey + scope]
+                if target is not None:
+                    p, adj, idx, curr, shape = target
+                    detail = f"{shape[0]}% {shape[1]:+d}" if shape[1] else f"{shape[0]}%"
+                    if p is not parref:
+                        o = 4 if p.ref[3:4].isalpha() else 3     # skip a polyglot column letter
+                        detail = f"{p.ref[o:].replace('.', ':')} {detail}"
+                    text += f"  ({detail})"
+                self.addSmartMenuItem(menu, self.smartIcon(scope), text, self.on_smart_adjust, target,
+                                      iconRight=direction > 0, tooltip=f"{mod} + {button}")
+            if direction < 0:
+                self.addMenuItem(menu, None, None)
+
     def on_shrink_paragraph(self, widget, info, parref):
         if self.adjlist is not None:
             self.adjlist.increment(info[2], -1)
@@ -2457,8 +2649,13 @@ class PDFContentViewer(PDFFileViewer):
             for p, r in self.parlocs.getParasByColumnOrParref(parref=parref):
                 refs2del.append(adjKey(p))
         elif scope in ('page', 'doc'):
+            # compare chapter, verse, paragraph as numbers: as strings MRK10.1 < MRK9.38
+            def pos(p):
+                k = refKey(p.ref)
+                return (k[1], k[2], getattr(p, 'parnum', 0) or 1)
+            start = pos(parref)
             for p, r in self.parlocs.getParas(pgindx, inclafter = scope=='doc'):
-                if scope != "doc" or (p.book() == parref.book() and p.ref >= parref.ref):
+                if scope != "doc" or (p.book() == parref.book() and pos(p) >= start):
                     refs2del.append(adjKey(p))
         elif scope == 'sprd':
             for pg in self.get_spread(pgindx):

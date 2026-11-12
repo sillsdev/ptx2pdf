@@ -694,7 +694,7 @@ class Paragraphs(list):
             if isinstance(p, FigInfo):
                 lastpa = None
                 for pa, r in self.getParas(pnum, inclast=True):
-                    if pa.ref > p.ref:
+                    if refSort(pa.ref)[:3] > refSort(p.ref)[:3]:     # not as strings: MRK10.1 < MRK9.38
                         if lastpa is not None:
                             p.anchor_pid = lastpa.pid()
                         break
