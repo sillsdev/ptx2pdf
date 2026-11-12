@@ -422,10 +422,10 @@ Works only for a few simple PDF line-art images; most images have their own colo
 In front: good for PDF line art. Behind: better for .jpg photos.
 
 ### @fcb_sbiOversize
-**Ignore** lets the image stick out of the box. **Shrink** keeps its shape. **Squash** may change its shape. **Crop** is not working yet.
+**Ignore** lets the image stick out of the box. **Shrink** keeps its shape. **Squash** may change its shape. **Crop** keeps its shape and fills the box; the parts that stick out are cut off. Use **Crop Offset** to choose which part you keep.
 
 ### @t_sbiBgCropOfs
-Crop is not working yet. Leave it empty.
+Only used when **If Image Is Oversized** is **Crop**. Type two numbers from 0 to 1 with an "x" between them: first across, then up. **0x0** keeps the bottom-left corner, **1x1** keeps the top-right corner, **0.5x0.5** keeps the middle. For example, **0.5x1** keeps the top centre of the picture. If you leave it empty, the bottom-left corner is kept.
 
 ### @fcb_sbiScaleTo
 **inner** = text area, **box** = coloured box, **border** = border, **outer** = outermost of these, **bleed**/**colbleed** = past the page edge (mainly for covers).

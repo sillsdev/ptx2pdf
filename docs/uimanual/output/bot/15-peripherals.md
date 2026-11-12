@@ -62,18 +62,24 @@ starts a new cover. **Cancel (keep my settings)** keeps them; the wizard does no
    Arabic or Hebrew, whose books open on the other side.
 2. **Picture / decoration** – choose where the main picture goes (none, whole cover, front
    only, front and spine, back only, back and spine, or separate front and back pictures).
-   Choose the file, how it fits (stretch or crop), and its opacity. You can also add a
-   decorative border to the front cover.
+   Choose the file, how it fits, and its opacity. **Stretch / Shrink** fills the area exactly
+   but may change the picture's shape. The **Crop** choices keep the shape, fill the area and
+   cut off what sticks out; **Crop Top**, **Bottom**, **Left**, **Right** or **Centre** chooses
+   which part of the picture you keep. You can also add a decorative border to the front cover.
 3. **Background** – white, or a solid colour behind everything. (Gradient shading is not
    available yet.)
-4. **Front cover text** – type the title (required before you can go on). You can also add a
-   subtitle, the language name and a picture. Each item has a position slider (higher or lower),
+4. **Front cover text** – type the title. If the title is already part of your cover picture
+   (for example, you designed the cover in another program), leave it empty: no title is then
+   printed on the front cover or the spine. You can also add a subtitle, the language name and
+   a picture. Each item has a position slider (higher or lower),
    a colour and a size.
 5. **Spine text** (only when the book has a spine) – choose what to show (title, subtitle,
    language name), its colour, size, direction and position. (The publisher name on the spine
    is not available yet.)
 6. **Back cover** – add a short text (a "blurb"), an ISBN barcode and a logo, and choose
-   where they go.
+   where they go. For the ISBN box, **Gap from spine or edge** (10 mm unless you change it) keeps
+   the box away from the spine (**Inner**) or the outer edge (**Outer**). Printers usually ask for
+   at least 6 mm; for a hardcover book use about 15 mm.
 7. **Review** – check the summary and the preview, then click **Finish**.
 
 When you click **Finish**, PTXprint:

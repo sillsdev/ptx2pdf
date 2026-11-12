@@ -1621,6 +1621,29 @@ Values: 0–10 (default 1)
 
 The page filler works on slices: pieces of text that belong together across the columns, such as the same verses in each language. A slice is unbalanced when one column ends lower than another. This sets how much to avoid that, compared with stretching or shrinking paragraphs. Higher: columns end more evenly, but paragraphs may change more. Lower: paragraphs look more even, but one column may end a few lines lower. Change it only if your diglot columns are often uneven after page filling.
 
+###### Effort to narrow a big imbalance
+
+Number · Regular+ · `s_pbpolyimbnarrow` · cfg `texpert/pbpolyimbnarrow`  
+Values: 0–10 (default 0.5)
+
+> The cost of each line of whitespace in a polyglot slice after the first.  
+> A glot is only stretched or shrunk to end level with its slice, so this does not  
+> narrow gaps; it chooses between slice heights that leave different amounts of  
+> whitespace in glots that cannot reach them.  
+> Higher: prefer less whitespace, even at the cost of looser paragraphs.  
+> 0: any amount of whitespace is as bad as one line.  
+> Only relevant to diglot and polyglot projects
+
+###### Fill polyglot slices regardless of 1 line gaps
+
+Checkbox, off · Regular+ · `c_pbpolyfillslices` · cfg `texpert/pbpolyfillslices`
+
+> Normally a glot is only stretched or shrunk to end level with its slice, and never  
+> so as to leave a gap of 1 line, which looks like a mistake.  
+> On: fill slices as much as possible: a gap may be narrowed, even to 1 line.  
+> Headings are never made to wrap differently just to narrow a gap.  
+> Only relevant to diglot and polyglot projects
+
 ##### Other Miscellaneous Settings
 
 ###### Use \toc3 for Tab Text

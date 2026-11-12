@@ -1,6 +1,6 @@
 # PTXprint User Interface Manual (AI support edition)
 
-Generated 2026-10-27 from the PTXprint source code and the explanations in docs/uimanual/content.
+Generated 2026-11-12 from the PTXprint source code and the explanations in docs/uimanual/content.
 
 ## Notes for the AI support assistant
 
@@ -4655,7 +4655,7 @@ Make it wide enough for a few short words per line. The main text becomes narrow
 
 ##### Margin Notes on Left/Inner
 
-Checkbox, off · Regular+ · `c_marginNotesInner` · cfg `document/marginnotesinner`  
+Checkbox, off · Regular+ · `c_marginNotesInner` · cfg `paper/marginnotespos`, `document/marginnotesinner`  
 Also: Place Margin Notes on Left/Inner edge of page · Needs: “Margin Notes Col Width (mm)”
 
 > Margin Notes are normally placed on the Right/Outer edge of the page. But this can be changed for single column layouts to appear on the Left/Inner edge if needed. (Not available for two-column layouts.)
@@ -11668,21 +11668,23 @@ In front: good for PDF line art. Behind: better for .jpg photos.
 ###### If Image Is Oversized – Sidebar background image: Oversize management
 
 Drop-down · Regular+ · `fcb_sbiOversize`  
-Choices: Ignore (overflows frame) | Shrink (maintains ratio) | Squash (distorts ratio) | Crop (unimplemented)
+Choices: Ignore (overflows frame) | Shrink (maintains ratio) | Squash (distorts ratio) | Crop (fills frame)
 
 > Select what action should be taken if the background image size is specified with a single dimension (height or width) and the unspecified dimension ends up being too large for a given sidebar.
+>
+> Crop scales the image to fill the whole frame and trims what sticks out; use Crop Offset to choose which part is kept.
 
-**Ignore** lets the image stick out of the box. **Shrink** keeps its shape. **Squash** may change its shape. **Crop** is not working yet.
+**Ignore** lets the image stick out of the box. **Shrink** keeps its shape. **Squash** may change its shape. **Crop** keeps its shape and fills the box; the parts that stick out are cut off. Use **Crop Offset** to choose which part you keep.
 
 ###### Crop Offset – Sidebar background image: Crop offset (XxY)
 
 Text box · Regular+ · `t_sbiBgCropOfs`
 
-> (Not available yet: cropping is still to be implemented.)
->
-> Crop offset in the format XxY (e.g. 10x20). Only used when Oversize is set to Crop. Shifts the cropped region by X points horizontally and Y points vertically.
+> Crop offset in the format XxY (e.g. 0.5x0.5). Only used when Oversize is set to Crop. Chooses which part of the image stays visible. Each number runs from 0 to 1:  
+> 0x0 keeps the bottom-left corner, 1x1 keeps the top-right corner,  
+> 0.5x0.5 keeps the centre.
 
-Crop is not working yet. Leave it empty.
+Only used when **If Image Is Oversized** is **Crop**. Type two numbers from 0 to 1 with an "x" between them: first across, then up. **0x0** keeps the bottom-left corner, **1x1** keeps the top-right corner, **0.5x0.5** keeps the middle. For example, **0.5x1** keeps the top centre of the picture. If you leave it empty, the bottom-left corner is kept.
 
 ###### Scale To – Sidebar background image: Scale Image to Inner/Outer/Bleed area
 
@@ -12098,7 +12100,7 @@ Default 0.25 (a quarter of the line). Larger values allow more uneven lines; sma
 ###### Caller Raise – Note settings: Caller raise
 
 Number · Regular+ · `s_styCallerRaise`  
-Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
+Values: -20–20 · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Raise the caller in the main text by this number of points.
 
@@ -12107,7 +12109,7 @@ Leave it at 0 unless the caller sits too high or too low.
 ###### Note Caller Raise – Note settings: Note caller raise
 
 Number · Regular+ · `s_styNoteCallerRaise`  
-Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
+Values: -20–20 · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Raise the caller in the note by this number of points.
 
@@ -13855,6 +13857,29 @@ Values: 0–10 (default 1)
 
 The page filler works on slices: pieces of text that belong together across the columns, such as the same verses in each language. A slice is unbalanced when one column ends lower than another. This sets how much to avoid that, compared with stretching or shrinking paragraphs. Higher: columns end more evenly, but paragraphs may change more. Lower: paragraphs look more even, but one column may end a few lines lower. Change it only if your diglot columns are often uneven after page filling.
 
+###### Effort to narrow a big imbalance
+
+Number · Regular+ · `s_pbpolyimbnarrow` · cfg `texpert/pbpolyimbnarrow`  
+Values: 0–10 (default 0.5)
+
+> The cost of each line of whitespace in a polyglot slice after the first.  
+> A glot is only stretched or shrunk to end level with its slice, so this does not  
+> narrow gaps; it chooses between slice heights that leave different amounts of  
+> whitespace in glots that cannot reach them.  
+> Higher: prefer less whitespace, even at the cost of looser paragraphs.  
+> 0: any amount of whitespace is as bad as one line.  
+> Only relevant to diglot and polyglot projects
+
+###### Fill polyglot slices regardless of 1 line gaps
+
+Checkbox, off · Regular+ · `c_pbpolyfillslices` · cfg `texpert/pbpolyfillslices`
+
+> Normally a glot is only stretched or shrunk to end level with its slice, and never  
+> so as to leave a gap of 1 line, which looks like a mistake.  
+> On: fill slices as much as possible: a gap may be narrowed, even to 1 line.  
+> Headings are never made to wrap differently just to narrow a gap.  
+> Only relevant to diglot and polyglot projects
+
 ##### Other Miscellaneous Settings
 
 ###### Use \toc3 for Tab Text
@@ -14542,18 +14567,24 @@ starts a new cover. **Cancel (keep my settings)** keeps them; the wizard does no
    Arabic or Hebrew, whose books open on the other side.
 2. **Picture / decoration** – choose where the main picture goes (none, whole cover, front
    only, front and spine, back only, back and spine, or separate front and back pictures).
-   Choose the file, how it fits (stretch or crop), and its opacity. You can also add a
-   decorative border to the front cover.
+   Choose the file, how it fits, and its opacity. **Stretch / Shrink** fills the area exactly
+   but may change the picture's shape. The **Crop** choices keep the shape, fill the area and
+   cut off what sticks out; **Crop Top**, **Bottom**, **Left**, **Right** or **Centre** chooses
+   which part of the picture you keep. You can also add a decorative border to the front cover.
 3. **Background** – white, or a solid colour behind everything. (Gradient shading is not
    available yet.)
-4. **Front cover text** – type the title (required before you can go on). You can also add a
-   subtitle, the language name and a picture. Each item has a position slider (higher or lower),
+4. **Front cover text** – type the title. If the title is already part of your cover picture
+   (for example, you designed the cover in another program), leave it empty: no title is then
+   printed on the front cover or the spine. You can also add a subtitle, the language name and
+   a picture. Each item has a position slider (higher or lower),
    a colour and a size.
 5. **Spine text** (only when the book has a spine) – choose what to show (title, subtitle,
    language name), its colour, size, direction and position. (The publisher name on the spine
    is not available yet.)
 6. **Back cover** – add a short text (a "blurb"), an ISBN barcode and a logo, and choose
-   where they go.
+   where they go. For the ISBN box, **Gap from spine or edge** (10 mm unless you change it) keeps
+   the box away from the spine (**Inner**) or the outer edge (**Outer**). Printers usually ask for
+   at least 6 mm; for a hardcover book use about 15 mm.
 7. **Review** – check the summary and the preview, then click **Finish**.
 
 When you click **Finish**, PTXprint:

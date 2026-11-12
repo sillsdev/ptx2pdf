@@ -11915,7 +11915,7 @@ counts are invalid.</property>
         <col id="1" translatable="yes">distort</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Crop (unimplemented)</col>
+        <col id="0" translatable="yes">Crop (fills frame)</col>
         <col id="1" translatable="yes">crop</col>
       </row>
     </data>
@@ -12750,7 +12750,11 @@ as .JPG images do not have transparency.</property>
 the background image size is specified
 with a single dimension (height or width)
 and the unspecified dimension ends up
-being too large for a given sidebar.</property>
+being too large for a given sidebar.
+
+Crop scales the image to fill the whole
+frame and trims what sticks out; use
+Crop Offset to choose which part is kept.</property>
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">If Image Is
 Oversized:</property>
@@ -12770,7 +12774,11 @@ Oversized:</property>
 the background image size is specified
 with a single dimension (height or width)
 and the unspecified dimension ends up
-being too large for a given sidebar.</property>
+being too large for a given sidebar.
+
+Crop scales the image to fill the whole
+frame and trims what sticks out; use
+Crop Offset to choose which part is kept.</property>
                             <property name="halign">start</property>
                             <property name="model">ls_sbiOversize</property>
                             <property name="wrap-width">1</property>
@@ -12808,14 +12816,14 @@ being too large for a given sidebar.</property>
                           <object class="GtkEntry" id="t_sbiBgCropOfs">
                             <property name="name">Sidebar background image: Crop offset (XxY)</property>
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">(Not available yet: cropping is still to be implemented.)
-
-Crop offset in the format XxY (e.g. 10x20).
+                            <property name="tooltip-text" translatable="yes">Crop offset in the format XxY (e.g. 0.5x0.5).
 Only used when Oversize is set to Crop.
-Shifts the cropped region by X points horizontally
-and Y points vertically.</property>
+Chooses which part of the image stays visible.
+Each number runs from 0 to 1:
+0x0 keeps the bottom-left corner,
+1x1 keeps the top-right corner,
+0.5x0.5 keeps the centre.</property>
                             <property name="halign">start</property>
                             <property name="width-chars">10</property>
                             <property name="placeholder-text">e.g. 10x20</property>
