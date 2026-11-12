@@ -15,7 +15,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 ## Quick-win groupings
 
 - [#997](https://github.com/sillsdev/ptx2pdf/issues/997) + [#1049](https://github.com/sillsdev/ptx2pdf/issues/1049): picture settings not persisted across sessions (likely one cause).
-- [#1038](https://github.com/sillsdev/ptx2pdf/issues/1038) + [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246): footnote spacing with "Start each footnote on a new line" (likely one cause).
+- [#1038](https://github.com/sillsdev/ptx2pdf/issues/1038) + [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246): footnote spacing with "Start each footnote on a new line" (likely one cause). **2026-11-13:** #1038 closed as a duplicate of [#1069](https://github.com/sillsdev/ptx2pdf/issues/1069), which describes the footnote alignment problem best; it's TeX work, left for the TeX developers.
 - [#1202](https://github.com/sillsdev/ptx2pdf/issues/1202) and [#1204](https://github.com/sillsdev/ptx2pdf/issues/1204) are duplicates, so close one.
 - [#1171](https://github.com/sillsdev/ptx2pdf/issues/1171) (3.0.6 report) and [#1207](https://github.com/sillsdev/ptx2pdf/issues/1207) are marked "info needed". Retest before spending time.
 
@@ -30,8 +30,8 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | ~~[#997](https://github.com/sillsdev/ptx2pdf/issues/997)~~ | ~~Picture Details tab doesn't remember Media settings~~ | ~~Persistence bug; see grouping above.~~ **DONE** 2026-10-23: unchecking all of Print/App/Web saved `media="x"`, but reloading filtered the `x` away and fell back to the default (all active). `_loadrow` now keeps `x`. Not yet checked whether this also explains #1049. | |
 | ~~[#1049](https://github.com/sillsdev/ptx2pdf/issues/1049)~~ | ~~Disappearing image copyrights~~ | ~~Probably same cause as #997.~~ **DONE Fixed?** 2026-10-23: not the same cause as #997. Mostly already fixed by `ad816fdfb` (17 Oct 2026: `PicChecks.init` read the wrong folder, so credits were never read back and the next save discarded them). Also fixed: the first credit in a project was lost if you exited without clicking another picture (`writeCfg` bailed before `savepic`). Awaiting Alastair's confirmation. | |
 | [#1114](https://github.com/sillsdev/ptx2pdf/issues/1114) | diglot: text blocks ending with an end-title should be set as text | Fix described in the issue (vtop vs vbox). | |
-| [#1038](https://github.com/sillsdev/ptx2pdf/issues/1038) | Start each Footnote on a new line moves the footnote bottom down | Known workaround (±0.25 space) to bake in. | |
-| [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246) | Slight change in footnote spacing – observation | Likely same cause as #1038. | |
+| ~~[#1038](https://github.com/sillsdev/ptx2pdf/issues/1038)~~ | ~~Start each Footnote on a new line moves the footnote bottom down~~ | **CLOSED 2026-11-13 as a duplicate of [#1069](https://github.com/sillsdev/ptx2pdf/issues/1069)** (footnote alignment; TeX work, left for the TeX developers). Known workaround: ±0.25 space on `\f`. | |
+| [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246) | Slight change in footnote spacing – observation | Likely same cause as #1038, now tracked in [#1069](https://github.com/sillsdev/ptx2pdf/issues/1069). Left for the TeX developers with #1069. | |
 | [#1058](https://github.com/sillsdev/ptx2pdf/issues/1058) | Final page footnote misalignment | `\FinalNotesDowntrue` works around it; needs default or auto-detect. | |
 | [#1170](https://github.com/sillsdev/ptx2pdf/issues/1170) | Wishlist: automatically check usfmtc version | **ON BRANCH `usfmtc-version-check`, awaiting developer review before merging** (2026-11-13): new `usfmtccheck.py` holds `MinUsfmtcVersion` (0.4.10). Checked at startup in `main.py` and in `ptxprint.spec` at build time (frozen builds have no usfmtc metadata). Older usfmtc stops with the pip command to fix it; `PTXPRINT_USFMTC=warn` carries on, `=reset` records the older version (rollback), `=dev` records a newer one for committing. Tests in `test/test_usfmtccheck.py`. | |
 | ~~[#1180](https://github.com/sillsdev/ptx2pdf/issues/1180)~~ | ~~Save a Named Custom Page Size~~ | **DONE** 2026-10-23: typed sizes are saved (whole string) to `customPageSizes` in the user config and added to the dropdown; right-click the entry to remove one. | |
@@ -120,7 +120,7 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#854](https://github.com/sillsdev/ptx2pdf/issues/854) | Deficiencies in paragraphed footnotes | L | 🔺 | |
 | [#977](https://github.com/sillsdev/ptx2pdf/issues/977) | Drop Chapters and poetry | L | 🔺 | |
 | [#1024](https://github.com/sillsdev/ptx2pdf/issues/1024) | Multiple poetry verse number misalignment | M | | |
-| [#1038](https://github.com/sillsdev/ptx2pdf/issues/1038) | Start each footnote on a new line moves footnote bottom | S | | Same cause as #1246 |
+| ~~[#1038](https://github.com/sillsdev/ptx2pdf/issues/1038)~~ | ~~Start each footnote on a new line moves footnote bottom~~ | ~~S~~ **CLOSED** (duplicate of #1069) | | |
 | [#1044](https://github.com/sillsdev/ptx2pdf/issues/1044) | Page numbers off-centre on introduction pages | M | | |
 | [#1048](https://github.com/sillsdev/ptx2pdf/issues/1048) | DoulosSILCipher music notation mangled | M | | ❓ font/shaping |
 | [#1058](https://github.com/sillsdev/ptx2pdf/issues/1058) | Final page footnote misalignment | S | | |
@@ -133,7 +133,7 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#1235](https://github.com/sillsdev/ptx2pdf/issues/1235) | Psalms: `\c` and `\ms` order reversed | M | | ❓ |
 | [#1237](https://github.com/sillsdev/ptx2pdf/issues/1237) | Rare column miscalculation | L | 🔺 | ❓ may involve the page filler |
 | ~~[#1241](https://github.com/sillsdev/ptx2pdf/issues/1241)~~ | ~~Page Full Factor ignored~~ | ~~M~~ **DONE Fixed?** | | |
-| [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246) | Footnote spacing changes with option | S | | Same cause as #1038 |
+| [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246) | Footnote spacing changes with option | S | | Same cause as #1038 (closed); left for the TeX developers with #1069 |
 | [#1260](https://github.com/sillsdev/ptx2pdf/issues/1260) | Old coverpage configs break with newer macros | S | 🔺 | ❓ |
 | [#1271](https://github.com/sillsdev/ptx2pdf/issues/1271) | Picture captions can't be moved away from picture | S | | ❓ |
 
