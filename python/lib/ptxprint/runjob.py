@@ -326,6 +326,10 @@ class RunJob:
         if not len(donebooks):
             unlockme()
             return []
+        if all(out is None for out in donebooks):
+            # every book failed (and said why): running TeX on nothing only adds a misleading TeX error
+            self.fail(_("Nothing to print: none of the books or modules could be read"))
+            return []
         self.books += donebooks
         self.info["project/bookids"] = [r[0][0].first.book if r[1] else "MOD" for r in jobs]
         self.info["project/books"] = donebooks

@@ -1058,6 +1058,8 @@ class TexModel:
         if infpath is None:
             if re.match(".*?[/\\.]", bk):
                 infpath = os.path.join(prjdir, bk)  # assume module
+                if not os.path.exists(infpath):
+                    raise FileNotFoundError(_("Can't find the module file {}").format(infpath))
                 infpath = self.flattenModule(infpath, outdir)
                 if isinstance(infpath, tuple) and infpath[0] is None:
                     self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
