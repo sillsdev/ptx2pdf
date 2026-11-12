@@ -7,6 +7,8 @@ from ptxprint.multiprint import MultiPrint
 
 def printSetup(view, args):
     for k, v in args.items():
+        if k.startswith("__"):
+            continue
         view.setvar(k, v)
 
 # TreeStore layout:
@@ -251,6 +253,27 @@ class PublicationsView:
         new_val = not self.ts[titer][2]
         self.ts[titer][2] = new_val
         self._updateStatus()
+
+    def applyToView(self, view=None, pid=None):
+        if view is None:
+            view = self.view
+        if pid is None:
+            piter = self._currentParent()
+        else:
+            for piter, r in enumerate(self.ts):
+                if r[6] == pid:
+                    break
+            else:
+                return
+        row = self.ts[piter] 
+        books = row[1].strip()
+        if self._isModule(books):
+            view.set("r_book", "module")
+            view.moduleFile = books
+        else:
+            view.set("r_book", "multiple")
+            view.set("ecb_booklist", books)
+        printSetup(view, {cr[5]: cr[1] for cr in row.iterchildren()})
 
     def onPubEdited(self, widget, path, new_text):
         titer = self.ts.get_iter(path)

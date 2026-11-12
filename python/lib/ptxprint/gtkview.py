@@ -2596,6 +2596,10 @@ class GtkViewModel(ViewModel):
         print_count += 1
         self.set("_printcount", print_count, skipmissing=True)
 
+        pgid = Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(int(self.get("nbk_Main"))))
+        if pgid == "tb_Publications" and len(self.publications) and getattr(self, 'pubView', None) is not None:
+            self.pubView.applyToView(view=self)
+
         jobs = self.getBooks(files=True, errors=True)
         if not len(jobs) or jobs[0] == '':
             self.doStatus(_("No books to print"), warning=True)
