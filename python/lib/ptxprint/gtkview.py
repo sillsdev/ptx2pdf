@@ -7898,7 +7898,7 @@ Thank you,
             self.set("c_colophon", False)
             self.doStatus(_("Colophon updates have also been disabled in 'Layout Only' mode"))
 
-    def _onFillPagesClicked(self, resume=False):
+    def _onFillPagesClicked(self, resume=False, analyse=False):
         self.saveAdjlists()
         # save shared files once here; the parallel fill workers must not rewrite them
         self.savePics()
@@ -7913,6 +7913,7 @@ Thank you,
 
         args = argparse.Namespace(**vars(self.args))
         args.restart = resume
+        args.analyse = analyse
         tout = float(self.get("s_pbtimeout")) * 60
         if tout < 1:
             tout = None
@@ -7938,7 +7939,10 @@ Thank you,
         self._progress_watch_id = GLib.timeout_add(1000, self._pollFillProgress)
         if self.bkProgressDlg is None:
             self.bkProgressDlg = BookProgressDialog(self.mainapp.win, self)  
-        self.bkProgressDlg.populate(bks)
+        self.bkProgressDlg.populate(bks, mode="analyse" if analyse else "fill")
+
+    def onAnalyseOnlyClicked(self, widget, *a):
+        self._onFillPagesClicked(analyse=True)
 
     def onResumeFillClicked(self, widget, *a):
         self._onFillPagesClicked(resume=True)

@@ -191,7 +191,7 @@ class BuildParams:
 class ProgressEvent:
     book:   str
     page:   int
-    mode:   Literal["probe", "complete", "failed", "badpage", "goodpage", "page", "already_filled"]
+    mode:   Literal["probe", "complete", "failed", "badpage", "goodpage", "page", "already_filled", "analysed"]
     msg:    Optional[str] = None
     total:  Optional[int] = None
 

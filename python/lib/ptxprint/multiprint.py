@@ -264,7 +264,8 @@ class WorkerContext:
                     target_id,
                     stop=job.stop,
                     restart=job.build_params.args.restart,
-                    chapters=job.chapters
+                    chapters=job.chapters,
+                    analyse=getattr(job.build_params.args, 'analyse', False)
                 )
             else:
                 res = printer.solve(job.books)

@@ -648,6 +648,24 @@ class TestFill(_Run):
         self.run_ok("WSGlatin", "Default", "-j", "1", "-b", "2JN", cmd="fill")
         self.run_ok("WSGlatin", "Default", "-j", "1", "-b", "2JN", "--restart", "--stop", cmd="fill")
 
+    def test_analyse_keeps_adjustments(self):
+        ''' Analyse Only writes orig= and shapes, and keeps the user's own adjustments and comments '''
+        adjdir = os.path.join(self.tmpdir.name, "WSGlatin", "shared", "ptxprint", "Default", "AdjLists")
+        os.makedirs(adjdir, exist_ok=True)
+        adjfile = os.path.join(adjdir, "653JNWSGlatin-Default.SFM.adj")
+        with open(adjfile, "w", encoding="utf-8") as outf:
+            outf.write("3JN 1.5 -1 % keep this note\n")
+        out = self.run_ok("WSGlatin", "Default", "-j", "1", "-b", "3JN", "--analyse", cmd="fill")
+        self.assertIn("Analysed 3JN", out)
+        with open(adjfile, encoding="utf-8") as inf:
+            lines = inf.read().splitlines()
+        mine = [l for l in lines if l.startswith("3JN 1.5 ")]
+        self.assertEqual(1, len(mine), lines)
+        self.assertIn(" -1 ", mine[0])
+        self.assertIn("keep this note", mine[0])
+        self.assertIn("orig=", mine[0])
+        self.assertTrue(any("orig=" in l and l.startswith("3JN 1.1") for l in lines), lines)
+
 @pytest.mark.slow
 class TestPolyFill(_Run):
     ''' The polyglot filler '''
@@ -656,6 +674,10 @@ class TestPolyFill(_Run):
     def test_diglot_fill(self):
         out = self.run_ok("WSGlatin", "Diglot2JN", "-j", "1", cmd="fill")
         self.assertIn("Complete 2JN", out)
+
+    def test_diglot_analyse(self):
+        out = self.run_ok("WSGlatin", "Diglot2JN", "-j", "1", "--analyse", cmd="fill")
+        self.assertIn("Analysed 2JN", out)
 
     def test_diglot_fill_jas(self):
         shutil.copytree(os.path.join(testsdir, "projects", "aArp", "local", "figures"),

@@ -78,6 +78,7 @@ mstr = {
     'smgrowcol':    _("Grow Column"),
     'smgrowpage':   _("Grow Page"),
     'classic':      _("Classic Adjustments"),
+    'smartfirst':   _("Smart Shrink/Grow: Analyse First…"),
 }
 
 def mm_pts(n):
@@ -2114,6 +2115,13 @@ class PDFContentViewer(PDFFileViewer):
                     self.addSubMenuItem(menu, mstr['classic'], classicMenu)
                 else:
                     self.addClassicItems(menu, info, parref, b_bar, r_bar)
+                    if isinstance(parref, ParInfo) and re.search(r'[.:]', parref.ref):
+                        # Point the way to the smart choices, which need the paragraphs measured first
+                        self.addMenuItem(menu, None, None)
+                        self.addMenuItem(menu, "<i>" + GLib.markup_escape_text(mstr['smartfirst']) + "</i>",
+                                self.on_openAnalyse, tooltip=_("Smart Shrink and Grow make the least noticeable change "
+                                "to a paragraph, column or page. They need the paragraphs measured first, and again "
+                                "after the text or layout changes.\n\nThis opens Analyse & Fill: click Analyse Only."))
                 self.addMenuItem(menu, None, None)
 
                 # Custom submenu (only show if UIExtensions.json has entries)
@@ -2546,6 +2554,17 @@ class PDFContentViewer(PDFFileViewer):
         adj.applyShape(idx, shape[0], shape[1], mrk=p.mrk)
         self.show_pdf()
         self.hitPrint()
+
+    def on_openAnalyse(self, widget, *a):
+        """ Show the Analyse & Fill window, where Analyse Only measures the paragraphs """
+        btn = self.model.builder.get_object("btn_prvAutoFill")
+        if btn is None:
+            return
+        if btn.get_active() and getattr(self.model, 'bkProgressDlg', None) is not None:
+            self.model.refreshFillerBooks(force=True)
+            self.model.bkProgressDlg.show()
+        else:
+            btn.set_active(True)        # its handler fills in the books and shows the window
 
     def on_smart_adjust(self, widget, target):
         self.applySmart(target)

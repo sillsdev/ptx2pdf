@@ -235,6 +235,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     # Performance & Debugging
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
     parser.add_argument("--restart", action="store_true", default=False, help="fill: start from the current adjustments")
+    parser.add_argument("--analyse", action="store_true", default=False, help="fill: only measure how paragraphs can shrink or grow (Analyse Only), keeping the current adjustments")
     parser.add_argument("--stop", action="store_true", default=False, help="fill: stop each book at its first unfixable page")
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
     parser.add_argument('-l', '--logging', help="Logging level [DEBUG, INFO, WARN, ERROR, number]")

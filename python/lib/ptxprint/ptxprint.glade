@@ -15121,9 +15121,9 @@ Shortcut: Ctrl-P</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Analyse &amp; Fill: adjusts paragraph spacing so that
-every page ends full, for all the books in What to Print at once.
+every page ends full, for all selected books at once.
 
-Click to show or hide its window.</property>
+Click to Show/Hide the progress dialog.</property>
                 <property name="halign">end</property>
                 <property name="valign">center</property>
                 <signal name="toggled" handler="onProgressMonitorToggle" swapped="no"/>

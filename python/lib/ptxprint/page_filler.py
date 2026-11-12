@@ -820,20 +820,38 @@ class TypesetterSolver:
             else:
                 high = mid
 
-    def initial_probes(self, state, page, npages, restart=False, progress=True):
+    def fine_sweeps(self):
+        """ Analyse Only: the adaptive sweeps expected after the fixed ones. Each direction's
+            search halves its expansion range down to 1%, trying two looseness values at each
+            step (e.g. 100-105%: 3 steps x 2 = 6 sweeps each way) """
+        steps = lambda span: math.ceil(math.log2(span / 0.01)) if span > 0.01 else 0
+        ranges = {self.limits(p) for p in self.paragraph_order} or {(self.expand, self.minexp, self.maxexp)}
+        return max(2 * (steps(maxexp - expand) + steps(expand - minexp)) for expand, minexp, maxexp in ranges)
+
+    def initial_probes(self, state, page, npages, restart=False, progress=True, fine=False):
         """
         Executes vectorized full-document layout sweeps.
         Calls evaluate_paragraph_probe(pid) as a completely stateless helper.
+        fine (Analyse Only): also try looseness alone at the normal width, and keep refining
+            every paragraph's search down to 1% expansion (the AdjList's resolution) rather
+            than stopping once a fill has enough to work with. Ends without the final
+            neutral layout, returning None.
         """
+        expected = self.fine_sweeps() if fine else 0
+        total = 5 + expected if fine else 10
+        fineLimit = max(2 * expected, 8)      # in case a paragraph never settles
         def do_progress(sweep):
             if progress:
-                p = ProgressEvent(self.bk, sweep, "probe", "", self.numpages)
-                p.total = 10
+                p = ProgressEvent(self.bk, sweep, "probe", "analysing" if fine else "", self.numpages)
+                p.total = total
                 self.hooks.progress(p)
         sweep_count = 0
         all_pids = self.hooks.get_paragraphs_for_pages(page, page + npages)
         last_page = -1 if page + npages >= self.numpages else page + npages
-        for (lim, strch) in ((1, -1), (2, 1), (2, 2)):        # (minexp, -1), (maxexp, 1), (maxexp, 2)
+        fixed = ((1, -1), (2, 1), (2, 2))       # (minexp, -1), (maxexp, 1), (maxexp, 2)
+        if fine:
+            fixed += ((0, -1), (0, 1))          # (expand, -1), (expand, +1): looseness alone
+        for (lim, strch) in fixed:
             sweep_params = {pid: (self.limits(pid)[lim], strch) for pid in all_pids}
             layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
             self.collect_probes(layout, all_pids, sweep_params, page=page)
@@ -862,7 +880,11 @@ class TypesetterSolver:
                 logging.log(15, 
                     f"[Sweep #{sweep_count}] Priorities -> Pri2: {pri_counts[2]}, Pri1: {pri_counts[1]}, Pri0: {pri_counts[0]}, {requests=}"
                 )
-            if global_max_pri != 2:
+            if fine:
+                if global_max_pri == 0 or sweep_count > len(fixed) + fineLimit:
+                    logging.log(15, f"[Sweep #{sweep_count}] Analysis finished, {pri_counts=}")
+                    break
+            elif global_max_pri != 2:
                 if self.hooks.tracing:
                     logging.log(15, f"[Sweep #{sweep_count}] No Priority 2 probes remaining. Exiting sweep loop.")
                 break
@@ -876,6 +898,8 @@ class TypesetterSolver:
             self.collect_probes(layout, all_pids, sweep_params, page=page)
             do_progress(sweep_count)
 
+        if fine:
+            return None
         sweep_params = {pid: self.neutral(pid) for pid in all_pids}
         layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
         do_progress(sweep_count)
@@ -932,11 +956,17 @@ class TypesetterSolver:
         res = EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
         return res
 
-    def collect_probes(self, layout, paragraphs, params, isbase=False, page=0):
+    def collect_probes(self, layout, paragraphs, params, isbase=False, page=0, force=()):
+        """ Record what each paragraph's line count and spacing came to with these params.
+            force: paragraphs whose setting becomes the shape for the line change it gives,
+                however bad (Analyse Only keeps the user's own settings this way, so the
+                preview's smart adjustments know which delta each one is) """
         def test_para(p, r):
             if not isinstance(p, ParInfo):      # e.g. a picture
                 return False
             pid = p.pid()
+            if pid in force:
+                return True
             e, s = params.get(pid, (None, None))
             d = self.probe_cache.get(pid, {}).get((e, s), None)
             if d is None:
@@ -988,6 +1018,11 @@ class TypesetterSolver:
                 self.shape_cache[(p,0)] = (e, s, badness)
                 self.forced_delta.discard(p)
             key = (p, delta)
+            if p in force:
+                self.shape_cache[key] = (e, s, badness)
+                self.forced_delta.discard(p)
+                changes.append((key, e, s, badness))
+                continue
             sc = self.shape_cache.get(key, None)
             if not isbase:
                 if parwhites < 0.01:
@@ -1336,10 +1371,19 @@ class PTXFiller:
         if progress:
             self.hooks.progress(ProgressEvent(bk, None, "page", ""))
 
-    def solve(self, bk, stop=False, restart=False, chapters=None):
+    def solve(self, bk, stop=False, restart=False, chapters=None, analyse=False):
+        """ Fill the pages of a book. analyse (Analyse Only): measure how each paragraph can
+            shrink or grow, keeping the user's own adjustments, without filling anything. """
         self.bk = bk        # needed by run()
         if bk not in self.view.getAllBooks().keys():
             return None
+        userAdjs = None
+        if analyse:
+            restart = False
+            # Every layout run rewrites the book's AdjList (TeX reads it from the config), so keep
+            # the user's own, to be written back with the results however the analysis ends
+            adj = self.view.get_adjlist(bk, save=False)
+            userAdjs = adj.copy() if adj is not None else None
         self.clear_book_files(bk)
         # suppress peripherals
         oldvals = {}
@@ -1376,12 +1420,14 @@ class PTXFiller:
             init_layout = self.hooks.run_layout(None, parms, {}, -1, -1, genfiles=True)
         except TimeoutError:
             msg = "Stopped" if self.cancelled else "Timed out"
+            self._restoreUserAdjs(userAdjs)
             self.progress(ProgressEvent(bk, 0, "failed", msg=msg))
             self.printbk(bk, "T", progress=False)
             return (False, f"{msg}: {bk} before initial layout")
         self.init_adjs = self.adjs
         # (ok, message): ok is True if filled, False if typeset but not filled, None if it couldn't be typeset
         if init_layout is None:
+            self._restoreUserAdjs(userAdjs)
             self.printbk(bk, "!")
             return (None, f"Failed: {bk}")
         #print(f"Init laid out {bk}")
@@ -1390,6 +1436,7 @@ class PTXFiller:
             msg = "TeX error - see log" if self.job.res else "No page data"
             logger.warning(f"{bk}: initial layout produced no pages (xetex result {self.job.res}); "
                            f"see {self.job.outfname.replace('.tex', '.log')}")
+            self._restoreUserAdjs(userAdjs)
             self.progress(ProgressEvent(bk, 0, "failed", msg=msg))
             self.printbk(bk, "x", progress=False)
             return (None, f"Failed: {bk} {msg}")
@@ -1404,6 +1451,8 @@ class PTXFiller:
         self.hooks.basestate = state
         self.hooks.chapters = self.parlocs.chapters
         starttime = time()
+        if analyse:
+            return self.analyseOnly(bk, solver, state, userAdjs)
         #print(f"Solving {bk}")
         if restart:
             solver.shape_cache, solver.probe_cache = adjlist.get_cache()
@@ -1448,15 +1497,84 @@ class PTXFiller:
             print(f"\n{bk}: mean={statistics.mean(self.stats)}, median={statistics.median(self.stats)}, sd={statistics.stdev(self.stats)}, quantiles={statistics.quantiles(self.stats)}")
         return retval
         
+    def _restoreUserAdjs(self, userAdjs):
+        """ Analyse Only stopped early: put back the user's AdjList, which the layout runs overwrote """
+        if userAdjs is None:
+            return
+        userAdjs.copy().createAdjlist()     # a copy has no read time, so it is written, not reread
+
+    def analyseOnly(self, bk, solver, state, userAdjs):
+        """ Analyse Only: probe sweeps over the whole book, from its unadjusted layout, to find
+            for each paragraph the least distorting setting for each line change from -2 to +2
+            (written to the AdjList as orig= and m2..p2, for the preview's smart adjustments).
+            Nothing is filled: the user's own adjustments are kept, and each becomes the shape
+            for the line change it gives, so the preview knows where each paragraph stands. """
+        starttime = time()
+        self.restarting = False         # deltas are measured from the unadjusted layout: write orig=
+        solver.bk = bk
+        solver.init_state = state
+        solver.numpages = state.numPages()
+        solver.baseline_lines = dict(state.layout.paragraph_total_lines)
+        pids = solver.paragraph_order
+        known = set(pids)
+        def fix(pid):       # a polyglot paragraph without a parnum is [1] in the AdjList but [] here
+            if pid not in known and pid.endswith("[1]") and pid[:-3] + "[]" in known:
+                return pid[:-3] + "[]"
+            return pid
+        own = {} if userAdjs is None else {fix(k): v for k, v in userAdjs.get_params().items()}
+        own = {k: v for k, v in own.items() if k in known and v != solver.neutral(k)}
+        params = {p: solver.neutral(p) for p in pids}
+        params.update(own)
+        # Only paragraphs without a row of their own get one written: rewriting a row (setval)
+        # would lose its marker, comment and other values
+        inFile = set() if userAdjs is None else {p for p in pids if userAdjs.find(*self.adjKey(p))[1]}
+        newRows = {p: v for p, v in params.items() if p not in inFile}
+        msg = None
+        try:
+            solver.collect_probes(state.layout, pids, dict(state.paragraph_params), isbase=True, page=-1)
+            solver.initial_probes(state, -1, solver.numpages + 2, fine=True)
+            # lay out with the user's own settings (the AdjList TeX reads is now theirs again)
+            if userAdjs is not None:
+                self.init_adjs = userAdjs.copy()
+            layout = self.hooks.run_layout(solver, newRows, state.float_anchors, -1, -1)
+            if layout is None:
+                msg = "Failed"
+            elif own:
+                solver.collect_probes(layout, list(own), params, force=set(own))
+        except TimeoutError:
+            msg = "Stopped" if self.cancelled else "Timed out"
+        if userAdjs is not None:
+            self.init_adjs = userAdjs.copy()
+        self.createAdjs(newRows, solver)    # the user's AdjList, plus orig= and the shapes found
+        unlockme()
+        if self.cpu_q is not None and self.job is not None:
+            self.cpu_q.put((os.getpid(), self.job.cpu_seconds))
+        if msg is not None:
+            self.progress(ProgressEvent(bk, 0, "failed", msg, -1))
+            self.printbk(bk, "T", progress=False)
+            return (False, f"{msg}: analysing {bk} after {time()-starttime:.0f}s")
+        self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
+                os.path.basename(self.job.pdffile))
+        self.createAdjs(newRows, solver, file=self.job.pdffile.replace(".pdf", ".adjlist"))
+        self.job.xdvtopdf(self.job.outfname, self.job.pdffile)
+        changeable = sum(1 for p in pids if any((p, d) in solver.shape_cache for d in (-2, -1, 1, 2)))
+        self.progress(ProgressEvent(bk, changeable, "analysed", str(len(pids)), state.numPages()))
+        self.printbk(bk, "A", progress=False)
+        return (True, f"Analysed {bk}: {changeable} of {len(pids)} paragraphs can change, "
+                      f"in {time()-starttime:.0f}s")
+
+    def adjKey(self, s):
+        """ (book, c.v, para) of a paragraph id as its AdjList row has it """
+        (r, para) = self.pidkey(s)
+        if r[1] == 0 and r[5]:
+            key = f"{r[5]}"
+        else:
+            key = f"{r[1]}.{r[2]}{r[5]}"
+            para = para or 1
+        return self.bk + r[3], key, para       # r[3] is the polyglot column letter, if any
+
     def createAdjs(self, parparms, solver, lastchap=0, file=None):
-        def mkkey(s):
-            (r, para) = self.pidkey(s)
-            if r[1] == 0 and r[5]:
-                key = f"{r[5]}"
-            else:
-                key = f"{r[1]}.{r[2]}{r[5]}"
-                para = para or 1
-            return self.bk + r[3], key, para       # r[3] is the polyglot column letter, if any
+        mkkey = self.adjKey
         def getchap(key):
             c, _d = key.split('.', 1) if '.' in key else (key, None)
             try:
@@ -1508,6 +1626,9 @@ class PTXFiller:
                         v = None
                     if v is not None:
                         self.adjs.setdb(f"{bk} {key}[{para}]", keyv, v)
+                    elif not getattr(self, 'restarting', False):
+                        # orig= was just rewritten: a shape left from an earlier run doesn't belong with it
+                        self.adjs.setdb(f"{bk} {key}[{para}]", keyv, None, insert=False)
         self.adjs.createAdjlist(fname=file)
         if file is None:
             tname = self.view.getLocalTriggerFilename(self.bk)
