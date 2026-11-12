@@ -721,7 +721,9 @@ class Paragraphs(list):
                 opg = doc.get_page(r.pagenum)
                 if r.dests is None and opg is not None:
                     self.load_page(doc, opg, r.pagenum)
-                currlast = max(r.dests)
+                # r.dests holds (name, (x, y)) tuples; the last in reading order is the one carried onto this page
+                if r.dests:
+                    currlast = max(ParDest(n, r.pagenum, x, y) for n, (x, y) in r.dests)
                 continue
             if r.dests is None:
                 r.dests = [(currlast.name, (r.xstart, r.ystart))] if currlast is not None else []
