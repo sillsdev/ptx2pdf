@@ -231,7 +231,9 @@ class _ZipTree:
         else:
             with open(os.path.join(self.path, name), "rb") as inf:
                 data = inf.read()
-        for enc in ("utf-8-sig", "utf-16", "cp1252"):
+        # UTF-16 decodes almost any bytes, so only when it says so (a BOM); else a legacy file is cp1252
+        encs = ("utf-16",) if data[:2] in (b"\xff\xfe", b"\xfe\xff") else ()
+        for enc in ("utf-8-sig",) + encs + ("cp1252",):
             try:
                 return data.decode(enc)
             except UnicodeDecodeError:

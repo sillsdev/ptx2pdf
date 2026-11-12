@@ -4,7 +4,7 @@ from usfmtc import _filetypes
 from usfmtc.reference import Ref, RefList, RefRange
 from usfmtc.usfmparser import Grammar, Tag
 from usfmtc.usfmgenerate import Emitter
-from ptxprint.utils import universalopen, runChanges
+from ptxprint.utils import universalopen, runChanges, allbooks
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids, iterusxref
 from ptxprint.changes import readChanges
@@ -274,15 +274,17 @@ class UsfmCollection:
            self.booknames.readBookNames(bknamesp)
         else:
             tocre = re.compile(r"^\\toc(\d)\s+(.*)\s*$")
-            for bk in list(self.booknames.bookstrings.keys()):
+            for bk in allbooks:     # (booknames has none yet) those the project has
                 tocs = [""] * 3
                 bkfile = self.bkmapper(bk)
-                if bkfile is None or not len(bkfile):
+                if bkfile is None or not len(bkfile) or not os.path.exists(bkfile):
                     continue
                 nochap = True
-                with open(bkfile, encoding="utf-8") as inf:
+                with universalopen(bkfile) as inf:     # in the project's encoding, as get()
                     while nochap:
                         l = inf.readline()
+                        if not l:       # a book with no \c
+                            break
                         m = tocre.match(l)
                         if m:
                             r = int(m.group(1))
@@ -597,6 +599,7 @@ class Usfm:
 
     def normalise(self):
         ''' Normalise USFM in place '''
+        from usfmtc.usxmodel import canonicalise
         canonicalise(self.getroot())
 
     def transform_text(self, *regs, parts=[]):

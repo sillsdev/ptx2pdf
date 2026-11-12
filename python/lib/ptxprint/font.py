@@ -163,10 +163,14 @@ def parseFeatString(featstring, defaults={}, langfeats={}):
     base = defaults
     if featstring is not None and featstring:
         logging.debug(f"Parsing feature string {featstring}")
-        words = list(re.split(r'\s*[,;:]\s*|\s+', featstring))
+        featstring = re.sub(r"\s*=\s*", "=", featstring.strip())     # "liga = 0" is "liga=0"
+        words = [w for w in re.split(r'\s*[,;:]\s*|\s+', featstring) if w]
         if '=' in featstring:
             for l in words:
-                k, v = l.split("=")
+                if "=" not in l:
+                    logging.debug(f"Ignoring feature setting {l} in {featstring}")
+                    continue
+                k, v = l.split("=", 1)
                 if k.lower() == "language":
                     lang = v.strip()
                     base = langfeats.get(lang, base)
@@ -265,7 +269,7 @@ class TTFontCache:
             logger.debug(f"Add font path: {path}")
             self.fontpaths.append(path)
         for fname in os.listdir(path):
-            if fname.lower()[-4:] in (".ttf", ".ttc"):
+            if fname.lower()[-4:] in (".ttf", ".ttc", ".otf"):
                 fpath = os.path.join(path, fname)
                 f = TTFont(None, filename=fpath)
                 f.usepath = True
@@ -1092,14 +1096,16 @@ class FontRef:
         return self._iseq(other)
 
     def to_dict(self):
-        return {'name': self.name, 'style': self.style, 'isGraphite': self.isGraphite, 'isCtxtSpace': self.isCtxtSpace, 'feats': self.lang}
+        return {'name': self.name, 'style': self.style, 'isGraphite': self.isGraphite, 'isCtxtSpace': self.isCtxtSpace,
+                'feats': self.feats, 'lang': self.lang}
 
     @classmethod
     def fromConfig(cls, txt):
         bits = txt.split("|")
         isCtxtSpace = "false"
+        featlist = []
         if len(bits) < 4:
-            (name, styles, isGraphite) = bits
+            (name, styles, isGraphite) = (bits + ["", ""])[:3]     # (name|style|graphite, perhaps shorter)
         else:
             (name, styles, isGraphite) = bits[:3]
             if bits[3] not in ('true', 'false'):
@@ -1112,7 +1118,7 @@ class FontRef:
         if len(featlist):
             for s in featlist:
                 if len(s) and '=' in s:
-                    k, v = s.split("=")
+                    k, v = s.split("=", 1)
                     if k == "language":
                         lang = v
                     else:
@@ -1156,7 +1162,7 @@ class FontRef:
         return res
 
     def copy(self, cls=None):
-        res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.isCtxtSpace, self.feats)
+        res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.isCtxtSpace, dict(self.feats or {}), self.lang)
         res.isItalic = self.isItalic
         res.isBold = self.isBold
         return res
@@ -1191,16 +1197,15 @@ class FontRef:
         if f is None:
             return
         for l in re.split(r"[,;:]", featstring):
-            if not len(l):
+            if not len(l.strip()) or "=" not in l:
                 continue
-            k, v = l.split("=")
+            k, v = l.split("=", 1)
             if k.strip().lower() == "language":
                 self.lang = v.strip()
                 continue
-            elif self.isGraphite:
-                self.readFeats()
-                key = f.featnames.get(k.strip(), k.strip())
-                val = f.featvalnames.get(key, {}).get(v.strip(), v.strip())
+            elif self.isGraphite:      # (the font's feature names were read with it)
+                key = getattr(f, 'featnames', {}).get(k.strip(), k.strip())
+                val = getattr(f, 'featvalnames', {}).get(key, {}).get(v.strip(), v.strip())
             else:
                 key = k.strip().lstrip("+")
                 val = v.strip()
@@ -1217,7 +1222,7 @@ class FontRef:
         s = " ".join(newstyle)
         f = fontcache.get(self.name, s)
         if f is not None:
-            return FontRef(self.name, s, self.isGraphite, self.isCtxtSpace, self.feats)
+            return FontRef(self.name, s, self.isGraphite, self.isCtxtSpace, dict(self.feats or {}), self.lang)
         res = self.copy()
         if bold:
             f = fontcache.get(self.name, "Bold")

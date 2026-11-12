@@ -1,5 +1,6 @@
 
 import os
+from shutil import copytree
 from dataclasses import dataclass
 from ptxprint.ptsettings import ParatextSettings
 import logging
@@ -228,11 +229,11 @@ class Project:
             return False
         ldir = os.path.join(self.path, self.localdir, cfgid)
         sdir = os.path.join(self.path, self.shareddir, cfgid)
-        isshared = sdir == cdir
+        isshared = os.path.normpath(sdir) == os.path.normpath(cdir.path)     # (cdir is a ConfigDir)
         if isshared == toshared:
             return False
         ddir = sdir if toshared else ldir
-        copytree(cdir, ddir, symlinks=True, dirs_exist_ok=True)
+        copytree(cdir.path, ddir, symlinks=True, dirs_exist_ok=True)
         self.configs[cfgid] = ConfigDir(cfgid, ddir)
         return True
 

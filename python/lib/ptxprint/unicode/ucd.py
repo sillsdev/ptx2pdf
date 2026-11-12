@@ -211,10 +211,9 @@ class UCD(list):
         if not len(txt):
             return True
         qck = normtype+'_QC'
-        tv = self.enums[qck].index('N')
-        def testc(v):
-            return v[qck] == tv
-        if not all(testc(self[ord(c)]) for c in txt):
+        def notnormal(c):       # is (or may be) not normalised; unassigned characters are
+            return self[ord(c)] is not None and self.get(ord(c), qck) in ('N', 'M')
+        if any(notnormal(c) for c in txt):
             return False
         lastccc = self.get(ord(txt[0]), "ccc")
         for i in range(1, len(txt)):

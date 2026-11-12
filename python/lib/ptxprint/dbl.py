@@ -1,3 +1,4 @@
+from xml.sax.saxutils import quoteattr
 
 import xml.etree.ElementTree as et
 import re, os, shutil, io, logging
@@ -37,7 +38,7 @@ class BundleZip(ZipFile):
                 outf.write('  <book code="{}"'.format(b))
                 for i, c in enumerate(v):
                     if c is not None:
-                        outf.write(' {}="{}"'.format(fieldnames[i], c))
+                        outf.write(' {}={}'.format(fieldnames[i], quoteattr(c)))   # & " < in names
                 outf.write('/>\n')
             outf.write("</BookNames>\n")
 

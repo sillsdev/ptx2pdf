@@ -115,6 +115,25 @@ cats = {
     'intro': 'i(?:[bep]|m[iq]|o[rt]|p[iqr]|(?:mt[e]?|[oqs]|li|qis)[1234]?|ex|qt)',
     'table': 'tr|(?:t[hc][cr]?(?:[1-9]|10|11|12))'
 }
+def _stripcomment(l):
+    """ The line without its # comment: a # inside a quoted string (or escaped) isn't one """
+    quote = None
+    i = 0
+    while i < len(l):
+        c = l[i]
+        if c == "\\":
+            i += 2
+            continue
+        if quote is not None:
+            if c == quote:
+                quote = None
+        elif c in "'\"":
+            quote = c
+        elif c == "#":
+            return l[:i].rstrip()
+        i += 1
+    return l
+
 def _convprop(m, cats):
     s = m.group(2)
     if cats is not None and (t := re.match(r"mkr\s*=\s*(.*?)\s*$", s)) is not None:
@@ -124,7 +143,7 @@ def _convprop(m, cats):
             g = cats.get(b.strip(), None)
             if g is None:
                 continue
-            if i == 0 or b[2*i-1] == '+':
+            if i == 0 or bits[2*i-1] == '+':     # the operator before this category
                 curr |= g
             else:
                 curr -= g
@@ -189,7 +208,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
             while l.endswith("\\") and i < len(alllines):
                 l = l[:-1] + alllines[i].strip()
                 i += 1
-            l = re.sub(r"\s*#.*$", "", l)
+            l = _stripcomment(l)
             if not len(l):
                 continue
             contexts = []
@@ -216,22 +235,22 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
             if m:
                 try:
                     atref = RefList(m.group(1), strict=False, single=False)
-                except SyntaxError as e:
-                    atref = []
-                    atcontexts = [None]
+                except SyntaxError as e:     # skip the rule: [None] would apply it everywhere
                     doError("at reference error: {} in changes file at line {}: {}".format(str(e), i+1, l))
+                    continue
                 try:
                     for r in atref:
                         if getattr(r.first, 'chapter', None) in (None, 0):
                             atcontexts.append((r.book, None))
                             continue
                         for cr in r.allchaps():
+                            # each chapter of the reference (not just the first)
                             if cr.first.verse is None:
-                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\c\s)".format(r.chapter), flags=regex.S)))
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\c\s)".format(cr.first.chapter), flags=regex.S)))
                             elif cr.first.verse == 0:
-                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chapter), flags=regex.S)))
+                                atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(cr.first.chapter), flags=regex.S)))
                             else:
-                                for cv in r:
+                                for cv in cr:
                                     v = None
                                     if cv.first != cv.last:
                                         v = cv
@@ -246,6 +265,7 @@ def readChanges(fname, bk, passes=None, get_usfm=None, doError=printError, gramm
                                     atcontexts.append((cv.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(cv.chapter, outv), flags=regex.S|regex.V1)))
                 except (TypeError, ValueError, AttributeError) as e:     # a reference we can't expand
                     doError("at reference error: {} in changes file at line {}: {}".format(str(e), i+1, l))
+                    continue        # skip the rule
                 l = l[m.end():].strip()
             else:
                 atcontexts = [None]

@@ -308,55 +308,57 @@ not looked at yet.
 
 ### Pictures, styles, fonts, text processing
 
-* `piclist.py:615` `"(.*?)\\v "` is a vertical tab to the regex: pictures before verse 1 of a
+* **[FIXED patches/bugs-text.patch (pictures before verse 1, anchored at the verse after them, where TeX places them); OPEN: intro pictures — TeX has no verse to anchor them to and I couldn't confirm its paragraph reference in an intro]** `piclist.py:615` `"(.*?)\\v "` is a vertical tab to the regex: pictures before verse 1 of a
   chapter are never read; the intro block (no `\v`) is lost even when fixed (tested).
-* `piclist.py:908` `merge_fields` calls `Picture.update` (doesn't exist): importing chosen
+* **[FIXED patches/bugs-text.patch]** `piclist.py:908` `merge_fields` calls `Picture.update` (doesn't exist): importing chosen
   picture fields crashes (tested).
-* `piclist.py:334` `getattr(self, 'pgpos')` is always None (fields are in `self.fields`), so
+* **[FIXED patches/bugs-text.patch]** `piclist.py:334` `getattr(self, 'pgpos')` is always None (fields are in `self.fields`), so
   GLO `pgpos="p"` and USFM2 positions are overwritten in two-column layouts (tested).
-* `piclist.py:573` attribute regex `[a-z]+?=` drops hyphenated names' prefix: `x-credit` stored
+* **[FIXED patches/bugs-text.patch]** `piclist.py:573` attribute regex `[a-z]+?=` drops hyphenated names' prefix: `x-credit` stored
   as `credit`, `x-xetex` as `xetex` (tested).
-* `piclist.py:370` `(\d+(?:\.\d*))` needs a decimal point: `size="col*2"` loses its scale.
-* `xrefs.py:441-461` Strong's renderings: multi-word renderings never match (no `\s+`), `a/b`
+* **[FIXED patches/bugs-text.patch]** `piclist.py:370` `(\d+(?:\.\d*))` needs a decimal point: `size="col*2"` loses its scale.
+* **[FIXED patches/bugs-text.patch]** `xrefs.py:441-461` Strong's renderings: multi-word renderings never match (no `\s+`), `a/b`
   doesn't match `b a`, `*`/`**` lack separators (tested).
-* `xrefs.py:386` prefix/suffix swapped in `merge`; `WordForm.merge` (39/43) `.add` on None.
-* `xrefs.py:136` a blank line in an .xrf → IndexError (tested). `xrefs.py:198` `BaseBooks`
+  → The WSG-Strongs standard now differs (xfail): Strong's numbers in JHN now attach where
+  two-word renderings match. Update the standard once you've checked it.
+* **[FIXED patches/bugs-text.patch]** `xrefs.py:386` prefix/suffix swapped in `merge`; `WordForm.merge` (39/43) `.add` on None.
+* **[FIXED patches/bugs-text.patch]** `xrefs.py:136` a blank line in an .xrf → IndexError (tested). `xrefs.py:198` `BaseBooks`
   undefined; no `strongsfilter` for non-Strong's XML lists.
-* `xrefs.py:557-558` sets `parent.hasLocalBookNames` not `parent.ptsettings...`, so book names
+* **[FIXED patches/bugs-text.patch]** `xrefs.py:557-558` sets `parent.hasLocalBookNames` not `parent.ptsettings...`, so book names
   are rebuilt every time; writes `bookNames`, which nothing reads.
-* `usxutils.py:270-296` `makeBookNames` \toc fallback loops over an always-empty list; if
+* **[FIXED patches/bugs-text.patch]** `usxutils.py:270-296` `makeBookNames` \toc fallback loops over an always-empty list; if
   fixed, `while nochap` loops forever on a book with no `\c`; reads as UTF-8 whatever the
   project encoding. `usxutils.py:600` `normalise` uses undefined `canonicalise`.
 * **[FIXED patches/bugs-config.patch]** `utils.py` `cachedData` (xref files): cache keyed by basename + version only, so edits to a
   custom xref file are ignored and same-named files in two projects share a cache.
-* `utils.py:759` `special_regexes['BA']` missing `]` (tested). `utils.py:955`
+* **[FIXED patches/bugs-text.patch]** `utils.py:759` `special_regexes['BA']` missing `]` (tested). `utils.py:955`
   `UnzipDir.infolist` uses unimported `ZipInfo` (archive import from a folder).
-* `changes.py:192` `#` inside a quoted string is taken as a comment (tested).
-* `changes.py:220-221` a bad `at` reference applies the rule to every book (tested).
-* `changes.py:230/232` `at GEN 1-2` only applies to chapter 1 (`r.chapter` for `cr.chapter`)
+* **[FIXED patches/bugs-text.patch]** `changes.py:192` `#` inside a quoted string is taken as a comment (tested).
+* **[FIXED patches/bugs-text.patch]** `changes.py:220-221` a bad `at` reference applies the rule to every book (tested).
+* **[FIXED patches/bugs-text.patch]** `changes.py:230/232` `at GEN 1-2` only applies to chapter 1 (`r.chapter` for `cr.chapter`)
   (tested).
-* `changes.py:127` `\p{mkr=para+char}`: `+` tests the wrong list and subtracts (tested).
-* `unicode/ducet.py:64, 87, 237` implicit/fallback/tailored weights stored as bytes, not
+* **[FIXED patches/bugs-text.patch]** `changes.py:127` `\p{mkr=para+char}`: `+` tests the wrong list and subtracts (tested).
+* **[FIXED patches/bugs-text.patch]** `unicode/ducet.py:64, 87, 237` implicit/fallback/tailored weights stored as bytes, not
   tuples: sort keys crash for CJK and unlisted characters (TOC sort, Strong's reversal) (tested).
-* `unicode/UnicodeSets.py:179` `flatten` advances before its first yield: `[abc]` →
+* **[FIXED patches/bugs-text.patch]** `unicode/UnicodeSets.py:179` `flatten` advances before its first yield: `[abc]` →
   `['b','c']`, `[a-c]` → `['b']`; the LDML index letters (Strong's index) lose entries.
   `_expand` uses undefined `indices` (tested).
-* `unicode/ucd.py:213` `isnormalized` test inverted (`normal_ucd("é","NFD")` unchanged).
-* `font.py:268` `addFontDir` skips `.otf`.
-* `font.py:1158, 1219` `copy`/`fromStyle` drop `lang`. `font.py:1098` 3-field config →
+* **[FIXED patches/bugs-text.patch]** `unicode/ucd.py:213` `isnormalized` test inverted (`normal_ucd("é","NFD")` unchanged).
+* **[FIXED patches/bugs-text.patch]** `font.py:268` `addFontDir` skips `.otf`.
+* **[FIXED patches/bugs-text.patch (all but iscore); OPEN: `iscore = True` before its test looks deliberate — your call]** `font.py:1158, 1219` `copy`/`fromStyle` drop `lang`. `font.py:1098` 3-field config →
   UnboundLocalError. `font.py:168` `parseFeatString("smcp=1, liga = 0")` ValueError (tested).
   `font.py:1201` calls nonexistent `readFeats()` for `/GR` styles; `to_dict` (1095) stores
   `lang` under 'feats'. `font.py:1276` sets `iscore = True` just before testing it (project
   fonts always referenced by name; maybe intended).
-* `hyphen.py:190-196` Hunspell: `__init_`, `Dictioanry` typo, undefined `Dictionary` — the
+* **[FIXED patches/bugs-text.patch]** `hyphen.py:190-196` Hunspell: `__init_`, `Dictioanry` typo, undefined `Dictionary` — the
   spylls path can never work.
-* `dbl2ptx.py:236` tries UTF-16 before cp1252, so legacy cp1252 files decode as garbage.
-* `dbl.py:40` BookNames.xml attribute values not escaped (`&`, `"`).
-* `borderstyle.py:128` inner/outer borders round-trip as left/right ("All").
-* `imagestyle.py:158` `removeStyle` removes keys that never exist, leaving `Bg/FgImageScale`.
-* `interlinear.py:166` `int("12a")` for subverse refs.
-* `project.py:235` `shareConfig` uses unimported `copytree`.
-* `pdf/pdfsig.py:46` `isinstnace` typo. `pdf/pdfinish.py:218` `scale_to_fit` from another
+* **[FIXED patches/bugs-text.patch]** `dbl2ptx.py:236` tries UTF-16 before cp1252, so legacy cp1252 files decode as garbage.
+* **[FIXED patches/bugs-text.patch]** `dbl.py:40` BookNames.xml attribute values not escaped (`&`, `"`).
+* **[FIXED patches/bugs-text.patch]** `borderstyle.py:128` inner/outer borders round-trip as left/right ("All").
+* **[FIXED patches/bugs-text.patch]** `imagestyle.py:158` `removeStyle` removes keys that never exist, leaving `Bg/FgImageScale`.
+* **[FIXED patches/bugs-text.patch]** `interlinear.py:166` `int("12a")` for subverse refs.
+* **[FIXED patches/bugs-text.patch]** `project.py:235` `shareConfig` uses unimported `copytree`.
+* **[FIXED patches/bugs-text.patch]** `pdf/pdfsig.py:46` `isinstnace` typo. `pdf/pdfinish.py:218` `scale_to_fit` from another
   method (NameError). `xdv/xdv.py:131` `uint=unit` (NameError for 3-byte values), `245` `os`
   not imported (diffable mode). `xdv/layout.py` uses undefined `XDViPositionedReader` and bare
   `lspace` (module unusable). `xdv/colouring.py:188` `proc` undefined in `main`.

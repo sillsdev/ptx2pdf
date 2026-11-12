@@ -159,11 +159,12 @@ class Interlinear:
                 elif event == "end" and (skipping is None or e.tag != skipping):
                     if e.tag == "string":
                         curref = self.makeref(e.text)
-                        m = re.match(r"(\d+)[-,](\d+)", curref[1])
+                        m = re.match(r"(\d+)[a-z]*[-,](\d+)", curref[1])      # (subverses: 12a-13b)
                         if m:
                             vrange = list(range(int(m.group(1)), int(m.group(2))+1))
                         else:
-                            vrange = [int(curref[1]), 0]
+                            m = re.match(r"(\d+)", curref[1])     # 12a is verse 12
+                            vrange = [int(m.group(1)), 0] if m else []
                         lexemes = []
                     elif e.tag == "VerseData":
                         if e.get('Hash', "") != "":

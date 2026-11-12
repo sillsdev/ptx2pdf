@@ -331,7 +331,7 @@ class Picture:
                 self['pgpos'] = random.choice(self.picposns[suffix]['span'])
             else:
                 self['pgpos'] = "t"
-        elif getattr(self, 'pgpos', None) is None:
+        elif self.get('pgpos', None) is None:      # (the fields aren't attributes)
             posns = self.picposns[suffix].get(self.get('size', 'col'), self.picposns[suffix]["col"])
             if randomize:
                 self['pgpos'] = random.choice(posns)
@@ -372,7 +372,7 @@ class Picture:
                 self['loc'] = p
                 del self['pgpos']
         if (p := self.get('size', None)) is not None:
-            m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
+            m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)?|\.\d+))?$", p)    # col*2, col*0.5, col*.5
             if m:
                 self['size'] = m[1]
                 if m[2] is not None and len(m[2]):
@@ -575,13 +575,9 @@ class Piclist:
                         if bk == 'GLO':
                             pic.update(pgpos="p", scale="0.7")
                         if b[1]:    # usfm 3
-                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
-                            for l in labelParams:
-                                try:
-                                    k,v = l.split("=")
-                                    pic[k.strip()] = v.strip('"')
-                                except ValueError:
-                                    logger.debug(f"Invalid Picture parameter: {l} in {pic} found in {bk}")
+                            # names may have hyphens (x-credit, x-xetex) and values may have = in them
+                            for k, v in re.findall(r'([A-Za-z][\w-]*)\s*=\s*"([^"\\]*)"', f.group(2)):
+                                pic[k] = v
                             if 'media' not in pic:
                                 default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
                                 pic['media'] = 'paw' if default is None else default
@@ -617,10 +613,12 @@ class Piclist:
             else:
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
-                    m = re.match("(.*?)\\v ", t, re.S)
+                    # pictures before the first verse: TeX places a picture just before a verse number
+                    # (BKc.v-preverse), so these are anchored at the verse that follows them. (The intro,
+                    # before \c 1, has no verse to anchor to, so its pictures can't be listed.)
+                    m = re.match(r"(.*?)\\v (\d+[abc]?)", t, re.S)
                     if m is not None:
-                        s = m.group(1)
-                        self._readpics(s, bk, c, 0, isperiph, parent, sync=sync, fn=fn)
+                        self._readpics(m.group(1), bk, c, m.group(2), isperiph, parent, sync=sync, fn=fn)
                     for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
                         lastv = v[0]
                         s = v[1]
@@ -910,7 +908,9 @@ class Piclist:
                     best = lk
             if best is not None:
                 anchored[v['anchor']].remove(best)
-                self.pics[best].update({f: v[f] for f in fields if f in v})
+                for f in fields:        # (a Picture isn't a dict: no update())
+                    if f in v:
+                        self.pics[best][f] = v[f]
                 for a in ("scale", "mirror", "x-xetex"):
                     if a in fields and a not in v and a in self.pics[best]:
                         del self.pics[best][a]

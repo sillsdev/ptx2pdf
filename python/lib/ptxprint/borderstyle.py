@@ -125,7 +125,7 @@ class BorderStyle:
     def toStyle(self, tgt, mkr):
         self._tostylemap(tgt, mkr, fieldmap)
         bitfield = sum(1<<i if getattr(self, k, False) else 0 for i,k in enumerate(brdrs))
-        if bitfield == 15 or bitfield == 51: # t,b,l,r   or  t,b,i,o
+        if bitfield == 15: # t,b,l,r (t,b,i,o stays as it is: All reads back as l,r)
             bitfield = 64
         elif bitfield == 0: # none
             bitfield = 128

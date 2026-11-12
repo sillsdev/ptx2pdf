@@ -61,7 +61,8 @@ class DUCET(dict):
                     starti = int(start, 16)
                     for i in range(starti, int(end, 16)+1):
                         key = chr(i)
-                        self[key] = basev + b"\00\00\00\00" + pack(">H", i - starti + 0x8000) + b"\00\00\00\00"
+                        # (weights, is variable) as every other entry
+                        self[key] = (basev + b"\00\00\00\00" + pack(">H", i - starti + 0x8000) + b"\00\00\00\00", False)
                     continue
                 k, v = line.split(";", 1)
                 key = "".join(chr(int(x, 16)) for x in k.rstrip().split())
@@ -83,8 +84,9 @@ class DUCET(dict):
     def __getitem__(self, k):
         if k in self:
             return super().get(k)
-        elif len(k) == 1:
-            return pack(">H", (ord(k) >> 15) + 0xFBC0) + b"\00\00\00\00"
+        elif len(k) == 1:       # an unlisted character: UCA implicit weights (AAAA, BBBB)
+            return (pack(">H", (ord(k) >> 15) + 0xFBC0) + b"\00\00\00\00"
+                    + pack(">H", (ord(k) & 0x7FFF) | 0x8000) + b"\00\00\00\00", False)
         return None
 
     def _shifttest(self, val, variable, l4, folvar):
@@ -234,7 +236,7 @@ def tailored(tailoring, ducet=None):
                         a = _splitkey(res.sortkey(newkey[0:i-1]))[:3]
                         b = _splitkey(res.sortkey(newkey[i-1]))[:3]
                         nkey = [a[i] + b[i] for i in range(3)]
-                        res[newkey[0:i]] = _makekey(nkey)
+                        res[newkey[0:i]] = (_makekey(nkey), False)
                 # print("{}={}".format(repr(newkey), strkey(res.sortkey(newkey))))
                 lastbase = b"\00\00".join(basebits)
             else:

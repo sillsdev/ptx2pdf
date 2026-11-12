@@ -2,7 +2,7 @@
 
 # Parses xdv
 from struct import unpack, pack
-import logging
+import logging, os
 
 class Font:
     def __init__(self, fname):
@@ -128,8 +128,8 @@ class XDViReader:
         if not num:
             return []
         if size == 3:
-            return [self.readval(size, uint=unit) for i in range(num)]
-        fmt = ("bhxi" if uint else "BHXI")[size-1]
+            return [self.readval(size, uint=uint) for i in range(num)]
+        fmt = ("BHXI" if uint else "bhxi")[size-1]     # upper case is unsigned (as readval)
         d = self.readbytes(size * num)
         return list(unpack(f">{num}{fmt}", d))
 
@@ -270,7 +270,7 @@ class XDViReader:
         slen = self.readval(2, uint=True)
         poses = self.readvals(4, 2 * slen)
         pos = list(zip(poses[::2], poses[1::2]))
-        glyphs = self.readvals(2, slen)
+        glyphs = self.readvals(2, slen, uint=True)     # glyph ids are unsigned; positions (above) aren't
         return (parm, width, pos, glyphs, txt)
         # res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
         # self.out("xglyphs: {}".format(res))

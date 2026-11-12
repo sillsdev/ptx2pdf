@@ -770,7 +770,7 @@ def texprotect(s):
 wfreg = "\\p{L}\\p{M}\\p{Sk}\\-\u200C\u200D"
 special_regexes = {
     'ba': f'(?=$|[^{wfreg}])',
-    'BA': f'(?=$|[{wfreg})',
+    'BA': f'(?=$|[{wfreg}])',
     'bb': f'(?<=^|[^{wfreg}])',
     'BB': f'(?<=^|[{wfreg}])',
     'w': f'[{wfreg}]',
@@ -965,17 +965,16 @@ class UnzipDir:
         self.mode = mode
 
     def infolist(self):
+        """ As a ZipFile's: names relative to the folder, as open() and read() take them """
         res = []
-        for dp, dn, fn in os.walk(self.filename):
-            for f in fn:
-                fp = os.path.join(dp, f)
-                res.append(ZipInfo.from_file(os.path.join(self.filename, fp), arcname=fp))
+        for n in self.namelist():
+            res.append(zipfile.ZipInfo.from_file(os.path.join(self.filename, n), arcname=n))
         return res
 
     def namelist(self):
         res = []
         for dp, dn, fn in os.walk(self.filename):
-            res.extend([os.path.join(dp, f) for f in fn])
+            res.extend([os.path.relpath(os.path.join(dp, f), self.filename).replace("\\", "/") for f in fn])
         return res
 
     def open(self, name, mode='rb', encoding=None, **kw):
@@ -990,7 +989,7 @@ class UnzipDir:
         return res
 
     def extract(self, member, path=None, pwd=None):
-        copy2(os.path.join(os.filename, member), os.path.join(path, member) if path is not None else member)
+        copy2(os.path.join(self.filename, member), os.path.join(path, member) if path is not None else member)
 
     def extractall(self, path=None, members=None, pwd=None):
         for dp, dn, fn in os.walk(self.filename):

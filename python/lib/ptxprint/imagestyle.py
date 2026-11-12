@@ -161,6 +161,7 @@ class ImageStyle:
             if k == "filename":
                 k = ""
             tgt.setval(mkr, prefix + k.title(), None)
+        tgt.setval(mkr, prefix + "Scale", None)     # what toStyle writes for width and height
         if self.isbg:
             for k in bgfieldmap.keys():
                 suffix = bgkeynamemap.get(k, k.title())
