@@ -5,7 +5,7 @@ from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union
 from collections import deque, defaultdict
 from configparser import ConfigParser
 import heapq, re, os, logging, random, itertools, argparse, threading, queue as _queue
-import statistics, math
+import statistics, math, sys
 from bisect import bisect
 import multiprocessing as mp
 from math import sqrt, log10
@@ -54,6 +54,17 @@ def bookletter(bk):
         return ""
     i = booknumbers.get(bk, 0) - 1
     return bkltrs[i] if 0 <= i < len(bkltrs) else "?"
+
+def consoleprint(s):
+    """ Print a console progress tag. A Windows console (cp1252 etc.) can't encode some of
+        them (e.g. the ✓ for an already filled book), which would otherwise crash the worker """
+    try:
+        print(s, flush=True, end="")
+    except UnicodeEncodeError:
+        enc = getattr(sys.stdout, "encoding", None) or "ascii"
+        print(s.encode(enc, errors="replace").decode(enc), flush=True, end="")
+    except (OSError, ValueError, AttributeError):
+        pass        # no usable console (e.g. a GUI worker): the tags are only for watching
 
 all_probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1), (1.0, 0)]
 
@@ -375,7 +386,7 @@ class TypesetterSolver:
 
     def printbk(self, bk, page, extra="", progress=True, total=None):
         bkc = bookletter(bk)
-        print(bkc+str(page)+extra, flush=True, end="")
+        consoleprint(bkc+str(page)+extra)
         if progress:
             pe = ProgressEvent(bk, page, "page", "")
             pe.total = total or self.numpages
@@ -1367,7 +1378,7 @@ class PTXFiller:
 
     def printbk(self, bk, page, progress=True):
         bkc = bookletter(bk)
-        print(bkc+str(page), flush=True, end="")
+        consoleprint(bkc+str(page))
         if progress:
             self.hooks.progress(ProgressEvent(bk, None, "page", ""))
 
@@ -1699,7 +1710,7 @@ class PTXFiller:
         self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
         statusfile = self.job.outfname.replace(".tex", ".status")
         self.parsestatus(statusfile)
-        print(prompt, flush=True, end="")
+        consoleprint(prompt)
         return self.job.res
 
     def progress(self, pEvent):

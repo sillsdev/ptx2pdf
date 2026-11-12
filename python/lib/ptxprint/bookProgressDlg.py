@@ -278,9 +278,6 @@ class BookProgressDialog:
         self.lb_status = Gtk.Label()
         self.lb_status.set_xalign(0)
         self.lb_status.get_style_context().add_class("dim-label")
-        self.lb_status.set_tooltip_text(_("Elapsed: how long this run has taken so far.\n"
-            "CPU time: the processor time used by all the parallel workers added together.\n"
-            "When it is larger than the elapsed time, several processor cores are sharing the work."))
         leftcol.pack_start(self.lb_status, False, False, 0)
         self._showStatus(None, None)
 
@@ -417,11 +414,22 @@ class BookProgressDialog:
         return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
     def _showStatus(self, elapsed, cpuSecs):
-        """ Show the run's elapsed and CPU times in the footer; None shows a placeholder """
+        """ Show the run's elapsed and CPU times in the footer, and the speed-up from running
+            books in parallel (CPU time / elapsed); None shows a placeholder """
         none = "--:--:--"
-        self.lb_status.set_text(_("Elapsed {0}\nCPU time {1}").format(
-                none if elapsed is None else self._hms(elapsed),
-                none if cpuSecs is None else self._hms(cpuSecs)))
+        e = GLib.markup_escape_text
+        speedup = ""
+        tip = _("Elapsed: how long this run has taken so far.\n"
+                "CPU time: the processor time used by all the parallel workers added together.")
+        if elapsed and cpuSecs and elapsed >= 2:
+            factor = cpuSecs / elapsed
+            speedup = "  <b>×{:.1f}</b>".format(factor)
+            tip = _("Run one after another, these books would have taken about {0} (the CPU time).\n"
+                    "Running them in parallel has taken {1}: ×{2:.1f} is how many times faster that is.").format(
+                    self._hms(cpuSecs), self._hms(elapsed), factor)
+        self.lb_status.set_markup(e(_("Elapsed {0}").format(none if elapsed is None else self._hms(elapsed)))
+                + speedup + "\n" + e(_("CPU time {0}").format(none if cpuSecs is None else self._hms(cpuSecs))))
+        self.lb_status.set_tooltip_text(tip)
 
     def updateEvent(self, event, cpuSecs=0., elapsed=0.):
         """Route a ProgressEvent to the correct BookProgressCell."""
