@@ -451,7 +451,7 @@ lb_style_wg+strong-s c_strongsNoComments fcb_strongswildcards scr_strvarList tv_
 col_strvar_name col_strvar_value fcb_strongsNdxBookId c_strongs2cols c_strongsOpenIndex l_strongRag
 s_strongRag c_strongsNotes
 c_findBadGlyphs c_findCollisions c_findWhitespace c_findRivers c_findUnbalanced
-btn_zoom_fit btn_findButton bx_seekPage btn_prvAutoFill c_updatePDF l_updateDelay c_gridLines
+btn_zoom_fit btn_findButton bx_seekPage btn_prvAutoFill bx_prvAutoFill l_prvAutoFill c_updatePDF l_updateDelay c_gridLines
 c_gridGraph lb_adjustGrid c_layoutAnalysis l_analysisSettings scr_previewCover bx_previewCover
 scr_previewDiff bx_previewDiff scr_previewManual bx_previewManual btn_prvReport
 btn_anc_ok btn_anc_cancel t_newAnchor l_newAnchorMsg
@@ -5054,6 +5054,8 @@ class GtkViewModel(ViewModel):
         #self.builder.get_object("ptxprint").set_title(titleStr)
         if self.mainapp.win:
             self.mainapp.win.set_title(titleStr)
+        # the book selection may have changed: keep the Analyse & Fill window in step
+        self.refreshFillerBooks()
 
     def _locFile(self, file2edit, loc, fallback=False):
         fpath = None
@@ -7942,6 +7944,19 @@ Thank you,
         self._onFillPagesClicked(resume=True)
 
     def onRestartFillClicked(self, widget, *a):
+        # Start Fill throws away every adjustment in these books, so check first if there are any
+        adjusted = []
+        for bk in self.getBooks():
+            adj = self.get_adjlist(bk, save=False)
+            n = adj.adjustedCount() if adj is not None else 0
+            if n:
+                adjusted.append(f"{bk} ({n})")
+        if adjusted and not self.msgQuestion(_("Throw away existing adjustments?"),
+                _("These books already have paragraph adjustments: {0}\n\n"
+                  "Start Fill begins again from scratch and throws them all away, including any you made by hand. "
+                  "To keep them and only fill the pages that still need it, use Resume Fill instead.\n\n"
+                  "Throw them away and start again?").format(", ".join(adjusted))):
+            return
         self._onFillPagesClicked(resume=False)
 
     def _pollFillProgress(self):
@@ -7951,15 +7966,16 @@ Thank you,
         if q is None:
             self._progress_watch_id = None
             return GLib.SOURCE_REMOVE
-        usage = int(mprint.sample_usage())
+        mprint.sample_usage()
+        cpuSecs = mprint.totalCpuSecs
         elapsed = time.time() - mprint.time
         try:
             while True:
                 event = q.get_nowait()
                 if event is not None:
-                    self._fill_progress(event, usage=usage, elapsed=elapsed)
+                    self._fill_progress(event, cpuSecs=cpuSecs, elapsed=elapsed)
         except queue.Empty:
-            self._fill_progress(None, usage=usage, elapsed=elapsed)
+            self._fill_progress(None, cpuSecs=cpuSecs, elapsed=elapsed)
 
         if mprint.is_finished():
             self._progress_watch_id = None
@@ -7983,17 +7999,32 @@ Thank you,
         if self.mprint is not None:
             self.mprint.cancel()
 
-    def _fill_progress(self, event, usage=0., elapsed=0.):
+    def _fill_progress(self, event, cpuSecs=0., elapsed=0.):
         if self.bkProgressDlg is None:
             return
-        self.bkProgressDlg.updateEvent(event, usage=usage, elapsed=elapsed)
+        self.bkProgressDlg.updateEvent(event, cpuSecs=cpuSecs, elapsed=elapsed)
+
+    def isFilling(self):
+        """ True while an Analyse & Fill run is under way """
+        return getattr(self, '_progress_watch_id', None) is not None
+
+    def refreshFillerBooks(self, force=False):
+        """ Show the books in What to Print in the Analyse & Fill window. The bars are only
+            rebuilt when the book list has changed (so the last run's results stay visible
+            for the same books), never during a run, and only while the window is shown
+            unless force is set. """
+        dlg = getattr(self, 'bkProgressDlg', None)
+        if dlg is None or self.isFilling() or not (force or dlg.window.get_visible()):
+            return
+        bks = list(self.getBooks())
+        if bks != list(dlg._cells.keys()):
+            dlg.populate(bks, running=False)
 
     def onProgressMonitorToggle(self, widget, *a):
         if self.bkProgressDlg is None:
             self.bkProgressDlg = BookProgressDialog(self.mainapp.win, self)
         if widget.get_active():
-            if not self.bkProgressDlg._cells:
-                self.bkProgressDlg.populate(self.getBooks(), stop_sensitive=False)
+            self.refreshFillerBooks(force=True)
             self.bkProgressDlg.show()
         else:
             self.bkProgressDlg.hide()

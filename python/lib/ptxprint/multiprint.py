@@ -430,6 +430,7 @@ class MultiPrint:
         self.time = time.time()
         self.prev_cpu_times = {}
         self.total_gops = 0.
+        self.totalCpuSecs = 0.      # processor time used by all the workers added together
 
     def sample_usage(self):
         freq = psutil.cpu_freq()
@@ -457,6 +458,7 @@ class MultiPrint:
                 break
             tick_cpu_seconds += child_cpu
         self.total_gops += tick_cpu_seconds * current_ghz
+        self.totalCpuSecs += tick_cpu_seconds
         return self.total_gops
 
     def wait(self, timeout:Optional[float] = None) -> list:

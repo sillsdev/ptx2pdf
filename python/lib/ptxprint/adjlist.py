@@ -70,6 +70,18 @@ class AdjList:
         res.savedVals = dict(self.savedVals)
         return res
 
+    def adjustedCount(self):
+        """ How many paragraphs have an adjustment (a line change or a non-default expansion) """
+        n = 0
+        for r in self.liststore:
+            try:
+                stretch = int(r[3] or 0)
+            except ValueError:
+                stretch = 1     # unexpected text: count it rather than risk losing it
+            if stretch != 0 or r[5] != self.centre:
+                n += 1
+        return n
+
     def clear(self):
         self.liststore.clear()
         self.db = []
