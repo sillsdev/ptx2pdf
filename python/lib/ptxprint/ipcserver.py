@@ -34,14 +34,27 @@ class _IPCConnection:
         except GLib.GError as e:
             logger.debug(f"-->Failed: {e}")
 
+    def _read(self, n):
+        """ n bytes, however many reads it takes; fewer only at the end of the stream """
+        res = b""
+        while len(res) < n:
+            dat = self.instream.read_bytes(n - len(res), None).get_data()
+            if not dat:
+                break
+            res += dat
+        return res
+
     def read_pkts(self):
         while True:
-            hdr = self.instream.read_bytes(8, None).get_data()
+            hdr = self._read(8)
             if len(hdr) < 8:
                 break
+            if hdr[:4] != b"js01":
+                logger.debug(f"--< not a PTXprint packet: {hdr}")
+                break
             datlen = struct.unpack("<L", hdr[4:8])[0]
-            indat = self.instream.read_bytes(datlen, None).get_data()
-            if indat is None or not len(indat):
+            indat = self._read(datlen)
+            if len(indat) < datlen:
                 break
             logger.debug(f"--<: {indat}")
             yield indat
@@ -75,13 +88,22 @@ class IPCServer:
     def do_run(self, server, connection, src, dat):
         conn = _IPCConnection(connection)
         self.connections.append(conn)
-        for pkt in conn.read_pkts():
-            dat = _unpacket(pkt)
-            verb = dat['verb'].lower()
-            params = dat.get('params', [])
-            fn = getattr(self, "verb_"+verb, None)
-            if fn is not None:
-                fn(conn, *params)
+        try:
+            for pkt in conn.read_pkts():
+                try:
+                    dat = _unpacket(pkt)
+                    verb = str(dat['verb']).lower()
+                    params = dat.get('params', [])
+                except (ValueError, KeyError, TypeError, AttributeError) as e:    # not JSON, or no verb
+                    logger.debug(f"--< bad packet {pkt}: {e}")
+                    continue
+                fn = getattr(self, "verb_"+verb, None)
+                if fn is not None:
+                    fn(conn, *params)
+        except GLib.GError as e:
+            logger.debug(f"--< connection failed: {e}")
+        finally:
+            self.connections.remove(conn)       # closed: don't send to it any more
 
     def verb_project(self, conn, prjid=None, cfgid=None, *a):
         self.view.onIdle(self.view.setPrjConfig, prjid, cfgid)

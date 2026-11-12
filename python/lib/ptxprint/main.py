@@ -199,7 +199,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     # Positional Argument
     parser.add_argument('pid', nargs="?", help="Project ID or full path to a ptxprint.cfg file")
-    parser.add_argument('cmd', nargs="?", choices=list(commands.keys()), help="Non interactive command to execute")
+    parser.add_argument('cmd', nargs="?", choices=list(commands.keys()), help="Non interactive command to execute. "
+                        "Exit codes are in docs/documentation/exitcodes.md")
 
     # Commonly Used Arguments
     parser.add_argument('-b', '--books', help="List of books to print")
@@ -238,7 +239,7 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
     parser.add_argument('-l', '--logging', help="Logging level [DEBUG, INFO, WARN, ERROR, number]")
     parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
-    parser.add_argument('-to', '--timeout', type=int, default=1200, help="XeTeX runtime timeout (seconds)")
+    parser.add_argument('-to', '--timeout', type=int, default=None, help="Stop a XeTeX run that takes longer than this (seconds; default no limit)")
     parser.add_argument('--debug', action="store_true", help="Enable debug output")
 
     # Font Settings
@@ -655,8 +656,10 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                         setupargs = pvars,
                         pubid = pub)
                     mprint.submit_print_job(RefList(books), bparms)
-                mprint.wait()
-                sys.exit(0)
+                results = mprint.wait()
+                # each is (publication, worker, res, ...): res 0 is printed (False is a failed job, and False == 0)
+                ok = all(type(r[2]) is int and r[2] == 0 for r in results if len(r) > 2)
+                sys.exit(0 if ok else 1)
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)
@@ -723,10 +726,29 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                 results = mprint.wait()
                 mprint.teardown()
                 print("\n".join(str(r) for r in sorted(results, key=lambda a:(booknumbers.get(str(a[0]).split(" ")[0], 1000), str(a)))))
+                # each is (book, worker, filled?, message): filled? is True, False (typeset but not
+                # filled) or None (couldn't be typeset). An exception has no worker; a missing book
+                # gives just a message. Exit codes are listed in docs/documentation/exitcodes.md:
+                # 1 (bad) if nothing was filled or anything couldn't be typeset, else 6 (a warning)
+                # if a book was typeset but not filled.
+                res = 0 if len(results) else 1
+                if not len(results):
+                    print("Nothing to fill")
+                for r in results:
+                    if len(r) > 3 and r[2] is True:
+                        continue
+                    if len(r) > 3 and r[2] is False and r[1] is not None:
+                        res = max(res, 6)
+                    else:
+                        res = 1
+                        break
             else:
                 job = doit(mainw, noview=True, nothreads=True)
                 res = 0 if job is None else job.res
                 print(f"{res=}")
+                # see docs/documentation/exitcodes.md: XeTeX's own codes, or being killed, are just failures
+                if res not in (0, 3, 4, 5):
+                    res = 1
         if args.action:
             actionfn = getattr(mainw, args.action, None)
             if not callable(actionfn):

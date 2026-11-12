@@ -7,7 +7,7 @@ import numpy as np
 from cairo import ImageSurface, Context
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from ptxprint.version import VersionStr
-from ptxprint.utils import _, f2s, coltoonemax, getcaller, \
+from ptxprint.utils import _, f2s, uiLangCode, coltoonemax, getcaller, \
     cleanParatextRef, sendRefToParatext, startfile
 from ptxprint.gtkutils import background_msg, pump_gtk
 from ptxprint.piclist import Piclist
@@ -143,16 +143,17 @@ class PDFViewer:
         curr = self.nbook.get_current_page()
         return self.viewers[curr]
 
-    def __getattr__(self, name, default=None):
+    def __getattr__(self, name):
+        """ Anything else is the current viewer's, or else the main (content) viewer's """
+        views = self.__dict__.get('viewers', None)
+        if not views or 'nbook' not in self.__dict__:     # still being set up
+            raise AttributeError(name)
         v = self._currview()
         if hasattr(v, name):
-            return getattr(self._currview(), name)
-        v = self.__dict__.get('views', None)
-        if v is None or not len(v):
-            return default
-        if hasattr(self.__dict__['views'][0], name):
-            return getattr(self.__dict__['views'][0], name)
-        return default
+            return getattr(v, name)
+        if hasattr(views[0], name):
+            return getattr(views[0], name)
+        raise AttributeError(f"{type(self).__name__} has no {name}")
 
     def set(self, name, val):
         v = self._currview()
@@ -176,8 +177,9 @@ class PDFViewer:
     def onPageChanged(self, widget, pspec):
         # called after the page is changed
         p = self.nbook.get_current_page()
-        page = self.viewers[p].current_index
-        self.model.set("t_pgNum", str(page), mod=False)
+        page = self.viewers[p].current_page        # t_pgNum is read as a folio, not a page index
+        if page is not None:
+            self.model.set("t_pgNum", str(page), mod=False)
         z = self.viewers[p].zoomLevel
         self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
@@ -536,7 +538,7 @@ class PDFFileViewer:
                 self.document = Poppler.Document.new_from_file(file_uri, None)
                 self.numpages = self.document.get_n_pages()
             except Exception as e:
-                self.model.doStatus(_("Error opening PDF: ").format(e), warning=True)
+                self.model.doStatus(_("Error opening PDF: {}").format(e), warning=True)
                 self.document = None
                 return False
             self.hbox.show()
@@ -788,7 +790,7 @@ class PDFFileViewer:
             
     def updatePageNavigation(self):
         """Update button sensitivity and tooltips dynamically based on the current index."""
-        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
+        is_rtl = self.rtl_mode and uiLangCode(self.model.lang, ['ar_SA']) is None
         pg = self.current_index or 1
         num_pages = self.numpages
 
@@ -918,7 +920,7 @@ class PDFFileViewer:
     
     def swap4rtl(self, action):
         # Only swap the buttons for RTL if we're NOT in Arabic UI mode
-        if (self.rtl_mode or False) and self.model.lang != 'ar_SA':
+        if (self.rtl_mode or False) and uiLangCode(self.model.lang, ['ar_SA']) is None:
             if action == _('first'):
                 return _('last')
             elif action == _('last'):
@@ -949,7 +951,8 @@ class PDFFileViewer:
         try:
             result = print_op.run(Gtk.PrintOperationAction.PRINT_DIALOG, None)
         except Exception as e:
-            self.model.doStatus(_("An error occurred while printing: ").format(e), warning=True)
+            self.model.doStatus(_("An error occurred while printing: {}").format(e), warning=True)
+            return
         if result == Gtk.PrintOperationResult.APPLY:
             self.model.doStatus(_("Print job sent to printer."))
             if not self.model.userconfig.has_section("printer"):
@@ -1120,7 +1123,7 @@ class PDFContentViewer(PDFFileViewer):
             self.document = Poppler.Document.new_from_file(file_uri, None)
             self.numpages = self.document.get_n_pages()
         except Exception as e:
-            self.model.doStatus(_("Error opening PDF: ").format(e), warning=True)
+            self.model.doStatus(_("Error opening PDF: {}").format(e), warning=True)
             self.document = None
             return False
 
@@ -1629,27 +1632,30 @@ class PDFContentViewer(PDFFileViewer):
             if rid == Gtk.ResponseType.CANCEL:
                 keepgoing = False
         dlg = background_msg(_("Analysing text. Press Cancel to stop"), dlgresponse, parent=self.hbox)
-        cthreshold = float(self.model.get("s_paddingwidth", 0.5))
-        xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
-                                    fontsize=float(self.model.get("s_fontsize", 1)),
-                                    outlines=self.model.get("c_collisionPrecise", False))
-        i = 0
-        for (opcode, data) in xdvreader.parse():
-            i += 1
-            if not i % 100:
-                pump_gtk()
-                if not keepgoing:
-                    return False
+        try:
+            cthreshold = float(self.model.get("s_paddingwidth", 0.5))
+            xdvreader = SpacingOddities(xdvname, parent=self.parlocs, collision_threshold=cthreshold,
+                                        fontsize=float(self.model.get("s_fontsize", 1)),
+                                        outlines=self.model.get("c_collisionPrecise", False))
+            i = 0
+            for (opcode, data) in xdvreader.parse():
+                i += 1
+                if not i % 100:
+                    pump_gtk()
+                    if not keepgoing:
+                        return False
 
-        if self.spacethreshold == 0:
-            self.badspaces = self.parlocs.getnbadspaces()
-            if len(self.badspaces):
-                self.model.set("s_spaceEms", self.badspaces[0].widthem)
-        wanted = 7
-        self.spacepages, self.collisionpages, self.riverpages, self.badglyphpages = \
-            self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
-                    float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
-        dlg.response(Gtk.ResponseType.OK)
+            if self.spacethreshold == 0:
+                self.badspaces = self.parlocs.getnbadspaces()
+                if len(self.badspaces):
+                    self.model.set("s_spaceEms", self.badspaces[0].widthem)
+            wanted = 7
+            self.spacepages, self.collisionpages, self.riverpages, self.badglyphpages = \
+                self.parlocs.getstats(wanted, float(self.model.get('s_spaceEms', 4)),
+                        float(self.model.get('s_charSpaceEms', 4) if self.model.get('c_letterSpacing', False) else 0.))
+        finally:
+            if keepgoing:       # (cancelling has closed it already)
+                dlg.response(Gtk.ResponseType.OK)     # also if the parsing failed
         return True
 
     def get_spread(self, page, rtl=False):
@@ -1702,7 +1708,7 @@ class PDFContentViewer(PDFFileViewer):
         self.all_pages = []
         pg = self.current_index or 1
         pnumpg = self.parlocs.pnumorder[pg - 1] if self.parlocs and pg <= len(self.parlocs.pnumorder) else 1
-        is_rtl = self.rtl_mode and self.model.lang != 'ar_SA'
+        is_rtl = self.rtl_mode and uiLangCode(self.model.lang, ['ar_SA']) is None
         num_pages = self.numpages
 
         seekPrevBtn = self.model.builder.get_object("btn_seekPage2fill_previous")
@@ -1806,7 +1812,7 @@ class PDFContentViewer(PDFFileViewer):
                     formatted_pages.append(text)
 
                 # RTL handling
-                if is_rtl or self.model.lang == 'ar_SA':
+                if is_rtl or uiLangCode(self.model.lang, ['ar_SA']) is not None:
                     formatted_pages = list(reversed(formatted_pages))
 
                 pgs = "  ".join(formatted_pages)
@@ -1888,9 +1894,12 @@ class PDFContentViewer(PDFFileViewer):
     def executePrint(self):
         """ Actually triggers print only if no new clicks happened in the last N seconds. """
         self.timer_id = None  # Reset timer reference
-        # If the last click was within the last N seconds, cancel execution
-        if time.time() - self.last_click_time < self.autoUpdateDelay:
-            return False  # Do nothing, just stop the timer
+        # If the last click (e.g. a right-click for the menu) was within the last N seconds, wait
+        # out the rest of the delay rather than drop the update
+        remaining = self.autoUpdateDelay - (time.time() - self.last_click_time)
+        if remaining > 0:
+            self.timer_id = GLib.timeout_add(int(remaining * 1000) + 1, self.executePrint)
+            return False
         self.model.onOK(None)
         self.updatePageNavigation()
         return False
@@ -2276,7 +2285,7 @@ class PDFContentViewer(PDFFileViewer):
             else: # 'col'
                 pic['pgpos'] = 'tl'
                 self.model.picListView.set_val(piciter, pgpos='tl')
-                self.hitPrint()
+            self.hitPrint()     # for every size, not just col
 
     def on_set_image_vpos(self, widget, data):
         pic, vpos_opt, orig_v, orig_h = data

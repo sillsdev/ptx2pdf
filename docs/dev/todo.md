@@ -235,74 +235,74 @@ not looked at yet.
 
 ### GUI (gtkview and friends)
 
-* `gtkview.py:2645-2652` Print with "process script" ticked and no script: `os.lstat(None)`
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:2645-2652` Print with "process script" ticked and no script: `os.lstat(None)`
   TypeError (FileNotFoundError if the script moved); the spinner keeps going.
-* `gtkview.py:5476-5482` importing settings from `X.PDF` (upper case) goes to ZipFile →
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:5476-5482` importing settings from `X.PDF` (upper case) goes to ZipFile →
   BadZipFile; dialog left open.
-* `gtkview.py:6371` `.get_sensitive` without `()`: OK on the DBL import dialog with no bundle →
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:6371` `.get_sensitive` without `()`: OK on the DBL import dialog with no bundle →
   `ZipFile(None)`.
-* `gtkview.py:4353-4361` cancelling the multi-book chooser switches the scope to single.
-* `gtkview.py:6526-6531, 6551-6556` Esc/X leaves dlg_overlayCredit and dlg_sbPosition shown
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:4353-4361` cancelling the multi-book chooser switches the scope to single.
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:6526-6531, 6551-6556` Esc/X leaves dlg_overlayCredit and dlg_sbPosition shown
   but dead.
-* `gtkview.py:3805-3810` with `tatweel.py`: the dialog is never reused (checks
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:3805-3810` with `tatweel.py`: the dialog is never reused (checks
   `tatweel_dialog`, stores `dialog`), so each opening adds handlers and another 1s timer;
   closing with X leaves timers writing to destroyed widgets; `logger` undefined in tatweel.py.
-* `gtkview.py:3466-3475` Generate on the Final SFM tab for a book not in scope:
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:3466-3475` Generate on the Final SFM tab for a book not in scope:
   `convertBook(None)` TypeError. `3461-3463` Esc on "Adjust lists already exist" still
   generates.
-* `gtkview.py:3613-3633` `onViewerChangePage`: `or`/`and` precedence → `bks[0]` IndexError
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:3613-3633` `onViewerChangePage`: `or`/`and` precedence → `bks[0]` IndexError
   with no books; FinalSFM `os.path.join(..., None)`; early return leaves `noUpdate` True,
   silently stopping book-change and font/baseline lock handlers.
-* `gtkview.py:2589-2672` early returns in onOK ("no books", missing fonts, PDF locked,
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:2589-2672` early returns in onOK ("no books", missing fonts, PDF locked,
   callback exception) leave the busy spinner running.
-* `gtkview.py:5246-5327` Cancel in the script / xref file / module choosers clears the
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:5246-5327` Cancel in the script / xref file / module choosers clears the
   existing setting (and unticks process script / switches to single book).
-* `gtkview.py:781-789` `_dlgtriggers` keys `dlg_multiBookSelect`, `dlg_multProjSelector`,
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:781-789` `_dlgtriggers` keys `dlg_multiBookSelect`, `dlg_multProjSelector`,
   `dlg_gridsGuides` don't match the glade ids, so search can't open those dialogs (and
   `adjustGridSettings` needs two args).
-* `gtkview.py:4618` black text colour test compares with `"x000000"`, never `"#000000"`, so
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:4618` black text colour test compares with `"x000000"`, never `"#000000"`, so
   black turns on coloured fonts.
-* `gtkview.py:3901-3904` saving an emptied editor buffer writes nothing (old contents
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:3901-3904` saving an emptied editor buffer writes nothing (old contents
   return); 3897 `adjView.adjlist.save()` with no adjlist → AttributeError.
-* `gtkview.py:7684-7795` cancelling Add Map leaves `XXM mapNN` piclist entries with no anchor.
-* `gtkview.py:5655` `basedir is not None or not basedir` (should be `and`); 5262 xrf filter
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:7684-7795` cancelling Add Map leaves `XXM mapNN` piclist entries with no anchor.
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:5655` `basedir is not None or not basedir` (should be `and`); 5262 xrf filter
   `"patterns": "*.xrf"` is a string, added a character at a time, so it shows every file.
-* `gtkview.py:4115` `onEditStyleClicked` as `activate-link` handler returns None, so GTK tries
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py:4115` `onEditStyleClicked` as `activate-link` handler returns None, so GTK tries
   to open each link's text as a URI (warning per click).
-* `gtkview.py` minor: `dlg_fillProgress` not in glade (no parent); `btnUnpackClicked` refers to
+* **[FIXED patches/bugs-gui.patch]** `gtkview.py` minor: `dlg_fillProgress` not in glade (no parent); `btnUnpackClicked` refers to
   missing widgets (no callers); `onSaveEdits` uses `pg` before assignment; `resetParam`
   connected to a bare GtkLabel (`l_styRaise`) has no `get_child()`.
-* `gtkadjlist.py:59-66` deleting rows removes them from the liststore but not `adjlist.db`, so
+* **[FIXED patches/bugs-gui.patch]** `gtkadjlist.py:59-66` deleting rows removes them from the liststore but not `adjlist.db`, so
   later rows get the wrong trig/shape comments when saved (tested). `gtkadjlist.py:33` edits
   to the Parameters column are ignored on save; editing Para breaks the sort `changeval`
   relies on.
-* `pdf_viewer.py:146-155` `__getattr__` falls back to `self.views` (it's `viewers`) and returns
+* **[FIXED patches/bugs-gui.patch]** `pdf_viewer.py:146-155` `__getattr__` falls back to `self.views` (it's `viewers`) and returns
   None instead of raising: toggling overlays with the Cover/Diff tab current → TypeError.
-* `pdf_viewer.py:2264-2280` `hitPrint()` only in the 'col' branch of Frame Size: page/full/span
+* **[FIXED patches/bugs-gui.patch]** `pdf_viewer.py:2264-2280` `hitPrint()` only in the 'col' branch of Frame Size: page/full/span
   don't auto-update.
-* `pdf_viewer.py:965-971` print_document: UnboundLocalError after an exception; there and at
+* **[FIXED patches/bugs-gui.patch]** `pdf_viewer.py:965-971` print_document: UnboundLocalError after an exception; there and at
   539/1100 `_("...: ").format(e)` has no `{}`, so the error text is dropped.
-* `pdf_viewer.py:1878-1898` a right-click within the auto-update delay cancels a pending
+* **[FIXED patches/bugs-gui.patch]** `pdf_viewer.py:1878-1898` a right-click within the auto-update delay cancels a pending
   update for good.
-* `pdf_viewer.py:174-182` `onPageChanged` puts the page index in `t_pgNum`, which is read as a
+* **[FIXED patches/bugs-gui.patch]** `pdf_viewer.py:174-182` `onPageChanged` puts the page index in `t_pgNum`, which is read as a
   folio: jumps to the wrong page with front matter.
-* `pdf_viewer.py:1635-1653` the "Analysing text" dialog stays up if parsing raises.
-* `report.py:66-68` every Report adds a root logging handler, never removed: N prints → each
+* **[FIXED patches/bugs-gui.patch]** `pdf_viewer.py:1635-1653` the "Analysing text" dialog stays up if parsing raises.
+* **[FIXED patches/bugs-gui.patch]** `report.py:66-68` every Report adds a root logging handler, never removed: N prints → each
   log line printed N times and memory grows; `Report.clear` never called, so the runtime
   section has every message since startup.
-* `gtkpolyglot.py:57-59` query-tooltip connected 11 times (inside the column loop).
-* `gtkpolyglot.py:396-470` changing a new row's code A→B: `createDiglotView` raises inside
+* **[FIXED patches/bugs-gui.patch]** `gtkpolyglot.py:57-59` query-tooltip connected 11 times (inside the column loop).
+* **[FIXED patches/bugs-gui.patch]** `gtkpolyglot.py:396-470` changing a new row's code A→B: `createDiglotView` raises inside
   the handler; for a configured row an extra ViewModel is built and thrown away.
-* `main.py:241` `--timeout` parsed but never used. `main.py:624-726` `-P -B` and `fill` always
+* **[FIXED patches/bugs-gui.patch]** `main.py:241` `--timeout` parsed but never used. `main.py:624-726` `-P -B` and `fill` always
   exit 0.
-* UI language "ar_SA.UTF-8" (from LANG, or after switching language) never equals `'ar_SA'`
+* **[FIXED patches/bugs-gui.patch]** UI language "ar_SA.UTF-8" (from LANG, or after switching language) never equals `'ar_SA'`
   (pdf_viewer 791/921/1705/1809, gtkstyleditor 686, gtkview 2320): RTL navigation buttons
   swapped twice, translated help links unused.
-* `ipcserver.py:37-81` short reads not handled, missing 'verb' → KeyError, closed connections
+* **[FIXED patches/bugs-gui.patch]** `ipcserver.py:37-81` short reads not handled, missing 'verb' → KeyError, closed connections
   kept, magic never checked.
-* `gtkutils.py:263-268` doError: `source_remove` on an already-removed timer (GLib critical);
+* **[FIXED patches/bugs-gui.patch (the GLib critical); OPEN: auto-closing errors after 30s unread looks deliberate — your call]** `gtkutils.py:263-268` doError: `source_remove` on an already-removed timer (GLib critical);
   error dialogs close unread after 30s.
-* `picselect.py` ImageSet (moved out of gtkview): `Pango`, `urllib`, `rmtree` not imported,
+* **[FIXED patches/bugs-gui.patch]** `picselect.py` ImageSet (moved out of gtkview): `Pango`, `urllib`, `rmtree` not imported,
   `self.project`/`onGetPicturesClicked`/`onHideStatusMsgClicked` belong to `self.view`; the
   image set dialog fails as it opens. `TagableRef.asint` uses undefined `books`/`vrs`.
 

@@ -1379,9 +1379,10 @@ class PTXFiller:
             self.printbk(bk, "T", progress=False)
             return (False, f"{msg}: {bk} before initial layout")
         self.init_adjs = self.adjs
+        # (ok, message): ok is True if filled, False if typeset but not filled, None if it couldn't be typeset
         if init_layout is None:
             self.printbk(bk, "!")
-            return (False, f"Failed: {bk}")
+            return (None, f"Failed: {bk}")
         #print(f"Init laid out {bk}")
         np = self.parlocs.numPages()
         if np == 0:
@@ -1390,7 +1391,7 @@ class PTXFiller:
                            f"see {self.job.outfname.replace('.tex', '.log')}")
             self.progress(ProgressEvent(bk, 0, "failed", msg=msg))
             self.printbk(bk, "x", progress=False)
-            return (False, f"Failed: {bk} {msg}")
+            return (None, f"Failed: {bk} {msg}")
         if restart and init_layout.first_failing_page is None:
             self.progress(ProgressEvent(bk, np, "already_filled", total=np))
             self.printbk(bk, "\u2713", progress=False)

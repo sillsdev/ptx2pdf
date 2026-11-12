@@ -2,7 +2,9 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk, Pango, GObject
 
-import sys
+import sys, logging
+
+logger = logging.getLogger(__name__)
 
 class TatweelDialog:
     def __init__(self, builder, font=None):
@@ -38,8 +40,20 @@ class TatweelDialog:
         self.s_tatweelLength.connect("value-changed", self.update_preview)
         self.btn_tatweel_close.connect("clicked", self.on_close_dialog)
         self.t_tatweelText.connect("key-press-event", self.on_key_press)
+        self.dialog.connect("delete-event", self.on_delete)
 
         self.dialog.show_all()
+
+    def show(self):
+        """ Shows the dialog again after it was closed """
+        if not hasattr(self, 'polling_timer_id'):
+            self.polling_timer_id = GObject.timeout_add(1000, self.check_clipboard)
+        self.dialog.show_all()
+
+    def on_delete(self, widget, event):
+        """ The window's close button: hide (as Close does), don't destroy """
+        self.on_close_dialog(None)
+        return True
 
     def on_cursor_moved(self, entry, param):
         """Captures the cursor position in the source word."""

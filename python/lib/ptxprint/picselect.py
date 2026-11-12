@@ -3,8 +3,9 @@ import os
 import re
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
-from gi.repository import Gtk, Gdk, GdkPixbuf, GLib
-import zipfile, json
+from gi.repository import Gtk, Gdk, GdkPixbuf, GLib, Pango
+import zipfile, json, urllib.request, urllib.error
+from shutil import rmtree
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,12 +41,6 @@ class TagableRef(Ref):
             v = min(self.verse or 0, 127)
         vals = [(c >> 5) & 63, ((v & 64) >> 6) + ((c & 31) << 1), v & 63]
         return subverse + "".join(self.b64codes[v] for v in vals)
-
-    def asint(self, chapshift=1):
-        if self.vrs is None:
-            self.loadvrs()
-        coffset = self.vrs[books[self.book]][self.chap-1] + (self.chap - 1) * chapshift if self.chap > 1 else 0
-        return self.vrs[books[self.book]][0] + coffset + self.verse
 
     def numverses(self):
         if self.verse is not None:
@@ -639,6 +634,17 @@ class ImageSet:
 
     def doError(self, *a, **kw):
         self.view.doError(*a, **kw)
+
+    # these belong to the view (moved here from gtkview with the rest of ImageSet)
+    @property
+    def project(self):
+        return self.view.project
+
+    def onGetPicturesClicked(self, *a):
+        return self.view.onGetPicturesClicked(*a)
+
+    def onHideStatusMsgClicked(self, *a):
+        return self.view.onHideStatusMsgClicked(*a)
 
     def doStatus(self, *a, **kw):
         self.view.doStatus(*a, **kw)

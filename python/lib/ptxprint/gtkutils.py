@@ -218,12 +218,15 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
         if autocloseSeconds and not copy2clip:
             _remaining = [autocloseSeconds]
             _base_title = title or ""
+            _ticking = [True]       # the timer is still there (so may be removed)
             def _tick():
                 if not dialog.get_visible():
+                    _ticking[0] = False
                     return GLib.SOURCE_REMOVE
                 dialog.set_title("{} [{}s]".format(_base_title, _remaining[0]))
                 _remaining[0] -= 1
                 if _remaining[0] < 0:
+                    _ticking[0] = False
                     dialog.response(Gtk.ResponseType.OK)
                     return GLib.SOURCE_REMOVE
                 return GLib.SOURCE_CONTINUE
@@ -232,7 +235,7 @@ def doError(text, secondary="", title=None, copy2clip=False, show=True, who2emai
         else:
             timeout_id = None
         dialog.run()
-        if timeout_id is not None:
+        if timeout_id is not None and _ticking[0]:     # (a timer that ended itself is gone already)
             GLib.source_remove(timeout_id)
         dialog.destroy()
     else:

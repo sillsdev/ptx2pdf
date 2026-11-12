@@ -703,5 +703,10 @@ class TestCommandLine(_Run):
                 "[publication.pubB]\n__books = 3JN XYZ\nsubtitle = B\n\n[publication.pubC]\n__books = \n")
         with open(os.path.join(cfgdir, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
             outf.write(dat)
-        self.run_ok("WSGlatin", "Pubs", "-j", "2", "-P", "-B", "pubA", "-B", "pubB", "-B", "pubC", "-B", "nosuch")
+        # empty and missing publications are skipped with a message
+        self.run_ok("WSGlatin", "Pubs", "-j", "2", "-P", "-B", "pubA", "-B", "pubC", "-B", "nosuch")
         self.assertTrue(os.path.exists(os.path.join(self.tmpdir.name, "WSGlatin", "local", "ptxprint", "WSGlatin_Pubs_pubA_ptxp.pdf")))
+        # one that fails to print (a bad book in its list) is reported in the exit status
+        rc, out = runptxprint(self.tmpdir.name, "WSGlatin", "Pubs", "-j", "2", "-P", "-B", "pubB")
+        self.assertNotIn("Traceback", out, out[-3000:])
+        self.assertEqual(1, rc, out[-3000:])

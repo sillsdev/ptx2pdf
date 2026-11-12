@@ -33320,7 +33320,6 @@ Factor:</property>
                                                             <property name="label" translatable="yes">Raise:</property>
                                                             <property name="justify">right</property>
                                                             <property name="xalign">1</property>
-                                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                                             </object>
                                                             </child>
                                                           </object>

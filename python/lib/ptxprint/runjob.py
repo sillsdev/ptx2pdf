@@ -172,6 +172,8 @@ class RunJob:
         self.env = None
 
     def fail(self, txt):
+        if not self.res:
+            self.res = 1        # nothing was printed: the exit code (docs/documentation/exitcodes.md)
         self.printer.doStatus(txt, warning=True)
         self.printer.finished(False)
         self.busy = False
@@ -273,6 +275,7 @@ class RunJob:
                 if len(badbooks):
                     self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
                                          show=not self.printer.get("c_quickRun"))
+                    self.res = 1
                     self.printer.finished(False)
                     self.busy = False
                     unlockme()
@@ -1013,6 +1016,8 @@ class RunJob:
             s = traceback.format_exc()
             s += "\n{}: {}".format(type(e), str(e))
             logger.warn(f"During report generation this error occurred:\n{s}")
+        finally:
+            r.close()       # or every later print's log lines go to this report too
         logger.debug("done_job: Finishing thread")
         unlockme()
         if not self.noview and not self.args.print:
@@ -1111,12 +1116,16 @@ class RunJob:
         return finalLogLines
 
     def _communicate(self):
-        """ Waits for self.runner, but kills it if stopcheck says to stop """
+        """ Waits for self.runner, but kills it if stopcheck says to stop or it runs longer than
+            --timeout seconds """
+        limit = getattr(self.args, 'timeout', None)
+        start = time.time()
         while True:
             try:
                 return self.runner.communicate(timeout=1)
             except subprocess.TimeoutExpired:
-                if self.stopcheck is not None and self.stopcheck():
+                if (self.stopcheck is not None and self.stopcheck()) \
+                        or (limit and time.time() - start > limit):
                     logger.warning(f"Stopping {self.runner.args[0] if self.runner.args else 'job'}")
                     self.runner.kill()
                     return self.runner.communicate()
@@ -1165,9 +1174,10 @@ class RunJob:
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
         self.diffresult = res
         if res == 2 and (self.noview or self.args.print):
-            # Nothing to compare with: tell the command line (exit code) and the tests. In the GUI this
-            # is not a failed print, and treating it as one makes finished() clear the preview.
-            self.res = 2
+            # Nothing to compare with: tell the command line (exit code 5, see docs/documentation/exitcodes.md)
+            # and the tests. In the GUI this is not a failed print, and treating it as one makes
+            # finished() clear the preview.
+            self.res = 5
         if not str(res).endswith('_diff.pdf'):
             outname = pdfname
         return outname

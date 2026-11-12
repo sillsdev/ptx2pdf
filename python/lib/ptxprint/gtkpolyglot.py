@@ -52,10 +52,9 @@ class PolyglotSetup(Gtk.Box):
 
         self.ensure_right_click_handler()
 
-        # Connect tooltips
-        for col_id in range(0, m.tooltip):
-            self.treeview.set_has_tooltip(True)  # Enable tooltips
-            self.treeview.connect("query-tooltip", self.on_query_tooltip)  # Connect event
+        # Connect tooltips (once: the handler works out the column itself)
+        self.treeview.set_has_tooltip(True)
+        self.treeview.connect("query-tooltip", self.on_query_tooltip)
         self.validate_page_widths() # Make sure % Width gets colored red if invalid (even on loading)
 
         # Safely reparent the treeview
@@ -373,6 +372,15 @@ class PolyglotSetup(Gtk.Box):
             if text in {row[m.code] for row in self.ls_treeview if row[m.code]}:
                 self.view.doStatus(_("Duplicate Code not allowed"), warning=True)
                 return
+            # Move what the row has (if anything yet) to the new code before the row says it
+            oldcode = self.ls_treeview[row_index][m.code]
+            if oldcode and oldcode != text:
+                self.view.moveDiglot(oldcode, text)
+            self.ls_treeview[path][col_id] = text
+            self.updateRow(row_index)
+            self.refresh_code_dropdowns()
+            self.view.updateDialogTitle()
+            return
 
 
         prjguid = None
@@ -443,11 +451,7 @@ class PolyglotSetup(Gtk.Box):
             self.ls_treeview[row_index][m.color] = c
            
         # Refresh dropdowns and other dependencies after updating the combo box
-        if col_id == m.code:    # Unique code changed
-            if text != polyglot.code:
-                self.view.moveDiglot(polyglot.code, text)
-                self.refresh_code_dropdowns()
-        elif col_id == m.pg:  # Page 1 or 2 changed
+        if col_id == m.pg:  # Page 1 or 2 changed
             self.validate_page_widths()
             self.update_layout_string(force=True)
             self.treeview.queue_draw()  # Refresh UI

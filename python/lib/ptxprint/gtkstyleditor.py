@@ -2,7 +2,7 @@ from gi.repository import Gtk, Pango, GLib
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.styleditor import StyleEditor, aliases, fromBool, asFloatPts
 from ptxprint.usxutils import mrktype, typesFromMrk
-from ptxprint.utils import _, coltotex, textocol, asfloat
+from ptxprint.utils import _, coltotex, textocol, asfloat, uiLangCode
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
 from ptxprint.borderstyle import borderStyleFromStyle, BorderStyle
 from usfmtc.usfmparser import Grammar
@@ -682,8 +682,8 @@ class StyleEditorView(StyleEditor):
             w = self.builder.get_object("l_url_usfm")
             w.set_sensitive(True)
             w.set_label(_('More Info...'))
-            tl = self.model.lang if not self.model.get("c_useEngLinks") and \
-                 self.model.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th'] else ""
+            tl = "" if self.model.get("c_useEngLinks") else \
+                 (uiLangCode(self.model.lang, ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']) or "")
             m = self.marker.strip("123456789")
             path = mkr2path.get(m, None)
             if "+" in urlmkr or "|" in urlmkr or path is None:

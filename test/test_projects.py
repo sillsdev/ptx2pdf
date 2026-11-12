@@ -167,8 +167,8 @@ class TestXetex:
         if self.pdf is None:
             return
         msg = None
-        if self.pdf.result == 2:
-            msg = f"pdfs are different"
+        if self.pdf.result == 5:      # see docs/documentation/exitcodes.md
+            msg = f"no standard pdf to compare with"
         elif self.pdf.result == 3:
             msg = f"Faulty PDF perhaps cover is missing"
         elif self.pdf.result != 0:

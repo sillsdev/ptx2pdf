@@ -238,6 +238,18 @@ def setup_i18n(i18nlang):
     if "_" in lang:
         lang = lang[:lang.find("_")].lower()
     
+def uiLangCode(uilang, known):
+    """ Which of the known language codes ('ar_SA', 'fr', ...) the UI language is: it may come with
+        an encoding or a region, e.g. 'ar_SA.UTF-8', 'fr_FR'. None if none of them. """
+    base = (uilang or "").split(".")[0].replace("-", "_")
+    if base in known:
+        return base
+    short = base.split("_")[0].lower()
+    for k in known:
+        if k.split("_")[0].lower() == short:
+            return k
+    return None
+
 def putenv(k, v):
     if sys.platform.startswith('win'):
         from ctypes import cdll

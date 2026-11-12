@@ -215,7 +215,7 @@ class ViewModel:
         self.spine = 0
         self.periphs = {}
         self.hyphenation = None
-        self.report = Report()
+        self.report = Report(collect=False)    # one per view: a logging handler each would repeat every line
         self.zf = None
 
         # private to this implementation
@@ -2289,10 +2289,15 @@ class ViewModel:
         self.polyglots.pop(suffix, None)
 
     def moveDiglot(self, old, new):
-        self.diglotViews[new] = self.diglotViews.pop(old, None)
-        self.polyglots[new] = self.polyglots.pop(old, None)
-        self.polyglots[new].code = new
-        self.reloadDiglotPics(self.diglotViews[new], old, new)
+        """ A polyglot row's code changed: what it had so far (a new row may have nothing) moves """
+        if old in self.diglotViews:
+            self.diglotViews[new] = self.diglotViews.pop(old)
+        if old in self.polyglots:
+            self.polyglots[new] = self.polyglots.pop(old)
+            if self.polyglots[new] is not None:
+                self.polyglots[new].code = new
+        if self.diglotViews.get(new, None) is not None:
+            self.reloadDiglotPics(self.diglotViews[new], old, new)
         logger.debug(f"Diglots={self.diglotViews.keys()}, polyglots={self.polyglots.keys()}")
         
     def reloadDiglotPics(self, digView, old, new):
@@ -3246,6 +3251,7 @@ set stack_size=32768""".format(self.cfgid)
         return False
 
     def runReport(self):
+        self.report.clear()         # run_view adds to it: don't repeat the last report's entries
         self.report.run_view(self)
         fpath = os.path.join(self.project.path, self.project.printdir, os.path.basename(self.getPDFname()).replace(".pdf", ".html"))
         tm = {"project/id": self.project.prjid, "config/name": self.cfgid}
