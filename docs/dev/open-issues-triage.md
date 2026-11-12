@@ -33,7 +33,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | [#1038](https://github.com/sillsdev/ptx2pdf/issues/1038) | Start each Footnote on a new line moves the footnote bottom down | Known workaround (±0.25 space) to bake in. | |
 | [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246) | Slight change in footnote spacing – observation | Likely same cause as #1038. | |
 | [#1058](https://github.com/sillsdev/ptx2pdf/issues/1058) | Final page footnote misalignment | `\FinalNotesDowntrue` works around it; needs default or auto-detect. | |
-| [#1170](https://github.com/sillsdev/ptx2pdf/issues/1170) | Wishlist: automatically check usfmtc version | Small startup check. | |
+| [#1170](https://github.com/sillsdev/ptx2pdf/issues/1170) | Wishlist: automatically check usfmtc version | **ON BRANCH `usfmtc-version-check`, awaiting developer review before merging** (2026-11-13): new `usfmtccheck.py` holds `MinUsfmtcVersion` (0.4.10). Checked at startup in `main.py` and in `ptxprint.spec` at build time (frozen builds have no usfmtc metadata). Older usfmtc stops with the pip command to fix it; `PTXPRINT_USFMTC=warn` carries on, `=reset` records the older version (rollback), `=dev` records a newer one for committing. Tests in `test/test_usfmtccheck.py`. | |
 | ~~[#1180](https://github.com/sillsdev/ptx2pdf/issues/1180)~~ | ~~Save a Named Custom Page Size~~ | **DONE** 2026-10-23: typed sizes are saved (whole string) to `customPageSizes` in the user config and added to the dropdown; right-click the entry to remove one. | |
 | ~~[#1193](https://github.com/sillsdev/ptx2pdf/issues/1193)~~ | ~~Push Config — Option to Skip Language-Specific Variables~~ | **DONE** 2026-10-23: new checkbox (on by default) in the copy-to-other-projects dialog keeps each target's `[vars]` and `[strongsvars]`; a new config there starts without them. | |
 | ~~[#1207](https://github.com/sillsdev/ptx2pdf/issues/1207)~~ | ~~First _diff is hard to produce~~ | ~~Automatic diff filename.~~ **DONE Fixed?** 2026-10-23: the automatic filename already worked (print, change, print again). Improved: Compare now keeps the previous PDF even if "keep versions" is 0; the first print says "Nothing to compare with yet" instead of "No differences found"; `--diffoutfile` was ignored (wrong keyword) and now works. Awaiting a failing procedure from the reporter. | |
@@ -41,9 +41,9 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | ~~[#1238](https://github.com/sillsdev/ptx2pdf/issues/1238)~~ | ~~Need non-breaking glue between Strong's number and following word~~ | **DONE Fixed?** 2026-10-23: not a bug with the default `\HAIRSPACE` (non-breaking): 0 line-end numbers. It only happened when a config's `ptxprint-mods.tex` replaced it with plain glue (the WSG/Strongs test project has `\def\HAIRSPACE{\hskip 0.1em}`: 33 numbers ended a line, 0 after the fix). `\dostr@ngs` now adds `\nobreak` after the number box, so the join holds whatever `\HAIRSPACE` is. The WSG/Strongs standard PDF will change; refresh it with `-u`. | |
 | ~~[#1239](https://github.com/sillsdev/ptx2pdf/issues/1239)~~ | ~~Missing ending verse in a cross-ref range~~ | **DONE** 2026-10-23: reproduced with WSG Strongs on GAL: the `\xo` label of each bridged verse was `1-`, `13-`, `15-`, `3-`. `xrefs.py` asked `last.str(whole range)` for the end verse, which usfmtc returns as empty; it now uses `last.str(first)`. All 10 bridges in GAL now read `1-2`, `13-14`, etc. | |
 | [#1271](https://github.com/sillsdev/ptx2pdf/issues/1271) | v3.1.3 Picture captions can't be moved away from the picture | Needs a quick look; may be a missing hook. | |
-| [#1119](https://github.com/sillsdev/ptx2pdf/issues/1119) | Table alignment broken in RTL books | | |
+| ~~[#1119](https://github.com/sillsdev/ptx2pdf/issues/1119)~~ | ~~Table alignment broken in RTL books~~ | **DONE Fixed?** 2026-11-03 (`4ab7bb170`): mnjames's `\parfillskip=0pt` for RTL cells in `ptx-tables.tex`. | |
 | ~~[#1028](https://github.com/sillsdev/ptx2pdf/issues/1028)~~ | ~~Issue Page and Displayed page mismatched if Front Matter included~~ | ~~Previous Issue button is easy; page numbering mismatch is more.~~ **DONE Fixed?** 2026-10-23: could not reproduce with a front PDF (page offset, paragraph lookup and arrows all correct); fixed a related arrow bug when the start page number isn't 1 (`updatePageNavigation` compared a folio with the PDF page count). Awaiting David's confirmation. | |
-| [#1137](https://github.com/sillsdev/ptx2pdf/issues/1137) | Foreground/background figures in stylesheet not included in archive | Archive code; use relative paths. | |
+| ~~[#1137](https://github.com/sillsdev/ptx2pdf/issues/1137)~~ | ~~Foreground/background figures in stylesheet not included in archive~~ | **DONE Fixed?** more missing files archived in `8ae8ff356` (2026-10-30); test for a cover image with an absolute path in `8822c38be` (`test_archive.py`, passes). | |
 | [#1260](https://github.com/sillsdev/ptx2pdf/issues/1260) | Old Coverpage configs break with newer versions of the TeX macros | A `\global` def masks the error; David suspects a deeper definition-order problem. | 🔺 |
 
 ## Medium (24)
@@ -71,7 +71,7 @@ Sizes are rough estimates made from each issue's title and text, without reading
 | [#1234](https://github.com/sillsdev/ptx2pdf/issues/1234) | Numeric Note Callers | Defined proposal. | |
 | [#1235](https://github.com/sillsdev/ptx2pdf/issues/1235) | Psalm Book Section Formatting | `\c` and `\ms` order reversed; TeX or Python? | |
 | [#1236](https://github.com/sillsdev/ptx2pdf/issues/1236) | Can we detect clashing headers? | Warning heuristic. | |
-| [#1241](https://github.com/sillsdev/ptx2pdf/issues/1241) | Page Full Factor isn't behaving as expected | Needs reproducing. | |
+| ~~[#1241](https://github.com/sillsdev/ptx2pdf/issues/1241)~~ | ~~Page Full Factor isn't behaving as expected~~ | **DONE Fixed?** 2026-11-09 (Martin): the expert setting for PageFullFactor was read wrongly, so it was always 1. | |
 | [#1242](https://github.com/sillsdev/ptx2pdf/issues/1242) | un-styling of nested text | Stylesheet semantics change. | 🔺 |
 | [#1248](https://github.com/sillsdev/ptx2pdf/issues/1248) | Figure not printing in module XXA | `\fig` ref/placement in the module path. | |
 
@@ -127,12 +127,12 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | [#1108](https://github.com/sillsdev/ptx2pdf/issues/1108) | Line spacing corrupted on one page | M | | ❓ |
 | [#1110](https://github.com/sillsdev/ptx2pdf/issues/1110) | Underlined / background text can't contain special items | L | 🔺 | |
 | [#1114](https://github.com/sillsdev/ptx2pdf/issues/1114) | Diglot: block ending in end-title should be a vtop | S | | |
-| [#1119](https://github.com/sillsdev/ptx2pdf/issues/1119) | Table alignment broken in RTL books | S | | |
+| ~~[#1119](https://github.com/sillsdev/ptx2pdf/issues/1119)~~ | ~~Table alignment broken in RTL books~~ | ~~S~~ **DONE Fixed?** | | |
 | [#1171](https://github.com/sillsdev/ptx2pdf/issues/1171) | Unable to create a PDF (`\@v@` extra `}`) | M | | ❓ old 3.0.6 report; retest |
 | [#1234](https://github.com/sillsdev/ptx2pdf/issues/1234) | Numeric note callers | M | | |
 | [#1235](https://github.com/sillsdev/ptx2pdf/issues/1235) | Psalms: `\c` and `\ms` order reversed | M | | ❓ |
 | [#1237](https://github.com/sillsdev/ptx2pdf/issues/1237) | Rare column miscalculation | L | 🔺 | ❓ may involve the page filler |
-| [#1241](https://github.com/sillsdev/ptx2pdf/issues/1241) | Page Full Factor ignored | M | | ❓ |
+| ~~[#1241](https://github.com/sillsdev/ptx2pdf/issues/1241)~~ | ~~Page Full Factor ignored~~ | ~~M~~ **DONE Fixed?** | | |
 | [#1246](https://github.com/sillsdev/ptx2pdf/issues/1246) | Footnote spacing changes with option | S | | Same cause as #1038 |
 | [#1260](https://github.com/sillsdev/ptx2pdf/issues/1260) | Old coverpage configs break with newer macros | S | 🔺 | ❓ |
 | [#1271](https://github.com/sillsdev/ptx2pdf/issues/1271) | Picture captions can't be moved away from picture | S | | ❓ |
@@ -155,8 +155,8 @@ The same 62 issues, split by where the work is likely to be. The split comes fro
 | ~~[#1049](https://github.com/sillsdev/ptx2pdf/issues/1049)~~ | ~~Disappearing image copyrights~~ | ~~S~~ **DONE Fixed?** | |
 | [#1051](https://github.com/sillsdev/ptx2pdf/issues/1051) | `\w`→footnote makes nested footnotes | M | |
 | [#1094](https://github.com/sillsdev/ptx2pdf/issues/1094) | Settings not stable after restart / upgrade | L | 🔺 |
-| [#1137](https://github.com/sillsdev/ptx2pdf/issues/1137) | Stylesheet figures not archived / absolute paths | S | |
-| [#1170](https://github.com/sillsdev/ptx2pdf/issues/1170) | Auto-check usfmtc version | S | |
+| ~~[#1137](https://github.com/sillsdev/ptx2pdf/issues/1137)~~ | ~~Stylesheet figures not archived / absolute paths~~ | ~~S~~ **DONE Fixed?** | |
+| [#1170](https://github.com/sillsdev/ptx2pdf/issues/1170) | Auto-check usfmtc version | S **(on branch `usfmtc-version-check`, awaiting review)** | |
 | ~~[#1180](https://github.com/sillsdev/ptx2pdf/issues/1180)~~ | ~~Save a named custom page size~~ | ~~S~~ **DONE** | |
 | [#1181](https://github.com/sillsdev/ptx2pdf/issues/1181) | Config diff viewer | L | |
 | [#1184](https://github.com/sillsdev/ptx2pdf/issues/1184) | Colour-code AdjList rows by diglot shading | M | |
