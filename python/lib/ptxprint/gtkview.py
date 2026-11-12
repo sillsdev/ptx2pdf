@@ -6638,6 +6638,8 @@ class GtkViewModel(ViewModel):
         return len(self.styleEditor.coverStyles()) > 0 or len(self.coverPeriphsInFrontMatter()) > 0
 
     def confirmWipeLegacyCover(self, why="legacy"):
+        ''' Returns "wipe" (delete and start again), "keep" (open the wizard with its own last settings,
+            only offered when it made this cover) or None (cancel) '''
         win = getattr(self.mainapp, "win", None)
         if win and not isinstance(win, Gtk.Window):
             win = win.get_toplevel() if hasattr(win, "get_toplevel") else None
@@ -6650,16 +6652,29 @@ class GtkViewModel(ViewModel):
         else:
             what = _("This configuration already has cover settings (in the styles and/or the local Front Matter) "
                      "that were not made by the Cover Wizard.")
-        dialog.format_secondary_text(what + "\n\n" + _(
-            "The Cover Wizard can't build on them: you can't put new wine into old wineskins! "
-            "To use it, PTXprint must DELETE those old cover settings and start the cover from scratch.\n\n"
-            "Delete the old cover settings and open the Cover Wizard?"))
+        if why == "changed":
+            # The wizard still has its own settings for this cover, so it can carry on from those
+            dialog.format_secondary_text(what + "\n\n" + _(
+                "Open Anyway: the Cover Wizard opens with the settings it last used. When you click "
+                "Finish, it replaces the cover settings it manages, so any of those changes made "
+                "outside the wizard will be lost.\n\n"
+                "Delete and Start Again: PTXprint DELETES all the cover settings and the Cover Wizard "
+                "starts the cover from scratch."))
+        else:
+            dialog.format_secondary_text(what + "\n\n" + _(
+                "The Cover Wizard can't build on them: you can't put new wine into old wineskins! "
+                "To use it, PTXprint must DELETE those old cover settings and start the cover from scratch.\n\n"
+                "Delete the old cover settings and open the Cover Wizard?"))
         dialog.add_button(_("Cancel (keep my settings)"), Gtk.ResponseType.CANCEL)
-        dialog.add_button(_("Delete and Continue"), Gtk.ResponseType.OK)
+        if why == "changed":
+            dialog.add_button(_("Open Anyway"), Gtk.ResponseType.APPLY)
+            dialog.add_button(_("Delete and Start Again"), Gtk.ResponseType.OK)
+        else:
+            dialog.add_button(_("Delete and Continue"), Gtk.ResponseType.OK)
         dialog.set_default_response(Gtk.ResponseType.CANCEL)
         response = dialog.run()
         dialog.destroy()
-        return response == Gtk.ResponseType.OK
+        return {Gtk.ResponseType.OK: "wipe", Gtk.ResponseType.APPLY: "keep"}.get(response, None)
 
     def wipeLegacyCover(self):
         mkrs = self.styleEditor.removeCoverStyles()
@@ -6693,12 +6708,15 @@ class GtkViewModel(ViewModel):
         fresh = False
         why = self.coverNeedsWiping()
         if why is not None:
-            if not self.confirmWipeLegacyCover(why):
+            choice = self.confirmWipeLegacyCover(why)
+            if choice is None:
                 return
-            self.wipeLegacyCover()
-            self.coverwiz = None            # start from scratch, and save nothing of the old cover
-            self._coverwiz_cfg_stash = None
-            fresh = True
+            if choice == "wipe":
+                self.wipeLegacyCover()
+                self.coverwiz = None            # start from scratch, and save nothing of the old cover
+                self._coverwiz_cfg_stash = None
+                fresh = True
+            # "keep": carry on with the wizard's own last settings (in self.coverwiz or the config stash)
         if self.coverwiz is None:
             self.coverwiz = CoverWizardApp(view=self)
             if self._coverwiz_cfg_stash is not None:

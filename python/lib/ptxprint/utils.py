@@ -298,12 +298,14 @@ def coltotex(s):
 
 def coltoonemax(s):
     try:
+        # 0-255 channel values map onto 0-1 by dividing by 255 (not 256), so that converting back
+        # and forth (textocol) gives the same colour, rather than drifting a little each time.
         if "," in s:
-            return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
+            return [float(x)/255. for x in s[s.find("(")+1:-1].split(",")]
         elif " " in s:
             return [float(x) for x in s.split(" ")]
         elif s.startswith("#"):
-            return [float(int(s[i:i+2], 16))/256. for i in range(1, 6, 2)]
+            return [float(int(s[i:i+2], 16))/255. for i in range(1, 6, 2)]
         else:
             return [0.8, 0.8, 0.8]
     except (ValueError, TypeError):
@@ -318,7 +320,7 @@ def textocol(s):
         except (ValueError, TypeError):
             vals = [0, 0, 0]
     elif " " in s:
-        vals = [int(float(x) * 255) for x in s.split(" ")]
+        vals = [int(round(float(x) * 255)) for x in s.split(" ")]   # round, not truncate: see coltoonemax
     elif "rgb" in s:
         vals = [float(x) for x in s[s.find("(")+1:-1].split(",")]
     else:
