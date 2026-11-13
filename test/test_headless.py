@@ -825,6 +825,37 @@ class TestCommandLine(_Run):
         self.run_ok("WSGlatin", "CoverJON", "-P", "-D", "c_printArchive=True")
         self.assertTrue(os.path.exists(os.path.join(self.tmpdir.name, "WSGlatin", "local", "ptxprint", "WSGlatin_CoverJON_JON_ptxp_cover.pdf")))
 
+    def test_readonly_print(self):
+        ''' --readonly prints without changing any of the project's files outside its output folder,
+            even when the print has styles of its own (-D) that the config's file doesn't '''
+        import hashlib
+        prjdir = os.path.join(self.tmpdir.name, "WSGlatin")
+        def snapshot():
+            res = {}
+            for d, dirs, files in os.walk(prjdir):
+                if os.path.relpath(d, prjdir).split(os.sep)[0] == "local":
+                    dirs[:] = []
+                    continue
+                for f in files:
+                    with open(os.path.join(d, f), "rb") as inf:
+                        res[os.path.join(d, f)] = hashlib.md5(inf.read()).hexdigest()
+            return res
+        cfgdir = os.path.join(prjdir, "shared", "ptxprint", "Default")
+        with open(os.path.join(cfgdir, "ptxprint.sty"), "a", encoding="utf-8") as outf:
+            outf.write("\n\\Marker p\n\\Fontsize 11\n")        # as an older version wrote it: a normal print tidies this
+        before = snapshot()
+        self.run_ok("WSGlatin", "Default", "-P", "-b", "2JN", "--readonly", "-D", "c_marginalverses=True")
+        self.assertTrue(os.path.exists(os.path.join(prjdir, "local", "ptxprint", "WSGlatin_Default_2JN_ptxp.pdf")))
+        after = snapshot()
+        self.assertEqual(sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k)), [])
+        # the print's own style sheet has what the config's does, and is the one TeX was given
+        wdir = os.path.join(prjdir, "local", "ptxprint", "Default")
+        with open(os.path.join(wdir, "ptxprint.sty"), encoding="utf-8") as inf:
+            self.assertIn("\\FontSize 11", inf.read())
+        with open(os.path.join(wdir, "WSGlatin_Default_2JN_ptxp.tex"), encoding="utf-8") as inf:
+            tex = inf.read()
+        self.assertRegex(tex, r"\\stylesheet\{\./ptxprint\.sty\}|\\stylesheet\{ptxprint\.sty\}|\\stylesheet\{[^}]*local[^}]*ptxprint\.sty\}")
+
     def test_old_cover_removed(self):
         ''' A print without a cover doesn't leave an earlier print's cover for the preview to show '''
         outdir = os.path.join(self.tmpdir.name, "WSGlatin", "local", "ptxprint")

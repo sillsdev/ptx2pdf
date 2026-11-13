@@ -227,6 +227,8 @@ class TexModel:
         self.dict['config/name'] = self.printer.cfgid
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.dict['/cfgrpath'] = rel(cpath, docdir)
+        # the config's ptxprint.sty, unless this print has been given one of its own (a read only print)
+        self.dict['/styrpath'] = rel(getattr(self.printer, 'styleSheetDir', None) or cpath, docdir)
         self.dict['/ptxprint_version'] = self.VersionStr
         self.dict['/ptxprint_gitversion'] = self.GitVersionStr
         self.processHdrFtr(self.printer)

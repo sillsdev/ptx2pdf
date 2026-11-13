@@ -184,6 +184,10 @@ class ViewModel:
         self.userconfig = userconfig        # user level .config
         self.scriptsdir = scriptsdir
         self.args = args
+        # --readonly: print, but leave everything the project shares (config, styles, picture and
+        # adjust lists) exactly as it is on disk
+        self.readOnly = bool(getattr(args, 'readonly', False))
+        self.styleSheetDir = None       # where this print's ptxprint.sty is, if not in the config's folder
         # importPDFsettings  (removed from list below)
         for v in ("""ptsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
@@ -1090,7 +1094,7 @@ class ViewModel:
         return os.path.join(rpath, "FRTlocal.sfm") if rpath is not None else None
 
     def configLocked(self):
-        return self.get("t_invisiblePassword") != ""
+        return self.readOnly or self.get("t_invisiblePassword") != ""
 
     def readConfig(self, cfgname=None, updatebklist=True):
         if cfgname is None:
@@ -1173,7 +1177,7 @@ class ViewModel:
         return oldversion
 
     def writeConfig(self, cfgname=None, force=False, diff=None):
-        if not force and self.configLocked():
+        if self.readOnly or (not force and self.configLocked()):
             return
         if cfgname is None:
             cfgname = self.cfgid or ""
@@ -1876,13 +1880,26 @@ class ViewModel:
         changed = False
         for bk in self.getAllBooks():
             adj = self.get_adjlist(bk, save=False)
-            if adj is not None:
+            if adj is None:
+                continue
+            if self.readOnly:
+                adj.createTriggerlist()     # what the print needs, in the working folder
+            else:
                 changed |= adj.save()
         if changed:
             self.triggervcs = True
         return changed
 
     def saveStyles(self, force=False):
+        if self.readOnly:
+            # The print reads the styles from a file. Give it one of its own, so that it has the
+            # styles as they are here (brought up to date, or changed by -D) and the config's is left
+            wdir = self.project.printPath(self.cfgid)
+            os.makedirs(wdir, exist_ok=True)
+            with open(os.path.join(wdir, "ptxprint.sty"), "w", encoding="utf-8") as outf:
+                self.styleEditor.output_diffile(outf)
+            self.styleSheetDir = wdir
+            return
         if not force and self.configLocked():
             return
         fname = os.path.join(self.project.createConfigDir(self.cfgid), "ptxprint.sty")
@@ -1940,7 +1957,7 @@ class ViewModel:
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
-        if not force and self.configLocked():
+        if self.readOnly or (not force and self.configLocked()):
             return False
         changed = False
         # In a diglot the config's own piclist gets just the main side, for when it is printed on its own

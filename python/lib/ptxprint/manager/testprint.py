@@ -83,7 +83,8 @@ class TestPrinter:
             return PrintResult(prjid, cfg, books, STOPPED)
         cmd, env = ptxprintCommand()
         # -S: run the config's script, as printing from PTXprint's window does
-        cmd = cmd + ["-p", self.validator.projectsDir, "-q", "-S", "-l", "error", "--logfile=none",
+        # --readonly: a test must not change the configuration it tests
+        cmd = cmd + ["-p", self.validator.projectsDir, "-q", "-S", "--readonly", "-l", "error", "--logfile=none",
                      "-c", cfg, "-P"] + (["-B", pub] if pub is not None else ["-b", " ".join(self.booksIn(books))]) + [prjid]
         start = time.time()
         try:

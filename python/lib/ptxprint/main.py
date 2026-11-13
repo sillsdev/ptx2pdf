@@ -247,6 +247,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     parser.add_argument('-f', '--fontpath', action='append', help="Specify directories containing fonts (repeatable)")
     parser.add_argument('--nofontcache', action="store_true", help="Disable font cache updates")
     parser.add_argument('--testsuite', action="store_true", help="Use only fonts from project and test suite")
+    parser.add_argument('--readonly', action="store_true", help="With -P: print without changing any of the project's shared "
+                                        "files (configuration, styles, picture lists, adjust lists)")
 
     # PDF & Output Settings
     parser.add_argument('-F', '--difffile', help="Generate difference PDF against another file")
