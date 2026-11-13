@@ -1643,6 +1643,22 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
+    def _healPath(self, val):
+        """ While ${settingsdir} meant the project folder (3.0.x-3.1.6), ${settingsdir}/OtherPrj/x.py
+            was read as a file inside this project and saved back as ${prjdir}/OtherPrj/x.py. If
+            there is no such file here but there is in that other project, that is the one meant. """
+        pre = "${prjdir}/"
+        if not val or not val.startswith(pre) or self.project is None:
+            return val
+        rest = val[len(pre):].replace("\\", "/")
+        if os.path.exists(os.path.join(self.project.path, rest)):
+            return val
+        other = os.path.join(os.path.dirname(os.path.normpath(self.project.path)), rest)
+        if "/" in rest and os.path.isfile(other):
+            logger.debug(f"Path {val} taken as {other}")
+            return "${settingsdir}/" + rest
+        return val
+
     def _resetMissing(self, config, setv):
         """ Settings this config doesn't have go back to the UI's defaults, rather than keeping what
             the config loaded before had (switching configs reuses the view) """
@@ -1718,6 +1734,7 @@ class ViewModel:
                             if w[2] is not None:
                                 setv(w[2], ", ".join(pdfre.sub(r"\1", x.as_posix()) for x in val))
                         else:
+                            val = self._healPath(val)
                             val = Path(val, self) if val is not None else None
                             if w[2] is not None and val is not None:
                                 setv(w[2], pdfre.sub(r"\1", val.as_posix()))

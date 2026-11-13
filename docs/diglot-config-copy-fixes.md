@@ -25,7 +25,7 @@ This document has three parts:
 | PTXprint complains about `ob00227.png`, a picture from a different project | The right-hand text was still aArpBT, and aArpBT's glossary has a faulty picture entry | Partly fixed; two things for you to do |
 | Printed the Arop BT instead of cOGBT | Same cause: the right-hand text is still the source project's | Now warned about; you set it yourself |
 | Arop publications appearing in another project after a copy | Publications were copied even when "keep each project's own variables" was ticked | Fixed |
-| `! Missing number ... \tri@lsplitRejR` in bSum | Not found yet | Open: we need an archive |
+| `! Missing number ... \tri@lsplitRejR` in bSum | Probably: the R row names a project "bSumBT", which does not exist | PTXprint now says so plainly; you set the R row (see section 10) |
 | Cannot print the glossary with a publication in cGoi | Not yet investigated; probably the same wrong right-hand text | Open |
 | Picture printing twice at the end of bPou Matthew | Not investigated here | Open (with Martin and David) |
 | Archive target folder not opening automatically | Not investigated here | Open |
@@ -107,20 +107,30 @@ The cause is that **Make Cover Page was turned off** in that configuration, so n
 **What was wrong.** Two things together:
 
 1. The right-hand text of the copied configuration was still aArpBT (see section 2), so cGoi's glossary was paired with the Arop BT glossary.
-2. The Arop BT glossary contains a picture entry with a faulty setting: `loc="paw"`. "paw" is a value for the *media* setting (print, app, web), not a position on the page, and PTXprint's typesetting engine stops with an error when it meets it. The entry is in the paragraph that begins "Dispela em narapela kain rais" and reads `\fig Ol |src="ob00227.png" size="span" loc="paw" ref="1.0"...`.
+2. One picture entry in the Arop BT glossary is put together wrongly. It is in the paragraph that begins "Dispela em narapela kain rais" and reads:
+
+   `\fig Ol |src="ob00227.png" size="span" loc="paw" ref="1.0"\w Juda\w* i save kisim sids bilong wit na wokim bret\fig*`
+
+   The caption has been split in two: it starts ("Ol"), then come the picture's settings, then the rest of the caption follows them. Everything in the caption should come before the `|`. Because of this, PTXprint does not recognise the entry as a normal picture, leaves it in the text, and the typesetting engine stops when it reaches it. (`loc="paw"` itself is fine: all your pictures have it.)
 
 **What you need to do.**
 
 - Set the R row to the right project in cGoi (section 2). This removes the error for cGoi.
-- Correct that `\fig` entry in the aArpBT glossary in Paratext: either remove `loc="paw"` or change it to `media="paw"`. Otherwise it may cause the same error whenever the aArpBT glossary is printed with pictures.
+- Correct that entry in the aArpBT glossary in Paratext so that the whole caption comes first: `\fig Ol \w Juda\w* i save kisim sids bilong wit na wokim bret|src="ob00227.png" size="span" loc="paw" ref="1.0"\fig*`. Otherwise it may cause the same error whenever the aArpBT glossary is printed.
 
 ### 9. Smaller fix
 
 Pressing Print while on the Publications tab with no publication highlighted could raise an error. It now prints the current settings.
 
-### Still open
+### 10. Two more fixes found while checking all 14 projects (13 November)
 
-- **`! Missing number ... \tri@lsplitRejR` (bSum, 1JN to JUD).** We could not find the cause from the error alone, and there is no bSum archive among those we have. Please send an archive from a bSum print that fails this way. It is worth trying again first with the fixes above, because your bSum configuration had the wrong left-hand project recorded in it.
+**A diglot whose other project cannot be found.** The current bSum DiglotA5 has "bSumBT" in the R row. There is no project of that name (bSum's own project settings say its back translation is cOGBT). PTXprint used to carry on without the second text and without telling you, which ends in a confusing error from the typesetting engine, or a page with only one text. This is the most likely cause of your `\tri@lsplitRejR` error, though we have not been able to reproduce that exact message. PTXprint now stops before typesetting and tells you which row names a project or configuration it cannot find.
+
+*What you need to do:* in bSum, set the R row on the Diglot tab to the right back translation project.
+
+**Script paths that version 3.1 saved wrongly.** While `${settingsdir}` had the wrong meaning (section 3), opening and saving a configuration rewrote the script location as `${prjdir}/aArpBT\shared\InsertGLOcounterpart.py`, that is, a folder called aArpBT *inside* the project. Six of the fourteen DiglotA5 configurations are in this state (aMal, aSno, bBar, bG1BT, cOGBT, cWol). PTXprint now recognises this when it loads a configuration and uses the file in the other project, as was meant. You do not need to change anything.
+
+### Still open
 - **Cannot print the glossary with a publication (cGoi).** Not yet examined. It may have the same cause as section 8.
 - **Picture printing twice at the end of bPou Matthew.** Already raised with Martin.
 - **Archive folder not opening automatically**, and **PTXprint reopening in a different language after a crash.** Not yet examined.
@@ -190,7 +200,7 @@ Printing a publication from the Publications tab now copies that publication's v
 
    `tri@lsplitRej#1` is given a default of `0pt` when a column is declared (`ptx-diglot.tex`, about line 4102), so it looks as though column R was never declared with `\newPolyglotCol` although the merged text uses it. The config had been copied from another project and partly edited by hand, and John reported that it printed once after he changed the T2 width and then failed again. We have no archive for this. What would let R be used without being declared, and what should we ask John to capture?
 
-2. **`loc="paw"` in a `\fig`.** aArpBT's glossary has `\fig Ol |src="ob00227.png" size="span" loc="paw" ref="1.0"...`. TeX stops in `\d@figurePar` with "Missing number" on the `w`. The data is wrong, but should an unrecognised `loc` be ignored with a warning rather than stop the run? The current hint ("Possibly a missing +/- value in the Adjust List") sent John in the wrong direction.
+2. **A malformed `\fig` reaching TeX with `loc="paw"`.** aArpBT's glossary has `\fig Ol |src="ob00227.png" size="span" loc="paw" ref="1.0"\w Juda\w* i save ...\fig*` (attributes in the middle of the caption). The Python side passes it on as `\fig Ol ... bret|size="span" loc="paw" ref="1.0" src="ob00227.png"\fig*`, and TeX stops in `\d@figurePar` with "Missing number" on the `w`: it reads `loc` as a page position. All of John's figures carry `loc="paw"` (the old media field), and normally they never reach TeX because the picture list replaces them. Should TeX ignore a `loc` it can't read as a position, with a warning, rather than stop? The current hint ("Possibly a missing +/- value in the Adjust List") sent John in the wrong direction.
 
 3. **Picture printing twice at the end of bPou Matthew.** A picture set to the bottom of the page, in the last part of the book, appears twice (or once at the end of Matthew and again at the start of the glossary). Setting it to the top of the page avoids it. John says he has seen this in other publications that week. It resembles the duplicate-picture problem fixed for 3.1; is this a remaining case at the end of a book?
 

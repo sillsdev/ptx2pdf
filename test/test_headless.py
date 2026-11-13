@@ -445,6 +445,38 @@ class TestCopyDiglotConfig(_ProjectCopy):
         self.assertEqual((view.polyglots["L"].prj, view.polyglots["L"].prjguid),
                          (view.project.prjid, view.project.guid))
 
+    def test_missing_secondary(self):
+        ''' A diglot whose other project isn't there says so, rather than printing something else '''
+        view = self.view("Diglot2JN")
+        cfgpath = os.path.join(view.project.srcPath("Diglot2JN"), "ptxprint.cfg")
+        with open(cfgpath, encoding="utf-8") as inf:
+            orig = inf.read()
+        cfg = configparser.ConfigParser(interpolation=None)
+        cfg.read(cfgpath, encoding="utf-8")
+        cfg.set("diglot_R", "projectid", "NoSuchBT")
+        cfg.set("diglot_R", "projectguid", "0" * 40)
+        with open(cfgpath, "w", encoding="utf-8") as outf:
+            cfg.write(outf)
+        try:
+            view = self.view("Diglot2JN")
+            errors = []
+            view.doError = lambda *a, **kw: errors.append(str(a) + str(kw.get("secondary", "")))
+            job = maketex(view)
+        finally:
+            with open(cfgpath, "w", encoding="utf-8") as outf:
+                outf.write(orig)
+        self.assertNotEqual(job.res, 0)
+        self.assertTrue(any("NoSuchBT" in e for e in errors), errors)
+
+    def test_heal_other_project_path(self):
+        ''' ${prjdir}/OtherPrj/file, as 3.1 wrote ${settingsdir}/OtherPrj/file, finds the file there '''
+        view = self.view("Default")
+        other = os.path.join(self.tmpdir.name, "WSG", "shared", "healme.py")
+        with open(other, "w", encoding="utf-8") as outf:
+            outf.write("pass\n")
+        self.assertEqual(view._healPath("${prjdir}/WSG\\shared\\healme.py"), "${settingsdir}/WSG/shared/healme.py")
+        self.assertEqual(view._healPath("${prjdir}/shared/nosuch.py"), "${prjdir}/shared/nosuch.py")
+
     def test_settingsdir(self):
         ''' ${settingsdir} is the folder the projects are in, as configs have always used it '''
         from ptxprint.utils import Path

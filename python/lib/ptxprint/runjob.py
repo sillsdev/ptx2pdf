@@ -243,6 +243,27 @@ class RunJob:
         captions = []
         diginfos = {}
         self.info["diglotcaptions_"] = ""
+        if self.printer.get("c_diglot") and not self.printer.isDiglot:
+            # Every other text of the diglot has to be there. Printing without one gave a TeX
+            # error about the column, or a single text with no word of why
+            missing = []
+            for k, pg in self.printer.polyglots.items():
+                if k == "L":
+                    continue
+                dv = self.printer.diglotViews.get(k)
+                if dv is None:
+                    try:
+                        dv = self.printer.createDiglotView(k)
+                    except ValueError:
+                        dv = None
+                if dv is None:
+                    missing.append(_("{} is project {} (configuration {})").format(k, pg.prj, pg.cfg))
+            if len(missing):
+                self.printer.doError(_("This diglot can't be printed: a project or configuration it uses was not found"),
+                        secondary="\n".join(missing) + "\n\n" + _("Choose the right project and configuration on the Diglot tab."),
+                        show=not self.printer.get("c_quickRun"))
+                self.fail(_("Diglot project or configuration not found: ") + "; ".join(missing))
+                return
         if len(self.printer.diglotViews):
             for k, dv in self.printer.diglotViews.items():
                 if dv is None:
