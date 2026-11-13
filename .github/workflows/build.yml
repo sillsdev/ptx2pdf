@@ -2,6 +2,7 @@ name: Build ptxprint and upload PTXPrint
 on: 
   push:
     branches: [master]
+    tags: ['[0-9]+.[0-9]+*']
   workflow_dispatch:
 
 jobs:
@@ -145,7 +146,9 @@ jobs:
         NOTARIZATION_USERNAME:  ${{ secrets.SIL_APPLE_NOTARIZATION_USERNAME }}
         NOTARIZATION_PASSWORD: ${{ secrets.SIL_APPLE_NOTARIZATION_PASSWORD }}
         NOTARIZATION_TEAM: 3YE4W86L3G
-      run: ./mac-build.sh
+      run: 
+        ./mac-build.sh
+        echo ${github.ref_protected}
         
     - name: Upload distribution DMG
       uses: actions/upload-artifact@v7
