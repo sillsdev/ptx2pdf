@@ -20,7 +20,7 @@ MOSTLABEL = "(what most have)"
 ACROSSPROJECTS = "projects"
 ACROSSCONFIGS = "configs"
 # fixed columns of the styles list; a column for each configuration compared follows
-(S_MARKER, S_ATTR, S_BASE, S_INDEX, S_NFIXED) = range(5)
+(S_TICK, S_MARKER, S_ATTR, S_BASE, S_INDEX, S_NFIXED) = range(6)
 
 MAINLABEL = "(main variables)"
 INHERITED = "#909090"       # a publication's value that is just the config's own
@@ -381,6 +381,30 @@ class ManagerWindow(Gtk.Window):
         self.styleNonVisual.connect("toggled", lambda w: self.fillStyles())
         bar.pack_start(self.styleNonVisual, False, False, 0)
 
+        bar = Gtk.Box(spacing=6)
+        page.pack_start(bar, False, False, 0)
+        self.styleCopyButton = Gtk.Button(label="Copy ticked")
+        self.styleCopyButton.set_tooltip_text("Give the ticked rows' out of step configurations the 'Compare with' value, "
+                                              "by changing their ptxprint.sty")
+        self.styleCopyButton.connect("clicked", self.onCopyStyles)
+        bar.pack_end(self.styleCopyButton, False, False, 0)
+        self.styleCopyTo = Gtk.ComboBoxText()
+        self.styleCopyTo.set_tooltip_text("Which of the configurations to change")
+        self.styleCopyTo.connect("changed", lambda w: self.updateButtons())
+        bar.pack_end(self.styleCopyTo, False, False, 0)
+        bar.pack_end(Gtk.Label(label="in:"), False, False, 0)
+        for label, handler, tip in (
+                ("Tick none", lambda w: self.tickStyles(False), None),
+                ("Tick whole style", self.onTickWholeStyle, "Tick every row shown for the highlighted row's style"),
+                ("Tick shown", lambda w: self.tickStyles(True), "Tick the rows shown, except fonts and cover styles: tick those yourself")):
+            b = Gtk.Button(label=label)
+            if tip:
+                b.set_tooltip_text(tip)
+            b.connect("clicked", handler)
+            bar.pack_end(b, False, False, 0)
+        bar.pack_start(Gtk.Label(label="To bring configurations into line, tick the rows and click Copy ticked.", xalign=0), False, False, 0)
+        self.styleTicked = set()        # (marker, attribute) of the ticked rows
+
         self.styleComparison = None
         self.styleDiffs = []
         self.styleShown = []
@@ -532,6 +556,13 @@ class ManagerWindow(Gtk.Window):
         n = sum(1 for r in self.compareStore if r[X_TICK])
         self.copyButton.set_label(f"Copy ticked ({n})")
         self.copyButton.set_sensitive(n > 0)
+        if self.styleComparison is not None:
+            todo, columns = self.styleCopyPlan()
+            n = sum(1 for d in todo for c in d.differing if columns is None or c in columns)
+        else:
+            n = 0
+        self.styleCopyButton.set_label(f"Copy ticked ({n})")
+        self.styleCopyButton.set_sensitive(n > 0)
 
     def confirm(self, text, lines):
         dialog = Gtk.MessageDialog(transient_for=self, modal=True, message_type=Gtk.MessageType.QUESTION,
@@ -1027,7 +1058,13 @@ class ManagerWindow(Gtk.Window):
         for c in comparison.columns:
             self.styleRef.append(c, c)
         self.styleRef.set_active(0)
+        self.styleCopyTo.remove_all()
+        self.styleCopyTo.append("", "all that differ")
+        for c in comparison.columns:
+            self.styleCopyTo.append(c, c)
+        self.styleCopyTo.set_active(0)
         self.styleRefFilling = False
+        self.styleTicked = set()
         self.fillStyles()
 
     def styleRowShown(self, d):
@@ -1051,12 +1088,15 @@ class ManagerWindow(Gtk.Window):
         self.styleDiffs = comp.differences(reference=ref)
         self.styleShown = [d for d in self.styleDiffs if self.styleRowShown(d)]
         ncols = len(comp.columns)
-        store = Gtk.ListStore(*([str, str, str, int] + [str] * ncols))
+        store = Gtk.ListStore(*([bool, str, str, str, int] + [str] * ncols))
         for i, d in enumerate(self.styleShown):
-            store.append([d.marker, d.attr, d.baseline.shown(d.attr), i]
+            store.append([(d.marker, d.attr) in self.styleTicked, d.marker, d.attr, d.baseline.shown(d.attr), i]
                          + [d.values[c].shown(d.attr) if c in d.differing else SAME for c in comp.columns])
         for c in self.styleTree.get_columns():
             self.styleTree.remove_column(c)
+        tick = Gtk.CellRendererToggle()
+        tick.connect("toggled", self.onStyleTicked)
+        self.styleTree.append_column(Gtk.TreeViewColumn("Copy", tick, active=S_TICK))
         self.styleTree.append_column(textColumn("Style", S_MARKER))
         self.styleTree.append_column(textColumn("Attribute", S_ATTR))
         self.styleTree.append_column(textColumn("Most have" if ref is COMMONEST else f"{ref} has", S_BASE))
@@ -1068,10 +1108,76 @@ class ManagerWindow(Gtk.Window):
             col.set_min_width(64)
             self.styleTree.append_column(col)
         self.styleTree.set_model(store)
+        self.updateButtons()
         visual = [d for d in self.styleDiffs if d.visual]
         nstyles = len(set(d.marker for d in visual))
         self.status.set_text(f"{self.styleWhat}: {len(visual)} style attributes differ, in {nstyles} styles "
                              f"({len(self.styleDiffs) - len(visual)} more in names and structure). Showing {len(self.styleShown)}.")
+
+    def onStyleTicked(self, r, path):
+        row = self.styleTree.get_model()[path]
+        row[S_TICK] = not row[S_TICK]
+        key = (row[S_MARKER], row[S_ATTR])
+        if row[S_TICK]:
+            self.styleTicked.add(key)
+        else:
+            self.styleTicked.discard(key)
+        self.updateButtons()
+
+    def tickStyles(self, val, marker=None):
+        ''' Tick (or untick) the rows shown, or those of one style. Fonts and cover styles are a
+            project's or a publication's own more often than not, so "all" leaves them for the user. '''
+        if not val:
+            self.styleTicked = set()
+        else:
+            for d in self.styleShown:
+                if marker is not None:
+                    if d.marker == marker:
+                        self.styleTicked.add((d.marker, d.attr))
+                elif d.visual and d.group != "Cover" and "font" not in d.attr.replace("fontsize", "").replace("fontscale", ""):
+                    self.styleTicked.add((d.marker, d.attr))
+        self.fillStyles()
+
+    def onTickWholeStyle(self, b):
+        model, titer = self.styleTree.get_selection().get_selected()
+        if titer is None:
+            self.status.set_text("Click on a row of the style first.")
+            return
+        self.tickStyles(True, marker=model[titer][S_MARKER])
+
+    def styleCopyPlan(self):
+        ''' Returns (the ticked StyleDifferences, the columns to change or None for all that differ) '''
+        todo = [d for d in self.styleDiffs if (d.marker, d.attr) in self.styleTicked]
+        only = self.styleCopyTo.get_active_id() or None
+        if only is not None:
+            todo = [d for d in todo if only in d.differing]
+        return todo, ([only] if only is not None else None)
+
+    def onCopyStyles(self, b):
+        todo, columns = self.styleCopyPlan()
+        if not len(todo):
+            return
+        lines = []
+        for d in todo:
+            for c in d.differing:
+                if columns is None or c in columns:
+                    lines.append(f"{c}: \\{d.marker} {d.attr}: {d.values[c].shown(d.attr)} becomes {d.baseline.shown(d.attr)}")
+        if self.confirm(f"Change {len(lines)} style value{'s' if len(lines) != 1 else ''} (in ptxprint.sty)?", lines):
+            self.copyStyles(todo, columns)
+
+    def copyStyles(self, todo, columns=None):
+        try:
+            changed, problems = self.styleComparison.copy(todo, columns)
+        except OSError as e:
+            self.status.set_text(f"Could not copy: {e}")
+            return 0, [str(e)]
+        self.styleTicked = set()
+        self.fillStyles()
+        msg = f"Changed {changed} style value{'s' if changed != 1 else ''}. Test print to check the result."
+        if len(problems):
+            msg += f" {len(problems)} could not be brought into line: " + "; ".join(problems[:3]) + ("..." if len(problems) > 3 else "")
+        self.status.set_text(msg)
+        return changed, problems
 
     def onStyleTooltip(self, tree, x, y, keyboard, tooltip):
         if self.styleComparison is None or keyboard:
@@ -1084,7 +1190,7 @@ class ManagerWindow(Gtk.Window):
         row = tree.get_model()[path]
         d = self.styleShown[row[S_INDEX]]
         cols = tree.get_columns()
-        i = cols.index(column) - 3
+        i = cols.index(column) - 4
         lines = []
         def describe(label, v):
             return f"{label}: {v.shown(d.attr)}   ({'the default' if v.source == 'default' else 'from ' + v.source})"

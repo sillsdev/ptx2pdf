@@ -11,7 +11,7 @@ r''' Compares styles between configurations: the same configuration in different
     of those files it came from.
 '''
 
-import os, re, sys, configparser
+import os, re, sys, shutil, configparser
 from collections import Counter
 from dataclasses import dataclass, field
 from typing import Optional
@@ -180,6 +180,79 @@ def loadDefaults():
     return _defaults
 
 
+def attributeName(attr):
+    ''' The attribute as PTXprint writes it in a style sheet: fontsize -> FontSize '''
+    try:
+        from ptxprint.styleditor import mkrexceptions
+    except ImportError:
+        mkrexceptions = {}
+    t = attr.lower().title()
+    return mkrexceptions.get(t, t)
+
+def backupSty(validator, prjid, cfg):
+    ''' Keep the style sheet as it was, in the config's working folder (which is not shared) '''
+    src = os.path.join(validator.configDir(prjid, cfg), "ptxprint.sty")
+    if not os.path.exists(src):
+        return None
+    destdir = os.path.join(validator.projects[prjid].path, "local", "ptxprint", cfg)
+    os.makedirs(destdir, exist_ok=True)
+    dest = os.path.join(destdir, "ptxprint.sty.before-copy")
+    shutil.copyfile(src, dest)
+    return dest
+
+def setStyValue(path, marker, attr, value):
+    r''' Set (or with value None, remove) one attribute of one style in a style sheet, leaving the
+        rest of the file as it is. Returns whether the file was changed. '''
+    lines = []
+    if os.path.exists(path):
+        with open(path, encoding="utf-8", errors="ignore") as inf:
+            lines = inf.read().split("\n")
+    attr = attr.lower()
+    newline = None if value is None else ("\\{} {}".format(attributeName(attr), value)).rstrip()
+    start = end = None          # the lines of this style's (last) block: after its \Marker, up to the next
+    found = []
+    curr = None
+    for i, l in enumerate(lines):
+        m = fieldRe.match(l)
+        if not m or l.lstrip().startswith("#"):
+            continue
+        key = m.group(1).lower()
+        if key == "marker":
+            if curr == marker:
+                end = i
+            curr = m.group(2)
+            if curr == marker:
+                start, end = i + 1, None
+        elif curr == marker and key == attr:
+            found.append(i)
+    if start is not None and end is None:
+        end = len(lines)
+    old = list(lines)
+    if len(found):
+        if newline is None:
+            for i in reversed(found):
+                del lines[i]
+        else:
+            lines[found[-1]] = newline
+            for i in reversed(found[:-1]):      # an earlier one that the last overrode
+                del lines[i]
+    elif newline is not None:
+        if start is None:
+            while len(lines) and not lines[-1].strip():
+                lines.pop()
+            lines.extend(["", "\\Marker " + marker, newline, ""])
+        else:
+            at = end
+            while at > start and not lines[at - 1].strip():     # before the blank line that ends the block
+                at -= 1
+            lines.insert(at, newline)
+    if lines == old:
+        return False
+    with open(path, "w", encoding="utf-8") as outf:
+        outf.write("\n".join(lines))
+    return True
+
+
 @dataclass
 class StyleDifference:
     marker: str
@@ -204,6 +277,7 @@ class StyleComparison:
             by project) or several configs of one project (labelled by config) '''
         self.validator = validator
         self.columns = [c[0] for c in columns]
+        self.targets = {label: (prjid, cfg) for label, prjid, cfg in columns}
         defaults = loadDefaults()
         self.sheets = {label: StyleSheet(validator, prjid, cfg, defaults) for label, prjid, cfg in columns}
 
@@ -215,6 +289,54 @@ class StyleComparison:
     def acrossConfigs(cls, validator, prjid, cfgs):
         have = validator.configNames(prjid)
         return cls(validator, [(c, prjid, c) for c in cfgs if c in have])
+
+    def reload(self):
+        defaults = loadDefaults()
+        self.sheets = {label: StyleSheet(self.validator, prjid, cfg, defaults) for label, (prjid, cfg) in self.targets.items()}
+
+    def copy(self, differences, columns=None):
+        ''' Give the configurations that differ (or just these columns of them) the value they are
+            compared with, by changing their ptxprint.sty and nothing else. Returns
+            (how many values were changed, [why any could not be brought into line]). '''
+        changed = 0
+        problems = []
+        backedUp = set()
+        for d in differences:
+            for col in d.differing:
+                if columns is not None and col not in columns:
+                    continue
+                prjid, cfg = self.targets[col]
+                sheet = self.sheets[col]
+                paragraph = (sheet.value(d.marker, "styletype").raw or "").lower() not in ("character", "note")
+                want = normalise(d.attr, d.baseline.raw, paragraph)
+                path = os.path.join(self.validator.configDir(prjid, cfg), "ptxprint.sty")
+                if path not in backedUp:
+                    backupSty(self.validator, prjid, cfg)
+                    backedUp.add(path)
+                # what it would be without its own ptxprint.sty saying anything
+                below = next((s[d.marker][d.attr] for label, s in reversed(sheet.layers)
+                              if label in (DEFAULTS, "custom.sty") and d.attr in s.get(d.marker, {})), None)
+                if normalise(d.attr, below, paragraph) == want:
+                    setStyValue(path, d.marker, d.attr, None)           # so just stop it saying otherwise
+                elif d.baseline.raw is not None:
+                    setStyValue(path, d.marker, d.attr, d.baseline.raw)
+                else:
+                    problems.append(f"{col}: \\{d.marker} {d.attr} can't be set to nothing: "
+                                    f"its {sheet.value(d.marker, d.attr).source} gives it a value")
+                    continue
+                changed += 1
+        self.reload()
+        # anything still out of line is being set by a file that is read after ptxprint.sty
+        for d in differences:
+            for col in d.differing:
+                if columns is not None and col not in columns:
+                    continue
+                now = self.sheets[col].value(d.marker, d.attr)
+                paragraph = (self.sheets[col].value(d.marker, "styletype").raw or "").lower() not in ("character", "note")
+                if normalise(d.attr, now.raw, paragraph) != normalise(d.attr, d.baseline.raw, paragraph) \
+                        and not any(p.startswith(f"{col}: \\{d.marker} {d.attr} ") for p in problems):
+                    problems.append(f"{col}: \\{d.marker} {d.attr} is still {now.shown(d.attr)}, because its {now.source} sets it")
+        return changed, problems
 
     def differences(self, reference=COMMONEST):
         ''' Returns the StyleDifferences: every attribute of every style that isn't the same in all of

@@ -443,6 +443,134 @@ class TestStyles(_Projects):
         self.assertEqual((found[("s", "fontsize")].values["WSG"].raw, found[("s", "fontsize")].values["WSG"].source),
                          ("9", "ptxprint-mods.sty"))
 
+    def readSty(self, prj, cfg, name="ptxprint.sty"):
+        with open(os.path.join(self.tmpdir.name, prj, "shared", "ptxprint", cfg, name), encoding="utf-8") as inf:
+            return inf.read()
+
+    def test_set_value(self):
+        from ptxprint.manager.styles import setStyValue, parseSty
+        path = os.path.join(self.tmpdir.name, "x.sty")
+        with open(path, "w", encoding="utf-8") as outf:
+            outf.write("\\Marker s\n\\FontSize 14\n\\Name Section head\n\n\\Marker p\n\\Color 16711680\n# a comment\n")
+        self.assertTrue(setStyValue(path, "s", "fontsize", "12"))           # change one
+        self.assertTrue(setStyValue(path, "s", "spacebefore", "3"))         # add one to a style that is there
+        self.assertTrue(setStyValue(path, "q1", "leftmargin", "0.5"))       # add a style
+        self.assertTrue(setStyValue(path, "p", "color", None))              # remove one
+        self.assertFalse(setStyValue(path, "p", "color", None))             # nothing to do
+        self.assertFalse(setStyValue(path, "s", "fontsize", "12"))
+        text = open(path, encoding="utf-8").read()
+        self.assertEqual(parseSty(path), {"s": {"fontsize": "12", "name": "Section head", "spacebefore": "3"},
+                                          "p": {}, "q1": {"leftmargin": "0.5"}})
+        self.assertIn("\\Marker s\n\\FontSize 12\n\\Name Section head\n\\SpaceBefore 3\n\n\\Marker p\n", text)
+        self.assertIn("# a comment", text)                                  # the rest is left as it was
+        self.assertIn("\\Marker q1\n\\LeftMargin 0.5", text)
+
+    def test_copy(self):
+        from ptxprint.manager.styles import StyleComparison
+        v = Validator(self.tmpdir.name)
+        comp = StyleComparison.acrossProjects(v, "Diglot2JN", ["WSG", "WSGlatin"])
+        before = self.readSty("WSGlatin", "Diglot2JN")
+        found = self.diffs(comp, reference="WSGlatin")
+        changed, problems = comp.copy([found[("s", "fontsize")]])
+        self.assertEqual((changed, problems), (1, []))
+        self.assertNotIn("FontSize", self.readSty("WSG", "Diglot2JN"))             # 12 is the default: no need to say it
+        self.assertIn("\\Name Section head", self.readSty("WSG", "Diglot2JN"))      # only what was asked for
+        self.assertEqual(before, self.readSty("WSGlatin", "Diglot2JN"))             # the reference isn't touched
+        self.assertNotIn(("s", "fontsize"), self.diffs(comp, reference="WSGlatin"))
+        # the sheet as it was is kept, out of the shared folder
+        backup = os.path.join(self.tmpdir.name, "WSG", "local", "ptxprint", "Diglot2JN", "ptxprint.sty.before-copy")
+        with open(backup, encoding="utf-8") as inf:
+            self.assertIn("\\FontSize 14", inf.read())
+
+    def test_copy_default(self):
+        ''' Where the others just have the default, the override is taken out, not a value written '''
+        from ptxprint.manager.styles import StyleComparison
+        self.writeSty("WSGlatin", "Diglot2JN", "ptxprint.sty", "\\Marker p\n\\Color x0000ff\n")
+        self.writeSty("WSG", "Diglot2JN", "ptxprint.sty", "\\Marker p\n\\Color x0000ff\n\\FirstLineIndent 0.7\n")
+        comp = StyleComparison.acrossProjects(Validator(self.tmpdir.name), "Diglot2JN", ["WSG", "WSGlatin"])
+        d = self.diffs(comp, reference="WSGlatin")[("p", "firstlineindent")]
+        self.assertEqual(d.baseline.source, "default")
+        self.assertEqual(comp.copy([d]), (1, []))
+        self.assertNotIn("FirstLineIndent", self.readSty("WSG", "Diglot2JN"))
+        self.assertEqual(self.diffs(comp, reference="WSGlatin"), {})
+
+    def test_copy_overridden(self):
+        ''' custom.sty is read before ptxprint.sty, so a value there has to be countered; ptxprint-mods.sty
+            is read after it, so a value there can't be, and the user is told '''
+        from ptxprint.manager.styles import StyleComparison
+        self.writeSty("WSGlatin", "Diglot2JN", "ptxprint.sty", "\\Marker p\n\\Color x0000ff\n")
+        self.writeSty("WSG", "Diglot2JN", "ptxprint.sty", "\\Marker p\n\\Color x0000ff\n")
+        with open(os.path.join(self.tmpdir.name, "WSG", "custom.sty"), "w", encoding="utf-8") as outf:
+            outf.write("\\Marker q1\n\\LeftMargin 0.9\n")
+        self.writeSty("WSG", "Diglot2JN", "ptxprint-mods.sty", "\\Marker q2\n\\LeftMargin 0.8\n")
+        self.change(("project", "ifusecustomsty", "True"), ("project", "ifusemodssty", "True"))
+        mods = self.readSty("WSG", "Diglot2JN", "ptxprint-mods.sty")
+        comp = StyleComparison.acrossProjects(Validator(self.tmpdir.name), "Diglot2JN", ["WSG", "WSGlatin"])
+        found = self.diffs(comp, reference="WSGlatin")
+        want = found[("q1", "leftmargin")].baseline.raw
+        changed, problems = comp.copy([found[("q1", "leftmargin")], found[("q2", "leftmargin")]])
+        self.assertIn(f"\\Marker q1\n\\LeftMargin {want}", self.readSty("WSG", "Diglot2JN"))
+        self.assertEqual(len(problems), 1)
+        self.assertIn("q2", problems[0])
+        self.assertIn("ptxprint-mods.sty", problems[0])
+        left = self.diffs(comp, reference="WSGlatin")
+        self.assertEqual(set(left), {("q2", "leftmargin")})
+        # only ptxprint.sty is ever written
+        self.assertEqual(mods, self.readSty("WSG", "Diglot2JN", "ptxprint-mods.sty"))
+        with open(os.path.join(self.tmpdir.name, "WSG", "custom.sty"), encoding="utf-8") as inf:
+            self.assertEqual(inf.read(), "\\Marker q1\n\\LeftMargin 0.9\n")
+
+    def test_copy_window(self):
+        try:
+            from ptxprint.manager.gtkmanager import ManagerWindow, S_TICK, S_MARKER, S_ATTR
+            from gi.repository import Gtk
+            if not Gtk.init_check()[0]:
+                raise ImportError("no display")
+        except (ImportError, ValueError) as e:
+            self.skipTest(f"No GTK: {e}")
+        self.writeSty("WSG", "Diglot2JN", "ptxprint.sty",
+                      "\\Marker s\n\\FontSize 14\n\\SpaceBefore 9\n\\FontName Charis\n\n\\Marker cat:coverfront|mt1\n\\FontSize 30\n"
+                      "\n\\Marker p\n\\Color x0000ff\n\\SpaceBefore 0.5\n")
+        win = ManagerWindow(self.tmpdir.name)
+        try:
+            win.configCombo.set_active_id("Diglot2JN")
+            win.runStyleCompare()
+            win.styleRef.set_active_id("WSGlatin")
+            self.assertFalse(any(r[S_TICK] for r in win.styleTree.get_model()))        # nothing is ticked for the user
+            self.assertFalse(win.styleCopyButton.get_sensitive())
+            win.tickStyles(True)            # "tick shown" leaves the font and the cover style
+            self.assertEqual(win.styleTicked, {("s", "fontsize"), ("s", "spacebefore")})
+            win.tickStyles(False)
+            win.tickStyles(True, marker="s")                                            # the whole style
+            self.assertEqual(win.styleTicked, {("s", "fontsize"), ("s", "spacebefore"), ("s", "fontname")})
+            win.styleTicked.discard(("s", "fontname"))
+            win.styleCopyTo.set_active_id("WSGlatin")       # the reference itself: nothing of it differs
+            self.assertEqual(win.styleCopyPlan()[0], [])
+            win.styleCopyTo.set_active_id("")
+            todo, columns = win.styleCopyPlan()
+            self.assertEqual(len(todo), 2)
+            self.assertIn("\\FontSize 14", self.readSty("WSG", "Diglot2JN"))            # nothing written until Copy
+            changed, problems = win.copyStyles(todo, columns)
+            self.assertEqual((changed, problems), (2, []))
+            sty = self.readSty("WSG", "Diglot2JN")
+            self.assertNotIn("\\FontSize 14", sty)
+            self.assertNotIn("SpaceBefore 9", sty)
+            self.assertIn("\\FontName Charis", sty)
+            self.assertEqual({(r[S_MARKER], r[S_ATTR]) for r in win.styleTree.get_model()},
+                             {("s", "fontname"), ("cat:coverfront|mt1", "fontsize")})
+            self.assertEqual(win.styleTicked, set())
+        finally:
+            win.destroy()
+
+    def test_ptxprint_reads_copy(self):
+        ''' A value copied into ptxprint.sty is what PTXprint loads '''
+        from ptxprint.manager.styles import StyleComparison
+        from test_headless import loadview
+        comp = StyleComparison.acrossProjects(Validator(self.tmpdir.name), "Diglot2JN", ["WSG", "WSGlatin"])
+        comp.copy([self.diffs(comp, reference="WSG")[("s", "fontsize")]])          # WSGlatin takes WSG's 14
+        view = loadview(self.tmpdir.name, "WSGlatin", "Diglot2JN")
+        self.assertAlmostEqual(float(view.styleEditor.getval("s", "FontSize")) * 12, 14, places=1)
+
     def test_commonest(self):
         from ptxprint.manager.styles import StyleComparison
         # three configurations of one project, one out of step
