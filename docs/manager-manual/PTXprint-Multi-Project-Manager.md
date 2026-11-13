@@ -1,6 +1,8 @@
 # PTXprint Multi-Project Manager: User Manual
 
-This manual describes the Manager as it is on the `multiproject-manager` branch (November 2026). The pictures were made with a sample set of thirteen projects from Papua New Guinea: ten translations and their three back translations.
+For PTXprint 3.1.7.
+
+The Multi-Project Manager is installed with PTXprint from version 3.1.7. The pictures in this manual were made with a set of thirteen projects from Papua New Guinea: ten translations and their three back translations.
 
 ## Contents
 
@@ -37,13 +39,7 @@ It does not replace PTXprint. You still design a layout, adjust paragraphs and p
 
 ## 2. Starting it
 
-**From the Start menu.** When it is installed with PTXprint, choose **PTXprint Multi-Project Manager**. Its icon is PTXprint's open book three times over. (It is not in a released installer yet.)
-
-**From the source code.** In the `ptx2pdf` folder:
-
-```
-python python/scripts/ptxprint-manager
-```
+Open the Start menu and choose **PTXprint Multi-Project Manager**. Its icon is PTXprint's open book three times over. It is installed alongside PTXprint; there is nothing extra to set up.
 
 **Choosing the projects folder.** The Manager opens in the projects folder that PTXprint last used. To work somewhere else, click the **Projects folder** button at the top left and choose the folder that contains the projects (not one of the projects themselves).
 
@@ -121,7 +117,7 @@ The Manager checks again afterwards, so what is left in the list is what still n
 | Column | Meaning |
 |---|---|
 | Fix | A tick box, if the Manager can repair this |
-| (colour word) | **Error**: this will stop the print or print the wrong thing. **Warning**: probably not what you want. **Note**: worth knowing |
+| (colour word) | **Error**: this will stop the print or print the wrong thing. **Warning**: it will print, but not as you intend. **Note**: worth knowing |
 | Project, Configuration | Where the problem is |
 | What is wrong | The problem, in words |
 | What Fix will do | Exactly what will be changed if you tick it |
@@ -453,7 +449,7 @@ This takes a couple of minutes for a dozen projects. It is worth doing after upd
 
 **A test print says "Not tried".** The project does not have a file for that book.
 
-**Every test print fails at once, with "PTXprint could not be started".** The Manager could not find PTXprint beside itself. Reinstall, or run both from the same source folder.
+**Every test print fails at once, with "PTXprint could not be started".** The Manager runs the PTXprint program that is installed beside it, and could not find it. Reinstall PTXprint.
 
 **I changed something in the Manager and PTXprint changed it back.** The configuration was open in PTXprint, which then saved its own copy. See [section 4](#4-what-it-changes-and-what-it-never-changes).
 
@@ -465,7 +461,7 @@ This takes a couple of minutes for a dozen projects. It is worth doing after upd
 
 ## 13. Using it from the command line
 
-Everything the window does can also be done from a command line, which is useful for a quick check or for a script. Give the projects folder with `-p`; without it, the folder PTXprint last used is taken.
+Most of what the window does can also be done from a command line, which is useful for a quick check or for a script. The program is `ptxprint-manager.exe`, in the folder PTXprint is installed in (normally `C:\Program Files\PTXprint`). Give the projects folder with `-p`; without it, the folder PTXprint last used is taken.
 
 ```
 ptxprint-manager -p "C:\My Paratext Projects" validate -c DiglotA5
