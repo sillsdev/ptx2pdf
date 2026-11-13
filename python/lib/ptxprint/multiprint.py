@@ -249,7 +249,9 @@ class WorkerContext:
 
         # Shared Watchdog Timer for both Fill and Print jobs
         watchdog = None
-        if job.build_params.timeout is not None:
+        # 0 (what BuildParams has unless told) is no limit, not a limit of no time at all: that
+        # stopped XeTeX after its first second, so only the shortest publications ever printed
+        if job.build_params.timeout:
             def trigger_timeout():
                 logging.debug("Timeout triggered")
                 printer.timedout = True

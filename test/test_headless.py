@@ -500,6 +500,30 @@ class TestCopyDiglotConfig(_ProjectCopy):
         self.assertEqual(view.get("btn_selectScript"), script)
         self.assertEqual(str(view.customScript), str(Path(script)))
 
+class TestWorkerTimeout(unittest.TestCase):
+
+    def test_no_limit_unless_given(self):
+        ''' A print job that isn't given a time limit (a publication's) isn't stopped as soon as it starts '''
+        import time
+        from types import SimpleNamespace
+        from ptxprint.multiprint import WorkerContext, Job
+        from ptxprint.utils import BuildParams
+        class SlowPrinter:
+            timedout = False
+            def solve(self, books):
+                time.sleep(0.4)
+                return 1 if self.timedout else 0
+        books = SimpleNamespace(first=SimpleNamespace(book="JAS"), last=SimpleNamespace(book="JAS"))
+        for timeout, expected in ((None, 0), (0.1, 1)):
+            kw = {} if timeout is None else {"timeout": timeout}
+            params = BuildParams(prjtree=None, config=None, macrosdir="", args=None, restart=False, pid="X", guid="",
+                                 cfgid="C", scriptsdir="", **kw)
+            ctx = WorkerContext("1", None, None, None)
+            printer = SlowPrinter()
+            ctx.get_printer = lambda job: printer
+            res = ctx.execute_job(Job("print", books, params))
+            self.assertEqual(res[2], expected, f"{timeout=}")
+
 class TestPolyglotProjects(unittest.TestCase):
     ''' Finding the other projects of a polyglot '''
 
