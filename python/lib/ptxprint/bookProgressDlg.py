@@ -424,8 +424,8 @@ class BookProgressDialog:
         if elapsed and cpuSecs and elapsed >= 2:
             factor = cpuSecs / elapsed
             speedup = "  <b>×{:.1f}</b>".format(factor)
-            tip = _("Run one after another, these books would have taken about {0} (the CPU time).\n"
-                    "Running them in parallel has taken {1}: ×{2:.1f} is how many times faster that is.").format(
+            tip = _("In sequence these books would have taken about {0} (CPU time).\n"
+                    "In parallel it has only taken {1}: ({2:.1f} times faster).").format(
                     self._hms(cpuSecs), self._hms(elapsed), factor)
         self.lb_status.set_markup(e(_("Elapsed {0}").format(none if elapsed is None else self._hms(elapsed)))
                 + speedup + "\n" + e(_("CPU time {0}").format(none if cpuSecs is None else self._hms(cpuSecs))))
