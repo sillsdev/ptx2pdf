@@ -145,6 +145,52 @@ def doSecondary(args):
                 rc = 1
     return rc
 
+def chosenPairs(validator, args):
+    prjids = splitList(args.project)
+    configs = splitList(args.config)
+    have = validator.projectsWithConfigs()
+    return [(p, c) for p in have if prjids is None or p in prjids for c in have[p] if configs is None or c in configs]
+
+def doPublications(args):
+    from ptxprint.manager.publications import PublicationTable, MAIN
+    validator = Validator(args.projects)
+    table = PublicationTable(validator, chosenPairs(validator, args))
+    cols = table.columns()
+    for (prjid, cfg, pubid) in table.rows():
+        c = table.configs[(prjid, cfg)]
+        if pubid == MAIN:
+            print(f"\n{prjid} / {cfg}   (book last chosen: {c.books})")
+        vals = "; ".join(f"{k} = {c.value(pubid, k)}" for k in cols if c.value(pubid, k).strip())
+        print(f"  {'main variables' if pubid == MAIN else pubid + ' [' + c.booksOf(pubid) + ']'}: {vals}")
+    return 0
+
+def doCompare(args):
+    from ptxprint.manager.compare import Comparison, NOTSET
+    validator = Validator(args.projects)
+    configs = splitList(args.config)
+    if configs is None or len(configs) != 1 or args.ref is None:
+        print("Give one configuration and the project to compare with: -c NAME --ref PROJECT")
+        return 2
+    if args.ref not in validator.projects or configs[0] not in validator.configNames(args.ref):
+        print(f"{args.ref} has no configuration {configs[0]}")
+        return 2
+    comparison = Comparison(validator, configs[0], args.ref)
+    diffs = comparison.differences([p for p, c in chosenPairs(validator, args)])
+    if not args.all:
+        diffs = [d for d in diffs if not d.oneSided]
+    wanted = set(args.copy or [])
+    show = lambda v: "(not set)" if v is NOTSET else v
+    for d in diffs:
+        print(f"{d.setting:38s} {d.project:10s} {show(d.value)}   ({args.ref}: {show(d.refValue)})")
+    print(f"\n{len(diffs)} differences from {args.ref} in {len(set(d.project for d in diffs))} projects.")
+    if len(wanted):
+        todo = [d for d in diffs if d.setting in wanted]
+        if not len(todo):
+            print("None of those settings differ.")
+        elif args.yes or input(f"Copy {len(todo)} settings from {args.ref}? [y/N] ").strip().lower() in ("y", "yes"):
+            print(f"Copied {comparison.copy(todo)} settings.")
+    return 0
+
 def main(argv=None):
     if sys.stdout is not None and hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")      # titles in any script, on any console
@@ -169,6 +215,16 @@ def main(argv=None):
     sec.add_argument("--side", default="R", help="Which text of the diglot [R]")
     sec.add_argument("--to", help="The project to use")
     sec.add_argument("--toconfig", help="Its configuration [the same name as before, if it has it]")
+    pub = sub.add_parser("publications", help="List the publications and title variables of configurations")
+    pub.add_argument("-P", "--project", action="append", help="Project(s) [all]")
+    pub.add_argument("-c", "--config", action="append", help="Configuration name(s) [all]")
+    cmp = sub.add_parser("compare", help="Compare a configuration's settings with one project's")
+    cmp.add_argument("-P", "--project", action="append", help="Project(s) to compare [all that have the configuration]")
+    cmp.add_argument("-c", "--config", action="append", help="The configuration")
+    cmp.add_argument("--ref", help="The project to compare the others with")
+    cmp.add_argument("--all", action="store_true", help="Also the settings only one of them has")
+    cmp.add_argument("--copy", action="append", metavar="SECTION/SETTING", help="Copy this setting from the reference (repeatable)")
+    cmp.add_argument("--yes", action="store_true", help="With --copy: don't ask")
     args = parser.parse_args(argv)
     if args.projects is None:
         args.projects = defaultProjectsDir()
@@ -179,6 +235,10 @@ def main(argv=None):
         return doValidate(args)
     elif args.command == "testprint":
         return doTestPrint(args)
+    elif args.command == "publications":
+        return doPublications(args)
+    elif args.command == "compare":
+        return doCompare(args)
     elif args.command == "secondary":
         if args.to is not None and splitList(args.project) is None:
             print("Say which project(s) to change: -P NAME")

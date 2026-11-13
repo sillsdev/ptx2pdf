@@ -70,17 +70,21 @@ class TestPrinter:
             return f"{prjid} does not have {', '.join(missing)}."
         return None
 
-    def run(self, prjid, cfg, books):
-        ''' Prints books (e.g. "3JN" or "JAS GLO") and returns a PrintResult. Blocks until done. '''
-        why = self.cannotPrint(prjid, cfg, books)
-        if why is not None:
-            return PrintResult(prjid, cfg, books, SKIPPED, message=why)
+    def run(self, prjid, cfg, books, pub=None):
+        ''' Prints books (e.g. "3JN" or "JAS GLO"), or the config's publication pub with its own books
+            and variables, and returns a PrintResult. Blocks until done. '''
+        if pub is not None:
+            books = pub
+        else:
+            why = self.cannotPrint(prjid, cfg, books)
+            if why is not None:
+                return PrintResult(prjid, cfg, books, SKIPPED, message=why)
         if self.stopping:
             return PrintResult(prjid, cfg, books, STOPPED)
         cmd, env = ptxprintCommand()
         # -S: run the config's script, as printing from PTXprint's window does
         cmd = cmd + ["-p", self.validator.projectsDir, "-q", "-S", "-l", "error", "--logfile=none",
-                     "-c", cfg, "-P", "-b", " ".join(self.booksIn(books)), prjid]
+                     "-c", cfg, "-P"] + (["-B", pub] if pub is not None else ["-b", " ".join(self.booksIn(books))]) + [prjid]
         start = time.time()
         try:
             proc = subprocess.Popen(cmd, cwd=self.validator.projectsDir, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -102,7 +106,11 @@ class TestPrinter:
         if self.stopping:
             return PrintResult(prjid, cfg, books, STOPPED, seconds)
         pdf = None
-        for l in reversed(out.split("\n")):
+        if pub is not None:
+            pdf = os.path.join(self.validator.projects[prjid].path, "local", "ptxprint", f"{prjid}_{cfg}_{pub}_ptxp.pdf")
+            if not os.path.exists(pdf):
+                pdf = None
+        for l in ([] if pub is not None else reversed(out.split("\n"))):
             l = l.strip()
             if l.lower().endswith("_ptxp.pdf") and os.path.exists(l):
                 pdf = os.path.normpath(l)
@@ -121,10 +129,14 @@ class TestPrinter:
             l = l.strip()
             if l.startswith("Status:"):
                 said.append(l[7:].strip())
+            elif l.startswith("Can't find publication") or l.startswith("No books to print"):
+                said.append(l)
         logdir = os.path.join(self.validator.projects[prjid].path, "local", "ptxprint", cfg)
         tex = ""
         if os.path.isdir(logdir):
-            logs = [os.path.join(logdir, f) for f in os.listdir(logdir) if f.startswith(f"{prjid}_{cfg}_") and f.endswith(".log")]
+            # a publication is printed in a folder of its own inside this one
+            logs = [os.path.join(d, f) for d, _, fs in os.walk(logdir) for f in fs
+                    if f.startswith(f"{prjid}_{cfg}_") and f.endswith(".log")]
             logs = [f for f in logs if os.path.getmtime(f) >= start - 2]
             if len(logs):
                 tex = texError(max(logs, key=os.path.getmtime))

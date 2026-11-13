@@ -243,6 +243,146 @@ class TestWindow(_Projects):
             win.destroy()
 
 
+    def test_publications_and_compare(self):
+        try:
+            from ptxprint.manager.gtkmanager import (ManagerWindow, P_PROJECT, P_PUBID, P_STATE, P_NFIXED, P_CANPRINT,
+                                                     X_TICK, X_SETTING, X_PROJECT, MAINLABEL)
+            from ptxprint.manager.publications import MAIN
+            from gi.repository import Gtk
+            if not Gtk.init_check()[0]:
+                raise ImportError("no display")
+        except (ImportError, ValueError) as e:
+            self.skipTest(f"No GTK: {e}")
+        self.change(("vars", "maintitle", "WSG title"), ("paper", "margins", "33"))
+        before = open(self.cfgpath, encoding="utf-8").read()
+        win = ManagerWindow(self.tmpdir.name)
+        try:
+            win.configCombo.set_active_id("Diglot2JN")
+            win.fillPublications(reload=True)
+            self.assertIn("maintitle", win.pubColumns)
+            col = P_NFIXED + win.pubColumns.index("maintitle")
+            self.assertEqual({(r[P_PROJECT], r[P_PUBID]) for r in win.pubStore}, {("WSG", MAIN), ("WSGlatin", MAIN)})
+            # a new publication in both projects, with a title of its own in one, and a main title changed
+            self.assertEqual(win.addPublication("Second John", "2jn"), 2)
+            self.assertEqual(win.addPublication("Bad:name", "2JN"), 0)
+            self.assertEqual(win.addPublication("Third", "not books!"), 0)
+            win.editPublication("WSG", "Diglot2JN", "Second John", "maintitle", "2 John in WSG")
+            win.editPublication("WSGlatin", "Diglot2JN", MAIN, "maintitle", "Latin main")
+            rows = {(r[P_PROJECT], r[P_PUBID]): r for r in win.pubStore}
+            self.assertEqual(rows[("WSG", "Second John")][col], "2 John in WSG")
+            self.assertEqual(rows[("WSGlatin", "Second John")][col], "Latin main")     # inherits the pending main value
+            self.assertEqual(rows[("WSG", "Second John")][P_STATE], "new")
+            self.assertFalse(rows[("WSG", "Second John")][P_CANPRINT])                 # not until it is saved
+            self.assertEqual(win.numPubChanges(), 4)
+            self.assertEqual(before, open(self.cfgpath, encoding="utf-8").read())      # nothing written yet
+            win.applyPublications()
+            self.assertEqual(win.numPubChanges(), 0)
+            self.assertEqual(self.get("publication.Second John", "__books"), "2JN")
+            self.assertEqual(self.get("publication.Second John", "maintitle"), "2 John in WSG")
+            self.assertEqual(self.get("vars.publishable", "maintitle"), "True")
+            self.assertEqual(self.get("vars", "maintitle"), "WSG title")
+            # delete it again from one project
+            win.deletePublications([("WSG", "Diglot2JN", "Second John"), ("WSG", "Diglot2JN", MAIN)])
+            self.assertEqual(win.pubDeletes, {("WSG", "Diglot2JN", "Second John")})
+            win.applyPublications()
+            self.assertEqual({(r[P_PROJECT], r[P_PUBID]) for r in win.pubStore},
+                             {("WSG", MAIN), ("WSGlatin", MAIN), ("WSGlatin", "Second John")})
+
+            # compare WSG with WSGlatin: the margin differs, the titles and the diglot's projects aren't compared
+            win.refCombo.set_active_id("WSGlatin")
+            win.runCompare()
+            settings = {(r[X_SETTING], r[X_PROJECT]) for r in win.compareStore}
+            self.assertIn(("paper/margins", "WSG"), settings)
+            self.assertFalse(any(s.startswith(("vars/", "diglot_", "publication.")) or s == "project/id" for s, p in settings))
+            win.compareFind.set_text("margins")
+            self.assertEqual(len(win.compareFilter), 1)
+            win.onTickCompare(None, True)
+            self.assertEqual([d.setting for d in win.tickedDifferences()], ["paper/margins"])
+            self.assertEqual(self.get("paper", "margins"), "33")
+            win.copySettings(win.tickedDifferences())
+            cfg = configparser.ConfigParser(interpolation=None)
+            cfg.read(os.path.join(self.src, "ptxprint.cfg"), encoding="utf-8")
+            self.assertEqual(self.get("paper", "margins"), cfg.get("paper", "margins"))
+            self.assertNotIn(("paper/margins", "WSG"), {(r[X_SETTING], r[X_PROJECT]) for r in win.compareStore})
+        finally:
+            win.destroy()
+
+
+class TestPublications(_Projects):
+
+    def test_table(self):
+        from ptxprint.manager.publications import PublicationTable, ConfigPublications, MAIN, validBooks
+        v = Validator(self.tmpdir.name)
+        c = ConfigPublications(v, "WSG", "Diglot2JN")
+        c.apply(adds=[("PubA", "JAS GLO")], edits=[("PubA", "isbn", "978-1"), (MAIN, "isbn", "000")])
+        self.assertEqual(c.booksOf("PubA"), "JAS GLO")
+        self.assertEqual((c.value("PubA", "isbn"), c.value(MAIN, "isbn")), ("978-1", "000"))
+        self.assertIn("isbn", c.publishable)
+        self.assertIn("maintitle", c.publishable)       # these stay as they were
+        with self.assertRaises(ValueError):
+            c.apply(adds=[("PubA", "JAS")])
+        table = PublicationTable(v, [("WSG", "Diglot2JN"), ("WSGlatin", "Diglot2JN")])
+        self.assertIn("isbn", table.columns())
+        self.assertEqual(table.publicationNames(), ["PubA"])
+        self.assertIn(("WSG", "Diglot2JN", "PubA"), table.rows())
+        c.apply(deletes=["PubA"])
+        self.assertEqual(c.pubs, {})
+        self.assertTrue(all(validBooks(b) for b in ("JAS", "jas glo", "MAT-JHN", "MAT 1-7")))
+        self.assertFalse(any(validBooks(b) for b in ("", "James", "JAS!")))
+
+    def test_ptxprint_reads_it(self):
+        ''' What is written is what PTXprint loads as the publication's variables '''
+        from ptxprint.manager.publications import ConfigPublications
+        from test_headless import loadview
+        v = Validator(self.tmpdir.name)
+        ConfigPublications(v, "WSGlatin", "Diglot2JN").apply(adds=[("PubA", "2JN")], edits=[("PubA", "t1title", "Title One")])
+        view = loadview(self.tmpdir.name, "WSGlatin", "Diglot2JN")
+        self.assertEqual(view.publications["PubA"]["t1title"], "Title One")
+        self.assertEqual(view.publications["PubA"]["__books"], "2JN")
+        self.assertTrue(view.pubvars_publishable.get("t1title"))
+
+
+class TestCompare(_Projects):
+
+    def test_differences_and_copy(self):
+        from ptxprint.manager.compare import Comparison, NOTSET, isShared
+        self.change(("paper", "margins", "33"), ("paper", "height", "210.0mm"), ("vars", "maintitle", "Mine"))
+        cfg = configparser.ConfigParser(interpolation=None)
+        cfg.read(self.cfgpath, encoding="utf-8")
+        cfg.remove_option("paper", "width")
+        cfg.set("paper", "onlyhere", "x")
+        with open(self.cfgpath, "w", encoding="utf-8") as outf:
+            cfg.write(outf)
+        comp = Comparison(Validator(self.tmpdir.name), "Diglot2JN", "WSGlatin")
+        diffs = {d.setting: d for d in comp.differences(["WSG", "WSGlatin", "OGNT"])}
+        self.assertEqual(set(diffs), {"paper/margins", "paper/height", "paper/width", "paper/onlyhere"} & set(diffs))
+        self.assertIn("paper/margins", diffs)
+        self.assertNotIn("vars/maintitle", diffs)
+        self.assertNotIn("diglot_L/projectid", diffs)
+        self.assertTrue(diffs["paper/width"].oneSided and diffs["paper/width"].value is NOTSET)
+        self.assertTrue(diffs["paper/onlyhere"].refValue is NOTSET)
+        self.assertFalse(isShared("publication.X", "isbn"))
+        self.assertTrue(Comparison.sameValue("0.50", "0.5") and Comparison.sameValue("True", "true"))
+        self.assertTrue(Comparison.sameValue("${prjdir}/shared\\x.py", "${prjdir}/shared/x.py"))
+        self.assertEqual(comp.copy([diffs["paper/margins"], diffs["paper/width"], diffs["paper/onlyhere"]]), 3)
+        left = {d.setting for d in comp.differences(["WSG"])}
+        self.assertEqual(left & {"paper/margins", "paper/width", "paper/onlyhere"}, set())
+        self.assertEqual(self.get("vars", "maintitle"), "Mine")
+
+    def test_command(self):
+        self.change(("paper", "margins", "33"))
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = main(["-p", self.tmpdir.name, "compare", "-c", "Diglot2JN", "--ref", "WSGlatin", "--copy", "paper/margins", "--yes"])
+            rc2 = main(["-p", self.tmpdir.name, "compare", "-c", "Diglot2JN"])
+            rc3 = main(["-p", self.tmpdir.name, "publications", "-c", "Diglot2JN"])
+        self.assertEqual((rc, rc2, rc3), (0, 2, 0))
+        self.assertIn("paper/margins", out.getvalue())
+        self.assertIn("Copied 1 settings", out.getvalue())
+        self.assertNotEqual(self.get("paper", "margins"), "33")
+        self.assertIn("WSG / Diglot2JN", out.getvalue())
+
+
 class TestDiglotSides(_Projects):
 
     def test_set_side(self):

@@ -11,6 +11,15 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Pango, GLib
 from ptxprint.manager.validate import Validator, ERROR, WARNING, NOTE
 from ptxprint.manager.testprint import TestPrinter, PRINTED, FAILED, SKIPPED, STOPPED
+from ptxprint.manager.publications import PublicationTable, MAIN, validBooks
+from ptxprint.manager.compare import Comparison, NOTSET
+
+MAINLABEL = "(main variables)"
+INHERITED = "#909090"       # a publication's value that is just the config's own
+# fixed columns of the publications list; a value and a colour column for each variable follow
+(P_TICK, P_PROJECT, P_CONFIG, P_PUBID, P_LABEL, P_BOOKS, P_STATE, P_WEIGHT, P_ISPUB, P_CANPRINT, P_NFIXED) = range(11)
+# columns of the compare list
+(X_TICK, X_SETTING, X_PROJECT, X_VALUE, X_REFVALUE, X_INDEX, X_ONESIDED) = range(7)
 
 ALLCONFIGS = "(all configurations)"
 sevLabels = {ERROR: "Error", WARNING: "Warning", NOTE: "Note"}
@@ -98,6 +107,8 @@ class ManagerWindow(Gtk.Window):
         self.notebook.append_page(self.makeProblemsPage(), Gtk.Label(label="Problems"))
         self.notebook.append_page(self.makeDiglotPage(), Gtk.Label(label="Diglot texts"))
         self.notebook.append_page(self.makePrintPage(), Gtk.Label(label="Test print"))
+        self.notebook.append_page(self.makePublicationsPage(), Gtk.Label(label="Publications"))
+        self.notebook.append_page(self.makeComparePage(), Gtk.Label(label="Compare settings"))
 
         self.status = Gtk.Label(label="", xalign=0)
         self.status.set_line_wrap(True)
@@ -221,6 +232,94 @@ class ManagerWindow(Gtk.Window):
         page.pack_start(scroll, True, True, 0)
         return page
 
+    def makePublicationsPage(self):
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=6)
+        bar = Gtk.Box(spacing=6)
+        page.pack_start(bar, False, False, 0)
+        b = Gtk.Button(label="Show")
+        b.get_style_context().add_class("suggested-action")
+        b.connect("clicked", lambda w: self.fillPublications(reload=True))
+        bar.pack_start(b, False, False, 0)
+        for label, handler, tip in (
+                ("Add publication...", self.onAddPublication, "Add a publication to every ticked project's configuration"),
+                ("Delete", self.onDeletePublications, "Delete the highlighted publication(s)"),
+                ("Add column...", self.onAddPubColumn, "Show another variable, so that publications can have their own value of it")):
+            b = Gtk.Button(label=label)
+            b.set_tooltip_text(tip)
+            b.connect("clicked", handler)
+            bar.pack_start(b, False, False, 0)
+        self.pubApplyButton = Gtk.Button(label="Apply changes")
+        self.pubApplyButton.connect("clicked", self.onApplyPublications)
+        bar.pack_end(self.pubApplyButton, False, False, 0)
+        self.pubPrintButton = Gtk.Button(label="Print ticked")
+        self.pubPrintButton.set_tooltip_text("Have PTXprint print the ticked publications, each with its own books and variables")
+        self.pubPrintButton.connect("clicked", self.onPrintPublications)
+        bar.pack_end(self.pubPrintButton, False, False, 0)
+        self.pubTree = Gtk.TreeView()
+        self.pubTree.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        self.pubScroll = Gtk.ScrolledWindow()
+        self.pubScroll.add(self.pubTree)
+        page.pack_start(self.pubScroll, True, True, 0)
+        page.pack_start(Gtk.Label(label="Click a value to change it. Grey values are the configuration's own (main) "
+                                        "variables, which a publication uses unless it is given its own.", xalign=0), False, False, 0)
+        self.pubTable = None
+        self.pubStore = None
+        self.pubColumns = []
+        self.pubExtraColumns = []
+        self.resetPubChanges()
+        return page
+
+    def makeComparePage(self):
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=6)
+        bar = Gtk.Box(spacing=6)
+        page.pack_start(bar, False, False, 0)
+        bar.pack_start(Gtk.Label(label="Compare with:"), False, False, 0)
+        self.refCombo = Gtk.ComboBoxText()
+        self.refCombo.set_tooltip_text("The project whose settings the others are compared with, and copied from")
+        bar.pack_start(self.refCombo, False, False, 0)
+        b = Gtk.Button(label="Compare")
+        b.get_style_context().add_class("suggested-action")
+        b.connect("clicked", lambda w: self.runCompare())
+        bar.pack_start(b, False, False, 0)
+        bar.pack_start(Gtk.Label(label="  Find:"), False, False, 0)
+        self.compareFind = Gtk.Entry()
+        self.compareFind.set_width_chars(14)
+        self.compareFind.set_tooltip_text("Show only the rows with this in them, e.g. margin, or a project's name")
+        self.compareFind.connect("changed", lambda w: self.refilterCompare())
+        bar.pack_start(self.compareFind, False, False, 0)
+        self.oneSidedCheck = Gtk.CheckButton(label="Also where only one has the setting")
+        self.oneSidedCheck.set_tooltip_text("A configuration last saved by an older PTXprint doesn't have the newer settings. "
+                                            "PTXprint uses its default for them, which is usually the same thing.")
+        self.oneSidedCheck.connect("toggled", lambda w: self.refilterCompare())
+        bar.pack_start(self.oneSidedCheck, False, False, 6)
+        self.copyButton = Gtk.Button(label="Copy ticked")
+        self.copyButton.connect("clicked", self.onCopySettings)
+        bar.pack_end(self.copyButton, False, False, 0)
+        for label, val in (("Tick none", False), ("Tick shown", True)):
+            b = Gtk.Button(label=label)
+            b.connect("clicked", self.onTickCompare, val)
+            bar.pack_end(b, False, False, 0)
+        self.comparison = None
+        self.differences = []
+        self.compareStore = Gtk.ListStore(bool, str, str, str, str, int, bool)
+        self.compareFilter = self.compareStore.filter_new()
+        self.compareFilter.set_visible_func(self.compareRowVisible)
+        self.compareTree = Gtk.TreeView(model=self.compareFilter)
+        tick = Gtk.CellRendererToggle()
+        tick.connect("toggled", self.onCompareToggled)
+        self.compareTree.append_column(Gtk.TreeViewColumn("Copy", tick, active=X_TICK))
+        self.compareTree.append_column(textColumn("Setting", X_SETTING))
+        self.compareTree.append_column(textColumn("Project", X_PROJECT))
+        self.compareTree.append_column(textColumn("Has", X_VALUE, 330))
+        self.compareRefColumn = textColumn("Reference has", X_REFVALUE, 330)
+        self.compareTree.append_column(self.compareRefColumn)
+        scroll = Gtk.ScrolledWindow()
+        scroll.add(self.compareTree)
+        page.pack_start(scroll, True, True, 0)
+        page.pack_start(Gtk.Label(label="Settings that belong to a project (its variables, publications, diglot texts, books, "
+                                        "included PDFs) are not compared. Nor are styles.", xalign=0), False, False, 0)
+        return page
+
     # ---- projects and configurations
 
     def loadProjects(self, projectsDir):
@@ -240,6 +339,11 @@ class ManagerWindow(Gtk.Window):
         self.fillList()
         self.diglotStore.clear()
         self.printStore.clear()
+        self.compareStore.clear()
+        self.differences = []
+        self.pubTable = None
+        self.resetPubChanges()
+        self.pubTree.set_model(None)
         self.status.set_text(f"{len(self.projectStore)} projects with PTXprint configurations. "
                              "Choose a configuration and click Check. Nothing is changed until you click Fix.")
 
@@ -251,6 +355,15 @@ class ManagerWindow(Gtk.Window):
         have = self.validator.projectsWithConfigs()
         for row in self.projectStore:
             row[0] = cfgs is None or any(c in have.get(row[1], []) for c in cfgs)
+        # the projects this configuration can be compared with
+        was = self.refCombo.get_active_id()
+        self.refCombo.remove_all()
+        if cfgs is not None:
+            names = [p for p in have if cfgs[0] in have[p]]
+            for p in names:
+                self.refCombo.append(p, p)
+            if len(names):
+                self.refCombo.set_active_id(was if was in names else names[0])
 
     def onDirChosen(self, w):
         self.loadProjects(w.get_filename())
@@ -330,6 +443,12 @@ class ManagerWindow(Gtk.Window):
         n = len(self.diglotChanges())
         self.applyButton.set_label(f"Apply changes ({n})")
         self.applyButton.set_sensitive(n > 0)
+        n = self.numPubChanges()
+        self.pubApplyButton.set_label(f"Apply changes ({n})")
+        self.pubApplyButton.set_sensitive(n > 0)
+        n = sum(1 for r in self.compareStore if r[X_TICK])
+        self.copyButton.set_label(f"Copy ticked ({n})")
+        self.copyButton.set_sensitive(n > 0)
 
     def confirm(self, text, lines):
         dialog = Gtk.MessageDialog(transient_for=self, modal=True, message_type=Gtk.MessageType.QUESTION,
@@ -444,6 +563,336 @@ class ManagerWindow(Gtk.Window):
         self.status.set_text(f"Made {len(todo) - len(failed)} change{'s' if len(todo) - len(failed) != 1 else ''}."
                              + (f" {len(failed)} could not be made: {'; '.join(failed[:3])}" if len(failed) else ""))
 
+    # ---- publications
+
+    def resetPubChanges(self):
+        self.pubEdits = {}          # (project, config, pubid, key) -> new value
+        self.pubAdds = {}           # (project, config, pubid) -> books
+        self.pubDeletes = set()     # (project, config, pubid)
+
+    def numPubChanges(self):
+        return len(self.pubEdits) + len(self.pubAdds) + len(self.pubDeletes)
+
+    def pubValue(self, prjid, cfg, pubid, key):
+        ''' Returns (the value to show, whether it is the publication's own) with pending changes '''
+        if (prjid, cfg, pubid, key) in self.pubEdits:
+            return self.pubEdits[(prjid, cfg, pubid, key)], True
+        c = self.pubTable.configs[(prjid, cfg)]
+        if key == "__books":
+            return (self.pubAdds[(prjid, cfg, pubid)] if (prjid, cfg, pubid) in self.pubAdds else c.booksOf(pubid)), True
+        if pubid == MAIN:
+            return c.variables.get(key, ""), True
+        if key in c.pubs.get(pubid, {}):
+            return c.pubs[pubid][key], True
+        main = self.pubEdits.get((prjid, cfg, MAIN, key), c.variables.get(key, ""))
+        return main, False
+
+    def fillPublications(self, reload=False):
+        if reload or self.pubTable is None:
+            if self.numPubChanges() and not self.confirm("Forget the changes that have not been applied?",
+                                                         [f"{self.numPubChanges()} changes to publications"]):
+                return
+            self.pubTable = PublicationTable(self.validator, self.chosenPairs())
+            self.resetPubChanges()
+        table = self.pubTable
+        self.pubColumns = table.columns() + [k for k in self.pubExtraColumns if k not in table.columns()]
+        ncols = len(self.pubColumns)
+        self.pubStore = Gtk.ListStore(*([bool, str, str, str, str, str, str, int, bool, bool] + [str] * (2 * ncols)))
+        rows = list(table.rows())
+        for (prjid, cfg, pubid) in self.pubAdds:
+            if (prjid, cfg) in table.configs:
+                at = max(i for i, r in enumerate(rows) if r[:2] == (prjid, cfg))
+                rows.insert(at + 1, (prjid, cfg, pubid))
+        for (prjid, cfg, pubid) in rows:
+            key = (prjid, cfg, pubid)
+            state = "new" if key in self.pubAdds else ("will be deleted" if key in self.pubDeletes else "")
+            changed = state != "" or any(k[:3] == key for k in self.pubEdits)
+            vals = []
+            cols = []
+            for k in self.pubColumns:
+                v, own = self.pubValue(prjid, cfg, pubid, k)
+                vals.append(v)
+                cols.append("#000000" if own else INHERITED)
+            self.pubStore.append([False, prjid, cfg, pubid, MAINLABEL if pubid == MAIN else pubid,
+                                  self.pubValue(prjid, cfg, pubid, "__books")[0], state, 700 if changed else 400,
+                                  pubid != MAIN, pubid != MAIN and state == ""] + vals + cols)
+        for c in self.pubTree.get_columns():
+            self.pubTree.remove_column(c)
+        tick = Gtk.CellRendererToggle()
+        tick.connect("toggled", self.onPubTicked)
+        self.pubTree.append_column(Gtk.TreeViewColumn("Print", tick, active=P_TICK, visible=P_CANPRINT))
+        self.pubTree.append_column(textColumn("Project", P_PROJECT, weight=P_WEIGHT))
+        self.pubTree.append_column(textColumn("Configuration", P_CONFIG, weight=P_WEIGHT))
+        self.pubTree.append_column(textColumn("Publication", P_LABEL, weight=P_WEIGHT))
+        r = Gtk.CellRendererText()
+        r.connect("edited", self.onPubCellEdited, "__books")
+        c = Gtk.TreeViewColumn("Books", r, text=P_BOOKS, weight=P_WEIGHT, editable=P_ISPUB)
+        c.set_resizable(True)
+        self.pubTree.append_column(c)
+        for i, k in enumerate(self.pubColumns):
+            r = Gtk.CellRendererText()
+            r.set_property("editable", True)
+            r.set_property("ellipsize", Pango.EllipsizeMode.END)
+            r.connect("edited", self.onPubCellEdited, k)
+            c = Gtk.TreeViewColumn(k, r, text=P_NFIXED + i, foreground=P_NFIXED + ncols + i, weight=P_WEIGHT)
+            c.set_resizable(True)
+            c.set_min_width(110 if "title" not in k else 220)
+            self.pubTree.append_column(c)
+        self.pubTree.append_column(textColumn("", P_STATE))
+        self.pubTree.set_model(self.pubStore)
+        self.updateButtons()
+        npubs = sum(len(c.pubs) for c in table.configs.values())
+        self.status.set_text(f"{len(table.configs)} configurations with {npubs} publication{'s' if npubs != 1 else ''}. "
+                             "Nothing is changed until you click Apply changes.")
+
+    def onPubTicked(self, r, path):
+        if self.pubStore[path][P_CANPRINT]:
+            self.pubStore[path][P_TICK] = not self.pubStore[path][P_TICK]
+
+    def onPubCellEdited(self, r, path, text, key):
+        row = self.pubStore[path]
+        self.editPublication(row[P_PROJECT], row[P_CONFIG], row[P_PUBID], key, text)
+
+    def editPublication(self, prjid, cfg, pubid, key, text):
+        ''' Records a change (it is made by Apply) '''
+        text = text.strip()
+        ident = (prjid, cfg, pubid)
+        if ident in self.pubDeletes:
+            return
+        if key == "__books":
+            if pubid == MAIN:
+                return
+            if not validBooks(text):
+                self.status.set_text(f"'{text}' isn't a list of books. Use book codes, e.g. JAS or JAS GLO or MAT-JHN.")
+                return
+            if ident in self.pubAdds:
+                self.pubAdds[ident] = text.upper()
+                self.fillPublications()
+                return
+            text = text.upper()
+        c = self.pubTable.configs[(prjid, cfg)]
+        if key == "__books":
+            orig = c.booksOf(pubid)
+        elif pubid == MAIN:
+            orig = c.variables.get(key, "")
+        else:
+            orig = c.pubs.get(pubid, {}).get(key, None)         # None: it has no value of its own
+            if orig is None and text == c.variables.get(key, "") and (prjid, cfg, pubid, key) not in self.pubEdits:
+                return                                          # left as it was: still the main value
+        if text == orig:
+            self.pubEdits.pop((prjid, cfg, pubid, key), None)
+        else:
+            self.pubEdits[(prjid, cfg, pubid, key)] = text
+        self.fillPublications()
+
+    def askFields(self, title, fields):
+        ''' fields: [(label, initial value or list of choices)]. Returns the values, or None '''
+        dialog = Gtk.Dialog(title=title, transient_for=self, modal=True)
+        dialog.add_buttons("Cancel", Gtk.ResponseType.CANCEL, "OK", Gtk.ResponseType.OK)
+        dialog.set_default_response(Gtk.ResponseType.OK)
+        grid = Gtk.Grid(column_spacing=8, row_spacing=6, margin=10)
+        dialog.get_content_area().add(grid)
+        widgets = []
+        for i, (label, init) in enumerate(fields):
+            grid.attach(Gtk.Label(label=label, xalign=0), 0, i, 1, 1)
+            if isinstance(init, list):
+                w = Gtk.ComboBoxText()
+                for v in init:
+                    w.append(v, v)
+                w.set_active(0)
+            else:
+                w = Gtk.Entry()
+                w.set_text(init)
+                w.set_width_chars(34)
+                w.set_activates_default(True)
+            grid.attach(w, 1, i, 1, 1)
+            widgets.append(w)
+        dialog.show_all()
+        ok = dialog.run() == Gtk.ResponseType.OK
+        res = [w.get_active_id() if isinstance(w, Gtk.ComboBoxText) else w.get_text().strip() for w in widgets]
+        dialog.destroy()
+        return res if ok else None
+
+    def onAddPublication(self, b):
+        if self.pubTable is None:
+            self.fillPublications(reload=True)
+        if self.pubTable is None or not len(self.pubTable.configs):
+            self.status.set_text("Tick the projects to add a publication to.")
+            return
+        n = len(self.pubTable.configs)
+        res = self.askFields(f"Add a publication to {n} configuration{'s' if n != 1 else ''}",
+                             [("Name of the publication:", ""), ("Its books (e.g. JAS or JAS GLO):", "")])
+        if res is not None:
+            self.addPublication(res[0], res[1])
+
+    def addPublication(self, name, books):
+        ''' A new publication in every config being shown that doesn't have one of that name '''
+        name = name.strip()
+        if not name or any(ch in name for ch in "[]\n\\/:*?\"<>|"):
+            self.status.set_text("Give the publication a name (it becomes part of the PDF's file name, so no \\ / : * ? \" < > |).")
+            return 0
+        if not validBooks(books):
+            self.status.set_text(f"'{books}' isn't a list of books. Use book codes, e.g. JAS or JAS GLO.")
+            return 0
+        added = 0
+        for (prjid, cfg), c in self.pubTable.configs.items():
+            if name not in c.pubs and (prjid, cfg, name) not in self.pubAdds:
+                self.pubAdds[(prjid, cfg, name)] = books.strip().upper()
+                added += 1
+        self.fillPublications()
+        self.status.set_text(f"'{name}' will be added to {added} configuration{'s' if added != 1 else ''} when you click Apply changes. "
+                             "Fill in its titles first.")
+        return added
+
+    def onDeletePublications(self, b):
+        model, paths = self.pubTree.get_selection().get_selected_rows()
+        self.deletePublications([(model[p][P_PROJECT], model[p][P_CONFIG], model[p][P_PUBID]) for p in paths])
+
+    def deletePublications(self, idents):
+        for ident in idents:
+            if ident[2] == MAIN:
+                continue
+            if ident in self.pubAdds:
+                del self.pubAdds[ident]
+            elif ident in self.pubDeletes:
+                self.pubDeletes.discard(ident)      # a second Delete changes its mind
+            else:
+                self.pubDeletes.add(ident)
+            for k in [k for k in self.pubEdits if k[:3] == ident]:
+                del self.pubEdits[k]
+        self.fillPublications()
+
+    def onAddPubColumn(self, b):
+        if self.pubTable is None:
+            self.fillPublications(reload=True)
+        choices = [k for k in self.pubTable.otherVariables() if k not in self.pubExtraColumns] if self.pubTable else []
+        if not len(choices):
+            self.status.set_text("There are no other variables to show.")
+            return
+        res = self.askFields("Show another variable", [("Variable:", choices)])
+        if res is not None and res[0]:
+            self.pubExtraColumns.append(res[0])
+            self.fillPublications()
+
+    def publicationChangeLines(self):
+        lines = [f"{p} / {c}: add publication '{pub}' ({books})" for (p, c, pub), books in self.pubAdds.items()]
+        lines += [f"{p} / {c}: delete publication '{pub}'" for (p, c, pub) in sorted(self.pubDeletes)]
+        lines += [f"{p} / {c} / {pub or MAINLABEL}: {'books' if k == '__books' else k} = {v}"
+                  for (p, c, pub, k), v in self.pubEdits.items()]
+        return lines
+
+    def onApplyPublications(self, b):
+        n = self.numPubChanges()
+        if n and self.confirm(f"Make {n} change{'s' if n != 1 else ''} to the publications and variables?",
+                              self.publicationChangeLines()):
+            self.applyPublications()
+
+    def applyPublications(self):
+        failed = []
+        done = 0
+        for (prjid, cfg), c in self.pubTable.configs.items():
+            edits = [(k[2], k[3], v) for k, v in self.pubEdits.items() if k[:2] == (prjid, cfg)]
+            adds = [(k[2], books) for k, books in self.pubAdds.items() if k[:2] == (prjid, cfg)]
+            deletes = [k[2] for k in self.pubDeletes if k[:2] == (prjid, cfg)]
+            if not (edits or adds or deletes):
+                continue
+            try:
+                c.apply(edits, adds, deletes)
+                done += len(edits) + len(adds) + len(deletes)
+            except (ValueError, OSError) as e:
+                failed.append(f"{prjid}/{cfg}: {e}")
+        self.resetPubChanges()
+        self.fillPublications(reload=True)
+        self.status.set_text(f"Made {done} change{'s' if done != 1 else ''}."
+                             + (f" Some could not be made: {'; '.join(failed[:3])}" if len(failed) else ""))
+
+    def onPrintPublications(self, b):
+        if self.pubStore is None:
+            return
+        if self.numPubChanges():
+            self.status.set_text("Apply the changes first, so that what is printed is what you see.")
+            return
+        jobs = [(r[P_PROJECT], r[P_CONFIG], r[P_PUBID]) for r in self.pubStore if r[P_TICK] and r[P_CANPRINT]]
+        if not len(jobs):
+            self.status.set_text("Tick the publications to print, in the Print column.")
+            return
+        if self.printThread is not None:
+            self.status.set_text("A print is already running.")
+            return
+        self.notebook.set_current_page(2)
+        self.startTestPrint(jobs, None)
+
+    # ---- compare settings
+
+    def runCompare(self):
+        cfgs = self.chosenConfigs()
+        ref = self.refCombo.get_active_id()
+        self.compareStore.clear()
+        self.differences = []
+        if cfgs is None or ref is None:
+            self.status.set_text("Choose one configuration (at the top) and the project to compare the others with.")
+            self.updateButtons()
+            return
+        self.comparison = Comparison(self.validator, cfgs[0], ref)
+        others = [p for p in self.chosenProjects() if p != ref]
+        self.differences = self.comparison.differences(others)
+        self.compareRefColumn.set_title(f"{ref} has")
+        for i, d in enumerate(self.differences):
+            self.compareStore.append([False, d.setting, d.project, "(not set)" if d.value is NOTSET else d.value,
+                                      "(not set)" if d.refValue is NOTSET else d.refValue, i, d.oneSided])
+        self.refilterCompare()
+        both = sum(1 for d in self.differences if not d.oneSided)
+        nprj = len(set(d.project for d in self.differences if not d.oneSided))
+        self.status.set_text(f"{cfgs[0]}: {both} settings differ from {ref} in {nprj} project{'s' if nprj != 1 else ''} "
+                             f"({len(self.differences) - both} more where only one has the setting). "
+                             "Tick the ones to bring into line and click Copy ticked.")
+
+    def compareRowVisible(self, model, titer, data=None):
+        if model[titer][X_ONESIDED] and not self.oneSidedCheck.get_active():
+            return False
+        find = self.compareFind.get_text().strip().lower()
+        if not find:
+            return True
+        return any(find in (model[titer][c] or "").lower() for c in (X_SETTING, X_PROJECT, X_VALUE, X_REFVALUE))
+
+    def refilterCompare(self):
+        self.compareFilter.refilter()
+        self.updateButtons()
+
+    def onCompareToggled(self, r, path):
+        row = self.compareStore[self.compareFilter.convert_path_to_child_path(Gtk.TreePath(path))]
+        row[X_TICK] = not row[X_TICK]
+        self.updateButtons()
+
+    def onTickCompare(self, b, val):
+        if val:
+            for frow in self.compareFilter:
+                self.compareStore[self.compareFilter.convert_iter_to_child_iter(frow.iter)][X_TICK] = True
+        else:
+            for row in self.compareStore:
+                row[X_TICK] = False
+        self.updateButtons()
+
+    def tickedDifferences(self):
+        return [self.differences[r[X_INDEX]] for r in self.compareStore if r[X_TICK]]
+
+    def onCopySettings(self, b):
+        todo = self.tickedDifferences()
+        ref = self.comparison.reference
+        if len(todo) and self.confirm(f"Copy {len(todo)} setting{'s' if len(todo) != 1 else ''} from {ref}?",
+                [f"{d.project}: {d.setting} = {'(not set)' if d.refValue is NOTSET else d.refValue}" for d in todo]):
+            self.copySettings(todo)
+
+    def copySettings(self, todo):
+        try:
+            done = self.comparison.copy(todo)
+        except OSError as e:
+            self.status.set_text(f"Could not copy: {e}")
+            return
+        self.runCompare()
+        self.status.set_text(f"Copied {done} setting{'s' if done != 1 else ''} from {self.comparison.reference}. "
+                             "Test print to check the result.")
+
     # ---- test print
 
     def onTestPrint(self, b):
@@ -464,10 +913,14 @@ class ManagerWindow(Gtk.Window):
         self.startTestPrint(pairs, books)
 
     def startTestPrint(self, pairs, books, workers=3):
+        ''' pairs: (project, config) to print books with, or (project, config, publication) to print '''
         self.printStore.clear()
         rows = {}
-        for (p, c) in pairs:
-            rows[(p, c)] = self.printStore.append([p, c, "Waiting", "", "", "#606060", "", 400])
+        for pair in pairs:
+            label = pair[1] if len(pair) < 3 else f"{pair[1]}: {pair[2]}"
+            rows[pair] = self.printStore.append([pair[0], label, "Waiting", "", "", "#606060", "", 400])
+        if books is None:
+            books = "the publications"
         self.printer = TestPrinter(self.validator)
         self.printButton.set_sensitive(False)
         self.stopButton.set_sensitive(True)
@@ -477,7 +930,7 @@ class ManagerWindow(Gtk.Window):
 
         def one(pair):
             GLib.idle_add(self.showPrinting, rows[pair])
-            res = printer.run(pair[0], pair[1], books)
+            res = printer.run(pair[0], pair[1], books, pub=pair[2] if len(pair) > 2 else None)
             GLib.idle_add(self.showPrintResult, rows[pair], res)
 
         def work():
