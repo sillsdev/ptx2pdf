@@ -669,27 +669,73 @@ class ViewModel:
     def setConfigId(self, configid, saveCurrConfig=False, force=True, loadConfig=True):
         return self.updateProjectSettings(self.project.prjid, self.project.guid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
-    langVarSections = ("vars", "strongsvars")
+    langVarSections = ("vars", "strongsvars", "vars.publishable")
+
+    def _isLangVarSection(self, sect):
+        # a project's publications are its own too: their books, and their titles in its language
+        return sect in self.langVarSections or sect.startswith("publication.")
 
     def _readLangVars(self, cfgpath):
-        """ The language-specific variable values (titles, language name, etc.) of a ptxprint.cfg """
+        """ The language-specific variable values (titles, language name, etc.) of a ptxprint.cfg,
+            and its publications """
         config = configparser.ConfigParser(interpolation=None)
         if os.path.exists(cfgpath):
             with open(cfgpath, encoding="utf-8", errors="ignore") as inf:
                 config.read_file(inf)
-        return {s: dict(config.items(s)) for s in self.langVarSections if config.has_section(s)}
+        return {s: dict(config.items(s)) for s in config.sections() if self._isLangVarSection(s)}
 
     def _writeLangVars(self, cfgpath, langvars):
         """ Make the language-specific variable values of a ptxprint.cfg exactly langvars """
         config = configparser.ConfigParser(interpolation=None)
         with open(cfgpath, encoding="utf-8", errors="ignore") as inf:
             config.read_file(inf)
-        for s in self.langVarSections:
+        for s in [s for s in config.sections() if self._isLangVarSection(s)]:
             config.remove_section(s)
-            if s in langvars:
-                config.add_section(s)
-                for k, v in langvars[s].items():
-                    config.set(s, k, v)
+        for s, vals in langvars.items():
+            config.add_section(s)
+            for k, v in vals.items():
+                config.set(s, k, v)
+        with open(cfgpath, "w", encoding="utf-8") as outf:
+            config.write(outf)
+
+    def _adaptCopiedConfig(self, cfgpath, oldcfg, newprj, newcfg):
+        """ A ptxprint.cfg copied here from this project belongs to newprj now. Most settings go
+            across as they are, but those that name this project have to name that one, and a file
+            that only this project has is still to be found here. """
+        if not os.path.exists(cfgpath):
+            return
+        config = configparser.ConfigParser(interpolation=None)
+        with open(cfgpath, encoding="utf-8", errors="ignore") as inf:
+            config.read_file(inf)
+        for sect, opt, val in (("diglot_L", "projectid", newprj.prjid), ("diglot_L", "projectguid", newprj.guid),
+                               ("diglot_L", "config", newcfg), ("project", "id", newprj.prjid),
+                               ("config", "name", newcfg)):
+            if config.has_section(sect) and val is not None:
+                config.set(sect, opt, val)
+        # ${prjdir}/shared/script.py is now a file in newprj. If it isn't there, point back at ours.
+        bases = {"${prjdir}/": (self.project.path, newprj.path),
+                 "${workingdir}/": (self.project.printPath(oldcfg), newprj.printPath(newcfg))}
+        def adapt(val):
+            for pre, (oldbase, newbase) in bases.items():
+                if not val.startswith(pre):
+                    continue
+                rest = val[len(pre):].replace("\\", "/")
+                oldf = os.path.normpath(os.path.join(oldbase, rest))
+                if os.path.exists(os.path.join(newbase, rest)) or not os.path.exists(oldf):
+                    continue
+                try:
+                    return pre + os.path.relpath(oldf, newbase).replace("\\", "/")
+                except ValueError:      # on another drive
+                    return oldf.replace("\\", "/")
+            return val
+        for sect in config.sections():
+            for opt, val in config.items(sect):
+                if "${" not in val:
+                    continue
+                newval = "\n".join(adapt(v) for v in val.split("\n"))
+                if newval != val:
+                    logger.debug(f"Copied config {sect}/{opt}: {val} -> {newval}")
+                    config.set(sect, opt, newval)
         with open(cfgpath, "w", encoding="utf-8") as outf:
             config.write(outf)
 
@@ -738,6 +784,8 @@ class ViewModel:
                 a[action](srcp, destp, mergep, moving=moving, oldcfg=oldcfg, newcfg=newcfg, newprj=newprj, nobase=nobase)
                 if keepvars:
                     self._writeLangVars(destp, langvars)
+                if f == 'ptxprint.cfg' and newprj is not None and newprj.guid != self.project.guid:
+                    self._adaptCopiedConfig(destp, oldcfg, newprj, newcfg)
         return True
 
     def _copyfile(self, srcp, destp, mergep, moving=False, nobase=False, **kw):
@@ -1089,7 +1137,13 @@ class ViewModel:
                     pg = PolyglotConfig()
                     pg.readConfig(config, s)
                     self.polyglots[k] = pg
-                    if k != "L":
+                    if k == "L":
+                        # The primary is always this project and config, whatever the file says
+                        # (a config copied from another project named that project here)
+                        pg.prj = self.project.prjid
+                        pg.prjguid = self.project.guid
+                        pg.cfg = cfgname or pg.cfg
+                    else:
                         try:
                             dv = self.createDiglotView(k)
                         except ValueError:
@@ -2807,6 +2861,7 @@ class ViewModel:
                 self._writearchive(zf, k, v, for_test=True)
         tmpcfg = {}
         for k,v in cfgchanges.items():
+            oldval = self.get(k)        # before it is changed, so that it can be put back
             if not isinstance(v, Path) and len(v) == 2 and v[1] is not None:
                 tv = getattr(self, v[1])
                 def expand(val):    # expand ${prjdir} etc. so it is written back correctly
@@ -2818,8 +2873,8 @@ class ViewModel:
                 self.set(k, str(v[0]))
             else:
                 tv = None
-                self.set(k, str(v))
-            tmpcfg[k] = (self.get(k), tv)
+                self.set(k, v[0] if isinstance(v, tuple) else str(v))   # (value, None) or a plain value
+            tmpcfg[k] = (oldval, tv)
         config = self.createConfig()
         configstr = StringIO()
         config.write(configstr)
@@ -2827,7 +2882,7 @@ class ViewModel:
                     configstr.getvalue())
         configstr.close()
         for k, v in tmpcfg.items():
-            self.set(k, str(v[0]))
+            self.set(k, v[0])
             if v[1] is not None:
                 setattr(self, cfgchanges[k][1], v[1])
         for f in tmpfiles:

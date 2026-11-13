@@ -895,7 +895,8 @@ def xdvigetfonts(xdv):
 
 varpaths = (
     ('prjdir', lambda p,v: p.path),
-    ('settingsdir', lambda p,v: p.path),
+    # the folder the projects are in: configs say ${settingsdir}/OtherPrj/... for a file in another project
+    ('settingsdir', lambda p,v: os.path.normpath(os.path.join(p.path, '..'))),
     ('workingdir', lambda p,v: p.printPath(v.cfgid)),
 )
 

@@ -396,6 +396,78 @@ class TestPolyglotLayout(_ProjectCopy):
         self.assertTrue(any("not supported" in m for m in msgs), msgs)
 
 
+class TestCopyDiglotConfig(_ProjectCopy):
+    ''' A diglot config copied to another project is that project's: its primary (L) text,
+        its own publications, and files that only the source project has are still found '''
+    others = ("OGNT", "WSG")
+
+    def test_copy_to_project(self):
+        view = self.view("Diglot2JN")
+        script = os.path.join(view.project.path, "shared", "myscript.py")
+        with open(script, "w", encoding="utf-8") as outf:
+            outf.write("pass\n")
+        from ptxprint.utils import Path
+        view.customScript = Path(script)
+        view.set("c_processScript", True)
+        view.publications = {"pubA": {"__books": "2JN", "maintitle": "Latin title"}}
+        view.writeConfig()
+        with open(os.path.join(view.project.srcPath("Diglot2JN"), "ptxprint.cfg"), encoding="utf-8") as inf:
+            self.assertIn("selectscript = ${prjdir}/", inf.read())
+        tgt = view.prjTree.findProject("WSG")
+        # the target already has this config, with a publication of its own
+        tgtcfg = os.path.join(tgt.createConfigDir("Diglot2JN"), "ptxprint.cfg")
+        with open(tgtcfg, "w", encoding="utf-8") as outf:
+            outf.write("[vars]\nmaintitle = Target title\n\n[publication.pubT]\n__books = 3JN\n")
+        view.applyConfig("Diglot2JN", "Diglot2JN", action=0, newprj=tgt, skipvars=True)
+        cfg = configparser.ConfigParser(interpolation=None)
+        cfg.read(tgtcfg, encoding="utf-8")
+        self.assertEqual(cfg.get("diglot_L", "projectid"), "WSG")
+        self.assertEqual(cfg.get("diglot_L", "projectguid"), tgt.guid)
+        self.assertEqual(cfg.get("diglot_R", "projectid"), "OGNT")
+        self.assertEqual(cfg.get("vars", "maintitle"), "Target title")
+        self.assertEqual([s for s in cfg.sections() if s.startswith("publication.")], ["publication.pubT"])
+        tview = loadview(self.tmpdir.name, "WSG", "Diglot2JN")
+        self.assertEqual(tview.polyglots["L"].prj, "WSG")
+        self.assertIsNotNone(tview.customScript)
+        self.assertTrue(os.path.samefile(str(tview.customScript), script))
+
+    def test_heal_primary(self):
+        ''' A config that names another project as its primary (copied by an older version) '''
+        view = self.view("Diglot2JN")
+        cfgpath = os.path.join(view.project.srcPath("Diglot2JN"), "ptxprint.cfg")
+        cfg = configparser.ConfigParser(interpolation=None)
+        cfg.read(cfgpath, encoding="utf-8")
+        cfg.set("diglot_L", "projectid", "WSG")
+        cfg.set("diglot_L", "projectguid", view.prjTree.findProject("WSG").guid)
+        with open(cfgpath, "w", encoding="utf-8") as outf:
+            cfg.write(outf)
+        view = self.view("Diglot2JN")
+        self.assertEqual((view.polyglots["L"].prj, view.polyglots["L"].prjguid),
+                         (view.project.prjid, view.project.guid))
+
+    def test_settingsdir(self):
+        ''' ${settingsdir} is the folder the projects are in, as configs have always used it '''
+        from ptxprint.utils import Path
+        view = self.view("Default")
+        other = os.path.join(self.tmpdir.name, "WSG", "Settings.xml")
+        self.assertTrue(os.path.samefile(str(Path("${settingsdir}/WSG/Settings.xml", view)), other))
+        self.assertEqual(Path(other).withvars(view).replace("\\", "/"), "${settingsdir}/WSG/Settings.xml")
+
+    def test_archive_restores(self):
+        ''' Making an archive leaves the script (etc.) as it was, not as the archive names it '''
+        view = self.view("Default")
+        script = os.path.join(view.project.path, "shared", "myscript2.py")
+        with open(script, "w", encoding="utf-8") as outf:
+            outf.write("pass\n")
+        from ptxprint.utils import Path
+        view.customScript = Path(script)
+        view.set("btn_selectScript", script)
+        view.set("c_processScript", True)
+        with contextlib.redirect_stdout(io.StringIO()):
+            view.createArchive(os.path.join(self.tmpdir.name, "restore.zip"), nobuild=True)
+        self.assertEqual(view.get("btn_selectScript"), script)
+        self.assertEqual(str(view.customScript), str(Path(script)))
+
 class TestPolyglotProjects(unittest.TestCase):
     ''' Finding the other projects of a polyglot '''
 

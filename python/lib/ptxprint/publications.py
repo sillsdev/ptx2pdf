@@ -259,6 +259,8 @@ class PublicationsView:
             view = self.view
         if pid is None:
             piter = self._currentParent()
+            if piter is None:       # no publication highlighted: print the view as it is
+                return
         else:
             for piter, r in enumerate(self.ts):
                 if r[6] == pid:
