@@ -1,0 +1,13 @@
+#!/usr/bin/python3
+''' The multi-project management tool for PTXprint '''
+
+import sys, os
+
+try:
+    from ptxprint.manager.main import main
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+    from ptxprint.manager.main import main
+
+if __name__ == "__main__":
+    sys.exit(main())

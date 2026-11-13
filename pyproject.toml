@@ -61,6 +61,7 @@ universal = true
 
 [project.scripts]
 ptxprint = "ptxprint.main:main"
+ptxprint-manager = "ptxprint.manager.main:main"
 pdfdiff = "ptxprint.pdf.pdfdiff:main"
 xdvitype = "ptxprint.xdv.xdvtype:main"
 pdfinish = "ptxprint.pdf.pdfinish:main"
