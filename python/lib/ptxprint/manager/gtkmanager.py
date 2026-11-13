@@ -432,9 +432,13 @@ class ManagerWindow(Gtk.Window):
         self.configCombo.remove_all()
         self.configCombo.append_text(ALLCONFIGS)
         common = self.validator.commonConfigs()
-        for name, n in common:
+        # in alphabetical order, so that a name can be found; the count says how widely it is used
+        for name, n in sorted(common, key=lambda x: x[0].lower()):
             self.configCombo.append(name, f"{name}   ({n} project{'s' if n != 1 else ''})")
-        self.configCombo.set_active(1 if len(common) else 0)
+        if len(common):
+            self.configCombo.set_active_id(common[0][0])        # start on the most widely used
+        else:
+            self.configCombo.set_active(0)
         self.findings = []
         self.fillList()
         self.diglotStore.clear()
