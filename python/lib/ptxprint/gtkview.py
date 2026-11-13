@@ -4420,6 +4420,11 @@ class GtkViewModel(ViewModel):
                         outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
                 except FileNotFoundError as e:
                     self.doError(_("File not found"), str(e))
+            if projlist and self.get("c_diglot"):
+                # the copy can't know which project each target uses for its other text(s)
+                self.doStatus(_("Diglot configuration copied to: {}. Now open each of them and set its own "
+                                "secondary (R) project on the Diglot tab.").format(
+                                " ".join(p.prjid for p in projlist)), warning=True)
             if projlist:
                 ecb = self.builder.get_object("ecb_mpsTargets")
                 sel_text = ecb.get_child().get_text().strip() if ecb is not None else ""

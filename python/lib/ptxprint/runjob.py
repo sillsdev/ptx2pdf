@@ -1168,6 +1168,15 @@ class RunJob:
             return False
         if cover:       # no separate cover isn't a failure
             self.coverfile = self.extrafiles.get('cover', None)
+        if 'cover' not in self.extrafiles:
+            # A cover left by an earlier print of these books isn't this print's cover, but the
+            # preview shows any that it finds: so it showed titles that are no longer set
+            oldcover = pdffile.replace(".pdf", "_cover.pdf")
+            if os.path.exists(oldcover):
+                try:
+                    os.remove(oldcover)
+                except OSError as e:
+                    logger.debug(f"Can't remove the old cover {oldcover}: {e}")
         return True
 
     def createDiff(self, pdfname, basename, outname=None, **kw):

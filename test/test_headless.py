@@ -769,6 +769,17 @@ class TestCommandLine(_Run):
         self.run_ok("WSGlatin", "CoverJON", "-P", "-D", "c_printArchive=True")
         self.assertTrue(os.path.exists(os.path.join(self.tmpdir.name, "WSGlatin", "local", "ptxprint", "WSGlatin_CoverJON_JON_ptxp_cover.pdf")))
 
+    def test_old_cover_removed(self):
+        ''' A print without a cover doesn't leave an earlier print's cover for the preview to show '''
+        outdir = os.path.join(self.tmpdir.name, "WSGlatin", "local", "ptxprint")
+        os.makedirs(outdir, exist_ok=True)
+        oldcover = os.path.join(outdir, "WSGlatin_Default_2JN_ptxp_cover.pdf")
+        with open(oldcover, "wb") as outf:
+            outf.write(b"%PDF-1.4\n")
+        self.run_ok("WSGlatin", "Default", "-P", "-b", "2JN")
+        self.assertTrue(os.path.exists(os.path.join(outdir, "WSGlatin_Default_2JN_ptxp.pdf")))
+        self.assertFalse(os.path.exists(oldcover))
+
     def test_missing(self):
         ''' A config or project that doesn't exist '''
         rc, out = runptxprint(self.tmpdir.name, "WSGlatin", "NoSuchConfig", "-P", "-b", "2JN")
