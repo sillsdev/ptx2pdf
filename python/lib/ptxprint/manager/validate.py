@@ -120,7 +120,9 @@ class Validator:
 
     def hasBook(self, prjid, bk):
         path = self.projects[prjid].path
-        return any(bk.upper() in f.upper() and f.upper().endswith(".SFM") for f in os.listdir(path))
+        # projects name their book files in different ways: 41MATaArp.SFM, 44JHNSGA.txt, MAT.usfm
+        return any(bk.upper() in f.upper() and os.path.splitext(f)[1].lower() in (".sfm", ".txt", ".usfm", ".usx")
+                   for f in os.listdir(path))
 
     def projectSettings(self, prjid, cfg=None):
         ''' The settings a project lays down for all its configs: {(section, option): value} '''
@@ -345,6 +347,41 @@ class Validator:
             add(NOTE, "variableEmpty", "Variables used in the front matter have no value: " + ", ".join(empty) + ".")
         if re.match(r"^(0123456789|1234567890|0+)$", variables.get("isbn", "").replace("-", "")):
             add(WARNING, "isbnPlaceholder", f"The ISBN is a placeholder: {variables['isbn']}.")
+
+    # ---- the texts of a diglot
+
+    def diglotSides(self, prjid, cfg):
+        ''' Returns {side: (project, config)} for a diglot or polyglot config, else {} '''
+        try:
+            config = readConfig(os.path.join(self.configDir(prjid, cfg), "ptxprint.cfg"))
+        except (configparser.Error, OSError):
+            return {}
+        if not asBool(config, "document", "ifdiglot"):
+            return {}
+        return {s[7:]: (config.get(s, "projectid", fallback=""), config.get(s, "config", fallback=""))
+                for s in config.sections() if s.startswith("diglot_")}
+
+    def bestConfig(self, prjid, wanted):
+        ''' The config of prjid to use beside another project's: the first of wanted that it has '''
+        have = self.configNames(prjid)
+        for w in wanted:
+            if w in have:
+                return w
+        return "Default" if "Default" in have else (have[0] if len(have) else None)
+
+    def setDiglotSide(self, prjid, cfg, side, newprj, newcfg):
+        ''' Make another project and config the diglot's text on this side (not L: that is the project itself) '''
+        if side == "L":
+            raise ValueError("The primary (L) text is always the project itself")
+        if newprj not in self.projects:
+            raise ValueError(f"No such project: {newprj}")
+        if newprj == prjid:
+            raise ValueError("A diglot can't have the same project on both sides")
+        if newcfg not in self.configNames(newprj):
+            raise ValueError(f"{newprj} has no configuration {newcfg}")
+        sect = f"diglot_{side}"
+        setOptions(os.path.join(self.configDir(prjid, cfg), "ptxprint.cfg"),
+                   [(sect, "projectid", newprj), (sect, "projectguid", self.projects[newprj].guid), (sect, "config", newcfg)])
 
     def checkCover(self, prjid, cfg, config, add):
         outdir = os.path.join(self.projects[prjid].path, "local", "ptxprint")

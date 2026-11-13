@@ -197,5 +197,108 @@ class TestWindow(_Projects):
         finally:
             win.destroy()
 
+    def test_diglot_texts_and_print(self):
+        try:
+            from ptxprint.manager.gtkmanager import (ManagerWindow, D_PROJECT, D_NEWPRJ, D_NEWCFG, D_NOTE,
+                                                     T_RESULT, T_MESSAGE)
+            from gi.repository import Gtk, GLib
+            if not Gtk.init_check()[0]:
+                raise ImportError("no display")
+        except (ImportError, ValueError) as e:
+            self.skipTest(f"No GTK: {e}")
+        self.change(("diglot_R", "projectid", "NoSuchBT"))
+        win = ManagerWindow(self.tmpdir.name)
+        try:
+            win.configCombo.set_active_id("Diglot2JN")
+            win.fillDiglots()
+            rows = {r[D_PROJECT]: r for r in win.diglotStore}
+            self.assertEqual(sorted(rows), ["WSG", "WSGlatin"])
+            self.assertIn("no project NoSuchBT", rows["WSG"][D_NOTE])
+            self.assertEqual(win.diglotChanges(), [])
+            # choosing the project picks a configuration of it; nothing is written yet
+            win.setDiglotProject(rows["WSG"].path, "OGNT")
+            self.assertEqual(win.diglotChanges(), [("WSG", "Diglot2JN", "R", "OGNT", "Default")])
+            self.assertEqual(self.get("diglot_R", "projectid"), "NoSuchBT")
+            win.setDiglotProject(rows["WSG"].path, "WSG")           # itself: refused
+            self.assertEqual(win.diglotChanges()[0][3], "OGNT")
+            win.applyDiglots(win.diglotChanges())
+            self.assertEqual(self.get("diglot_R", "projectid"), "OGNT")
+            self.assertEqual(self.get("diglot_R", "projectguid"), win.validator.projects["OGNT"].guid)
+            self.assertEqual(win.diglotChanges(), [])
+            # a test print of a book the projects don't have is reported, not run
+            win.startTestPrint(win.chosenPairs(), "XXQ")
+            loop = GLib.MainLoop()
+            def poll():
+                if win.printThread is None:
+                    loop.quit()
+                    return False
+                return True
+            GLib.timeout_add(50, poll)
+            GLib.timeout_add(20000, loop.quit)
+            loop.run()
+            self.assertIsNone(win.printThread)
+            self.assertEqual({r[T_RESULT] for r in win.printStore}, {"Not tried"})
+            self.assertTrue(all("XXQ" in r[T_MESSAGE] for r in win.printStore))
+        finally:
+            win.destroy()
+
+
+class TestDiglotSides(_Projects):
+
+    def test_set_side(self):
+        v = Validator(self.tmpdir.name)
+        self.assertEqual(v.diglotSides("WSG", "Diglot2JN")["R"], ("OGNT", "Default"))
+        self.assertEqual(v.diglotSides("WSG", "Default"), {})
+        for bad in (("L", "OGNT", "Default"), ("R", "WSG", "Default"), ("R", "Nope", "Default"), ("R", "OGNT", "NoCfg")):
+            with self.assertRaises(ValueError):
+                v.setDiglotSide("WSG", "Diglot2JN", *bad)
+        v.setDiglotSide("WSG", "Diglot2JN", "R", "WSGlatin", "Default")
+        self.assertEqual(v.diglotSides("WSG", "Diglot2JN")["R"], ("WSGlatin", "Default"))
+        self.assertEqual(self.get("diglot_R", "projectguid"), v.projects["WSGlatin"].guid)
+
+    def test_command(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = main(["-p", self.tmpdir.name, "secondary", "-c", "Diglot2JN"])
+            rc2 = main(["-p", self.tmpdir.name, "secondary", "-c", "Diglot2JN", "--to", "WSGlatin"])    # which project?
+            rc3 = main(["-p", self.tmpdir.name, "secondary", "-c", "Diglot2JN", "-P", "WSG", "--to", "WSGlatin"])
+        self.assertEqual((rc, rc2, rc3), (0, 2, 0))
+        self.assertIn("WSG / Diglot2JN: R is OGNT, Default", out.getvalue())
+        self.assertEqual(self.get("diglot_R", "projectid"), "WSGlatin")
+
+
+class TestTestPrint(_Projects):
+
+    def test_not_tried(self):
+        from ptxprint.manager.testprint import TestPrinter, SKIPPED
+        t = TestPrinter(Validator(self.tmpdir.name))
+        self.assertEqual(t.booksIn("jas, GLO  3jn"), ["JAS", "GLO", "3JN"])
+        self.assertEqual(t.run("WSGlatin", "Default", "XXQ").status, SKIPPED)
+        self.assertEqual(t.run("WSGlatin", "Default", "").status, SKIPPED)
+
+    def test_tex_error(self):
+        from ptxprint.manager.testprint import texError
+        log = os.path.join(self.tmpdir.name, "x.log")
+        with open(log, "w", encoding="utf-8") as outf:
+            outf.write("This is XeTeX\n! Missing number, treated as zero.\n<to be read again>\n   \\relax\nl.151 \\polyglotendcols\n")
+        self.assertEqual(texError(log), "Missing number, treated as zero.  [at l.151 \\polyglotendcols]")
+        self.assertEqual(texError(os.path.join(self.tmpdir.name, "none.log")), "")
+
+    def test_real_print(self):
+        ''' PTXprint is run as a separate program and its result reported, whichever it is '''
+        from ptxprint.manager.testprint import TestPrinter, PRINTED, FAILED
+        t = TestPrinter(Validator(self.tmpdir.name), timeout=600)
+        res = t.run("WSGlatin", "Default", "2JN")
+        self.assertIn(res.status, (PRINTED, FAILED), res)
+        if res.status == PRINTED:
+            self.assertTrue(os.path.exists(res.pdf))
+        else:       # e.g. the project's fonts aren't installed on this machine
+            self.assertTrue(res.message)
+        # a diglot whose other project is missing is a failure with its reason
+        self.change(("diglot_L", "projectid", "WSG"), ("diglot_R", "projectid", "NoSuchBT"), ("diglot_R", "projectguid", "0" * 40))
+        res = t.run("WSG", "Diglot2JN", "JHN")
+        self.assertEqual(res.status, FAILED, res)
+        self.assertIn("NoSuchBT", res.message)
+
 if __name__ == "__main__":
     unittest.main()
