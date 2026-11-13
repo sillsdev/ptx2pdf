@@ -1,7 +1,48 @@
-PTXprint 3.1.6 Release Notes
-6 Nov 2026
+PTXprint 3.1.7 Release Notes
+13 Nov 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.7 - (13 Nov 2026)
+
+  New features
+  * Multi-Project Manager (ptxprint-manager) for configs across projects
+  * Manager: validate and repair configs, diglot texts, paths and ISBNs
+  * Manager: test print a book in every project that has the config
+  * Manager: edit publications and compare/copy settings and styles
+  * Page Filler: "Analyse Only" measures paragraphs without filling
+  * Preview: Smart Shrink/Grow uses filler data to change a single line
+  * Page Filler: clearer Analyse & Fill window, showing parallel speed-up
+  * Cover Wizard: optional title, for when it is part of the artwork
+  * Cover Wizard: new "Gap from spine or edge" setting for the ISBN box
+  * Cover Wizard: "Open Anyway" reopens a cover that has since changed
+  * Copying a config to another project now adapts its diglot texts
+  * New --readonly option prints without changing shared project files
+  * PDF viewer highlights the current page in the outline
+  * Breakable sidebars much improved, though still experimental (#1290)
+
+  Bug fixes
+  * Publications taking over a second to typeset failed to print
+  * A separate back cover image was only shown in the preview
+  * Cropped cover images in the PDF did not match the preview
+  * Cover spine overlap and bleed settings never reached TeX
+  * "Margin Notes on Left/Inner" had no effect
+  * Colours drifted slightly each time a config was saved
+  * A missing diglot secondary project now gives a clear message
+  * ${settingsdir} paths saved by 3.1 pointed at the wrong folder
+  * An old cover PDF was still shown after turning the cover off
+  * A missing module file gave a misleading .parlocs error
+  * Reset Adjustments > End of Book stopped at chapter 10
+  * Guides and grid were misplaced when printing 2-up with crop marks
+  * Page filling was poor for contextually spaced text such as Awami
+  * Page Filler crashed on some Windows consoles
+  * The PageFullFactor setting was always read as 1
+  * Last-line spacing in RTL table cells was wrong
+  * Printing a selected publication didn't show its settings
+  * Fixes in the style editor, picture list editor and PDF viewer
+  * Many smaller fixes in configs, TeX macros, cross references and fonts
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.1.6 - (6 Nov 2026)
