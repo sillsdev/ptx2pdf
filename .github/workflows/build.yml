@@ -148,7 +148,7 @@ jobs:
         NOTARIZATION_TEAM: 3YE4W86L3G
       run: 
         ./mac-build.sh
-        echo ${github.ref_protected}
+        echo ${{github.ref_protected}}
         
     - name: Upload distribution DMG
       uses: actions/upload-artifact@v7
