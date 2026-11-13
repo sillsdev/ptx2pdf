@@ -191,6 +191,37 @@ def doCompare(args):
             print(f"Copied {comparison.copy(todo)} settings.")
     return 0
 
+def doStyles(args):
+    from ptxprint.manager.styles import StyleComparison, COMMONEST
+    validator = Validator(args.projects)
+    configs = splitList(args.config)
+    if args.within is not None:
+        if args.within not in validator.projects or configs is None or len(configs) < 2:
+            print("Give the project and at least two of its configurations: --within PROJECT -c A -c B")
+            return 2
+        comp = StyleComparison.acrossConfigs(validator, args.within, configs)
+    else:
+        if configs is None or len(configs) != 1:
+            print("Give one configuration to compare across projects: -c NAME")
+            return 2
+        prjids = splitList(args.project) or list(validator.projectsWithConfigs())
+        comp = StyleComparison.acrossProjects(validator, configs[0], prjids)
+    if len(comp.columns) < 2:
+        print("There need to be at least two to compare.")
+        return 2
+    if args.ref is not None and args.ref not in comp.columns:
+        print(f"{args.ref} is not one of those being compared: {', '.join(comp.columns)}")
+        return 2
+    diffs = [d for d in comp.differences(reference=args.ref or COMMONEST) if args.all or d.visual]
+    if args.strays:
+        diffs = [d for d in diffs if len(d.differing) <= 2]
+    base = f"{args.ref} has" if args.ref else "most have"
+    for d in diffs:
+        others = ";  ".join(f"{c}: {d.values[c].shown(d.attr)} [{d.values[c].source}]" for c in d.differing)
+        print(f"\\{d.marker:24s} {d.attr:18s} {base} {d.baseline.shown(d.attr)}  |  {others}")
+    print(f"\n{len(diffs)} style attributes differ, in {len(set(d.marker for d in diffs))} styles.")
+    return 0
+
 def main(argv=None):
     if sys.stdout is not None and hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")      # titles in any script, on any console
@@ -225,6 +256,13 @@ def main(argv=None):
     cmp.add_argument("--all", action="store_true", help="Also the settings only one of them has")
     cmp.add_argument("--copy", action="append", metavar="SECTION/SETTING", help="Copy this setting from the reference (repeatable)")
     cmp.add_argument("--yes", action="store_true", help="With --copy: don't ask")
+    sty = sub.add_parser("styles", help="Compare styles: one configuration across projects, or a project's configurations")
+    sty.add_argument("-P", "--project", action="append", help="Project(s) to compare [all that have the configuration]")
+    sty.add_argument("-c", "--config", action="append", help="The configuration (or, with --within, each one to compare)")
+    sty.add_argument("--within", metavar="PROJECT", help="Compare configurations of this one project")
+    sty.add_argument("--ref", help="Compare with this one [with what most have]")
+    sty.add_argument("--strays", action="store_true", help="Only where one or two differ")
+    sty.add_argument("--all", action="store_true", help="Also names and structure, which don't change the page")
     args = parser.parse_args(argv)
     if args.projects is None:
         args.projects = defaultProjectsDir()
@@ -239,6 +277,8 @@ def main(argv=None):
         return doPublications(args)
     elif args.command == "compare":
         return doCompare(args)
+    elif args.command == "styles":
+        return doStyles(args)
     elif args.command == "secondary":
         if args.to is not None and splitList(args.project) is None:
             print("Say which project(s) to change: -P NAME")

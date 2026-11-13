@@ -13,6 +13,14 @@ from ptxprint.manager.validate import Validator, ERROR, WARNING, NOTE
 from ptxprint.manager.testprint import TestPrinter, PRINTED, FAILED, SKIPPED, STOPPED
 from ptxprint.manager.publications import PublicationTable, MAIN, validBooks
 from ptxprint.manager.compare import Comparison, NOTSET
+from ptxprint.manager.styles import StyleComparison, COMMONEST, GROUPS
+
+SAME = "·"             # a middle dot: the same as what it is compared with
+MOSTLABEL = "(what most have)"
+ACROSSPROJECTS = "projects"
+ACROSSCONFIGS = "configs"
+# fixed columns of the styles list; a column for each configuration compared follows
+(S_MARKER, S_ATTR, S_BASE, S_INDEX, S_NFIXED) = range(5)
 
 MAINLABEL = "(main variables)"
 INHERITED = "#909090"       # a publication's value that is just the config's own
@@ -109,6 +117,7 @@ class ManagerWindow(Gtk.Window):
         self.notebook.append_page(self.makePrintPage(), Gtk.Label(label="Test print"))
         self.notebook.append_page(self.makePublicationsPage(), Gtk.Label(label="Publications"))
         self.notebook.append_page(self.makeComparePage(), Gtk.Label(label="Compare settings"))
+        self.notebook.append_page(self.makeStylesPage(), Gtk.Label(label="Compare styles"))
 
         self.status = Gtk.Label(label="", xalign=0)
         self.status.set_line_wrap(True)
@@ -320,6 +329,73 @@ class ManagerWindow(Gtk.Window):
                                         "included PDFs) are not compared. Nor are styles.", xalign=0), False, False, 0)
         return page
 
+    def makeStylesPage(self):
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin=6)
+        bar = Gtk.Box(spacing=6)
+        page.pack_start(bar, False, False, 0)
+        self.styleMode = Gtk.ComboBoxText()
+        self.styleMode.append(ACROSSPROJECTS, "This configuration in the ticked projects")
+        self.styleMode.append(ACROSSCONFIGS, "The configurations of one project:")
+        self.styleMode.set_active_id(ACROSSPROJECTS)
+        self.styleMode.connect("changed", self.onStyleModeChanged)
+        bar.pack_start(self.styleMode, False, False, 0)
+        self.styleProject = Gtk.ComboBoxText()
+        self.styleProject.connect("changed", self.onStyleProjectChanged)
+        bar.pack_start(self.styleProject, False, False, 0)
+        self.styleConfigs = Gtk.Entry()
+        self.styleConfigs.set_width_chars(30)
+        self.styleConfigs.set_tooltip_text("The configurations of that project to compare, with spaces between them")
+        bar.pack_start(self.styleConfigs, False, False, 0)
+        b = Gtk.Button(label="Compare")
+        b.get_style_context().add_class("suggested-action")
+        b.connect("clicked", lambda w: self.runStyleCompare())
+        bar.pack_start(b, False, False, 0)
+
+        bar = Gtk.Box(spacing=6)
+        page.pack_start(bar, False, False, 0)
+        bar.pack_start(Gtk.Label(label="Compare with:"), False, False, 0)
+        self.styleRef = Gtk.ComboBoxText()
+        self.styleRef.set_tooltip_text("What each is compared with: the value most of them have, or one of them")
+        self.styleRef.connect("changed", lambda w: self.fillStyles())
+        bar.pack_start(self.styleRef, False, False, 0)
+        bar.pack_start(Gtk.Label(label="  Show:"), False, False, 0)
+        self.styleGroup = Gtk.ComboBoxText()
+        self.styleGroup.append("", "All styles")
+        for g in GROUPS:
+            self.styleGroup.append(g, g)
+        self.styleGroup.set_active(0)
+        self.styleGroup.connect("changed", lambda w: self.fillStyles())
+        bar.pack_start(self.styleGroup, False, False, 0)
+        bar.pack_start(Gtk.Label(label="  Find:"), False, False, 0)
+        self.styleFind = Gtk.Entry()
+        self.styleFind.set_width_chars(12)
+        self.styleFind.set_tooltip_text("Show only the rows with this in the style or attribute, e.g. fontsize, or s1")
+        self.styleFind.connect("changed", lambda w: self.fillStyles())
+        bar.pack_start(self.styleFind, False, False, 0)
+        self.styleStrays = Gtk.CheckButton(label="Only where one or two differ")
+        self.styleStrays.set_tooltip_text("The quickest way to find the configuration that is out of step")
+        self.styleStrays.connect("toggled", lambda w: self.fillStyles())
+        bar.pack_start(self.styleStrays, False, False, 6)
+        self.styleNonVisual = Gtk.CheckButton(label="Also names and structure")
+        self.styleNonVisual.set_tooltip_text("Name, description, where a style may occur, and such, which don't change how a page looks")
+        self.styleNonVisual.connect("toggled", lambda w: self.fillStyles())
+        bar.pack_start(self.styleNonVisual, False, False, 0)
+
+        self.styleComparison = None
+        self.styleDiffs = []
+        self.styleShown = []
+        self.styleTree = Gtk.TreeView()
+        self.styleTree.set_property("has-tooltip", True)
+        self.styleTree.connect("query-tooltip", self.onStyleTooltip)
+        self.styleTree.set_grid_lines(Gtk.TreeViewGridLines.BOTH)
+        scroll = Gtk.ScrolledWindow()
+        scroll.add(self.styleTree)
+        page.pack_start(scroll, True, True, 0)
+        page.pack_start(Gtk.Label(label=f"A dot ({SAME}) is the same as the 'Compare with' value. Point at a value to see which file "
+                                        "it comes from. What is compared is what prints: the defaults, then custom.sty, "
+                                        "ptxprint.sty and ptxprint-mods.sty.", xalign=0), False, False, 0)
+        return page
+
     # ---- projects and configurations
 
     def loadProjects(self, projectsDir):
@@ -344,6 +420,13 @@ class ManagerWindow(Gtk.Window):
         self.pubTable = None
         self.resetPubChanges()
         self.pubTree.set_model(None)
+        self.styleComparison = None
+        self.styleDiffs = []
+        self.styleTree.set_model(None)
+        self.styleProject.remove_all()
+        for prjid in self.validator.projectsWithConfigs():
+            self.styleProject.append(prjid, prjid)
+        self.onStyleModeChanged(None)
         self.status.set_text(f"{len(self.projectStore)} projects with PTXprint configurations. "
                              "Choose a configuration and click Check. Nothing is changed until you click Fix.")
 
@@ -892,6 +975,130 @@ class ManagerWindow(Gtk.Window):
         self.runCompare()
         self.status.set_text(f"Copied {done} setting{'s' if done != 1 else ''} from {self.comparison.reference}. "
                              "Test print to check the result.")
+
+    # ---- compare styles
+
+    def onStyleModeChanged(self, w):
+        configs = self.styleMode.get_active_id() == ACROSSCONFIGS
+        self.styleProject.set_sensitive(configs)
+        self.styleConfigs.set_sensitive(configs)
+        if configs and self.styleProject.get_active_id() is None:
+            ticked = self.chosenProjects()
+            if len(ticked):
+                self.styleProject.set_active_id(ticked[0])
+
+    def onStyleProjectChanged(self, w):
+        ''' Offer the project's most widely used configurations '''
+        prjid = self.styleProject.get_active_id()
+        if prjid is None or self.validator is None:
+            return
+        have = self.validator.configNames(prjid)
+        common = [c for c, n in self.validator.commonConfigs() if c in have and c != "Default"]
+        self.styleConfigs.set_text(" ".join(common[:4]))
+
+    def runStyleCompare(self):
+        if self.styleMode.get_active_id() == ACROSSCONFIGS:
+            prjid = self.styleProject.get_active_id()
+            if prjid is None:
+                self.status.set_text("Choose the project whose configurations are to be compared.")
+                return
+            wanted = self.styleConfigs.get_text().replace(",", " ").split()
+            missing = [c for c in wanted if c not in self.validator.configNames(prjid)]
+            if len(missing):
+                self.status.set_text(f"{prjid} has no configuration called {', '.join(missing)}.")
+                return
+            self.compareStyles(StyleComparison.acrossConfigs(self.validator, prjid, wanted), f"{prjid}'s configurations")
+        else:
+            cfgs = self.chosenConfigs()
+            if cfgs is None:
+                self.status.set_text("Choose one configuration (at the top) to compare across the ticked projects.")
+                return
+            self.compareStyles(StyleComparison.acrossProjects(self.validator, cfgs[0], self.chosenProjects()), cfgs[0])
+
+    def compareStyles(self, comparison, what):
+        if len(comparison.columns) < 2:
+            self.status.set_text("There need to be at least two to compare.")
+            return
+        self.styleComparison = comparison
+        self.styleWhat = what
+        self.styleRefFilling = True         # filling the list isn't the user choosing from it
+        self.styleRef.remove_all()
+        self.styleRef.append("", MOSTLABEL)
+        for c in comparison.columns:
+            self.styleRef.append(c, c)
+        self.styleRef.set_active(0)
+        self.styleRefFilling = False
+        self.fillStyles()
+
+    def styleRowShown(self, d):
+        if not d.visual and not self.styleNonVisual.get_active():
+            return False
+        if self.styleStrays.get_active() and len(d.differing) > 2:
+            return False
+        group = self.styleGroup.get_active_id()
+        if group and d.group != group:
+            return False
+        find = self.styleFind.get_text().strip().lower()
+        if find and find not in d.marker.lower() and find not in d.attr:
+            return False
+        return True
+
+    def fillStyles(self):
+        comp = self.styleComparison
+        if comp is None or getattr(self, "styleRefFilling", False):
+            return
+        ref = self.styleRef.get_active_id() or COMMONEST
+        self.styleDiffs = comp.differences(reference=ref)
+        self.styleShown = [d for d in self.styleDiffs if self.styleRowShown(d)]
+        ncols = len(comp.columns)
+        store = Gtk.ListStore(*([str, str, str, int] + [str] * ncols))
+        for i, d in enumerate(self.styleShown):
+            store.append([d.marker, d.attr, d.baseline.shown(d.attr), i]
+                         + [d.values[c].shown(d.attr) if c in d.differing else SAME for c in comp.columns])
+        for c in self.styleTree.get_columns():
+            self.styleTree.remove_column(c)
+        self.styleTree.append_column(textColumn("Style", S_MARKER))
+        self.styleTree.append_column(textColumn("Attribute", S_ATTR))
+        self.styleTree.append_column(textColumn("Most have" if ref is COMMONEST else f"{ref} has", S_BASE))
+        for i, c in enumerate(comp.columns):
+            r = Gtk.CellRendererText()
+            r.set_property("ellipsize", Pango.EllipsizeMode.END)
+            col = Gtk.TreeViewColumn(c, r, text=S_NFIXED + i)
+            col.set_resizable(True)
+            col.set_min_width(64)
+            self.styleTree.append_column(col)
+        self.styleTree.set_model(store)
+        visual = [d for d in self.styleDiffs if d.visual]
+        nstyles = len(set(d.marker for d in visual))
+        self.status.set_text(f"{self.styleWhat}: {len(visual)} style attributes differ, in {nstyles} styles "
+                             f"({len(self.styleDiffs) - len(visual)} more in names and structure). Showing {len(self.styleShown)}.")
+
+    def onStyleTooltip(self, tree, x, y, keyboard, tooltip):
+        if self.styleComparison is None or keyboard:
+            return False
+        bx, by = tree.convert_widget_to_bin_window_coords(x, y)
+        hit = tree.get_path_at_pos(bx, by)
+        if hit is None:
+            return False
+        path, column = hit[0], hit[1]
+        row = tree.get_model()[path]
+        d = self.styleShown[row[S_INDEX]]
+        cols = tree.get_columns()
+        i = cols.index(column) - 3
+        lines = []
+        def describe(label, v):
+            return f"{label}: {v.shown(d.attr)}   ({'the default' if v.source == 'default' else 'from ' + v.source})"
+        if 0 <= i < len(self.styleComparison.columns):
+            label = self.styleComparison.columns[i]
+            lines.append(describe(label, d.values[label]))
+            lines.append(describe("compared with", d.baseline))
+        else:
+            lines.append(f"\\{d.marker}  {d.attr}")
+            lines.append(describe("compared with", d.baseline))
+            lines.extend(describe(c, d.values[c]) for c in d.differing[:12])
+        tooltip.set_text("\n".join(lines))
+        tree.set_tooltip_cell(tooltip, path, column, None)
+        return True
 
     # ---- test print
 

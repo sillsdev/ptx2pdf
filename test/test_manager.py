@@ -383,6 +383,128 @@ class TestCompare(_Projects):
         self.assertIn("WSG / Diglot2JN", out.getvalue())
 
 
+class TestStyles(_Projects):
+
+    def writeSty(self, prj, cfg, name, text):
+        with open(os.path.join(self.tmpdir.name, prj, "shared", "ptxprint", cfg, name), "w", encoding="utf-8") as outf:
+            outf.write(text)
+
+    def setUp(self):
+        super().setUp()
+        # WSG and WSGlatin: the same but for the size of \s, written differently where they agree
+        self.writeSty("WSGlatin", "Diglot2JN", "ptxprint.sty",
+                      "\\Marker s\n\\FontSize 12\n\\Italic -\n\\LeftMargin 0\n\\Name Heading\n\n\\Marker p\n\\Color x0000ff\n\\SpaceBefore 0.50\n")
+        self.writeSty("WSG", "Diglot2JN", "ptxprint.sty",
+                      "\\Marker s\n\\FontSize 14\n\\Name Section head\n\n\\Marker p\n\\Color 16711680\n\\SpaceBefore 0.5   # as the others\n")
+
+    def diffs(self, comp, **kw):
+        return {(d.marker, d.attr): d for d in comp.differences(**kw)}
+
+    def test_normalise(self):
+        from ptxprint.manager.styles import normalise, styleGroup, parseSty, loadDefaults
+        self.assertEqual(normalise("fontsize", "12.0"), normalise("fontsize", "12"))
+        self.assertEqual(normalise("color", "16711680"), normalise("color", "x0000ff"))
+        self.assertEqual(normalise("bold", "-"), "off")
+        self.assertEqual(normalise("bold", None), "off")                        # a paragraph's
+        self.assertIsNone(normalise("bold", None, paragraph=False))             # a character style inherits
+        self.assertEqual(normalise("leftmargin", None), normalise("leftmargin", "0"))
+        self.assertEqual(normalise("occursunder", "c p  id"), normalise("occursunder", "id c p"))
+        self.assertEqual([styleGroup(m) for m in ("p", "s1", "f", "xt", "ip", "cat:coverfront|mt1", "cat:box|esb")],
+                         ["Text", "Headings", "Notes", "Notes", "Introductions", "Cover", "Sidebars and categories"])
+        self.assertIn("p", loadDefaults())
+
+    def test_across_projects(self):
+        from ptxprint.manager.styles import StyleComparison
+        comp = StyleComparison.acrossProjects(Validator(self.tmpdir.name), "Diglot2JN", ["WSG", "WSGlatin", "OGNT"])
+        self.assertEqual(comp.columns, ["WSG", "WSGlatin"])
+        found = self.diffs(comp, reference="WSGlatin")
+        self.assertEqual(set(found), {("s", "fontsize"), ("s", "name")})        # not bold, margin, colour or space
+        d = found[("s", "fontsize")]
+        self.assertEqual((d.values["WSG"].raw, d.values["WSG"].source, d.baseline.raw), ("14", "ptxprint.sty", "12"))
+        self.assertEqual(d.differing, ["WSG"])
+        self.assertTrue(d.visual and not found[("s", "name")].visual)
+        self.assertEqual(d.group, "Headings")
+        self.assertEqual(self.diffs(comp, reference="WSG")[("s", "fontsize")].differing, ["WSGlatin"])
+
+    def test_layers(self):
+        ''' custom.sty and ptxprint-mods.sty count only if the configuration uses them, and mods wins '''
+        from ptxprint.manager.styles import StyleComparison
+        with open(os.path.join(self.tmpdir.name, "WSG", "custom.sty"), "w", encoding="utf-8") as outf:
+            outf.write("\\Marker q1\n\\LeftMargin 0.9\n\n\\Marker s\n\\FontSize 20\n")
+        self.writeSty("WSG", "Diglot2JN", "ptxprint-mods.sty", "\\Marker s\n\\FontSize 9\n")
+        self.change(("project", "ifusecustomsty", "False"), ("project", "ifusemodssty", "False"))
+        v = Validator(self.tmpdir.name)
+        found = self.diffs(StyleComparison.acrossProjects(v, "Diglot2JN", ["WSG", "WSGlatin"]))
+        self.assertNotIn(("q1", "leftmargin"), found)
+        self.assertEqual(found[("s", "fontsize")].values["WSG"].raw, "14")
+        self.change(("project", "ifusecustomsty", "True"), ("project", "ifusemodssty", "True"))
+        found = self.diffs(StyleComparison.acrossProjects(v, "Diglot2JN", ["WSG", "WSGlatin"]))
+        self.assertEqual(found[("q1", "leftmargin")].values["WSG"].source, "custom.sty")
+        self.assertEqual((found[("s", "fontsize")].values["WSG"].raw, found[("s", "fontsize")].values["WSG"].source),
+                         ("9", "ptxprint-mods.sty"))
+
+    def test_commonest(self):
+        from ptxprint.manager.styles import StyleComparison
+        # three configurations of one project, one out of step
+        for cfg in ("A", "B", "C"):
+            d = os.path.join(self.tmpdir.name, "WSG", "shared", "ptxprint", cfg)
+            shutil.copytree(self.dest, d)
+            self.writeSty("WSG", cfg, "ptxprint.sty", "\\Marker p\n\\FontSize {}\n".format(11 if cfg == "B" else 12))
+        comp = StyleComparison.acrossConfigs(Validator(self.tmpdir.name), "WSG", ["A", "B", "C", "Nope"])
+        self.assertEqual(comp.columns, ["A", "B", "C"])
+        d = self.diffs(comp)[("p", "fontsize")]
+        self.assertEqual((d.baseline.raw, d.differing), ("12", ["B"]))
+
+    def test_command_and_window(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = main(["-p", self.tmpdir.name, "styles", "-c", "Diglot2JN", "-P", "WSG,WSGlatin", "--ref", "WSGlatin"])
+            rc2 = main(["-p", self.tmpdir.name, "styles", "--within", "WSG", "-c", "Diglot2JN"])
+        self.assertEqual((rc, rc2), (0, 2))
+        self.assertIn("fontsize", out.getvalue())
+        self.assertIn("1 style attributes differ", out.getvalue())
+        try:
+            from ptxprint.manager.gtkmanager import ManagerWindow, S_MARKER, S_ATTR, S_BASE, S_NFIXED, SAME
+            from gi.repository import Gtk
+            if not Gtk.init_check()[0]:
+                raise ImportError("no display")
+        except (ImportError, ValueError) as e:
+            self.skipTest(f"No GTK: {e}")
+        before = {f: open(os.path.join(self.dest, f), encoding="utf-8").read() for f in ("ptxprint.sty", "ptxprint.cfg")}
+        win = ManagerWindow(self.tmpdir.name)
+        try:
+            win.configCombo.set_active_id("Diglot2JN")
+            win.runStyleCompare()
+            store = win.styleTree.get_model()
+            self.assertEqual([(r[S_MARKER], r[S_ATTR]) for r in store], [("s", "fontsize")])
+            cols = win.styleComparison.columns
+            row = store[0]
+            # with two, either is "what most have": the other shows its value, the first a dot
+            self.assertEqual(sorted([row[S_NFIXED + i] for i in range(len(cols))]), sorted([SAME, "14"]) if row[S_BASE] == "12"
+                             else sorted([SAME, "12"]))
+            win.styleRef.set_active_id("WSG")
+            row = win.styleTree.get_model()[0]
+            self.assertEqual((row[S_BASE], row[S_NFIXED + cols.index("WSGlatin")], row[S_NFIXED + cols.index("WSG")]), ("14", "12", SAME))
+            win.styleNonVisual.set_active(True)
+            self.assertEqual(len(win.styleTree.get_model()), 2)
+            win.styleFind.set_text("name")
+            self.assertEqual([r[S_ATTR] for r in win.styleTree.get_model()], ["name"])
+            win.styleFind.set_text("")
+            win.styleGroup.set_active_id("Notes")
+            self.assertEqual(len(win.styleTree.get_model()), 0)
+            # the configurations of one project
+            win.styleMode.set_active_id("configs")
+            win.styleProject.set_active_id("WSG")
+            win.styleConfigs.set_text("Diglot2JN Default")
+            win.styleGroup.set_active_id("")
+            win.runStyleCompare()
+            self.assertEqual(win.styleComparison.columns, ["Diglot2JN", "Default"])
+        finally:
+            win.destroy()
+        # looking changes nothing
+        self.assertEqual(before, {f: open(os.path.join(self.dest, f), encoding="utf-8").read() for f in before})
+
+
 class TestDiglotSides(_Projects):
 
     def test_set_side(self):
