@@ -89,6 +89,7 @@ Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{autoprograms}\{#MyAppName} Multi-Project Manager"; Filename: "{app}\ptxprint-manager.exe"
 ; Add an item for PDFinish in the Start menu
 ; Name: "{autoprograms}\{#MyAppName}\PDFinish"; Filename: "{app}\pdfinish.exe"
 

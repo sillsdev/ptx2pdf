@@ -403,11 +403,17 @@ hiddenimports += ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._c
 
 jobs = {
     "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
-    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]},
+    # The multi-project manager: a program of its own, that runs ptxprint.exe (beside it) for test prints
+    "ptxprint-manager": {"py": "python/scripts/ptxprint-manager",
+                         "datas": [('python/lib/ptxprint/ptxprint-manager.png', 'ptxprint')],
+                         "hiddenimports": hiddenimports,
+                         "icon": "icon/ptxprint-manager.ico"}
 }
 tcolls = []
 for k, v in jobs.items():
     s = v.pop('py')
+    jobicon = v.pop('icon', None)
     a = Analysis([s],
              pathex = ['python/lib'],
              binaries = binaries,
@@ -431,7 +437,8 @@ for k, v in jobs.items():
           runtime_tmpdir = None,
           contents_directory = '.',
           windowed=True,
-          console = False)
+          console = False,
+          **({"icon": jobicon} if jobicon else {}))
     a.binaries = stripbinaries(a.binaries, f'xetex/bin/{bindir}')
     tcolls.append([e, a.binaries, a.zipfiles, a.datas])
 

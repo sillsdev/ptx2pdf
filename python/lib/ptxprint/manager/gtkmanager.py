@@ -65,6 +65,12 @@ class ManagerWindow(Gtk.Window):
     def __init__(self, projectsDir):
         super().__init__(title="PTXprint Multi-Project Manager")
         self.set_default_size(1200, 720)
+        icon = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ptxprint-manager.png")
+        if os.path.exists(icon):
+            try:
+                self.set_icon_from_file(icon)
+            except GLib.Error:
+                pass
         self.findings = []
         self.validator = None
         self.printer = None
