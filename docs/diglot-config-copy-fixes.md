@@ -25,7 +25,7 @@ This document has three parts:
 | PTXprint complains about `ob00227.png`, a picture from a different project | The right-hand text was still aArpBT, and aArpBT's glossary has a faulty picture entry | Partly fixed; two things for you to do |
 | Printed the Arop BT instead of cOGBT | Same cause: the right-hand text is still the source project's | Now warned about; you set it yourself |
 | Arop publications appearing in another project after a copy | Publications were copied even when "keep each project's own variables" was ticked | Fixed |
-| `! Missing number ... \tri@lsplitRejR` in bSum | Probably: the R row names a project "bSumBT", which does not exist | PTXprint now says so plainly; you set the R row (see section 10) |
+| `! Missing number ... \tri@lsplitRejR` in bSum | Reproduced: the back translation's copy of the book has verse numbers but no text (Jude in cOGBT) | The Manager now detects and explains it (section 10); the crash itself is with David |
 | Cannot print the glossary with a publication in cGoi | Not yet investigated; probably the same wrong right-hand text | Open |
 | Cannot print with a publication: "PTXprint doesn't do anything, it doesn't even update the PDF" | PTXprint stopped the typesetting of a publication after one second | Fixed (section 11) |
 | Jude fails in aArpAux, aMal and aSno with DiglotA5 (found by test printing, not reported by you) | Not found yet: an error in the diglot typesetting | Open (with David) |
@@ -130,6 +130,12 @@ Pressing Print while on the Publications tab with no publication highlighted cou
 
 *What you need to do:* in bSum, set the R row on the Diglot tab to the right back translation project.
 
+**The `\tri@lsplitRejR` error itself: found (added later on 13 November).** With bSum pointing at cOGBT, printing Jude gives exactly your error. The reason is that Jude in cOGBT has been created but not translated: it has the verse numbers and no words (the file is 272 bytes). PTXprint's diglot typesetting cannot cope with one side being empty and stops with "Missing number". cGoi fails on Jude the same way, for the same reason. Your failing job was "1, 2 and 3 John and Jude", so Jude was in it. (We cannot now check why 1 John on its own also failed for you then; that may have been the bSumBT problem above.)
+
+The Multi-Project Manager now reports this before you print ("the book has no text yet in the diglot's R project"), and when a test print fails this way it adds "Probably because JUD in cOGBT has no text yet, only verse numbers."
+
+*What you need to do:* leave Jude out of a diglot until the back translation has it, or print it with a configuration that is not a diglot.
+
 **Script paths that version 3.1 saved wrongly.** While `${settingsdir}` had the wrong meaning (section 3), opening and saving a configuration rewrote the script location as `${prjdir}/aArpBT\shared\InsertGLOcounterpart.py`, that is, a folder called aArpBT *inside* the project. Six of the fourteen DiglotA5 configurations are in this state (aMal, aSno, bBar, bG1BT, cOGBT, cWol). PTXprint now recognises this when it loads a configuration and uses the file in the other project, as was meant. You do not need to change anything.
 
 ### 11. Publications that would not print
@@ -231,6 +237,8 @@ Printing a publication from the Publications tab now copies that publication's v
    ```
 
    `tri@lsplitRej#1` is given a default of `0pt` when a column is declared (`ptx-diglot.tex`, about line 4102), so it looks as though column R was never declared with `\newPolyglotCol` although the merged text uses it. The config had been copied from another project and partly edited by hand, and John reported that it printed once after he changed the T2 width and then failed again. We have no archive for this. What would let R be used without being declared, and what should we ask John to capture?
+
+   **Reproduced (13 November, later).** In the sample projects, `bSum` and `cGoi` with DiglotA5 and R = `cOGBT` fail on JUD with exactly this error, at `l.30 \polyglotendcols`. `cOGBT/66JUDcOGBT.SFM` is a stub: `\id`, `\h`, `\toc1-3`, `\c 1` and bare `\v 1` ... `\v 25` with one stray word, 272 bytes. So the R column has verse numbers and no text. To reproduce: `ptxprint-manager -p <folder> testprint -c DiglotA5 -b JUD -P bSum`, or print JUD in bSum with DiglotA5. Two questions: can the diglot code survive an empty column (or stop with a message that says so), and should the Python side refuse to merge a book whose other side has no verse text? The Manager now detects it, but PTXprint itself does not.
 
 2. **A malformed `\fig` reaching TeX with `loc="paw"`.** aArpBT's glossary has `\fig Ol |src="ob00227.png" size="span" loc="paw" ref="1.0"\w Juda\w* i save ...\fig*` (attributes in the middle of the caption). The Python side passes it on as `\fig Ol ... bret|size="span" loc="paw" ref="1.0" src="ob00227.png"\fig*`, and TeX stops in `\d@figurePar` with "Missing number" on the `w`: it reads `loc` as a page position. All of John's figures carry `loc="paw"` (the old media field), and normally they never reach TeX because the picture list replaces them. Should TeX ignore a `loc` it can't read as a position, with a warning, rather than stop? The current hint ("Possibly a missing +/- value in the Adjust List") sent John in the wrong direction.
 

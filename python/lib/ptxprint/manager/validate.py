@@ -124,6 +124,21 @@ class Validator:
         return any(bk.upper() in f.upper() and os.path.splitext(f)[1].lower() in (".sfm", ".txt", ".usfm", ".usx")
                    for f in os.listdir(path))
 
+    def bookIsEmpty(self, prjid, bk):
+        ''' Is the book there but with (almost) no text in its verses: a book that has been
+            created in Paratext and not yet translated? A diglot can't be typeset against one. '''
+        path = self.projects[prjid].path
+        for f in os.listdir(path):
+            if bk.upper() in f.upper() and os.path.splitext(f)[1].lower() in (".sfm", ".txt", ".usfm"):
+                try:
+                    with open(os.path.join(path, f), encoding="utf-8", errors="ignore") as inf:
+                        text = inf.read()
+                except OSError:
+                    return False
+                words = sum(len(m.split()) for m in re.findall(r"\\v \S+[ \t]*([^\\\n]*)", text))
+                return words < 5
+        return False
+
     def projectSettings(self, prjid, cfg=None):
         ''' The settings a project lays down for all its configs: {(section, option): value} '''
         res = {}
@@ -289,8 +304,14 @@ class Validator:
             if not self.hasBook(prjid, bk):
                 add(WARNING, "bookMissing", f"The book last chosen, {bk}, is not in this project.")
             for k, (sprj, scfg) in sides.items():
-                if k != "L" and sprj in self.projects and bk not in serial and not self.hasBook(sprj, bk):
+                if k == "L" or sprj not in self.projects or bk in serial:
+                    continue
+                if not self.hasBook(sprj, bk):
                     add(WARNING, "bookMissingSecondary", f"The book last chosen, {bk}, is not in the diglot's {k} project {sprj}.")
+                elif self.bookIsEmpty(sprj, bk) and not self.bookIsEmpty(prjid, bk):
+                    add(ERROR, "bookEmptySecondary", f"The book last chosen, {bk}, has no text yet in the diglot's {k} project {sprj} "
+                        "(only verse numbers). A diglot can't be typeset with one side empty: the typesetting stops "
+                        "with an error such as 'Missing number'.")
 
     def checkPaths(self, prjid, cfg, config, add, fixTo):
         prjdir = self.projects[prjid].path

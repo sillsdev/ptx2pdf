@@ -121,6 +121,21 @@ class TestValidate(_Projects):
         self.assertIn("t1title", found["variableEmpty"].message)
         self.assertIn("isbnPlaceholder", found)
 
+    def test_empty_secondary_book(self):
+        ''' A diglot whose other project has the book but no text in it (only verse numbers) '''
+        ognt = os.path.join(self.tmpdir.name, "OGNT")
+        for f in os.listdir(ognt):
+            if "2JN" in f.upper():
+                with open(os.path.join(ognt, f), "w", encoding="utf-8") as outf:
+                    outf.write("\\id 2JN\n\\h 2 John\n\\c 1\n\\v 1\n\\v 2\n\\v 3 word\n\\v 4\n")
+        v = Validator(self.tmpdir.name)
+        self.assertTrue(v.bookIsEmpty("OGNT", "2JN"))
+        self.assertFalse(v.bookIsEmpty("WSGlatin", "2JN"))
+        self.assertFalse(v.bookIsEmpty("OGNT", "XXQ"))          # not there at all isn't "empty"
+        found = self.codes(v.validate(["WSGlatin"], ["Diglot2JN"]), prj="WSGlatin")
+        self.assertEqual(found["bookEmptySecondary"].severity, ERROR)
+        self.assertIn("2JN", found["bookEmptySecondary"].message)
+
     def test_stale_cover(self):
         outdir = os.path.join(self.tmpdir.name, "WSG", "local", "ptxprint")
         os.makedirs(outdir)

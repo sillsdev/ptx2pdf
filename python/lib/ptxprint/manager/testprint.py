@@ -120,9 +120,10 @@ class TestPrinter:
             pdf = None          # an old one: nothing was made this time
         if proc.returncode == 0 and pdf is not None:
             return PrintResult(prjid, cfg, books, PRINTED, seconds, pdf)
-        return PrintResult(prjid, cfg, books, FAILED, seconds, message=self.explain(prjid, cfg, out, timedout, start))
+        return PrintResult(prjid, cfg, books, FAILED, seconds, message=self.explain(prjid, cfg, out, timedout, start,
+                                                   books=None if pub is not None else books))
 
-    def explain(self, prjid, cfg, out, timedout, start):
+    def explain(self, prjid, cfg, out, timedout, start, books=None):
         if timedout:
             return f"Took longer than {self.timeout // 60} minutes and was stopped."
         said = []
@@ -143,6 +144,13 @@ class TestPrinter:
                 tex = texError(max(logs, key=os.path.getmtime))
         if tex:
             said.append("Typesetting error: " + tex)
+            # the commonest cause of an error where a diglot's columns end: one side has nothing in it
+            if "polyglotendcols" in tex:
+                empty = [f"{b} in {sprj}" for k, (sprj, scfg) in self.validator.diglotSides(prjid, cfg).items()
+                         if k != "L" and sprj in self.validator.projects
+                         for b in self.booksIn(books or "") if self.validator.hasBook(sprj, b) and self.validator.bookIsEmpty(sprj, b)]
+                if len(empty):
+                    said.append("Probably because " + ", ".join(empty) + " has no text yet, only verse numbers.")
         if not len(said):
             lines = [l.strip() for l in out.split("\n") if l.strip() and "Warning" not in l]
             said = lines[-2:] if len(lines) else ["PTXprint gave no reason."]
