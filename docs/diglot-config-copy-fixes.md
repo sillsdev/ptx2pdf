@@ -1,6 +1,6 @@
 # Copying a diglot configuration to another project: what was wrong and what has changed
 
-Branch: `diglot-config-copy-fixes` (not yet in a release)
+Branches: `diglot-config-copy-fixes`, and `multiproject-manager` which is built on it (neither is in a release yet)
 Written: 13 November 2026
 Source of the bug reports: John Nystrom's testing notes, sections "Version 3.1" to "Wrong cover prints" (PTXprint 3.1.4 to 3.1.6)
 
@@ -27,6 +27,8 @@ This document has three parts:
 | Arop publications appearing in another project after a copy | Publications were copied even when "keep each project's own variables" was ticked | Fixed |
 | `! Missing number ... \tri@lsplitRejR` in bSum | Probably: the R row names a project "bSumBT", which does not exist | PTXprint now says so plainly; you set the R row (see section 10) |
 | Cannot print the glossary with a publication in cGoi | Not yet investigated; probably the same wrong right-hand text | Open |
+| Cannot print with a publication: "PTXprint doesn't do anything, it doesn't even update the PDF" | PTXprint stopped the typesetting of a publication after one second | Fixed (section 11) |
+| Jude fails in aArpAux, aMal and aSno with DiglotA5 (found by test printing, not reported by you) | Not found yet: an error in the diglot typesetting | Open (with David) |
 | Picture printing twice at the end of bPou Matthew | Not investigated here | Open (with Martin and David) |
 | Archive target folder not opening automatically | Not investigated here | Open |
 | PTXprint crashed and reopened in a different language | Not investigated here | Open |
@@ -130,6 +132,24 @@ Pressing Print while on the Publications tab with no publication highlighted cou
 
 **Script paths that version 3.1 saved wrongly.** While `${settingsdir}` had the wrong meaning (section 3), opening and saving a configuration rewrote the script location as `${prjdir}/aArpBT\shared\InsertGLOcounterpart.py`, that is, a folder called aArpBT *inside* the project. Six of the fourteen DiglotA5 configurations are in this state (aMal, aSno, bBar, bG1BT, cOGBT, cWol). PTXprint now recognises this when it loads a configuration and uses the file in the other project, as was meant. You do not need to change anything.
 
+### 11. Publications that would not print
+
+**What you saw.** Printing with a publication did nothing: no new PDF, or a "Failed to create" message.
+
+**What was wrong.** When PTXprint printed a publication it gave the typesetting a time limit of zero seconds by mistake, and stopped it after the first second. Only a publication small enough to typeset in under a second ever came out. This had nothing to do with your settings or your variables.
+
+**What has changed.** A publication now has no time limit unless one is set. Your "James" publication in cGoi, which failed before, now prints in about 13 seconds.
+
+### 12. A new tool: the PTXprint Multi-Project Manager
+
+This is a separate program for looking after the same configuration in many projects at once. It is still being built and is on its own branch (`multiproject-manager`). What it does so far:
+
+- **Problems:** checks one configuration (for example DiglotA5) in every project that has it, explains what is wrong in plain words, and offers repairs with a tick box each. Nothing is changed until you agree.
+- **Diglot texts:** shows which project each diglot has on its other side, and lets you choose a different one.
+- **Test print:** prints a book you choose in every project and shows which printed and which failed, and why. A test print does not change any of the project's settings files.
+- **Publications:** one table of titles, ISBNs and books for every project, edited in place; a publication can be added to every project at once.
+- **Compare settings** and **Compare styles:** show where one project's configuration differs from the others'.
+
 ### Still open
 - **Cannot print the glossary with a publication (cGoi).** Not yet examined. It may have the same cause as section 8.
 - **Picture printing twice at the end of bPou Matthew.** Already raised with Martin.
@@ -174,6 +194,18 @@ Printing a publication from the Publications tab now copies that publication's v
 
 7. **Picture printing twice at the end of bPou Matthew** (Mark's comment to you in John's document, 12 Nov). Not looked at in this branch.
 
+### Added later on 13 November (branch `multiproject-manager`)
+
+8. **The Styles tab and TeX read the style sheets in a different order.** TeX is given them as `usfm_sb.sty`, `ptx2pdf.sty`, `custom.sty`, `ptxprint.sty`, then `ptxprint-mods.sty` (`template.tex` lines 25 to 35), so where both set the same attribute of a style, **mods wins on the page**. `ViewModel.getStyleSheets` returns them as `usfm_sb.sty`, `ptx2pdf.sty`, `custom.sty`, `ptxprint-mods.sty`, then `ptxprint.sty`, and `StyleEditor.load` takes the last as the sheet being edited and the rest as its base. So in the Styles tab **`ptxprint.sty` wins**, and the tab can show a value that is not what prints. It also means `ptxprint.sty` is saved as a difference from a base that includes mods, although TeX applies mods afterwards. Which order is intended? The manager's style comparison follows TeX. (The diglot snippet has the same order as the template: `ptxprint.sty` then `ptxprint-mods.sty`.)
+
+9. **Publications were stopped after one second** (`0bcc0dc09`). `BuildParams.timeout` defaults to `0`, and `WorkerContext.execute_job` started its watchdog for anything but `None`, so `threading.Timer(0, ...)` set `printer.timedout` at once and `RunJob._communicate` killed XeTeX at its first one-second check. The publication jobs from `publications.py` and `main.py --pub` don't pass a timeout. The fix is `if job.build_params.timeout:`. The existing test passed because its book typesets in under a second; there is now a test of the watchdog itself. Would you rather `BuildParams.timeout` defaulted to `None`?
+
+10. **`--readonly`** (`ab914a084`). A command line print called `savePics`, `saveStyles` and `saveAdjlists` before printing, and `readConfig` rewrites a config it has brought forward from an older version. The content was equivalent but tidied (`\Occursunder` to `\OccursUnder`, repeated `JUD L 1` lines in adjust lists dropped, adjust lists with only zero entries deleted, `picChecks.txt` rewritten), so every headless print left modified files for Mercurial. With `--readonly`, `ViewModel.readOnly` makes `writeConfig`, `savePics` and `saveStyles` leave the shared files alone, `saveAdjlists` only makes the triggers, and the print gets its own `ptxprint.sty` in the working folder through a new `/styrpath` in the template. Two things to check: is anything else written to `shared/` during a print that I have missed (hyphenation?), and should the normal print be writing these files at all when nothing has changed?
+
+11. **A missing diglot project now stops the print** (`8204612bb`): `RunJob.doit` fails with a message naming the side, project and configuration if a `diglot_X` view can't be made, rather than carrying on without that text.
+
+12. **The manager tool** is in `python/lib/ptxprint/manager/`, with `python/scripts/ptxprint-manager` and an entry point in `pyproject.toml`. It reads and writes `ptxprint.cfg` with `configparser` and does not load a `ViewModel`, except that test prints run `ptxprint` as a subprocess. It is not yet in the PyInstaller spec or the installer.
+
 ### Testing
 
 - New tests fail without the fixes and pass with them.
@@ -204,4 +236,6 @@ Printing a publication from the Publications tab now copies that publication's v
 
 3. **Picture printing twice at the end of bPou Matthew.** A picture set to the bottom of the page, in the last part of the book, appears twice (or once at the end of Matthew and again at the start of the glossary). Setting it to the top of the page avoids it. John says he has seen this in other publications that week. It resembles the duplicate-picture problem fixed for 3.1; is this a remaining case at the end of a book?
 
-4. **Page Fill on diglots (3.1.4).** For reference only: John found the result a net improvement on 2JN and 3JN, with one place in 3JN where a three-line difference between columns became five lines. Martin has already replied in John's document.
+4. **Jude fails with DiglotA5 in aArpAux, aMal and aSno** (found on 13 November by test printing every project). XeTeX stops with `! Dimension too large.` at `\polyglotendcols` (l.133 or l.135 of the merged file). All three have aArpBT on the right. aArp itself prints Jude with the same configuration, and all three print 3 John. To reproduce: `ptxprint-manager testprint -c DiglotA5 -b JUD -P aMal`, or print JUD in aMal with DiglotA5. Not investigated further.
+
+5. **Page Fill on diglots (3.1.4).** For reference only: John found the result a net improvement on 2JN and 3JN, with one place in 3JN where a three-line difference between columns became five lines. Martin has already replied in John's document.
