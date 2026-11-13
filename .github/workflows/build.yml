@@ -146,9 +146,10 @@ jobs:
         NOTARIZATION_USERNAME:  ${{ secrets.SIL_APPLE_NOTARIZATION_USERNAME }}
         NOTARIZATION_PASSWORD: ${{ secrets.SIL_APPLE_NOTARIZATION_PASSWORD }}
         NOTARIZATION_TEAM: 3YE4W86L3G
-      run: 
+      run: |
         ./mac-build.sh
-        echo ${{github.ref_protected}}
+        echo -------
+        echo Branch protected: "${{github.ref_protected}}"
         
     - name: Upload distribution DMG
       uses: actions/upload-artifact@v7
