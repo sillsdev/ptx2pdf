@@ -563,13 +563,13 @@ class PDFFileViewer:
             cpage = self.current_index or 1
         page = cpage
         images = []
-        if cpage in range(self.numpages+1):
+        pg = None
+        if 1 <= cpage <= self.numpages:
             self.create_boxes(1)
             pg = self.document.get_page(cpage-1)
-            self.psize = pg.get_size()
-            images.append(render_page_image(pg, self.zoomLevel, cpage, []))
-        else:
-            pg = None
+            if pg is not None:
+                self.psize = pg.get_size()
+                images.append(render_page_image(pg, self.zoomLevel, cpage, []))
 
         self.current_page = page
         self.current_index = cpage
@@ -905,7 +905,7 @@ class PDFFileViewer:
             self.set_zoom(fit, setz=iscurrent)
 
     def set_page(self, action):
-        if self.current_index is None:
+        if self.current_index is None or not self.numpages:
             return
         increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
         pg = min(self.current_index, self.numpages)
@@ -975,6 +975,8 @@ class PDFFileViewer:
             return
 
         pdf_page = self.document.get_page(page_number)
+        if pdf_page is None:
+            return
 
         cairo_context = context.get_cairo_context()
         cairo_context.save()
@@ -1260,8 +1262,9 @@ class PDFContentViewer(PDFFileViewer):
             return
         if cpage is None:
             cpage = self.current_index or self.parlocs.pnums.get(1, 1) if self.parlocs is not None else 1
-        if self.numpages:
-            cpage = max(1, min(cpage, self.numpages))
+        if not self.numpages:   # e.g. empty/half-written PDF: nothing to render
+            return
+        cpage = max(1, min(cpage, self.numpages))
         self.spread_mode = self.model.get("c_bkView", False)
         # page = self.parlocs.pnumorder[cpage-1] if self.parlocs is not None and cpage > 0 and cpage <= len(self.parlocs.pnumorder) else cpage 
         if self.parlocs and self.parlocs.pnumorder and 0 < cpage <= len(self.parlocs.pnumorder):
@@ -1290,17 +1293,20 @@ class PDFContentViewer(PDFFileViewer):
             spread = self.get_spread(cpage, self.rtl_mode)
             self.create_boxes(len(spread))
             for i in spread:
-                if i in range(self.numpages+1):
+                if 1 <= i <= self.numpages:
                     pg = self.document.get_page(i-1)
+                    if pg is None:
+                        continue
                     self.psize = pg.get_size()
                     images.append(render_page_image(pg, self.zoomLevel, i, layerfns))
                     self.parlocs.load_page(self.document, pg, i)
-        elif cpage in range(self.numpages+1):
+        else:
             self.create_boxes(1)
             pg = self.document.get_page(cpage-1)
-            self.psize = pg.get_size()
-            images.append(render_page_image(pg, self.zoomLevel, cpage, layerfns))
-            self.parlocs.load_page(self.document, pg, cpage)
+            if pg is not None:
+                self.psize = pg.get_size()
+                images.append(render_page_image(pg, self.zoomLevel, cpage, layerfns))
+                self.parlocs.load_page(self.document, pg, cpage)
 
         self.current_page = page
         self.current_index = cpage
@@ -1631,8 +1637,14 @@ class PDFContentViewer(PDFFileViewer):
             res = self.parlocs.readParlocs(fname, rtl=rtl, gui=large_pdf, parent=self.hbox)
             if res:
                 res = self.parlocs.load_dests(self.document)
+            elif res is False:
+                # Cancelled part way: discard the partial page info, otherwise the page
+                # count and page navigation are limited to the pages read so far.
+                self.parlocs.clear()
+                self.parlocs.readParlocs(None)
         except (IndexError,):
-            pass
+            self.parlocs.clear()
+            self.parlocs.readParlocs(None)
         finally:
             dlg = getattr(self.parlocs, '_parloc_dlg', None)
             if dlg is not None:
