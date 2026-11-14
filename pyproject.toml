@@ -16,7 +16,7 @@ classifiers = [
    ]
 requires-python = ">=3.8"
 # dynamic = ["version"]
-version = "3.1.6"
+version = "3.1.7"
 
 dependencies = [
 "usfmtc @ https://github.com/usfm-bible/usfmtc/archive/main.zip",

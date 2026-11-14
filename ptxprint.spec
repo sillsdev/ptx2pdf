@@ -29,7 +29,7 @@ if '_uuid' not in sys.modules:
 
 import usfmtc           # so we can find its data files
 
-version="3.1.6"
+version="3.1.7"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
