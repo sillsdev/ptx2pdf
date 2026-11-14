@@ -389,3 +389,245 @@ not looked at yet.
   `\ifDgltHdrOffsetCenter`, `\ifreftooltip`.
 - **[OPEN: TeX never sees unknown markers like \\zunknown, because Python drops them in the conversion; undefined milestones (and \\u0000) get through. The fix belongs there: drop and warn as for other unknown markers]** Undefined markers kill TeX with a bare "Undefined control sequence" instead of a helpful message: a milestone with no stylesheet entry (`\zcustom-s |who="x"\* … \zcustom-e\*`), and `\u0000` (marker name followed by digits). `\zunknown …\zunknown*` and `\xyz` are fine. Found when OddUSFM's JUD started reaching TeX (usfmtc e72a391); taken out of the test data in patches/oddusfm-cleanup.patch.
 - **[OPEN: not looked into further (the test data was cleaned instead)]** Unclosed `\f` running into an unclosed `\fig` ends in "Argument of \getonep@ram has an extra }" — no hint of the real cause (also cleaned out of OddUSFM).
+
+## Hidden bugs (Nov 2026, second pass)
+
+Found by a deeper read than the bug hunt above. Same status tags; no tag = not looked at yet.
+
+### Multi-project manager
+
+* `manager/validate.py:138` `bookIsEmpty` counts only the text between `\v N` and the next
+  backslash or line end. A verse that starts with a character style (`\v 1 \w In|strong="G1722"\w* ...`),
+  a footnote, or that puts its text on the next line after `\q1` counts 0 words, so a translated
+  book with Strong's markup, or poetry (PSA), is reported as the ERROR "bookEmptySecondary" and
+  test-print failures are blamed on it (`testprint.py:151`) (tested: three such verses count 0).
+  Count words in the whole chapter text with markers and attributes stripped instead.
+* `manager/testprint.py:82-95` Stop races with a print that is starting: `stop()` kills only the
+  processes already in `self.processes`, so a `Popen` made between the `stopping` test and
+  `processes.add` runs to completion (up to the 900s timeout) after Stop, and is then reported as
+  "Stopped". Test `stopping` again after adding the process (traced, not run).
+
+### Page filler and layout analysis
+
+* `adjlist.py:366-369` `increment`: a `+N` value that goes negative is written `+-1` ("Shrink
+  both" in the viewer on a `+1` row). `get_params` then raises ValueError, TeX is given `+-1`, and
+  on the next read `adjre` doesn't match so the row is dropped (tested). Only prefix `+` when
+  `v >= 0`.
+* `parlocs.py:644-645` (and `_getRectsPage` 581) `getParas` looks back only 2 entries before
+  `pindex[pnum-1]` for a paragraph continuing from the previous page; in a diglot the other glot's
+  continuing paragraph is often further back, so page-start keys (`page_memo`, `avoid_key`,
+  `failed_starts`), `get_page_first_pid` and viewer click lookups get the wrong paragraph or none
+  (tested, OGNT Diglot JAS: pages 5, 6, 9; p5 misses `JASR2.1[]`). Scan back until no earlier
+  paragraph still has rects on the page, or index rects by page while reading.
+* `page_filler.py:1183` the contrast term looks up `p` instead of `prev`, so `preve == pe` and
+  `s_pbcontrast` has no effect (`prev` is computed and unused) (traced). Use
+  `shape_cache.get((prev, combo.get(prev, 0)), self.neutral(prev))` when `prev` is not None.
+* `page_filler.py:1422-1424, 1469` (used at 437-441) resume/restart in `PTXFiller`:
+  `AdjList.get_params`/`get_cache` key rows `BK c.v[1]` but parlocs ids are `BK c.v[]` when TeX
+  gave no parnum, so on a resume of a non-diglot book earlier adjustments are dropped, the
+  shape cache never matches (no moves), and probing is off, so pages fail untried (tested:
+  my_judson ROM 56/56 ids are `[]`). `PolySolver._match_adjlist_ids` (poly_filler.py:77-86)
+  already fixes this for polyglots; apply it in `TypesetterSolver` too.
+* `page_filler.py:1603-1610` with 437-441: on restart `createAdjs` starts from `init_adjs` (all
+  old rows) and only `setval`s paragraphs in `parparms`, so rows the solver dropped from
+  `base_params` keep their old stretch on disk; every run is measured against settings the solver
+  thinks are neutral (traced, medium confidence). Reset rows not in `parparms` to neutral.
+* `page_filler.py:664-670` vs 682: the page is judged full on a run with `probe_params`, and the
+  straddler's probe shape is copied to `page_base_params`, but 682 commits
+  `new_state.paragraph_params`, built without it; on the next page the straddler reverts, the page
+  goes short and page+1 combos are rejected at 651. 665 also reads `state.layout` not
+  `new_state` (traced, medium). Put the straddler's probe value into `new_state.paragraph_params`.
+* `page_filler.py:619` vs 1064: `page_base_params[page]` is read before the `next_combination`
+  generator overwrites it, so each visit uses the base saved on the previous visit; on a third
+  repair visit `{B:+1}` is laid out as `{A:-1, B:+1}` while `tried_combos` (keyed by combo only)
+  skips the clean one (traced, medium). Fix one base per visit, or key tried combos by base.
+* `page_filler.py:1600, 1610, 1635`, `view.py:2058` percentages use `int(x*100)`:
+  `int(1.15*100) == 114`, so max text limits 113-116% lose 1, and bisection midpoints truncate onto
+  values already tried (1.01875 and 1.0125 both run at 101%) (tested). Use `round()`.
+
+### GUI
+
+* `gtkview.py:7971-8002` when Analyse & Fill finishes, `_pollFillProgress` reloads adjlists and
+  calls `onOK` on whatever project/config is current *now*: the progress window is non-modal, so
+  switching to project B mid-fill saves and prints B (resetting its adjlists/adjView) and A's PDF
+  is never rebuilt (traced). Keep pid/guid/cfgid at start; on finish skip (or ask) if changed.
+* `gtkview.py:4753-4756` unsaved picture-list edits are lost on switching project:
+  `picListView.clear()`/`picinfos.clear()` run before `super().updateProjectSettings(saveCurrConfig=True)`
+  saves, and `clear()` sets `loaded=False`, so both `savePics` skip writing (traced). Clear after
+  the save, or `savePics()` first.
+* `gtkview.py:5123-5139` auto-save / "Save changes?" on leaving a Viewer sub-tab saves the *new*
+  tab: the focus-out handler computes `pgnum` from `widget.pageid` but calls `onSaveEdits(None)`,
+  which uses `nbk_Viewer.get_current_page()` (3910), already switched; the edits are then lost on
+  reload. Same in `onRefreshViewerTextClicked` (3598) (traced, medium: depends on GTK focus order).
+  Pass `pgid=widget.pageid`.
+* `gtkpolyglot.py:403-405` changing a row's project overwrites the first entry of the new
+  config list with `new_cfg` instead of selecting it: Y's configs [Alpha, Default] show as
+  [Default, Default] (traced). Delete those lines; 407 already sets the row's cfg.
+* `gtkpolyglot.py:613-620, 678-692` (and `load_polyglots_into_treeview` 116-117) `ls_config` is
+  indexed by row position but delete/move of a row never reorders it, so shifted rows offer
+  another project's configs (traced). `pop`/`insert` the matching `ls_config` entry.
+* `pdf_viewer.py:910` spread Next/Previous step by folio parity (`current_page` is a folio) but
+  spreads are built from index parity (`get_spread` 1691-1703): after jumping to an even page, or
+  when folio and index parity differ (front matter), a press lands on the same spread (traced,
+  medium-high). Step ±2 from `get_spread(current_index)[0]`.
+* `pdf_viewer.py:520-523` with 1293/1700-1701 RTL spreads are reversed twice (`get_spread` order
+  and `pack_end`) in a fresh session, but once if the boxes were packed while viewing an LTR PDF
+  (reused at 505), so RTL page order depends on what was previewed earlier (traced, medium).
+  Reverse in one place; re-pack when `rtl_mode` changes.
+* `view.py:1115-1160` `readConfig` sets `loadingConfig` with no `try/finally`; e.g. a project with
+  no books raises IndexError at 1136 (`list(...)[0]`) and the flag stays True, silencing every
+  handler that checks it (UI level, direction, grid, lock ratio...) until the next good load
+  (traced, medium). `try/finally`, and guard the `[0]`.
+* `gtkview.py:4836` vs 7580 the preview decides RTL from text direction (`self.rtl`) on project
+  load but from `c_RTLbookBinding` after printing, so spread order and gutter guides change with
+  RTL text + LTR binding (traced, medium). Use `c_RTLbookBinding` in both.
+* `gtkpolyglot.py:139-146` `find_or_create_row` tests the 9-row limit before looking for an
+  existing row, so with 9 rows every lookup (even "L") returns -1 and writes into the last row
+  (traced, low-medium). Look up first; limit only when appending.
+
+### Config and model
+
+* `view.py:1132` with 1596-1598 `readConfig` runs `versionFwdConfig` on `ptxprint_override.cfg`
+  and `ptxprint_project.cfg`, which always sets `project/colophontext` (to "" if absent); the
+  locked override then blanks the colophon and the next save writes `colophontext =` (tested,
+  WSGlatin with a one-line project cfg). Only apply such fix-ups when the option is present, or
+  don't version-forward override files.
+* `view.py:1788-1795` the `_settingmappings` loop also runs for override loads (`clearvars=False`):
+  `fncallers`/`xrcallers` missing from the override are reset to Paratext's (`*`), and
+  `createConfig:1253` then drops them because they equal ptsettings — custom callers lost for good
+  (tested). Only run the loop when `clearvars`.
+* `view.py:1733-1746` with 1231-1242 `_attributes` paths (FrontPDFs, BackPDFs, watermarks,
+  pageborder, sectionheader, endofbook, customScript, customXRfile, coverImage, ...) are never reset
+  on a config switch: config B prints with A's border/watermark/script and saving writes A's paths
+  into B (tested: DecorRUT → MinimalOdd). Reset every `_attributes` value at the start of a
+  clearvars load.
+* `view.py:1118, 1137-1157` with 1272-1274 `self.polyglots` is only rebuilt from `diglot_*`
+  sections when `c_diglot` is on, and `createConfig` writes only what is in it: untick diglot,
+  reload, save, and `[diglot_L]`/`[diglot_R]` are deleted (tested, Diglot2JN). Always read the
+  sections; only create the views when diglot is on.
+* `snippets.py:251` the diglot secondary's hyphenation is `\input` from `{diglot[/cfgrpath]}`
+  (the config folder), but the file is in `shared/ptxprint/` (`hyphen.py:16`, `template.tex:271`),
+  where `texmodel.py:252` found it to set `ifhavehyphenate`: XeTeX fails on a missing file
+  (traced). Use the same path as the template.
+* `view.py:818-824, 858-862` "Copy config to other projects → Merge" opens `destp` and
+  `<newp>/base/...` unconditionally; a target config not made by an earlier copy (no `base/`), or
+  lacking a file the source has (changes.txt, FRTlocal.sfm), raises FileNotFoundError and the
+  remaining files are skipped, leaving it half-merged (traced). Plain copy when `destp` is
+  missing; treat a missing base as empty.
+* `utils.py:943`, 913-928 `withvars` stores `os.path.relpath` (backslashes on Windows) after a
+  `/`, and `Path` never converts `\` back on POSIX: `${pdfassets}/border-art\A5 page border.pdf`
+  is not found on Linux (traced; 13 WSGlatin test configs contain such paths, medium-high).
+  Normalise `\` to `/` in both places.
+* `view.py:1128` override/project cfgs are read as `utf-8`, not `utf-8-sig` like the main cfg
+  (1107): a Notepad-saved file with a BOM raises MissingSectionHeaderError and no overrides apply
+  (tested). Use `utf-8-sig` (also `_readLangVars`, `_writeLangVars`, `_mergecfg`).
+* Minor: v<1.502 upgrade tests `includimg` (typo); `view.py:1403` `bits += [] * n` is a no-op;
+  `texmodel.py:614` `210 / unitConv["mm"]` should be `*` (practically unreachable).
+
+### Print job and PDF post-processing
+
+* `pdf/procpdf.py:56-66` with a cover and "extract inserts" off, `split_pages` still removes every
+  tagged insert but only writes the cover back: map pages (`\PullPeriph{maps}` is the default)
+  vanish from the final PDF (tested: 4 pages → 2). Split out only the cover when burst is off.
+* `pdf/pdfimage.py:176` `bytes(x)` on an int gives x zero bytes: Spot-output images get a stream
+  of zeros of the wrong length (tested: 4 pixels → 1221 bytes). Build the stream from the byte
+  values (`bytes(z)`) or interleave with numpy.
+* `pdf/fixcol.py:257`, `pdf/pdfimage.py:207,217` spot maths: text/drawing tint is
+  `spothsv[1]/hsv[1]` (inverted; pale red gives 5.00); image `spotb = v - maxv` is never positive
+  and wraps in uint8 (darker pixels get heavy black); `np.isclose(hue, h, hrange)` passes rtol not
+  atol (tested). Invert the ratio, use `maxv - v` clipped, `atol=hrange`.
+* `pdf/fixcol.py:173-176, 191` CMYK conversion: the grey test applies 0.05 to a sum of squares
+  (~0.16 per channel) and takes the level from `r`, so pale pink → white, light blue → grey
+  (tested, medium-high that it's unintended); `vals >= self.threshold` compares a list with a float,
+  the TypeError is swallowed, so black overprint never happens (tested). Per-channel tolerance
+  ~0.01 with luminance; test `max(vals[:3])`/`vals[3]`.
+* `runjob.py:183` (`doit`/`dojob`/`sharedjob`) `lockme` has no try/finally; after an exception in a
+  reused worker process (or `-j 1`) every later job returns False at once with no message
+  (traced). Unlock in a finally, or in `execute_job`'s except.
+* `multiprint.py:426` `" ".join(job.books)` on a RefList → TypeError when a publication job
+  raised: the summary is lost (tested). Use `str(job.books)`.
+* `publications.py:309`, `multiprint.py:236, 71` module publications can't print: the GUI submits
+  `[books]` (a list), `execute_job` calls `job.books.first` outside its try, and `ViewPrinter.solve`
+  sets `self.moduleFile` not `self.view.moduleFile`; `_pollProgress` (publications.py:352) never
+  reads `get_results`, so all failures look like success (traced).
+* `gtkview.py:7911-7917` starting Analyse & Fill `terminate()`s the shared `self.mprint`, killing
+  publications being printed; the reverse also mixes the two pools (traced). Separate
+  MultiPrints, or refuse while busy.
+* `runjob.py:733` with 816-824 the rerun check compares XeTeX's raw `.toc` with the one Python
+  rewrote last time, so every print with a TOC does an extra XeTeX run (Quick Run always says
+  "Rerun to fix: table of contents") (traced). Compare with the `_org` copy.
+* `pdf/procpdf.py:144-174` scale to fit scales MediaBox and content but not TrimBox (every page
+  has one, `ptx-cropmarks.tex:421-426`), nor MediaBox origin offsets: TrimBox ends up in a corner,
+  or larger than the MediaBox (invalid PDF/X) (traced, medium-high). Transform Trim/Bleed/ArtBox too.
+* `view.py:1308-1607`, `texmodel.py:254-260` `--readonly` still writes shared files through
+  `versionFwdConfig` (blank ptxprint.sty when missing, changes.txt rewrite, .adj deletion,
+  piclist renames, ...) and TexModel's PrintDraft-mods.sty copy; the diglot side ViewModel
+  (`view.py:2354`) is made without args, so it's never read-only (traced). Skip file side effects
+  when `readOnly`; pass `args`.
+* `pdf/procpdf.py:136-140` an imposition OverflowError returns `{}` not `None`, so the CLI exits 0
+  with the un-imposed PDF (traced). Return `None`.
+
+### Text, pictures, styles, fonts
+
+* `changes.py:89` nested contexts: `domatch` passes `lambda x: fn(m.group(0))`, applying the
+  change to the outer match and putting that in place of the inner match, so any rule with two
+  scopes (`at GEN 1:2 in "\f .*?\f\*": ...`, or two `in` clauses) duplicates text (tested). Use
+  `lambda x: fn(x)`.
+* `usxutils.py:161-182` `mrktype`: `set(sheet.get('occursunder'))` is a set of characters, and
+  lower-cased TextType/StyleType are compared with mixed-case `'NoteText'`, `'VerseText'`,
+  `'Standalone'`; a custom note marker (`\StyleType Note`, `\TextType NoteText`) becomes `char`, so
+  `\zfn + \ft note\zfn*` text spills into the verse; custom standalone markers get no category
+  (tested). Split OccursUnder into words, compare case-insensitively, map Note to footnote.
+* `usfmerge.py:222/713/490` subverses: `3a`/`3b` reduce to the same `position`; `score()` keeps
+  only the last index in `self.loc[pos]`, so L's 3a sits opposite R's v2 (tested, both score
+  modes). Include the subverse letter, or keep the first index on collision.
+* `usfmerge.py:655` `elif c.type in (CHAPTER, BODY, PREVERSEPAR)` tests `c` (always HEADING there)
+  instead of `cn`, so every heading not followed by a verse-start paragraph becomes INTRO; the
+  "heading before \c" merge (662) is dead, and L's `\s` before `\c 2` prints at the foot of chapter
+  1 while R's goes with `\c 2` (tested; intended outcome per case: medium).
+* `usfmerge.py:423-429` a mid-verse paragraph that also starts the next verse
+  (`\q2 rest of v1. \v 2 ...`) is labelled PREVERSEPAR because `c.text` is never checked, so v1's
+  second line goes in the v2 row and v2/v3 collapse (tested). Use `midvmode` when the paragraph
+  has leading text.
+* `font.py:1329` `updateTeXStyle` writes `FontName = self.name`, dropping the face from
+  `_getTeXComponents` (Semibold, Light...), so "Segoe UI Semibold" prints as regular; and 1316's
+  `_iseq(ignorestyle=True)` drops FontName when the family matches the body font (tested; how
+  often the UI produces such a FontRef: medium). Use `name`.
+* `font.py:658-707` `TTFont.cache` keeps "not found" entries (filename None) all session;
+  `addFontDir`/`runFcCache` never clear it, so a font installed later, or shipped in another
+  project's `shared/fonts`, stays missing and a Graphite font loses `/GR` until restart; the first
+  project's same-named font wins for later projects (tested). Don't cache misses; clear on
+  font-dir changes.
+* Lower impact (traced): `usfmerge.py:897` `chlist=('CHAPTERHEAD')` is a string, so `'CHAPTER' in
+  chlist` is true by substring (`\c N` always alone in its row); 901 tests `positions[...][3]` not
+  `[_headingidx]`, so heading back-up never runs; 817/857 broken but unreachable align modes;
+  `piclist.py:761` `['anchor'][3:4]` is always `[]` (sort order only).
+
+### TeX macros
+
+* `ptx-figure.tex:962` `\uppercase{\def\t@mp{\l@cspec@b}}` only uppercases the letters it sees, so
+  `\t@mp` is `macro:->\l@cspec@b` and `\ifx\t@mp\m@x@at@col` is never true: in a diglot a top
+  picture's own column is never recognised as the tallest, so a second `tL` picture smaller than
+  the first counts 0pt against `\pagegoal` (1204-1208) and too much text is let in (ran the
+  construct; layout effect traced, medium-high). `\edef` first, then `\uppercase` via `\x@`.
+* `ptx-output.tex:1112, 1083` "Enhanced paragraphed footnotes" shaving: 1112 records
+  `\ht\n@tesbox - \sh@vedim`, but `\findsh@venotes` runs inside `\m@kenotebox`, while `\n@tesbox`
+  still holds the previous trial's/page's box of all classes; should be `\ht\@sh@venotebox`. 1083
+  tests scratch `\ht0` instead of `\ht#1`. Shaving is skipped or moves the wrong amount (negative
+  on the first page with notes) (traced, high).
+* `ptx-figure.tex:849-850` `\lowercase{\edef\size@ption{\csname figparam-size\endcsname}}`
+  lowercases the name, not the value: `size="Span"` stops with `Unknown picture size` (920)
+  (ran it; not checked whether Python lowercases first). Same pattern at `ptx-extended.tex:628`
+  (`FigScaleTo`). `\edef` first, then `\lowercase` via `\x@`.
+* `ptx-para-style.tex:434` the `\@parend` record's `{\the\lastdepth}` stays inside the deferred
+  `\write`, so it is the value at shipout (often 0pt after a title gridbox, 262), and the write
+  precedes `\p@r` anyway; `parlocs.py:409` subtracts it from `yend`, so paragraph ends the filler
+  uses are off by a descender (traced, medium-high; impact low-medium). Write after `\p@r` with
+  the depth expanded at once.
+* `ptx-adj-list.tex:169` `\ifadjslurp\else ... \else ... \fi\fi` has two `\else`: with
+  `\adjslurpfalse` and trace `j`, every `\ch@ckadjustments` gives `! Extra \else.` (ran it; debug
+  path only).
+* Minor: `ptx-adj-list.tex:66` `\warnspace #1 \E` passes the book code, not `#3`, so the
+  "no spaces in adjustlist entries" warning never fires; `ptx-output.tex:474, 1512`
+  `\multiply\dimen5 by 32` overflows when the column-notes xref box is >512pt taller than the
+  column (guard at 445 only stops at 2000pt) (traced, unlikely).
