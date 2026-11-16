@@ -70,20 +70,7 @@ class PolySolver(TypesetterSolver):
 
     def solve(self, state, start_page=-1, stop=True, restart=False, book=None):
         self.restarting = restart
-        if restart:
-            self._match_adjlist_ids(state)
         return super().solve(state, start_page=start_page, stop=stop, restart=restart, book=book)
-
-    def _match_adjlist_ids(self, state):
-        """ The adjlist writes a paragraph without a parnum as [1], but its id here is [] """
-        known = set(self.paragraph_order)
-        def fix(pid):
-            if pid not in known and pid.endswith("[1]") and pid[:-3] + "[]" in known:
-                return pid[:-3] + "[]"
-            return pid
-        state.paragraph_params = {fix(k): v for k, v in state.paragraph_params.items()}
-        self.shape_cache = {(fix(k), d): v for (k, d), v in self.shape_cache.items()}
-        self.probe_cache = {fix(k): v for k, v in self.probe_cache.items()}
 
     @property
     def early(self):

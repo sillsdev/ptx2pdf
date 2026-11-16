@@ -917,14 +917,15 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
             return pathlib.Path.__new__(cls, txt)
         varlib = cls.create_varlib(args[0])
         k = txt[2:txt.find("}")]
-        return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:])
+        # a path saved on Windows has \ in it, which only Windows reads as a separator
+        return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:].replace("\\", "/"))
 
     def __init__(self, txt, *args):
         if sys.version_info.major > 3 or sys.version_info.minor >= 12:
             if len(args) and str(txt).startswith("${"):
                 varlib = self.create_varlib(args[0])
                 k = txt[2:txt.find("}")]
-                txt = str(varlib[k]) + "/" + txt[len(k)+4:]
+                txt = str(varlib[k]) + "/" + txt[len(k)+4:].replace("\\", "/")
             super().__init__(txt)
 
     def withvars(self, aView, relto=None):
@@ -947,7 +948,7 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
                 bestk = k
                 bestr = str(rpath)
         if bestk is not None:
-            return "${"+bestk+"}/"+bestr
+            return "${"+bestk+"}/"+bestr.replace("\\", "/")      # relpath gives \ on Windows
         else:
             return self.as_posix()
 

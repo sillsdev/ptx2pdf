@@ -31,7 +31,7 @@ _occurstypes = {
 }
 
 _typetypes = {      # type: (type, StyleType, TextType, startswith)
-    'footnote': ('char', 'note', 'NoteText', None),
+    'footnote': (None, 'note', 'NoteText', None),     # any note (\StyleType Note), wherever it occurs
     'introduction': ('header', 'paragraph', 'other', "i"),
     'list': ('versepara', 'paragraph', 'VerseText', "l"),
     'milestone': (None, 'milestone', None, None),
@@ -158,7 +158,10 @@ def mrktype(sheet, mrk):
     mtype = sheet.get('mrktype', None)
     if mtype is not None:
         return mtype
-    occurs = set(sheet.get('occursunder', {}))
+    occurs = sheet.get('occursunder', None) or set()
+    if isinstance(occurs, str):         # "c p q1": markers, not characters
+        occurs = occurs.split()
+    occurs = set(occurs)
     stype = sheet.get('styletype', "").lower()
     ttype = sheet.get('texttype', "").lower()
     for k, v in _occurstypes.items():
@@ -172,7 +175,7 @@ def mrktype(sheet, mrk):
     for k, v in _typetypes.items():
         matched = True
         for i, a in enumerate((mtype, stype, ttype)):
-            if v[i] is not None and v[i] != a:
+            if v[i] is not None and (v[i].lower() if i else v[i]) != a:      # (stype, ttype are lower case)
                 matched = False
                 break
         if v[3] is not None and not mrk.startswith(v[3]):

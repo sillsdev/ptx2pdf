@@ -254,6 +254,7 @@ class Paragraphs(list):
         self.dests = {}
         self.chapters = [0]
         self.rect_cache = (None, None)
+        self._pagerects = None  # page index: [(paragraph index, paragraph, rect)], built when first needed
         self.colcount = {}
         self.polycols = []      # (pnum, glot, ColInfo) for each polyglot column start (page slice)
         self.lostdata = []      # (ref, glot, where, pnum) for each place TeX lost text
@@ -566,23 +567,30 @@ class Paragraphs(list):
             kept.append(kept[-1] + (not d))
         self.pindex = [kept[i] for i in self.pindex]
         self[:] = [p for p, d in zip(self, drop) if not d]
+        self.rect_cache = (None, None)
+        self._pagerects = None
 
     def numPages(self):
         return len(self.pindex)
         
+    def _pageRects(self, pnum):
+        """ [(paragraph index, paragraph, rect)] for each rect on page pnum, in paragraph order.
+            A paragraph continuing onto a page may start well before the page's first paragraph
+            (in a diglot the other glot's can be several paragraphs back), so look them all up. """
+        if self._pagerects is None:
+            self._pagerects = {}
+            for i, p in enumerate(self):
+                for r in getattr(p, "rects", []):
+                    self._pagerects.setdefault(r.pagenum, []).append((i, p, r))
+        return self._pagerects.get(pnum, [])
+
     def _getRectsPage(self, pnum):
         if self.rect_cache[0] == pnum:
             return self.rect_cache[1]
         if pnum > len(self.pindex): # need some other test here 
             return None
         self._last_state = None
-        e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
-        res = []
-        for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
-            for i, r in enumerate(p.rects):
-                if r.pagenum != pnum:
-                    continue
-                res.append((p, r))
+        res = [(p, r) for i, p, r in self._pageRects(pnum)]
         self.rect_cache = (pnum, res)
         return res
 
@@ -624,8 +632,6 @@ class Paragraphs(list):
         ''' Iterates all ParDest, ParRect on page with given index '''
         if pnum > len(self.pindex) or pnum < 1:
             return
-        e = self.pindex[pnum] if not inclafter and pnum < len(self.pindex) else len(self)
-
         start = max(self.pindex[pnum-1], 0)
         #logger.info(f"{pnum=}, {start=}, {e=}, max={len(self)}, {self.pindex=}")
         if inclast and pnum > 1:        # pnum is 1 based
@@ -641,13 +647,17 @@ class Paragraphs(list):
                         break
                 if done:
                     break
-        start = max(start - 2, 0)
-        for p in self[start:e+2]:
+        if not inclafter:
+            for i, p, r in self._pageRects(pnum):
+                if isinstance(p, ParInfo):
+                    yield (p, r)
+            return
+        start = min([i for i, p, r in self._pageRects(pnum)] + [start])
+        for p in self[start:]:
             if not isinstance(p, ParInfo):
                 continue
             for r in p.rects:
-                if (not inclafter and r.pagenum == pnum) \
-                        or (inclafter and r.pagenum >= pnum):
+                if r.pagenum >= pnum:
                     yield (p, r)
 
     def getRects(self):

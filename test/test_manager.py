@@ -7,7 +7,7 @@ import sys, os, io, shutil, tempfile, unittest, contextlib, configparser
 testsdir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(testsdir, "..", "python", "lib"))
 
-from ptxprint.manager.validate import Validator, ERROR, WARNING, NOTE
+from ptxprint.manager.validate import Validator, ERROR, WARNING, NOTE, countVerseWords
 from ptxprint.manager.main import main
 
 class _Projects(unittest.TestCase):
@@ -132,6 +132,11 @@ class TestValidate(_Projects):
         self.assertTrue(v.bookIsEmpty("OGNT", "2JN"))
         self.assertFalse(v.bookIsEmpty("WSGlatin", "2JN"))
         self.assertFalse(v.bookIsEmpty("OGNT", "XXQ"))          # not there at all isn't "empty"
+        # text in character styles, notes, or on the line after a poetry marker is text
+        self.assertEqual(countVerseWords("\\c 1\n\\p\n\\v 1\n\\v 2\n"), 0)
+        self.assertEqual(countVerseWords('\\v 1 \\w In|strong="G1722"\\w* \\w the|strong="G3588"\\w*'), 2)
+        self.assertEqual(countVerseWords("\\q1 \\v 1\n\\q1 Blessed is the man\n\\q2 who walks"), 6)
+        self.assertEqual(countVerseWords("\\v 1 \\f + \\ft a note\\f* text"), 4)
         found = self.codes(v.validate(["WSGlatin"], ["Diglot2JN"]), prj="WSGlatin")
         self.assertEqual(found["bookEmptySecondary"].severity, ERROR)
         self.assertIn("2JN", found["bookEmptySecondary"].message)

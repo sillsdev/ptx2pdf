@@ -730,7 +730,14 @@ class RunJob:
                     else:
                         logger.warning(f"Cannot delete marginnotes file — still locked, skipping: {marginnotesfname}")
         for a in cacheexts.keys():
-            cachedata[a] = self.readfile(os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a)))
+            fpath = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext="."+a))
+            if a == "toc":
+                # after each run the .toc is rewritten (sorted, with variants): what XeTeX wrote is
+                # kept as _org, and that is what the next run's .toc must be compared with
+                orgpath = swapext(fpath, withpref="_org")
+                if os.path.exists(orgpath):
+                    fpath = orgpath
+            cachedata[a] = self.readfile(fpath)
         if self.maxRuns == 0:
             numruns = -1
         while numruns < self.maxRuns:

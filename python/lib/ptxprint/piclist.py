@@ -758,7 +758,7 @@ class Piclist:
         self.rmdups()
         lines = []
         pMedia = self.model.picMedia if self.model else None
-        for p in sorted(self.pics.values(), key=lambda x:refSort(x['anchor'], info=['anchor'][3:4])):
+        for p in sorted(self.pics.values(), key=lambda x:refSort(x['anchor'], info=x['anchor'][3:4])):
             (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media,
                                           checks=checks, hiderefs=hiderefs, picMedia=pMedia)
             if k:

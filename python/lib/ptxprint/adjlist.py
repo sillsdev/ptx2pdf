@@ -105,6 +105,17 @@ class AdjList:
                 return (i, False)
         return (-1, False)
 
+    def resetAllBut(self, keep, expand):
+        """ Gives every paragraph not in keep no line change, at the given expansion.
+            keep: (book, c.v, para) of each paragraph to leave alone, as setval takes them """
+        def key(bk, cv, para):
+            return (bk, cv.replace(":", "."), int(para or 1))
+        keys = {key(*k) for k in keep}
+        for r in self.liststore:
+            if key(r[0], r[1], r[2]) not in keys:
+                r[3] = "0"
+                r[5] = expand
+
     def sort(self):
         allvals = [[*r] for r in self.liststore]
         alldb = self.db[:]
@@ -365,7 +376,7 @@ class AdjList:
             if v < 0:
                 mult = -1
             v += offset
-            if (v < 0 or v > 0) and hasplus:
+            if v > 0 and hasplus:
                 f = "+" + str(v)
             elif v == 0 and mult:
                 f = ("+" if hasplus else "") + ("-" if mult < 0 else "") + "0"

@@ -93,6 +93,8 @@ class TestPrinter:
         except OSError as e:
             return PrintResult(prjid, cfg, books, FAILED, message=f"PTXprint could not be started: {e}")
         self.processes.add(proc)
+        if self.stopping:       # Stop came while this was starting: stop() didn't see it
+            proc.kill()
         try:
             out, _ = proc.communicate(timeout=self.timeout)
             timedout = False

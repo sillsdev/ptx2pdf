@@ -86,7 +86,7 @@ def make_contextsfn(bk, *changes):
         if currfn is not None:
             def compfn(fn, b, s):
                 def domatch(m):
-                    return currfn(lambda x:fn(m.group(0)), b, m.group(0))
+                    return currfn(fn, b, m.group(0))      # fn applies to what the inner context matches
                 return reg.sub(domatch, s) if bk is None or b == bk else s
         else:
             def compfn(fn, b, s):

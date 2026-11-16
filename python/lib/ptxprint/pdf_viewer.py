@@ -517,10 +517,8 @@ class PDFFileViewer:
                 
                 event_box.connect("scroll-event", self.on_scroll_event)
                 event_box.connect("button-release-event", self.on_button_release)
-                if self.rtl_mode:
-                    self.hbox.pack_end(event_box, False, False, 1)
-                else:
-                    self.hbox.pack_start(event_box, False, False, 1)
+                # always in order: get_spread() already puts an RTL spread's pages right to left
+                self.hbox.pack_start(event_box, False, False, 1)
                 boxes.append(event_box)
 
     def update_boxes(self, images, index=0):
@@ -907,8 +905,12 @@ class PDFFileViewer:
     def set_page(self, action):
         if self.current_index is None or not self.numpages:
             return
-        increment = 2 if self.spread_mode and self.current_page % 2 == 1 else 1
         pg = min(self.current_index, self.numpages)
+        increment = 1
+        if self.spread_mode:
+            # spreads are (1), (2, 3), (4, 5)... by page index (not folio): step from the start of this one
+            pg = min(self.get_spread(pg))
+            increment = 2 if pg > 1 else 1
         try:
             if action == self.swap4rtl("first"):
                 pg = 1
@@ -917,7 +919,7 @@ class PDFFileViewer:
             elif action == self.swap4rtl("next"):
                 pg = min(pg + increment, self.numpages)
             elif action == self.swap4rtl("previous"):
-                pg = max(pg - increment, 1)
+                pg = max(pg - 2, 1) if self.spread_mode else max(pg - 1, 1)
             else:
                 logger.error(f"Unknown action: {action}")
                 return
@@ -1058,7 +1060,7 @@ class PDFContentViewer(PDFFileViewer):
         self.showanalysis = val
         self.spacethreshold = threshold
         if self.showanalysis:
-            self.loadnshow(None, True, page=self.current_page)
+            self.loadnshow(None, True, rtl=self.rtl_mode, page=self.current_page)
         self.show_pdf()
 
     def settingsChanged(self):
@@ -1875,10 +1877,9 @@ class PDFContentViewer(PDFFileViewer):
         x = event.x / self.zoomLevel
         y = event.y / self.zoomLevel
         if self.spread_mode:
-            side = self.widgetPosition(widget)
-            if len(self.hbox.get_children()) > 1 and self.rtl_mode:
-                side ^= 1 # swap side if RTL
-            pnum = self.get_spread(self.current_index)[side]     # this all only works for LTR
+            side = self.widgetPosition(widget)      # the boxes are in the order of the spread's pages
+            spread = self.get_spread(self.current_index, self.rtl_mode)
+            pnum = spread[side] if 0 <= side < len(spread) else spread[0]
         else:
             pnum = self.current_index
         p = None

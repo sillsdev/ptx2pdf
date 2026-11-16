@@ -252,7 +252,7 @@ class TexModel:
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
-        if self.dict["project/ifusemodssty"] == "":
+        if self.dict["project/ifusemodssty"] == "" and not getattr(self.printer, 'readOnly', False):
             modspath = os.path.join(cpath, "ptxprint-mods.sty")
             if not os.path.exists(modspath):
                 spath = os.path.join(docdir, "PrintDraft-mods.sty")
@@ -611,7 +611,7 @@ class TexModel:
         if m:
             pheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
         else:
-            pheight = 210 / unitConv["mm"]
+            pheight = 210 * unitConv["mm"]
         top = pheight - float(self.dict["paper/topmargin"]) * unitConv["mm"]
         bottom = float(self.dict["paper/bottommargin"]) * unitConv["mm"]
         return (pheight, top, bottom)

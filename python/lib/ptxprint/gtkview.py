@@ -2497,9 +2497,10 @@ class GtkViewModel(ViewModel):
         replayer = getattr(self, 'replayer', None)
         if replayer is not None:
             replayer.closing()
-        mprint = getattr(self, 'mprint', None)
-        if mprint is not None:
-            mprint.terminate()
+        for a in ('mprint', 'pubprint'):
+            mprint = getattr(self, a, None)
+            if mprint is not None:
+                mprint.terminate()
         logger.debug(f"Main width={self.mainapp.win.get_size().width}")
         self.builder.get_object("mainapp_win").destroy()
         self.mainapp.quit()
@@ -3594,8 +3595,8 @@ class GtkViewModel(ViewModel):
         elif pgid == "tb_Printers":
             self.ensurePrinterTab().refresh()
 
-    def onRefreshViewerTextClicked(self, btn):
-        pg = self.get("nbk_Viewer")
+    def onRefreshViewerTextClicked(self, btn, pgnum=None):
+        pg = self.get("nbk_Viewer") if pgnum is None else pgnum
         self.onViewerChangePage(None, None, pg, forced=True)
         
     def clearEditableBuffers(self):
@@ -4750,6 +4751,8 @@ class GtkViewModel(ViewModel):
                 self.testing.setid(self.project, self.cfgid)
                 self.testing.unpause()
             return True
+        if saveCurrConfig and getattr(self.project, 'prjid', None) is not None:
+            self.savePics()     # clearing below would stop the save that follows from writing them
         self.picListView.clear()
         if self.picinfos is not None:
             self.picinfos.clear()
@@ -4833,7 +4836,7 @@ class GtkViewModel(ViewModel):
                     pdfname = self.baseTeXPDFnames()[0]
                     if len(pdfname):
                         plocname = os.path.join(self.project.printPath(self.cfgid), pdfname+".parlocs")
-                        self.pdf_viewer.loadnshow(pdffile, rtl=self.rtl, parlocs=plocname, widget=prvw, page=1,
+                        self.pdf_viewer.loadnshow(pdffile, rtl=self.get("c_RTLbookBinding", False), parlocs=plocname, widget=prvw, page=1,
                                                     isdiglot=self.get("c_diglot"))
                         return
             self.pdf_viewer.clear(widget=prvw)
@@ -5128,14 +5131,15 @@ class GtkViewModel(ViewModel):
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         label = self.builder.get_object("l"+_allpgids[pgnum][2:])
         tt = label.get_tooltip_text()
+        # by now the notebook may already show the tab being moved to: work on this one
         if tt is not None and not currentText == self.uneditedText[pgnum]:
             if self.get("c_autoSave"):
-                self.onSaveEdits(None)
+                self.onSaveEdits(None, pgid=widget.pageid)
             elif self.msgQuestion(_("Save changes?"), _("Do you wish to save the changes you made?") + \
                                                         "\n\n" + _("File: ") + tt):
-                self.onSaveEdits(None)
+                self.onSaveEdits(None, pgid=widget.pageid)
             else:
-                self.onRefreshViewerTextClicked(None)
+                self.onRefreshViewerTextClicked(None, pgnum=pgnum)
         self.onViewEdited()
                 
     def onViewerFocus(self, widget, event):
@@ -7935,6 +7939,8 @@ Thank you,
                 timeout = tout,
                 loglevel = int(getattr(logging, args.logging.upper(), args.logging)) if args.logging else None)
         bks = self.getBooks()
+        # the window is not modal: the user may change project or config before this finishes
+        self._fillTarget = (self.project.prjid, self.cfgid, list(bks))
         self.mprint.submit_fill_jobs(bks, build_params, stop=False)
         self.mprint.start_clock()
         # Poll for progress events every 100 ms — simpler and more reliable
@@ -7990,6 +7996,11 @@ Thank you,
             self._progress_watch_id = None
             self.bkProgressDlg.finished()
             mprint.teardown()
+            target = getattr(self, '_fillTarget', None)
+            if target is not None and target[:2] != (self.project.prjid, self.cfgid):
+                # don't reload, save or print whatever is open now in place of what was filled
+                self.doStatus(_("Finished filling {} ({}): open it and print to see the result").format(target[0], target[1]))
+                return GLib.SOURCE_REMOVE
             for i, bk in enumerate(self.getBooks()):
                 self.adjlists.pop(bk, None)
                 a = self.get_adjlist(bk, save=False)

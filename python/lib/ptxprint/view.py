@@ -684,14 +684,14 @@ class ViewModel:
             and its publications """
         config = configparser.ConfigParser(interpolation=None)
         if os.path.exists(cfgpath):
-            with open(cfgpath, encoding="utf-8", errors="ignore") as inf:
+            with open(cfgpath, encoding="utf-8-sig", errors="ignore") as inf:
                 config.read_file(inf)
         return {s: dict(config.items(s)) for s in config.sections() if self._isLangVarSection(s)}
 
     def _writeLangVars(self, cfgpath, langvars):
         """ Make the language-specific variable values of a ptxprint.cfg exactly langvars """
         config = configparser.ConfigParser(interpolation=None)
-        with open(cfgpath, encoding="utf-8", errors="ignore") as inf:
+        with open(cfgpath, encoding="utf-8-sig", errors="ignore") as inf:
             config.read_file(inf)
         for s in [s for s in config.sections() if self._isLangVarSection(s)]:
             config.remove_section(s)
@@ -785,7 +785,14 @@ class ViewModel:
                 keepvars = skipvars and newprj is not None and f == 'ptxprint.cfg'
                 if keepvars:
                     langvars = self._readLangVars(destp)
-                a[action](srcp, destp, mergep, moving=moving, oldcfg=oldcfg, newcfg=newcfg, newprj=newprj, nobase=nobase)
+                fn = a[action]
+                if action == 1 and not os.path.exists(destp):
+                    fn = a[0]           # nothing there to merge with: a plain copy
+                elif action == 1 and not os.path.isdir(srcp) and not os.path.exists(mergep):
+                    # not made by an earlier copy, so there is no base: merge as if from nothing
+                    with open(mergep, "w", encoding="utf-8"):
+                        pass
+                fn(srcp, destp, mergep, moving=moving, oldcfg=oldcfg, newcfg=newcfg, newprj=newprj, nobase=nobase)
                 if keepvars:
                     self._writeLangVars(destp, langvars)
                 if f == 'ptxprint.cfg' and newprj is not None and newprj.guid != self.project.guid:
@@ -796,7 +803,7 @@ class ViewModel:
         if moving:
             move(srcp, destp)
             if not nobase:
-                move(srcp, mergep)
+                copyfile(destp, mergep)     # (srcp has gone)
         else:
             copyfile(srcp, destp)
             if not nobase:
@@ -819,7 +826,7 @@ class ViewModel:
         configs = []
         for a in (destp, srcp, mergep):
             config = configparser.ConfigParser(interpolation=None)
-            with open(a, encoding="utf-8", errors="ignore") as inf:
+            with open(a, encoding="utf-8-sig", errors="ignore") as inf:
                 config.read_file(inf)
             configs.append(config)
         (this, new, base) = configs
@@ -1113,28 +1120,32 @@ class ViewModel:
         cp = self.project.srcPath(cfgname)
         (oldversion, forcerewrite) = self.versionFwdConfig(config, cp)
         self.loadingConfig = True
-        self.localiseConfig(config)
-        self.diglotViews = {}
-        self.polyglots = {}
-        self.publications = {}
-        self.pubvars_publishable = {}
-        self.loadConfig(config, updatebklist=updatebklist)
-        for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
-                               (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
-            if not os.path.exists(opath):
-                continue
-            oconfig = configparser.ConfigParser(interpolation=None)
-            try:
-                oconfig.read(opath, encoding="utf-8")
-            except configparser.Error as e:
-                self.doError(f"Can't read {opath}", secondary=str(e))
-                continue
-            self.versionFwdConfig(oconfig, cp)
-            self.localiseConfig(oconfig)
-            self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
-        if self.get("ecb_book") == "":
-            self.set("ecb_book", list(self.getAllBooks().keys())[0])
-        if self.get("c_diglot") and not self.isDiglot:
+        try:
+            self.localiseConfig(config)
+            self.diglotViews = {}
+            self.polyglots = {}
+            self.publications = {}
+            self.pubvars_publishable = {}
+            self.loadConfig(config, updatebklist=updatebklist)
+            for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
+                                   (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
+                if not os.path.exists(opath):
+                    continue
+                oconfig = configparser.ConfigParser(interpolation=None)
+                try:
+                    oconfig.read(opath, encoding="utf-8-sig")     # a file saved by Notepad starts with a BOM
+                except configparser.Error as e:
+                    self.doError(f"Can't read {opath}", secondary=str(e))
+                    continue
+                self.versionFwdConfig(oconfig, cp)
+                self.localiseConfig(oconfig)
+                self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
+            if self.get("ecb_book") == "":
+                books = list(self.getAllBooks().keys())
+                if len(books):
+                    self.set("ecb_book", books[0])
+            # Read the diglot's texts even when it is turned off, or the next save loses them
+            isdiglot = self.get("c_diglot") and not self.isDiglot
             for s in config.sections():
                 if s.startswith("diglot_"):
                     k = s[7:]
@@ -1147,7 +1158,7 @@ class ViewModel:
                         pg.prj = self.project.prjid
                         pg.prjguid = self.project.guid
                         pg.cfg = cfgname or pg.cfg
-                    else:
+                    elif isdiglot:
                         try:
                             dv = self.createDiglotView(k)
                         except ValueError:
@@ -1155,9 +1166,11 @@ class ViewModel:
                         if dv is None:
                             logger.warning(f"Can't load the {k} side of this polyglot: project {pg.prj}"
                                            f" (config {pg.cfg}) isn't in {', '.join(self.prjTree.treedirs)}")
-        else:
-            self.setPrintBtnStatus(2)
-        self.loadingConfig = False
+            if not isdiglot:
+                self.setPrintBtnStatus(2)
+        finally:
+            # or every handler that waits for a load to finish stays silent until the next one
+            self.loadingConfig = False
         if self.get("bl_fontR", skipmissing=True) is None:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
             font = FontRef(fname, "")
@@ -1306,6 +1319,8 @@ class ViewModel:
         return v
 
     def versionFwdConfig(self, config, cfgpath):
+        if self.readOnly:
+            cfgpath = None      # bring the settings up to date, but touch none of the config's files
         version = self._config_get(config, "config", "version", conv=float, fallback=ConfigVersion)
         forcerewrite = False
         v = float(version)
@@ -1353,7 +1368,7 @@ class ViewModel:
         if v < 1.404:
             self._configset(config, "fancy/versedecoratorshift", "-5")
         if v < 1.502:
-            if not config.has_option("document", "includimg"):
+            if not config.has_option("document", "includeimg"):
                 self._configset(config, "document/includeimg", config.get("snippets", "imgcredits", fallback="false"))
         if v < 1.503:
             marginmms = config.getfloat("paper", "margins")
@@ -1400,7 +1415,7 @@ class ViewModel:
                     f = config.get("document", "font{}".format(a), fallback="||||")
                     bits = f.split("|")
                     if len(bits) < 3:
-                        bits += [] * (3-len(bits))
+                        bits += [""] * (3-len(bits))
                     bits.append("mapping=mappings/{}digits".format(digmap.lower()))
                     f = "|".join(bits)
                     self._configset(config, "document/font{}".format(a), f)
@@ -1593,9 +1608,11 @@ class ViewModel:
             self._configset(config, "header/chvseparator", "colon")
 
         # ensure that the colophon text uses lowercase \zcodes (regardless of which version it comes from)
-        colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
-                        .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")
-        self._configset(config, "project/colophontext", colophontext)
+        # (only if there is one: an override file that doesn't set it must not blank it)
+        if config.has_option("project", "colophontext"):
+            colophontext = config.get("project", "colophontext").replace("zCopyright", "zcopyright")\
+                            .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")
+            self._configset(config, "project/colophontext", colophontext)
 
         self._configset(config, "config/version", ConfigVersion)
 
@@ -1702,6 +1719,12 @@ class ViewModel:
                 self.clearvars()
                 if categories is None and not dummyload:
                     self._resetMissing(config, setv)
+                    # files the last config chose (borders, watermarks, script, PDFs...): this one
+                    # sets its own below, and must not print with, or save, the last one's
+                    for attr, multiple, label in self._attributes.values():
+                        setattr(self, attr, None)
+                        if label is not None:
+                            setv(label, "")
         varcolour = "#FFDAB9" if not clearvars else None
         # set publishable category first so when we read the var we can also set the publishable
         if categories is None or 'variables' in categories:
@@ -1786,6 +1809,8 @@ class ViewModel:
         if categories is None or 'texpert' in categories:
             TeXpert.loadConfig(config, self, defaults=clearvars)
         for k, v in self._settingmappings.items():
+            if not clearvars:       # an override file says only what it changes
+                break
             if categories is not None and ModelMap[k].category not in categories:
                 continue
             (sect, name) = k.split("/")
@@ -2055,7 +2080,7 @@ class ViewModel:
         except ValueError:
             maxexp = 1.05 * expand
         centre = 100
-        adj = AdjList(int(expand * 100), int(minexp * 100), int(maxexp * 100), gtk=gtk, fname=fpath, tname=tpath)
+        adj = AdjList(round(expand * 100), round(minexp * 100), round(maxexp * 100), gtk=gtk, fname=fpath, tname=tpath)
         if os.path.exists(fpath):
             adj.readAdjlist(fpath)
         self.adjlists[bk] = adj
@@ -2352,6 +2377,7 @@ class ViewModel:
             digview = None
         else:
             digview = ViewModel(self.prjTree, self.userconfig, self.scriptsdir)
+            digview.readOnly = self.readOnly        # (before it reads its config)
             digview.isDiglot = True
             digview.setPrjid(prj.prjid, prj.guid)
             if cfg is None or cfg == "" or not digview.setConfigId(cfg):

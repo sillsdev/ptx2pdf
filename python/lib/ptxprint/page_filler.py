@@ -392,6 +392,17 @@ class TypesetterSolver:
             pe.total = total or self.numpages
             self.hooks.progress(pe)
 
+    def _match_adjlist_ids(self, state):
+        """ The adjlist writes a paragraph without a parnum as [1], but its id here is [] """
+        known = set(self.paragraph_order)
+        def fix(pid):
+            if pid not in known and pid.endswith("[1]") and pid[:-3] + "[]" in known:
+                return pid[:-3] + "[]"
+            return pid
+        state.paragraph_params = {fix(k): v for k, v in state.paragraph_params.items()}
+        self.shape_cache = {(fix(k), d): v for (k, d), v in self.shape_cache.items()}
+        self.probe_cache = {fix(k): v for k, v in self.probe_cache.items()}
+
     def solve(self, state, start_page: int = -1, stop: bool = True, restart: bool = False, book=None):
         """Top-level entry point: set up base params from a possible
         restart, run the initial lookahead probe, then drive the
@@ -405,6 +416,8 @@ class TypesetterSolver:
         Returns final EngineState, or a HumanFixRequest.
         """
         self.bk = book
+        if restart:
+            self._match_adjlist_ids(state)
         self.init_state = state
         if self.hooks.tracing:
             logger.log(15, f"{state=} {state.layout.paragraph_pages=}")
@@ -616,7 +629,10 @@ class TypesetterSolver:
         if page >= state.numPages():
             state = self.run_layout(self.base_params, state, {}, page, start)
 
-        page_base_params = self.page_base_params.get(page, dict(self.base_params))
+        # One base for the whole visit, made now: next_combination's generator only runs once the
+        # loop below starts, so a base it made would be the one used by the next visit
+        page_base_params = dict(self.base_params)
+        self.page_base_params[page] = page_base_params
         self.printbk(self.bk, page)
         maxcombos = 200
         tried = set()
@@ -662,12 +678,14 @@ class TypesetterSolver:
                         continue
 
                 if not self.noprobe and (free is None or all(x == 0 for x in free)):
-                    lpars = state.layout.get_pars(page)
+                    lpars = new_state.layout.get_pars(page)
                     straddler = lpars[-1] if len(lpars) else None     # none on a full page picture
                     if straddler is not None and self.hooks.get_first_page_for_para(straddler) <= page \
                             and straddler in self.probe_params \
                             and self.probe_params[straddler] != page_base_params.get(straddler, self.neutral(straddler)):
                         page_base_params[straddler] = self.probe_params[straddler]
+                        # this run laid it out with its probe shape: what is committed must say so
+                        new_state.paragraph_params[straddler] = self.probe_params[straddler]
 
                 page_full = free is None or not len(free) or all(x == 0 for x in free)
                 if page == 0 and almostcombo is None and free is not None and len(free) and all(x == 1 for x in free):
@@ -1061,7 +1079,6 @@ class TypesetterSolver:
         if key not in seen:
             seen.add(key)
             self.tried_combos[page] = set()
-        self.page_base_params[page] = dict(self.base_params)
         tried = self.tried_combos[page]
         paragraphs = self.get_candidate_paragraphs(state, page)
         for combo in self.generate_combos(paragraphs, state, page):
@@ -1180,9 +1197,10 @@ class TypesetterSolver:
                             logger.log(12, "Can't find mask for {p}")
                             col_deltas[5] += d
                         prev = self.hooks.get_previous(p)
-                        preve = self.shape_cache.get((p, combo.get(p, 0)), self.neutral(p))[0]
-                        pe = self.shape_cache[(p, d)][0]
-                        score += self.hooks.badness_contrast_factor * abs(pe - preve)
+                        if prev is not None:
+                            preve = self.shape_cache.get((prev, combo.get(prev, 0)), self.neutral(prev))[0]
+                            pe = self.shape_cache[(p, d)][0]
+                            score += self.hooks.badness_contrast_factor * abs(pe - preve)
                     else:
                         col1_net = col_deltas[0] + col_deltas[1] + col_deltas[3]
                         migration = 0
@@ -1597,17 +1615,22 @@ class PTXFiller:
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
         if getattr(self, 'init_adjs', None) is None:
-            self.adjs = AdjList(int(self.expand*100), int(self.minexp*100), int(self.maxexp*100), fname=adjfname, gtk=None)
+            self.adjs = AdjList(round(self.expand*100), round(self.minexp*100), round(self.maxexp*100), fname=adjfname, gtk=None)
             doappend = True
         else:
             self.adjs = self.init_adjs.copy()
             doappend = False
+        if doappend is False and getattr(self, 'restarting', False):
+            # On a restart the copy has every row the run started with. A paragraph the solver
+            # has let go of (from the first failing page on) is neutral as far as it knows: so
+            # it must be laid out that way, not with the stretch it had before.
+            self.adjs.resetAllBut([mkkey(s) for s in parparms], round(self.expand*100))
         logger.log(12, f"{self.bk}: {parparms=}")
         for s, p in parparms.items():
             bk, key, para = mkkey(s)
             c = getchap(key)
             if lastchap == 0 or lastchap > int(c):
-                self.adjs.setval(bk, key, para, p[1], None, expand=int(p[0]*100), append=doappend)
+                self.adjs.setval(bk, key, para, p[1], None, expand=round(p[0]*100), append=doappend)
         self.adjs.sort()
         if solver is not None:
             for s in solver.paragraph_order:
@@ -1632,7 +1655,7 @@ class PTXFiller:
                         if badness is None or ((e, t) == solver.neutral(s) and not hasshapes):
                             v = None
                         else:
-                            v = f"{int(e*100)}{t:+d}@" + f"{badness:.3f}".rstrip("0").rstrip(".")
+                            v = f"{round(e*100)}{t:+d}@" + f"{badness:.3f}".rstrip("0").rstrip(".")
                     else:
                         v = None
                     if v is not None:

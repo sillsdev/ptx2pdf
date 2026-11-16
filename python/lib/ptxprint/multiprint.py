@@ -12,9 +12,9 @@ import threading, queue, psutil
 from ptxprint.page_filler import PTXFiller, make_filler_view
 from ptxprint.poly_filler import PolyFiller
 from ptxprint.project import ProjectList
-from ptxprint.utils import BuildParams, ProgressEvent, f_, appdirs
+from ptxprint.utils import BuildParams, ProgressEvent, f_, appdirs, Path
 from ptxprint.view import ViewModel
-from ptxprint.runjob import RunJob
+from ptxprint.runjob import RunJob, unlockme
 from ptxprint.font import cachepath
 from usfmtc.reference import chaps, RefList
 
@@ -68,7 +68,7 @@ class ViewPrinter:
 
     def solve(self, books: RefList|str, cfgid_override: Optional[str] = None):
         if isinstance(books, str):
-            self.moduleFile = books
+            self.view.moduleFile = Path(books, self.view)     # the view prints it, not this
             self.view.set("r_book", "module")
         else:
             self.view.set("ecb_booklist", str(books))
@@ -233,7 +233,12 @@ class WorkerContext:
 
     def execute_job(self, job: Job):
         """Unified execution handler with shared watchdog timer and logger setup."""
-        target_id = job.books[0] if job.action == 'fill' else "_".join([job.books.first.book, job.books.last.book])
+        if job.action == 'fill':
+            target_id = job.books[0]
+        elif isinstance(job.books, str):        # a module
+            target_id = job.books
+        else:
+            target_id = "_".join([job.books.first.book, job.books.last.book])
 
         logging.debug(f"Executing for {target_id}")
         if self.cancel_event and self.cancel_event.value:
@@ -272,7 +277,10 @@ class WorkerContext:
             else:
                 res = printer.solve(job.books)
         except Exception as e:
-            print(f"Exception {job.books[0]}: {e}")
+            # a job that failed half way leaves the job lock taken: in a reused worker every
+            # later job would then return at once, doing nothing and saying nothing
+            unlockme()
+            print(f"Exception {target_id}: {e}")
             logging.warn(f"Unhandled error during {job.action} for {target_id}: {e}\n"
                          f"{f_('Traceback: ')}{traceback.format_exc()}")
             if watchdog:
@@ -423,7 +431,7 @@ class MultiPrint:
                 results.append(future.result())
             except Exception as exc:
                 logging.warning(f"Job failed for {job.books}: {exc}\n{traceback.format_exc()}")
-                bks = job.books if isinstance(job.books, str) else " ".join(job.books)
+                bks = str(job.books)
                 results.append((bks, None, False, str(exc)))
 
         self.pending_futures.clear()

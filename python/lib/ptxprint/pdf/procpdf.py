@@ -54,7 +54,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
     coverfile = None
     if kw.get('burst', False) or kw.get('cover', False):
         inpdf = PdfReader(opath)
-        extras = split_pages(inpdf)
+        # with only the cover wanted, other inserts (e.g. maps) must stay in the PDF
+        extras = split_pages(inpdf, only=None if kw.get('burst', False) else ('cover',))
         logger.debug("Bursting: " + " ".join(extras.keys()))
         for k, eps in extras.items():
             bpdfname = pdffile.replace(".pdf", f"_{k}.pdf")
@@ -137,7 +138,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
             print(e)
             doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                  title=_("Paper Size Error"), secondary=str(e), threaded=True)
-            return {}
+            return None         # failed: {} is a success with nothing to say
     else:  # nums is 1
         scale_to_fit = bool(kw.get("scaletofit", False))
         if scale_to_fit:
@@ -158,7 +159,9 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                     continue
                 tx = (target_w - pg_w * scale) / 2
                 ty = (target_h - pg_h * scale) / 2
-                matrix_op = "{} {} {} {} {} {} cm\n".format(*[round(v, 6) for v in [scale, 0, 0, scale, tx, ty]])
+                ox, oy = float(mb[0]), float(mb[1])     # the content is placed from the MediaBox's corner
+                matrix_op = "{} {} {} {} {} {} cm\n".format(*[round(v, 6) for v in
+                                                    [scale, 0, 0, scale, tx - scale * ox, ty - scale * oy]])
                 save  = make_stream("q\n" + matrix_op)
                 restore = make_stream("\nQ\n")
                 existing = page.Contents
@@ -172,6 +175,16 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                                         PdfObject(round(target_w, 4)),
                                         PdfObject(round(target_h, 4))])
                 page.CropBox = None
+                # the other boxes (every page has a TrimBox) go where their part of the page went
+                for k in ("TrimBox", "BleedBox", "ArtBox"):
+                    box = getattr(page, k)
+                    if box is None:
+                        continue
+                    b = [float(x) for x in box]
+                    nb = [scale * (b[0] - ox) + tx, scale * (b[1] - oy) + ty,
+                          scale * (b[2] - ox) + tx, scale * (b[3] - oy) + ty]
+                    nb = [min(max(v, 0.), m) for v, m in zip(nb, (target_w, target_h, target_w, target_h))]
+                    setattr(page, k, PdfArray([PdfObject(round(v, 4)) for v in nb]))
 
     if kw.get('inclsettings', False):
         if ext is None:

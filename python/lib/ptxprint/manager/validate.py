@@ -20,6 +20,18 @@ NOTE = "note"           # worth knowing
 severityOrder = {ERROR: 0, WARNING: 1, NOTE: 2}
 
 
+def countVerseWords(text):
+    ''' The number of words of text from the first verse on, with markers, verse and chapter
+        numbers and attributes taken out. Words in character styles, notes and poetry lines count. '''
+    i = text.find("\\v ")
+    if i < 0:
+        return 0
+    body = re.sub(r"\\[cv]\s+\S+", " ", text[i:])
+    body = re.sub(r"\|[^\\]*", " ", body)                     # attributes: \w word|strong="G1722"\w*
+    body = re.sub(r"\\\+?[A-Za-z0-9]+\*?", " ", body)         # all other markers
+    return len(body.split())
+
+
 @dataclass
 class Fix:
     description: str                # what will be changed, for the user to agree to
@@ -135,8 +147,7 @@ class Validator:
                         text = inf.read()
                 except OSError:
                     return False
-                words = sum(len(m.split()) for m in re.findall(r"\\v \S+[ \t]*([^\\\n]*)", text))
-                return words < 5
+                return countVerseWords(text) < 5
         return False
 
     def projectSettings(self, prjid, cfg=None):

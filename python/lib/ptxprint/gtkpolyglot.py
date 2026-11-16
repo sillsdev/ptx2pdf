@@ -115,6 +115,7 @@ class PolyglotSetup(Gtk.Box):
                 except ValueError:
                     listiter = self.ls_treeview.get_iter(row_index)
                     self.ls_treeview.remove(listiter)
+                    self._dropConfigStore(row_index)
                     continue
             if polyview is not None:
                 if self.ls_treeview[row_index][m.fontsize] == 0:
@@ -136,14 +137,14 @@ class PolyglotSetup(Gtk.Box):
         self.view.update_diglot_polyglot_UI()
 
     def find_or_create_row(self, sfx, save=False):
-        if len(self.ls_treeview) >= 9:
-            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.", warning=True)
-            return -1  # Indicate failure to add a row
-
         # Check if row already exists
         for i, row in enumerate(self.ls_treeview):
             if row[m.code] == sfx:
                 return i  # Return existing row index
+
+        if len(self.ls_treeview) >= 9:
+            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.", warning=True)
+            return -1  # Indicate failure to add a row
 
         # First row logic: Locked with primary project settings # FixMe!
         if len(self.ls_treeview) == 0 and sfx == "L":
@@ -392,18 +393,13 @@ class PolyglotSetup(Gtk.Box):
             self.ls_treeview[row_index][m.prjguid] = prjguid
 
             # Update the ListStore for this specific row
+            new_cfg = old_cfg if old_cfg in available_configs else (available_configs[0] if available_configs else "")
             if row_index < len(self.ls_config):  # Ensure row is valid
                 lsc = self.ls_config[row_index]
                 lsc.clear()
-                if available_configs:
-                    for c in available_configs:
-                        lsc.append([c])   
-                    # Determine the new config to select
-                    new_cfg = old_cfg if old_cfg in available_configs else available_configs[0]
-                    tree_iter = self.ls_config[row_index].get_iter_first()
-                    if tree_iter:
-                        self.ls_config[row_index].set_value(tree_iter, 0, new_cfg)                
-                # Set the selected config
+                for c in available_configs or []:
+                    lsc.append([c])
+            # Select the config (the drop-down's list itself must stay as it is)
             self.ls_treeview[row_index][m.cfg] = new_cfg
             self.treeview.queue_draw()  # Refresh UI
         else:
@@ -618,12 +614,19 @@ class PolyglotSetup(Gtk.Box):
             sfx = self.ls_treeview[row_index][m.code]
             self.view.removeDiglotView(sfx)
             model.remove(iter)
+            self._dropConfigStore(row_index)
             self.update_layout_string(force=True)
             self.refresh_code_dropdowns()  # Refresh available codes
             self.update_context_menu()     # Refresh menu state
             self.view.update_diglot_polyglot_UI()
             self.validate_page_widths()    # Refresh color of % width
         self.view.updateDialogTitle()
+
+    def _dropConfigStore(self, row_index):
+        """ The rows after a removed one move up: so must the config list each offers """
+        if 0 <= row_index < len(self.ls_config):
+            self.ls_config.pop(row_index)
+            self.ls_config.append(Gtk.ListStore(str))
 
     def update_context_menu(self):
         if not len(self.ls_treeview):
@@ -686,6 +689,8 @@ class PolyglotSetup(Gtk.Box):
                 row_data = list(model[iter])
                 model.remove(iter)
                 new_iter = model.insert(new_index, row_data)
+                if index < len(self.ls_config) and new_index < len(self.ls_config):
+                    self.ls_config.insert(new_index, self.ls_config.pop(index))     # its configs go with it
 
                 # Update selection to new position
                 selection = self.treeview.get_selection()
