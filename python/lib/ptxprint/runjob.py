@@ -1215,6 +1215,9 @@ class RunJob:
         logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)}) to {outname}")
         res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
         self.diffresult = res
+        if self.noview or self.args.print:
+            # for regression tests (ptxprint-manager): the diff PDF, 0 (no differences) or why there could be no comparison
+            print(f"diffresult={res}")
         if res == 2 and (self.noview or self.args.print):
             # Nothing to compare with: tell the command line (exit code 5, see docs/documentation/exitcodes.md)
             # and the tests. In the GUI this is not a failed print, and treating it as one makes

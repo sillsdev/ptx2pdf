@@ -86,12 +86,31 @@ class TestPrinter:
         # --readonly: a test must not change the configuration it tests
         cmd = cmd + ["-p", self.validator.projectsDir, "-q", "-S", "--readonly", "-l", "error", "--logfile=none",
                      "-c", cfg, "-P"] + (["-B", pub] if pub is not None else ["-b", " ".join(self.booksIn(books))]) + [prjid]
-        start = time.time()
         try:
-            proc = subprocess.Popen(cmd, cwd=self.validator.projectsDir, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            returncode, out, timedout, start = self.execute(cmd, env)
         except OSError as e:
             return PrintResult(prjid, cfg, books, FAILED, message=f"PTXprint could not be started: {e}")
+        seconds = time.time() - start
+        if self.stopping:
+            return PrintResult(prjid, cfg, books, STOPPED, seconds)
+        pdf = None
+        if pub is not None:
+            pdf = os.path.join(self.validator.projects[prjid].path, "local", "ptxprint", f"{prjid}_{cfg}_{pub}_ptxp.pdf")
+            if not os.path.exists(pdf) or os.path.getmtime(pdf) < start - 2:
+                pdf = None
+        else:
+            pdf = self.newPdf(out, start)
+        if returncode == 0 and pdf is not None:
+            return PrintResult(prjid, cfg, books, PRINTED, seconds, pdf)
+        return PrintResult(prjid, cfg, books, FAILED, seconds, message=self.explain(prjid, cfg, out, timedout, start,
+                                                   books=None if pub is not None else books))
+
+    def execute(self, cmd, env):
+        ''' Runs PTXprint, which Stop can kill. Returns (exit code, what it said, whether it took too long,
+            when it started). Raises OSError if it can't be started. '''
+        start = time.time()
+        proc = subprocess.Popen(cmd, cwd=self.validator.projectsDir, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
         self.processes.add(proc)
         if self.stopping:       # Stop came while this was starting: stop() didn't see it
             proc.kill()
@@ -104,26 +123,17 @@ class TestPrinter:
             timedout = True
         finally:
             self.processes.discard(proc)
-        seconds = time.time() - start
-        out = out.decode("utf-8", errors="replace")
-        if self.stopping:
-            return PrintResult(prjid, cfg, books, STOPPED, seconds)
-        pdf = None
-        if pub is not None:
-            pdf = os.path.join(self.validator.projects[prjid].path, "local", "ptxprint", f"{prjid}_{cfg}_{pub}_ptxp.pdf")
-            if not os.path.exists(pdf):
-                pdf = None
-        for l in ([] if pub is not None else reversed(out.split("\n"))):
+        return proc.returncode, out.decode("utf-8", errors="replace"), timedout, start
+
+    def newPdf(self, out, start, skip=()):
+        ''' The PDF PTXprint says it made (the last _ptxp.pdf it names), if it was made this time '''
+        skip = [os.path.normcase(os.path.normpath(s)) for s in skip]
+        for l in reversed(out.split("\n")):
             l = l.strip()
-            if l.lower().endswith("_ptxp.pdf") and os.path.exists(l):
+            if l.lower().endswith("_ptxp.pdf") and os.path.exists(l) and os.path.normcase(os.path.normpath(l)) not in skip:
                 pdf = os.path.normpath(l)
-                break
-        if pdf is not None and os.path.getmtime(pdf) < start - 2:
-            pdf = None          # an old one: nothing was made this time
-        if proc.returncode == 0 and pdf is not None:
-            return PrintResult(prjid, cfg, books, PRINTED, seconds, pdf)
-        return PrintResult(prjid, cfg, books, FAILED, seconds, message=self.explain(prjid, cfg, out, timedout, start,
-                                                   books=None if pub is not None else books))
+                return pdf if os.path.getmtime(pdf) >= start - 2 else None     # an old one: nothing was made this time
+        return None
 
     def explain(self, prjid, cfg, out, timedout, start, books=None):
         if timedout:

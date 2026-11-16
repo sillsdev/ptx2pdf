@@ -62,7 +62,7 @@ def openFile(path):
 
 class ManagerWindow(Gtk.Window):
 
-    def __init__(self, projectsDir):
+    def __init__(self, projectsDir, testing=False):
         super().__init__(title="PTXprint Multi-Project Manager")
         self.set_default_size(1200, 720)
         icon = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ptxprint-manager.png")
@@ -124,6 +124,10 @@ class ManagerWindow(Gtk.Window):
         self.notebook.append_page(self.makePublicationsPage(), Gtk.Label(label="Publications"))
         self.notebook.append_page(self.makeComparePage(), Gtk.Label(label="Compare settings"))
         self.notebook.append_page(self.makeStylesPage(), Gtk.Label(label="Compare styles"))
+        self.testingPages = None
+        if testing:         # for PTXprint's developers: the regression tests, at the end so the others keep their numbers
+            from ptxprint.manager.gtktesting import TestingPages
+            self.testingPages = TestingPages(self)
 
         self.status = Gtk.Label(label="", xalign=0)
         self.status.set_line_wrap(True)
@@ -463,6 +467,8 @@ class ManagerWindow(Gtk.Window):
         self.onStyleModeChanged(None)
         self.status.set_text(f"{len(self.projectStore)} projects with PTXprint configurations. "
                              "Choose a configuration and click Check. Nothing is changed until you click Fix.")
+        if self.testingPages is not None:
+            self.testingPages.load()
 
     def onConfigChanged(self, w):
         ''' Tick the projects that have this configuration: they are the ones to work on '''
@@ -573,6 +579,8 @@ class ManagerWindow(Gtk.Window):
             n = 0
         self.styleCopyButton.set_label(f"Copy ticked ({n})")
         self.styleCopyButton.set_sensitive(n > 0)
+        if self.testingPages is not None:
+            self.testingPages.updateButtons()
 
     def confirm(self, text, lines):
         dialog = Gtk.MessageDialog(transient_for=self, modal=True, message_type=Gtk.MessageType.QUESTION,
@@ -1307,10 +1315,12 @@ class ManagerWindow(Gtk.Window):
     def onDestroy(self, w):
         if self.printer is not None:
             self.printer.stop()
+        if self.testingPages is not None:
+            self.testingPages.stop()
 
 
-def runWindow(projectsDir):
-    win = ManagerWindow(projectsDir)
+def runWindow(projectsDir, testing=False):
+    win = ManagerWindow(projectsDir, testing=testing)
     win.connect("destroy", Gtk.main_quit)
     win.show_all()
     Gtk.main()

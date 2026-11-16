@@ -2,7 +2,7 @@
     the command line and the window, on copies of the test projects.
     unittest classes, so that test/conftest.py does not parametrize them as projects. '''
 
-import sys, os, io, shutil, tempfile, unittest, contextlib, configparser
+import sys, os, io, json, time, shutil, tempfile, unittest, contextlib, configparser
 
 testsdir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(testsdir, "..", "python", "lib"))
@@ -709,6 +709,308 @@ class TestTestPrint(_Projects):
         res = t.run("WSG", "Diglot2JN", "JHN")
         self.assertEqual(res.status, FAILED, res)
         self.assertIn("NoSuchBT", res.message)
+
+def makePdf(path, pages=1, ink=False):
+    ''' A small PDF of blank (or, with ink, marked) pages '''
+    from PIL import Image, ImageDraw
+    imgs = []
+    for i in range(pages):
+        im = Image.new("RGB", (200, 300), "white")
+        if ink:
+            ImageDraw.Draw(im).rectangle((20, 20 + 10 * i, 120, 60 + 10 * i), fill="black")
+        imgs.append(im)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    imgs[0].save(path, "PDF", save_all=True, append_images=imgs[1:])
+    return path
+
+
+class _Regress(_Projects):
+
+    def suite(self):
+        from ptxprint.manager.regress import TestSuite
+        return TestSuite(Validator(self.tmpdir.name))
+
+    def fakeRunner(self, suite, said=None, rc=0, pages=1, makeDiff=False, makePdfToo=True, silent=False):
+        ''' A runner whose PTXprint is faked: it "prints" a PDF and says what PTXprint would '''
+        from ptxprint.manager.regress import RegressionRunner
+        test = self
+        class Fake(RegressionRunner):
+            def execute(self, cmd, env):
+                test.lastCmd = cmd
+                start = time.time()
+                prjid, cfg = cmd[-1], cmd[cmd.index("-c") + 1]
+                pdf = os.path.join(self.suite.projectPath(prjid), "local", "ptxprint", f"{prjid}_{cfg}_2JN_ptxp.pdf")
+                out = []
+                if makePdfToo:
+                    makePdf(pdf, pages)
+                    out.append(pdf)
+                out.append(f"self.res={rc}")
+                if makeDiff:
+                    makePdf(pdf[:-4] + "_diff.pdf")
+                elif os.path.exists(pdf[:-4] + "_diff.pdf"):
+                    os.remove(pdf[:-4] + "_diff.pdf")       # as PTXprint does when it finds no differences
+                if said is not None and "-F" in cmd:
+                    out.append(f"diffresult={pdf[:-4] + '_diff.pdf' if said == 'diff' else said}")
+                out.append(f"res={rc}")
+                return rc, "" if silent else "\n".join(out), False, start
+        return Fake(suite)
+
+
+class TestRegress(_Regress):
+
+    def test_suite_file(self):
+        from ptxprint.manager.regress import TestSuite, SUITENAME
+        s = self.suite()
+        self.assertEqual((s.entries, s.path), ([], os.path.join(os.path.normpath(self.tmpdir.name), SUITENAME)))
+        self.assertFalse(os.path.exists(s.path))                    # reading makes nothing
+        self.assertIsNotNone(s.add("WSG", "Diglot2JN"))
+        self.assertIsNone(s.add("WSG", "Diglot2JN"))                # no duplicates
+        s.add("OGNT", "Default").note = "Greek"
+        s.settings["runs"] = 2
+        s.save()
+        # what a later version may add is kept
+        with open(s.path, encoding="utf-8") as inf:
+            data = json.load(inf)
+        data["future"] = 1
+        data["entries"][0]["future"] = "x"
+        with open(s.path, "w", encoding="utf-8") as outf:
+            json.dump(data, outf)
+        s = self.suite()
+        self.assertEqual([e.key for e in s.entries], [("WSG", "Diglot2JN"), ("OGNT", "Default")])
+        self.assertEqual((s.find("OGNT", "Default").note, s.settings["runs"], s.settings["diffPages"]), ("Greek", 2, 10))
+        s.save()
+        with open(s.path, encoding="utf-8") as inf:
+            data = json.load(inf)
+        self.assertEqual((data["future"], data["entries"][0]["future"]), (1, "x"))
+        self.assertEqual(s.remove([("WSG", "Diglot2JN"), ("WSG", "Nope")]), 1)
+        self.assertEqual(s.standardPath("WSG", "Short"),
+                         os.path.join(s.validator.projects["WSG"].path, "local", "ptxprint", "WSG_Short_standard_ptxp.pdf"))
+        self.assertEqual(os.path.basename(s.resultsPath()), "ptxprintTestResults.json")
+
+    def test_find_standards(self):
+        s = self.suite()
+        makePdf(s.standardPath("WSG", "Diglot2JN"))
+        makePdf(s.standardPath("OGNT", "Default"))
+        makePdf(s.standardPath("OGNT", "NotAConfig"))              # not one of its configurations
+        s.add("OGNT", "Default")
+        self.assertEqual(s.findStandards(), [("WSG", "Diglot2JN")])
+
+    def test_results(self):
+        from ptxprint.manager.regress import (SAME, DIFFERENT, NOSTANDARD, NOCOMPARE, ACCEPTED, FAILED, STOPPED,
+                                              ResultStore, summarise)
+        s = self.suite()
+        s.add("OGNT", "Default")
+        standard = s.standardPath("OGNT", "Default")
+        # no standard: printed without -F, and can be accepted as the first one
+        r = self.fakeRunner(s, said="0").run("OGNT", "Default")
+        self.assertEqual(r.status, NOSTANDARD, r)
+        self.assertNotIn("-F", self.lastCmd)
+        self.assertNotIn("--readonly", self.lastCmd)
+        makePdf(standard)
+        r = self.fakeRunner(s, said="0").run("OGNT", "Default")
+        self.assertEqual((r.status, r.diff), (SAME, None), r)
+        self.assertEqual(self.lastCmd[self.lastCmd.index("-F") + 1], standard)
+        r = self.fakeRunner(s, said="diff", makeDiff=True).run("OGNT", "Default")
+        self.assertEqual(r.status, DIFFERENT, r)
+        self.assertTrue(r.diff.endswith("_diff.pdf"))
+        # a comparison that could not be made is never "the same"
+        for said in ("1", "3", "5"):
+            r = self.fakeRunner(s, said=said).run("OGNT", "Default")
+            self.assertEqual(r.status, NOCOMPARE, (said, r))
+            self.assertTrue(r.message)
+        # more (blank) pages than the standard, which the comparison doesn't see
+        r = self.fakeRunner(s, said="0", pages=2).run("OGNT", "Default")
+        self.assertEqual(r.status, DIFFERENT, r)
+        self.assertIn("2 pages", r.message)
+        # an older PTXprint, which doesn't say: judged by the diff PDF, and said to be unconfirmed
+        r = self.fakeRunner(s).run("OGNT", "Default")
+        self.assertEqual(r.status, SAME, r)
+        self.assertIn("confirmed", r.message)
+        r = self.fakeRunner(s, makeDiff=True).run("OGNT", "Default")
+        self.assertEqual(r.status, DIFFERENT, r)
+        # an installed PTXprint.exe run from a console says nothing to us: its PDF is found by name
+        r = self.fakeRunner(s, makeDiff=True, silent=True).run("OGNT", "Default")
+        self.assertEqual(r.status, DIFFERENT, r)
+        self.assertTrue(r.pdf.endswith("OGNT_Default_2JN_ptxp.pdf"))
+        # no PDF: a failure, with a reason
+        r = self.fakeRunner(s, rc=1, makePdfToo=False).run("OGNT", "Default")
+        self.assertEqual(r.status, FAILED, r)
+        self.assertTrue(r.message)
+        r = self.fakeRunner(s).run("OGNT", "NoSuchConfig")
+        self.assertEqual(r.status, FAILED)
+        self.assertIn("no configuration", r.message)
+        runner = self.fakeRunner(s, said="0")
+        runner.stop()
+        self.assertEqual(runner.run("OGNT", "Default").status, STOPPED)
+        # the last result of each is kept
+        self.assertEqual(ResultStore(s.resultsPath()).get("OGNT", "NoSuchConfig").status, FAILED)
+        self.assertEqual(ResultStore(s.resultsPath()).get("OGNT", "Default").status, FAILED)
+        self.assertEqual(summarise([r, r, runner.run("OGNT", "Default")]), "2 failed, 1 stopped")
+
+    def test_accept(self):
+        from ptxprint.manager.regress import DIFFERENT, ACCEPTED, SAME
+        from ptxprint.version import VersionStr
+        s = self.suite()
+        s.add("OGNT", "Default")
+        standard = makePdf(self.suite().standardPath("OGNT", "Default"), ink=True)
+        runner = self.fakeRunner(s, said="diff", makeDiff=True)
+        r = runner.run("OGNT", "Default")
+        self.assertEqual(r.status, DIFFERENT)
+        res = runner.accept("OGNT", "Default")
+        self.assertEqual(res.status, ACCEPTED)
+        with open(standard, "rb") as a, open(r.pdf, "rb") as b:
+            self.assertEqual(a.read(), b.read())
+        self.assertTrue(os.path.exists(standard + ".bak"))
+        self.assertEqual(self.suite().find("OGNT", "Default").standardVersion, VersionStr)
+        with self.assertRaises(ValueError):             # nothing new to accept
+            runner.accept("OGNT", "Default")
+        # a PDF printed again since its result is not the one that was looked at
+        r = runner.run("OGNT", "Default")
+        time.sleep(1.5)
+        makePdf(r.pdf, 3)
+        with self.assertRaises(ValueError):
+            runner.accept("OGNT", "Default")
+        # recreating prints without -F and keeps the old standard
+        res = self.fakeRunner(s, said="0").recreate("OGNT", "Default")
+        self.assertEqual(res.status, ACCEPTED, res)
+        self.assertNotIn("-F", self.lastCmd)
+        self.assertTrue(os.path.exists(standard + ".bak"))
+
+    def test_real(self):
+        ''' PTXprint really prints and compares: no standard, accept it, the same, change the text, different, recreate '''
+        from ptxprint.manager.regress import SAME, DIFFERENT, NOSTANDARD, ACCEPTED, RegressionRunner
+        s = self.suite()
+        s.add("OGNT", "Short").extraArgs = ["-b", "2JN"]
+        s.save()
+        runner = RegressionRunner(s)
+        r = runner.run("OGNT", "Short")
+        if r.status != NOSTANDARD:      # e.g. the fonts aren't installed on this machine
+            self.skipTest(f"OGNT doesn't print here: {r}")
+        self.assertEqual(runner.accept("OGNT", "Short").status, ACCEPTED)
+        r = runner.run("OGNT", "Short")
+        self.assertEqual(r.status, SAME, r)
+        self.assertEqual(r.message, "")         # this PTXprint says that it compared
+        book = os.path.join(self.tmpdir.name, "OGNT", "642JNOGNT.SFM")
+        with open(book, encoding="utf-8") as inf:
+            text = inf.read()
+        with open(book, "w", encoding="utf-8") as outf:
+            outf.write(text.replace("\\v 3 ", "\\v 3 Some new words in verse three. ", 1))
+        r = runner.run("OGNT", "Short")
+        self.assertEqual(r.status, DIFFERENT, r)
+        self.assertTrue(os.path.exists(r.diff))
+        r = runner.recreate("OGNT", "Short")
+        self.assertEqual(r.status, ACCEPTED, r)
+        self.assertTrue(os.path.exists(s.standardPath("OGNT", "Short") + ".bak"))
+        self.assertEqual(runner.run("OGNT", "Short").status, SAME)
+
+    def test_command(self):
+        def run(*args):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
+                try:
+                    rc = main(["-p", self.tmpdir.name] + list(args))
+                except SystemExit as e:
+                    rc = e.code
+            return rc, out.getvalue()
+        rc, out = run("--help")
+        self.assertNotIn("testing", out)
+        self.assertNotIn("regress", out)
+        self.assertEqual(run("regress")[0], 2)                  # not without --testing
+        s = self.suite()
+        makePdf(s.standardPath("WSG", "Diglot2JN"))
+        rc, out = run("--testing", "regress", "--find")
+        self.assertIn("Added 1 tests", out)
+        rc, out = run("--testing", "regress", "-c", "Default", "-P", "OGNT", "--add")
+        self.assertIn("Added 1 tests", out)
+        self.assertEqual([e.key for e in self.suite().entries], [("WSG", "Diglot2JN"), ("OGNT", "Default")])
+        rc, out = run("--testing", "regress", "--list")
+        self.assertIn("OGNT / Default: standard none yet", out)
+        rc, out = run("--testing", "regress", "-c", "Default", "--remove")
+        self.assertIn("Took 1 tests out", out)
+        self.assertEqual(len(self.suite().entries), 1)
+
+
+class TestRegressWindow(_Regress):
+
+    def window(self, testing):
+        try:
+            from ptxprint.manager.gtkmanager import ManagerWindow
+            from gi.repository import Gtk
+            if not Gtk.init_check()[0]:
+                raise ImportError("no display")
+        except (ImportError, ValueError) as e:
+            self.skipTest(f"No GTK: {e}")
+        return ManagerWindow(self.tmpdir.name, testing=testing)
+
+    def test_tabs(self):
+        win = self.window(False)
+        try:
+            self.assertEqual(win.notebook.get_n_pages(), 6)
+            self.assertIsNone(win.testingPages)
+        finally:
+            win.destroy()
+        win = self.window(True)
+        try:
+            self.assertEqual(win.notebook.get_n_pages(), 8)
+            self.assertEqual(win.notebook.get_tab_label_text(win.notebook.get_nth_page(2)), "Test print")
+            self.assertIn("No tests yet", win.status.get_text())
+        finally:
+            win.destroy()
+
+    def test_suite_and_accept(self):
+        from ptxprint.manager.gtktesting import R_STATUS, R_TICK, R_PROJECT, U_PROJECT, U_ENABLED
+        from ptxprint.manager.regress import TestResult, DIFFERENT, ACCEPTED, FAILED
+        from gi.repository import GLib
+        s = self.suite()
+        makePdf(s.standardPath("WSG", "Diglot2JN"))
+        win = self.window(True)
+        try:
+            t = win.testingPages
+            self.assertEqual(t.findStandards(), 1)
+            self.assertEqual(len(self.suite().entries), 1)           # saved at once
+            win.configCombo.set_active_id("Default")
+            win.onAllProjects(None, False)
+            win.projectStore[[r[1] for r in win.projectStore].index("OGNT")][0] = True
+            self.assertEqual(t.addTests(win.chosenPairs()), 1)
+            self.assertEqual([r[U_PROJECT] for r in t.suiteStore], ["WSG", "OGNT"])
+            self.assertEqual(len(t.resultStore), 2)
+            # switched off: not in Run all's list
+            t.onSuiteToggled(None, "1", U_ENABLED)
+            self.assertFalse(self.suite().find("OGNT", "Default").enabled)
+            self.assertEqual(len(t.resultStore), 1)
+            # a result that differs can be accepted
+            pdf = makePdf(os.path.join(self.tmpdir.name, "WSG", "local", "ptxprint", "WSG_Diglot2JN_2JN_ptxp.pdf"), ink=True)
+            t.results.record(TestResult("WSG", "Diglot2JN", DIFFERENT, 3, "", pdf, pdf, "2026-11-14T10:00:00", "3.1.7",
+                                        os.path.getmtime(pdf)))
+            t.fillResults()
+            t.onTickResults(None, True)
+            self.assertEqual(t.acceptableKeys(), [("WSG", "Diglot2JN")])
+            self.assertEqual(t.acceptButton.get_label(), "Accept ticked as standard (1)")
+            done, failed = t.accept(t.acceptableKeys())
+            self.assertEqual((done, failed), (1, []))
+            self.assertTrue(os.path.exists(s.standardPath("WSG", "Diglot2JN") + ".bak"))
+            self.assertEqual(t.resultStore[0][R_STATUS], ACCEPTED)
+            # a run that can't print fills its row in
+            t.suite.add("WSG", "NoSuchConfig")
+            t.startRuns([("WSG", "NoSuchConfig")])
+            loop = GLib.MainLoop()
+            def poll():
+                if t.runThread is None:
+                    loop.quit()
+                    return False
+                return True
+            GLib.timeout_add(50, poll)
+            GLib.timeout_add(20000, loop.quit)
+            loop.run()
+            self.assertIsNone(t.runThread)
+            rows = {r[R_PROJECT] + "/" + r[1]: r[R_STATUS] for r in t.resultStore}
+            self.assertEqual(rows["WSG/NoSuchConfig"], FAILED)
+            self.assertIn("1 failed", win.status.get_text())
+            t.removeTests([("WSG", "NoSuchConfig")])
+            self.assertTrue(os.path.exists(s.standardPath("WSG", "Diglot2JN")))    # standards are left alone
+        finally:
+            win.destroy()
+
 
 if __name__ == "__main__":
     unittest.main()
