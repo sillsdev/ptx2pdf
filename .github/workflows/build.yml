@@ -73,7 +73,7 @@ jobs:
         $ver_inf = $exe_obj.VersionInfo
         @{name=$ver_inf.ProductName.TrimEnd()
           version=$ver_inf.ProductVersion.TrimEnd()
-          date=($exe_obj.CreationTime | Get-Date -UFormat "%%Y-%%m-%%d")
+          date=($exe_obj.CreationTime | Get-Date -UFormat "%Y-%m-%d")
           category="installer"
           description=$ver_inf.FileDescription.TrimEnd()
           installer="1"
