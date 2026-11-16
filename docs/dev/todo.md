@@ -631,3 +631,52 @@ Found by a deeper read than the bug hunt above. Same status tags; no tag = not l
   "no spaces in adjustlist entries" warning never fires; `ptx-output.tex:474, 1512`
   `\multiply\dimen5 by 32` overflows when the column-notes xref box is >512pt taller than the
   column (guard at 445 only stops at 2000pt) (traced, unlikely).
+
+## PDF standards conformance (Nov 2026, octopdf + veraPDF)
+
+Faults octopdf and veraPDF found, with the same status tags. The settings zip stays in the catalog's
+`/PieceInfo` in every output: PDF/X forbids attached files, so `/EmbeddedFiles` could not be used everywhere.
+
+* **[FIXED patches/pdf-standards.patch]** XMP `CreatorTool` lacked the version that Info `/Creator` has.
+* **[FIXED patches/pdf-standards.patch]** Screen claimed PDF/X-4 with DeviceGray text and an RGB output
+  intent: Screen now claims nothing (Digital converts gray, and stays PDF/X-4).
+* **[FIXED patches/pdf-standards.patch]** XMP claimed PDF/X-4 on every output (X-1a and Screen too); its
+  `pdfxid` property wasn't declared in the extension schema (it sat under `pdfaid`).
+* **[FIXED patches/pdf-standards.patch]** `<?xpacket begin=` was `pr@tect unhbox voidb@x penalty @M`
+  (the active U+FEFF expanded in the `\special`); now the BOM.
+* **[FIXED patches/pdf-standards.patch]** `xmpMM:DocumentID` was one fixed, malformed UUID for every
+  PDF; now a uuid5 of project id + config.
+* **[FIXED patches/pdf-standards.patch]** Output intents gave `/RegistryName (http://www.color.org)`
+  for the unregistered identifier `Custom`.
+* **[FIXED patches/pdf-standards.patch]** `/CIDSet` (incomplete: PDF/A-2/3 fail; PDF/A-4, PDF/UA-2
+  forbid it) is removed when procpdf writes the PDF.
+* **[FIXED patches/pdf-standards.patch]** XMP metadata stream was compressed on Screen and print-archive
+  output (procpdf's writer; `fixcol.outpdf` already kept it plain).
+* **[FIXED patches/pdf-output-intents.patch]** Every file had two output intents (GTS_PDFX and GTS_PDFA1):
+  X-1a allows one, and a PDF/A intent has no place outside the print archive. Now one GTS_PDFX intent,
+  plus GTS_PDFA1 (first, as octopdf only looks at the first) in the print archive.
+* **[FIXED patches/pdf-output-intents.patch]** Gray's output intent was a grayscale profile; PDF/X-1a needs
+  CMYK. Gray now uses `default_cmyk.icc` like CMYK (its DeviceGray pages print on the black plate). The
+  profile path is also set on every print, so an earlier Screen print no longer leaves sRGB for CMYK.
+* **[FIXED patches/pdf2-procset.patch]** Page `/Resources /ProcSet` (from xdvipdfmx) is deprecated in
+  PDF 2.0: removed from the print archive. Left in 1.4 output, where it is merely obsolete.
+* **[OPEN: informational]** octopdf: output intent `Custom` is not in the color.org registry. Allowed, as
+  the profile is embedded. A real fix is a setting for the printer's characterization (FOGRA39/51,
+  GRACoL2013, ...) with its registered identifier and profile.
+* **[FIXED patches/pdf-x1a-transparency.patch]** Feint boxes (`ptx-extended.tex` `\f@intthing`) used
+  transparency (`/CA`) in CMYK, Gray and Spot output, which claims PDF/X-1a. Those now set
+  `\NoTransparencytrue` (blend with white). A `\NoTransparencyfalse` in ptxprint-mods.tex still wins
+  (minitests has one), and the file then claims X-1a wrongly. Images with an alpha channel (SMask) not checked.
+* **[FIXED patches/pdf-xmp-empty.patch]** With no author (minitests), the XMP had an empty `dc:creator`
+  while xdvipdfmx left `/Author` out of Info: octopdf could not even load the PDF/X-4 ("Missing or invalid
+  name, off or token"). Empty `dc:creator`, `dc:title`, `dc:description` are now left out.
+* **[OPEN: octopdf only]** X-1a "Actions in Bookmarks" on bookmarks that are plain `/Dest [page /Fit]`.
+* **[OPEN: Acrobat ignores it; veraPDF passes PDF/A-4 without it]** Embedded fonts have no XMP metadata
+  (octopdf: required by PDF/A).
+* **[OPEN: kept on purpose — external links like file.pdf#2JN.1:3]** Per-verse named destinations are
+  not referenced from inside the PDF (octopdf warns).
+* **[FIXED patches/pdf-transparent-cmyk.patch]** `_pdfmodes['cmyk']` (`procpdf.py`, `runjob.py`) listed
+  `"Transparency"`, but the mode is `"Transparent"`: Transparent output claimed PDF/X-4 with a CMYK intent
+  while its pages and pictures stayed RGB. Its finished file is now `..._CMYK-Transparent_cmyk.pdf`
+  (was `_transparent`).
+* **[OPEN]** Bursted extra PDFs (cover etc., `procpdf.py` burst loop) don't get the CIDSet/metadata pass.

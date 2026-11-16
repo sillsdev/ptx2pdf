@@ -94,7 +94,7 @@ _errmsghelp = {
 
 _pdfmodes = {
     'rgb': ("Screen", "Digital"),
-    'cmyk': ("CMYK", "Transparency")
+    'cmyk': ("CMYK", "Transparent")
 }
 
 def base(fpath):
@@ -1182,6 +1182,7 @@ class RunJob:
                 kw[a] = self.info['finishing/'+a]
         kw['date'] = self.info["pdfdate_"]
         kw['stripinfo'] = bool(self.info["document/printarchive"])
+        kw['pdf2'] = bool(self.info["document/printarchive"])     # (as the PDF version given to xdvipdfmx)
 
         def doSettingsZip(zio):
             z = zipfile.ZipFile(zio, "w", compression=zipfile.ZIP_DEFLATED)

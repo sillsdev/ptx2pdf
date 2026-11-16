@@ -1,6 +1,7 @@
 from ptxprint.utils import coltoonemax, asfloat, _
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdfrw import PdfReader, PdfWriter
+from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 _pdfmodes = {
     'rgb': ("Screen", "Digital"),
-    'cmyk': ("CMYK", "Transparency")
+    'cmyk': ("CMYK", "Transparent")
 }
 
 _unitpts = {
@@ -43,6 +44,47 @@ def stripInfo(trailer):
         trailer.Info = PdfDict(ModDate=info.ModDate)
     else:
         trailer.Info = None
+
+def plainMetadata(trailer):
+    """ PDF/A wants the XMP metadata stream unfiltered. fixcol.compress leaves a stream whose
+        /Filter is an empty list uncompressed (as fixcol.outpdf does). """
+    meta = trailer.Root.Metadata
+    if meta is None:
+        return
+    if meta.Filter:
+        uncompress([meta])
+    if meta.Filter is None:
+        meta.Filter = []
+
+def finishPdf(trailer, pdf2=False):
+    stripCIDSets(trailer, procsets=pdf2)
+    plainMetadata(trailer)
+
+def stripCIDSets(trailer, procsets=False):
+    """ Removes the /CIDSet from each CID font's descriptor. It is optional in every PDF version;
+        PDF/A-2 and 3 want it complete (xdvipdfmx's isn't always) and PDF/A-4 and PDF/UA-2 forbid it.
+        With procsets, also each resource dictionary's /ProcSet, which PDF 2.0 deprecates. """
+    seen = set()
+    def doresources(res):
+        if res is None or id(res) in seen:
+            return
+        seen.add(id(res))
+        if procsets and res.ProcSet is not None:
+            res.ProcSet = None
+        for f in (res.Font or {}).values():
+            for d in (f.DescendantFonts or []):
+                if d.FontDescriptor is not None and d.FontDescriptor.CIDSet is not None:
+                    d.FontDescriptor.CIDSet = None
+        for x in (res.XObject or {}).values():     # an imposed page is the original as a form
+            doresources(x.Resources)
+    def dopages(node):         # the page tree (an imposed PDF's trailer isn't a PdfReader)
+        if node is None or id(node) in seen:
+            return
+        seen.add(id(node))
+        doresources(node.Resources)         # a page's, or inherited from the tree
+        for k in (node.Kids or []):
+            dopages(k)
+    dopages(trailer.Root.Pages)
 
 def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                 stripinfo=False, **kw):
@@ -246,6 +288,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
         if kw.get("output_filepath"):
             pdffile = kw.get("output_filepath")
         outpdfobj.fname = pdffile
+        finishPdf(outpdfobj.trailer, pdf2=kw.get("pdf2", False))
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
         outpdfobj.write()
@@ -253,6 +296,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
     # Write the settings-augmented 1-up *after* the 2-up has been serialised, so 
     # its lazy references into opath still resolve to the original xetex output.
     if origobj is not None:
+        finishPdf(origobj.trailer, pdf2=kw.get("pdf2", False))
         origobj.write()
 
     return res
