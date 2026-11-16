@@ -171,7 +171,6 @@ jobs:
     - uses: webfactory/ssh-agent@v0.10.0
       with:
         ssh-private-key: ${{secrets.PUBLISH_PK}}
-        ssh-known-hosts: ${{secrets.PUBLISH_HK}}
     
     - name: Upload deliverables to distribution server
-      run: scp *_bundle/* ${{secrets.PUBLISH_REMOTE_AREA}}
+      run: scp -o StrictHostKeyChecking=no *_bundle/* ${{secrets.PUBLISH_REMOTE_AREA}}
