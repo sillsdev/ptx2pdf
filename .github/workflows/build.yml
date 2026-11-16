@@ -168,9 +168,10 @@ jobs:
     needs: [build-windows, build-macos]
     steps:
     - uses: actions/download-artifact@v8
+    - run: tree
     - uses: webfactory/ssh-agent@v0.10.0
       with:
         ssh-private-key: ${{secrets.PUBLISH_PK}}
-    
+    - run: tree
     - name: Upload deliverables to distribution server
-      run: scp -o StrictHostKeyChecking=no *_bundle/* ${{secrets.PUBLISH_REMOTE_AREA}}
+      run: echo scp -o StrictHostKeyChecking=no *_bundle/* ${{secrets.PUBLISH_REMOTE_AREA}}
