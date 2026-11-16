@@ -168,8 +168,7 @@ jobs:
     needs: [build-windows, build-macos]
     steps:
     - uses: actions/download-artifact@v8
-    - name: ssh-agent-deploy-key
-      uses: cardoe/ssh-agent-deploy-key@v1.1.0
+    - uses: webfactory/ssh-agent@v0.10.0
       with:
         ssh-private-key: ${{secrets.PUBLISH_PK}}
         ssh-known-hosts: ${{secrets.PUBLISH_HK}}
