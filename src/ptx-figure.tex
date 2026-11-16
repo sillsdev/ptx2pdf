@@ -846,8 +846,9 @@
     \ifmorep@rams\repeat
   %\ifusfmthree\x@\edef\csname param-caption\endcsname{\csname param-1\endcsname}\fi
   % get size
-  \lowercase{\edef\size@ption{\csname figparam-size\endcsname}}%
-  \lowercase{\edef\sizem@ltiple{\csname figparam-scale\endcsname}}%
+  % the values must be lower case (size="Span"), not the names: expand, then lowercase
+  \edef\size@ption{\csname figparam-size\endcsname}\x@\lowercase\x@{\x@\def\x@\size@ption\x@{\size@ption}}%
+  \edef\sizem@ltiple{\csname figparam-scale\endcsname}\x@\lowercase\x@{\x@\def\x@\sizem@ltiple\x@{\sizem@ltiple}}%
   \expandafter\p@rsesize\size@ption**\end % extract possible multiplier
   % figparam-loc is ambiguously used, as either pgpos or media or something else.
   \x@\ifx\csname figparam-loc\endcsname\empty\else
@@ -959,7 +960,8 @@
           \let\col@do=\max@boxht \dimen1=0pt
           \edef\v@lpfx{\colinsert@name{t}}\def\v@lsfx{}%
           \x@\each@col\diglot@list\E
-          \uppercase{\def\t@mp{\l@cspec@b}}%
+          % (\uppercase only changes the letters it sees: expand first, then uppercase the letters)
+          \edef\t@mp{\l@cspec@b}\x@\uppercase\x@{\x@\def\x@\t@mp\x@{\t@mp}}%
           \ifx\t@mp\m@x@at@col\else %don't adjust height if this box is already highest
             \otherinsht=\dimen1
           \fi

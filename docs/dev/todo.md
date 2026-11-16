@@ -605,29 +605,29 @@ Found by a deeper read than the bug hunt above. Same status tags; no tag = not l
 
 ### TeX macros
 
-* `ptx-figure.tex:962` `\uppercase{\def\t@mp{\l@cspec@b}}` only uppercases the letters it sees, so
+* **[FIXED patches/hidden-tex.patch]** `ptx-figure.tex:962` `\uppercase{\def\t@mp{\l@cspec@b}}` only uppercases the letters it sees, so
   `\t@mp` is `macro:->\l@cspec@b` and `\ifx\t@mp\m@x@at@col` is never true: in a diglot a top
   picture's own column is never recognised as the tallest, so a second `tL` picture smaller than
   the first counts 0pt against `\pagegoal` (1204-1208) and too much text is let in (ran the
   construct; layout effect traced, medium-high). `\edef` first, then `\uppercase` via `\x@`.
-* `ptx-output.tex:1112, 1083` "Enhanced paragraphed footnotes" shaving: 1112 records
+* **[FIXED patches/hidden-tex.patch]** `ptx-output.tex:1112, 1083` "Enhanced paragraphed footnotes" shaving: 1112 records
   `\ht\n@tesbox - \sh@vedim`, but `\findsh@venotes` runs inside `\m@kenotebox`, while `\n@tesbox`
   still holds the previous trial's/page's box of all classes; should be `\ht\@sh@venotebox`. 1083
   tests scratch `\ht0` instead of `\ht#1`. Shaving is skipped or moves the wrong amount (negative
   on the first page with notes) (traced, high).
-* `ptx-figure.tex:849-850` `\lowercase{\edef\size@ption{\csname figparam-size\endcsname}}`
+* **[FIXED patches/hidden-tex.patch]** `ptx-figure.tex:849-850` `\lowercase{\edef\size@ption{\csname figparam-size\endcsname}}`
   lowercases the name, not the value: `size="Span"` stops with `Unknown picture size` (920)
   (ran it; not checked whether Python lowercases first). Same pattern at `ptx-extended.tex:628`
   (`FigScaleTo`). `\edef` first, then `\lowercase` via `\x@`.
-* `ptx-para-style.tex:434` the `\@parend` record's `{\the\lastdepth}` stays inside the deferred
+* **[FIXED patches/hidden-tex.patch]** `ptx-para-style.tex:434` the `\@parend` record's `{\the\lastdepth}` stays inside the deferred
   `\write`, so it is the value at shipout (often 0pt after a title gridbox, 262), and the write
   precedes `\p@r` anyway; `parlocs.py:409` subtracts it from `yend`, so paragraph ends the filler
   uses are off by a descender (traced, medium-high; impact low-medium). Write after `\p@r` with
   the depth expanded at once.
-* `ptx-adj-list.tex:169` `\ifadjslurp\else ... \else ... \fi\fi` has two `\else`: with
+* **[FIXED patches/hidden-tex.patch]** `ptx-adj-list.tex:169` `\ifadjslurp\else ... \else ... \fi\fi` has two `\else`: with
   `\adjslurpfalse` and trace `j`, every `\ch@ckadjustments` gives `! Extra \else.` (ran it; debug
   path only).
-* Minor: `ptx-adj-list.tex:66` `\warnspace #1 \E` passes the book code, not `#3`, so the
+* **[FIXED patches/hidden-tex.patch]** Minor: `ptx-adj-list.tex:66` `\warnspace #1 \E` passes the book code, not `#3`, so the
   "no spaces in adjustlist entries" warning never fires; `ptx-output.tex:474, 1512`
   `\multiply\dimen5 by 32` overflows when the column-notes xref box is >512pt taller than the
   column (guard at 445 only stops at 2000pt) (traced, unlikely).
