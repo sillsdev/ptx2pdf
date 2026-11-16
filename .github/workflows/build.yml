@@ -160,7 +160,7 @@ jobs:
         retention-days: 7
   
   publish:
-    if: github.ref_type == 'tag' && endsWith(github.ref_name, '-testing') # Only run for releases which are tagged.
+    if: github.ref_type == 'tag'
     environment:
       name: release
       url: https://software.sil.org/ptxprint/download/
