@@ -1,7 +1,58 @@
-PTXprint 3.1.7 Release Notes
-13 Nov 2026
+PTXprint 3.1.8 Release Notes
+16 Nov 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.8 - (16 Nov 2026)
+
+  PDF standards
+  * PDF/X and PDF/A output now passes far more conformance checks
+  * Each output claims only the standard it meets; Screen claims none
+  * PDF/X output no longer contains links or actions (Screen keeps them)
+  * Gray output now uses a CMYK output intent, as PDF/X-1a requires
+  * Shaded (feint) boxes no longer use transparency in CMYK/Gray/Spot
+  * "Transparent" output was left in RGB; it is now properly CMYK
+
+  Bug fixes
+  * Map pages disappeared when printing with a cover
+  * Scale to Fit left the TrimBox in the wrong place
+  * Spot colour and CMYK conversion of pictures and text corrected
+  * Every print with a table of contents ran XeTeX one extra time
+  * Settings from the previous config (borders, watermarks, custom
+    script, cover image...) leaked into the next config
+  * Unticking Diglot and saving deleted the diglot settings
+  * Override files blanked the colophon and reset custom note callers
+  * Override files saved with a BOM (e.g. from Notepad) were ignored
+  * Paths saved on Windows were not found on Linux or macOS
+  * Copy Config > Merge stopped part way when a file was missing
+  * --readonly still changed some shared project files
+  * Module publications could not be printed
+  * Starting Analyse & Fill stopped any publications being printed
+  * Analyse & Fill printed the wrong project if you switched meanwhile
+  * Unsaved picture list edits were lost when switching project
+  * Viewer edits could be saved to the wrong tab, and lost
+  * Polyglot: rows showed the wrong configs after a project change,
+    delete or move
+  * PDF viewer: spread Next/Previous and RTL page order fixed
+  * Diglot: subverses (3a, 3b) and headings before \c now line up
+  * Diglot: a paragraph that runs on into the next verse is aligned
+  * Changes with two nested contexts duplicated text
+  * Custom note markers' text spilled into the verse
+  * Pictures with size="Span" stopped TeX with an error
+  * Diglot: a second top picture could let too much text on the page
+  * Enhanced paragraphed footnotes shaved the wrong amount
+  * Page Filler: "Shrink both" on a +1 row broke the AdjList
+  * Page Filler: resuming a fill dropped earlier adjustments
+  * Page Filler: several smaller fixes for more reliable filling
+  * Manager: books with Strong's markup or poetry reported as empty
+  * Manager: Stop did not stop a test print that was just starting
+  * After one failed print, later jobs could silently do nothing
+
+  For developers
+  * Manager: regression tests against standard PDFs (--testing)
+  * Windows and macOS release builds now upload from GitHub Actions
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.1.7 - (13 Nov 2026)
