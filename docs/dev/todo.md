@@ -670,6 +670,16 @@ Faults octopdf and veraPDF found, with the same status tags. The settings zip st
 * **[FIXED patches/pdf-xmp-empty.patch]** With no author (minitests), the XMP had an empty `dc:creator`
   while xdvipdfmx left `/Author` out of Info: octopdf could not even load the PDF/X-4 ("Missing or invalid
   name, off or token"). Empty `dc:creator`, `dc:title`, `dc:description` are now left out.
+* **[FIXED patches/pdf-pdfx-noactions.patch]** PDF/X output had GoTo actions in bookmarks and links,
+  `/URI` actions in web links and link annotations inside the page. Every PDF/X output (Digital and
+  Transparent as well as CMYK, Gray, Spot, and the print archive) now sets `\Actionsfalse`, which now also
+  suppresses the link annotations themselves (`\pdfURL`, `\pdfG@T@`, their `eann`s in `ptx-attribute.tex`).
+  Bookmarks point straight at pages. Screen keeps links and per-verse destinations.
+* **[OPEN: latent]** `fixcol.fixhighlights` drops every non-highlight annotation (`page.Annots.extend` onto a
+  list it then replaces), so links vanish in any output that goes through the colour step. Harmless now that
+  those outputs have no links, but wrong if links are ever wanted there.
+* **[NOTE]** octopdf caches by the trailer `/ID`: a file sharing an `/ID` with an earlier upload but with
+  other contents fails to load ("Missing or invalid name, off or token"). Give test copies fresh IDs.
 * **[OPEN: octopdf only]** X-1a "Actions in Bookmarks" on bookmarks that are plain `/Dest [page /Fit]`.
 * **[OPEN: Acrobat ignores it; veraPDF passes PDF/A-4 without it]** Embedded fonts have no XMP metadata
   (octopdf: required by PDF/A).

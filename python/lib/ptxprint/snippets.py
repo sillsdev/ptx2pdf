@@ -147,6 +147,8 @@ class PDFx1aOutput(Snippet):
         elif pdftype in ("Transparent", "Digital"):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
             extras['_xmppdfx'] = "        <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>\n"
+            # PDF/X: no actions, and so no links (annotations inside the page; a web link is a URI action)
+            res += "\\Actionsfalse\n"
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
             res += "\\Actionsfalse\n\\NoTransparencytrue\n"     # PDF/X-1a: no actions, no transparency
@@ -179,6 +181,8 @@ class PDFx1aOutput(Snippet):
         if model['document/printarchive']:
             extras['_gtspdfaid'] = "      <pdfaid:part>4</pdfaid:part>\n        <pdfaid:rev>2020</pdfaid:rev>\n"
             res += "\\XeTeXgenerateactualtext=1\n"
+            if pdftype == "Screen":     # PDF/X-6: no actions, as for the other PDF/X outputs
+                res += "\\Actionsfalse\n"
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-6)%\n"
             extras['_xmppdfx'] = "        <pdfxid:GTS_PDFXVersion>PDF/X-6</pdfxid:GTS_PDFXVersion>\n"
             extras['_docinfo'] = r'\special{pdf:docinfo << >>}'
