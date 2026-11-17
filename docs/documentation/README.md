@@ -565,7 +565,7 @@ WARNING: spaces in the string are ignored (due to a peculiarity of TeX).
 *  `\zEmptyPage` – Insert an intentionally empty page. The macro `\TPILB` will be used to provide any filler content.  Headers and footers will be the `...noV...` versions.
 * `\zNeedOddPage` - Insert 0 or 1 intentionally empty page(s) so that what follows is on a odd-numbered page.
 * `\zNeedEvenPage` - Insert 0 or 1 intentionally empty page(s) so that what follows is on a even-numbered page.
-* `\zNeedQuadPage` - Insert 0 to 3 intentionally empty page(s) so that what follows is on page exactly divisible by 4.
+* `\zNeedQuadPage` - Insert 0 to 3 intentionally empty page(s) so that the number of pages output so far is a multiple of 4, and what follows starts a new group of 4 pages (page 1, 5, 9, ...).
 * `\zfillsignature|pagenums="no" extra="0" pages="8"\*` Calculate `\afterwordpages` + "extra" + current page count. Work out how many pages are needed to fill the signature of "pages" pages, and call \zEmptyPage that many times. The pagenums parameter can either be entirely ommitted or contain "do" (`\dopagenums`) or "no" (`\nopagenums`).
 Note that the page count used by this is now the *actual* count of pages
 printed by PTXprint, not the current page number.
