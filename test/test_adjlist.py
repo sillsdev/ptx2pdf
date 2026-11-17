@@ -142,3 +142,24 @@ def test_resetAllBut(tmp_path):
     assert r[("MRK3.7-8", 1)] == ("0", 100)
     assert r[("MRK1.3", 2)] == ("-1", 97)
     assert r[("MRK4.2", 1)][0] == "+1"
+
+
+def test_keywordParagraphsAreSeparate(tmp_path):
+    """ Paragraphs that start with \\k (glossary entries, or labels in an introduction) have the
+        reference k.word. Each must get its own row, keep its paragraph number and be written
+        with its : as TeX matches it. """
+    path = tmp_path / "JOL.adj"
+    adj = makeAdj(path, text="JOL 1.1 +1\n")
+    adj.increment("JOLk.lihikītonaporol:", 1)
+    adj.getinfo("JOLk.mukegosṭi:", insert=True)
+    adj.increment("JOLk.mukegosṭi:[2]", -1)
+    adj.getinfo("JOLk.lihikītonaporol:", insert=True)
+    adj.increment("JOLk.lihikītonaporol:", 1)
+    adj.getinfo("JOLk.mukegosṭi:[2]", insert=True)
+    adj.increment("JOLk.mukegosṭi:[2]", -1)
+    adj.createAdjlist(str(path))
+    lines = path.read_text(encoding="utf-8").splitlines()
+    assert "JOL k.lihikītonaporol: 1" in lines
+    assert "JOL k.mukegosṭi: -1[2]" in lines
+    assert "JOL 1.1 +1" in lines
+    assert len(lines) == 3

@@ -37,7 +37,7 @@ class Liststore(list):
         
 
 adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
-refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
+refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|[^\s\[]+)(?:\[(\d+)\])?")    # [n] is the paragraph, even after k.word
 restre = re.compile(r"^\s*(?:(?:mrk=|\\)(\S+)\s*)?(?:(?:expand=)?(\d+))?(.*?)$")
 
 
@@ -149,7 +149,9 @@ class AdjList:
 
     def calckey(self, row):
         k = refKey("{0} {1}".format(*row))
-        res = k[:3] + (k[5], row[2], k[3], k[4])
+        # refKey puts a keyword (k.word) in its extras, k[6]: without it every keyword in a book
+        # would be the same paragraph.
+        res = k[:3] + (k[5], k[6].strip(), row[2], k[3], k[4])
         return res
 
     def parseline(self, l, lineno=0):
@@ -210,7 +212,9 @@ class AdjList:
         d = self.db[i]
         if r[3] in (0, "0") and r[5] == self.centre and not len(d) and not (r[7] or "").strip():   # nothing to adjust
             return None
-        cv = r[1].replace(":", ".").replace(" ", "")
+        cv = r[1].replace(" ", "")
+        if not cv.startswith("k."):     # TeX matches a keyword as it is, : and all
+            cv = cv.replace(":", ".")
         if r[2] > 1:
             line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
         else:

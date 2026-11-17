@@ -1599,7 +1599,7 @@ class PTXFiller:
             key = f"{r[5]}"
         else:
             key = f"{r[1]}.{r[2]}{r[5]}"
-            para = para or 1
+        para = para or 1        # a paragraph TeX didn't number is the first, k.word ones too
         return self.bk + r[3], key, para       # r[3] is the polyglot column letter, if any
 
     def createAdjs(self, parparms, solver, lastchap=0, file=None):

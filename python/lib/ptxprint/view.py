@@ -1,5 +1,5 @@
 
-import configparser, os, re, regex, random, collections, sys, glob, copy, hashlib
+import configparser, os, posixpath, re, regex, random, collections, sys, glob, copy, hashlib
 from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
@@ -2907,9 +2907,10 @@ class ViewModel:
             p = pathlib.Path(fname).parts
             if len(p) > 1 and p[1] == 'local':
                 return  # we can exclude the local subdirectory from the test archive
-        try:
-            zinfo = zf.getinfo(fname)
-        except KeyError:
+        # The zip stores names with / (zf.write converts os.sep), so look them up the same way;
+        # on Windows a name with \ never matched, and the same file went in twice.
+        fname = posixpath.normpath(fname.replace("\\", "/"))
+        if fname not in zf.NameToInfo:
             zf.write(ifile, fname)
 
     def _archiveAdd(self, zf, books, parent=None, parentcfg=None, xdv=None, fontprjid=None):
