@@ -1145,6 +1145,11 @@ class TexModel:
                 (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
                 dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
 
+            # Check the markers once the user's changes.txt has had a chance to clean them up
+            (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Checking for unknown markers\n")
+            if doc is not None:
+                self._reportUnknownMarkers(doc, bk)
+
             if self.dict['project/canonicalise']:
                 (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Canonicalising")
                 dat = None
@@ -1243,6 +1248,33 @@ class TexModel:
                 secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
                 self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
         return doc  
+
+    # Plain TeX commands that are not USFM markers. In USFM they are almost certainly typos
+    # (e.g. \t for \it) and do odd things, such as asking for the cmmi10 math font.
+    _texnotmarkers = set("t u d H i j l L o O P S aa AA ae AE oe OE ss bf rm sl tt".split())
+
+    def _reportUnknownMarkers(self, doc, bk):
+        """ Warn about markers left after the changes.txt rules that are not in any
+            stylesheet, so that changes.txt can be used to clean them up """
+        found = doc.unknownMarkers(bk)
+        if not len(found):
+            return
+        res = [_("Unknown markers (not in any stylesheet, and not defined in ptxprint-mods.tex):")]
+        for tag, refs in sorted(found.items()):
+            where = ", ".join(dict.fromkeys(refs))
+            if len(where) > 60:
+                where = where[:60].rsplit(",", 1)[0] + ", ..."
+            line = f"  \\{tag}  ({len(refs)}x: {where})"
+            if tag in self._texnotmarkers:
+                line += "  " + _("- a TeX command, not a USFM marker; probably a typo (e.g. \\t for \\it)")
+            res.append(line)
+        maxshown = 15
+        if len(res) > maxshown + 1:
+            res[maxshown+1:] = ["  " + _("... and {} more").format(len(res) - maxshown - 1)]
+        res.append("\n" + _("Fix these in the text, define them in a stylesheet, or correct them with changes.txt."))
+        self.printer.doError(_("Unknown USFM markers in {}").format(bk), secondary="\n".join(res),
+                             title=_("PTXprint [{}] - USFM Text Error!").format(self.VersionStr),
+                             show=not self.printer.get("c_quickRun"))
 
     def makelocalChanges(self, printer, bk, chaprange=None):
         import ptxprint.scriptsnippets as scriptsnippets

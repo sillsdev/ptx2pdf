@@ -606,7 +606,7 @@ class ViewModel:
 
     def getMargins(self):
         def asmm(v): return v * 25.4 / 72.27
-        hfont = self.styleEditor.getval("h", "font")
+        hfont = self.styleEditor.getval("h", "font", includebase=True)
         if hfont is None:
             # print("hfont is None")
             hfont = self.get("bl_fontR")
@@ -618,7 +618,7 @@ class ViewModel:
         hfontheight = float(hfont.ascent) / hfont.upem
         fontsizemms = asmm(float(self.get("s_fontsize")))
         linespacemms = asmm(float(self.get("s_linespacing")))
-        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 1.) * fontsizemms
+        hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize", includebase=True), 1.) * fontsizemms
         # print(f"{hfontheight=} {fontsizemms=} {hfontsizemms=}")
         marginmms = float(self.get("s_margins"))
         # in the macros, topmargin is set to topmargin - baselineskip + 12*FontSizeUnit
@@ -989,8 +989,20 @@ class ViewModel:
         if self.usfms is None:
             cfile = os.path.join(self.project.srcPath(self.cfgid), "changes.txt")
             self.usfms = UsfmCollection(self.getBookSrcPath, self.project.path,
-                            Sheets(self.getStyleSheets()), changes=cfile)
+                            Sheets(self.getStyleSheets()), changes=cfile, texfiles=self.getModsTexFiles())
         return self.usfms
+
+    def getModsTexFiles(self):
+        """ The ptxprint-premods.tex and ptxprint-mods.tex files in use, whose macros may be used in the USFM """
+        cpath = self.project.srcPath(self.cfgid)
+        if cpath is None:
+            return []
+        res = []
+        for w, f in (("c_usePreModsTex", "ptxprint-premods.tex"), ("c_useModsTex", "ptxprint-mods.tex")):
+            fpath = os.path.join(cpath, f)
+            if self.get(w) and os.path.exists(fpath):
+                res.append(fpath)
+        return res
 
     def get_usfm(self, bk, silent=False):
         self.get_usfms()

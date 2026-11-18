@@ -206,9 +206,33 @@ def typesFromMrk(mtype):
         return ('Note', 'NoteText')
     return (None, None)
 
-texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody zBottomRag"""
+# TeX macros (not stylesheet markers) that may legitimately appear in USFM text
+texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody polyglotcolumn
+    zap zapres zautoBookEndDecoration zBookEndDecoration zBottomRag zccimg zcolophon zcopyright
+    zEmptyPage zendheadings zendnoterule zendperiph zendtable zexp zfalsetext zglot zimagecopyrights
+    zlicence zlicense zMarkVerseAgain zNeedEvenPage zNeedOddPage zNeedQuadPage zpdf zplaceallnotes
+    zpostendnoterule zSEQ zt ztablecategory zthumbtab ztmoff ztmon ztocafter ztocbefore ztruetext
+    ztvaloff ztvalon zv"""
 
-def createGrammar(sheets):
+# Language or polyglot column suffixed forms of the above, e.g. \zimagecopyrightsfr, \zcopyrightR
+texcmdsuffixed = re.compile(r"^(?:zimagecopyrights[a-z]{2,3}|zcopyright[A-Z]|zlicen[cs]e[A-Z])$")
+
+def texDefinedCmds(fpaths):
+    r""" Names \def'd or \let in the given TeX files (e.g. ptxprint-mods.tex) that
+        contain no @, so may be used as instructions in the USFM """
+    res = set()
+    for fpath in fpaths:
+        try:
+            with open(fpath, encoding="utf-8", errors="ignore") as inf:
+                dat = inf.read()
+        except OSError:
+            continue
+        for l in dat.splitlines():
+            l = re.sub(r"(?<!\\)%.*$", "", l)
+            res.update(re.findall(r"\\(?:[gex]?def|let)\s*\\([A-Za-z]+)(?![A-Za-z@])", l))
+    return res
+
+def createGrammar(sheets, extracmds=None):
     grammar = Grammar()
     for k in sheets:
         if k not in grammar.marker_categories:
@@ -221,14 +245,18 @@ def createGrammar(sheets):
             grammar.attribmap[k] = attrib
     for k in texcmds.split():
         grammar.marker_categories[k] = "standalone"
+    for k in (extracmds or []):
+        if k not in grammar.marker_categories:
+            grammar.marker_categories[k] = "standalone"
     return grammar
 
 
 class UsfmCollection:
-    def __init__(self, bkmapper, basedir, sheets, changes=None):
+    def __init__(self, bkmapper, basedir, sheets, changes=None, texfiles=None):
         self.bkmapper = bkmapper
         self.basedir = basedir
         self.sheets = sheets
+        self.texfiles = texfiles or []
         self.books = {}
         self.times = {}
         self.tocs = []
@@ -247,7 +275,7 @@ class UsfmCollection:
             self.times = {}
 
     def setgrammar(self):
-        self.grammar = createGrammar(self.sheets)
+        self.grammar = createGrammar(self.sheets, extracmds=texDefinedCmds(self.texfiles))
 
     def get(self, bk):
         bkfile = self.bkmapper(bk)
@@ -919,6 +947,20 @@ class Usfm:
     def reversify(self, srcvrs, tgtvrs, vpvrse, vpchap):
         if tgtvrs is not None or srcvrs is not None:
             self.xml.reversify(srcvrs, tgtvrs, keep=vpvrse, chnums=vpchap)
+
+    def unknownMarkers(self, bk=None):
+        """ Markers the parser marked as unknown (not in a stylesheet, texcmds or
+            ptxprint-mods.tex). Returns {marker: [refs]} """
+        res = {}
+        for eloc, isin, cref in iterusxref(self.getroot(), book=bk):
+            if not isin or not getattr(eloc, "unknown", False):
+                continue
+            style = eloc.get("style", "")
+            if texcmdsuffixed.match(style):
+                continue
+            r = getattr(cref, "first", cref)
+            res.setdefault(style, []).append(f"{r.book} {r.chapter}:{r.verse}" if r is not None else "?")
+        return res
 
     def runchecks(self):
         root = self.getroot()

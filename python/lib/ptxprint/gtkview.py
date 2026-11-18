@@ -6030,10 +6030,10 @@ class GtkViewModel(ViewModel):
         bcol = coltohex(self.get("col_thumbback"))
         self.set("l_thumbbackValue", bcol)
         tabstyle = "zthumbtab" if self.get("r_thumbText") == "zthumbtab" else "toc3"
-        colval = self.styleEditor.getval(tabstyle, "color")
+        colval = self.styleEditor.getval(tabstyle, "color", includebase=True)
         fcol = coltohex(textocol(colval))
-        bold = "bold" if self.styleEditor.getval(tabstyle, "bold") == "" else "normal"
-        ital = "italic" if self.styleEditor.getval(tabstyle, "italic") == "" else "normal"
+        bold = "bold" if self.styleEditor.getval(tabstyle, "bold", includebase=True) else "normal"
+        ital = "italic" if self.styleEditor.getval(tabstyle, "italic", includebase=True) else "normal"
         markup = '<span background="{}" foreground="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, fcol, bold, ital)
         # print(f"{colval=}  {markup=}")
         for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):

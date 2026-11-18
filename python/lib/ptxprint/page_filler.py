@@ -1865,6 +1865,8 @@ class PTXFiller:
         return False
 
     def pid_isjustified(self, pid):
+        if not self.view.get("c_justify"):
+            return False        # \JustifyParsfalse: TeX rags every paragraph, whatever its style says
         pind = self.get_para_ind(pid)
         if pind is None or pind >= len(self.parlocs):
             return True
