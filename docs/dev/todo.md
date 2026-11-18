@@ -690,3 +690,18 @@ Faults octopdf and veraPDF found, with the same status tags. The settings zip st
   while its pages and pictures stayed RGB. Its finished file is now `..._CMYK-Transparent_cmyk.pdf`
   (was `_transparent`).
 * **[OPEN]** Bursted extra PDFs (cover etc., `procpdf.py` burst loop) don't get the CIDSet/metadata pass.
+
+## Preview click tests (Nov 2026)
+
+* **A cutout picture can't be right-clicked in the preview.** In PicsJON the cutout at JON 2.1
+  (`pgpos="cl3"`, 68pt square) gets a parlocs rect that is upside down and too short
+  (top 37pt, bottom 54pt), so `findPos` never finds it: a right-click on it gives the
+  paragraph's menu, or none. The `\@parpicstart`/`\@parpicstop` positions for cutouts look wrong.
+* **Change Anchor keeps the old caption reference.** Moving JON 1.6's picture to JON 1.7 from the
+  preview menu writes `JON 1.7 ...|... ref="1.6"`. Intended (ref is the caption's text), or
+  should it follow the anchor?
+* **`pdf_viewer.on_reset_adjustments` edits `adjlist.liststore` rows directly** (columns 3 and 5),
+  rather than through an AdjList method. Not a bug today, but a layer violation.
+* **Recording preview clicks is untested with a real mouse.** Replays and `mkguitest.py` drive the
+  new `paraclick`/`paramenu` events; recording them by hand (`-C`) goes through
+  `GtkTester.previewClicked`/`menuChosen` and hasn't been tried.

@@ -175,6 +175,9 @@ def _runtest(prjTree, config, macrosdir, project, doit, args):
     if test_result['errors']:
         err_str = '\n\t'.join(['', *test_result['errors']])
         print(f"The following events could not be replayed:{err_str}")
+    if test_result['messages']:
+        msg_str = '\n\t'.join(['', *test_result['messages']])
+        print(f"PTXprint's messages differed from the test's:{msg_str}")
     if test_result['cfg']:
         cfg_str = '\n\t'.join(['', *test_result['cfg']])
         print(f"The following differences were found in the cfg:{cfg_str}")

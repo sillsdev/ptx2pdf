@@ -120,6 +120,12 @@ class ParInfo:
     def pid(self):
         return f"{self.ref}[{getattr(self, 'parnum', '')}]"
 
+    def ident(self):
+        """ How tests name the paragraph: its reference, with its number if it isn't the first
+            paragraph of the verse (e.g. RUT1.3, RUT1.3[2]) """
+        parnum = getattr(self, 'parnum', 0) or 0
+        return self.ref + (f"[{parnum}]" if parnum > 1 else "")
+
     def sortKey(self):
         return (self.rects[-1].pagenum if self.rects is not None and len(self.rects) else 10000,
                 refSort(self.ref), getattr(self, 'parnum', 0))
@@ -147,6 +153,10 @@ class FigInfo:
     def pid(self):
         """ For logging alongside ParInfo.pid() """
         return f"Pic({self.ref})[{self.src}]"
+
+    def ident(self):
+        """ How tests name the picture: fig and its anchor (e.g. fig RUT1.5) """
+        return "fig " + re.sub(r"-preverse$", "", self.ref)
 
     def __repr__(self):
         return self.__str__()
@@ -593,6 +603,14 @@ class Paragraphs(list):
         res = [(p, r) for i, p, r in self._pageRects(pnum)]
         self.rect_cache = (pnum, res)
         return res
+
+    def findIdent(self, ident):
+        """ The paragraph or picture a test names (see ParInfo.ident), or None """
+        return next((p for p in self if getattr(p, 'rects', None) and p.ident() == ident), None)
+
+    def identsOnPage(self, pnum):
+        """ What a test can name on a page (page index), to help someone whose name isn't there """
+        return [p.ident() for p, r in self._getRectsPage(pnum) or []]
 
     def findPos(self, pnum, x, y, endx = None, xdv=False, rtl=False):
         """ Given page index (not folio) returns (ParDest, ParRect) covering the given x, y """

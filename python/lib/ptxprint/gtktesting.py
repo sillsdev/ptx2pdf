@@ -69,11 +69,22 @@ _selectableRows = {"tv_picListEdit": _picRows}
 # Pop-up menus made in code: the widget they belong to, and how to make the menu again. Their
 # items are named mi_..., and choosing one is recorded as [owner, "menu", item name].
 _menus = {"tv_picListEdit": lambda view: view.picListView.buildMenu()}
+# Clicks on paragraphs and pictures in the preview are recorded for this widget
+_preview = "bx_previewPDF"
 
 def testsDir(project, cfgid):
     """ Where a project's tests for a config live: <project>/shared/tests/<config> """
     res = os.path.join(project.path, "shared", "tests", cfgid or "Default")
     os.makedirs(res, exist_ok=True)
+    return res
+
+def messageText(view, txt, secondary=None):
+    """ The text of a message PTXprint shows, in a form that is the same each time a test runs,
+        so that a test can check it shows the messages it showed when it was made. """
+    res = str(txt) + (f" ({secondary})" if secondary else "")
+    prj = getattr(view, 'project', None)
+    if prj is not None and getattr(prj, 'path', None):
+        res = res.replace(os.path.dirname(prj.path), "<projects>")
     return res
 
 def testLocation(fname):
@@ -89,11 +100,16 @@ def testLocation(fname):
 # answers are acceptable) is waiting for a person again, so they must forget its answer.
 _replays = []
 _dialogRun = Gtk.Dialog.run
+_running = []       # the dialogs waiting in run() for an answer, innermost last
 
 def _runDialog(dlg, *a, **kw):
     for r in _replays:
         r.responded.discard(dlg)
-    return _dialogRun(dlg, *a, **kw)
+    _running.append(dlg)
+    try:
+        return _dialogRun(dlg, *a, **kw)
+    finally:
+        _running.remove(dlg)
 
 Gtk.Dialog.run = _runDialog
 
@@ -149,12 +165,31 @@ class GtkTester:
                 hook_id = GObject.add_emission_hook(o, k, self.emission_hook, k)
                 self.hook_ids.append((o, k, hook_id))
         self._wrapFileChooser(record=True)
+        self._watchMessages()
+
+    def _watchMessages(self):
+        """ Note each message PTXprint shows while recording, so that a replay can check it shows
+            the same ones: a print that fails only says so in a message. """
+        self.shownmessages = []
+        self.prevDoError = self.view.__dict__.get('doError')    # e.g. a replay's quiet one
+        shown = self.view.doError
+        def doError(txt, *a, **kw):
+            if not self.paused:
+                self.shownmessages.append(messageText(self.view, txt, kw.get('secondary')))
+            return shown(txt, *a, **kw)
+        self.view.doError = doError
 
     def stopRecording(self):
         for obj, signal_name, hook_id in getattr(self, 'hook_ids', []):
             GObject.remove_emission_hook(obj, signal_name, hook_id)
         self.hook_ids = []
         self.view.__dict__.pop('fileChooser', None)
+        if hasattr(self, 'prevDoError'):
+            if self.prevDoError is None:
+                self.view.__dict__.pop('doError', None)
+            else:
+                self.view.doError = self.prevDoError
+            del self.prevDoError
         if getattr(self, 'recordcontrol', None) is not None:
             self.recordcontrol.close()
             self.recordcontrol = None
@@ -215,7 +250,7 @@ class GtkTester:
         if isinstance(w, Gtk.MenuItem):
             return self.menuChosen(w)
         if isinstance(w, Gtk.EventBox):
-            return self.labelClicked(w)
+            return self.previewClicked(w, a[0]) or self.labelClicked(w)
         if self.paused or w.get_toplevel() in getattr(self, 'ownwindows', ()):
             return True
         sigid = a[-1]
@@ -254,9 +289,16 @@ class GtkTester:
         return True
 
     def menuChosen(self, item):
-        """ Choosing from a pop-up menu that _menus can make again. Menus from the builder (and
-            the menus of combo boxes) aren't recorded this way. """
+        """ Choosing from a pop-up menu that _menus can make again, or from the menu that
+            right-clicking in the preview opens. Menus from the builder (and the menus of combo
+            boxes) aren't recorded this way. """
         name = item.get_name()
+        choice = self.view.pdf_viewer.menuChoice(item) if not self.paused else None
+        if choice is not None and choice[0] is not None and Gtk.get_current_event() is not None:
+            e = (_preview, "paramenu", choice[0], *choice[1])
+            self.events.append(e)
+            self.lastevent = e
+            return True
         menu = item.get_parent()
         owner = menu.get_attach_widget() if isinstance(menu, Gtk.Menu) else None
         oname = Gtk.Buildable.get_name(owner) if owner is not None else None
@@ -266,6 +308,25 @@ class GtkTester:
         e = (oname, "menu", name)
         self.events.append(e)
         self.lastevent = e
+        return True
+
+    def previewClicked(self, box, event):
+        """ Clicking a paragraph or picture in the preview while holding down Ctrl, Shift or Alt,
+            which adjusts it: [preview, "paraclick", what was clicked, button, keys]. A right-click
+            without them opens a menu, and what is chosen from it is recorded (see menuChosen).
+            Returns whether this was a click in the preview. """
+        if self.paused or not self.userInitiated(box):
+            return False
+        ident = self.view.pdf_viewer.identAt(box, event)
+        if ident is None:
+            return False
+        mods = "+".join(k for k, m in (("ctrl", Gdk.ModifierType.CONTROL_MASK),
+                    ("shift", Gdk.ModifierType.SHIFT_MASK), ("alt", Gdk.ModifierType.MOD1_MASK))
+                    if event.state & m)
+        if mods:
+            e = (_preview, "paraclick", ident, event.button, mods)
+            self.events.append(e)
+            self.lastevent = e
         return True
 
     def labelClicked(self, box):
@@ -292,6 +353,18 @@ class GtkTester:
         ev.window = box.get_window()
         ev.send_event = True
         self._later(box.emit, "button-release-event", ev)
+        return True
+
+    def _paraclick(self, w, ident, button, mods=""):
+        self._later(self.view.pdf_viewer.clickIdent, ident, button, mods)
+        return True
+
+    def _paramenu(self, w, ident, *names):
+        def doit():
+            if self.view.pdf_viewer.clickIdent(ident, 3) is None:
+                raise ValueError(f"Right-clicking {ident} didn't open a menu")
+            self.view.pdf_viewer.chooseFromMenu(names)
+        self._later(doit)
         return True
 
     def _menu(self, w, name):
@@ -407,7 +480,8 @@ class GtkTester:
             zf.writestr(testdir + "deleted_files.txt", "\n".join(deleted_files))
             info = {"events": self.events,
                     "uilevel": getattr(self, 'uilevel', self.view.uilevel),
-                    "project": project.prjid, "config": cfgid}
+                    "project": project.prjid, "config": cfgid,
+                    "messages": getattr(self, 'shownmessages', [])}
             others = sorted((self.others | set(otherProjects(self.view))) - {project.prjid})
             if others:
                 info["projects"] = others
@@ -527,10 +601,29 @@ class GtkTester:
             if goround:     # come back after the signal has run, even after the last event
                 GLib.idle_add(self.run_action, noclose)
                 return False
+        if self.closeLeftDialogs():
+            GLib.idle_add(self.run_action, noclose)     # finish once their handlers have
+            return False
         self.finishReplay()
         if not noclose:
             self.view.onDestroy(None)
         return False
+
+    def closeLeftDialogs(self):
+        """ A test that ends while a dialog is still waiting for an answer (perhaps because a step
+            failed) would wait for ever: fail it, and close the dialogs so it can finish.
+            Returns whether there were any. """
+        if getattr(self, 'closedLeft', False):
+            return False
+        left = list(reversed(_running))
+        if not left:
+            return False
+        self.closedLeft = True
+        self.errors.append("The test ended with a dialog still waiting for an answer: "
+                           + ", ".join(Gtk.Buildable.get_name(d) or d.get_title() or "?" for d in left))
+        for d in left:
+            d.response(Gtk.ResponseType.DELETE_EVENT)
+        return True
 
     def finishReplay(self):
         """ Take the result the same way recording does: an in memory archive of the UI state,
@@ -677,6 +770,13 @@ class GtkTester:
             items = [i for i in _menus[e[0]](self.view).get_children() if i.get_name() == e[2]] \
                         if e[0] in _menus else []
             return _("Right-click {} and choose {}").format(label, items[0].get_label() if items else e[2])
+        elif e[1] == "paraclick":
+            keys = "+".join(k.capitalize() for k in str(e[4]).split("+")) if len(e) > 4 and e[4] else ""
+            button = {1: _("Left-Click"), 2: _("Middle-Click"), 3: _("Right-Click")}.get(int(e[3]), str(e[3]))
+            return _("In the preview, {} {}").format(f"{keys} + {button}" if keys else button, e[2])
+        elif e[1] == "paramenu":
+            return _("In the preview, right-click {} and choose {}").format(e[2],
+                        " > ".join(n[3:] if n.startswith("mi_") else n for n in e[3:]))
         elif e[1] == "choose":
             return _("In the file chooser, pick {}").format(", ".join(e[2:])) if len(e) > 2 else _("Cancel the file chooser")
         return f"{label}: {' '.join(str(x) for x in e[1:])}"
@@ -693,7 +793,7 @@ class GtkTester:
             Awkward clicks are meant to bring some of these up. """
         self.messages = []
         def doError(txt, threaded=False, secondary=None, **kw):
-            msg = txt + (f" ({secondary})" if secondary else "")
+            msg = messageText(self.view, txt, secondary)
             idx = getattr(self, 'runeventidx', 0)
             self.messages.append((idx - 1, msg))
             print(f"Message at event {idx-1}: {msg}")
@@ -745,8 +845,8 @@ class GtkTester:
             waiting in a dialog it opened, so the events that follow belong to that dialog.
             Once the dialog has answered, wait for its handler to finish. """
         from ptxprint.runjob import isLocked
-        if isLocked():
-            return False        # wait for a print to finish
+        if isLocked() or self.view.pdf_viewer.printPending():
+            return False        # wait for a print to finish, or to start after an adjustment
         se = getattr(self.view, 'styleEditor', None)
         if getattr(se, 'search_timer_id', None) is not None:
             return False        # wait for the style search, which waits for typing to pause
@@ -791,7 +891,15 @@ class GtkTester:
         if isinstance(widget, Gtk.SearchEntry):
             widget.emit("search-changed")       # now, rather than after GTK's own typing delay
         if isinstance(widget, Gtk.Entry):      # spin buttons too
-            # someone typing moves on to something else, and handlers listen for that
+            # someone typing lets go of the last key they typed, and handlers listen for that
+            # (e.g. to check what was typed, and only then let OK be clicked)
+            text = str(val)
+            ev = Gdk.Event.new(Gdk.EventType.KEY_RELEASE)
+            ev.keyval = Gdk.unicode_to_keyval(ord(text[-1])) if text else Gdk.KEY_BackSpace
+            ev.window = widget.get_window()
+            ev.send_event = True
+            widget.emit("key-release-event", ev)
+            # and then moves on to something else, and handlers listen for that too
             ev = Gdk.Event.new(Gdk.EventType.FOCUS_CHANGE)
             ev.window = widget.get_window()
             ev.send_event = True
@@ -812,9 +920,23 @@ class GtkTester:
                 self.errors.append("The replay did not complete")
         else:
             res = self.prepare_diff_report(self.snapshot, self.reference())
+        res['messages'] = self.compare_messages()
         res['errors'] = self.errors
         res['skipped'] = self.skipped
         return res
+
+    def compare_messages(self):
+        """ The messages PTXprint showed that the test didn't expect, and those it didn't show.
+            Tests made before messages were kept don't check them. """
+        expected = (getattr(self, 'runextra', None) or {}).get("messages")
+        if expected is None or not hasattr(self, 'messages'):     # or watched, with real messages
+            return []
+        shown = [m for i, m in self.messages]
+        if shown == expected:
+            return []
+        res = [f"unexpected: {m}" for m in shown if m not in expected]
+        res += [f"not shown: {m}" for m in expected if m not in shown]
+        return res or [f"in another order: {' | '.join(shown)}"]
 
     def saveSnapshot(self, fname):
         if getattr(self, 'snapshot', None) is None:

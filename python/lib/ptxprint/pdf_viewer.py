@@ -1032,6 +1032,8 @@ class PDFContentViewer(PDFFileViewer):
         self.ufCurrIndex = 0
         self.currpref = None
         self.timer_id = None  # Stores the timer reference
+        self.contextMenu = None     # the menu the last right-click opened, and what it was on
+        self.contextTarget = None
         self.last_click_time = 0  # Timestamp of the last right-click
         self.linespacing = float(self.model.get("s_linespacing", "12"))
         self.collisionpages = []
@@ -1891,7 +1893,95 @@ class PDFContentViewer(PDFFileViewer):
             self.lastParRect = r        # which column of the paragraph was clicked
         return p, pnum, a
 
-    def addMenuItem(self, menu, label, fn, *args, sensitivity=None, tooltip=None):
+    # Tests click on paragraphs and pictures as people do, naming them as ParInfo.ident does
+
+    _modifiers = {"ctrl": Gdk.ModifierType.CONTROL_MASK, "shift": Gdk.ModifierType.SHIFT_MASK,
+                  "alt": Gdk.ModifierType.MOD1_MASK}
+
+    def clickIdent(self, ident, button, mods=""):
+        """ Click a paragraph or picture in the preview with the mouse button (1 left, 2 middle,
+            3 right) while holding down the keys in mods (e.g. "ctrl+shift"). Returns the menu the
+            click opened, if it opened one. """
+        if self.parlocs is None:
+            raise ValueError("There is no preview to click in: print first")
+        target = self.parlocs.findIdent(ident)
+        if target is None:
+            raise ValueError(f"The preview has no {ident}")
+        r = target.rects[0]
+        self.show_pdf(r.pagenum)
+        side = 0
+        if self.spread_mode:
+            spread = self.get_spread(self.current_index, self.rtl_mode)
+            side = spread.index(r.pagenum) if r.pagenum in spread else 0
+        box = self.hbox.get_children()[side]
+        state = 0
+        for m in filter(None, mods.lower().split("+")):
+            state |= self._modifiers[m]
+        ev = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+        ev.button = int(button)
+        ev.x = (r.xstart + max(r.xend, r.xstart + 2)) / 2 * self.zoomLevel
+        ev.y = (self.psize[1] - (r.ystart + r.yend) / 2) * self.zoomLevel
+        ev.state = Gdk.ModifierType(state)
+        ev.window = box.get_window()
+        ev.send_event = True
+        ev.time = Gtk.get_current_event_time()
+        found = self.get_parloc(box, ev)[0]
+        if found is not target:
+            others = ", ".join(self.parlocs.identsOnPage(r.pagenum))
+            raise ValueError(f"Clicking the middle of {ident} finds {found.ident() if found else 'nothing'}"
+                             f" (the page has {others})")
+        self.contextMenu = None
+        box.emit("button-release-event", ev)
+        return self.contextMenu
+
+    def chooseFromMenu(self, names):
+        """ Choose from the menu the last click opened, as a test does: names are the item's
+            name (see addMenuItem) and before it the names of the submenus it is in """
+        menu = self.contextMenu
+        if menu is None:
+            raise ValueError("The click didn't open a menu")
+        try:
+            for i, n in enumerate(names):
+                item = next((c for c in menu.get_children() if c.get_name() == n), None)
+                if item is None:
+                    raise ValueError(f"The menu has no {n}: it has " + ", ".join(c.get_name()
+                                     for c in menu.get_children() if c.get_name().startswith("mi_")))
+                if not item.is_sensitive():
+                    raise ValueError(f"{n} in the menu is greyed out")
+                if i < len(names) - 1:
+                    menu = item.get_submenu()
+                    if menu is None:
+                        raise ValueError(f"{n} in the menu has no submenu")
+        finally:
+            self.contextMenu.popdown()
+        item.activate()
+
+    def menuChoice(self, item):
+        """ What a test records for choosing this item from the menu a click opened: (what was
+            clicked, [names of the submenus and the item]), or None if it is from another menu """
+        names = [item.get_name()]
+        menu = item.get_parent()
+        while menu is not getattr(self, 'contextMenu', None):
+            owner = menu.get_attach_widget() if isinstance(menu, Gtk.Menu) else None
+            if owner is None:
+                return None
+            names.insert(0, owner.get_name())
+            menu = owner.get_parent()
+        return (self.contextTarget, names)
+
+    def identAt(self, widget, event):
+        """ What a test calls the paragraph or picture a click in the preview is on, or None """
+        if widget not in self.hbox.get_children():
+            return None
+        target = self.get_parloc(widget, event)[0]
+        return target.ident() if hasattr(target, 'ident') else None
+
+    def printPending(self):
+        """ Whether an adjustment has asked for the PDF to be updated, and it hasn't started yet """
+        return self.timer_id is not None
+
+    def addMenuItem(self, menu, label, fn, *args, sensitivity=None, tooltip=None, name=None):
+        """ name gives the item a fixed name (mi_<name>), so that tests can choose it """
         if label is None:
             res = Gtk.SeparatorMenuItem.new()
         else:
@@ -1908,6 +1998,8 @@ class PDFContentViewer(PDFFileViewer):
                 res.set_tooltip_text(tooltip)
             if fn is not None:
                 res.connect("activate", fn, *args)
+            if name is not None:
+                res.set_name("mi_" + name)
         
         res.show_all() # Important to show the child label
         menu.append(res)
@@ -1941,8 +2033,10 @@ class PDFContentViewer(PDFFileViewer):
         self.model.onOK(None)
         self.updatePageNavigation()
 
-    def addSubMenuItem(self, parent_menu, label, submenu):
+    def addSubMenuItem(self, parent_menu, label, submenu, name=None):
         menu_item = Gtk.MenuItem(label=label)  # Create a menu item for the parent
+        if name is not None:
+            menu_item.set_name("mi_" + name)
         menu_item.set_submenu(submenu)         # Attach the submenu
         parent_menu.append(menu_item)          # Add the parent item to the parent menu
         menu_item.show()                       # Show the parent item
@@ -2045,18 +2139,18 @@ class PDFContentViewer(PDFFileViewer):
         
         # Shrink Line: Blue bar
         self.addMenuItem(menu, f"{b_bar}    {shrinkText} ({parref.lines - 1})", 
-                         self.on_shrink_paragraph, info, parref,
+                         self.on_shrink_paragraph, info, parref, name="shrinkline",
                          tooltip=None if not shortcuts else "Shift + Left-Click")
         
         # Shrink Text: Red bar
         self.addMenuItem(menu, f"{r_bar}    {mstr['st']} ({shrLim}%)", 
-                         self.on_shrink_text, info, parref, 
+                         self.on_shrink_text, info, parref, name="st",
                          sensitivity=not info[1] <= shrLim,
                          tooltip=None if not shortcuts else "Ctrl + Left-Click")
                          
         # Shrink Both: Uses Blue and Red bar
         self.addMenuItem(menu, f"{b_bar}{r_bar} {mstr['shrnkboth']} ({int(info[1])+self.shrinkBothAmt(info)}%)", 
-                         self.on_shrink_both, info, parref, 
+                         self.on_shrink_both, info, parref, name="shrnkboth",
                          sensitivity=not info[1] <= shrLim,
                          tooltip=None if not shortcuts else "Ctrl + Shift + Left-Click")
         
@@ -2064,19 +2158,19 @@ class PDFContentViewer(PDFFileViewer):
         
         # Expand Line: Blue bar
         self.addMenuItem(menu, f"{mstr['plusline']} ({parref.lines + 1})       {b_bar}", 
-                         self.on_expand_paragraph, info, parref,
+                         self.on_expand_paragraph, info, parref, name="plusline",
                          tooltip=None if not shortcuts else "Shift + Right-Click")
         
         # Expand Text: Red bar
         expLim = min(self.expandLimit, info[1]+self.expandStep)
         self.addMenuItem(menu, f"{mstr['et']} ({expLim}%)       {r_bar}", 
-                         self.on_expand_text, info, parref, 
+                         self.on_expand_text, info, parref, name="et",
                          sensitivity=not info[1] >= expLim,
                          tooltip=None if not shortcuts else "Ctrl + Right-Click")
 
         # Expand Both: Uses Blue and Red bar
         self.addMenuItem(menu, f"{mstr['expandboth']} ({int(info[1])+self.expandBothAmt(info)}%)   {r_bar}{b_bar}", 
-                         self.on_expand_both, info, parref, 
+                         self.on_expand_both, info, parref, name="expandboth",
                          sensitivity=not info[1] >= expLim,
                          tooltip=None if not shortcuts else "Ctrl + Shift + Right-Click")
 
@@ -2125,14 +2219,14 @@ class PDFContentViewer(PDFFileViewer):
                     self.addMenuItem(menu, None, None)
                     classicMenu = Gtk.Menu()
                     self.addClassicItems(classicMenu, info, parref, b_bar, r_bar, shortcuts=False)
-                    self.addSubMenuItem(menu, mstr['classic'], classicMenu)
+                    self.addSubMenuItem(menu, mstr['classic'], classicMenu, name='classic')
                 else:
                     self.addClassicItems(menu, info, parref, b_bar, r_bar)
                     if isinstance(parref, ParInfo) and re.search(r'[.:]', parref.ref):
                         # Point the way to the smart choices, which need the paragraphs measured first
                         self.addMenuItem(menu, None, None)
                         self.addMenuItem(menu, "<i>" + GLib.markup_escape_text(mstr['smartfirst']) + "</i>",
-                                self.on_openAnalyse, tooltip=_("Smart Shrink and Grow make the least noticeable change "
+                                self.on_openAnalyse, name='smartfirst', tooltip=_("Smart Shrink and Grow make the least noticeable change "
                                 "to a paragraph, column or page. They need the paragraphs measured first, and again "
                                 "after the text or layout changes.\n\nThis opens Analyse & Fill: click Analyse Only."))
                 self.addMenuItem(menu, None, None)
@@ -2160,16 +2254,19 @@ class PDFContentViewer(PDFFileViewer):
 
                         if entryType == "trigger" and content:
                             item = Gtk.CheckMenuItem.new_with_label(menuText)
+                            item.set_name(f"mi_{entryId}")
                             item.set_active(content in enabled)
                             item.connect("toggled", self.onUITriggerToggled, content, entryId, info, parref, pgindx)
                         else:
                             item = Gtk.MenuItem.new_with_label(menuText)
+                            item.set_name(f"mi_{entryId}")
                             item.connect("activate", self.onUIExtensionSelected, entryType, content, entryId, info, parref, pgindx)
                         if tooltip:
                             item.set_tooltip_text(tooltip)
                         customMenu.append(item)
                         item.show()
                     customItem = Gtk.MenuItem()
+                    customItem.set_name("mi_custom")
                     customLabel = Gtk.Label()
                     customLabel.set_use_markup(True)
                     customLabel.set_xalign(0)
@@ -2189,6 +2286,7 @@ class PDFContentViewer(PDFFileViewer):
                             k == "col" and not self.model.get('c_doublecolumn', True):
                         continue
                     menu_item = Gtk.MenuItem(label=f"{v}")
+                    menu_item.set_name("mi_" + k)
                     if k == 'para':
                         menu_item.set_tooltip_text("Ctrl/Shift + Middle-Click")
                     menu_item.connect("activate", self.on_reset_adjustments, k, pgindx, info, parref)
@@ -2198,21 +2296,21 @@ class PDFContentViewer(PDFFileViewer):
                                             or k == 'doc')
                     menu_item.show()
                     reset_menu.append(menu_item)
-                self.addSubMenuItem(menu, mstr['rp'], reset_menu)
+                self.addSubMenuItem(menu, mstr['rp'], reset_menu, name='rp')
                 self.addMenuItem(menu, None, None)
 
                 if not self.model.get("c_diglot", False) and parref.mrk in ("p", "m"): # add other conditions like: odd page, 1st rect on page, etc
-                    self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref) # , sensitivity=False)
+                    self.addMenuItem(menu, mstr['sstm'], self.speed_slice, info, parref, name='sstm') # , sensitivity=False)
 
                 if parref and parref.mrk is not None:
-                    self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None))
+                    self.addMenuItem(menu, f"{mstr['es']} \\{parref.mrk}", self.edit_style, (parref.mrk, pref if pref != "L" else None), name='es')
 
                 if sys.platform.startswith("win"): # and ALSO (later) check for valid ref
-                    self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref)
+                    self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, ref, name='j2pt')
 
-                self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen)
+                self.addMenuItem(menu, mstr['z2f']+" (Ctrl + F)", self.menuFitToScreen, name='z2f')
                 if not self.model.get("c_updatePDF"):
-                    self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
+                    self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf, name='update')
 
         elif parref is not None and isinstance(parref, FigInfo):
             showmenu = True
@@ -2246,30 +2344,32 @@ class PDFContentViewer(PDFFileViewer):
                     curr_vpos = 'c'
                     curr_hpos = 'c'
                 if showmenu:
-                    self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, (pic, parref))
+                    self.addMenuItem(menu, mstr['cnganc'], self.on_edit_anchor, (pic, parref), name='cnganc')
 
                 frame_menu = Gtk.Menu()
                 self.clear_menu(frame_menu)
-                for frame_opt in frame.values():
+                for k, frame_opt in frame.items():
                     menu_item = Gtk.MenuItem(label=f"● {frame_opt}" if frame_opt == frame[curr_frame] else f" {frame_opt}")
+                    menu_item.set_name("mi_" + k)
                     if frame_opt == frame[curr_frame]:
                         menu_item.set_sensitive(False)
                     menu_item.connect("activate", self.on_set_image_frame, (pic, frame_opt))
                     menu_item.show()
                     frame_menu.append(menu_item)
-                self.addSubMenuItem(menu, mstr['frmsz'], frame_menu)
+                self.addSubMenuItem(menu, mstr['frmsz'], frame_menu, name='frmsz')
 
                 vpos_menu = Gtk.Menu()
                 self.clear_menu(vpos_menu)
                 for k, vpos_opt in vpos.items():
                     if k in dsplyOpts[pic['size']][0]:
                         menu_item = Gtk.MenuItem(label=f"● {vpos_opt}" if vpos_opt == vpos[curr_vpos] else f" {vpos_opt}")
+                        menu_item.set_name("mi_" + k)
                         if vpos_opt == vpos[curr_vpos]:
                             menu_item.set_sensitive(False)
                         menu_item.connect("activate", self.on_set_image_vpos, (pic, vpos_opt, curr_vpos, curr_hpos))
                         menu_item.show()
                         vpos_menu.append(menu_item)
-                self.addSubMenuItem(menu, mstr['vpos'], vpos_menu)
+                self.addSubMenuItem(menu, mstr['vpos'], vpos_menu, name='vpos')
 
                 if curr_frame != 'span':
                     hpos_menu = Gtk.Menu()
@@ -2278,40 +2378,44 @@ class PDFContentViewer(PDFFileViewer):
                     for k, hpos_opt in hpos.items():
                         if k in dsplyOpts[pic['size']][1]:
                             menu_item = Gtk.MenuItem(label=f"● {hpos_opt}" if hpos_opt == hpos[curr_hpos] else f" {hpos_opt}")
+                            menu_item.set_name("mi_" + k)
                             if hpos_opt == hpos[curr_hpos]:
                                 menu_item.set_sensitive(False)
                             menu_item.connect("activate", self.on_set_image_hpos, (pic, hpos_opt, curr_vpos, curr_hpos))
                             menu_item.show()
                             hpos_menu.append(menu_item)
-                    self.addSubMenuItem(menu, mstr['hpos'], hpos_menu)
+                    self.addSubMenuItem(menu, mstr['hpos'], hpos_menu, name='hpos')
 
                 mirror_menu = Gtk.Menu()
                 self.clear_menu(mirror_menu)
                 curr_mirror = pic.get('mirror', '')
-                for mirror_opt in mirror.values():
+                for k, mirror_opt in mirror.items():
                     menu_item = Gtk.MenuItem(label=f"● {mirror_opt}" if mirror_opt == mirror[curr_mirror] else f" {mirror_opt}")
+                    menu_item.set_name("mi_" + (k or "never"))
                     if mirror_opt == mirror[curr_mirror]:
                         menu_item.set_sensitive(False) 
                     menu_item.connect("activate", self.on_set_image_mirror, (pic, mirror_opt))
                     menu_item.show()
                     mirror_menu.append(menu_item)
-                self.addSubMenuItem(menu, mstr['mirror'], mirror_menu)
+                self.addSubMenuItem(menu, mstr['mirror'], mirror_menu, name='mirror')
 
                 self.addMenuItem(menu, None, None)
-                self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref))
-                self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref))
+                self.addMenuItem(menu, mstr['shrinkpic'], self.on_shrink_image, (pic, parref), name='shrinkpic')
+                self.addMenuItem(menu, mstr['growpic'], self.on_grow_image, (pic, parref), name='growpic')
                 self.addMenuItem(menu, None, None)
 
-                self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic)
-                self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style)
+                self.addMenuItem(menu, mstr['shwdtl'], self.on_image_show_details, pic, name='shwdtl')
+                self.addMenuItem(menu, mstr['ecs']+" \\fig", self.edit_fig_style, name='ecs')
             if showmenu:
                 if sys.platform.startswith("win"):
                     self.addMenuItem(menu, None, None)
                     self.addMenuItem(menu, mstr['j2pt'], self.on_broadcast_ref, imgref)
                 if not self.model.get("c_updatePDF"):
                     self.addMenuItem(menu, None, None)
-                    self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf)
+                    self.addMenuItem(menu, "Print (Update PDF)", self.on_update_pdf, name='update')
         if len(menu):
+            self.contextMenu = menu
+            self.contextTarget = parref.ident() if hasattr(parref, 'ident') else None
             menu.popup(None, None, None, None, event.button, event.time)
 
     def on_edit_anchor(self, widget, data):
@@ -2600,9 +2704,11 @@ class PDFContentViewer(PDFFileViewer):
                 'col':  blk("▌", blue) + blk("▌", grey),
                 'page': blk("▌", blue) + blk("▌", blue)}[scope]
 
-    def addSmartMenuItem(self, menu, icon, text, fn, target, iconRight=False, tooltip=None):
+    def addSmartMenuItem(self, menu, icon, text, fn, target, iconRight=False, tooltip=None, name=None):
         """ A menu item with its icon on the left, or with the text and icon at the right """
         item = Gtk.MenuItem()
+        if name is not None:
+            item.set_name("mi_" + name)
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         lbl = Gtk.Label(label=text)
         ilbl = Gtk.Label()
@@ -2650,7 +2756,8 @@ class PDFContentViewer(PDFFileViewer):
                         detail = f"{p.ref[o:].replace('.', ':')} {detail}"
                     text += f"  ({detail})"
                 self.addSmartMenuItem(menu, self.smartIcon(scope), text, self.on_smart_adjust, target,
-                                      iconRight=direction > 0, tooltip=f"{mod} + {button}")
+                                      iconRight=direction > 0, tooltip=f"{mod} + {button}",
+                                      name='sm' + dirkey + scope)
             if direction < 0:
                 self.addMenuItem(menu, None, None)
 
