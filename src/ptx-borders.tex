@@ -98,12 +98,12 @@
   \fi
 } 
 
-\newdimen\minblackline \minblackline=0.25pt
-\newdimen\mincolourline \mincolourline=0.5pt
-\newdimen\minwhiteline \minwhiteline=0.5pt
+\globdimen\minblackline \minblackline=0.25pt
+\globdimen\mincolourline \mincolourline=0.5pt
+\globdimen\minwhiteline \minwhiteline=0.5pt
 \def\OverThinRule{warn}
 \def\OverThinCurve{warn}
-\newdimen\mingreyline 
+\globdimen\mingreyline 
 \def\thinlinecheck#1#2#3#4{%
   \ifx\thinlinest@ndard\tls@nochk\else\ifdim #1#2 =0pt\else 
     \ifdim #1#2 < \csname min\thinlinest@ndard line\endcsname\relax

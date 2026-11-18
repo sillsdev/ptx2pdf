@@ -47,5 +47,5 @@ TeX id|Description|Calculation|Notes
 \b@dr@bot@edge|Outer edge of border or box, relative to text|OUT( `\border@bpadding + \b@drwidth pt`)  `+\fb@bpadding`
 \b@x@lunpad|Left border relative to box|OUT(`-\b@drwidth pt -\border@lpadding`)
 \b@x@runpad|Right border relative to box|BDR(`-\b@drwidth pt -\border@rpadding`)
-\b@xintadj|Internal adjustment|` \b@dr@top@edge - \b@dr@top@pad`|There was a time when boxintadj occured between the border and the text, and boxextadj occurred outside the border. This no longer seems  true.
-\b@xextadj|Adjust above and below the box so that the top of the box is at the page top|` \ifdim\border@bpadding< -\b@drwidth pt` BDR{bottom}(`-\b@drwidth pt  -\border@bpadding`) `\else 0pt \fi` | Surely this should be looking at BDR{top} and tpadding?
+\b@xintadj|Internal adjustment|` \b@dr@top@edge - \b@dr@top@pad`|There was a time when boxintadj occurred between the border and the text, and boxextadj occurred outside the border. This no longer seems  true.
+\b@xextadj|Adjust above and below the box so that the top of the box is at the page top or gridding is preserved|` \ifdim\border@bpadding< -\b@drwidth pt` BDR{bottom}(`-\b@drwidth pt  -\border@bpadding`) `\else 0pt \fi` | Surely this should be looking at BDR{top} and tpadding?
