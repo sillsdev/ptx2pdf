@@ -1871,7 +1871,7 @@ class PTXFiller:
         mrk = self.parlocs[pind].mrk
         res = self.justified.get(mrk)
         if res is None:
-            just = self.view.styleEditor.getval(mrk, 'justification', None)
+            just = self.view.styleEditor.getval(mrk, 'justification', None, includebase=True)
             res = just is None or just.lower() == 'justified'
             self.justified[mrk] = res
         return res
