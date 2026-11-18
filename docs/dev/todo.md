@@ -121,6 +121,31 @@ end; remove an item when it is fixed.
   recorded as if the user did it. Replays set the same values, so tests pass, but tutorials show
   them as steps.
 
+## Font review (do together: these change which fonts get used)
+
+Collected for one breaking change to font handling, rather than piecemeal.
+
+* **Bold/italic via `/B`, `/I` picks the wrong face in big families.** PTXprint asks XeTeX for
+  `Family/B` etc. (`_fontstylemap` in `font.py` `_getTeXComponents`). XeTeX ignores style
+  linking: it builds a family from name ID 16 when present (`XeTeXFontMgr_FC.cpp` 117-160), and
+  `/B` aims for weight + (max - min)/2 + 1 (`XeTeXFontMgr.cpp` 336), taking the nearest face.
+  Lato 3.100 (Hairline 100 .. Black 900): 400 + 401 = 801 -> **Lato Heavy**, not Bold. (Debian's
+  Lato 2.015 has Hairline at 250, so it happens to land on Bold.) An archive carries only the
+  RIBBI files, so the same config gives Bold from an archive and Heavy on the user's machine.
+  Proposed: reference the real face by its full name (name ID 4, e.g. `"Lato Bold"`) whenever
+  the font cache has it; use `/B`, `/I` only to synthesise a missing face.
+* **`font.py` `f.iscore = True`** (added 2021, 40b32d330, unexplained) forces every font to be
+  referenced by name, making the file-path branch of `_getTeXComponents` dead. Removing it
+  (tested Nov 2026, patches/font-path-refs.patch) breaks every diglot/polyglot: the secondary
+  glot's fonts are defined after `[` is made active, so `"[path]"` becomes `""`. Writing
+  `\string[` fixes that (suite back to baseline); system fonts and `-Z` archives then print the
+  same. No case found where paths change the output yet; untested on Windows (`C:\`, spaces,
+  non-ASCII paths). Decide: keep names (delete the dead branch) or go to paths for non-core fonts
+  (pins the exact file when a project font shares a name with an installed one).
+* The `-B`/`-P` font choice also depends on `c_usesysfonts` (`-Z` turns it off): with system fonts
+  a name is resolved by fontconfig across everything installed, so duplicate installs (e.g.
+  `~/.fonts` and `/usr/share/fonts` copies of one family at different versions) affect output.
+
 ## Bug hunt (Nov 2026)
 
 Found by reading the code (with the todo-*.patch series applied), plus small headless tests
@@ -300,7 +325,7 @@ not looked at yet.
   swapped twice, translated help links unused.
 * **[FIXED patches/bugs-gui.patch]** `ipcserver.py:37-81` short reads not handled, missing 'verb' → KeyError, closed connections
   kept, magic never checked.
-* **[FIXED patches/bugs-gui.patch (the GLib critical); OPEN: auto-closing errors after 30s unread looks deliberate — your call]** `gtkutils.py:263-268` doError: `source_remove` on an already-removed timer (GLib critical);
+* **[FIXED patches/bugs-gui.patch (the GLib critical); NOT A BUG: auto-closing errors after 30s is kept, by your decision]** `gtkutils.py:263-268` doError: `source_remove` on an already-removed timer (GLib critical);
   error dialogs close unread after 30s.
 * **[FIXED patches/bugs-gui.patch]** `picselect.py` ImageSet (moved out of gtkview): `Pango`, `urllib`, `rmtree` not imported,
   `self.project`/`onGetPicturesClicked`/`onHideStatusMsgClicked` belong to `self.view`; the
@@ -705,3 +730,82 @@ Faults octopdf and veraPDF found, with the same status tags. The settings zip st
 * **Recording preview clicks is untested with a real mouse.** Replays and `mkguitest.py` drive the
   new `paraclick`/`paramenu` events; recording them by hand (`-C`) goes through
   `GtkTester.previewClicked`/`menuChosen` and hasn't been tried.
+
+## Notes and References tests (Nov 2026)
+
+* **37 references in `xrefs/tsk.xml` don't parse.** Printing anything with the TSK list failed
+  ("Cannot parse reference '8_ 16'"), since the whole list is read at once. `xrefs.py` now leaves
+  out just the bad part of an entry (with a warning) instead. The data still needs mending from
+  the TSK source, as I couldn't tell what was meant: chapter/verse mangled into `8_ 16`,
+  `NUM; 7_ 11`, `LEV 11; _ 3` (12 entries, e.g. GEN 8:14, EXO 12:34, NUM 1:42), backwards ranges
+  such as `HEB 9:21-15`, `MAT 13:54-4`, `PSA 33:16-10` (22, e.g. LEV 4:7, MRK 6:1, 2CH 25:8), and
+  a stray `SIZE=` (GEN 31:19, JDG 18:30, 1CH 19:11). The warnings list them all; they show once,
+  when the list is first read into the cache.
+* **usfmtc: `RefList(" MAT 28:2-6")` fails** ("Cannot parse reference '-6'"); a leading space
+  breaks the parse. `lenientRefList` strips pieces to get round it.
+* **GUI tests share the user's `~/.cache/ptxprint`.** A parsed xref list cached by one run is used
+  by the next, even with different code (the key is the file's mtime and `DataVersion`). It hid
+  the TSK bug from a test run once. Tests could point `XDG_CACHE_HOME` at a temporary directory.
+* **A Windows picture folder is saved as relative on Linux.** A config made on Windows with
+  `customfigfolder = C:/WSG/local/figures` is saved on Linux as `${prjdir}/C:/WSG/local/figures`,
+  as `os.path.isabs` doesn't know drive letters there; aArpBT had even got to
+  `${prjdir}/${prjdir}/figures`. The test configs no longer have such folders (only the two
+  WSGlatin Pics configs use one: `${prjdir}/figures`), but users moving configs between Windows
+  and Linux will still meet it. The same goes for the other paths in `ViewModel._attributes`.
+
+## Forum-driven error messages (Nov 2026)
+
+From a read of the support.bible PTXprint forum (Nov 2024 – Nov 2026): cases where the user's own
+data or settings caused the failure and the message didn't help them. Item 1 (unknown markers) is
+done: patches/unknown-markers-warning.patch.
+
+* **[OPEN] Empty book / glossary filtered to nothing → "! File ended while scanning use of \@nxxt".**
+  Forum 13436: GLO came out as just `\id GLO` (renderings not linked, so `filterGlossary` kept
+  nothing); probably also 14645. The only hint is "Try turning off various settings on the Advanced
+  tab" (`runjob.py:62`). Fixes: in `filterGlossary` (`texmodel.py`) warn when `found_glosses` is empty
+  (no `\w` words in the selected books, so the glossary will be empty: turn off filtering or link
+  the words); add an `_errmsghelp` entry for `\@nxxt` ("a book ended unexpectedly, check View+Edit
+  for an empty or truncated book"); better, warn or skip any book with nothing after `\id` before TeX runs.
+* **[OPEN] Variable fonts: warn when chosen, not after a failed run.** Forum 15743 (variable
+  NotoSerif). PTXprint uses only the default instance, so bold/italic/weights don't vary and some
+  fail outright. Today only `runjob.py:1016` catches it, and only for the xdvipdfmx line
+  `Invalid font: -1 (0)`. `TTFont.readfont` has the table directory, so `'fvar' in self.dict` is the
+  test; warn in `onFontChanged` (`view.py`) and suggest installing the static faces.
+* **[OPEN] Font name mismatches.** Forum 13472: the config asks for `"SolaimanLipi Normal"` but the
+  font's full name is `"SolaimanLipi"`, giving "Metric (TFM) file or installed font not found". A
+  check before printing that every body and style font is in the font cache, naming the nearest
+  match, would answer this.
+* **[OPEN] "! Font" message blames the user for PTXprint's own font.** Forum 15633 (unresolved):
+  `\idf@nt="Source Code Pro"` (`ptx-cropmarks.tex:38`) wasn't loadable. `parseLogLines`
+  (`runjob.py` "! Font" branch) looked the font up in the styles, found `zpmkr`, and told the user to
+  fix that style; after they changed it, it said "specified in Fonts+Scripts was not found". Both wrong.
+  When the font is one of PTXprint's own (Source Code Pro, `\idf@nt`, `\VisTracefont`, trigger fonts)
+  say it's an installation/font cache problem (Tidy Up, refresh font cache, reinstall).
+  Also: `! Font \tenmi=cmmi10` / `cmsy10` comes from a plain TeX command such as `\t` in the text,
+  not a missing font; give that its own hint.
+* **[OPEN] A directory opened as a book file → PermissionError.** Forums 15062, 15068:
+  `PermissionError: [Errno 13] Permission denied: '...\Tangkhul\..\Tavua'` from
+  `piclist.read_sfm` → `universalopen`. `getBookSrcPath` (`view.py`) tests `os.path.exists`, which is
+  true for a directory; on Windows opening a directory gives exactly this error. Use `os.path.isfile`,
+  and catch `OSError` in `read_sfm` with a message naming the file. How the name `..\Tavua` arose is
+  not known (the user fixed it by deleting the non-USFM files from the project folder).
+* **[OPEN] Parser-error dialog should say what to do.** Forum 14801:
+  `Attrib marker 'va' found after 'p' but may only follow 'v'`. The user thought changes.txt couldn't
+  help because the error appears first. `_makeUSFM` (`texmodel.py`) should say whether printing
+  continues, and that rules under `sections("initial")` in changes.txt run before parsing.
+* **[OPEN, minor] Coloured styles with "Enable Colored Text" off.** Forum 15221: red `\wj` from
+  Paratext/custom.sty didn't print. The style editor turns the option on when a colour is set
+  (`gtkview.py:4631`), but not for colours that come from the stylesheets. Hint before printing.
+* **[OPEN, minor] Stray `\fig*` in the front matter.** Forum 13436 (second error): "File ended while
+  scanning use of \ptx@fig". Books are parsed and this is reported; the FRT path isn't parsed the same
+  way. Also the unknown-marker check (item 1) doesn't cover FRT or module (XX?) books.
+* **[OPEN, minor] Unknown-marker check misses `sections("final")`.** It runs after the default
+  changes; rules in the final section run later, so markers they fix are still reported.
+* **[OPEN, minor] Anchor Ref tooltip for modules.** Forum 14827: pictures in a module didn't print with
+  the generated anchor `XXB p001=6`; a scripture reference (`XXB LUK1.9`) worked. The tooltip doesn't
+  explain module anchors.
+* **[OPEN, minor] `AdjLists/<book>-<cfg>.changes.txt` looks like corruption.** Forum 13593: users
+  find the Stretch/Shrink files and don't know what made them.
+* **[OPEN, usfmtc] An unknown tag stays open.** `USFMParser.unknown()` adds a bare `ms` node that seems
+  to become the parent, so the next unknown is reported as `Unknown tag 'polyglotcolumn' in
+  'zcopyright'`. Output text looked right in a test; the tree shape may not be.

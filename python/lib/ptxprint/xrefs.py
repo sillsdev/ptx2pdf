@@ -202,6 +202,29 @@ class StandardXrefs(XrefFileXrefs):
         return results
 
 
+def lenientRefList(text, where, **kw):
+    """ The references in a cross-reference list entry, leaving out any part that isn't a
+        reference, so that one mistake in a long list doesn't stop every print that uses it. """
+    try:
+        return RefList(text, strict=False, **kw)
+    except (SyntaxError, ValueError):
+        pass
+    res = RefList()
+    context = None
+    for piece in text.split(";"):
+        piece = piece.strip()       # RefList can't parse a leading space
+        if not piece:
+            continue
+        try:
+            refs = RefList(piece, context=context, strict=False, **kw)
+        except (SyntaxError, ValueError) as e:
+            logger.warning(f"Cross-references for {where}: leaving out '{piece}' from '{text}': {e}")
+            continue
+        if len(refs):
+            res.extend(refs)
+            context = refs[-1].last
+    return res
+
 class RefGroup(list):
     pass
 
@@ -216,15 +239,18 @@ class XMLXrefs(BaseXrefs):
         self.xmldat = cachedData(xrfile, self.readxml)
         self.ptsettings = ptsettings
 
-    def _unpackxml(self, xr):
+    def _unpackxml(self, xr, where):
         a = []
         for e in xr:
             st = e.get('strongs', None)
             if e.tag == "ref" and e.text is not None:
-                r = RefList(e.text, marks=("+", "\u203A"), strict=False)
-                a.append((st, e.get('style', None), r))
+                r = lenientRefList(e.text, where, marks=("+", "\u203A"))
+                if len(r):
+                    a.append((st, e.get('style', None), r))
             elif e.tag == "refgroup":
-                a.append((st, None, RefGroup(self._unpackxml(e))))
+                g = RefGroup(self._unpackxml(e, where))
+                if len(g):
+                    a.append((st, None, g))
         return a
 
     def simplify(self, groups):
@@ -242,7 +268,7 @@ class XMLXrefs(BaseXrefs):
         xmldat = {}
         for xr in doc.findall('.//xref'):
             k = RefList(xr.get('ref'))[0]
-            a = self._unpackxml(xr)
+            a = self._unpackxml(xr, xr.get('ref'))
             if len(a):
                 xmldat.setdefault(k.first.book, {})[k.first] = self.simplify(a)
         return xmldat
