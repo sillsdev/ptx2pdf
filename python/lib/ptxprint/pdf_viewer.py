@@ -2781,29 +2781,40 @@ class PDFContentViewer(PDFFileViewer):
             # A paragraph with no number is paragraph 1, as when an adjustment is added (see getinfo)
             return (p.ref, getattr(p, 'parnum', 0) or 1)
 
-        refs2del = []
+        firstpage = pgindx
+        paras = []
         if scope == 'para':
-            refs2del.append(adjKey(parref))
+            paras.append(parref)
         elif scope == 'col':
-            for p, r in self.parlocs.getParasByColumnOrParref(parref=parref):
-                refs2del.append(adjKey(p))
-        elif scope in ('page', 'doc'):
-            # compare chapter, verse, paragraph as numbers: as strings MRK10.1 < MRK9.38
-            def pos(p):
-                k = refKey(p.ref)
-                return (k[1], k[2], getattr(p, 'parnum', 0) or 1)
-            start = pos(parref)
-            for p, r in self.parlocs.getParas(pgindx, inclafter = scope=='doc'):
-                if scope != "doc" or (p.book() == parref.book() and pos(p) >= start):
-                    refs2del.append(adjKey(p))
+            paras = [p for p, r in self.parlocs.getParasByColumnOrParref(parref=parref)]
+        elif scope == 'page':
+            paras = [p for p, r in self.parlocs.getParas(pgindx)]
+        elif scope == 'doc':
+            # From the clicked paragraph to the end of its book (and side, in a diglot), in document
+            # order. Refs can't be compared: the introduction (JOL0.1, JOLk.word:) has no verse order.
+            target = adjKey(parref)
+            started = False
+            for p, r in self.parlocs.getParas(pgindx, inclafter=True):
+                if not started:
+                    started = p is parref or (adjKey(p) == target and p.book() == parref.book())
+                if started and p.book() == parref.book():
+                    paras.append(p)
+            if not started:
+                paras = [parref]
         elif scope == 'sprd':
-            for pg in self.get_spread(pgindx):
-                for p, r in self.parlocs.getParas(pg):
-                    refs2del.append(adjKey(p))
-        
+            spread = self.get_spread(pgindx)
+            firstpage = min(spread) if spread else pgindx
+            for pg in spread:
+                paras.extend(p for p, r in self.parlocs.getParas(pg))
+
+        # Leave alone a paragraph carried over from an earlier page: changing it would change that page
+        if scope in ('col', 'page', 'sprd') and len(paras) > 1:
+            rects = getattr(paras[0], 'rects', None)
+            if rects and rects[0].pagenum < firstpage:
+                paras = paras[1:]
+
         # Remove duplicates while preserving order
-        refs2del = list(dict.fromkeys(refs2del)) 
-        refs2del = refs2del[1:] if pgindx > 1 and len(refs2del) > 1 else refs2del
+        refs2del = list(dict.fromkeys(adjKey(p) for p in paras))
 
         # x = '\n'.join(map(str, refs2del))
         # print(f"\n\nDeleting Adjustments for:\n{x}\n")

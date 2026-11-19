@@ -131,8 +131,11 @@ class ParInfo:
                 refSort(self.ref), getattr(self, 'parnum', 0))
 
     def book(self):
-        res = re.sub(r"^(.*?\D)\s*\d.*$", r"\1", self.ref)
-        return res
+        """ The book code and any diglot letter: JOL1.2 -> JOL, JOLR1.2 -> JOLR, and for the
+            introduction JOL0.1 and JOLk.word: -> JOL (a keyword has no digit to stop at) """
+        if (m := re.match(r"^(\d\D\D|\D{3})([A-Z]?)(?=\s*(?:\d|k\.))", self.ref)):
+            return m.group(1) + m.group(2)
+        return re.sub(r"^(.*?\D)\s*\d.*$", r"\1", self.ref)
 
 
 @dataclass
