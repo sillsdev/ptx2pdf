@@ -905,8 +905,9 @@ class TexModel:
         cmyk = fmt in ('CMYK', 'Transparent', 'Spot')
         if os.path.exists(infpath):
             fcontent = []
+            srclines = []       # the line in infpath each line of the output comes from
             with open(infpath, encoding="utf-8") as inf:
-                for l in inf.readlines():
+                for i, l in enumerate(inf.readlines(), 1):
                     l = runChanges(self.changes.get('periph', self.changes.get('default', [])), "FRT", l)
                     if re.match(r"^\s*\\rem\s", l.lower()):
                         continue
@@ -917,9 +918,11 @@ class TexModel:
                                      + '.jpg" copy="None" ' + m.group(2)+ r'\fig*', l)
                     l = re.sub(r'(\\fig[ |].*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
                     fcontent.append(l.rstrip())
+                    srclines.extend([i] * (fcontent[-1].count("\n") + 1))
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
                 logger.log(7, "\n".join(fcontent))
+            self._checkFrontMatter("\n".join(fcontent), srclines)
 
     def addInt(self, outfname):
         intfile = self.printer.getBookSrcPath('INT')
@@ -1240,19 +1243,38 @@ class TexModel:
         syntaxErrors = []
         doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar, informat="usfm")
         doc.xml.canonicalise(version="3.1")
-        if doc.xml.errors:      # (msg, pos, ref)
-            dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
-            # pos.l counts from 0; unknown markers are reported separately (_reportUnknownMarkers)
-            errors = "\n".join([_("{} (line {}): {}").format(str(ref).rstrip(":"), pos.l + 1, msg)
-                                for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
-            if len(errors):
-                logger.debug(f"USFM parse errors in {bk} while {reason}")
-                secondary = errors + "\n\n" + _("Printing carries on, but text affected by these problems may be "
+        if self._reportParseErrors(doc, bk, _("Printing carries on, but text affected by these problems may be "
                         "left out or misplaced.") + "\n" + _("Fix them in Paratext, or with a rule in changes.txt "
-                        "(rules in sections(\"initial\") always run before this check).")
-                self.printer.doError(_("Problems in the USFM of {}").format(bk), secondary=secondary, title=dlgtitle,
-                                     show=not self.printer.get("c_quickRun"))
-        return doc  
+                        "(rules in sections(\"initial\") always run before this check).")):
+            logger.debug(f"USFM parse errors in {bk} while {reason}")
+        return doc
+
+    def _reportParseErrors(self, doc, bk, advice, srclines=None):
+        """ Tells the user about problems the USFM parser found in a book, and what to do about them.
+            Unknown markers are left to _reportUnknownMarkers. srclines gives the line in the user's
+            file for each line parsed, when they differ. Returns whether there were any. """
+        def line(pos):          # pos.l counts from 0
+            return srclines[pos.l] if srclines is not None and 0 <= pos.l < len(srclines) else pos.l + 1
+        errors = "\n".join([_("{} (line {}): {}").format(str(ref).rstrip(":").strip(), line(pos), msg)
+                            for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
+        if not len(errors):
+            return False
+        self.printer.doError(_("Problems in the USFM of {}").format(bk), secondary=errors + "\n\n" + advice,
+                             title=_("PTXprint [{}] - USFM Text Error!").format(self.VersionStr),
+                             show=not self.printer.get("c_quickRun"))
+        return True
+
+    def _checkFrontMatter(self, txt, srclines=None):
+        """ The front matter goes to TeX as written, so problems in it (such as a stray \\fig*) would
+            stop the print with an obscure TeX error. Says what they are first. Unknown markers aren't
+            reported: front matter may use TeX commands directly. """
+        try:
+            doc = Usfm.readfile(txt + "\n", grammar=self.printer.get_usfms().grammar, informat="usfm")
+        except Exception as e:      # the check must never stop the print
+            logger.warning(f"Couldn't check the front matter: {e}")
+            return
+        self._reportParseErrors(doc, "FRT", _("The front matter is printed as written, so these problems may "
+                        "stop the print.") + "\n" + _("Fix them on the Front Matter tab (View+Edit)."), srclines=srclines)
 
     # Plain TeX commands that are not USFM markers. In USFM they are almost certainly typos
     # (e.g. \t for \it) and do odd things, such as asking for the cmmi10 math font.

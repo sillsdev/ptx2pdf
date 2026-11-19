@@ -237,6 +237,8 @@ def createGrammar(sheets, extracmds=None):
     for k in sheets:
         if k not in grammar.marker_categories:
             v = sheets.mrktype(k)
+            if v == "barems":           # ptx2pdf.sty's bare milestones, e.g. \nopagenums
+                v = "standalone"
             if v is not None:
                 grammar.marker_categories[k] = v
         a = sheets[k].get("attributes", None)
@@ -414,6 +416,8 @@ class Usfm:
             (_, ext) = os.path.splitext(fname)
             if ext not in _filetypes:
                 informat = "usfm"
+        if informat == "usfm":
+            kw.setdefault("remline", True)      # markup commented out in a \rem isn't parsed
         usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, tagger=PTXTag, **kw)
         if usxdoc is None:
             return None

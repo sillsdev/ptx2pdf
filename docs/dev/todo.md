@@ -852,12 +852,23 @@ done: patches/unknown-markers-warning.patch.
   `sections("initial")` always run before the check. It no longer shows the internal reason
   ("for Checking for unknown markers"). The unsectioned (default) rules run before it too, unless
   the text is parsed earlier (a chapter range, interlinear, Strong's in the text).
-* **[OPEN, minor] Coloured styles with "Enable Colored Text" off.** Forum 15221: red `\wj` from
-  Paratext/custom.sty didn't print. The style editor turns the option on when a colour is set
-  (`gtkview.py:4631`), but not for colours that come from the stylesheets. Hint before printing.
-* **[OPEN, minor] Stray `\fig*` in the front matter.** Forum 13436 (second error): "File ended while
-  scanning use of \ptx@fig". Books are parsed and this is reported; the FRT path isn't parsed the same
-  way. Also the unknown-marker check (item 1) doesn't cover FRT or module (XX?) books.
+* **[NOT A BUG] Coloured styles with "Enable Colored Text" off.** Forum 15221: red `\wj` from
+  Paratext/custom.sty didn't print. A project with colour off prints without colour, whatever the
+  stylesheets say. Setting a colour in the style editor turns the option on (`gtkview.py:4631`)
+  because that act shows the user wants colour: an event, not a state. A colour that merely exists in
+  a stylesheet says nothing about this print, and headless runs never turn options on.
+* **[FIXED patches/frt-check.patch] Stray `\fig*` in the front matter.** Forum 13436 (second error):
+  "File ended while scanning use of \ptx@fig". Books were parsed and this was reported; the front
+  matter went to TeX unchecked. `createFrontMatter` now parses what it writes, only to check it
+  (`_checkFrontMatter`): parse errors are reported with lines in FRTlocal.sfm, and the front matter is
+  still printed as written. Unknown markers aren't reported for it: front matter uses TeX directly
+  (`\vfill`, `\hfil`). Of 187 FRTlocal.sfm files around, 7 are reported: a stray `\zrm*`,
+  `\zgap 0.5in\*` (no `|`), and `|` used as text, which should be `\|`. The log hints for a failed
+  print now say what "File ended while scanning use of \ptx@fig" (an incomplete picture) and the
+  general "File ended" (something started but not finished) mean. Also: `\mrktype barems` markers
+  in ptx2pdf.sty (`\nopagenums`, `\zNeedOddPage`...) are now standalone in the grammar, so books
+  using them don't get unknown-marker warnings; and markup in `\rem` lines isn't parsed (usfmtc
+  `remline`, patches/usfmtc-remline.patch). Module (XX?) books still aren't checked.
 * **[OPEN, minor] Unknown-marker check misses `sections("final")`.** It runs after the default
   changes; rules in the final section run later, so markers they fix are still reported.
 * **[OPEN, minor] Anchor Ref tooltip for modules.** Forum 14827: pictures in a module didn't print with
@@ -865,6 +876,8 @@ done: patches/unknown-markers-warning.patch.
   explain module anchors.
 * **[OPEN, minor] `AdjLists/<book>-<cfg>.changes.txt` looks like corruption.** Forum 13593: users
   find the Stretch/Shrink files and don't know what made them.
-* **[OPEN, usfmtc] An unknown tag stays open.** `USFMParser.unknown()` adds a bare `ms` node that seems
-  to become the parent, so the next unknown is reported as `Unknown tag 'polyglotcolumn' in
-  'zcopyright'`. Output text looked right in a test; the tree shape may not be.
+* **[FIXED usfmtc 1c544c0] An unknown tag stays open.** `USFMParser.unknown()` added a bare `ms` node
+  that became the parent of everything after it, so the next unknown was reported as `Unknown tag
+  'polyglotcolumn' in 'zcopyright'`, and output lost the space after it (`\polyglotcolumnL`). Unknown
+  and standalone markers are now milestones closed by the first text or marker; an unknown end marker
+  scans back to make its bare start a char style.

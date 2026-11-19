@@ -738,9 +738,12 @@ class TestConfigZoo(_ProjectCopy):
 def runptxprint(prjsdir, prj, cfg, *opts, cmd=None):
     ''' Run ptxprint headless as the test suite does. Returns (returncode, output) '''
     import subprocess
+    logsdir = os.path.join(testsdir, "logs")
+    os.makedirs(logsdir, exist_ok=True)
+    worker = os.environ.get("PYTEST_XDIST_WORKER", "main")     # parallel runs mustn't share a log
     args = [sys.executable, os.path.join(testsdir, "..", "python", "scripts", "ptxprint"), "-p", prjsdir, "-S",
             "--testsuite", "--nofontcache", "-f", os.path.join(testsdir, "fonts"), "-l", "info",
-            "--logfile=" + os.path.join(prjsdir, "ptxprint.log"), "-c", cfg] + list(opts) + [prj]
+            "--logfile=" + os.path.join(logsdir, f"headless_{prj}_{cfg}_{worker}.log"), "-c", cfg] + list(opts) + [prj]
     if cmd is not None:
         args.append(cmd)
     res = subprocess.run(args, cwd=prjsdir, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=1200)

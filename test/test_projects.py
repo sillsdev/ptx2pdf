@@ -66,8 +66,11 @@ def check_output(*a, **kw):
 
 def make_paths(projectsdir, project, config, logging):
     testsdir = os.path.dirname(__file__)
+    logsdir = os.path.join(testsdir, "logs")
+    os.makedirs(logsdir, exist_ok=True)
     ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"), "-p", projectsdir, "-S",
-                "--testsuite", "--nofontcache", "-l", "info", f"--logfile=ptxprint_{project}_{config}.log",
+                "--testsuite", "--nofontcache", "-l", "info",
+                "--logfile=" + os.path.join(logsdir, f"ptxprint_{project}_{config}.log"),
                 "-f", os.path.join(testsdir, "fonts")]
     if config is not None:
         ptxcmd += ['-c', config]

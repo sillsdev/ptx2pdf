@@ -59,7 +59,10 @@ _errmsghelp = {
                                            "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                            "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."),
 "! File ended while scanning use of \\parse@djline.":  ("Check for errors in the Adjust List (see View+Edit tab)."),
-"! File ended while scanning use of":    _("Try turning off various settings on the Advanced tab."),
+"! File ended while scanning use of \\ptx@fig.":  _("A picture (\\fig ... \\fig*) isn't complete, or there is a \\fig* " +\
+                                          "with no \\fig. Check the front matter and the book named below."),
+"! File ended while scanning use of":    _("Something in the text was started but not finished, such as a footnote or " +\
+                                          "picture without its end marker (\\f*, \\fig*). Look near the reference below."),
 "! Output loop---25 consecutive dead cycles.":  _("Sorry! XeTeX was unable to complete the typesetting.\n" +\
                                            "* If creating a Diglot, ensure both texts can print successfully\n" +\
                                            "  before merging them as a Diglot print. And ensure that there\n" +\
