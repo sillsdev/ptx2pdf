@@ -177,6 +177,7 @@ class TexModel:
         self.imageCopyrightLangs = {}
         self.found_glosses = None
         self.frontperiphs = None
+        self.unknownmkrs = {}           # markers no stylesheet defines: {marker: kind}, see _reportUnknownMarkers
         self.xrefs = None
         self.inserts = {}
         self.usedfiles = {}
@@ -701,6 +702,7 @@ class TexModel:
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})",
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         self.updateStyles()
+        self.dict['project/unknownmarkers'] = self.unknownMarkersTeX()
         for a in (('FrontPDFs', 'c_inclFrontMatter', 'frontincludes_'),
                   ('BackPDFs', 'c_inclBackMatter', 'backincludes_')):
             files = getattr(self.printer, a[0], None)
@@ -1280,14 +1282,27 @@ class TexModel:
     # (e.g. \t for \it) and do odd things, such as asking for the cmmi10 math font.
     _texnotmarkers = set("t u d H i j l L o O P S aa AA ae AE oe OE ss bf rm sl tt".split())
 
+    def unknownMarkersTeX(self):
+        """ TeX that gives the markers no stylesheet defines a plain meaning, so the job prints
+            instead of stopping at them. Includes the other sides of a diglot. """
+        mkrs = dict(self.unknownmkrs)
+        for d in (self.dict.get('diglots_') or {}).values():
+            for m, k in getattr(d, 'unknownmkrs', {}).items():
+                if mkrs.get(m, "bare") == "bare":
+                    mkrs[m] = k
+        return "".join(f"\\defunk{k}{{{m}}}\n" for m, k in sorted(mkrs.items()))
+
     def _reportUnknownMarkers(self, doc, bk):
         """ Warn about markers left after the changes.txt rules that are not in any
             stylesheet, so that changes.txt can be used to clean them up """
         found = doc.unknownMarkers(bk)
         if not len(found):
             return
+        for m, (k, refs) in found.items():
+            if self.unknownmkrs.get(m, "bare") == "bare":
+                self.unknownmkrs[m] = k
         res = [_("Unknown markers (not in any stylesheet, and not defined in ptxprint-mods.tex):")]
-        for tag, refs in sorted(found.items()):
+        for tag, (kind, refs) in sorted(found.items()):
             where = ", ".join(dict.fromkeys(refs))
             if len(where) > 60:
                 where = where[:60].rsplit(",", 1)[0] + ", ..."
@@ -1298,7 +1313,8 @@ class TexModel:
         maxshown = 15
         if len(res) > maxshown + 1:
             res[maxshown+1:] = ["  " + _("... and {} more").format(len(res) - maxshown - 1)]
-        res.append("\n" + _("Fix these in the text, define them in a stylesheet, or correct them with changes.txt."))
+        res.append("\n" + _("Until then they are printed as plain text. Fix these in the text, define them in a "
+                             "stylesheet, or correct them with changes.txt."))
         self.printer.doError(_("Unknown USFM markers in {}").format(bk), secondary="\n".join(res),
                              title=_("PTXprint [{}] - USFM Text Error!").format(self.VersionStr),
                              show=not self.printer.get("c_quickRun"))

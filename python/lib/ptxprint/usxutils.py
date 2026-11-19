@@ -954,7 +954,9 @@ class Usfm:
 
     def unknownMarkers(self, bk=None):
         """ Markers the parser marked as unknown (not in a stylesheet, texcmds or
-            ptxprint-mods.tex). Returns {marker: [refs]} """
+            ptxprint-mods.tex), with how each is used: "char" (\\zfoo text\\zfoo*), "ms"
+            (\\zfoo|attribs\\*) or "bare" (\\zfoo on its own); a fuller use wins.
+            Returns {marker: (kind, [refs])} """
         res = {}
         for eloc, isin, cref in iterusxref(self.getroot(), book=bk):
             if not isin or not getattr(eloc, "unknown", False):
@@ -962,8 +964,11 @@ class Usfm:
             style = eloc.get("style", "")
             if texcmdsuffixed.match(style):
                 continue
+            kind = "char" if eloc.tag == "char" else ("bare" if eloc.get("x-bare", "false") == "true" else "ms")
+            oldkind, refs = res.get(style, ("bare", []))
             r = getattr(cref, "first", cref)
-            res.setdefault(style, []).append(f"{r.book} {r.chapter}:{r.verse}" if r is not None else "?")
+            refs.append(f"{r.book} {r.chapter}:{r.verse}" if r is not None else "?")
+            res[style] = (kind if oldkind == "bare" else oldkind, refs)
         return res
 
     def runchecks(self):
