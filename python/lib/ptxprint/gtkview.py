@@ -5896,10 +5896,13 @@ class GtkViewModel(ViewModel):
         self.setPublishableTextBorder()
 
     def onOpenTextBorderDialog(self, btn, *a):
-        # Like the other style links: open the textborder style on the Styles tab.
-        # (This used to call styleEditor.sidebarBorderDialog(), which doesn't exist.)
+        # Open the Border dialog for \textborder directly (users rely on this shortcut).
+        # setPublishableTextBorder() selects textborder in the style editor, which sets its marker.
         self.setPublishableTextBorder()
-        self.onEditStyleClicked(btn)
+        if self.styleEditor.marker == "textborder":
+            self.styleEditor.onSBborderClicked()
+        else:
+            self.onEditStyleClicked(btn)    # fallback: show the style on the Styles tab
         return True     # handled: don't try to open the link's uri
 
     def setPublishableTextBorder(self):
