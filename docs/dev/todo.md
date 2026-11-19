@@ -819,14 +819,21 @@ done: patches/unknown-markers-warning.patch.
   styles to the family name. Fixed: "Normal" is treated as Regular in the font cache, `TTFont`
   and `FontRef` (so old configs storing it print too). Other oddly named styles are left to the
   Font review item on referencing faces by their full name.
-* **[OPEN] "! Font" message blames the user for PTXprint's own font.** Forum 15633 (unresolved):
-  `\idf@nt="Source Code Pro"` (`ptx-cropmarks.tex:38`) wasn't loadable. `parseLogLines`
-  (`runjob.py` "! Font" branch) looked the font up in the styles, found `zpmkr`, and told the user to
-  fix that style; after they changed it, it said "specified in Fonts+Scripts was not found". Both wrong.
-  When the font is one of PTXprint's own (Source Code Pro, `\idf@nt`, `\VisTracefont`, trigger fonts)
-  say it's an installation/font cache problem (Tidy Up, refresh font cache, reinstall).
-  Also: `! Font \tenmi=cmmi10` / `cmsy10` comes from a plain TeX command such as `\t` in the text,
-  not a missing font; give that its own hint.
+* **[FIXED patches/font-error-message.patch] "! Font" message blamed the user for PTXprint's own
+  font.** Forum 15633: `\idf@nt="Source Code Pro"` (`ptx-cropmarks.tex:38`) wasn't loadable.
+  `parseLogLines` searched every style for that font name, found `zpmkr`, and told the user to fix
+  that style; after they changed it, it said "specified in Fonts+Scripts was not found". Both were
+  wrong. `RunJob.texFontFailure` now goes by the TeX font that failed: PTXprint's own (Source Code
+  Pro, `\idf@nt`, `\VisTracefont`, trigger fonts) is reported as an installation problem, naming
+  the font file and whether it exists; `\tenmi`/`cmmi10` etc. as a plain TeX command (`\t`, `$`)
+  in the text; a style font by the marker in its identifier (`font<[id:X|][cat:C|]mkr-size...>`,
+  the first marker to use it), saying whether the style or Fonts+Scripts set it.
+* **[ON HOLD] Check fonts are installed before running XeTeX.** `prePrintChecks` only checks that
+  the main fonts are set. It could look up the main fonts, the active fallback font, the fonts of
+  styles whose markers the books use (as `report.py` finds them) and Source Code Pro in
+  `getfontcache()`. On hold: XeTeX's font path includes folders the GUI cache may not list
+  (`shared/fonts`, the job's fonts folder, fonts given by path), so a font the GUI can't see may
+  still print, and a check would give false alarms.
 * **[OPEN] A directory opened as a book file → PermissionError.** Forums 15062, 15068:
   `PermissionError: [Errno 13] Permission denied: '...\Tangkhul\..\Tavua'` from
   `piclist.read_sfm` → `universalopen`. `getBookSrcPath` (`view.py`) tests `os.path.exists`, which is

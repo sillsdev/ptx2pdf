@@ -584,7 +584,8 @@ class RunJob:
             if a not in texinputs:
                 texinputs.append(a)
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
-        miscfonts.append(os.path.join(ptxmacrospath, '..', 'fonts'))
+        self.ownfontsdir = os.path.abspath(os.path.join(ptxmacrospath, '..', 'fonts'))
+        miscfonts.append(self.ownfontsdir)
         miscfonts.append(os.path.join(self.tmpdir, "fonts"))
         sfonts = os.path.join(self.prjdir, "shared", "fonts")
         miscfonts.append(sfonts)
@@ -1114,6 +1115,48 @@ class RunJob:
         res += "\n" + _("Choose a different font for the text or styles that use it.")
         return res
 
+    def texFontFailure(self, line):
+        """ Explains a TeX "! Font ... not loadable" error by what asked for the font: a style
+            (named in the TeX font identifier), PTXprint itself, or a plain TeX command in the text. """
+        m = re.match(r'! Font \\(\S+?)=\s*(?:"([^"]*)"|(\S+))', line)
+        if m is None:
+            return _errmsghelp["! Font"]
+        cs = m.group(1)
+        name = m.group(2) or m.group(3)
+        name = name[1:name.find("]")] if name.startswith("[") else name.split(":")[0]
+        if name == "Source Code Pro" or cs in ("idf@nt", "VisTracefont"):
+            res = _("PTXprint could not load its own font {}. This is a problem with the PTXprint installation, "
+                    "not with your settings. Reinstall PTXprint.").format(name)
+            fontsdir = getattr(self, "ownfontsdir", None)
+            if fontsdir is not None:
+                fpath = os.path.join(fontsdir, "SourceCodePro-Regular.ttf")
+                if os.path.exists(fpath):
+                    res += "\n" + _("The font file {} is there but could not be used.").format(fpath)
+                else:
+                    res += "\n" + _("The font file {} is missing.").format(fpath)
+            return res
+        if re.match(r"(?:ten|seven|five)(?:rm|i|bf|sl|it|tt|sy|ex|mi)$", cs) or re.match(r"cm[a-z]+\d+$", name):
+            return _("Something in the text is a plain TeX command (such as \\t, or $ for mathematics) that needs "
+                     "the TeX font {}, which isn't available. Look for a stray backslash command or $ near the "
+                     "reference below.").format(name)
+        # Style fonts are called font<[id:X|][cat:C|][ms:M|]marker[side]-size[+stack][@extend]>
+        ms = re.match(r"font<(?:[a-z]+:[^|<>]*\|)*(.+?)-[\d.]+(?:[+@][^<>]*)?>$", cs)
+        if ms is None:
+            return _("The font {} could not be found.").format(name) + "\n" + _errmsghelp["! Font"]
+        mkr = ms.group(1)
+        cat = re.search(r"cat:([^|]*)\|", cs)
+        where = "\\" + mkr
+        if cat is not None:
+            where += " " + _("(category {})").format(cat.group(1))
+        stylefont = self.printer.styleEditor.getval(mkr, 'fontname', None, includebase=True)
+        if stylefont is None and re.search(r"[a-z0-9][A-Z]$", mkr):     # diglot side letter
+            stylefont = self.printer.styleEditor.getval(mkr[:-1], 'fontname', None, includebase=True)
+        if stylefont == name:
+            return _("The font {} set in the style for {} could not be found. Install it, or choose another "
+                     "font for that style.").format(name, where)
+        return _("The font {} set on the Fonts+Scripts tab (here used by the style for {}) could not be found. "
+                 "Install it, or choose another font.").format(name, where)
+
     def parseLogLines(self):
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
         l = len(self.loglines)
@@ -1137,17 +1180,7 @@ class RunJob:
                     if m in l or l.startswith(m):
                         finalLogLines.append(_errmsghelp[m]+"\n")
                         if m == "! Font":
-                            mf = re.match(r'.*?=(?:"([^:/"]+)|([^:/]+))', l)
-                            if mf is not None:
-                                mkrs = []
-                                mn = mf.group(1) or mf.group(2)
-                                for s in sorted(self.printer.styleEditor.allStyles()):
-                                    if self.printer.styleEditor.getval(s, 'fontname', None, includebase=True) == mn:
-                                        mkrs.append(s)
-                                if len(mkrs):
-                                    finalLogLines.append("\n" + f"Font: '{mn}' was found in Style settings for marker(s): {', '.join(mkrs)}" + "\n")
-                                else:
-                                    finalLogLines.append("\n" + f"Font: '{mn}' specified in Fonts+Scripts was not found" + "\n")
+                            finalLogLines[-1] = self.texFontFailure(l) + "\n"
                         foundmsg = True
                         break
         if not foundmsg:
