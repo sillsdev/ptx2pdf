@@ -204,6 +204,7 @@ class TTFontCache:
 
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
+        cff2 = self.cff2Files()
         primary = set()     # (family, style) set from a file whose own (first) style it is
         for f in files.split("\n"):
             logger.log(8, f"fc-list: {f}")
@@ -211,6 +212,8 @@ class TTFontCache:
                 continue
             try:
                 (path, full) = f.strip().split(": ")
+                if path in cff2:
+                    continue
                 if path[-4:].lower() not in (".ttf", ".otf", ".ttc"):
                     continue
                 if ":style=" in full:
@@ -248,6 +251,16 @@ class TTFontCache:
         self.fccache = {k: v.copy() for k,v in self.cache.items()}
         self.busy = False
 
+    def cff2Files(self):
+        """ The installed font files with CFF2 outlines, which can't be printed: xdvipdfmx can't
+            embed them. fontconfig calls them CFF fonts that are variable. """
+        res = set()
+        for l in checkoutput(["fc-list", ":fontformat=CFF:variable=true", "file"], path="xetex").split("\n"):
+            l = l.strip()
+            if l.endswith(":"):
+                res.add(l[:-1])
+        return res
+
     def stylefilter(self, styles):
         currweight = max(styles_order.get(s.title(), 0) for s in styles)
         if currweight == 0:
@@ -272,6 +285,8 @@ class TTFontCache:
             if fname.lower()[-4:] in (".ttf", ".ttc", ".otf"):
                 fpath = os.path.join(path, fname)
                 f = TTFont(None, filename=fpath)
+                if 'CFF2' in f.dict:        # can't be printed: xdvipdfmx can't embed CFF2
+                    continue
                 f.usepath = True
                 self.cache.setdefault(f.family, {})[f.style] = fpath
 

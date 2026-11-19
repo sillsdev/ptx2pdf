@@ -9,7 +9,7 @@ from ptxprint.texmodel import TexModel
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.version import VersionStr
 from ptxprint.view import ViewModel
-from ptxprint.font import getfontcache, fontconfig_template_nofc, fontsconf_dirs, fontsconf_text
+from ptxprint.font import TTFont, getfontcache, fontconfig_template_nofc, fontsconf_dirs, fontsconf_text
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.texlog import summarizeTexLog, readUnderfills
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
@@ -1009,15 +1009,18 @@ class RunJob:
                     title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
         elif self.res == 4:
             logpath = os.path.join(self.tmpdir, swapext(outfname, ext=".tex", withext=".xdvi_log"))
+            explain = None
             if os.path.exists(logpath):
                 with open(logpath, encoding="utf-8", errors="replace") as inf:
                     loglines = inf.readlines()
-                    if "xdvipdfmx:fatal: Invalid font: -1 (0)\n" in loglines:
-                        loglines.append("\n" + _("To fix this error: Use a different font which is not a Variable Font."))
+                explain = self.pdfFontFailure("".join(loglines))
             else:
                 loglines = [_("Bad xdvi file, probably failed to load a picture or font")]
+            secondary = "".join(loglines[-12:])
+            if explain is not None:
+                secondary = explain + "\n\n" + _("Details:") + "\n" + secondary
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
-                    secondary="".join(loglines[-12:]),
+                    secondary=secondary,
                     title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
         else:
             finalLogLines = self.parseLogLines()
@@ -1080,6 +1083,36 @@ class RunJob:
             return res
         except FileNotFoundError:
             return ""
+
+    def pdfFontFailure(self, log):
+        """ If making the PDF (xdvipdfmx) failed over a font, says which font and what to do about
+            it, in words a user can act on. Otherwise returns None. """
+        m = re.search(r"^xdvipdfmx:fatal: (.*)$", log, flags=re.M)
+        if m is None:
+            return None
+        before = log[:m.start()]
+        if not re.search(r"font|truetype|type ?1|cff", m.group(1), flags=re.I):
+            return None
+        # The message may name the file. If not, it is the last font xdvipdfmx loaded ("<file@size").
+        f = re.search(r"([^\s\"<>]+\.(?:otf|ttf|ttc|otc|pfb))", m.group(1), flags=re.I)
+        if f is not None:
+            fpath = f.group(1)
+        else:
+            loaded = re.findall(r"<([^<>@]+\.(?:otf|ttf|ttc|otc|pfb))(?:\[\d+\])?@", before, flags=re.I)
+            fpath = loaded[-1] if len(loaded) else None
+        if fpath is None:
+            res = _("The PDF could not be made because a font could not be put into it.")
+        else:
+            name = os.path.basename(fpath)
+            if os.path.exists(fpath):
+                f = TTFont(None, filename=fpath)
+                if f.family:
+                    name = (f.family + " " + (f.style or "")).strip()
+            res = _("The PDF could not be made: the font {} ({}) could not be put into it.").format(name, fpath)
+        if 'PS OpenType but no "CFF " table' in before:
+            res += " " + _("Its outlines are CFF2 (a variable font with PostScript outlines), which can't be embedded in a PDF.")
+        res += "\n" + _("Choose a different font for the text or styles that use it.")
+        return res
 
     def parseLogLines(self):
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:

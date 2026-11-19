@@ -147,6 +147,40 @@ Collected for one breaking change to font handling, rather than piecemeal.
 * The `-B`/`-P` font choice also depends on `c_usesysfonts` (`-Z` turns it off): with system fonts
   a name is resolved by fontconfig across everything installed, so duplicate installs (e.g.
   `~/.fonts` and `/usr/share/fonts` copies of one family at different versions) affect output.
+* **Variable fonts: let the user choose axis values, and print a static instance.** Today
+  PTXprint can only print a variable font's default instance, and can't print CFF2 fonts at all
+  (xdvipdfmx: `Invalid font: -1 (0)`), so they are left out of the font list.
+  Design agreed Nov 2026:
+  - The font chooser shows the axes of a variable font (and perhaps its named instances, from
+    `fvar`) and lets the user set them.
+  - fontTools makes a static instance:
+    `instancer.instantiateVariableFont(font, {every axis: value}, downgradeCFF2=True)`.
+    Every axis must be given a value, or the result stays variable. On fontTools 4.57, saving a
+    CFF2→CFF instance needs `TTFont(..., recalcBBoxes=False)`, or `hhea.recalc` fails with a
+    KeyError.
+  - The instance is named from the font and its settings, e.g. `Cantarell_wght700`. Its name
+    table (IDs 1, 2, 4, 6, 16, 17) is rewritten to match, so fontconfig, XeTeX and the PDF use
+    that name. Without this, the Cantarell instances embed as `CFF2Font` and the Junicode ones
+    keep `JunicodeVF-Regular`.
+  - It is saved in a config-specific fonts folder in the project definition (it's part of the
+    config, so not under `local/`, and not the project-wide `shared/fonts`). There isn't one yet:
+    make `shared/ptxprint/<cfg>/fonts` (`project.srcPath(cfgid)`), and
+    - add it to the print job's font path (`runjob.py`, beside `<print dir>/fonts` at line 588),
+      including each glot's config folder in a diglot/polyglot;
+    - make sure archives and config copies/imports carry it;
+    - leave it out of the config saved inside a PDF (the settings zip): fonts don't go there.
+  - The chooser returns that name like any other font, so configs and stylesheets just store it.
+  - When the main (Regular) font changes, `onFontChanged`/`FontRef.fromStyle` must derive Bold,
+    Italic and Bold Italic as matching instances (e.g. `Cantarell_wght700`), not `/B`/`/I`.
+  - No need to add the folder to the GUI's font cache.
+  Tested (Nov 2026): Cantarell-VF (CFF2) at wght 400 and 700, and JunicodeVF-Roman (TrueType) at
+  wght 700, all print and embed through XeTeX + xdvipdfmx (instancing takes 0.5–2.7s).
+  To check:
+  - Should a missing instance be rebuilt from its name (which needs a separator that can't
+    clash with family names), or is the file the only copy?
+  - The `*.otf` `rejectfont` rule in `fontconfig_template` (`font.py`): STIX (.otf) printed by
+    name anyway, but make sure `.otf` instances aren't rejected.
+  Once this is in, the CFF2 filter on the font list can go.
 
 ## Bug hunt (Nov 2026)
 
@@ -767,11 +801,14 @@ done: patches/unknown-markers-warning.patch.
   (`\gr@btomacro`), which never came. `\ptxfile` now ends each book file with `\relax`
   (`\everyeof`). `filterGlossary` warns when no book marks any `\w` words, so the filtered glossary
   would be empty.
-* **[OPEN] Variable fonts: warn when chosen, not after a failed run.** Forum 15743 (variable
-  NotoSerif). PTXprint uses only the default instance, so bold/italic/weights don't vary and some
-  fail outright. Today only `runjob.py:1016` catches it, and only for the xdvipdfmx line
-  `Invalid font: -1 (0)`. `TTFont.readfont` has the table directory, so `'fvar' in self.dict` is the
-  test; warn in `onFontChanged` (`view.py`) and suggest installing the static faces.
+* **[FIXED patches/cff2-fonts.patch] Variable fonts: warn when chosen, not after a failed run.**
+  Forum 15743. Variable fonts weren't the problem: TrueType ones (e.g. JunicodeVF) print at their
+  default instance. CFF2 fonts (OpenType with PostScript variable outlines, e.g. Cantarell-VF) fail
+  in xdvipdfmx with `Invalid font: -1 (0)`, which can't embed CFF2. Fixed: CFF2 fonts are left out
+  of the font list (`TTFontCache.cff2Files`, via `fc-list :fontformat=CFF:variable=true`, and in
+  `addFontDir`); a failed PDF step that is about a font now names the font and says what to do,
+  adding the CFF2 reason when xdvipdfmx warns about it (`RunJob.pdfFontFailure`). Instancing
+  variable fonts is in the Font review section.
 * **[OPEN] Font name mismatches.** Forum 13472: the config asks for `"SolaimanLipi Normal"` but the
   font's full name is `"SolaimanLipi"`, giving "Metric (TFM) file or installed font not found". A
   check before printing that every body and style font is in the font cache, naming the nearest
