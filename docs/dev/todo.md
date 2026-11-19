@@ -133,7 +133,10 @@ Collected for one breaking change to font handling, rather than piecemeal.
   Lato 2.015 has Hairline at 250, so it happens to land on Bold.) An archive carries only the
   RIBBI files, so the same config gives Bold from an archive and Heavy on the user's machine.
   Proposed: reference the real face by its full name (name ID 4, e.g. `"Lato Bold"`) whenever
-  the font cache has it; use `/B`, `/I` only to synthesise a missing face.
+  the font cache has it; use `/B`, `/I` only to synthesise a missing face. That would also fix
+  faces with style names PTXprint doesn't know, which today become `"Family Style"`: XeTeX can't
+  find that unless it happens to be the full name (forum 13472: SolaimanLipi "Normal", now
+  special-cased as Regular).
 * **`font.py` `f.iscore = True`** (added 2021, 40b32d330, unexplained) forces every font to be
   referenced by name, making the file-path branch of `_getTeXComponents` dead. Removing it
   (tested Nov 2026, patches/font-path-refs.patch) broke every diglot/polyglot: the secondary
@@ -809,10 +812,13 @@ done: patches/unknown-markers-warning.patch.
   `addFontDir`); a failed PDF step that is about a font now names the font and says what to do,
   adding the CFF2 reason when xdvipdfmx warns about it (`RunJob.pdfFontFailure`). Instancing
   variable fonts is in the Font review section.
-* **[OPEN] Font name mismatches.** Forum 13472: the config asks for `"SolaimanLipi Normal"` but the
-  font's full name is `"SolaimanLipi"`, giving "Metric (TFM) file or installed font not found". A
-  check before printing that every body and style font is in the font cache, naming the nearest
-  match, would answer this.
+* **[FIXED patches/normal-style.patch] Font name mismatches.** Forum 13472: the config asks for
+  `"SolaimanLipi Normal"` but the font's full name is `"SolaimanLipi"`, giving "Metric (TFM) file
+  or installed font not found". Cause: the font calls its regular style "Normal" (name ID 2), the
+  font cache filed it under that, the chooser stored it, and `_getTeXComponents` adds unknown
+  styles to the family name. Fixed: "Normal" is treated as Regular in the font cache, `TTFont`
+  and `FontRef` (so old configs storing it print too). Other oddly named styles are left to the
+  Font review item on referencing faces by their full name.
 * **[OPEN] "! Font" message blames the user for PTXprint's own font.** Forum 15633 (unresolved):
   `\idf@nt="Source Code Pro"` (`ptx-cropmarks.tex:38`) wasn't loadable. `parseLogLines`
   (`runjob.py` "! Font" branch) looked the font up in the styles, found `zpmkr`, and told the user to

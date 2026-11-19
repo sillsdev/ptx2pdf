@@ -233,6 +233,8 @@ class TTFontCache:
             except ValueError:
                 raise SyntaxError("Can't parse: {}".format(f).encode("unicode_escape"))
             styles = [x.strip() for x in self.stylefilter(styles)]
+            # some fonts call their regular face "Normal"; XeTeX knows it only by the family name
+            styles = ["Regular" if x.lower() == "normal" else x for x in styles]
             # The first style is the file's own. The others are translations, or the legacy style
             # that goes with a second family name: "Lato,Lato Hairline:style=Hairline,Regular" is
             # Lato Hairline and "Lato Hairline" Regular, not Lato Regular. So those only fill a
@@ -709,7 +711,7 @@ class TTFont:
                 self.family = self.names.get(1, self.family)
                 self.style = self.names.get(2, self.style)
                 self.style = " ".join(x.title() for x in self.style.split())
-                if self.style.lower() == "regular":
+                if self.style.lower() in ("regular", "normal"):
                     self.style = ""
             else:                       # corrupted font so dump it
                 self.dict = {}
@@ -1080,8 +1082,9 @@ class FontRef:
                 bits.remove(a)
             else:
                 setattr(self, f"is{a}", False)
-        if "Regular" in bits:
-            bits.remove("Regular")
+        for a in ("Regular", "Normal"):     # "Normal" is what some fonts call Regular
+            if a in bits:
+                bits.remove(a)
         self.style = " ".join(bits)
         self.isGraphite = isGraphite
         self.isCtxtSpace = isCtxtSpace
