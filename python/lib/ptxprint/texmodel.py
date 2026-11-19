@@ -1635,6 +1635,13 @@ class TexModel:
             new_glosses.clear()
             count -= 1
         logger.debug(f"Found glossary keys: {self.found_glosses}")
+        if not self.found_glosses:
+            self.printer.doError(_("The glossary will have no entries"),
+                    secondary=_("None of the books being printed mark any glossary words (\\w ...\\w*), so " +
+                                "'Filter Glossary to Only Include Entries Used in the Text' (Body tab) leaves " +
+                                "nothing in it.\n\nTurn that option off, or mark the glossary words in the text."),
+                    title=_("PTXprint [{}] - Glossary").format(self.VersionStr),
+                    show=not self.printer.get("c_quickRun"))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":

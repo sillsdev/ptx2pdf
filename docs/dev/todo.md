@@ -761,13 +761,12 @@ From a read of the support.bible PTXprint forum (Nov 2024 – Nov 2026): cases w
 data or settings caused the failure and the message didn't help them. Item 1 (unknown markers) is
 done: patches/unknown-markers-warning.patch.
 
-* **[OPEN] Empty book / glossary filtered to nothing → "! File ended while scanning use of \@nxxt".**
-  Forum 13436: GLO came out as just `\id GLO` (renderings not linked, so `filterGlossary` kept
-  nothing); probably also 14645. The only hint is "Try turning off various settings on the Advanced
-  tab" (`runjob.py:62`). Fixes: in `filterGlossary` (`texmodel.py`) warn when `found_glosses` is empty
-  (no `\w` words in the selected books, so the glossary will be empty: turn off filtering or link
-  the words); add an `_errmsghelp` entry for `\@nxxt` ("a book ended unexpectedly, check View+Edit
-  for an empty or truncated book"); better, warn or skip any book with nothing after `\id` before TeX runs.
+* **[FIXED patches/empty-book-end.patch] Empty book / glossary filtered to nothing → "! File ended
+  while scanning use of \@nxxt".** Forum 13436 (probably also 14645). Cause: a book ending right
+  after `\h`, `\h1`, `\toc1` or `\cl`, whose text is collected up to the next control sequence
+  (`\gr@btomacro`), which never came. `\ptxfile` now ends each book file with `\relax`
+  (`\everyeof`). `filterGlossary` warns when no book marks any `\w` words, so the filtered glossary
+  would be empty.
 * **[OPEN] Variable fonts: warn when chosen, not after a failed run.** Forum 15743 (variable
   NotoSerif). PTXprint uses only the default instance, so bold/italic/weights don't vary and some
   fail outright. Today only `runjob.py:1016` catches it, and only for the xdvipdfmx line

@@ -2178,7 +2178,8 @@
    \trace{d}{\meaning\atn@xtptxfile}%
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
-     \else \closein\t@stread \def\n@xt{\atn@xtptxfile \input "\the\PtxFilePath#1"\relax}\fi
+     \else \closein\t@stread % \relax at the end of the book ends anything still collecting text, e.g. \h with nothing after it
+       \def\n@xt{\atn@xtptxfile \p@sheof\everyeof{\relax}\input "\the\PtxFilePath#1"\relax\p@peof}\fi
    \traceifset{ptxfile-contents}%
    \n@xt\relax
    \traceifcheck{ptxfile-contents}%
