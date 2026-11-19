@@ -844,10 +844,14 @@ done: patches/unknown-markers-warning.patch.
   projects, or a project id that isn't found, now stops PTXprint at once with a message
   (`giveUp` in `main.py`) rather than after setting everything up. The GUI instead offers the
   projects folder chooser for the first two, and opens with no project for the third.
-* **[OPEN] Parser-error dialog should say what to do.** Forum 14801:
+* **[FIXED patches/parse-error-message.patch] Parser-error dialog should say what to do.** Forum 14801:
   `Attrib marker 'va' found after 'p' but may only follow 'v'`. The user thought changes.txt couldn't
-  help because the error appears first. `_makeUSFM` (`texmodel.py`) should say whether printing
-  continues, and that rules under `sections("initial")` in changes.txt run before parsing.
+  help because the error appears first. `_makeUSFM` (`texmodel.py`) now heads the message with the
+  book, gives 1-based line numbers (they were 0-based), says printing carries on but the text
+  affected may be left out (the stray `\va` was silently dropped), and that rules in
+  `sections("initial")` always run before the check. It no longer shows the internal reason
+  ("for Checking for unknown markers"). The unsectioned (default) rules run before it too, unless
+  the text is parsed earlier (a chapter range, interlinear, Strong's in the text).
 * **[OPEN, minor] Coloured styles with "Enable Colored Text" off.** Forum 15221: red `\wj` from
   Paratext/custom.sty didn't print. The style editor turns the option on when a colour is set
   (`gtkview.py:4631`), but not for colours that come from the stylesheets. Hint before printing.

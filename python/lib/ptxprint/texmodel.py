@@ -1242,10 +1242,16 @@ class TexModel:
         doc.xml.canonicalise(version="3.1")
         if doc.xml.errors:      # (msg, pos, ref)
             dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
-            errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
+            # pos.l counts from 0; unknown markers are reported separately (_reportUnknownMarkers)
+            errors = "\n".join([_("{} (line {}): {}").format(str(ref).rstrip(":"), pos.l + 1, msg)
+                                for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
             if len(errors):
-                secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
-                self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
+                logger.debug(f"USFM parse errors in {bk} while {reason}")
+                secondary = errors + "\n\n" + _("Printing carries on, but text affected by these problems may be "
+                        "left out or misplaced.") + "\n" + _("Fix them in Paratext, or with a rule in changes.txt "
+                        "(rules in sections(\"initial\") always run before this check).")
+                self.printer.doError(_("Problems in the USFM of {}").format(bk), secondary=secondary, title=dlgtitle,
+                                     show=not self.printer.get("c_quickRun"))
         return doc  
 
     # Plain TeX commands that are not USFM markers. In USFM they are almost certainly typos
