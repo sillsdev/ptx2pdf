@@ -190,6 +190,15 @@ def _runtest(prjTree, config, macrosdir, project, doit, args):
         print(f"The following files were not identical: {', '.join(test_result['diff'])}")
     return 1
 
+def isGui(args):
+    """ Whether this run shows the GUI, rather than printing, running a command or a test. """
+    return not args.print and args.test is None and not args.cmd
+
+def giveUp(msg):
+    """ Stops a run without the GUI that has nothing to work on, saying why. """
+    print(msg)
+    sys.exit(1)
+
 commands = {
     'print': (),
     'fill': (),
@@ -426,6 +435,7 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
         testtree = os.path.dirname(test_project.path)
         args.projects.append(testtree)
 
+    pidgiven = args.pid is not None     # not just the one used last time
     if (args.extras & 16) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:
@@ -464,7 +474,7 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
             args.projects.append(candidates[0]['path'])
             print(f"Adding {candidates[0]['path']}")
         elif len(candidates) > 1:
-            if not args.print and args.test is None and not args.cmd:
+            if isGui(args):
                 from ptxprint.gtkview import chooseProjectsDir
                 chosen = chooseProjectsDir(candidates)
                 if chosen is None:
@@ -476,8 +486,11 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                     args.projects.append(c['path'])
                     print(f"Adding {c['path']}")
     elif not any(os.path.isdir(p) for p in args.projects):
-        print(f"Projects directories do not exist in {args.projects}. Quitting")
-        sys.exit(1)
+        msg = _("Can't find the projects folder: {}").format(", ".join(args.projects))
+        if not isGui(args):
+            giveUp(msg)
+        print(msg)
+        args.projects = []      # the GUI asks for one
 
     if args.lang is None:
         args.lang = getnsetlang(config)
@@ -485,14 +498,14 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
     if sys.platform.startswith("linux") and not args.nox11:
         os.environ['GDK_BACKEND'] = 'x11'
     if (args.extras & 8) != 0 or not len(args.projects):
-        if not args.print and args.test is None and not args.cmd:
+        if isGui(args):
             from ptxprint.gtkview import chooseProjectsDir
             chosen = chooseProjectsDir(find_pt_candidates())
             if chosen is None:
                 sys.exit(1)
             args.projects = [str(chosen)]
         else:
-            sys.exit(1)
+            giveUp(_("Can't find a projects folder. Give one with -p"))
     else:
         args.projects = [os.path.abspath(p.replace("\\", "/")) for p in args.projects if p is not None]
         args.projects = [p[:-1] if p.endswith("/") else p for p in args.projects]
@@ -598,12 +611,27 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
         prjTree.addTreedir(p)
         log.debug(f"Adding project tree: {p}")
 
+    if not len(prjTree.projects) and args.test is None:
+        msg = _("There are no projects in: {}").format(", ".join(args.projects))
+        if not isGui(args):
+            giveUp(msg)
+        print(msg)
+        from ptxprint.gtkview import chooseProjectsDir
+        chosen = chooseProjectsDir(find_pt_candidates())
+        if chosen is None:
+            sys.exit(1)
+        args.projects = [os.path.abspath(str(chosen))]
+        prjTree = ProjectList()
+        prjTree.addTreedir(args.projects[0])
     project = None
     if args.pid:
         project = prjTree.findProject(args.pid)
         if project is None:
-            print(f"Can't find project {args.pid} in {prjTree.treedirs}")
-            args.pid = None     # keep going anyway, just with no pid specified.
+            msg = _("Can't find project {} in: {}").format(args.pid, ", ".join(prjTree.treedirs))
+            if pidgiven and not isGui(args):
+                giveUp(msg)
+            print(msg)
+            args.pid = None     # the GUI opens as if no project was asked for
         if args.config:
             if project is None:
                 args.config = None
@@ -616,7 +644,7 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
         finally:
             if testtree is not None and not args.testing:
                 rmtree(testtree, ignore_errors=True)
-    elif args.print or args.cmd is not None or retview:
+    elif not isGui(args) or retview:
         mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()
         if args.pid:
@@ -628,9 +656,8 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
-        if not retview and mainw.project is None and (args.print or args.cmd is not None):
-            print("No project to work on. Quitting")
-            sys.exit(1)
+        if not retview and mainw.project is None and not isGui(args):
+            giveUp(_("No project to work on. Give a project id"))
         if args.print or retview or args.cmd in ("print", "fill"):
             if args.pub:
                 from ptxprint.publications import printSetup

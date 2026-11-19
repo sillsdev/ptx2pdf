@@ -834,12 +834,16 @@ done: patches/unknown-markers-warning.patch.
   `getfontcache()`. On hold: XeTeX's font path includes folders the GUI cache may not list
   (`shared/fonts`, the job's fonts folder, fonts given by path), so a font the GUI can't see may
   still print, and a check would give false alarms.
-* **[OPEN] A directory opened as a book file → PermissionError.** Forums 15062, 15068:
-  `PermissionError: [Errno 13] Permission denied: '...\Tangkhul\..\Tavua'` from
-  `piclist.read_sfm` → `universalopen`. `getBookSrcPath` (`view.py`) tests `os.path.exists`, which is
-  true for a directory; on Windows opening a directory gives exactly this error. Use `os.path.isfile`,
-  and catch `OSError` in `read_sfm` with a message naming the file. How the name `..\Tavua` arose is
-  not known (the user fixed it by deleting the non-USFM files from the project folder).
+* **[FIXED patches/missing-project.patch] A directory opened as a book file → PermissionError.**
+  Forums 15062, 15068: `PermissionError: [Errno 13] Permission denied: '...\Tangkhul\..\Tavua'`
+  (on Linux, `IsADirectoryError` in `convertBook`). Book paths are now accepted only if they are
+  files (`getBookSrcPath`, `piclist`, and `ptsettings` when it finds and infers book file names),
+  and `read_sfm` skips a book it can't read, naming the file. How the name `..\Tavua` arose is not
+  known (the user fixed it by deleting the non-USFM files from the project folder).
+  Also, without the GUI (`-P`, a command), a projects folder that doesn't exist or holds no
+  projects, or a project id that isn't found, now stops PTXprint at once with a message
+  (`giveUp` in `main.py`) rather than after setting everything up. The GUI instead offers the
+  projects folder chooser for the first two, and opens with no project for the third.
 * **[OPEN] Parser-error dialog should say what to do.** Forum 14801:
   `Attrib marker 'va' found after 'p' but may only follow 'v'`. The user thought changes.txt couldn't
   help because the error appears first. `_makeUSFM` (`texmodel.py`) should say whether printing

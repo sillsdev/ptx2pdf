@@ -524,8 +524,8 @@ class ViewModel:
             if a is None:
                 continue
             fpath = os.path.join(a, fname)
-            logger.log(5, f"Trying {bk} -> {fpath} {'success' if os.path.exists(fpath) else 'failed'}")
-            if os.path.exists(fpath):
+            logger.log(5, f"Trying {bk} -> {fpath} {'success' if os.path.isfile(fpath) else 'failed'}")
+            if os.path.isfile(fpath):        # not a folder that happens to have the book's file name
                 return fpath
         return None
 

@@ -174,7 +174,8 @@ class ParatextSettings:
 
     def inferValues(self, forced=False):
         if forced or 'FileNameBookNameForm' not in self.dict and os.path.exists(self.prjdir):
-            sfmfiles = [x for x in os.listdir(self.prjdir) if x.lower().endswith("sfm")]
+            sfmfiles = [x for x in os.listdir(self.prjdir) if x.lower().endswith("sfm")
+                            and os.path.isfile(os.path.join(self.prjdir, x))]
             for f in sfmfiles:
                 m = re.search(r"(\d{2})", f)
                 if not m:
@@ -234,7 +235,7 @@ class ParatextSettings:
                         self.get('FileNamePostPart', "")
             for k, v in books.items():
                 fname = bknamefmt.format(bkid=k, bkcode=bookcodes.get(k, ""))
-                if os.path.exists(os.path.join(self.prjdir, fname)):
+                if os.path.isfile(os.path.join(self.prjdir, fname)):
                     bookspresent[v] = 1         # books[] is 0 based
                     self.bookmap[k] = fname
                     booksfound.add(fname)
@@ -243,7 +244,8 @@ class ParatextSettings:
                 self.calcbookspresent(forced=True)
         else:
             for f in os.listdir(self.prjdir):
-                if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
+                if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup") \
+                        or not os.path.isfile(os.path.join(self.prjdir, f)):
                     continue
                 with open(os.path.join(self.prjdir, f), encoding="utf-8", errors="ignore") as inf:
                     l = inf.readline()

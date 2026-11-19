@@ -528,7 +528,7 @@ class Piclist:
     def threadUsfms(self, parent, nosave=False):
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
-            if os.path.exists(bkp):
+            if os.path.isfile(bkp):
                 self.read_sfm(bk, bkp, parent)
         # as generating the list from the Pictures tab does
         self.set_positions(cols=2 if self.model.get("c_doublecolumn") else 1,
@@ -605,25 +605,29 @@ class Piclist:
 
     def read_sfm(self, bk, fname, parent, media=None, sync=False, fn=None):
         isperiph = bk in nonScriptureBooks
-        with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
-                            if self.model is not None else 65001) as inf:
-            dat = inf.read()
-            if isperiph:
-                self._readpics(dat, bk, 0, None, isperiph, parent, sync=sync, fn=fn)
-            else:
-                blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
-                for c, t in zip(blocks[0::2], blocks[1::2]):
-                    # pictures before the first verse: TeX places a picture just before a verse number
-                    # (BKc.v-preverse), so these are anchored at the verse that follows them. (The intro,
-                    # before \c 1, has no verse to anchor to, so its pictures can't be listed.)
-                    m = re.match(r"(.*?)\\v (\d+[abc]?)", t, re.S)
-                    if m is not None:
-                        self._readpics(m.group(1), bk, c, m.group(2), isperiph, parent, sync=sync, fn=fn)
-                    for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
-                        lastv = v[0]
-                        s = v[1]
-                        key = None
-                        self._readpics(s, bk, c, lastv, isperiph, parent, sync=sync, fn=fn)
+        try:
+            with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
+                                if self.model is not None else 65001) as inf:
+                dat = inf.read()
+        except OSError as e:
+            logger.warning(f"Can't read the pictures in {bk} from {fname}: {e}")
+            return
+        if isperiph:
+            self._readpics(dat, bk, 0, None, isperiph, parent, sync=sync, fn=fn)
+        else:
+            blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
+            for c, t in zip(blocks[0::2], blocks[1::2]):
+                # pictures before the first verse: TeX places a picture just before a verse number
+                # (BKc.v-preverse), so these are anchored at the verse that follows them. (The intro,
+                # before \c 1, has no verse to anchor to, so its pictures can't be listed.)
+                m = re.match(r"(.*?)\\v (\d+[abc]?)", t, re.S)
+                if m is not None:
+                    self._readpics(m.group(1), bk, c, m.group(2), isperiph, parent, sync=sync, fn=fn)
+                for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
+                    lastv = v[0]
+                    s = v[1]
+                    key = None
+                    self._readpics(s, bk, c, lastv, isperiph, parent, sync=sync, fn=fn)
 
     def add_from_fig(self, bk, anchor, fige):
         pic = {"anchor": f"{bk} {anchor}"}
@@ -939,7 +943,7 @@ class Piclist:
 
         for bk in bks:
             bkf = allbooks.get(bk, None)
-            if bkf is None or not os.path.exists(bkf):
+            if bkf is None or not os.path.isfile(bkf):
                 continue
             self.read_sfm(bk, bkf, self.model, sync=sync, fn=addpic)
 
