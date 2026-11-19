@@ -451,8 +451,8 @@ not looked at yet.
   calc needs undefined `\diglotgridcolumn` (dead).
 * **[OPEN: features without a UI setting (settable from ptxprint-mods.tex): add UI or remove — your call]** Flags nothing sets: `\ifdiglotSwap` (setter commented out in snippets.py:208),
   `\ifDgltHdrOffsetCenter`, `\ifreftooltip`.
-- **[OPEN: TeX never sees unknown markers like \\zunknown, because Python drops them in the conversion; undefined milestones (and \\u0000) get through. The fix belongs there: drop and warn as for other unknown markers]** Undefined markers kill TeX with a bare "Undefined control sequence" instead of a helpful message: a milestone with no stylesheet entry (`\zcustom-s |who="x"\* … \zcustom-e\*`), and `\u0000` (marker name followed by digits). `\zunknown …\zunknown*` and `\xyz` are fine. Found when OddUSFM's JUD started reaching TeX (usfmtc e72a391); taken out of the test data in patches/oddusfm-cleanup.patch.
-- **[OPEN: not looked into further (the test data was cleaned instead)]** Unclosed `\f` running into an unclosed `\fig` ends in "Argument of \getonep@ram has an extra }" — no hint of the real cause (also cleaned out of OddUSFM).
+- **[FIXED 730d76e7e, usfmtc 72a68fb] Undefined markers stopped TeX** with a bare "Undefined control sequence": a milestone with no stylesheet entry (`\zcustom-s |who="x"\* … \zcustom-e\*`) and `\u0000`. PTXprint now defines every unknown marker for TeX (`\defunkms` etc.), and parsing as USFM 3.2 (`parseas`) turns `\u0000` into a space. Checked with both in 3JN: prints, text intact.
+- **[LEFT: rare; usfmtc now says `Missing end marker \fig* after attributes` (patches/usfmtc-missing-end.patch), shown in the Problems in the USFM dialog before TeX fails]** Unclosed `\f` running into an unclosed `\fig` ends in "Argument of \getonep@ram has an extra }" — no hint of the real cause (also cleaned out of OddUSFM).
 
 ## Hidden bugs (Nov 2026, second pass)
 
@@ -869,12 +869,22 @@ done: patches/unknown-markers-warning.patch.
   in ptx2pdf.sty (`\nopagenums`, `\zNeedOddPage`...) are now standalone in the grammar, so books
   using them don't get unknown-marker warnings; and markup in `\rem` lines isn't parsed (usfmtc
   `remline`, patches/usfmtc-remline.patch). Module (XX?) books still aren't checked.
-* **[OPEN, minor] Unknown-marker check misses `sections("final")`.** It runs after the default
-  changes; rules in the final section run later, so markers they fix are still reported.
-* **[OPEN, minor] Anchor Ref tooltip for modules.** Forum 14827: pictures in a module didn't print with
-  the generated anchor `XXB p001=6`; a scripture reference (`XXB LUK1.9`) worked. The tooltip doesn't
-  explain module anchors.
-* **[OPEN, minor] `AdjLists/<book>-<cfg>.changes.txt` looks like corruption.** Forum 13593: users
+* **[WON'T FIX] Unknown-marker check misses `sections("final")`.** The check runs after the default
+  changes; final rules run later, so markers only they fix are still reported, and markers they add
+  get no `\defunk...` definition. Checking after them would mean another USFM->USX->USFM conversion,
+  which final rules exist to clean up after. Marker clean-up belongs in the default section.
+* **[SHELVED, patches/experiments/module-pictures-zfiga.patch] Pictures in XX? books (modules) are lost.**
+  Forum 14827: a picture with the generated anchor `XXB p001=6` didn't print; `XXB LUK1.9` did. Not a
+  tooltip problem. XX? books are flattened as modules (`Module.parse`), which turns each `\fig` into
+  `\zfiga|<id>\*` but looks anchors up under a fixed `MOD` book code (so the Pictures tab's `XXB ...`
+  anchors are never found), and for a new entry writes an empty id (`anchor[4:]` of `emptyAnchor`'s bare
+  number). An id containing `=` (`p001=6`) never matches a `\zfiga` anyway: TeX's picture list reads it
+  as a paragraph reference (`ptx-pic-list.tex:72`). The patch uses the book's own code, fixes the id,
+  makes ids TeX-safe (`=` -> `-`) in the text and the print's picture list (`zfigaRef`), with a headless
+  test. Open: inserting `\zfiga` at the `\fig` ignores an anchor the user has moved (e.g. to
+  `XXB LUK1.9`). Idea: only use `\zfiga` while the anchor still equals its `srcref`. GLO and other
+  peripheral books left alone until this has proved itself.
+* **[DEFERRED: to the adjust-list refactor] `AdjLists/<book>-<cfg>.changes.txt` looks like corruption.** Forum 13593: users
   find the Stretch/Shrink files and don't know what made them.
 * **[FIXED usfmtc 1c544c0] An unknown tag stays open.** `USFMParser.unknown()` added a bare `ms` node
   that became the parent of everything after it, so the next unknown was reported as `Unknown tag

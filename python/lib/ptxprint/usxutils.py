@@ -417,7 +417,7 @@ class Usfm:
             if ext not in _filetypes:
                 informat = "usfm"
         if informat == "usfm":
-            kw.setdefault("remline", True)      # markup commented out in a \rem isn't parsed
+            kw.setdefault("parseas", "3.2")     # e.g. \rem is plain text, \u00e9 is a character; output stays as declared
         usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, tagger=PTXTag, **kw)
         if usxdoc is None:
             return None
