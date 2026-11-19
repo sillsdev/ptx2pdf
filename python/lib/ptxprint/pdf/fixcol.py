@@ -466,7 +466,8 @@ def fixhighlights(trailer, parlocs=None):
         pres = []
         for k, vannots in newannots.items():
             if k is None:
-                page.Annots.extend(vannots)
+                annots.extend(vannots)
+                continue
             for v in vannots:
                 q = []
                 rect = []
