@@ -1,0 +1,38 @@
+{
+    "title": "Preview: adjusting paragraphs by clicking them and from their menu, and the AdjList",
+    "project": "WSGlatin",
+    "config": "Default",
+    "uilevel": 6,
+    "events": [
+        ["", "note", "Turn off updating the PDF after each change, and print, so there is a preview to click in"],
+        ["c_updatePDF", "set", false],
+        ["b_print", "signal", "clicked"],
+
+        ["", "note", "Right-click RUT 1:3 and Shrink Text"],
+        ["bx_previewPDF", "paramenu", "RUT1.3", "mi_st"],
+
+        ["", "note", "Shift + Right-Click RUT 1:8: one line longer"],
+        ["bx_previewPDF", "paraclick", "RUT1.8", 3, "shift"],
+
+        ["", "note", "Ctrl + Left-Click RUT 1:11, which runs on into the next column: shrink its text"],
+        ["bx_previewPDF", "paraclick", "RUT1.11", 1, "ctrl"],
+
+        ["", "note", "Expand both RUT 2:4, from the menu"],
+        ["bx_previewPDF", "paramenu", "RUT2.4", "mi_expandboth"],
+
+        ["", "note", "Shrink RUT 1:3 by a line too, then reset it from the menu: its adjustments go"],
+        ["bx_previewPDF", "paramenu", "RUT1.3", "mi_shrinkline"],
+        ["bx_previewPDF", "paramenu", "RUT1.3", "mi_rp", "mi_para"],
+
+        ["", "note", "Ctrl + Middle-Click RUT 1:8 resets it too"],
+        ["bx_previewPDF", "paraclick", "RUT1.8", 2, "ctrl"],
+
+        ["", "note", "The second paragraph of verse 1:4 is a heading: Edit Style takes us to \\s in the style editor, and the change goes to \\s"],
+        ["bx_previewPDF", "paramenu", "RUT1.4-5[2]", "mi_es"],
+        ["c_styFaceItalic", "set", true],
+
+        ["", "note", "Save, and print with the changes"],
+        ["btn_saveConfig", "signal", "clicked"],
+        ["b_print", "signal", "clicked"]
+    ]
+}

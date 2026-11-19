@@ -1,0 +1,28 @@
+{
+    "title": "Notes and References: footnotes as endnotes with the book's own callers, TSK cross-references below them",
+    "project": "WSGlatin",
+    "config": "Default",
+    "uilevel": 6,
+    "events": [
+        ["", "note", "Turn off updating the PDF after each change: we print at the end"],
+        ["c_updatePDF", "set", false],
+
+        ["", "note", "Footnotes go to the end of the book, keep the callers the text gives them (which turns off omitting callers and starting them again on each page), and show only the verse"],
+        ["r_fnpos_endnote", "set", true],
+        ["c_fnautocallers", "set", false],
+        ["c_frVerseOnly", "set", true],
+        ["c_addColon", "set", true],
+
+        ["", "note", "Cross-references from the TSK list, whole Bible, below the notes, with no rule above them"],
+        ["c_useXrefList", "set", true],
+        ["fcb_xRefExtListSource", "set", "tsk"],
+        ["r_xrpos_below", "set", true],
+        ["c_xoVerseOnly", "set", true],
+        ["c_xrefrule", "set", false],
+        ["s_xrAboveSpace", "set", "4"],
+
+        ["", "note", "Save, and print with the changes"],
+        ["btn_saveConfig", "signal", "clicked"],
+        ["b_print", "signal", "clicked"]
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "title": "Preview: changing pictures from their menu, and the .piclist",
+    "project": "WSGlatin",
+    "config": "PicsJON",
+    "uilevel": 6,
+    "events": [
+        ["", "note", "Turn off updating the PDF after each change, and print, so there is a preview to click in"],
+        ["c_updatePDF", "set", false],
+        ["b_print", "signal", "clicked"],
+
+        ["", "note", "Right-click the picture at JON 1:3: make it span the columns, then put it at the bottom"],
+        ["bx_previewPDF", "paramenu", "fig JON1.3", "mi_frmsz", "mi_span"],
+        ["bx_previewPDF", "paramenu", "fig JON1.3", "mi_vpos", "mi_b"],
+
+        ["", "note", "JON 1:4: to the right of its column, and a line bigger"],
+        ["bx_previewPDF", "paramenu", "fig JON1.4", "mi_hpos", "mi_r"],
+        ["bx_previewPDF", "paramenu", "fig JON1.4", "mi_growpic"],
+
+        ["", "note", "JON 1:12: never mirrored"],
+        ["bx_previewPDF", "paramenu", "fig JON1.12", "mi_mirror", "mi_never"],
+
+        ["", "note", "The whole page picture at JON 2:10: at the bottom of its page"],
+        ["bx_previewPDF", "paramenu", "fig JON2.10", "mi_vpos", "mi_b"],
+
+        ["", "note", "Awkward: shrink the picture whose image is missing (JON 3:4)"],
+        ["bx_previewPDF", "paramenu", "fig JON3.4", "mi_shrinkpic"],
+
+        ["", "note", "Move the spanning picture at JON 1:6. Verse 3 already has a picture, so OK stays greyed out until we choose verse 7"],
+        ["bx_previewPDF", "paramenu", "fig JON1.6", "mi_cnganc"],
+        ["t_newAnchor", "set", "JON 1.3"],
+        ["t_newAnchor", "set", "JON 1.7"],
+        ["btn_anc_ok", "signal", "clicked"],
+
+        ["", "note", "Save, and print with the changes"],
+        ["btn_saveConfig", "signal", "clicked"],
+        ["b_print", "signal", "clicked"]
+    ]
+}

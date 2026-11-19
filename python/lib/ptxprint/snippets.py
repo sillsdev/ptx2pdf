@@ -132,7 +132,7 @@ class PDFx1aOutput(Snippet):
 /OutputIntents [{_outintents}]
 >>}}
 \egroup
-\catcode`\#=6\catcode`\@=11 \activ@tecustomch@rs
+\catcode`\#=6\catcode`\@=11
 """
 # /MarkInfo <</Marked /False>>
 
@@ -503,7 +503,6 @@ class ParaLabelling(Snippet):
 \deactiv@tecustomch@rs
 \input marginnotes.tex
 \addtoeveryparhooks{{\parmkr}}
-\activ@tecustomch@rs
 '''
 
 class MarginalNotes(Snippet):

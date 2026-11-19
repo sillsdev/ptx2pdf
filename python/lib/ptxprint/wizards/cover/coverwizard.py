@@ -385,7 +385,7 @@ class WorkingCoverState:
                     self.langname_enabled = True
                     self.langname_position_pct = max(0, min(100,
                         int(round(cum_mm / pheight * 100))))
-                elif re.search(r'\\fig ?\|', line) and 'pgpos="hc"' in line:
+                elif re.search(r'\\fig ?\|', line) and re.search(r'pgpos="[hp]c"', line):
                     self.fgimage_enabled = True
                     self.fgimage_position_pct = max(0, min(100,
                         int(round(cum_mm / pheight * 100))))
@@ -412,7 +412,9 @@ class WorkingCoverState:
             if logo_m:
                 self.logo_enabled = True
                 self.logo_path = logo_m.group(1)
-                pgpos_rev = {"hr": "inner", "h": "outer", "hc": "centre"}
+                inner, outer = ("hl", "hr") if self.rtl_binding else ("hr", "hl")
+                pgpos_rev = {inner: "inner", outer: "outer", "hc": "centre",
+                             "qr": "inner", "p": "outer", "pc": "centre"}   # codes from older wizards
                 self.logo_hpos = pgpos_rev.get(logo_m.group(2), "centre")
                 if logo_m.group(3):
                     try:
@@ -645,7 +647,9 @@ class WorkingCoverState:
                 res.append(r"\mt2 " + " - ".join(parts) if parts else r"\p")
             elif a == "back":
                 back_height = view.styleEditor.getval(f"cat:cover{a}|m", "LineSpacing", 1.0)
-                positions = {"inner": "hr", "centre": "hc", "outer": "h"}
+                # 'h' = here; post-paragraph ('p') pictures get held and come out on the front
+                inner, outer = ("hl", "hr") if self.rtl_binding else ("hr", "hl")
+                positions = {"inner": inner, "centre": "hc", "outer": outer}
                 res.append(r"\zgap|1in\*")
                 res.append(rf"\m {self.backtext}")
                 if self.logo_enabled:

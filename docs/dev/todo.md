@@ -136,12 +136,14 @@ Collected for one breaking change to font handling, rather than piecemeal.
   the font cache has it; use `/B`, `/I` only to synthesise a missing face.
 * **`font.py` `f.iscore = True`** (added 2021, 40b32d330, unexplained) forces every font to be
   referenced by name, making the file-path branch of `_getTeXComponents` dead. Removing it
-  (tested Nov 2026, patches/font-path-refs.patch) breaks every diglot/polyglot: the secondary
-  glot's fonts are defined after `[` is made active, so `"[path]"` becomes `""`. Writing
-  `\string[` fixes that (suite back to baseline); system fonts and `-Z` archives then print the
-  same. No case found where paths change the output yet; untested on Windows (`C:\`, spaces,
-  non-ASCII paths). Decide: keep names (delete the dead branch) or go to paths for non-core fonts
-  (pins the exact file when a project font shares a name with an installed one).
+  (tested Nov 2026, patches/font-path-refs.patch) broke every diglot/polyglot: the secondary
+  glot's fonts were defined after the PDF metadata snippet had left `[` active, so `"[path]"`
+  became `""`. patches/setup-activechars.patch stops setup code making `[` active (the text
+  reader does that itself); with it, paths work and the suite is at baseline. System fonts and
+  `-Z` archives then print the same. No case found where paths change the output yet; untested
+  on Windows (`C:\`, spaces, non-ASCII paths). Decide: keep names (delete the dead branch) or go
+  to paths for non-core fonts (pins the exact file when a project font shares a name with an
+  installed one).
 * The `-B`/`-P` font choice also depends on `c_usesysfonts` (`-Z` turns it off): with system fonts
   a name is resolved by fontconfig across everything installed, so duplicate installs (e.g.
   `~/.fonts` and `/usr/share/fonts` copies of one family at different versions) affect output.
