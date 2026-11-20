@@ -3,6 +3,7 @@ from shutil import copyfile
 from inspect import signature
 import regex
 from ptxprint.font import TTFont
+from ptxprint.piclist import picCodePattern
 from ptxprint.runner import checkoutput
 from ptxprint.usxutils import Usfm, Sheets
 from ptxprint.module import Module
@@ -1593,24 +1594,6 @@ class TexModel:
                 # print(report)
         return self.localChanges
 
-    def base(self, fpath):
-        doti = fpath.rfind(".")
-        return os.path.basename(fpath[:doti])
-
-    def codeLower(self, fpath):
-        cl = re.match(self.printer.getPicRe()+"$", self.base(fpath), re.I)
-        if cl:
-            return cl[0].lower()
-        else:
-            return ""
-
-    def newBase(self, fpath):
-        clwr = self.codeLower(fpath)
-        if len(clwr):
-            return clwr
-        else:
-            return re.sub('[()&+,.;: ]', '_', self.base(fpath).lower())
-
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes
         prjid = printer.project.prjid
@@ -1714,8 +1697,7 @@ class TexModel:
         are stored in self.printer.artpgs (coded artists store under their code,
         others under the '' key).
         """
-        coded = set("ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"))
-        key = art_code if art_code in coded else ''
+        key = art_code if art_code in self.printer.copyrightInfo['copyrights'] else ''
         return len(pgs_for_artist.get(key, []))
 
     def generateImageCopyrightText(self):
@@ -1737,18 +1719,19 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{./tmpPics/cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:[^}]*\/)?(?:" + self.printer.getPicRe() + r"|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:[^}]*\/)?(?:_?" + picCodePattern + r"|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []
             if len(m):
                 for f in m:
-                    # print(f"{f[0]=} {f[1]=} {f[2]=} {f[3]=} {f[4]=} {f[5]=} ")
-                    if not len(f) or not f[0] or f[5] == "None":
+                    # f: page, code prefix, code number, other filename, credit text
+                    if not len(f) or not f[0] or f[4] == "None":
                         continue
-                    a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
-                    if a == '' and f[5] != '':
-                        p = f[5]
+                    a = self.printer.copyrightKey(f[1]) if f[1] else ''    # '' if not a known publisher
+                    a = 'co' if a == 'cn' else a    # merge Cook's OT & NT illustrations together
+                    if a == '' and f[4] != '':
+                        p = f[4]
                     elif a == '':
                         p = "zz"
                         msngPgs += [f[0]]
@@ -1786,7 +1769,7 @@ class TexModel:
                         continue
 
                     if len(pgs):
-                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[kno][a-z]".split("|"):
+                        if art in cinfo['copyrights']:
                             pages = [x[0] for x in pgs[art]]
                         else:
                             pages = [x[0] for x in pgs.get('zz', pgs.get('', [[]])) if x is not None and len(x)]
@@ -1819,7 +1802,7 @@ class TexModel:
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
                         # print(f"{art=} {artistWithMost=} {self.printer.artpgs=}")
-                        if artistWithMost in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                        if artistWithMost in cinfo['copyrights']:
                             pages = [x[0] for x in self.printer.artpgs[artistWithMost][artistWithMost]]
                         else:
                             pages = [x[0] for x in self.printer.artpgs[artistWithMost]['']]

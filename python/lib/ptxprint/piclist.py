@@ -25,14 +25,43 @@ _parmCategories = {
 
 _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 
-def newBase(fpath):
+# Illustration library names, e.g. cn01617.jpg or ab12345c.tif: a publisher letter, a set letter
+# and a 5 digit number. Different set letters are always different files (even if the publisher
+# drew the same picture in another style). The optional trailing a/b/c only marks the resolution
+# of that copy, so it is not part of the code.
+# https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
+picCodePattern = r"([a-z]{2})(\d{5})[abc]?"
+picCodeRe = re.compile(r"(?i)_?" + picCodePattern + "$")
+
+def picCode(fpath):
+    ''' The lower case library code (e.g. ab12345) of an illustration file, or "" if its name
+        is not in the library form. '''
     doti = fpath.rfind(".")
     f = os.path.basename(fpath[:doti] if doti >= 0 else fpath)
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[onk][a-z])..\d{5})[abcABC]?$", f)
-    if cl:
-        return cl[0].lower()
-    else:
-        return re.sub(r'[()&+,.;: \-]', '_', f.lower())
+    m = picCodeRe.search(f)
+    return (m.group(1) + m.group(2)).lower() if m else ""
+
+def copyrightKey(copyrights, code):
+    ''' The entry in the copyrights table for an illustration code (or its 2 letter prefix): the
+        publisher's set if it has its own entry, else the publisher. "" if neither is known. '''
+    prefix = (code or "")[:2].lower()
+    if len(prefix) < 2:
+        return ""
+    if prefix in copyrights:
+        return prefix
+    if prefix[0] in copyrights:
+        return prefix[0]
+    return ""
+
+def newBase(fpath):
+    ''' The key used to match an illustration reference to its files: the library code if
+        it has one, so every resolution of it matches, or else a tidied version of its name. '''
+    code = picCode(fpath)
+    if code:
+        return code
+    doti = fpath.rfind(".")
+    f = os.path.basename(fpath[:doti] if doti >= 0 else fpath)
+    return re.sub(r'[()&+,.;: \-]', '_', f.lower())
 
 
 _checks = {
@@ -206,11 +235,11 @@ class PicChecks:
         # return set(list(self.cfgShared.keys()) + list(self.cfgProject.keys()))
         
     def setMultiCreditOverlays(self, srcs, crdtxt, crdtbox, copysrc):
-        srcseries = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?", copysrc)
-        if len(srcseries):
+        srcseries = picCode(copysrc)
+        if srcseries:
             for k in srcs:
-                kseries = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?", k)
-                if len(kseries) and kseries[0][:3].lower() == srcseries[0][:3].lower():
+                kseries = picCode(k)
+                if kseries and kseries[:2] == srcseries[:2]:
                     k = newBase(k)
                     if self.parent.get('c_plCreditOverwrite') or not self.cfgShared.get(k, 'piccredit', fallback=''):
                         if not self.cfgShared.has_section(k):

@@ -2,7 +2,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.piclist import newBase, Picture
+from ptxprint.piclist import newBase, picCode, Picture
 from ptxprint.utils import refSort, getlang, _, f2s, pycodedir, \
     cleanParatextRef, sendRefToParatext
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
@@ -227,9 +227,6 @@ class PicList:
 
     def _loadrow(self, pic):
         row = []
-        #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
-        defaultmedia = self.parent.readCopyrights().get(pic.get('src', '')[:2].lower(),
-            { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
         for e in _piclistfields:
             if e == 'key':
                 val = pic.key
@@ -397,7 +394,7 @@ class PicList:
             elif k == 'copy': # If we already have the copyright information, then don't let them enter it unnecessarily
                 val = currow[j]
                 figname = currow[_pickeys['src']]
-                status = True if len(re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?", figname)) else False
+                status = self.parent.copyrightFor(picCode(figname or "")) is not None
                 self.builder.get_object('l_autoCopyAttrib').set_visible(status)
                 self.builder.get_object(v).set_visible(not status)
             elif k == 'size':
@@ -458,8 +455,8 @@ class PicList:
             self.row_select(self.selection, update=False)
 
     def mask_media(self, row):
-        src = row[_pickeys['src']][:2]
-        inf = self.parent.copyrightInfo['copyrights'].get(src.lower(), {"media": {"default": "paw", "limit": "paw", "tip": {"en": "Default"}}})["media"]
+        info = self.parent.copyrightFor(picCode(row[_pickeys['src']] or "")) or {}
+        inf = info.get("media", {"default": "paw", "limit": "paw", "tip": {"en": "Default"}})
         tip = inf["tip"].get(getlang()[0], inf["tip"]["en"])
         if inf["tip"]["en"] == 'Default':
             self.builder.get_object("l_plMedia").set_tooltip_text(_("Media permissions unknown\nfor this illustration"))

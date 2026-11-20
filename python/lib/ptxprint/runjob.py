@@ -100,25 +100,6 @@ _pdfmodes = {
     'cmyk': ("CMYK", "Transparent")
 }
 
-def base(fpath):
-    doti = fpath.rfind(".")
-    return os.path.basename(fpath[:doti])
-
-# https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
-def codeLower(fpath):
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", base(fpath))
-    if cl:
-        return cl[0].lower()
-    else:
-        return ""
-
-def newBase(fpath):
-    clwr = codeLower(fpath)
-    if len(clwr):
-        return clwr
-    else:
-        return re.sub('[()&+,.;: ]', '_', base(fpath).lower())
-
 _joblock = None
 def lockme(job):
     global _joblock

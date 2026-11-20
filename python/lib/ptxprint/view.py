@@ -11,7 +11,7 @@ from ptxprint.utils import _, refKey, universalopen, local2globalhdr, chgsHeader
                             zipopentext, xdvigetfonts, calledme, parseBookList, coverSeparator
 from ptxprint.usxutils import UsfmCollection, Usfm, Sheets, simple_parse, merge_sty, out_sty
 from ptxprint.module import Module
-from ptxprint.piclist import Piclist, PicChecks
+from ptxprint.piclist import Piclist, PicChecks, picCode, copyrightKey
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
 from usfmtc.reference import RefList, RefRange, Ref
@@ -1096,9 +1096,9 @@ class ViewModel:
             self.readCopyrights()
         if loc is not None and any(x not in 'paw' for x in loc):
             loc = None
-        m = re.match(self.getPicRe(), src, re.I)
-        if m is not None and m.group(1).lower() in self.copyrightInfo['copyrights']:
-            media = self.copyrightInfo['copyrights'][m.group(1).lower()]['media']
+        info = self.copyrightFor(picCode(src))
+        if info is not None and 'media' in info:
+            media = info['media']
             limit = media['limit']
             default = media['default']
         else:
@@ -2033,12 +2033,17 @@ class ViewModel:
     def onGeneratePicListClicked(self, btn):
         pass
 
-    def getPicRe(self):
+    def copyrightKey(self, code):
+        ''' The copyrights table entry name for an illustration code or prefix, "" if unknown. '''
         if not self.copyrightInfo or not len(self.copyrightInfo):
             self.readCopyrights()
-        r = r"_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
-                + r")(\d+)([^.]*)"
-        return r
+        return copyrightKey(self.copyrightInfo['copyrights'], code)
+
+    def copyrightFor(self, code):
+        ''' The copyright, artist and media information for an illustration code or prefix,
+            or None if its publisher is not known. '''
+        k = self.copyrightKey(code)
+        return self.copyrightInfo['copyrights'][k] if k else None
 
     def getDraftFilename(self, bk, ext=".piclist"):
         fname = self.getBookFilename(bk, self.project.prjid)

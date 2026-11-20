@@ -36,7 +36,7 @@ from ptxprint.utils import APP, setup_i18n, xdvigetpages, allbooks, books, \
             _categoryColors, _bookToCategory, getResourcesDir, find_pt_candidates, f2s, BuildParams
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList, dispLocPreview, getLocnKey
-from ptxprint.piclist import Piclist
+from ptxprint.piclist import Piclist, newBase
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.styleditor import aliases
 from ptxprint.runjob import isLocked, unlockme
@@ -7290,7 +7290,7 @@ class GtkViewModel(ViewModel):
         return ptregname
 
     def getPicsInConfig(self, booklist):
-        pics = [x["src"][:-5].lower() for x in self.picinfos.get_pics() if x["anchor"][:3] in booklist]
+        pics = [newBase(x["src"]) for x in self.picinfos.get_pics() if x["anchor"][:3] in booklist]
         if len(pics) == 0:
             _errText = _("No illustrations were detected for this configuration.")
             self.doError("Request Error", secondary=_errText, \

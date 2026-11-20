@@ -247,7 +247,7 @@ class ThumbnailDialog:
         model.clear()
         if self.imagedata and 'sets' in self.imagedata:
             for a in sorted(self.imagedata['sets']):
-                name = self.view.copyrightInfo['copyrights'].get(a.lower(), {}).get('artist', _("Unknown"))
+                name = (self.view.copyrightFor(a) or {}).get('artist', _("Unknown"))
                 model.append([False, a.upper(), name])
         self.artists.clear()
         langpath = os.path.join(imagesetdir, "lang_{}.json".format(self.view.lang.lower()))
@@ -561,8 +561,7 @@ class ThumbnailDialog:
         self.view.set("l_artStatusLine", status)
 
     def on_thumbnail_entered(self, button, event, imageid):
-        cinfo = self.view.copyrightInfo
-        artist = cinfo['copyrights'].get(imageid[:2].lower(), {}).get('artist', '')
+        artist = (self.view.copyrightFor(imageid) or {}).get('artist', '')
         if len(artist):
             self.view.set("l_imgIDArtist", "{}, {}".format(imageid, artist))
         else:
