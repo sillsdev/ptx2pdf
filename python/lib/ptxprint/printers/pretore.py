@@ -421,7 +421,7 @@ class Pretore(PrinterBase):
             elif outkey == "Finished":
                 outkey = "Final"
             z.write(v, outkey+".pdf")
-        z.close
+        z.close()
 
         # also make the zip, create a dialog to present the results
         self.do_quote("create", cb=self.showCreateResults)
