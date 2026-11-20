@@ -348,10 +348,9 @@ class RunJob:
                            "paper/topmarginfactor", "paper/bottommarginfactor",
                            "paper/headerposition", "paper/footerposition", "paper/ruleposition",
                            "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
-                           "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
-                           "notes/xrlocation",
-                           "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
-                           "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
+                           "notes/iffootnoterule", "notes/xrlocation", "notes/fneachnewline", 
+                           "notes/xreachnewline", "document/filterglossary", "document/chapfrom", 
+                           "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
         sheets = {}
         keyarr = ["L"]
         if self.outfname is None:
