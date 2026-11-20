@@ -59,7 +59,9 @@ class ParRect:
         return self.__str__()
 
     def __contains__(self, p):
-        if self.ystart >= p[1] >= self.yend:
+        # positions from the xdv and from the parlocs file reach points by different sums, so a
+        # paragraph's last line on a page, whose baseline is the bottom, can come out a hair below it
+        if self.ystart >= p[1] >= self.yend - 0.001:
             return self.xstart <= p[0] <= self.xend
         return False
 
@@ -136,6 +138,13 @@ class ParInfo:
         if (m := re.match(r"^(\d\D\D|\D{3})([A-Z]?)(?=\s*(?:\d|k\.))", self.ref)):
             return m.group(1) + m.group(2)
         return re.sub(r"^(.*?\D)\s*\d.*$", r"\1", self.ref)
+
+    def avgspace(self):
+        """ How loose the paragraph is set: the mean width of its interword spaces in ems, the
+            measure the page filler compares with its spacing tolerance. None if it has no
+            spaces or they have not been measured (see Paragraphs.measure_spaces). """
+        n = sum(r.nspaces for r in self.rects or [])
+        return sum(r.white for r in self.rects) / n if n else None
 
 
 @dataclass
@@ -271,6 +280,7 @@ class Paragraphs(list):
         self.colcount = {}
         self.polycols = []      # (pnum, glot, ColInfo) for each polyglot column start (page slice)
         self.lostdata = []      # (ref, glot, where, pnum) for each place TeX lost text
+        self.xdvname = None if fname is None else fname.replace(".parlocs", ".xdv")
         if fname is None:
             return
         currp = None
@@ -483,7 +493,7 @@ class Paragraphs(list):
                     currps[polycol] = None
                 if currps[polycol] is not None:
                     if currps[polycol].slice != cinfo.slice:
-                        logger.warning(f"Paragraph {currps[polycol].ref} ({polycol}) starts in slice {currps[polycol].slice} but continues in slice {cinfo.slice}")
+                        logger.debug(f"Paragraph {currps[polycol].ref} ({polycol}) starts in slice {currps[polycol].slice} but continues in slice {cinfo.slice}")
                     currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
@@ -808,6 +818,19 @@ class Paragraphs(list):
                 elif res[0] < s:
                     heapq.heapreplace(res, s)
         return res
+
+    def measure_spaces(self):
+        """ Measure the interword spaces of every paragraph from the typeset output, so that
+            its avgspace() can say how loose it is. """
+        if self.xdvname is None or not os.path.exists(self.xdvname):
+            return
+        from ptxprint.xdv.xdvspaces import XdvSpaceMeasure
+        reader = XdvSpaceMeasure(self.xdvname, self, testfn=lambda p, r: isinstance(p, ParInfo))
+        try:
+            for _ in reader.parse():
+                pass
+        except Exception as e:      # e.g. output left from an older run: the measure is only advice
+            logger.warning(f"Could not measure the spaces in {self.xdvname}: {e}")
 
     def _getlines(self, pnum):
         for p, r in self.getParas(pnum):

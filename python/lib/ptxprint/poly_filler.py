@@ -49,19 +49,19 @@ class PolySolver(TypesetterSolver):
 
     balance_change_cost = 0.1   # cost of changing a paragraph at all, to prefer fewer changes
 
-    # The first failing page matters most (the user fixes it, and maybe all that follows, by
-    # hand), so pages before any failure get more effort than pages after one.
-    page_budget = 24            # most layout runs spent filling one page (after a failure)
-    backtrack_budget = 12       # most layout runs spent on each earlier page when backtracking
-    refill_budget = 8           # most runs filling a page again from a start a backtrack gave it
-    early_max_budget = 80       # before any page has failed: most runs for a page,
-    early_backtrack_budget = 16 # per earlier page when backtracking,
-    early_refill_budget = 10    # and to refill from a new start
+    # Layout runs for filling a page (see page_budget). A page that can be filled usually is in a
+    # run or two, so a page gets a few runs more than filled pages have needed so far. The first
+    # failing page matters most (the user fixes it, and maybe all that follows, by hand), so
+    # pages before any failure get more. Early pages may take more than later ones, within a cap
+    # that falls over the book so that the total stays in proportion to its length.
+    budget_margin = 3           # runs beyond what filled pages needed on average
+    early_budget_margin = 6     # the same before any page has failed
+    budget_start = 2            # what filled pages are taken to need before any has filled
+    budget_floor = 5            # the fewest runs a page gets
+    budget_cap_factor = 5       # the cap on the first page is this times the square root of the pages
     relax_caps = (2, 4)         # if a page runs out of candidates, try again allowing looser shapes
     per_net = 3                 # combos kept for each net height change of a page's slices
     per_dh = 3                  # outcomes kept for each height change of one slice (differing in which glots change)
-    budget_per_par = 2          # extra layout runs a page gets for each paragraph on it that can change
-    max_budget = 60
     max_candidates = 2000       # most candidates listed for a page
     pull_lines = 2              # lines of space the next slice needs to start on a page
     crossing_budget = 1         # most layout runs spent evening the ends of a slice crossing a page
@@ -77,6 +77,17 @@ class PolySolver(TypesetterSolver):
         """ Before the first failed page """
         return not self.failed_pages
 
+    def page_budget(self, page):
+        """ Most layout runs to spend filling page (and on each earlier page when backtracking for
+            it): a few more than the pages filled so far have needed on average, within a cap
+            that is highest at the start of the book and falls to budget_floor at its end """
+        runs = getattr(self, 'fill_runs', None)
+        need = sum(runs) / len(runs) if runs else self.budget_start
+        normal = need + (self.early_budget_margin if self.early else self.budget_margin)
+        npages = max(getattr(self, 'npages', 0), page + 1)
+        cap = self.budget_cap_factor * math.sqrt(npages) * (1 - page / npages) ** 2
+        return math.ceil(min(normal, max(self.budget_floor, cap)))
+
     def run_forward(self, state, page, start_page, stop):
         """ Fill pages in order (design section 4). Each page is tried with candidate combos,
             ordered by a note free model and re-ordered by what each layout run measures, and
@@ -84,6 +95,8 @@ class PolySolver(TypesetterSolver):
         printer = self.hooks.printer
         printer.report(state)
         self.failed_pages = []
+        self.fill_runs = []     # layout runs each page that was filled took
+        self.npages = len(state.layout.pages)
         self.page_memo = {}     # (page, start key) -> {combo signature: gap measured}
         cur = state
         p = 0
@@ -103,7 +116,10 @@ class PolySolver(TypesetterSolver):
             if self._page_short(cur, p):
                 before = cur
                 cur = self.fill_page(cur, p)
-                if p in self.failed_pages and p > self.floor and p - 1 not in self.failed_pages:
+                # backtracking moves where pages end, which only helps if every glot is short: if
+                # one reaches the foot, what the others lack is the balance of the last slice
+                if p in self.failed_pages and p > self.floor and p - 1 not in self.failed_pages \
+                        and all(x > 0 for x in self._gap(cur, p)):
                     self.failed_pages.remove(p)     # still early while backtracking for it
                     back = self.backtrack(before, p)
                     self.failed_pages.append(p)
@@ -348,12 +364,7 @@ class PolySolver(TypesetterSolver):
         """ Try combos on page until it is full or its budget is spent; commit the result """
         self.prepare_slices(state.parlocs)
         # foreach slice on the page count the paragraphs in it that can change shape
-        movable = sum(1 for sl, pg in self.sliceheights.items() if page in pg
-                      for g in self.hooks.printer.glots for p in self.slicepars.get(sl, {}).get(g, [])
-                      if page in self.parpages.get(p, ()) and self.shape_deltas.get(p))
-        budget = min(self.early_max_budget if self.early else self.max_budget,
-                     self.page_budget + self.budget_per_par * movable)
-        gap, dbad, new, desc = self.try_fill(state, page, budget)
+        gap, dbad, new, desc = self.try_fill(state, page, self.page_budget(page))
         if gap > 0:
             self.failed_pages.append(page)
         return new
@@ -410,8 +421,9 @@ class PolySolver(TypesetterSolver):
             if score < best[:2]:
                 best = (sum(gap), dbad, new, desc)
             if sum(gap) == 0:
+                self.fill_runs.append(tried)
                 break
-        logger.log(15, f"p{page+1}: {'filled' if best[0] == 0 else 'failed, best gap %d' % best[0]} by {best[3]} after {tried} runs")
+        logger.log(15, f"p{page+1}: {'filled' if best[0] == 0 else 'failed, best gap %d' % best[0]} by {best[3]} after {tried} of {budget} runs")
         return best
 
     def backtrack(self, state, page):
@@ -437,7 +449,7 @@ class PolySolver(TypesetterSolver):
                 # growth pushes material on towards the short page: try it first, nearest the need
                 return (c[1] in samestart, c[1] < 0, abs(abs(c[1]) - need), c[2])
             n = 0
-            while cands and n < (self.early_backtrack_budget if self.early else self.backtrack_budget):
+            while cands and n < self.page_budget(page):
                 cands.sort(key=order)
                 effects, net, dbad, combo, desc, slicedesc = cands.pop(0)
                 params = dict(state.paragraph_params)
@@ -463,8 +475,7 @@ class PolySolver(TypesetterSolver):
                 if sum(gap) > 0:
                     # a new start for page: try filling it from there
                     before = self.itercount
-                    rgap, rdbad, rnew, rdesc = self.try_fill(new, page,
-                                    self.early_refill_budget if self.early else self.refill_budget)
+                    rgap, rdbad, rnew, rdesc = self.try_fill(new, page, self.page_budget(page))
                     tried += self.itercount - before
                     if rgap < sum(gap):
                         gap, new = [0] * len(glots) if rgap == 0 else self._gap(rnew, page), rnew

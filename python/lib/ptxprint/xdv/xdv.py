@@ -151,6 +151,11 @@ class XDViReader:
                 break
 
     def readpost(self):
+        """ Start reading at the page startpage pages in (counting from 0), with the units the
+            preamble and the fonts the postamble define. If the file has no usable postamble
+            or page links, start at the beginning. self.pageindex is the number of pages
+            skipped. """
+        self.pageindex = 0
         dat = self.buffer[-16:]
         postpos = 0
         for i in range(16):
@@ -158,26 +163,31 @@ class XDViReader:
                 postpos = int.from_bytes(dat[-5-i:-1-i], byteorder='big', signed=False)
                 break
         else:
-            self.seek(0)
+            self.fpos = 0
             return
-        self.fpos = postpos
-        spage = 0
-        lastbop = 0
-        for (op, res) in self._parse():
-            if self.startpage != 0:
-                if op == "multiparm":       # post
-                    spage = res[6] - self.startpage  # t, numpages
-                    lastbop = res[0]
         self.fpos = 0
-        while spage > 0:
-            self.fpos = lastbop
-            (op, opc, data) = next(self)
-            if op != "bop":     # error!
-                self.fpos = 0
-                break
-            spage -= 1
-            lastbop = data[10]
-        logging.log(15, f"{self.fname}: {self.fpos=}")
+        (op, opc, data) = next(self)        # the preamble, which sets the units the fonts' sizes need
+        getattr(self, opc[0])(op, opc[2], data)
+        self.fpos = postpos
+        lastbop = None
+        npages = 0
+        for (op, res) in self._parse():
+            if opcodes[op][2] == "post":
+                lastbop, npages = res[1][0], res[1][7]
+        self.fpos = 0
+        skip = min(self.startpage, npages - 1)
+        if lastbop is None or skip <= 0:
+            return
+        pos = lastbop
+        for i in range(npages - 1 - skip):  # follow each page's link back to the one before
+            if pos < 0 or opcodes[self.buffer[pos]][2] != "bop":
+                return
+            pos = int.from_bytes(self.buffer[pos+41:pos+45], byteorder='big', signed=True)
+        if pos < 0 or opcodes[self.buffer[pos]][2] != "bop":
+            return
+        self.fpos = pos
+        self.pageindex = skip
+        logging.log(15, f"{self.fname}: starting at page {skip+1}, {self.fpos=}")
 
     def out(self, txt):
         # print(("pg[{}] ".format(self.pageno) + txt).encode("utf-8"))

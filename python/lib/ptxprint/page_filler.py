@@ -1931,7 +1931,8 @@ class PTXFiller:
 
     def analyse_bw(self, testfn, page, trackp=False):
         xdvname = self.job.outfname.replace(".tex", ".xdv")
-        xdv = XdvSpaceMeasure(xdvname, self.parlocs, testfn=testfn, page=max(page, 0), trackp=trackp)
+        # from the page before: a paragraph carried over onto the page is measured whole
+        xdv = XdvSpaceMeasure(xdvname, self.parlocs, testfn=testfn, page=max(page - 1, 0), trackp=trackp)
         for (opcode, data) in xdv.parse():
             pass
         

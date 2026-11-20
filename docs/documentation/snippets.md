@@ -1087,8 +1087,8 @@ same verse (51 + 51 = 102). One text on its own (51) isn't enough.
 In the [DEFAULT] section, change these two lines from 1 to 0:
 
 ```
-PREVERSEPAR = 0  # was 1: a paragraph that starts with a verse number
-MIDVERSEPAR = 0  # was 1: a paragraph that starts in the middle of a verse
+PREVERSEPAR = 0     # was 1: a paragraph that starts with a verse number
+MIDVERSEPAR = 0     # was 1: a paragraph that starts in the middle of a verse
 ```
 
 Leave these at 1:
@@ -1105,7 +1105,7 @@ Leave everything else as it is. Save the file and print again.
 ### Notes
 
 - *A heading lines up only if both texts have one at the same
-  verse.* If the Nali heading is before verse 5 and the NIV heading is
+  verse.* If the primary heading is before verse 5 and the secondary heading is
   before verse 6, neither one lines up. That section just continues to the
   next heading both texts share. This is probably what they want.
 - *To make a heading in either text force a line-up*, change PREVERSEHEAD

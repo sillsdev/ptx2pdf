@@ -1641,6 +1641,7 @@ class PDFContentViewer(PDFFileViewer):
             res = self.parlocs.readParlocs(fname, rtl=rtl, gui=large_pdf, parent=self.hbox)
             if res:
                 res = self.parlocs.load_dests(self.document)
+                self.parlocs.measure_spaces()
             elif res is False:
                 # Cancelled part way: discard the partial page info, otherwise the page
                 # count and page navigation are limited to the pages read so far.
@@ -2210,6 +2211,9 @@ class PDFContentViewer(PDFFileViewer):
                 if l[0] not in '+-':
                     l = '+' + l
                 hdr = f"{ref[:o]} {ref[o:]}{parnum} \\{parref.mrk} {l} {info[1]}%"
+                avgspace = parref.avgspace()
+                if avgspace is not None:
+                    hdr += f" \u2423={avgspace:.2g} em"
                 self.addMenuItem(menu, hdr, None, info, sensitivity=False)
                 self.addMenuItem(menu, None, None)
 

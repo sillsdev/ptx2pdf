@@ -455,13 +455,14 @@ class PicList:
             self.row_select(self.selection, update=False)
 
     def mask_media(self, row):
-        info = self.parent.copyrightFor(picCode(row[_pickeys['src']] or "")) or {}
+        code = picCode(row[_pickeys['src']] or "")
+        info = self.parent.copyrightFor(code) or {}
         inf = info.get("media", {"default": "paw", "limit": "paw", "tip": {"en": "Default"}})
         tip = inf["tip"].get(getlang()[0], inf["tip"]["en"])
         if inf["tip"]["en"] == 'Default':
             self.builder.get_object("l_plMedia").set_tooltip_text(_("Media permissions unknown\nfor this illustration"))
         else:
-            self.builder.get_object("l_plMedia").set_tooltip_text(_("Permission for {} series:\n{}").format(src.upper(), tip))
+            self.builder.get_object("l_plMedia").set_tooltip_text(_("Permission for {} series:\n{}").format(code[:2].upper(), tip))
         val = row[_pickeys['media']]
         for c in 'paw':
             w = _form_structure["med"+c.upper()]
