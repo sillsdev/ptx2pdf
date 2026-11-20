@@ -3605,6 +3605,8 @@ class GtkViewModel(ViewModel):
                 self.picListView.row_select(sel)
         elif pgid == "tb_Printers":
             self.ensurePrinterTab().refresh()
+        elif pgid == "tb_Publications" and getattr(self, 'pubView', None) is not None:
+            self.pubView.refreshMain()
 
     def onRefreshViewerTextClicked(self, btn, pgnum=None):
         pg = self.get("nbk_Viewer") if pgnum is None else pgnum
