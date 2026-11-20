@@ -343,6 +343,16 @@ texpertOptions = {
                               "Higher: prefer less whitespace, even at the cost of looser paragraphs.\n"
                               "0: any amount of whitespace is as bad as one line.\n"
                               "Only relevant to diglot and polyglot projects")),
+    "pbpolybudget":       O("pbpolybudget", "APF", (20, 0, 500, 1, 10, 0), "", _("Most tries to fill a polyglot page"),
+                            _("The most layout runs spent trying to fill one page; earlier pages, when going back\n"
+                              "to fill it from a different start, get half as many each. A page that can be\n"
+                              "filled usually is within a few tries, so this mostly limits the time spent on\n"
+                              "pages that cannot be. A page where one glot reaches the foot is kept as the best\n"
+                              "layout found, not counted as failed.\n"
+                              "Higher: a few more pages may be filled, at a cost in time.\n"
+                              "Lower: faster, but more pages may be left short.\n"
+                              "0: no limit.\n"
+                              "Only relevant to diglot and polyglot projects")),
     "pbpolyfillslices":   O("pbpolyfillslices", "APF", False, "", _("Fill polyglot slices regardless of 1 line gaps"),
                             _("Normally a glot is only stretched or shrunk to end level with its slice, and never\n"
                               "so as to leave a gap of 1 line, which looks like a mistake.\n"
