@@ -6831,6 +6831,24 @@ how the border settings affect the final outcome.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_hdrColumns">
+    <columns>
+      <!-- column-name display -->
+      <column type="gchararray"/>
+      <!-- column-name code -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">L</col>
+        <col id="1">L</col>
+      </row>
+      <row>
+        <col id="0">R</col>
+        <col id="1">R</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_diglotMerge">
     <columns>
       <!-- column-name mergeDesc -->
@@ -26556,26 +26574,26 @@ Study Notes and Questions should appear.</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">4</property>
                                 <child>
-                                  <!-- n-columns=6 n-rows=3 -->
+                                  <!-- n-columns=3 n-rows=2 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="halign">center</property>
+                                    <property name="hexpand">True</property>
                                     <property name="row-spacing">4</property>
-                                    <property name="column-spacing">2</property>
+                                    <property name="column-spacing">12</property>
+                                    <property name="column-homogeneous">True</property>
                                     <child>
                                       <object class="GtkLabel" id="l_hdrleft">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin-start">4</property>
+                                        <property name="halign">center</property>
                                         <property name="label" translatable="yes">Inner (Left)</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">1</property>
+                                        <property name="left-attach">0</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
@@ -26584,14 +26602,13 @@ Study Notes and Questions should appear.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-end">14</property>
                                         <property name="label" translatable="yes">Center</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">3</property>
+                                        <property name="left-attach">1</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
@@ -26599,385 +26616,303 @@ Study Notes and Questions should appear.</property>
                                       <object class="GtkLabel" id="l_hdrright">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin-end">45</property>
+                                        <property name="halign">center</property>
                                         <property name="label" translatable="yes">Outer (Right)</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">5</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBoxText" id="ecb_hdrcenter">
-                                        <property name="name">Center page header settings</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
-and/or reference(s) in various forms. Select a preset option,
-or type in a keyword with additional adornments as needed. 
-
-For example:
-\bookalt\ \rangeref   uses the book name from the \h1 alt book header
-[\pagenumber]    places square brackets around the page number
-DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
--empty-     places nothing in that location
-
-With Mirror Pages on, First Reference and Last
-Reference are swapped on left-hand (even) pages.
-
-Note that a space and the following certain special 
-characters require a slash '\' to be typed before them:
-    # % &amp; ^ ~ and \ itself.
-For example, to get this output: 
-     This is page #1
-you would need to enter:
-     This\ is\ page\ \#\pagenumber</property>
-                                        <property name="margin-end">3</property>
-                                        <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="active">1</property>
-                                        <property name="has-entry">True</property>
-                                        <items>
-                                          <item id="\empty" translatable="yes">-empty-</item>
-                                          <item id="\pagenumber" translatable="yes">Page Number</item>
-                                          <item id="\firstref" translatable="yes">First Reference</item>
-                                          <item id="\lastref" translatable="yes">Last Reference</item>
-                                          <item id="\rangeref" translatable="yes">Reference Range</item>
-                                          <item id="\book" translatable="yes">Book (\h)</item>
-                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
-                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
-                                          <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
-                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
-                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
-                                        </items>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="width-chars">10</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">1</property>
-                                        <property name="height">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBoxText" id="ecb_hdrright">
-                                        <property name="name">Outer (right) page header settings</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
-and/or reference(s) in various forms. Select a preset option,
-or type in a keyword with additional adornments as needed. 
-
-For example:
-\bookalt\ \rangeref   uses the book name from the \h1 alt book header
-[\pagenumber]    places square brackets around the page number
-DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
--empty-     places nothing in that location
-
-With Mirror Pages on, First Reference and Last
-Reference are swapped on left-hand (even) pages.
-
-Note that a space and the following certain special 
-characters require a slash '\' to be typed before them:
-    # % &amp; ^ ~ and \ itself.
-For example, to get this output: 
-     This is page #1
-you would need to enter:
-     This\ is\ page\ \#\pagenumber</property>
-                                        <property name="margin-end">6</property>
-                                        <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="active">4</property>
-                                        <property name="has-entry">True</property>
-                                        <items>
-                                          <item id="\empty" translatable="yes">-empty-</item>
-                                          <item id="\pagenumber" translatable="yes">Page Number</item>
-                                          <item id="\firstref" translatable="yes">First Reference</item>
-                                          <item id="\lastref" translatable="yes">Last Reference</item>
-                                          <item id="\rangeref" translatable="yes">Reference Range</item>
-                                          <item id="\book" translatable="yes">Book (\h)</item>
-                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
-                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
-                                          <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
-                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
-                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
-                                        </items>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="width-chars">10</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">5</property>
-                                        <property name="top-attach">1</property>
-                                        <property name="height">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBoxText" id="ecb_hdrleft">
-                                        <property name="name">Inner (left) page header settings</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
-and/or reference(s) in various forms. Select a preset option,
-or type in a keyword with additional adornments as needed. 
-
-For example:
-\bookalt\ \rangeref   uses the book name from the \h1 alt book header
-[\pagenumber]    places square brackets around the page number
-DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
--empty-     places nothing in that location
-
-With Mirror Pages on, First Reference and Last
-Reference are swapped on left-hand (even) pages.
-
-Note that a space and the following certain special 
-characters require a slash '\' to be typed before them:
-    # % &amp; ^ ~ and \ itself.
-For example, to get this output: 
-     This is page #1
-you would need to enter:
-     This\ is\ page\ \#\pagenumber</property>
-                                        <property name="margin-end">3</property>
-                                        <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="active">0</property>
-                                        <property name="has-entry">True</property>
-                                        <items>
-                                          <item id="\empty" translatable="yes">-empty-</item>
-                                          <item id="\pagenumber" translatable="yes">Page Number</item>
-                                          <item id="\firstref" translatable="yes">First Reference</item>
-                                          <item id="\lastref" translatable="yes">Last Reference</item>
-                                          <item id="\rangeref" translatable="yes">Reference Range</item>
-                                          <item id="\book" translatable="yes">Book (\h)</item>
-                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
-                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
-                                          <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
-                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
-                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
-                                        </items>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="width-chars">10</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">1</property>
-                                        <property name="height">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrLeft_Pri">
-                                        <property name="label" translatable="yes">Pri</property>
-                                        <property name="name">Use formatting from primary project (inner header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrLeft_Sec</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrLeft_Sec">
-                                        <property name="label" translatable="yes">Sec</property>
-                                        <property name="name">Use formatting from secondary project (inner header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrLeft_Pri</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrCenter_Pri">
-                                        <property name="label" translatable="yes">Pri</property>
-                                        <property name="name">Use formatting from primary project (center header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrCenter_Sec</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrRight_Pri">
-                                        <property name="label" translatable="yes">Pri</property>
-                                        <property name="name">Use formatting from primary project (outer header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrRight_Sec</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">4</property>
-                                        <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrCenter_Sec">
-                                        <property name="label" translatable="yes">Sec</property>
-                                        <property name="name">Use formatting from secondary project (center header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrCenter_Pri</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrRight_Sec">
-                                        <property name="label" translatable="yes">Sec</property>
-                                        <property name="name">Use formatting from secondary project (outer header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrRight_Pri</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">4</property>
-                                        <property name="top-attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="width-request">40</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">start</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="width-request">40</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">start</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">4</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
                                     </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_hdrLeftSide">
+                                            <property name="name">Column for the inner header</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Which text (column) of the diglot or polyglot this part of the inner header&#10;comes from: its text and formatting are taken from that project.&#10;The letters match the codes on the Diglot page.</property>
+                                            <property name="valign">center</property>
+                                            <property name="model">ls_hdrColumns</property>
+                                            <property name="id-column">1</property>
+                                            <signal name="changed" handler="onHdrColumnChanged" swapped="no"/>
+                                            <child>
+                                              <object class="GtkCellRendererText"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_hdrleft">
+                                            <property name="name">Inner (left) page header settings</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
+    and/or reference(s) in various forms. Select a preset option,
+    or type in a keyword with additional adornments as needed. 
+
+    For example:
+    \bookalt\ \rangeref   uses the book name from the \h1 alt book header
+    [\pagenumber]    places square brackets around the page number
+    DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
+    -empty-     places nothing in that location
+
+    With Mirror Pages on, First Reference and Last
+    Reference are swapped on left-hand (even) pages.
+
+    Note that a space and the following certain special 
+    characters require a slash '\' to be typed before them:
+        # % &amp; ^ ~ and \ itself.
+    For example, to get this output: 
+         This is page #1
+    you would need to enter:
+         This\ is\ page\ \#\pagenumber</property>
+                                            <property name="margin-end">3</property>
+                                            <property name="margin-top">4</property>
+                                            <property name="margin-bottom">4</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active">0</property>
+                                            <property name="has-entry">True</property>
+                                            <items>
+                                              <item id="\empty" translatable="yes">-empty-</item>
+                                              <item id="\pagenumber" translatable="yes">Page Number</item>
+                                              <item id="\firstref" translatable="yes">First Reference</item>
+                                              <item id="\lastref" translatable="yes">Last Reference</item>
+                                              <item id="\rangeref" translatable="yes">Reference Range</item>
+                                              <item id="\book" translatable="yes">Book (\h)</item>
+                                              <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                              <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                              <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                              <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                              <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="width-chars">10</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_hdrCenterSide">
+                                            <property name="name">Column for the center header</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Which text (column) of the diglot or polyglot this part of the center header&#10;comes from: its text and formatting are taken from that project.&#10;The letters match the codes on the Diglot page.</property>
+                                            <property name="valign">center</property>
+                                            <property name="model">ls_hdrColumns</property>
+                                            <property name="id-column">1</property>
+                                            <signal name="changed" handler="onHdrColumnChanged" swapped="no"/>
+                                            <child>
+                                              <object class="GtkCellRendererText"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_hdrcenter">
+                                            <property name="name">Center page header settings</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
+    and/or reference(s) in various forms. Select a preset option,
+    or type in a keyword with additional adornments as needed. 
+
+    For example:
+    \bookalt\ \rangeref   uses the book name from the \h1 alt book header
+    [\pagenumber]    places square brackets around the page number
+    DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
+    -empty-     places nothing in that location
+
+    With Mirror Pages on, First Reference and Last
+    Reference are swapped on left-hand (even) pages.
+
+    Note that a space and the following certain special 
+    characters require a slash '\' to be typed before them:
+        # % &amp; ^ ~ and \ itself.
+    For example, to get this output: 
+         This is page #1
+    you would need to enter:
+         This\ is\ page\ \#\pagenumber</property>
+                                            <property name="margin-end">3</property>
+                                            <property name="margin-top">4</property>
+                                            <property name="margin-bottom">4</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active">1</property>
+                                            <property name="has-entry">True</property>
+                                            <items>
+                                              <item id="\empty" translatable="yes">-empty-</item>
+                                              <item id="\pagenumber" translatable="yes">Page Number</item>
+                                              <item id="\firstref" translatable="yes">First Reference</item>
+                                              <item id="\lastref" translatable="yes">Last Reference</item>
+                                              <item id="\rangeref" translatable="yes">Reference Range</item>
+                                              <item id="\book" translatable="yes">Book (\h)</item>
+                                              <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                              <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                              <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                              <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                              <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="width-chars">10</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_hdrRightSide">
+                                            <property name="name">Column for the outer header</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Which text (column) of the diglot or polyglot this part of the outer header&#10;comes from: its text and formatting are taken from that project.&#10;The letters match the codes on the Diglot page.</property>
+                                            <property name="valign">center</property>
+                                            <property name="model">ls_hdrColumns</property>
+                                            <property name="id-column">1</property>
+                                            <signal name="changed" handler="onHdrColumnChanged" swapped="no"/>
+                                            <child>
+                                              <object class="GtkCellRendererText"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_hdrright">
+                                            <property name="name">Outer (right) page header settings</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
+    and/or reference(s) in various forms. Select a preset option,
+    or type in a keyword with additional adornments as needed. 
+
+    For example:
+    \bookalt\ \rangeref   uses the book name from the \h1 alt book header
+    [\pagenumber]    places square brackets around the page number
+    DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
+    -empty-     places nothing in that location
+
+    With Mirror Pages on, First Reference and Last
+    Reference are swapped on left-hand (even) pages.
+
+    Note that a space and the following certain special 
+    characters require a slash '\' to be typed before them:
+        # % &amp; ^ ~ and \ itself.
+    For example, to get this output: 
+         This is page #1
+    you would need to enter:
+         This\ is\ page\ \#\pagenumber</property>
+                                            <property name="margin-end">6</property>
+                                            <property name="margin-top">4</property>
+                                            <property name="margin-bottom">4</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active">4</property>
+                                            <property name="has-entry">True</property>
+                                            <items>
+                                              <item id="\empty" translatable="yes">-empty-</item>
+                                              <item id="\pagenumber" translatable="yes">Page Number</item>
+                                              <item id="\firstref" translatable="yes">First Reference</item>
+                                              <item id="\lastref" translatable="yes">Last Reference</item>
+                                              <item id="\rangeref" translatable="yes">Reference Range</item>
+                                              <item id="\book" translatable="yes">Book (\h)</item>
+                                              <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                              <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                              <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                              <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                              <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="width-chars">10</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -27430,52 +27365,26 @@ these can be set in the ptxprint-mods.tex file.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkRadioButton" id="r_ftrCenter_Sec">
-                                    <property name="label" translatable="yes">Sec</property>
-                                    <property name="name">Use formatting from secondary project (center footer)</property>
+                                  <object class="GtkComboBox" id="fcb_ftrCenterSide">
+                                    <property name="name">Column for the center footer</property>
                                     <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">If setting the footer for a diglot
-you will need to specify whether
-this part of the footer (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.</property>
-                                    <property name="halign">start</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Which text (column) of the diglot or polyglot this part of the footer&#10;comes from: its text and formatting are taken from that project.&#10;The letters match the codes on the Diglot page.</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">10</property>
-                                    <property name="active">True</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_ftrCenter_Pri</property>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_ftrCenter_Pri">
-                                    <property name="label" translatable="yes">Pri</property>
-                                    <property name="name">Use formatting from primary project (center footer)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">If setting the footer for a diglot
-you will need to specify whether
-this part of the footer (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">10</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_ftrCenter_Sec</property>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <property name="model">ls_hdrColumns</property>
+                                    <property name="id-column">1</property>
+                                    <signal name="changed" handler="onHdrColumnChanged" swapped="no"/>
+                                    <child>
+                                      <object class="GtkCellRendererText"/>
+                                      <attributes>
+                                        <attribute name="text">0</attribute>
+                                      </attributes>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
+                                    <property name="height">2</property>
                                   </packing>
                                 </child>
                               </object>

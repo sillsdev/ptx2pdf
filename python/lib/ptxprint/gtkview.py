@@ -12,7 +12,7 @@ gi.require_version('Poppler', '0.18')
 gi.require_version('GtkSource', '3.0')
 from shutil import rmtree, copy2
 import datetime, time, locale, urllib.request, json, hashlib, argparse
-from ptxprint.utils import universalopen, refKey, refSort, chgsHeader, saferelpath, startfile, uiLangCode
+from ptxprint.utils import universalopen, refKey, refSort, chgsHeader, saferelpath, startfile, uiLangCode, hdrColumn
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -297,11 +297,10 @@ ex_xrefs gr_xrRuleSettings
 l_xrBelowSpace l_xrAboveSpace c_xrefrule l_text2NotesSpace3 s_xrAboveSpace s_xrBelowSpace rule_xref
 lb_xrRuleSettings lb_xrefs c_sidebars
 lb_studynotes
-r_hdrLeft_Pri r_hdrLeft_Sec r_hdrCenter_Pri r_hdrRight_Pri r_hdrCenter_Sec r_hdrRight_Sec
+fcb_hdrLeftSide fcb_hdrCenterSide fcb_hdrRightSide
 gr_HeaderAdvOptions c_rangeShowChapter c_rangeShowVerse r_CVsep_colon r_CVsep_period
 c_rangeShowBook l_chvsSep lb_style_h
-fr_layoutOther l_startPageNum s_startPageNum c_pageNumTitlePage c_printConfigName r_ftrCenter_Sec
-r_ftrCenter_Pri
+fr_layoutOther l_startPageNum s_startPageNum c_pageNumTitlePage c_printConfigName fcb_ftrCenterSide
 tb_plTopPane scr_picListEdit tv_picListEdit col_anchor col_caption col_file col_frame col_scale
 col_posn col_ref col_mirror col_desc col_copy col_media col_caption2 gr_picButtons btn_plDel
 btn_plGenerate btn_plAdd btn_refreshCaptions btn_addMaps2 btn_editMaps2 btn_getPictures
@@ -590,8 +589,7 @@ _sensitivities = {
     "c_strongsShowInText" :    ["c_strongsShowAll"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
-    "c_diglot" :               ["gr_diglot", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
-                                "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"], # "fcb_diglotPicListSources", 
+    "c_diglot" :               ["gr_diglot"],  # the Header/Footer column drop-downs are hidden by updateHdrColumns() 
     "c_diglotSeparateNotes" :  ["c_diglotNotesRule", "c_diglotJoinVrule"],
     "c_diglotNotesRule" :      ["c_diglotJoinVrule"],
     "c_useOrnaments" :         ["gr_borders"],
@@ -1214,6 +1212,7 @@ class GtkViewModel(ViewModel):
 
         self._setup_css()
         self.radios = {}
+        self.hdrColWanted = {}  # Header/Footer column (L, R, A-G) asked for, even before that column is loaded
         GLib.set_prgname("ptxprint")
         gladefile = os.path.join(pycodedir(), "ptxprint.glade")
         GObject.type_register(GtkSource.View)
@@ -2281,6 +2280,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(pgId)
         for f, g, key, d in _collapsibleSections:
             self._updateSectionVisibility(key)
+        self.updateHdrColumns()     # the UI level showed them all; hide them again for a monoglot
         return True
 
     def toggleUIdetails(self, w, state):
@@ -2382,6 +2382,8 @@ class GtkViewModel(ViewModel):
             if len(bits) > 1:
                 return w.get_active()
             return super().get(wid, default=default)
+        if wid in PolyglotSetup.hdrColumnWidgets:
+            return w.get_active_id() or self.hdrColWanted.get(wid, "L")
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
     def set(self, wid, value, skipmissing=False, useMarkup=False, sub=-1, mod=True):
@@ -2424,6 +2426,13 @@ class GtkViewModel(ViewModel):
                 if not wid.startswith('_'):
                     print(_("Can't set {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
+            return
+        if wid in PolyglotSetup.hdrColumnWidgets:
+            # Pri/Sec (old configs) become L/R; a column not loaded yet is remembered for updateHdrColumns
+            value = hdrColumn(value)
+            self.hdrColWanted[wid] = value
+            if not w.set_active_id(value):
+                w.set_active_id("L")
             return
         setWidgetVal(wid, w, value, useMarkup=useMarkup, sub=sub)
         if wid in ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI") and not getattr(self, "loadingConfig", False):
@@ -3172,6 +3181,8 @@ class GtkViewModel(ViewModel):
                         wid.set_sensitive(l(state))
         if focus and k in _sensitivities:
             self.builder.get_object(_sensitivities[k][0]).grab_focus()
+        if k == "c_diglot":
+            self.updateHdrColumns()     # show/hide + refill the Header/Footer column drop-downs
         return state
 
     def onSimpleClicked(self, btn):

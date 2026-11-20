@@ -8,7 +8,7 @@ from ptxprint.runner import checkoutput
 from ptxprint.usxutils import Usfm, Sheets
 from ptxprint.module import Module
 from ptxprint.markdown import MarkDown
-from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
+from ptxprint.utils import _, universalopen, localhdrmappings, hdrColumn, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect, spineWidthMm, asfloat
 from ptxprint.dimension import Dimension
@@ -501,11 +501,15 @@ class TexModel:
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """
         diglot = True if self.dict["document/ifdiglot"] == "" else False
+        cols = set(getattr(printer, "polyglots", None) or ()) | {"L", "R"}
+        def hdrcol(v):      # a column that has since been removed from the Diglot page falls back to L
+            c = hdrColumn(v)
+            return c if c in cols else "L"
         v = self.dict["footer/ftrcenter"]
-        pri = self.dict["footer/ftrcenterside"] == "Pri" 
+        col = hdrcol(self.dict["footer/ftrcenterside"])
         t = self._hdrmappings.get(v, v)
         if diglot:
-            t = self._addLR(t, pri)
+            t = self._addCol(t, col)
             swap = False # FixMe! self.dict['document/diglotswapside'] == 'true'
             # ratio = float(self.dict['document/diglotprifraction']) # FixMe!
             ratio = 0.5
@@ -523,7 +527,8 @@ class TexModel:
         self.dict['footer/oddcenter'] = t
         self.dict['footer/evencenter'] = t
         if self.dict['footer/ifftrtitlepagenum'] == "":
-            self.dict['footer/titleevencenter'] = self.dict['footer/titleoddcenter'] = self._addLR('\\pagenumber', pri)
+            self.dict['footer/titleevencenter'] = self.dict['footer/titleoddcenter'] = \
+                    self._addCol('\\pagenumber', col if diglot else "L")
         elif self.dict['footer/ifprintconfigname'] == "":
             self.dict['footer/titleevencenter'] = self.dict['footer/titleoddcenter'] = self.dict['config/name']
         else:
@@ -533,30 +538,34 @@ class TexModel:
         mirror = self.asBool("header/mirrorlayout")
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
-            pri = self.dict["header/hdr"+side+"side"] == "Pri"
-            t = self._hdrmappings.get(v, v)
+            col = hdrcol(self.dict["header/hdr"+side+"side"])
+            base = self._hdrmappings.get(v, v)
+            # Mirror and test the plain macro, then add the column (\cstyle{hR}{...} etc. hid them before)
+            t = self._addCol(base, col) if diglot else base
+            mt = self.mirrorHeaders(base)
             if diglot:
-                t = self._addLR(t, pri)
+                mt = self._addCol(mt, col)
+            isref = base.startswith((r'\first', r'\last', r'\range'))
             self.dict['header/odd{}'.format(side)] = t
             if mirror:
-                self.dict['header/even{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
+                self.dict['header/even{}'.format(self._swapRL[side])] = mt
             else:
                 self.dict['header/even{}'.format(side)] = t
 
-            if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
+            if isref: # ensure noVodd + noVeven is \empty
                 self.dict['header/noVodd{}'.format(side)] = r'\empty'
             else:
                 self.dict['header/noVodd{}'.format(side)] = t  # copy the other header as is
             if mirror:
-                if t.startswith((r'\first', r'\last', r'\range')):
+                if isref:
                     self.dict['header/noVeven{}'.format(self._swapRL[side])] = r'\empty'
                 else:
-                    self.dict['header/noVeven{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
+                    self.dict['header/noVeven{}'.format(self._swapRL[side])] = mt
             else:
-                if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
+                if isref: # ensure noVodd + noVeven is \empty
                     self.dict['header/noVeven{}'.format(side)] = r'\empty'
                 else:
-                    self.dict['header/noVeven{}'.format(side)] = t 
+                    self.dict['header/noVeven{}'.format(side)] = t
 
             if side == "center" and diglot and self.dict["document/diglotadjcenter"]:
                 for a in ('header/odd', 'header/even', 'footer/odd', 'footer/even',
@@ -568,34 +577,25 @@ class TexModel:
                     else:
                         self.dict[b] = (rhfil if swap else lhfil) + self.dict[b] + (lhfil if swap else rhfil)
 
-    def _addLR(self, t, pri):
-        # those with L and R forms (\header@defs in ptx-references.tex); others go in \headfootL/R
+    def _addCol(self, t, col):
+        """ Make header/footer item t come from diglot/polyglot column col (L, R, A-G) """
+        # those with per-column forms (\header@defs in ptx-references.tex, run for every column);
+        # anything else goes in \headfoot<col>{...}
         if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate",
                  r"\usdate", r"\ukdate", r"\timestamp"]:
-            if pri:
-                t = t+'L'
+            if col == "R":
+                t = r'\cstyle{hR}{'+t+'R}'      # as before, so existing R headers are unchanged
             else:
-                t = r'\cstyle{hR}{'+t+'R}'
+                t = t+col
         elif t == r"\empty":
             pass
         else:
-            if pri:
-                t = r"\headfootL{{{}}}".format(t)
-            else:
-                t = r"\headfootR{{{}}}".format(t)
+            t = r"\headfoot {}{{{}}}".format(col, t)
         return t
 
-    def mirrorHeaders(self, h, dig=False):
-        if dig and h.endswith(("L", "R")):
-            try:
-                return self._mirrorRL[h[:-1]]+h[-1:]
-            except KeyError:
-                return h
-        else:
-            try:
-                return self._mirrorRL[h]
-            except KeyError:
-                return h
+    def mirrorHeaders(self, h):
+        """ Swap first/last ref for the facing page (h is the plain macro, before _addCol) """
+        return self._mirrorRL.get(h, h)
 
     def calculateMargins(self):
         (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms,

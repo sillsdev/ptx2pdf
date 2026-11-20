@@ -14,8 +14,11 @@ m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
 class PolyglotSetup(Gtk.Box):
 
     _methods = """onDiglotClicked loadPolyglotSettings onDiglotAutoAdjust update_diglot_polyglot_UI
-                  switchToDiglot
+                  switchToDiglot updateHdrColumns onHdrColumnChanged
                """.split()
+
+    # Header/Footer page: which column (L, R, A-G) each header/footer item comes from
+    hdrColumnWidgets = ("fcb_hdrLeftSide", "fcb_hdrCenterSide", "fcb_hdrRightSide", "fcb_ftrCenterSide")
 
     def __init__(self, builder, view, tv):
         self.builder = builder
@@ -51,6 +54,13 @@ class PolyglotSetup(Gtk.Box):
         self.add_column("Weight", m.weight, editable=True, renderer_type="text", align="right", width=60)
 
         self.ensure_right_click_handler()
+
+        # Header/Footer column drop-downs: just the letter when closed (narrow), "L · WSG" in the open list
+        for w in self.hdrColumnWidgets:
+            combo = self.builder.get_object(w)
+            cell = combo.get_cells()[0]
+            combo.clear_attributes(cell)
+            combo.set_cell_data_func(cell, self._hdrColumnCellText, combo)
 
         # Connect tooltips (once: the handler works out the column itself)
         self.treeview.set_has_tooltip(True)
@@ -380,6 +390,7 @@ class PolyglotSetup(Gtk.Box):
             self.ls_treeview[path][col_id] = text
             self.updateRow(row_index)
             self.refresh_code_dropdowns()
+            self.updateHdrColumns()
             self.view.updateDialogTitle()
             return
 
@@ -451,8 +462,10 @@ class PolyglotSetup(Gtk.Box):
             self.validate_page_widths()
             self.update_layout_string(force=True)
             self.treeview.queue_draw()  # Refresh UI
+        if col_id in (m.prj, m.cfg):
+            self.updateHdrColumns()     # the Header/Footer column drop-downs show the project
         self.view.updateDialogTitle()
-            
+
     def changeConfigName(self, config):
         if len(self.ls_treeview):
             self.ls_treeview[0][m.cfg] = config
@@ -1274,7 +1287,66 @@ class PolyglotSetup(Gtk.Box):
             btn.set_active(False)
         self.view.callback(self.view)
 
+    def updateHdrColumns(self):
+        """ Fill the Header/Footer column drop-downs from the rows on the Diglot page
+            ("L · WSG"), and show them only for a diglot/polyglot """
+        diglot = bool(self.view.get("c_diglot"))
+        rows = [(r[m.code], r[m.prj], r[m.cfg]) for r in self.ls_treeview if r[m.code]] if diglot else []
+        if not rows:
+            rows = [("L", "", ""), ("R", "", "")]
+        prjcount = {}
+        for c, p, f in rows:
+            prjcount[p] = prjcount.get(p, 0) + 1
+        newrows = []
+        for c, p, f in sorted(rows, key=lambda x: self.codes.index(x[0]) if x[0] in self.codes else 99):
+            if not p or p == "(Select)":
+                desc = c
+            elif prjcount[p] > 1 and f:     # same project twice: the config tells them apart
+                desc = "{} · {} ({})".format(c, p, f)
+            else:
+                desc = "{} · {}".format(c, p)
+            newrows.append([desc, c])
+        ls = self.builder.get_object("ls_hdrColumns")
+        if [list(r) for r in ls] != newrows:
+            self._hdrColRefilling = True
+            try:
+                ls.clear()
+                for r in newrows:
+                    ls.append(r)
+                # Show what each wants; one whose column is gone (or not loaded yet) shows L
+                for w in self.hdrColumnWidgets:
+                    want = self.view.hdrColWanted.get(w, "L")
+                    combo = self.builder.get_object(w)
+                    if not combo.set_active_id(want):
+                        combo.set_active_id("L")
+            finally:
+                self._hdrColRefilling = False
+        for w in self.hdrColumnWidgets:
+            combo = self.builder.get_object(w)
+            combo.set_visible(diglot)
+            self._hdrColumnTooltip(combo)
+
+    def _hdrColumnTooltip(self, combo):
+        it = combo.get_active_iter()
+        desc = combo.get_model()[it][0] if it is not None else ""
+        combo.set_tooltip_text(_("This item comes from column: {}").format(desc) + "\n\n"
+                + _("The letters match the codes on the Diglot page; its text and formatting come from that project."))
+
+    def _hdrColumnCellText(self, layout, cell, model, it, combo):
+        # Sized (closed) with letters only, so the button stays narrow; the open list shows the project too
+        cell.set_property("text", model[it][0] if combo.get_property("popup-shown") else model[it][1])
+
+    def onHdrColumnChanged(self, combo):
+        if getattr(self, "_hdrColRefilling", False):
+            return
+        cid = combo.get_active_id()
+        self._hdrColumnTooltip(combo)
+        if cid:
+            self.view.hdrColWanted[Gtk.Buildable.get_name(combo)] = cid
+            self.view.changed()
+
     def update_diglot_polyglot_UI(self):
+        self.updateHdrColumns()
         dglt = True if len(self.ls_treeview) < 3 else False
         self.builder.get_object("btn_adjust_diglot").set_sensitive(dglt)
         orig = self.view.get("fcb_diglotMerge", "scores")

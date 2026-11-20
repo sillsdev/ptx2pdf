@@ -645,6 +645,18 @@ headermappings = {
     "-empty-":                   r"\empty"
 }
 
+polyglotCodes = "LRABCDEFG"
+
+def hdrColumn(v):
+    """ The diglot/polyglot column (L, R, A-G) a header/footer item comes from.
+        Configs from before polyglot headers say Pri/Sec instead. """
+    v = (v or "").strip()
+    if v == "Sec":
+        return "R"
+    if len(v) == 1 and v in polyglotCodes:
+        return v
+    return "L"
+
 def localhdrmappings():
     return {
         _("First Reference"):           r"\firstref",
