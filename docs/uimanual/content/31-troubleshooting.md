@@ -205,7 +205,7 @@ First try these three quick checks. They solve many problems:
 
 1. On the **Styles** tab, find the marker. A bold **Font** label means the style has its own font. Click the bold label to go back to the main font.
 2. On the **Fonts+Script** tab, check **Use Fallback Font** and the characters in its list.
-3. In a diglot, on the **Header+Footer** tab, choose **Pri** or **Sec** for each part of the header.
+3. In a diglot or polyglot, on the **Header+Footer** tab, choose the text letter (**L**, **R**, **A** …) in the drop-down in front of each part of the header.
 4. If you chose a new **Regular** font, check **Bold**, **Italic** and **Bold Italic** again.
 
 ### My font is not in the list
@@ -837,7 +837,6 @@ Extra pages at the end of the longer PDF always show as changed. This is correct
 | **Reset** (Basic tab) | Regular or Full view. |
 | **Two Column Layout** | Turn off the diglot. A diglot always uses columns. |
 | **Verse** (header references) | Tick **Chapter** first. |
-| **Pri** / **Sec** (header) | Turn on **Diglot (or Polyglot)**. |
 | **Parallel Passage Refs** | Tick **Headings** on the **Body** tab. |
 | **Hanging Poetry Verse Numbers** | Untick **Marginal Verses**. |
 | **Optimize Layout for Poetry Books** | Tick **Use Special Features for These Books** (**Body** tab). |

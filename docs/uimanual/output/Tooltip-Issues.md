@@ -1,6 +1,6 @@
 # Tooltip and UI issues found while writing the manual
 
-Generated 2026-11-12. One section per chapter; IDs refer to ptxprint.glade.
+Generated 2026-11-20. One section per chapter; IDs refer to ptxprint.glade.
 
 
 ## 02-main-window-tooltip-issues

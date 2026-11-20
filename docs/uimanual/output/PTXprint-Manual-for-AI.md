@@ -1,6 +1,6 @@
 # PTXprint User Interface Manual (AI support edition)
 
-Generated 2026-11-12 from the PTXprint source code and the explanations in docs/uimanual/content.
+Generated 2026-11-20 from the PTXprint source code and the explanations in docs/uimanual/content.
 
 ## Notes for the AI support assistant
 
@@ -2587,7 +2587,7 @@ First try these three quick checks. They solve many problems:
 
 1. On the **Styles** tab, find the marker. A bold **Font** label means the style has its own font. Click the bold label to go back to the main font.
 2. On the **Fonts+Script** tab, check **Use Fallback Font** and the characters in its list.
-3. In a diglot, on the **Header+Footer** tab, choose **Pri** or **Sec** for each part of the header.
+3. In a diglot or polyglot, on the **Header+Footer** tab, choose the text letter (**L**, **R**, **A** …) in the drop-down in front of each part of the header.
 4. If you chose a new **Regular** font, check **Bold**, **Italic** and **Bold Italic** again.
 
 ### My font is not in the list
@@ -3219,7 +3219,6 @@ Extra pages at the end of the longer PDF always show as changed. This is correct
 | **Reset** (Basic tab) | Regular or Full view. |
 | **Two Column Layout** | Turn off the diglot. A diglot always uses columns. |
 | **Verse** (header references) | Tick **Chapter** first. |
-| **Pri** / **Sec** (header) | Turn on **Diglot (or Polyglot)**. |
 | **Parallel Passage Refs** | Tick **Headings** on the **Body** tab. |
 | **Hanging Poetry Verse Numbers** | Untick **Marginal Verses**. |
 | **Optimize Layout for Poetry Books** | Tick **Use Special Features for These Books** (**Body** tab). |
@@ -7952,12 +7951,23 @@ Under **Include in References**, choose what the reference items contain (Regula
 Most Bibles show only book and chapter, for example "Matthew 5–6", because a chapter is easier to
 find when you turn the pages.
 
-### Diglot options
+### Diglot and polyglot options
 
-In a diglot (two texts side by side), each place has two small buttons, **Pri** and **Sec**. They
-choose whether the item comes from the primary or the secondary text. This decides both the
-language of the book names in the references and the font. They are greyed out until you turn on
-**Diglot (or Polyglot)** on the **Diglot** tab. (Regular and Full views.)
+In a diglot (two texts side by side) or a polyglot (more than two), a small drop-down appears in
+front of each place. It shows one letter: the code of one of the texts on the **Diglot** tab.
+**L** is the primary text, **R** the secondary text, and a polyglot adds **A** to **G**. The letter
+chooses which text the item comes from. This decides both the language of the book names in the
+references and the font.
+
+* The list only has the letters of the texts set up on the **Diglot** tab: **L** and **R** for a
+  diglot, more for a polyglot. It follows any change you make there.
+* When the list is open, each letter is shown with its project, for example **A · TEL29OV**. When it
+  is closed it shows only the letter, so it stays narrow. Point at it to see which project the
+  letter stands for.
+* The drop-downs are hidden when **Diglot (or Polyglot)** is off. The header boxes then use the
+  full width.
+
+(Regular and Full views.)
 
 ### Typing your own text (advanced)
 
@@ -8001,7 +8011,8 @@ The footer of the first page of each book follows the **Other** area:
 * else, **Print Name of Saved Config on Intro Page(s)** ticked: the configuration name.
 * else: the same as **Center Footer**.
 
-In a diglot, the **Pri** and **Sec** buttons choose which text's font the footer uses.
+In a diglot or polyglot, the letter drop-down in front of **Center Footer** chooses which text's
+font (and references) the footer uses.
 
 To move the footer up or down, use the **Layout** tab, **Margins** area (**Bottom of Text to Top of
 Footer** and **Place Footer Text Above the Bottom Margin**).
@@ -8046,12 +8057,14 @@ Footer** and **Place Footer Text Above the Bottom Margin**).
 2. On the **Header+Footer** tab, in **Other**, tick **Print Name of Saved Config on Intro Page(s)**.
 3. The name is printed at the bottom of the first page of each book, instead of the page number.
 
-### How do I set the headers for a diglot?
+### How do I set the headers for a diglot or polyglot?
 
-1. On the **Diglot** tab, turn on **Diglot (or Polyglot)**.
+1. On the **Diglot** tab, turn on **Diglot (or Polyglot)** and set up the texts.
 2. On the **Header+Footer** tab, choose an item for each place.
-3. For each place, click **Pri** for the primary text (its book names and font), or **Sec** for the
-   secondary text.
+3. For each place, choose a letter in the small drop-down in front of it: **L** for the primary
+   text (its book names and font), **R** for the secondary text, or **A** to **G** for the other
+   texts of a polyglot. For example, **L** for the inner place and **R** for the outer place gives
+   each language its own reference.
 4. Decide on **Mirror Pages** on the **Layout** tab. With it ticked, the primary text is next to the spine.
 
 ## 11.6 Common problems
@@ -8075,8 +8088,19 @@ untick **Mirror Pages** for the same layout on every page.
 **"Verse" is greyed out.**
 Cause: **Chapter** is unticked. Tick **Chapter** first.
 
-**The Pri / Sec buttons are greyed out.**
-Cause: diglot is not on. Turn on **Diglot (or Polyglot)** on the **Diglot** tab.
+**There is no letter drop-down in front of the header and footer boxes.**
+Cause: diglot is not on, or you are in the Basic view. The drop-downs are only shown for a diglot
+or polyglot. Turn on **Diglot (or Polyglot)** on the **Diglot** tab, and use the Regular or Full
+view.
+
+**A header part from one of the texts of a polyglot prints no reference.**
+Cause: the references from a text use the book name from that text's `\h` line. If that project's
+book has no `\h` line, the reference is empty. Fix: add an `\h` line to the book in that project.
+Pages where that text has no verses also show no reference for it.
+
+**A header part went back to L.**
+Cause: the text it used was removed from the **Diglot** tab, or its code was changed. Choose the
+letter again.
 
 **"Print Name of Saved Config" unticked itself.**
 Cause: you ticked **Print Page Number at Bottom of Intro Page(s)**. Only one of the two can be used.
@@ -8096,135 +8120,124 @@ numbers, the numbering simply continues from the front matter.
 
 #### Header
 
-##### Center – Center page header settings
+##### Column for the inner header
 
-Drop-down · Basic+ · `ecb_hdrcenter` · cfg `header/hdrcenter`  
-Choices: -empty- | Page Number | First Reference | Last Reference | Reference Range | Book (\h) | Book Alt (\h1) | Time (HH:MM) | Date (YYYY-MM-DD) | Date and Time | Printed on YYYY-MM-DD
+Drop-down · Regular+ · `fcb_hdrLeftSide` · cfg `header/hdrleftside`  
+Choices: L | R
 
-> The header line on each page can contain the page number, and/or reference(s) in various forms. Select a preset option, or type in a keyword with additional adornments as needed.
->
-> For example:  
-> \bookalt\ \rangeref   uses the book name from the \h1 alt book header [\pagenumber]    places square brackets around the page number DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"  
-> -empty-     places nothing in that location
->
-> With Mirror Pages on, First Reference and Last Reference are swapped on left-hand (even) pages.
->
-> Note that a space and the following certain special characters require a slash '\' to be typed before them:  
->     # % & ^ ~ and \ itself. For example, to get this output:  
->      This is page #1 you would need to enter:  
->      This\ is\ page\ \#\pagenumber
+> Which text (column) of the diglot or polyglot this part of the inner header comes from: its text and formatting are taken from that project. The letters match the codes on the Diglot page.
 
-A common choice is **Page Number** or **Reference Range**. The center place does not change sides
-with **Mirror Pages**, but **First Reference** and **Last Reference** still swap on left-hand pages.
-
-##### Outer (Right) – Outer (right) page header settings
-
-Drop-down · Basic+ · `ecb_hdrright` · cfg `header/hdrright`  
-Choices: -empty- | Page Number | First Reference | Last Reference | Reference Range | Book (\h) | Book Alt (\h1) | Time (HH:MM) | Date (YYYY-MM-DD) | Date and Time | Printed on YYYY-MM-DD
-
-> The header line on each page can contain the page number, and/or reference(s) in various forms. Select a preset option, or type in a keyword with additional adornments as needed.
->
-> For example:  
-> \bookalt\ \rangeref   uses the book name from the \h1 alt book header [\pagenumber]    places square brackets around the page number DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"  
-> -empty-     places nothing in that location
->
-> With Mirror Pages on, First Reference and Last Reference are swapped on left-hand (even) pages.
->
-> Note that a space and the following certain special characters require a slash '\' to be typed before them:  
->     # % & ^ ~ and \ itself. For example, to get this output:  
->      This is page #1 you would need to enter:  
->      This\ is\ page\ \#\pagenumber
-
-With **Mirror Pages** ticked, this is the outer edge: right on right-hand pages, left on left-hand
-pages. A common choice is **Page Number** or a reference.
+Only shown for a diglot or polyglot. **L** is the primary text and **R** the secondary text; a
+polyglot adds the letters **A** to **G** set up on the **Diglot** tab. References in this place use
+that text's book names, and its header font is used. Open the list to see the project behind each
+letter. Configurations saved with the older **Pri** / **Sec** buttons open as **L** / **R**.
 
 ##### Inner (Left) – Inner (left) page header settings
 
 Drop-down · Basic+ · `ecb_hdrleft` · cfg `header/hdrleft`  
 Choices: -empty- | Page Number | First Reference | Last Reference | Reference Range | Book (\h) | Book Alt (\h1) | Time (HH:MM) | Date (YYYY-MM-DD) | Date and Time | Printed on YYYY-MM-DD
 
-> The header line on each page can contain the page number, and/or reference(s) in various forms. Select a preset option, or type in a keyword with additional adornments as needed.
+> The header line on each page can contain the page number,  
+>     and/or reference(s) in various forms. Select a preset option,  
+>     or type in a keyword with additional adornments as needed.
 >
-> For example:  
-> \bookalt\ \rangeref   uses the book name from the \h1 alt book header [\pagenumber]    places square brackets around the page number DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"  
-> -empty-     places nothing in that location
+>     For example:  
+>     \bookalt\ \rangeref   uses the book name from the \h1 alt book header  
+>     [\pagenumber]    places square brackets around the page number  
+>     DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"  
+>     -empty-     places nothing in that location
 >
-> With Mirror Pages on, First Reference and Last Reference are swapped on left-hand (even) pages.
+>     With Mirror Pages on, First Reference and Last  
+>     Reference are swapped on left-hand (even) pages.
 >
-> Note that a space and the following certain special characters require a slash '\' to be typed before them:  
->     # % & ^ ~ and \ itself. For example, to get this output:  
->      This is page #1 you would need to enter:  
->      This\ is\ page\ \#\pagenumber
+>     Note that a space and the following certain special  
+>     characters require a slash '\' to be typed before them:  
+>         # % & ^ ~ and \ itself.  
+>     For example, to get this output:  
+>          This is page #1  
+>     you would need to enter:  
+>          This\ is\ page\ \#\pagenumber
 
 With **Mirror Pages** ticked, this is the inner edge (next to the spine): left on right-hand pages,
 right on left-hand pages. Many publications leave it **-empty-**.
 
-##### Pri
+##### Column for the center header
 
-Radio · Regular+ · `r_hdrLeft_Pri` · cfg `header/hdrleftside=Pri`  
-Also: Use formatting from primary project (inner header) · Needs: “Diglot (or Polyglot)”
+Drop-down · Regular+ · `fcb_hdrCenterSide` · cfg `header/hdrcenterside`  
+Choices: L | R
 
-> If setting the header for a diglot you will need to specify whether this part of the header (its text and formatting) should come from the Primary (Left) or the Secondary text.
+> Which text (column) of the diglot or polyglot this part of the center header comes from: its text and formatting are taken from that project. The letters match the codes on the Diglot page.
+
+Only shown for a diglot or polyglot. **Page Number** looks the same from any text, but it is printed
+in that text's header font.
+
+##### Center – Center page header settings
+
+Drop-down · Basic+ · `ecb_hdrcenter` · cfg `header/hdrcenter`  
+Choices: -empty- | Page Number | First Reference | Last Reference | Reference Range | Book (\h) | Book Alt (\h1) | Time (HH:MM) | Date (YYYY-MM-DD) | Date and Time | Printed on YYYY-MM-DD
+
+> The header line on each page can contain the page number,  
+>     and/or reference(s) in various forms. Select a preset option,  
+>     or type in a keyword with additional adornments as needed.
 >
-> Note: To activate or change this setting, you must first enable Diglot.
-
-References use the primary text's book names, and its header font is used.
-
-##### Sec
-
-Radio · Regular+ · `r_hdrLeft_Sec` · cfg `header/hdrleftside=Sec`  
-Also: Use formatting from secondary project (inner header) · Needs: “Diglot (or Polyglot)”
-
-> If setting the header for a diglot you will need to specify whether this part of the header (its text and formatting) should come from the Primary (Left) or the Secondary text.
+>     For example:  
+>     \bookalt\ \rangeref   uses the book name from the \h1 alt book header  
+>     [\pagenumber]    places square brackets around the page number  
+>     DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"  
+>     -empty-     places nothing in that location
 >
-> Note: To activate or change this setting, you must first enable Diglot.
-
-References use the secondary text's book names, and its header font is used.
-
-##### Pri
-
-Radio · Regular+ · `r_hdrCenter_Pri` · cfg `header/hdrcenterside=Pri`  
-Also: Use formatting from primary project (center header) · Needs: “Diglot (or Polyglot)”
-
-> If setting the header for a diglot you will need to specify whether this part of the header (its text and formatting) should come from the Primary (Left) or the Secondary text.
+>     With Mirror Pages on, First Reference and Last  
+>     Reference are swapped on left-hand (even) pages.
 >
-> Note: To activate or change this setting, you must first enable Diglot.
+>     Note that a space and the following certain special  
+>     characters require a slash '\' to be typed before them:  
+>         # % & ^ ~ and \ itself.  
+>     For example, to get this output:  
+>          This is page #1  
+>     you would need to enter:  
+>          This\ is\ page\ \#\pagenumber
 
-Primary text's book names and font for the center item.
+A common choice is **Page Number** or **Reference Range**. The center place does not change sides
+with **Mirror Pages**, but **First Reference** and **Last Reference** still swap on left-hand pages.
 
-##### Pri
+##### Column for the outer header
 
-Radio · Regular+ · `r_hdrRight_Pri` · cfg `header/hdrrightside=Pri`  
-Also: Use formatting from primary project (outer header) · Needs: “Diglot (or Polyglot)”
+Drop-down · Regular+ · `fcb_hdrRightSide` · cfg `header/hdrrightside`  
+Choices: L | R
 
-> If setting the header for a diglot you will need to specify whether this part of the header (its text and formatting) should come from the Primary (Left) or the Secondary text.
+> Which text (column) of the diglot or polyglot this part of the outer header comes from: its text and formatting are taken from that project. The letters match the codes on the Diglot page.
+
+Only shown for a diglot or polyglot. A common setup is **L** for the inner place and **R** for the
+outer place, so each language has its own reference. In a polyglot, any of its texts can be chosen.
+
+##### Outer (Right) – Outer (right) page header settings
+
+Drop-down · Basic+ · `ecb_hdrright` · cfg `header/hdrright`  
+Choices: -empty- | Page Number | First Reference | Last Reference | Reference Range | Book (\h) | Book Alt (\h1) | Time (HH:MM) | Date (YYYY-MM-DD) | Date and Time | Printed on YYYY-MM-DD
+
+> The header line on each page can contain the page number,  
+>     and/or reference(s) in various forms. Select a preset option,  
+>     or type in a keyword with additional adornments as needed.
 >
-> Note: To activate or change this setting, you must first enable Diglot.
-
-Primary text's book names and font for the outer item.
-
-##### Sec
-
-Radio · Regular+ · `r_hdrCenter_Sec` · cfg `header/hdrcenterside=Sec`  
-Also: Use formatting from secondary project (center header) · Needs: “Diglot (or Polyglot)”
-
-> If setting the header for a diglot you will need to specify whether this part of the header (its text and formatting) should come from the Primary (Left) or the Secondary text.
+>     For example:  
+>     \bookalt\ \rangeref   uses the book name from the \h1 alt book header  
+>     [\pagenumber]    places square brackets around the page number  
+>     DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"  
+>     -empty-     places nothing in that location
 >
-> Note: To activate or change this setting, you must first enable Diglot.
-
-Secondary text's book names and font for the center item.
-
-##### Sec
-
-Radio · Regular+ · `r_hdrRight_Sec` · cfg `header/hdrrightside=Sec`  
-Also: Use formatting from secondary project (outer header) · Needs: “Diglot (or Polyglot)”
-
-> If setting the header for a diglot you will need to specify whether this part of the header (its text and formatting) should come from the Primary (Left) or the Secondary text.
+>     With Mirror Pages on, First Reference and Last  
+>     Reference are swapped on left-hand (even) pages.
 >
-> Note: To activate or change this setting, you must first enable Diglot.
+>     Note that a space and the following certain special  
+>     characters require a slash '\' to be typed before them:  
+>         # % & ^ ~ and \ itself.  
+>     For example, to get this output:  
+>          This is page #1  
+>     you would need to enter:  
+>          This\ is\ page\ \#\pagenumber
 
-Secondary text's book names and font for the outer item. A common diglot setup is **Pri** for one
-side and **Sec** for the other, so each language has its own reference.
+With **Mirror Pages** ticked, this is the outer edge: right on right-hand pages, left on left-hand
+pages. A common choice is **Page Number** or a reference.
 
 ##### Chapter
 
@@ -8339,23 +8352,15 @@ On the first page of each book, the **Other** area settings can replace it. **DR
 "DRAFT". Own text uses the same codes and rules as the header. For drafts, **Date and Time** shows
 when each printout was made.
 
-##### Sec
+##### Center Footer – Column for the center footer
 
-Radio · Regular+ · `r_ftrCenter_Sec` · cfg `footer/ftrcenterside=Sec`  
-Also: Use formatting from secondary project (center footer) · Needs: “Diglot (or Polyglot)”
+Drop-down · Regular+ · `fcb_ftrCenterSide` · cfg `footer/ftrcenterside`  
+Choices: L | R
 
-> If setting the footer for a diglot you will need to specify whether this part of the footer (its text and formatting) should come from the Primary (Left) or the Secondary text.
+> Which text (column) of the diglot or polyglot this part of the footer comes from: its text and formatting are taken from that project. The letters match the codes on the Diglot page.
 
-Uses the secondary text's font (and references) for the footer.
-
-##### Pri
-
-Radio · Regular+ · `r_ftrCenter_Pri` · cfg `footer/ftrcenterside=Pri`  
-Also: Use formatting from primary project (center footer) · Needs: “Diglot (or Polyglot)”
-
-> If setting the footer for a diglot you will need to specify whether this part of the footer (its text and formatting) should come from the Primary (Left) or the Secondary text.
-
-Uses the primary text's font (and references) for the footer.
+Only shown for a diglot or polyglot. The footer uses that text's font (and references). It also
+applies to the page number printed at the bottom of the first page of each book.
 
 
 # 12. Pictures tab
@@ -10038,7 +10043,7 @@ Some settings always come from the primary configuration, whatever the secondary
 
 **Notes.** Whether a text has footnotes and cross-references depends on that text's own configuration (its **Notes+Refs** settings). The layout of the notes area (separate or together, rules) is set on this tab.
 
-**Headers and footers.** The headers and footers are set in the primary configuration, on the **Header+Footer** tab. When diglot is on, each header part has **Pri** and **Sec** buttons. Choose **Pri** to use the primary text (its references and its font) for that part, or **Sec** to use the secondary text. If **Mirror Pages** is ticked on the **Layout** tab, the texts also swap sides on even pages, so each text stays on the same side relative to the binding.
+**Headers and footers.** The headers and footers are set in the primary configuration, on the **Header+Footer** tab. When diglot is on, each header part (and the center footer) has a small drop-down with the code letter of one of the texts in the table above. Choose **L** to use the primary text (its references and its font) for that part, **R** for the secondary text, or, in a polyglot, any of the other letters. The list shows only the texts you have set up, with each letter's project. If **Mirror Pages** is ticked on the **Layout** tab, the texts also swap sides on even pages, so each text stays on the same side relative to the binding.
 
 **Front matter.** The **Generate Front Matter** dialog (Peripherals tab) offers a **DIGLOT** template when diglot is on.
 
@@ -10158,7 +10163,7 @@ Tick **Captions** in that text's row. Also check that both texts use the same pi
 The two texts probably have the same picture with a different file name or at a different verse. On the **Pictures** tab, make the entries match, or remove the picture from one text.
 
 **The header shows the references of only one text.**
-On the **Header+Footer** tab, choose **Pri** or **Sec** for each part of the header. For example, use **Pri** for the left part and **Sec** for the right part.
+On the **Header+Footer** tab, choose a text letter in the drop-down in front of each part of the header. For example, use **L** for the left part and **R** for the right part. If a polyglot text's part stays empty, check that its book has an `\h` line: the reference takes the book name from it.
 
 **The primary text is on the left on some pages and on the right on others.**
 **Mirror Pages** is ticked on the **Layout** tab. With it, the columns swap on even pages. Untick it if you want the primary text always on the left.
@@ -10222,7 +10227,7 @@ Also: Diglot: Use default header settings · Needs: “Diglot (or Polyglot)” �
 
 > Checking this option will override the header settings and place the Reference Ranges on the outer edges and Page Number in (or near) the middle.
 
-This checkbox is normally hidden. In this version it is saved with the configuration but it does not change the printed headers. Set the headers on the **Header+Footer** tab instead, using the **Pri** and **Sec** buttons for each part.
+This checkbox is normally hidden. In this version it is saved with the configuration but it does not change the printed headers. Set the headers on the **Header+Footer** tab instead, using the text letter drop-down in front of each part.
 
 ##### Adjust Center Header Based on Column Widths
 
@@ -16728,11 +16733,13 @@ Button · Mini+ · `b_reprint`
 
 Same as **Print** on the main window. Needed when **Auto-update** is off, or after you change settings on the main window.
 
-#### Show/hide the Page Filler with progress monitor
+#### Analyse & Fill
 
 Toggle, off · Regular+ · `btn_prvAutoFill`
 
-> Show/hide the Page Filler with progress monitor
+> Analyse & Fill: adjusts paragraph spacing so that every page ends full, for all selected books at once.
+>
+> Click to Show/Hide the progress dialog.
 
 Opening the **PTXprint: Page Filler** window starts nothing; use **Start Fill** or **Resume Fill** there. The job can take a long time and uses a lot of processor power.
 

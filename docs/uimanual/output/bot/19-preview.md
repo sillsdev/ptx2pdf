@@ -473,11 +473,13 @@ Button · Mini+ · `b_reprint`
 
 Same as **Print** on the main window. Needed when **Auto-update** is off, or after you change settings on the main window.
 
-#### Show/hide the Page Filler with progress monitor
+#### Analyse & Fill
 
 Toggle, off · Regular+ · `btn_prvAutoFill`
 
-> Show/hide the Page Filler with progress monitor
+> Analyse & Fill: adjusts paragraph spacing so that every page ends full, for all selected books at once.
+>
+> Click to Show/Hide the progress dialog.
 
 Opening the **PTXprint: Page Filler** window starts nothing; use **Start Fill** or **Resume Fill** there. The job can take a long time and uses a lot of processor power.
 

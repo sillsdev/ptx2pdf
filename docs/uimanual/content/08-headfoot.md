@@ -63,12 +63,23 @@ Under **Include in References**, choose what the reference items contain (Regula
 Most Bibles show only book and chapter, for example "Matthew 5–6", because a chapter is easier to
 find when you turn the pages.
 
-### Diglot options
+### Diglot and polyglot options
 
-In a diglot (two texts side by side), each place has two small buttons, **Pri** and **Sec**. They
-choose whether the item comes from the primary or the secondary text. This decides both the
-language of the book names in the references and the font. They are greyed out until you turn on
-**Diglot (or Polyglot)** on the **Diglot** tab. (Regular and Full views.)
+In a diglot (two texts side by side) or a polyglot (more than two), a small drop-down appears in
+front of each place. It shows one letter: the code of one of the texts on the **Diglot** tab.
+**L** is the primary text, **R** the secondary text, and a polyglot adds **A** to **G**. The letter
+chooses which text the item comes from. This decides both the language of the book names in the
+references and the font.
+
+* The list only has the letters of the texts set up on the **Diglot** tab: **L** and **R** for a
+  diglot, more for a polyglot. It follows any change you make there.
+* When the list is open, each letter is shown with its project, for example **A · TEL29OV**. When it
+  is closed it shows only the letter, so it stays narrow. Point at it to see which project the
+  letter stands for.
+* The drop-downs are hidden when **Diglot (or Polyglot)** is off. The header boxes then use the
+  full width.
+
+(Regular and Full views.)
 
 ### Typing your own text (advanced)
 
@@ -112,7 +123,8 @@ The footer of the first page of each book follows the **Other** area:
 * else, **Print Name of Saved Config on Intro Page(s)** ticked: the configuration name.
 * else: the same as **Center Footer**.
 
-In a diglot, the **Pri** and **Sec** buttons choose which text's font the footer uses.
+In a diglot or polyglot, the letter drop-down in front of **Center Footer** chooses which text's
+font (and references) the footer uses.
 
 To move the footer up or down, use the **Layout** tab, **Margins** area (**Bottom of Text to Top of
 Footer** and **Place Footer Text Above the Bottom Margin**).
@@ -157,12 +169,14 @@ Footer** and **Place Footer Text Above the Bottom Margin**).
 2. On the **Header+Footer** tab, in **Other**, tick **Print Name of Saved Config on Intro Page(s)**.
 3. The name is printed at the bottom of the first page of each book, instead of the page number.
 
-### How do I set the headers for a diglot?
+### How do I set the headers for a diglot or polyglot?
 
-1. On the **Diglot** tab, turn on **Diglot (or Polyglot)**.
+1. On the **Diglot** tab, turn on **Diglot (or Polyglot)** and set up the texts.
 2. On the **Header+Footer** tab, choose an item for each place.
-3. For each place, click **Pri** for the primary text (its book names and font), or **Sec** for the
-   secondary text.
+3. For each place, choose a letter in the small drop-down in front of it: **L** for the primary
+   text (its book names and font), **R** for the secondary text, or **A** to **G** for the other
+   texts of a polyglot. For example, **L** for the inner place and **R** for the outer place gives
+   each language its own reference.
 4. Decide on **Mirror Pages** on the **Layout** tab. With it ticked, the primary text is next to the spine.
 
 ## Common problems
@@ -186,8 +200,19 @@ untick **Mirror Pages** for the same layout on every page.
 **"Verse" is greyed out.**
 Cause: **Chapter** is unticked. Tick **Chapter** first.
 
-**The Pri / Sec buttons are greyed out.**
-Cause: diglot is not on. Turn on **Diglot (or Polyglot)** on the **Diglot** tab.
+**There is no letter drop-down in front of the header and footer boxes.**
+Cause: diglot is not on, or you are in the Basic view. The drop-downs are only shown for a diglot
+or polyglot. Turn on **Diglot (or Polyglot)** on the **Diglot** tab, and use the Regular or Full
+view.
+
+**A header part from one of the texts of a polyglot prints no reference.**
+Cause: the references from a text use the book name from that text's `\h` line. If that project's
+book has no `\h` line, the reference is empty. Fix: add an `\h` line to the book in that project.
+Pages where that text has no verses also show no reference for it.
+
+**A header part went back to L.**
+Cause: the text it used was removed from the **Diglot** tab, or its code was changed. Choose the
+letter again.
 
 **"Print Name of Saved Config" unticked itself.**
 Cause: you ticked **Print Page Number at Bottom of Intro Page(s)**. Only one of the two can be used.
@@ -215,24 +240,19 @@ pages. A common choice is **Page Number** or a reference.
 With **Mirror Pages** ticked, this is the inner edge (next to the spine): left on right-hand pages,
 right on left-hand pages. Many publications leave it **-empty-**.
 
-### @r_hdrLeft_Pri
-References use the primary text's book names, and its header font is used.
+### @fcb_hdrLeftSide
+Only shown for a diglot or polyglot. **L** is the primary text and **R** the secondary text; a
+polyglot adds the letters **A** to **G** set up on the **Diglot** tab. References in this place use
+that text's book names, and its header font is used. Open the list to see the project behind each
+letter. Configurations saved with the older **Pri** / **Sec** buttons open as **L** / **R**.
 
-### @r_hdrLeft_Sec
-References use the secondary text's book names, and its header font is used.
+### @fcb_hdrCenterSide
+Only shown for a diglot or polyglot. **Page Number** looks the same from any text, but it is printed
+in that text's header font.
 
-### @r_hdrCenter_Pri
-Primary text's book names and font for the center item.
-
-### @r_hdrRight_Pri
-Primary text's book names and font for the outer item.
-
-### @r_hdrCenter_Sec
-Secondary text's book names and font for the center item.
-
-### @r_hdrRight_Sec
-Secondary text's book names and font for the outer item. A common diglot setup is **Pri** for one
-side and **Sec** for the other, so each language has its own reference.
+### @fcb_hdrRightSide
+Only shown for a diglot or polyglot. A common setup is **L** for the inner place and **R** for the
+outer place, so each language has its own reference. In a polyglot, any of its texts can be chosen.
 
 ### @c_rangeShowChapter
 Example: "Mark 4". Unticking it greys out **Verse**. Unticking can be useful for one-chapter books or
@@ -272,8 +292,6 @@ On the first page of each book, the **Other** area settings can replace it. **DR
 "DRAFT". Own text uses the same codes and rules as the header. For drafts, **Date and Time** shows
 when each printout was made.
 
-### @r_ftrCenter_Sec
-Uses the secondary text's font (and references) for the footer.
-
-### @r_ftrCenter_Pri
-Uses the primary text's font (and references) for the footer.
+### @fcb_ftrCenterSide
+Only shown for a diglot or polyglot. The footer uses that text's font (and references). It also
+applies to the page number printed at the bottom of the first page of each book.
