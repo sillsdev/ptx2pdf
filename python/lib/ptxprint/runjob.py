@@ -778,6 +778,8 @@ class RunJob:
                     os.remove(tocfname)
                 break
             rererun = rerun
+            if rerun:
+                self.rerunReasons.append(_("Tex log"))
             if os.path.exists(marginnotesfname):
                 (tsize, ttop, tbot) = self.info.getTextBlockSize()
                 mncols = 2 if self.info.dict.get("paper/columns", "1") == "2" or self.info.asBool("document/diffcolayout") else 1
@@ -820,6 +822,11 @@ class RunJob:
             print(_("Maximum runs exceeded"))
         logging.info(f"It took {numruns} runs to get here")
 
+        rerunnable = set([v[0] for v in cacheexts.values() if v[1]])
+        if self.maxRuns > 1 and numruns >= self.maxRuns and not self.res \
+                and (rererun and rerunnable.intersection(self.rerunReasons)):
+            logger.warn(f"Typesetting did not converge after {numruns} passes: {', '.join(self.rerunReasons)}")
+            # lack of convergence is not an error
         if not self.res and not self.nopdf:
             self.printer.incrementProgress(stage="xp")
             self.xdvtopdf(outfname, pdffile)
