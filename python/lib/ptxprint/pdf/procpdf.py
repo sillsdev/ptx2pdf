@@ -36,6 +36,22 @@ def safeRename(infile, outfile):
     except (FileNotFoundError, PermissionError):
         pass
 
+def writeOrWarn(writefn, fname, doError):
+    """ Runs writefn to (over)write fname. If fname is locked (e.g. open in Adobe Reader on
+        Windows) tells the user, rather than letting the exception die silently in the
+        print thread, and returns False. """
+    try:
+        writefn()
+        return True
+    except PermissionError as e:
+        logger.error(f"Unable to write {fname}: {e}")
+        doError(_("Could not create: {}").format(os.path.basename(fname)),
+                secondary=_("The file is probably open in another program (such as a PDF viewer), "
+                            "which is stopping PTXprint from replacing it.\n\n"
+                            "Please close it there and print again.\n\n{}").format(fname),
+                title=_("PDF file is locked"), threaded=True)
+        return False
+
 def stripInfo(trailer):
     """ PDF 2.0 deprecates the document information dictionary. The only entry
         that may remain is ModDate, and then only if the catalog has PieceInfo. """
@@ -121,10 +137,11 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
             if stripinfo:
                 stripInfo(bpdf)
             if ispdfxa == "Screen":
-                outpdf(bpdf, bpdfname)
+                done = writeOrWarn(lambda: outpdf(bpdf, bpdfname), bpdfname, doError)
             else:
-                fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
-            res[k] = bpdfname
+                done = writeOrWarn(lambda: fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True), bpdfname, doError)
+            if done:
+                res[k] = bpdfname
         outpdfobj = PdfWriter(None, trailer=inpdf)
     colour = None
     params = {}
@@ -291,13 +308,15 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
         finishPdf(outpdfobj.trailer, pdf2=kw.get("pdf2", False))
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
-        outpdfobj.write()
+        # A locked finished PDF mustn't stop the normal PDF being shown, so just say so
+        if not writeOrWarn(outpdfobj.write, pdffile, doError):
+            res.pop(' Finished', None)
 
-    # Write the settings-augmented 1-up *after* the 2-up has been serialised, so 
+    # Write the settings-augmented 1-up *after* the 2-up has been serialised, so
     # its lazy references into opath still resolve to the original xetex output.
     if origobj is not None:
         finishPdf(origobj.trailer, pdf2=kw.get("pdf2", False))
-        origobj.write()
+        writeOrWarn(origobj.write, opath, doError)
 
     return res
 
