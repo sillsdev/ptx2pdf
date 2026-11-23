@@ -319,11 +319,13 @@ texpertOptions = {
                               "Lower: the page filler accepts big changes more easily.\n"
                               "Affects: Quality.")),
     "pbExpansion":        O("pbexpcost", "APF", (1.0, -5, 5, 0.1, 1, 1), "", _("Penalise shrink or stretch"),
-                            _("Tells the page filler whether to shrink paragraphs or stretch them when both are possible.\n"
-                              "Positive numbers: penalise stretching (so the text prefers to shrink more).\n"
-                              "Negative numbers: penalise shrinking. (so the text prefers to stretch more).\n"
+                            _("Tells the page filler whether to make the letters of a paragraph narrower or wider when both are possible.\n"
+                              "Positive numbers: penalise wider letters (so the text prefers narrower letters).\n"
+                              "Negative numbers: penalise narrower letters (so the text prefers wider letters).\n"
                               "0: no preference.\n"
                               "A bigger number (+ or −) means a higher penalty.\n"
+                              "This setting only changes the width of the letters. It does not change how often "
+                              "the page filler asks a paragraph to take one line more or one line fewer.\n"
                               "Affects: Quality.")),
    "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Keep neighbouring paragraphs alike"),
                            _("The page filler compares each paragraph with the paragraph before it. "
@@ -333,7 +335,10 @@ texpertOptions = {
                              "Affects: Quality.")),
 #    "pbStrict":           O("pbstrict", "APF", False, "", _("Add strict layout constraints"), _("Ensure things like \\q2 don't start a column")),
     "pbpolyimbalance":    O("pbpolyimbalance", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("The cost of imbalance in a polyglot slice"),
-                            _("How bad is it for a polyglot slice to not be balanced. This the multiplier of that cost\n"
+                            _("How bad it is when the languages in a slice do not end level, so that a shorter "
+                              "language leaves white space at the end of the slice.\n"
+                              "Higher: the page filler works harder to make slices end level, even if it must change more paragraphs.\n"
+                              "Lower: the page filler changes fewer paragraphs, and accepts more white space at the end of slices.\n"
                               "Only relevant to diglot and polyglot projects")),
     "pbpolyimbnarrow":    O("pbpolyimbnarrow", "APF", (0.5, 0, 10, 0.1, 1, 1), "", _("Effort to narrow a big imbalance"),
                             _("The cost of each line of whitespace in a polyglot slice after the first.\n"
