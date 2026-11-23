@@ -286,12 +286,20 @@ texpertOptions = {
 
     # Translators: "page filler" = the Automatic Page Filler feature. Please translate these terms the
     # same way in every string below: page filler, paragraph, stretch, shrink, word space, failed page.
-    # Speed settings (how hard the page filler tries)
+    # Page filler settings: the ones most likely to need changing first, the most obscure last;
+    # then the diglot and polyglot ones, in the same way
     "pbtimeout":          O("pbtimeout", "APF", (180, 0, 1000, 1, 10, 0), "", _("Time limit for the whole job (minutes)"),
                             _("The page filler works on all the books together. When this time is reached, the page filler stops. "
                               "A book that is not finished keeps the pages that are already filled. "
                               "Usually this affects only the longest book.\n"
                               "Higher: more time to find a good layout for every page.")),
+    "pbSpacingTol":       O("pbspacingtol", "APF", (1.0, 0, 10, 0.01, 1, 2), "", _("Widest word space allowed (× text size)"),
+                            _("When the page filler stretches a paragraph, the average space between words must not be wider than this. "
+                              "1.0 = as wide as the text size. A normal word space is about 0.3 to 0.5.\n"
+                              "Right-click a paragraph in the preview to see its average word space (␣); set this to 1.5 to 2 times that.\n"
+                              "Higher: easier to fill pages, but the text can look too spread out.\n"
+                              "Lower: tighter, better-looking text, but pages are harder to fill and take longer.\n"
+                              "Affects: Quality and Speed.")),
     "pbBackTrack":        O("pbbacktrack", "APF", (4, 0, 10, 1, 1, 0), "", _("Earlier pages to retry"),
                             _("If the page filler cannot fill a page, it backtracks to the page before and tries a different layout there. "
                               "This is the largest number of pages it can backtrack.\n"
@@ -305,19 +313,6 @@ texpertOptions = {
                               "Higher: more ways to fill each page, so fewer failed pages, but each page takes longer.\n"
                               "Lower: faster, but more pages may fail.\n"
                               "Affects: Speed.")),
-    # Quality settings (how good the text must look)
-    "pbSpacingTol":       O("pbspacingtol", "APF", (1.0, 0, 10, 0.01, 1, 2), "", _("Widest word space allowed (× text size)"),
-                            _("When the page filler stretches a paragraph, the average space between words must not be wider than this. "
-                              "1.0 = as wide as the text size. A normal word space is about 0.3 to 0.5.\n"
-                              "Higher: easier to fill pages, but the text can look too spread out.\n"
-                              "Lower: tighter, better-looking text, but pages are harder to fill and take longer.\n"
-                              "Affects: Quality and Speed.")),
-    "pbExpandBadness":    O("pbexpbad", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Keep paragraphs close to normal width"),
-                            _("The page filler prefers small changes to a paragraph over big changes. "
-                              "This setting controls how strong that preference is. "
-                              "Higher: the page filler tries small changes first, so the text looks more even.\n"
-                              "Lower: the page filler accepts big changes more easily.\n"
-                              "Affects: Quality.")),
     "pbExpansion":        O("pbexpcost", "APF", (1.0, -5, 5, 0.1, 1, 1), "", _("Penalise shrink or stretch"),
                             _("Tells the page filler whether to make the letters of a paragraph narrower or wider when both are possible.\n"
                               "Positive numbers: penalise wider letters (so the text prefers narrower letters).\n"
@@ -327,26 +322,29 @@ texpertOptions = {
                               "This setting only changes the width of the letters. It does not change how often "
                               "the page filler asks a paragraph to take one line more or one line fewer.\n"
                               "Affects: Quality.")),
-   "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Keep neighbouring paragraphs alike"),
-                           _("The page filler compares each paragraph with the paragraph before it. "
+    "pbExpandBadness":    O("pbexpbad", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("Keep paragraphs close to normal width"),
+                            _("The page filler prefers small changes to a paragraph over big changes. "
+                              "This setting controls how strong that preference is. "
+                              "Higher: the page filler tries small changes first, so the text looks more even.\n"
+                              "Lower: the page filler accepts big changes more easily.\n"
+                              "Affects: Quality.")),
+    "pbContrast":         O("pbcontrast", "APF", (3, 0, 20, 0.1, 1, 1), "", _("Keep neighbouring paragraphs alike"),
+                           _("The page filler compares each paragraph it changes with the paragraphs before and after it. "
                              "It tries to avoid a very stretched paragraph next to a very shrunk one.\n"
                              "Higher: neighbouring paragraphs look more alike, so the page looks more even.\n"
                              "Lower: neighbouring paragraphs can look more different.\n"
                              "Affects: Quality.")),
-#    "pbStrict":           O("pbstrict", "APF", False, "", _("Add strict layout constraints"), _("Ensure things like \\q2 don't start a column")),
     "pbpolyimbalance":    O("pbpolyimbalance", "APF", (1.0, 0, 10, 0.1, 1, 1), "", _("The cost of imbalance in a polyglot slice"),
-                            _("How bad it is when the languages in a slice do not end level, so that a shorter "
-                              "language leaves white space at the end of the slice.\n"
-                              "Higher: the page filler works harder to make slices end level, even if it must change more paragraphs.\n"
-                              "Lower: the page filler changes fewer paragraphs, and accepts more white space at the end of slices.\n"
+                            _("How important it is for the columns of a slice (the same verses in each language) to end level.\n"
+                              "Each extra line of gap counts half as much again as the first.\n"
+                              "Higher: work hard to balance every slice, even if some paragraphs look less good.\n"
+                              "Lower: how good the paragraphs look matters more, so a slice may be left with a gap.\n"
                               "Only relevant to diglot and polyglot projects")),
-    "pbpolyimbnarrow":    O("pbpolyimbnarrow", "APF", (0.5, 0, 10, 0.1, 1, 1), "", _("Effort to narrow a big imbalance"),
-                            _("The cost of each line of whitespace in a polyglot slice after the first.\n"
-                              "A glot is only stretched or shrunk to end level with its slice, so this does not\n"
-                              "narrow gaps; it chooses between slice heights that leave different amounts of\n"
-                              "whitespace in glots that cannot reach them.\n"
-                              "Higher: prefer less whitespace, even at the cost of looser paragraphs.\n"
-                              "0: any amount of whitespace is as bad as one line.\n"
+    "pbpolyfillslices":   O("pbpolyfillslices", "APF", False, "", _("Fill polyglot slices regardless of 1 line gaps"),
+                            _("Normally a glot is only stretched or shrunk to end level with its slice, and never\n"
+                              "so as to leave a gap of 1 line, which looks like a mistake.\n"
+                              "On: fill slices as much as possible: a gap may be narrowed, even to 1 line.\n"
+                              "Headings are never made to wrap differently just to narrow a gap.\n"
                               "Only relevant to diglot and polyglot projects")),
     "pbpolybudget":       O("pbpolybudget", "APF", (20, 0, 500, 1, 10, 0), "", _("Most tries to fill a polyglot page"),
                             _("The most layout runs spent trying to fill one page; earlier pages, when going back\n"
@@ -358,12 +356,7 @@ texpertOptions = {
                               "Lower: faster, but more pages may be left short.\n"
                               "0: no limit.\n"
                               "Only relevant to diglot and polyglot projects")),
-    "pbpolyfillslices":   O("pbpolyfillslices", "APF", False, "", _("Fill polyglot slices regardless of 1 line gaps"),
-                            _("Normally a glot is only stretched or shrunk to end level with its slice, and never\n"
-                              "so as to leave a gap of 1 line, which looks like a mistake.\n"
-                              "On: fill slices as much as possible: a gap may be narrowed, even to 1 line.\n"
-                              "Headings are never made to wrap differently just to narrow a gap.\n"
-                              "Only relevant to diglot and polyglot projects")),
+#    "pbStrict":           O("pbstrict", "APF", False, "", _("Add strict layout constraints"), _("Ensure things like \\q2 don't start a column")),
 
     "TOCthreetab":        O("tocthreetab", "OTH", True, None, _("Use \\toc3 for Tab Text"),
                             _("Use \\toc3 for tab text if no \\zthumbtab")),

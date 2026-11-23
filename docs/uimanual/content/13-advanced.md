@@ -119,7 +119,7 @@ The PDF Preview window: the auto-update delay, how far the right-click menu can 
 
 ### Automatic Page Filler
 
-The page filler tool in the PDF Preview window stretches or shrinks paragraphs a little so each page is filled. These settings balance speed against how good the text looks. **The cost of imbalance in a polyglot slice** is only used for diglot and polyglot projects. See the PDF Preview chapter for how to use the tool.
+The page filler tool in the PDF Preview window stretches or shrinks paragraphs a little so each page is filled. These settings balance speed against how good the text looks. They are listed with the ones you are most likely to change first; the last three are only used for diglot and polyglot projects. See the PDF Preview chapter for how to use the tool.
 
 ### Other Miscellaneous Settings
 
@@ -652,28 +652,34 @@ In em.
 For two spaces on lines above each other.
 
 ### @s_pbtimeout
-0 means no time limit. Increase it for a long Bible if the longest book does not finish.
+One clock for the whole job. The books are filled at the same time (up to **Maximum parallel processes**), so the job takes about as long as its longest book (Psalms, Isaiah, Jeremiah), and that is the book that runs out of time. Its bar turns red, but the pages already filled are kept: click **Resume Fill** later to carry on from there. 0 = no limit. If you print a long book, or a whole Bible, allow several hours.
 
 ### @s_pbbacktrack
-How many earlier pages the page filler may go back to try a different layout.
+When a page cannot be filled, the problem is often where the page starts. The filler goes back to the page before, lays it out differently, and fills forward again; if that fails it tries one page further back, up to this many. Most pages fill without going back at all, and each extra page back is needed less often, so this setting does not slow the whole job much. A high value says "try really hard on a difficult page": that one page may take many minutes. 0 = never go back (fastest; good for a quick first look). It never goes back past a page that has already failed.
 
 ### @s_pbmaxr
-Keep it low unless many pages fail.
+How hard the filler works on one page before it goes back to an earlier one (see **Earlier pages to retry**). It tries changing one paragraph first, then two, and so on, cheapest first, so most pages fill long before this limit is reached. A higher value only costs time on hard pages, and makes it more likely that they fill. Poetry books need a higher value: each poetry line (`\q1`, `\q2` …) counts as a paragraph, and moving a heading block to the next page may need many lines changed. Not used for diglot and polyglot.
 
 ### @s_pbspacingtol
-As a part of the text size.
+The main quality control: set it from your own text. Right-click a few ordinary paragraphs in the preview; the grey first line of the menu ends with the paragraph's average word space, for example `␣=0.32 em`. Set this to 1.5 to 2 times that (here about 0.5 to 0.65). The filler never uses a layout whose average word space is wider than this, and a paragraph that is already wider is changed even if its page is full. Too low (near your normal spacing): the filler changes many paragraphs and fails more pages. Too high (the default 1.0 is a space as wide as the text size): only very loose lines are stopped. Ragged-right (unjustified) paragraphs are not checked.
 
 ### @s_pbexpbad
-Higher values give more even text.
+When several paragraphs could fill the page, this decides how much it counts against a paragraph that its letters must be squeezed or stretched more. Higher: the filler prefers paragraphs that need only a small width change, even if their spacing is a little looser. Lower: it looks mostly at word spacing and accepts larger width changes. 0 = width change does not matter, only spacing. Raise it (2–3) if changed paragraphs are easy to see because the letters look squeezed or stretched; lower it if spacing matters more to you.
 
 ### @s_pbexpcost
-Applies when both shrinking and stretching would work.
+When a page can be filled either by shrinking some paragraphs or by stretching others, this sets which the filler prefers. Positive: stretching costs extra, so it prefers shrinking. Negative: shrinking costs extra, so it prefers stretching. 0: no preference. At the default 1, stretching a paragraph by 5% costs about as much as its whole word spacing, which is a strong preference. The extra cost grows with the size of the change, so a large stretch is much worse than a small one, and small stretches are still used. Use a negative value if your text is already tight (small type, narrow columns) and shrinking makes it look crowded; use 0 if stretched and shrunk text look equally good in your script.
 
 ### @s_pbcontrast
-Higher values give a more even page.
+Each changed paragraph is compared with the paragraphs just before and after it, and a difference in width counts against that choice. This avoids a stretched paragraph right next to a squeezed (or normal) one, where the difference in letter shapes is easy to see. Higher: changes are spread more evenly over neighbouring paragraphs. Lower: the filler looks only at each paragraph by itself. 0 = ignore neighbours. It only changes which layouts are tried first, never whether a page can be filled. Not used for diglot and polyglot.
 
 ### @s_pbpolyimbalance
-The page filler works on slices: pieces of text that belong together across the columns, such as the same verses in each language. A slice is unbalanced when one column ends lower than another. This sets how much to avoid that, compared with stretching or shrinking paragraphs. Higher: columns end more evenly, but paragraphs may change more. Lower: paragraphs look more even, but one column may end a few lines lower. Change it only if your diglot columns are often uneven after page filling.
+How important it is for the columns of a slice to end level. A slice is a piece of text that belongs together across the columns, such as the same verses in each language. High: work hard to balance every slice, even if some paragraphs must be stretched or shrunk until they look less good. Low: other things (how good the paragraphs look) matter more, so a slice may be left with a gap. At the default 1, one line of gap counts for much more than a well-stretched or shrunk paragraph. Each extra line of gap counts half as much again as the first. A gap of less than half a line, or a 1-line gap at a heading, is never counted. Only used for diglot and polyglot.
+
+### @s_pbpolybudget
+How many layout runs are tried on one page. A page is counted as full once one column reaches the foot; the higher this value, the harder the filler tries to balance the bottom of the page properly, rather than just making sure one column reaches the foot. When the filler goes back to earlier pages for this page, each earlier page gets half as many runs. 0 = no limit (can be very slow). Only used for diglot and polyglot.
+
+### @c_pbpolyfillslices
+A 1-line gap at the end of a slice looks like a mistake, so normally the filler either tries harder to balance the slice or falls back to a gap of 2 lines. Tick this to allow 1-line gaps. Only used for diglot and polyglot.
 
 ### @c_tocthreetab
 `\toc3` is the short book name. Thumb tabs are set on the **Tabs+Borders** tab.

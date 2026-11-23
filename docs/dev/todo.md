@@ -590,6 +590,15 @@ Found by a deeper read than the bug hunt above. Same status tags; no tag = not l
 
 ### Print job and PDF post-processing
 
+* Rerun loop never settles with page-reset footnote callers (`c_fnpageresetcallers`). TeX picks a
+  note's caller from the page the previous pass recorded in `.notepages` (`\noteonpage`,
+  `src/ptx-callers.tex:120`). A note on the last line of a page flips: caller ✶ (1st on next page)
+  fits, so it lands on this page and becomes ③, which no longer fits, so it moves on and is ✶ again.
+  Repro: BSB_1 Single_side + `\marginaln@te{f}` commented out, ROM, `-D c_doublecolumn=true
+  -D c_marginalverses=true -D s_fontsize=8.5 -D s_linespacing=10.5` (period 2 from pass 3; fn 59,
+  ROM 10:19, page 15/16). Fix idea: once a note's page flips, pin it to the later page (Python
+  edits `.notepages`), or have TeX keep the wider caller. Found while chasing #1289 (not its cause).
+
 * **[FIXED patches/hidden-printjob.patch]** `pdf/procpdf.py:56-66` with a cover and "extract inserts" off, `split_pages` still removes every
   tagged insert but only writes the cover back: map pages (`\PullPeriph{maps}` is the default)
   vanish from the final PDF (tested: 4 pages → 2). Split out only the cover when burst is off.

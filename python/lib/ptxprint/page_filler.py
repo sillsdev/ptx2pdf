@@ -198,7 +198,6 @@ class Hooks:
             val = float(printer.view.get("s_"+a[1], default="1.0"))
             logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
-        self.badness_imbalance_narrow = max(0., float(printer.view.get("s_pbpolyimbnarrow", default="0.5")))
         self.fill_budget = max(0, int(float(printer.view.get("s_pbpolybudget", default="20"))))    # 0: no limit
         self.fill_slices = bool(printer.view.get("c_pbpolyfillslices", False))
         # setattr(self, "strictness", printer.view.get("c_pbstrict", False))
@@ -270,8 +269,11 @@ class Hooks:
             logging.log(15, f"page={pnum}, chapter={i}")
         return i
 
-    def get_previous(self, pid, page=None):
-        return self.printer.get_previous(pid, page=page)
+    def get_previous(self, pid):
+        return self.printer.get_previous(pid)
+
+    def get_next(self, pid):
+        return self.printer.get_next(pid)
 
     def covers_book(self, last_page):
         """ Is this last_page from a layout covering the whole book? """
@@ -1197,11 +1199,7 @@ class TypesetterSolver:
                         else:
                             logger.log(12, "Can't find mask for {p}")
                             col_deltas[5] += d
-                        prev = self.hooks.get_previous(p)
-                        if prev is not None:
-                            preve = self.shape_cache.get((prev, combo.get(prev, 0)), self.neutral(prev))[0]
-                            pe = self.shape_cache[(p, d)][0]
-                            score += self.hooks.badness_contrast_factor * abs(pe - preve)
+                        score += self.hooks.badness_contrast_factor * self.contrast(p, combo)
                     else:
                         col1_net = col_deltas[0] + col_deltas[1] + col_deltas[3]
                         migration = 0
@@ -1240,6 +1238,26 @@ class TypesetterSolver:
         except ValueError:
             i = len(self.paragraph_order)
         return i
+
+    def width(self, pid, combo):
+        """ The width (expansion) paragraph pid is set at with combo applied: its shape in combo,
+            else its committed setting (an earlier page's or the user's), else normal """
+        if pid in combo:
+            return self.shape_cache[(pid, combo[pid])][0]
+        return self.base_params.get(pid, self.neutral(pid))[0]
+
+    def contrast(self, pid, combo):
+        """ How much paragraph pid, changed by combo, differs in width from the paragraphs either
+            side of it. A neighbour also in combo is left to count the pair itself. """
+        e = self.width(pid, combo)
+        res = 0.
+        prev = self.hooks.get_previous(pid)
+        if prev is not None:
+            res += abs(e - self.width(prev, combo))
+        nxt = self.hooks.get_next(pid)
+        if nxt is not None and nxt not in combo:
+            res += abs(e - self.width(nxt, combo))
+        return res
 
     def get_candidate_paragraphs(self, state, page):
         logger.debug(f"{state.layout.paragraph_pages=}")
@@ -1810,20 +1828,24 @@ class PTXFiller:
             return parlocs[pindex]
         return None
 
-    def get_previous(self, pid, page=None):
+    def get_previous(self, pid):
+        """ The paragraph before pid, or None """
+        return self._neighbour(pid, -1)
+
+    def get_next(self, pid):
+        """ The paragraph after pid, or None """
+        return self._neighbour(pid, 1)
+
+    def _neighbour(self, pid, step):
         pindex = self.pidmap.get(pid)
         if pindex is None:
             return None
-        while pindex > 0:
-            pindex -= 1
+        pindex += step
+        while 0 <= pindex < len(self.parlocs):
             p = self.parlocs[pindex]
             if isinstance(p, ParInfo):
-                if page is None:
-                    return p.pid()
-                elif page in self.pidmap[p.pid()]:
-                    return p.pid()
-                else:
-                    return None
+                return p.pid()
+            pindex += step
         return None
 
     def get_paragraph_start_page(self, pid):

@@ -204,13 +204,15 @@ The bottom of the window shows the time used and how busy the processor is (CPU)
 
 When all books have finished, PTXprint makes a new PDF and the preview shows it. Then use **Locate the next issue** (with **Underfilled Pages** ticked) to find the pages the tool could not fill, and fix them by hand.
 
-The **Automatic Page Filler** settings decide how hard the tool tries (speed) and how good the text must look (quality):
+### Choosing the filler settings
 
-* **Time limit for the whole job (minutes)** – normally 180.
-* **Earlier pages to retry** – if a page cannot be filled, the tool goes back this many pages and tries a different layout there (normally 4). Higher = fewer failed pages, but slower. 0 = fastest.
-* **Paragraphs to adjust on each page** – normally 6. Higher = more pages filled, but each page takes longer.
-* **Widest word space allowed (× text size)** – normally 1.0. Lower = better-looking text, but more pages may fail.
-* **Keep paragraphs close to normal width**, **Penalise shrink or stretch** and **Keep neighbouring paragraphs alike** – fine control of which changes the tool prefers.
+The settings are on the main window: **Advanced** tab > **Other** > **Automatic Page Filler**. They are listed with the ones you are most likely to change first. Each one is explained in the Advanced tab chapter.
+
+1. **Time limit for the whole job (minutes)** – the job takes about as long as its longest book. Allow several hours for a whole Bible.
+2. **Widest word space allowed (× text size)** – the main quality control. Right-click a few ordinary paragraphs in the preview: the grey first line of the menu ends with the average word space, for example `␣=0.32 em`. Set this to 1.5 to 2 times that.
+3. **Earlier pages to retry** and **Paragraphs to adjust on each page** – how hard the tool works on a page that is difficult to fill. Higher values fill more pages; they cost time only on the hard pages.
+4. **Penalise shrink or stretch**, **Keep paragraphs close to normal width** and **Keep neighbouring paragraphs alike** – which changes the tool prefers when there is a choice. Change them only if the filled text looks wrong to you.
+5. Diglot and polyglot only: **The cost of imbalance in a polyglot slice** (how important it is that the columns end level), **Fill polyglot slices regardless of 1 line gaps** and **Most tries to fill a polyglot page**.
 
 The text width limits come from **Minimum Text Shrink** and **Maximum Text Expand** (normally 95% and 105%). The number of books worked on at the same time comes from **Maximum parallel processes** (**Advanced** > **Other** > **Page Layout and Spacing**).
 

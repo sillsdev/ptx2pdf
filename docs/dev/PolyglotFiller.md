@@ -86,8 +86,8 @@ In priority order:
 
 Whitespace is an area in column-lines (a line of the largest baseline across a
 column of the glots' mean width), so glots of different widths count fairly.
-`pbpolyimbalance` is what levelling a slice is worth, `pbpolyimbnarrow` what
-each further line of whitespace costs.
+`pbpolyimbalance` is what levelling a slice is worth; each further line of
+whitespace costs half as much again.
 
 * A slice crossing a page can leave a gap at the top of the next page (L=10,
   R=7 breaking at 7 leaves L=3, R=0 over the page). That counts as slice

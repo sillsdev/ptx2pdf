@@ -677,6 +677,7 @@ class PolySolver(TypesetterSolver):
 
     maxbad_scale = 20           # shape badness: most usable shapes are under 2, loose ones over 20
     imbalance_scale = 10        # badness of a line of imbalance, well above what good shapes cost
+    narrow_share = 0.5          # each line of imbalance after the first, as a share of the first
 
     def maxbad(self):
         """ Paragraph shapes worse than this are not used to change a slice """
@@ -744,8 +745,7 @@ class PolySolver(TypesetterSolver):
 
     def imbalance_cost(self, imb, sl):
         """ Badness of imb lines of imbalance where slice sl ends. A gap costs imbalance_weight
-            for its first line and its own smaller amount for each further one: less whitespace
-            is better. A 1 line gap that looks like a mistake (see single_gap) costs twice
+            for its first line and half that for each further one: less whitespace is better. A 1 line gap that looks like a mistake (see single_gap) costs twice
             imbalance_weight, and at least the loosest shape that may level it (see balance_page),
             so any shape that can level it does. A 1 line gap in a slice of headings, or above
             one, costs nothing: it is better than making a heading wrap differently. """
@@ -754,7 +754,7 @@ class PolySolver(TypesetterSolver):
         if self.single_gap(sl, imb):
             cap = max(self.hooks.badness_balance_maxbad * self.maxbad_scale, self.imbalance_weight())
             return max(2 * self.imbalance_weight(), self.relax_caps[0] * cap)
-        return self.imbalance_weight() + self.hooks.badness_imbalance_narrow * self.imbalance_scale * max(0, imb - 1)
+        return self.imbalance_weight() * (1 + self.narrow_share * max(0, imb - 1))
 
     def shape_cost(self, pid, d):
         """ Badness of paragraph pid at line delta d above its unadjusted shape, or None if unusable """
