@@ -6,26 +6,33 @@ logger = logging.getLogger(__name__)
 from shutil import copy
 from gi.repository import Gtk, GLib, Gdk
 from ptxprint.utils import _, appdirs
-from ptxprint.printers.base import PrinterBase, Choice, Spin, BINDING_HARD, BINDING_SADDLE
+from ptxprint.printers.base import PrinterBase, Choice, Spin, BINDING_HARD, BINDING_SADDLE, BINDING_SOFT
 from zipfile import ZipFile, ZIP_DEFLATED
 
 querymap = {
-    "settings/quantity":    (lambda s: [s.jobCopies()], None),
-    "settings/description": ("t_prnl_description", str),
-    "settings/height":      (lambda s: s.height(), int),
-    "settings/width":       (lambda s: s.width(), int),
-    "data/11-211-widget-1": ("t_prnl_bookID", str),
-    "data/8-203-widget-0":  ("t_prnl_description", str),
-    "data/1-189-widget-4":  ("s_prn_pages", int),
-    "data/1-189-widget-5":  ("fcb_prnl_paperType", int),
-    "data/6-200-widget-3":  ("fcb_prnl_coverLamination", int),
-    "data/31-194-widget-4": ("s_prnl_ribbons", int),
-    "data/23-135-widget-5": ("fcb_prnl_wrap", int)
+    "settings/quantity":    (lambda s: [s.jobCopies()], None, False),
+    "settings/description": ("t_prnl_description", str, False),
+    "settings/height":      (lambda s: s.height(), int, False),
+    "settings/width":       (lambda s: s.width(), int, False),
+    "data/11-211-widget-1": ("t_prnl_bookID", str, False),
+    "data/8-203-widget-0":  ("t_prnl_description", str, False),
+    "data/1-189-widget-4":  ("s_prn_pages", int, False),
+    "data/1-189-widget-5":  ("fcb_prnl_paperType", int, False),
+    "data/6-200-widget-3":  ("fcb_prnl_coverLamination", int, False),
+    "data/31-194-widget-4": ("s_prnl_ribbons", int, True),
+    "data/23-135-widget-5": ("fcb_prnl_wrap", int, False),
+    "data/22-149-widget-1": ("fcb_prnl_endPapers", int, True)
 }
 
 querytypes = {
-    "306": list(querymap.keys()),
-    "307": [k for k in querymap.keys() if k != "data/31-194-widget-4"]
+    "b3a6zov4hypx4eyfrex3cdji": [k for k, v in querymap.items() if not v[2]],
+    "bgw3emd69pisfn57743qqcmd": [k for k, v in querymap.items() if v[2]],
+    "ql43iqz2c3bx0skgytkbbwe9": list(querymap.keys()),
+    "ys08ztakhzsbp8iqfc277v7y": list(querymap.keys()),
+}
+
+softqueryremap = {
+    "data/1-189-widget-5": {728: 727, 364: 786}
 }
 
 def labelWidget(txt, widget, grid, x, y):
@@ -55,16 +62,21 @@ class Pretore(PrinterBase):
     options = [
         Choice("fcb_prnl_paperType", "Paper Type:", [
             ("755", "40 gsm ThinLeaf FSC"),
-            ("355", "50 gsm Thinopaque white FSC"),
-            ("364", "80 gsm woodfree offset FSC"),
-            ("366", "90 gsm woodfree offset FSC"),
-            ("575", "100 gsm woodfree offset FSC"),
+            ("789", "50 gsm ThinLeaf FSC"),
+            ("728", "70 gsm CVF silk FSC"),             # paperback is 727
+            ("364", "80 gsm woodfree offset FSC"),      # paperback is 786
+            ("366", "90 gsm woodfree offset FSC")
         ], default="755"),
+        Choice("fcb_prnl_endPapers", "End Papers:", [
+            ("763", "150 gsm. MultiDesign Natural FSC - same color as thinleaf paper"),
+            ("596", "160 gsm. Woodfree offset FSC - same color as offset or CVG paper")
+        ], default="763"),
         Choice("fcb_prnl_coverLamination", "Cover Lamination:", [
-            ("455", "Gloss"),
+            ("452", "Gloss"),
             ("453", "Scuff free matte"),
-            ("452", "Linen"),
-        ], default="455"),
+            ("454", "Soft touch"),
+            ("455", "Linen"),
+        ], default="452"),
         Choice("fcb_prnl_wrap", "Shrink Wrap:", [
             ("475", "Sealfoil (Strong BE13)"),
             ("779", "Sealfoil (Ultra Strong BE19)"),
@@ -79,16 +91,27 @@ class Pretore(PrinterBase):
     # Paper type ID → mm per page (single page, not leaf)
     _paperThickness = {
         "755": 0.050,   # 40 gsm ThinLeaf
-        "355": 0.060,   # 50 gsm Thinopaque
+        "789": 0.060,   # 50 gsm Thinopaque
+        "727": 0.084,   # 70 gsm
+        "728": 0.084,   # 70 gsm
         "364": 0.095,   # 80 gsm woodfree
         "366": 0.105,   # 90 gsm woodfree
-        "575": 0.115,   # 100 gsm woodfree
     }
     # Binding class → cover thickness in mm (both covers combined)
     _coverThickness = {
-        "307": 1.5,     # Paperback (light card)
-        "306": 8.0,     # Hardback (boards + liner)
+        "b3a6zov4hypx4eyfrex3cdji": 1.5,
+        "bgw3emd69pisfn57743qqcmd": 1.5,
+        "ql43iqz2c3bx0skgytkbbwe9": 8.0,
+        "ys08ztakhzsbp8iqfc277v7y": 8.0
     }
+
+    _jobTypes = {               #    soft binding, colour interior
+        "b3a6zov4hypx4eyfrex3cdji": (True, False),
+        "bgw3emd69pisfn57743qqcmd": (True, True),
+        "ql43iqz2c3bx0skgytkbbwe9": (False, True),
+        "ys08ztakhzsbp8iqfc277v7y": (False, False)
+    }
+
 
     MIN_PAGES = 120
     MAX_PAGES = 2000
@@ -106,7 +129,10 @@ class Pretore(PrinterBase):
     def bookType(self, job=None):
         if job is None:
             job = self.view.printerTab.jobSpec()
-        return "306" if job.binding == BINDING_HARD else "307"
+        soft = job.binding in (BINDING_SADDLE, BINDING_SOFT)
+        for k, v in self._jobTypes.items():
+            if soft == v[0] and job.color == v[1]:
+                return k, soft
 
     def jobCopies(self):
         v = self.get("s_prn_copies")
@@ -193,7 +219,7 @@ class Pretore(PrinterBase):
     def thicknessText(self, job):
         paperID = self.get("fcb_prnl_paperType") or "755"
         mmPerPage = self._paperThickness.get(paperID, 0.050)
-        coverMm = self._coverThickness.get(self.bookType(job), 1.5)
+        coverMm = self._coverThickness.get(self.bookType(job)[0], 1.5)
         return "{:.1f} mm".format(job.pages * mmPerPage + coverMm)
 
     def panelExtras(self, panel):
@@ -312,10 +338,10 @@ class Pretore(PrinterBase):
         dialog.destroy()
 
     def prepare_quote(self, quantities=None, job=None):
-        booktype = self.bookType(job)
+        booktype, issoft = self.bookType(job)
         qinfo = {}
         for k in querytypes[booktype]:
-            v, t = querymap[k]
+            v, t, hardonly = querymap[k]
             if isinstance(v, str):
                 val = self.get(v)
             else:
@@ -324,6 +350,8 @@ class Pretore(PrinterBase):
                 continue
             if t is not None:
                 val = t(val)
+            if issoft and k in softqueryremap:
+                    val = softqueryremap[k].get(val, val)
             b = k.split("/")
             c = qinfo
             for bk in b[:-1]:
@@ -331,6 +359,7 @@ class Pretore(PrinterBase):
             c[b[-1]] = val
         if quantities is not None:
             qinfo["settings"]["quantity"] = quantities
+        logger.debug(f"{booktype=}, {qinfo}")
         return booktype, qinfo
 
     def submit_quote(self, qinfo, endpoint, cb=None):
@@ -345,6 +374,7 @@ class Pretore(PrinterBase):
             self.thread = None
 
     def updatequote(self, result):
+        logger.debug(f"{result=}")
         if result is None or 'cost' not in result:
             print("Failed quote")
             return
