@@ -5,7 +5,7 @@ This chapter lists common problems, grouped by kind, in the words users often us
 First try these three quick checks. They solve many problems:
 
 1. **Print again.** Most changes appear in the PDF only after you click **Print (Make PDF)**.
-2. **Check the view level.** A setting can be hidden but still turned on. Click **☰** › **View Level** › **Full View** to see every setting.
+2. **Check the view level.** A setting can be hidden but still turned on. Click **≡** › **View Level** › **Full View** to see every setting.
 3. **Check the configuration name.** Look at **Name** on the **Basic** tab. Is it the configuration you think it is?
 
 "pt" means point. 1 pt is about 0.35 mm.
@@ -40,7 +40,7 @@ First try these three quick checks. They solve many problems:
 **What to do:**
 
 1. Close the PDF in the other program and click **Yes** to try again.
-2. To avoid this, click **☰** › **Show PDF** › **Preview Pane**. The preview does not lock the file.
+2. To avoid this, click **≡** › **Show PDF** › **Preview Pane**. The preview does not lock the file.
 
 ### The Print (Make PDF) and Save buttons are greyed out
 
@@ -812,7 +812,7 @@ Extra pages at the end of the longer PDF always show as changed. This is correct
 
 **What to do:**
 
-1. Click **☰** › **View Level** › **Regular View** or **Full View**.
+1. Click **≡** › **View Level** › **Regular View** or **Full View**.
 2. Or type the name of the setting in **Search for settings** (bottom-left, or **Ctrl+F**). PTXprint raises the view level if the setting is hidden.
 
 ### The PDF has pictures (or a diglot, borders, thumb tabs …) but I cannot find the setting

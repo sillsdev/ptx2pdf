@@ -604,13 +604,7 @@ class Piclist:
                         if bk == 'GLO':
                             pic.update(pgpos="p", scale="0.7")
                         if b[1]:    # usfm 3
-                            # names may have hyphens (x-credit, x-xetex) and values may have = in them
-                            for k, v in re.findall(r'([A-Za-z][\w-]*)\s*=\s*"([^"\\]*)"', f.group(2)):
-                                pic[k] = v
-                            if 'media' not in pic:
-                                default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
-                                pic['media'] = 'paw' if default is None else default
-                            picture = Picture(**pic)
+                            picture = self._fig3picture(pic, f.group(2), parent)
                         else:       # usfm 2
                             for j, v in enumerate(f.groups()):
                                 if v is not None:
@@ -632,6 +626,55 @@ class Piclist:
                         koffset = parcount
                         currentk = a[0]
 
+    def _fig3picture(self, pic, attribs, parent):
+        """ A Picture of pic (anchor, caption ...) and the attributes of a USFM 3 \\fig """
+        # names may have hyphens (x-credit, x-xetex) and values may have = in them
+        for k, v in re.findall(r'([A-Za-z][\w-]*)\s*=\s*"([^"\\]*)"', attribs):
+            pic[k] = v
+        if 'media' not in pic:
+            default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
+            pic['media'] = 'paw' if default is None else default
+        return Picture(**pic)
+
+    def _readmdpics(self, txt, bk, parent, sync=False, fn=None):
+        """ The pictures of a Markdown module (txt is its USFM). Each is anchored "md" and its id
+            attribute, which \\zfiga then names. A picture without an id keeps the number of the
+            listed picture with the same file, so its settings stay with it; a new one gets the next
+            number (md001, md002 ...). Listed pictures no longer in the text are dropped. """
+        prefix = bk + " md"
+        known = {}          # file -> anchor of the pictures already listed for this module
+        highest = 0
+        for p in list(self.pics.values()):
+            a = p['anchor']
+            if not a.startswith(prefix):
+                continue
+            known.setdefault(p.get('src', ''), a)
+            if a[len(prefix):].isdigit():
+                highest = max(highest, int(a[len(prefix):]))
+        seen = set()
+        for f in regex.finditer(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', txt):
+            m = re.search(r'\bid\s*=\s*"([^"\\]+)"', f.group(2))
+            src = re.search(r'\bsrc\s*=\s*"([^"\\]*)"', f.group(2))
+            if m is not None:
+                r = prefix + re.sub(r"\s+", "", m.group(1))
+            elif src is not None and known.get(src.group(1)) not in (None, *seen):
+                r = known[src.group(1)]
+            else:
+                highest += 1
+                r = "{}{:03d}".format(prefix, highest)
+            seen.add(r)
+            attribs = re.sub(r'\bid\s*=\s*"[^"\\]*"', '', f.group(2))      # the id is in the anchor
+            picture = self._fig3picture({'anchor': r, 'caption': f.group(1).strip(), 'srcref': r}, attribs, parent)
+            if not picture.get('src', ''):
+                logger.warning(f"Skipping \\fig with no image file at {r}: {f.group(0)[:60]}")
+            elif fn is not None:
+                fn(picture)
+            else:
+                self.add_picture(picture, sync=sync)
+        for p in list(self.pics.values()):
+            if p['anchor'].startswith(prefix) and p['anchor'] not in seen:
+                self.remove(p)
+
     def read_sfm(self, bk, fname, parent, media=None, sync=False, fn=None):
         isperiph = bk in nonScriptureBooks
         try:
@@ -640,6 +683,10 @@ class Piclist:
                 dat = inf.read()
         except OSError as e:
             logger.warning(f"Can't read the pictures in {bk} from {fname}: {e}")
+            return
+        if str(fname).lower().endswith(".md"):   # a Markdown module: its pictures are its images, in its own book
+            from ptxprint.markdown import MarkDown, documentBook
+            self._readmdpics(MarkDown(dat).outUsfm(version=[3, 1]), documentBook(dat), parent, sync=sync, fn=fn)
             return
         if isperiph:
             self._readpics(dat, bk, 0, None, isperiph, parent, sync=sync, fn=fn)

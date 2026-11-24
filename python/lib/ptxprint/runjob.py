@@ -1326,6 +1326,12 @@ class RunJob:
             return []
         self.printer.setupPicinfos(picinfos, diglots)
         books = [r[0][0].first.book if r[1] else "MOD" for r in jobs] + ["FRT","COV"]
+        modfile = self.printer.moduleFile
+        if any(not r[1] for r in jobs) and modfile is not None and str(modfile).lower().endswith(".md") \
+                and os.path.exists(modfile):     # a Markdown module's pictures are in its own book
+            from ptxprint.markdown import documentBook
+            with open(modfile, encoding="utf-8") as inf:
+                books.append(documentBook(inf.read(1000)))
         for j in books:
             logger.debug(f"getsrc&dest for {j}")
             picinfos.getFigureSources(keys=j, mode=self.ispdfxa)

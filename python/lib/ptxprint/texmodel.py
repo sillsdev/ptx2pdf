@@ -1062,6 +1062,7 @@ class TexModel:
         else:
             self.dict["/nocustomsty"] = ""
         infpath = printer.getBookSrcPath(bk)
+        rulesbk = bk        # the book the text rules are made for: a module's own, if it says so
         if infpath is None:
             if re.match(".*?[/\\.]", bk):
                 infpath = os.path.join(prjdir, bk)  # assume module
@@ -1074,6 +1075,11 @@ class TexModel:
                             title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
                             show=not self.printer.get("c_quickRun"))
                     return None
+                if isinstance(infpath, str) and os.path.exists(infpath):
+                    with open(infpath, encoding="utf-8") as inf:
+                        m = re.match(r"\s*\\id\s+(\S+)", inf.read(200))
+                    if m is not None and m.group(1) in nonScriptureBooks:     # e.g. a Markdown module's book
+                        rulesbk = m.group(1)
         if infpath is None:
             raise FileNotFoundError(f"Can't find file for {bk}")
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
@@ -1088,7 +1094,7 @@ class TexModel:
             outfname = outfname[:doti] + draft + outextra + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
         if not noaction or not os.path.exists(outfpath):
-            self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
+            self.makelocalChanges(printer, rulesbk, chaprange=(chaprange if isbk else None))
             os.makedirs(outdir, exist_ok=True)
             codepage = self.ptsettings.get('Encoding', 65001)
             with universalopen(infpath, cp=codepage) as inf:
@@ -1404,7 +1410,8 @@ class TexModel:
         ############ Temporary (to be removed later) ########%%%%
         # Throw out \esb ... \esbe blocks if Study Bible Sidebars are not wanted
         if not self.asBool("studynotes/includesidebar"):
-            self.localChanges.append(makeChange(r"\\esb.+?\\esbe", "", flags=regex.S))
+            # not \\esb, which is the text "\esb" (as in a manual that talks about sidebars)
+            self.localChanges.append(makeChange(r"(?<!\\)\\esb\b.+?(?<!\\)\\esbe\b", "", flags=regex.S))
         ############ Temporary (to be removed later) ########%%%%
         
         if self.asBool("studynotes/includextfn"):

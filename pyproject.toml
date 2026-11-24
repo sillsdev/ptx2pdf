@@ -27,6 +27,7 @@ dependencies = [
 "Pillow",
 "numpy",
 "markdown_it-py",
+"mdit-py-plugins",
 "psutil"
 ]
 

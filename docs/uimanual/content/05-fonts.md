@@ -54,7 +54,7 @@ The other options are:
 
 ### Digit mapping (numbers in your own script)
 
-Many scripts have their own digits, for example Arabic-Indic ٠١٢٣, Devanagari ०१२३, Myanmar ၀၁၂၃ or Thai ๐๑๒๓. If your text uses the Western digits 0–9 but you want your script's digits, choose your script in **Digit mapping**. PTXprint then changes the digits when it prints, for numbers in that font (for example chapter and verse numbers).
+Many scripts have their own digits, for example Arabic-Indic, Devanagari, Myanmar or Thai. If your text uses the Western digits 0–9 but you want your script's digits, choose your script in **Digit mapping**. PTXprint then changes the digits when it prints, for numbers in that font (for example chapter and verse numbers).
 
 * Check that your font has these digits. If not, you will see empty boxes.
 * When you change **Text Script**, PTXprint also tries to choose the matching digit mapping. Check it.
@@ -159,7 +159,7 @@ These settings are shown in the **Regular** and **Full** views.
 
 ## Add Tatweel (kashida) Rules dialog
 
-In Arabic script, a *tatweel* (also *kashida*, the character ـ) is a joining stroke that makes a word longer, to make lines look better or to fill a line. This dialog writes a *change rule* that adds tatweels to one word at one verse. The rule goes into the project's changes file (changes.txt), which PTXprint applies every time it prints.
+In Arabic script, a *tatweel* (also *kashida*) is a joining stroke that makes a word longer, to make lines look better or to fill a line. This dialog writes a *change rule* that adds tatweels to one word at one verse. The rule goes into the project's changes file (changes.txt), which PTXprint applies every time it prints.
 
 To open it (advanced): on the **View+Edit** tab, open the changes file. In the **Code Snippets** area at the side, click **Arabic**, then **Add Tatweels**.
 

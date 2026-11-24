@@ -189,6 +189,7 @@
 \def\PDFposfromattr{\ifActions\dimen0=\baselineskip\raise\the\dimen0\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos 1.4]}}\fi}
 \SetSpeciallAttribs{link-id}{\noexpand\maybePDFp@sfromattr\noexpand\makelabelfromattr}{}
 \SetSpeciallAttribs{link-href}{\ifhrefLink\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi\fi}{\ifhrefLink\ifx\attr@b\empty\else\ifActions\special{pdf:eann}\fi\fi\fi}
+\SetSpeciallAttribs{href}{\ifhrefLink\ifx\attr@b\empty\else\noexpand\trace{A}{Applying href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi\fi}{\ifhrefLink\ifx\attr@b\empty\else\ifActions\special{pdf:eann}\fi\fi\fi}% as link-href (the name HTML and Markdown use)
 \SetSpeciallAttribs{outline-entry}{\noexpand\m@keoutlinefromattr{\attr@b}}{}
 \SetSpeciallAttribs{link-title}{\noexpand\maybem@keoutlinefromattr{\attr@b}}{}
 \def\maybem@keoutlinefromattr#1{\testt@ttrn@me{link-href}\if@ttrexists\else\m@keoutlinefromattr{#1}}
@@ -220,7 +221,9 @@
 }
 
 \def\setup@ttr@grab#1{%
-  \x@\xdef\csname \gr@bname\endcsname{\liter@lkerns\catcode`\/=12\relax % FIXME other active chars too?
+  % attribute values are text: / and the active characters (such as ( and [) are read as themselves
+  % (\proc@ttribs makes them active again), as for milestones
+  \x@\xdef\csname \gr@bname\endcsname{\liter@lkerns\catcode`\/=12\noexpand\deactiv@tecustomch@rs\relax
     \csname @@\gr@bname\endcsname}%Note this is grabbing atttributes, don't put anything after
   \x@\gdef\csname @@\gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}\sm@rtquotes#1}%
 }

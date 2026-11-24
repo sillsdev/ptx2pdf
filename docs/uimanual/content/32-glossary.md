@@ -182,7 +182,7 @@ This glossary explains the technical words and PTXprint words used in this manua
 
 ## K
 
-**Kashida (tatweel)** — A joining stroke (ـ) in Arabic script that makes a word longer. It can be used to make lines look better. See the **Fonts+Script** tab.
+**Kashida (tatweel)** — A joining stroke in Arabic script that makes a word longer. It can be used to make lines look better. See the **Fonts+Script** tab.
 
 ## L
 
@@ -362,7 +362,7 @@ This glossary explains the technical words and PTXprint words used in this manua
 
 **Variable Line Spacing** — A layout choice where PTXprint may stretch the space between lines a little so that every column is filled to the bottom. Compare **Align Text to Baseline**.
 
-**View level** — How many settings PTXprint shows: **Mini**, **Basic**, **Regular** or **Full**. Hidden settings still work. Change it with **☰** › **View Level** (see the chapter **The main window, menu and view levels**).
+**View level** — How many settings PTXprint shows: **Mini**, **Basic**, **Regular** or **Full**. Hidden settings still work. Change it with **≡** › **View Level** (see the chapter **The main window, menu and view levels**).
 
 ## W
 

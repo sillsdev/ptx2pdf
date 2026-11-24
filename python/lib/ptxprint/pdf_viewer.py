@@ -18,6 +18,7 @@ from pathlib import Path
 from shutil import copy2
 from typing import Optional
 from threading import Timer
+from types import SimpleNamespace
 import logging
 
 # These libs are for Windows-only functionality to make 
@@ -454,6 +455,24 @@ class PDFViewer:
         if self.model.get('c_updatePDF', False):
             self.model.onOK(None)
 
+def hasTop(dest):
+    """ Whether a destination says how far down its page it is (dest.change_top is not reliable) """
+    return dest.type in (Poppler.DestType.XYZ, Poppler.DestType.FITH, Poppler.DestType.FITBH)
+
+
+def linkInfo(mapping):
+    """ ((x1, y1, x2, y2), ("uri", address) or ("dest", destination)) for a Poppler link mapping, or None.
+        Plain copies: a mapping's action is freed with the page's list of mappings. """
+    a, action = mapping.area, mapping.action
+    if action.type == Poppler.ActionType.URI:
+        return ((a.x1, a.y1, a.x2, a.y2), ("uri", action.uri.uri))
+    if action.type == Poppler.ActionType.GOTO_DEST and action.goto_dest.dest is not None:
+        d = action.goto_dest.dest
+        return ((a.x1, a.y1, a.x2, a.y2), ("dest", SimpleNamespace(type=d.type, named_dest=d.named_dest,
+                                                                     page_num=d.page_num, top=d.top)))
+    return None
+
+
 class PDFFileViewer:
     def __init__(self, model, widget, alloc=None): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
         self.hbox = widget
@@ -487,6 +506,8 @@ class PDFFileViewer:
         self.widget = None
         self.timer = None
         self.is_dragging = False
+        self.linkCache = {}         # page index -> the page's Poppler link mappings
+        self.onLink = False         # the pointer is over a link (and shows a hand)
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -517,6 +538,7 @@ class PDFFileViewer:
                 
                 event_box.connect("scroll-event", self.on_scroll_event)
                 event_box.connect("button-release-event", self.on_button_release)
+                event_box.connect("motion-notify-event", self.on_page_motion)
                 # always in order: get_spread() already puts an RTL spread's pages right to left
                 self.hbox.pack_start(event_box, False, False, 1)
                 boxes.append(event_box)
@@ -547,6 +569,7 @@ class PDFFileViewer:
                 self.model.doStatus(_("Error opening PDF: {}").format(e), warning=True)
                 self.document = None
                 return False
+            self.linkCache = {}
             self.hbox.show()
         else:
             self.hbox.hide()
@@ -840,10 +863,71 @@ class PDFFileViewer:
         if event.button == 2: # middle click
             self.is_dragging = False
             return True
+        if self.followLinkAt(widget, event):
+            return True
         return False
 
     def show_context_menu(self, widget, event):
         pass
+
+    # Links: a plain left click on a link follows it
+
+    def pageForWidget(self, widget):
+        """ The page index (1 based) shown in widget, one of the page boxes """
+        return self.current_index
+
+    def linkAt(self, widget, event):
+        """ The link (see linkInfo) under the mouse in widget (a page box), or None """
+        if self.document is None or widget not in self.hbox.get_children():
+            return None
+        pnum = self.pageForWidget(widget)
+        if not pnum or pnum > self.numpages:
+            return None
+        links = self.linkCache.get(pnum)
+        if links is None:
+            links = self.linkCache[pnum] = [l for l in map(linkInfo, self.document.get_page(pnum - 1).get_link_mapping()) if l]
+        x = event.x / self.zoomLevel
+        y = self.psize[1] - event.y / self.zoomLevel     # link areas count up from the foot of the page
+        for (x1, y1, x2, y2), link in links:
+            if min(x1, x2) <= x <= max(x1, x2) and min(y1, y2) <= y <= max(y1, y2):
+                return link
+        return None
+
+    def followLinkAt(self, widget, event):
+        """ Follows the link under a plain left click. Returns whether there was one. """
+        mods = Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.MOD1_MASK
+        if event.button != 1 or event.state & mods:
+            return False
+        link = self.linkAt(widget, event)
+        return link is not None and self.followLink(link)
+
+    def followLink(self, link):
+        """ Goes to a link's destination (see linkInfo): a place in this PDF, or a web page in the browser """
+        kind, dest = link
+        if kind == "uri":
+            try:
+                Gtk.show_uri_on_window(None, dest, Gdk.CURRENT_TIME)
+            except GLib.Error as e:
+                self.model.doStatus(_("Could not open {}: {}").format(dest, e), warning=True)
+            return True
+        if dest is not None and dest.type == Poppler.DestType.NAMED:
+            dest = self.document.find_dest(dest.named_dest)
+        if dest is None or not 0 < dest.page_num <= self.numpages:
+            return False
+        self.show_pdf(dest.page_num)
+        if hasTop(dest):        # scroll the place to the top, once the new page has its size
+            top = max(0, (self.psize[1] - dest.top) * self.zoomLevel - 20)
+            GLib.idle_add(lambda: self.swv.set_value(min(top, max(0, self.swv.get_upper() - self.swv.get_page_size()))) and False)
+        return True
+
+    def on_page_motion(self, widget, event):
+        """ Shows a pointing hand over links """
+        onLink = self.linkAt(widget, event) is not None
+        if onLink != self.onLink and widget.get_window() is not None:
+            self.onLink = onLink
+            cursor = Gdk.Cursor.new_from_name(widget.get_display(), "pointer") if onLink else None
+            widget.get_window().set_cursor(cursor)
+        return False
 
     # Zoom functionality
     def on_zoom_in(self, widget):
@@ -1140,6 +1224,7 @@ class PDFContentViewer(PDFFileViewer):
             self.model.doStatus(_("Error opening PDF: {}").format(e), warning=True)
             self.document = None
             return False
+        self.linkCache = {}         # the new PDF's links are read when first needed
 
         tocts = self.load_toc(self.document, self.toctv)
         self.toctv.set_model(tocts)
@@ -1876,15 +1961,17 @@ class PDFContentViewer(PDFFileViewer):
                 pg = min(available_pnums, key=lambda p: abs(p - pg))
         return pg
 
-    def get_parloc(self, widget, event):
-        x = event.x / self.zoomLevel
-        y = event.y / self.zoomLevel
+    def pageForWidget(self, widget):
         if self.spread_mode:
             side = self.widgetPosition(widget)      # the boxes are in the order of the spread's pages
             spread = self.get_spread(self.current_index, self.rtl_mode)
-            pnum = spread[side] if 0 <= side < len(spread) else spread[0]
-        else:
-            pnum = self.current_index
+            return spread[side] if 0 <= side < len(spread) else spread[0]
+        return self.current_index
+
+    def get_parloc(self, widget, event):
+        x = event.x / self.zoomLevel
+        y = event.y / self.zoomLevel
+        pnum = self.pageForWidget(widget)
         p = None
         a = self.hbox.get_allocation()
         self.lastParRect = None
@@ -2068,6 +2155,9 @@ class PDFContentViewer(PDFFileViewer):
                     if self.adjlist:
                         info = self.adjlist.getinfo(ref + parnum, insert=True)
                         self.on_reset_adjustments(widget, 'para', pgindx, info, parref)
+            return True
+
+        if self.followLinkAt(widget, event):
             return True
 
         # Check if we are in the main content viewer and if any modifier key was pressed

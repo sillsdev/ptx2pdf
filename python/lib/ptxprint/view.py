@@ -2492,9 +2492,10 @@ class ViewModel:
             res[os.path.join(fpath, bk)] = baseprjid + "/" + bkname
             cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+bkname), "moduleFile")
             cfgchanges['lb_bibleModule'] = bkname
-            usfms = self.get_usfms()
-            mod = Module(os.path.join(fpath, bk), usfms, None)
-            books.extend(mod.getBookRefs())
+            if not bk.lower().endswith(".md"):     # a Markdown module refers to no scripture books
+                usfms = self.get_usfms()
+                mod = Module(os.path.join(fpath, bk), usfms, None)
+                books.extend(mod.getBookRefs())
         for bk in books + ['INT']:
             fname = self.getBookSrcPath(bk, baseprjid, project=baseprj)
             if fname is not None:

@@ -48,7 +48,7 @@ controlClasses = {
 dialogTitles = {
     "mainAppWindow": "Main window",
     "mainapp_win": "Main window",
-    "menu_main": "Main menu (top-left ☰ button)",
+    "menu_main": "Main menu (top-left ≡ button)",
     "pop_locateIssues": "PDF Preview > Issue types popup",
     "dlg_about": "About dialog",
 }
@@ -64,6 +64,9 @@ def cleanText(s):
     s = re.sub(r"<[^>]+>", "", s)           # strip Pango markup
     s = s.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"')
     s = re.sub(r"\s*\n\s*", " ", s.strip())
+    # The manual's fonts have no warning sign: a filled triangle shows the same thing (U+FE0F, the emoji
+    # form, goes too)
+    s = re.sub("\u26a0\ufe0f?", "\u25b2", s)
     return s or None
 
 

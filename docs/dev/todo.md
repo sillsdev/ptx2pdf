@@ -900,3 +900,19 @@ done: patches/unknown-markers-warning.patch.
   'polyglotcolumn' in 'zcopyright'`, and output lost the space after it (`\polyglotcolumnL`). Unknown
   and standalone markers are now milestones closed by the first text or marker; an unknown end marker
   scans back to make its bare start a char style.
+
+## Markdown modules (Nov 2026)
+
+* False "Unknown markers" warning for a Markdown module (`.md` module file): a character style defined
+  in the config's `ptxprint.sty` (e.g. `\zcode`, with `\Endmarker zcode*`) is reported as unknown
+  (`texmodel._reportUnknownMarkers` via `usxutils.unknownMarkers`), yet TeX uses the style correctly.
+  A paragraph style from the same file (`\zpre`) is not reported. Repro: BSB_1 config `MDManual`
+  (module = `uimanual-ch19.md`). Find which grammar the module path checks against.
+* Other `localChanges` patterns in `texmodel.py` that match `\\marker` probably have the same fault as the
+  `\esb … \esbe` one (fixed in patches/esb-escaped-text.patch): they also match an escaped `\\marker`,
+  which is text. Check each for a `(?<!\\)` guard. Found when a Markdown module mentioned `\esb ... \esbe`.
+* Markdown modules, later (via mdit-py-plugins, now a dependency): figures from images with attributes
+  (`![caption](file.jpg){size=col pos=t}` → `\fig caption|src=… size=… loc=…\fig*`, attrs_plugin);
+  `::: name` containers (container_plugin) for sidebars (`\esb … \esbe`) or other boxes; definition
+  lists (deflist_plugin), e.g. for the manual's glossary: each entry as `\p \k term\k* definition` or
+  `\p \pl term\pl* definition`.

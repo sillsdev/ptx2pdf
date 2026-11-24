@@ -8,8 +8,12 @@ Writes to docs/uimanual/output/:
     PTXprint-Manual-for-AI.md          one file containing everything (for the support bot)
     bot/<chapter>.md                   the same content, one file per chapter
     PTXprint-User-Manual.html          the human-readable manual
-    PTXprint-User-Manual.pdf           the same, as PDF (needs PyMuPDF and markdown-it-py)
+    PTXprint-User-Manual.pdf           the same, as PDF: the linked Markdown typeset by PTXprint itself
+                                       (docs/uimanual/ptx; not kept in git)
     build-report.txt                   controls with no explanation, orphan notes, etc.
+
+and, not kept in git, data/PTXprint-User-Manual.md: the human edition as one Markdown file, with the HTML
+edition's heading ids ("Title {#id}") and cross-reference links, for typesetting.
 
 Content files: each docs/uimanual/content/<chapter-id>.md holds the prose for a chapter,
 starting at heading level 2 (the build adds the chapter title as level 1). An optional last
@@ -24,10 +28,13 @@ Usage:
 
 import argparse
 import datetime
+import glob
 import html
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 from collections import OrderedDict
 
@@ -35,6 +42,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from chapters import chapters, chapterFor, orderedChapters, partOf
 from chapters import parts as partList
 import htmlmanual
+import mdwriter
 
 levelShort = {2: "Mini+", 4: "Basic+", 5: "Regular+", 6: "Full"}
 levelHuman = {2: "all views", 4: "Basic, Regular and Full views", 5: "Regular and Full views", 6: "Full view only"}
@@ -315,7 +323,7 @@ def build(repo, dopdf=True, skeleton=False):
         if ctrls:
             where = OrderedDict((stripTab(c["breadcrumbs"][0]), 1) for c in ctrls if c["breadcrumbs"])
             subs.append(f"{refnum} Settings reference ({', '.join(where)})")
-        contents.extend(f"   - {s}" for s in subs)
+        contents.extend(f"    - {s}" for s in subs)
         for human in (False, True):
             parts = [f"# {num}. {title}", ""]
             if prose:
@@ -375,86 +383,72 @@ def build(repo, dopdf=True, skeleton=False):
     with open(os.path.join(outdir, "PTXprint-User-Manual.html"), "w", encoding="utf-8") as outf:
         outf.write(pageHtml)
     print(f"HTML edition: {len(chapterInfos)} chapters, {linker.count} cross-reference links")
+    linkedMd, mdLinks = makeLinkedMarkdown(humanParts[0], chapterInfos, ctrlKeys)
+    os.makedirs(os.path.join(base, "data"), exist_ok=True)
+    with open(os.path.join(base, "data", "PTXprint-User-Manual.md"), "w", encoding="utf-8") as outf:
+        outf.write(linkedMd)
+    print(f"Linked Markdown edition: {mdLinks} cross-reference links")
+    if mdLinks != linker.count:
+        print(f"Warning: the Markdown edition has {mdLinks} links but the HTML edition {linker.count}")
     if dopdf:
-        pdfText = re.sub(r" ?\{#[A-Za-z0-9-]+\}", "", humanText)       # setting anchors are for the HTML edition
-        makePdf(makeHtml(pdfText), os.path.join(outdir, "PTXprint-User-Manual.pdf"))
+        makePdf(repo, os.path.join(outdir, "PTXprint-User-Manual.pdf"))
     print(f"Wrote {outdir}")
 
 
-css = """
-body { font-family: sans-serif; font-size: 10pt; line-height: 1.35; color: #222; }
-h1 { font-size: 20pt; color: #1b4f8a; margin-top: 0; padding-bottom: 4pt; border-bottom: 2px solid #1b4f8a; page-break-before: always; }
-h2 { font-size: 15pt; color: #1b4f8a; margin-top: 16pt; }
-h3 { font-size: 12pt; color: #2e6db4; margin-top: 12pt; }
-h4 { font-size: 10.5pt; color: #000; margin-top: 10pt; margin-bottom: 2pt; background-color: #eef3fa; padding: 2pt; }
-blockquote { margin-left: 10pt; padding-left: 6pt; color: #444; font-style: italic; border-left: 2px solid #bbb; }
-code { font-family: monospace; font-size: 9pt; }
-ul, ol { margin-top: 2pt; margin-bottom: 4pt; }
-li { margin-bottom: 1pt; }
-table { border-collapse: collapse; }
-td, th { border: 1px solid #aaa; padding: 2pt 4pt; vertical-align: top; }
-th { background-color: #eef3fa; }
+def makeLinkedMarkdown(preamble, chapterInfos, ctrlKeys):
+    """The human edition as one Markdown file, with the HTML edition's heading ids ("Title {#id}") and
+    cross-reference links, for typesetting. preamble (the title) is written as it is, then a contents
+    list whose entries link to the chapters and their sections."""
+    chapters, linker = htmlmanual.linkedChapters(chapterInfos, ctrlKeys)
+    parts = [typesetSettings, preamble.rstrip("\n") + "\n", linkedContents(chapters)]
+    parts += [mdwriter.tokensToMarkdown(ch.tokens) for ch in chapters]
+    return "\n".join(parts), linker.count
+
+
+# How PTXprint (markdown.py) typesets the linked edition: h1 (chapter) is \ms1, h2 \s1, h3 \s2 ... and
+# headings down to level 3 are PDF bookmarks
+typesetSettings = """---
+book: XXA
+headings: ms1 s1
+outline: 3
+---
 """
 
 
-def makeHtml(mdText):
-    from markdown_it import MarkdownIt
-    md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
-    body = md.render(mdText)
-    return ("<!DOCTYPE html>\n<html><head><meta charset='utf-8'><title>PTXprint User Manual</title>"
-            f"<style>{css}</style></head><body>\n{body}\n</body></html>\n")
+def linkedContents(chapters):
+    """The contents (as in the other editions: parts, chapters, their sections) with every entry a link"""
+    esc = mdwriter.escapeText
+    out = ["## Contents {#contents}", ""]
+    lastPart = None
+    for ch in chapters:
+        if ch.part != lastPart:
+            lastPart = ch.part
+            out += ["", f"**Part {ch.part + 1}: {esc(partList[ch.part][0])}** – {esc(partList[ch.part][1])}", ""]
+        out.append(f"{ch.num}. [**{esc(ch.title)}**](#{ch.id})")
+        out.extend(f"    - [{esc(h['text'])}](#{h['id']})" for h in ch.headings if h["level"] == 2)
+    return "\n".join(out) + "\n"
 
 
-def makePdf(htmlText, outpath):
-    try:
-        import fitz
-    except ImportError:
-        print("PyMuPDF (fitz) is not installed: skipping PDF")
+def makePdf(repo, outpath):
+    """Typesets the linked Markdown edition with PTXprint, headless, using the project in
+    docs/uimanual/ptx (its module file is data/PTXprint-User-Manual.md), and copies the PDF to outpath."""
+    base = os.path.join(repo, "docs", "uimanual", "ptx")
+    prjid = "PTXprintManual"
+    env = {k: v for k, v in os.environ.items() if k not in ("DISPLAY", "WAYLAND_DISPLAY")}
+    paths = [os.path.join(repo, "python", "lib")]       # this repo's PTXprint, not an installed one
+    if env.get("PYTHONPATH"):
+        paths.append(env["PYTHONPATH"])
+    env["PYTHONPATH"] = os.pathsep.join(paths)
+    cmd = [sys.executable, os.path.join(repo, "python", "scripts", "ptxprint"), "-p", base, "-c", "Default", "-P", prjid,
+           "-f", os.path.join(repo, "fonts")]          # Charis, Source Code Pro, SymPub: no installed fonts needed
+    print("Typesetting the PDF: " + " ".join(cmd[1:]))
+    res = subprocess.run(cmd, env=env, capture_output=True, text=True)
+    pdfs = glob.glob(os.path.join(base, prjid, "local", "ptxprint", f"{prjid}_Default_*_ptxp.pdf"))
+    if res.returncode or not pdfs:
+        print(f"PTXprint could not make the PDF (exit {res.returncode}):\n" + "\n".join(res.stdout.splitlines()[-15:]))
         return
-    body = re.sub(r"(?s)^.*<body>|</body>.*$", "", htmlText)
-    # first h1 is the cover title: don't break before it
-    body = body.replace("<h1>", "<h1 style='page-break-before: avoid'>", 1)
-    story = fitz.Story(html=body, user_css=css)
-    mediabox = fitz.paper_rect("a4")
-    where = mediabox + (50, 50, -50, -60)
-    toc = []
+    shutil.copy2(max(pdfs, key=os.path.getmtime), outpath)
 
-    def recorder(pos):
-        if pos.heading in (1, 2, 3) and pos.open_close & 1 and pos.text:
-            toc.append([pos.heading, pos.text.strip(), pos.page_num, pos.rect[1]])
-
-    import io
-    tmp = io.BytesIO()
-    writer = fitz.DocumentWriter(tmp)
-    more = 1
-    pno = 0
-    while more:
-        dev = writer.begin_page(mediabox)
-        more, _ = story.place(where)
-        story.element_positions(recorder, {"page_num": pno})
-        story.draw(dev)
-        writer.end_page()
-        pno += 1
-    writer.close()
-    doc = fitz.open("pdf", tmp.getvalue())
-    for i, page in enumerate(doc):
-        if i > 0:
-            page.insert_text((mediabox.width / 2 - 10, mediabox.height - 30), str(i + 1), fontsize=9, color=(0.4, 0.4, 0.4))
-    outline = []
-    for lvl, text, pg, y in toc:
-        if not outline and lvl > 1:
-            lvl = 1
-        while outline and lvl > outline[-1][0] + 1:
-            lvl -= 1
-        outline.append([lvl, text, pg + 1, {"kind": fitz.LINK_GOTO, "page": pg, "to": fitz.Point(0, y), "zoom": 0}])
-    try:
-        doc.set_toc([o[:3] for o in outline])
-    except Exception as e:
-        print(f"Could not set PDF bookmarks: {e}")
-    doc.set_metadata({"title": "PTXprint User Manual", "author": "PTXprint team", "subject": "PTXprint user interface"})
-    doc.save(outpath, garbage=3, deflate=True)
-    doc.close()
-    print(f"Wrote {outpath} ({pno} pages)")
 
 
 def main():
