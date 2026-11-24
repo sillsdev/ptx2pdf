@@ -516,7 +516,7 @@ Label · Mini+
 
 > You can say what you like here to describe the purpose of the style.
 
-#### ⚠️Marker – Add/Edit marker dialog: Marker (code)
+#### ▲Marker – Add/Edit marker dialog: Marker (code)
 
 Text box · Regular+ · `t_styMarker`
 
@@ -554,7 +554,7 @@ Text box · Regular+ · `t_styEndMarker`
 
 Usually leave it empty: for character and note markers PTXprint adds the marker followed by `*`. For a pair of milestone markers, type the closing milestone here.
 
-#### ⚠️Type – Add/Edit marker dialog: Marker type
+#### ▲Type – Add/Edit marker dialog: Marker type
 
 Drop-down · Regular+ · `fcb_styType`  
 Choices: Header | Title | Introduction | Introduction Character | Section Paragraph | Verse Paragraph | Character | List | List Character | Milestone | Standalone Milestone | Other Paragraph | Cross Reference | Cross Reference Character | Footnote | Footnote Character | Cell | Attribute | Identification | Internal

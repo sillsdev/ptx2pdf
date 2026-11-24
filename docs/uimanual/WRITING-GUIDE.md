@@ -9,19 +9,22 @@ It produces, in `output/`:
 * `PTXprint-Manual-for-AI.md` (+ `bot/*.md`, one file per chapter) – for the AI support bot.
 * `PTXprint-User-Manual.html` – the manual for people: one self-contained page with a contents
   sidebar, search, and links between sections. It can be published as a website (for example with
-  GitHub Pages). A PDF edition is also built (`PTXprint-User-Manual.pdf`, not kept in git):
-  PTXprint typesets the manual itself, from the linked Markdown edition, with the project in `ptx/`
+  GitHub Pages).
+* `PTXprint-User-Manual.md` – the same as one Markdown file, with all its links, for typesetting.
+* `PTXprint-User-Manual.pdf` (not kept in git) – the PDF edition, shown in the program's Manual tab.
+  PTXprint typesets the manual itself, from `PTXprint-User-Manual.md`, with the project in `ptx/`
   (its stylesheet `ptx/PTXprintManual/shared/ptxprint/Default/ptxprint.sty` sets the look). Its fonts
   come from the repository's `fonts/` folder: Charis, Source Code Pro, and SymPub for symbols that
   Charis lacks. A character none of them has is silently left out of the PDF, so keep to those.
+  The Windows and macOS release builds (`ptxprint.spec`) typeset it with the program they have just
+  built (`build_manual.py --pdf-only`), so commit `PTXprint-User-Manual.md` whenever you build.
 
 ## What is in git, and what is not
 
 * **In git:** `content/*.md` (the only copy of the written explanations), the PTXprint project
   in `ptx/` that typesets the PDF, the scripts in `python/scripts/uimanual/`, and the generated `output/` files above.
-* **Not in git (made again whenever you build):** `data/` (the facts read from the program, a
-  per-chapter listing of every control with its Internal ID, and `PTXprint-User-Manual.md`: the whole
-  manual as one Markdown file with all its links, for typesetting), `review/` and `sources/` (working
+* **Not in git (made again whenever you build):** `data/` (the facts read from the program, and a
+  per-chapter listing of every control with its Internal ID), the PDF, `review/` and `sources/` (working
   notes).
 
 ## How it is built

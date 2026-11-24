@@ -1,6 +1,6 @@
 # PTXprint User Interface Manual (AI support edition)
 
-Generated 2026-11-23 from the PTXprint source code and the explanations in docs/uimanual/content.
+Generated 2026-11-24 from the PTXprint source code and the explanations in docs/uimanual/content.
 
 ## Notes for the AI support assistant
 
@@ -42,302 +42,302 @@ Generated 2026-11-23 from the PTXprint source code and the explanations in docs/
 **Part 1: Start here** – New to PTXprint? Read these first.
 
 1. **About this manual**
-   - 1.1 What PTXprint is
-   - 1.2 Who this manual is for
-   - 1.3 How this manual is organised
-   - 1.4 How to read a settings-reference entry
-   - 1.5 A short note about view levels
+    - 1.1 What PTXprint is
+    - 1.2 Who this manual is for
+    - 1.3 How this manual is organised
+    - 1.4 How to read a settings-reference entry
+    - 1.5 A short note about view levels
 2. **Getting started with PTXprint**
-   - 2.1 About this chapter
-   - 2.2 Before you start
-   - 2.3 Open PTXprint
-   - 2.4 Choose the project and the configuration
-   - 2.5 Choose the books
-   - 2.6 Make your first PDF
-   - 2.7 Look at the PDF in the preview
-   - 2.8 Change a few common things
-   - 2.9 Keep different settings for different outputs
-   - 2.10 How PTXprint saves your settings
-   - 2.11 Where the PDF is saved
-   - 2.12 When something goes wrong
-   - 2.13 What to read next
+    - 2.1 About this chapter
+    - 2.2 Before you start
+    - 2.3 Open PTXprint
+    - 2.4 Choose the project and the configuration
+    - 2.5 Choose the books
+    - 2.6 Make your first PDF
+    - 2.7 Look at the PDF in the preview
+    - 2.8 Change a few common things
+    - 2.9 Keep different settings for different outputs
+    - 2.10 How PTXprint saves your settings
+    - 2.11 Where the PDF is saved
+    - 2.12 When something goes wrong
+    - 2.13 What to read next
 3. **The main window, menu and view levels**
-   - 3.1 What this part of PTXprint is for
-   - 3.2 Projects and configurations
-   - 3.3 How PTXprint saves your settings
-   - 3.4 View levels
-   - 3.5 Tab labels and highlighted settings
-   - 3.6 The bottom bar
-   - 3.7 The ☰ main menu
-   - 3.8 Common tasks
-   - 3.9 Common problems
-   - 3.10 Settings reference (Main menu (top-left ☰ button), Main window)
+    - 3.1 What this part of PTXprint is for
+    - 3.2 Projects and configurations
+    - 3.3 How PTXprint saves your settings
+    - 3.4 View levels
+    - 3.5 Tab labels and highlighted settings
+    - 3.6 The bottom bar
+    - 3.7 The ≡ main menu
+    - 3.8 Common tasks
+    - 3.9 Common problems
+    - 3.10 Settings reference (Main menu (top-left ≡ button), Main window)
 
 **Part 2: Find an answer** – Step-by-step tasks, and what to do when something goes wrong.
 
 4. **How do I...? (step-by-step tasks)**
-   - 4.1 How to use this chapter
-   - 4.2 Printing: what goes into the PDF
-   - 4.3 Page size, margins and columns
-   - 4.4 Fonts and text size
-   - 4.5 Scripts, languages and hyphenation
-   - 4.6 Making the text fit
-   - 4.7 Scripture text: headings, numbers and other content
-   - 4.8 Footnotes and cross-references
-   - 4.9 Pictures and maps
-   - 4.10 Diglot (two texts side by side)
-   - 4.11 Thumb tabs, borders and decorations
-   - 4.12 Front matter, back matter and covers
-   - 4.13 Headers, footers and page numbers
-   - 4.14 Fixing the page layout
-   - 4.15 Preparing the PDF for a printer
-   - 4.16 Configurations and settings
-   - 4.17 Finding settings and getting help
+    - 4.1 How to use this chapter
+    - 4.2 Printing: what goes into the PDF
+    - 4.3 Page size, margins and columns
+    - 4.4 Fonts and text size
+    - 4.5 Scripts, languages and hyphenation
+    - 4.6 Making the text fit
+    - 4.7 Scripture text: headings, numbers and other content
+    - 4.8 Footnotes and cross-references
+    - 4.9 Pictures and maps
+    - 4.10 Diglot (two texts side by side)
+    - 4.11 Thumb tabs, borders and decorations
+    - 4.12 Front matter, back matter and covers
+    - 4.13 Headers, footers and page numbers
+    - 4.14 Fixing the page layout
+    - 4.15 Preparing the PDF for a printer
+    - 4.16 Configurations and settings
+    - 4.17 Finding settings and getting help
 5. **Problems and solutions**
-   - 5.1 How to use this chapter
-   - 5.2 Printing fails or no PDF appears
-   - 5.3 The PDF does not change
-   - 5.4 Text and fonts
-   - 5.5 Layout and spacing
-   - 5.6 Pictures
-   - 5.7 Notes and cross-references
-   - 5.8 Diglot
-   - 5.9 Headers, footers and page numbers
-   - 5.10 Settings and configurations
-   - 5.11 Comparing PDFs
-   - 5.12 I cannot find a setting
-   - 5.13 Getting more help
+    - 5.1 How to use this chapter
+    - 5.2 Printing fails or no PDF appears
+    - 5.3 The PDF does not change
+    - 5.4 Text and fonts
+    - 5.5 Layout and spacing
+    - 5.6 Pictures
+    - 5.7 Notes and cross-references
+    - 5.8 Diglot
+    - 5.9 Headers, footers and page numbers
+    - 5.10 Settings and configurations
+    - 5.11 Comparing PDFs
+    - 5.12 I cannot find a setting
+    - 5.13 Getting more help
 
 **Part 3: Reference: tab by tab** – Every setting in the PTXprint window, in the order of the tabs.
 
 6. **Basic tab**
-   - 6.1 What this tab is for
-   - 6.2 Project
-   - 6.3 Layout Configuration
-   - 6.4 What to Print
-   - 6.5 Dialogs on this tab
-   - 6.6 Common tasks
-   - 6.7 Common problems
-   - 6.8 Settings reference (Import Scripture... (dialog), Save Current Configuration As... (dialog), Select Books To Export to PDF (dialog), Copy Configuration To... (dialog), Lock/Unlock Configuration (dialog), Basic)
+    - 6.1 What this tab is for
+    - 6.2 Project
+    - 6.3 Layout Configuration
+    - 6.4 What to Print
+    - 6.5 Dialogs on this tab
+    - 6.6 Common tasks
+    - 6.7 Common problems
+    - 6.8 Settings reference (Import Scripture... (dialog), Save Current Configuration As... (dialog), Select Books To Export to PDF (dialog), Copy Configuration To... (dialog), Lock/Unlock Configuration (dialog), Basic)
 7. **Layout tab**
-   - 7.1 What this tab is for
-   - 7.2 Page Setup
-   - 7.3 Two Column Layout
-   - 7.4 Margins
-   - 7.5 Change the Grid Settings dialog (graph paper)
-   - 7.6 Lock UI Layout Settings
-   - 7.7 Common tasks
-   - 7.8 Common problems
-   - 7.9 Settings reference (Change the Grid Settings (dialog), Layout)
+    - 7.1 What this tab is for
+    - 7.2 Page Setup
+    - 7.3 Two Column Layout
+    - 7.4 Margins
+    - 7.5 Change the Grid Settings dialog (graph paper)
+    - 7.6 Lock UI Layout Settings
+    - 7.7 Common tasks
+    - 7.8 Common problems
+    - 7.9 Settings reference (Change the Grid Settings (dialog), Layout)
 8. **Fonts+Script tab**
-   - 8.1 What this tab is for
-   - 8.2 Font Configuration
-   - 8.3 Pick a Font (and Typeface) dialog
-   - 8.4 Use Fallback Font
-   - 8.5 Writing System
-   - 8.6 Hyphenation
-   - 8.7 Spacing Adjustments
-   - 8.8 Add Tatweel (kashida) Rules dialog
-   - 8.9 Common tasks
-   - 8.10 Common problems
-   - 8.11 Settings reference (Create List (dialog), Add Tatweel (kashida) Rules (dialog), Pick a Font (and Typeface) (dialog), Select Font Features... (dialog), Fonts+Script)
+    - 8.1 What this tab is for
+    - 8.2 Font Configuration
+    - 8.3 Pick a Font (and Typeface) dialog
+    - 8.4 Use Fallback Font
+    - 8.5 Writing System
+    - 8.6 Hyphenation
+    - 8.7 Spacing Adjustments
+    - 8.8 Add Tatweel (kashida) Rules dialog
+    - 8.9 Common tasks
+    - 8.10 Common problems
+    - 8.11 Settings reference (Create List (dialog), Add Tatweel (kashida) Rules (dialog), Pick a Font (and Typeface) (dialog), Select Font Features... (dialog), Fonts+Script)
 9. **Body tab**
-   - 9.1 What this tab is for
-   - 9.2 Beginning and Ending Material
-   - 9.3 Include Scripture Text
-   - 9.4 Other Features
-   - 9.5 Common tasks
-   - 9.6 Common problems
-   - 9.7 Settings reference (Body)
+    - 9.1 What this tab is for
+    - 9.2 Beginning and Ending Material
+    - 9.3 Include Scripture Text
+    - 9.4 Other Features
+    - 9.5 Common tasks
+    - 9.6 Common problems
+    - 9.7 Settings reference (Body)
 10. **Notes+Refs tab**
-   - 10.1 What this tab is for
-   - 10.2 Footnotes
-   - 10.3 Cross-References
-   - 10.4 Study Notes + Questions
-   - 10.5 Generate Strong's Index dialog
-   - 10.6 Common tasks
-   - 10.7 Common problems
-   - 10.8 Settings reference (Generate Strong's Index... (dialog), Notes+Refs)
+    - 10.1 What this tab is for
+    - 10.2 Footnotes
+    - 10.3 Cross-References
+    - 10.4 Study Notes + Questions
+    - 10.5 Generate Strong's Index dialog
+    - 10.6 Common tasks
+    - 10.7 Common problems
+    - 10.8 Settings reference (Generate Strong's Index... (dialog), Notes+Refs)
 11. **Header+Footer tab**
-   - 11.1 What this tab is for
-   - 11.2 Header
-   - 11.3 Other
-   - 11.4 Footer
-   - 11.5 Common tasks
-   - 11.6 Common problems
-   - 11.7 Settings reference (Header+Footer)
+    - 11.1 What this tab is for
+    - 11.2 Header
+    - 11.3 Other
+    - 11.4 Footer
+    - 11.5 Common tasks
+    - 11.6 Common problems
+    - 11.7 Settings reference (Header+Footer)
 12. **Pictures tab**
-   - 12.1 What this tab is for
-   - 12.2 The picture table (PicList)
-   - 12.3 Global Options
-   - 12.4 Details
-   - 12.5 Checklist
-   - 12.6 Generate PicList dialog
-   - 12.7 Select Images dialog (the catalogue)
-   - 12.8 Download & Install Image Sets dialog
-   - 12.9 Illustration Credit Overlay dialog
-   - 12.10 Add Map dialog
-   - 12.11 Common tasks
-   - 12.12 Common problems
-   - 12.13 Settings reference (Generate PicList (dialog), Select Images... (dialog), Download & Install Image Sets (dialog), Illustration Credit Overlay (dialog), Add Map (dialog), Pictures)
+    - 12.1 What this tab is for
+    - 12.2 The picture table (PicList)
+    - 12.3 Global Options
+    - 12.4 Details
+    - 12.5 Checklist
+    - 12.6 Generate PicList dialog
+    - 12.7 Select Images dialog (the catalogue)
+    - 12.8 Download & Install Image Sets dialog
+    - 12.9 Illustration Credit Overlay dialog
+    - 12.10 Add Map dialog
+    - 12.11 Common tasks
+    - 12.12 Common problems
+    - 12.13 Settings reference (Generate PicList (dialog), Select Images... (dialog), Download & Install Image Sets (dialog), Illustration Credit Overlay (dialog), Add Map (dialog), Pictures)
 13. **Diglot tab (two or more languages)**
-   - 13.1 What this tab is for
-   - 13.2 Diglot (or Polyglot)
-   - 13.3 The texts table
-   - 13.4 Layout
-   - 13.5 Merging mode
-   - 13.6 Column widths and auto-balance
-   - 13.7 Notes, headers and other options
-   - 13.8 Changing the settings of a secondary text
-   - 13.9 What happens to pictures, notes and headers
-   - 13.10 Auto Page Fill for diglots and polyglots (experimental)
-   - 13.11 Save As Monoglot
-   - 13.12 Common tasks
-   - 13.13 Common problems
-   - 13.14 Settings reference (Save As Monoglot... (dialog), Diglot)
+    - 13.1 What this tab is for
+    - 13.2 Diglot (or Polyglot)
+    - 13.3 The texts table
+    - 13.4 Layout
+    - 13.5 Merging mode
+    - 13.6 Column widths and auto-balance
+    - 13.7 Notes, headers and other options
+    - 13.8 Changing the settings of a secondary text
+    - 13.9 What happens to pictures, notes and headers
+    - 13.10 Auto Page Fill for diglots and polyglots (experimental)
+    - 13.11 Save As Monoglot
+    - 13.12 Common tasks
+    - 13.13 Common problems
+    - 13.14 Settings reference (Save As Monoglot... (dialog), Diglot)
 14. **Tabs+Borders tab**
-   - 14.1 What this tab is for
-   - 14.2 Thumb Tabs
-   - 14.3 Ornamental Decorations
-   - 14.4 Border Settings dialog
-   - 14.5 Common tasks
-   - 14.6 Common problems
-   - 14.7 Settings reference (Border Settings (dialog), Tabs+Borders)
+    - 14.1 What this tab is for
+    - 14.2 Thumb Tabs
+    - 14.3 Ornamental Decorations
+    - 14.4 Border Settings dialog
+    - 14.5 Common tasks
+    - 14.6 Common problems
+    - 14.7 Settings reference (Border Settings (dialog), Tabs+Borders)
 15. **Styles tab**
-   - 15.1 What this tab is for
-   - 15.2 The marker list
-   - 15.3 Bold setting names: what has changed
-   - 15.4 Include Contents of Marker
-   - 15.5 Character Settings
-   - 15.6 Paragraph Settings
-   - 15.7 Other Settings
-   - 15.8 Sidebars
-   - 15.9 Size and Position Settings (dialog)
-   - 15.10 Sidebar Image Settings (dialog)
-   - 15.11 Add/Edit Style (dialog)
-   - 15.12 Common tasks
-   - 15.13 Common problems
-   - 15.14 Settings reference (Size and Position Settings (dialog), Sidebar Image Settings (dialog), Add/Edit Style (dialog), Styles)
+    - 15.1 What this tab is for
+    - 15.2 The marker list
+    - 15.3 Bold setting names: what has changed
+    - 15.4 Include Contents of Marker
+    - 15.5 Character Settings
+    - 15.6 Paragraph Settings
+    - 15.7 Other Settings
+    - 15.8 Sidebars
+    - 15.9 Size and Position Settings (dialog)
+    - 15.10 Sidebar Image Settings (dialog)
+    - 15.11 Add/Edit Style (dialog)
+    - 15.12 Common tasks
+    - 15.13 Common problems
+    - 15.14 Settings reference (Size and Position Settings (dialog), Sidebar Image Settings (dialog), Add/Edit Style (dialog), Styles)
 16. **Advanced tab**
-   - 16.1 What this tab is for
-   - 16.2 Before you change anything here
-   - 16.3 Main sub-tab: Text Processing & Stylesheets
-   - 16.4 Main sub-tab: General
-   - 16.5 Main sub-tab: Capture tests?
-   - 16.6 Other sub-tab: the TeXpert settings
-   - 16.7 Common tasks
-   - 16.8 Common problems
-   - 16.9 Settings reference (Advanced)
+    - 16.1 What this tab is for
+    - 16.2 Before you change anything here
+    - 16.3 Main sub-tab: Text Processing & Stylesheets
+    - 16.4 Main sub-tab: General
+    - 16.5 Main sub-tab: Capture tests?
+    - 16.6 Other sub-tab: the TeXpert settings
+    - 16.7 Common tasks
+    - 16.8 Common problems
+    - 16.9 Settings reference (Advanced)
 17. **View+Edit tab**
-   - 17.1 What this tab is for
-   - 17.2 The sub-tabs: which files you may edit
-   - 17.3 The buttons at the top of the tab
-   - 17.4 The Generate button
-   - 17.5 The Generate Front Matter dialog
-   - 17.6 The front matter and its special codes (advanced)
-   - 17.7 The Adj List (adjustment list)
-   - 17.8 Common tasks
-   - 17.9 Common problems
-   - 17.10 Settings reference (Generate Front Matter (dialog), View+Edit)
+    - 17.1 What this tab is for
+    - 17.2 The sub-tabs: which files you may edit
+    - 17.3 The buttons at the top of the tab
+    - 17.4 The Generate button
+    - 17.5 The Generate Front Matter dialog
+    - 17.6 The front matter and its special codes (advanced)
+    - 17.7 The Adj List (adjustment list)
+    - 17.8 Common tasks
+    - 17.9 Common problems
+    - 17.10 Settings reference (Generate Front Matter (dialog), View+Edit)
 18. **Peripherals tab (front and back matter)**
-   - 18.1 What this tab is for
-   - 18.2 Cover
-   - 18.3 Front Matter PDF(s) and Back Matter PDF(s)
-   - 18.4 Table of Contents
-   - 18.5 Local Front Matter
-   - 18.6 Maps
-   - 18.7 Colophon at End of Publication
-   - 18.8 Variables and Values
-   - 18.9 Common tasks
-   - 18.10 Common problems
-   - 18.11 Settings reference (Peripherals)
+    - 18.1 What this tab is for
+    - 18.2 Cover
+    - 18.3 Front Matter PDF(s) and Back Matter PDF(s)
+    - 18.4 Table of Contents
+    - 18.5 Local Front Matter
+    - 18.6 Maps
+    - 18.7 Colophon at End of Publication
+    - 18.8 Variables and Values
+    - 18.9 Common tasks
+    - 18.10 Common problems
+    - 18.11 Settings reference (Peripherals)
 19. **Publications tab**
-   - 19.1 What this tab is for
-   - 19.2 The list of publications
-   - 19.3 The buttons
-   - 19.4 Printing the publications
-   - 19.5 Common tasks
-   - 19.6 Common problems
-   - 19.7 Settings reference (Publications)
+    - 19.1 What this tab is for
+    - 19.2 The list of publications
+    - 19.3 The buttons
+    - 19.4 Printing the publications
+    - 19.5 Common tasks
+    - 19.6 Common problems
+    - 19.7 Settings reference (Publications)
 20. **Finishing tab**
-   - 20.1 What this tab is for
-   - 20.2 PDF Details
-   - 20.3 Booklet Pagination
-   - 20.4 Compare PDFs
-   - 20.5 Common tasks
-   - 20.6 Common problems
-   - 20.7 Settings reference (Finishing)
+    - 20.1 What this tab is for
+    - 20.2 PDF Details
+    - 20.3 Booklet Pagination
+    - 20.4 Compare PDFs
+    - 20.5 Common tasks
+    - 20.6 Common problems
+    - 20.7 Settings reference (Finishing)
 21. **Printers tab**
-   - 21.1 What this tab is for
-   - 21.2 Book & Job Specification
-   - 21.3 The printer list
-   - 21.4 The printer details panels
-   - 21.5 Common tasks
-   - 21.6 Common problems
-   - 21.7 Settings reference (Printers)
+    - 21.1 What this tab is for
+    - 21.2 Book & Job Specification
+    - 21.3 The printer list
+    - 21.4 The printer details panels
+    - 21.5 Common tasks
+    - 21.6 Common problems
+    - 21.7 Settings reference (Printers)
 22. **PDF Preview window, layout analysis and page filling**
-   - 22.1 What this window is for
-   - 22.2 Opening and closing the Preview window
-   - 22.3 Moving around: pages, spreads and zoom
-   - 22.4 The Content tab: what to show on the preview
-   - 22.5 Layout Analysis and finding issues
-   - 22.6 Adjusting paragraphs with the right-click menu
-   - 22.7 Moving and resizing pictures with the right-click menu
-   - 22.8 SpeedSlice: work on one part of a long book quickly
-   - 22.9 Auto Page Fill and the progress monitor
-   - 22.10 The buttons at the bottom of the window
-   - 22.11 Common tasks
-   - 22.12 Common problems
-   - 22.13 Settings reference (PDF Preview > Issue types popup, PDF Preview (dialog), Enter new anchor verse ref (dialog), SpeedSlice (dialog))
+    - 22.1 What this window is for
+    - 22.2 Opening and closing the Preview window
+    - 22.3 Moving around: pages, spreads and zoom
+    - 22.4 The Content tab: what to show on the preview
+    - 22.5 Layout Analysis and finding issues
+    - 22.6 Adjusting paragraphs with the right-click menu
+    - 22.7 Moving and resizing pictures with the right-click menu
+    - 22.8 SpeedSlice: work on one part of a long book quickly
+    - 22.9 Auto Page Fill and the progress monitor
+    - 22.10 The buttons at the bottom of the window
+    - 22.11 Common tasks
+    - 22.12 Common problems
+    - 22.13 Settings reference (PDF Preview > Issue types popup, PDF Preview (dialog), Enter new anchor verse ref (dialog), SpeedSlice (dialog))
 23. **Importing settings**
-   - 23.1 What this dialog is for
-   - 23.2 Source of Settings
-   - 23.3 Target
-   - 23.4 What to import: the category tabs
-   - 23.5 RESET
-   - 23.6 Common tasks
-   - 23.7 Common problems
-   - 23.8 Settings reference (Import Settings... (dialog))
+    - 23.1 What this dialog is for
+    - 23.2 Source of Settings
+    - 23.3 Target
+    - 23.4 What to import: the category tabs
+    - 23.5 RESET
+    - 23.6 Common tasks
+    - 23.7 Common problems
+    - 23.8 Settings reference (Import Settings... (dialog))
 24. **Help tab and getting support**
-   - 24.1 What this tab is for
-   - 24.2 Links and Help
-   - 24.3 How to ask for help
-   - 24.4 Log tab
-   - 24.5 About dialog
-   - 24.6 Common tasks
-   - 24.7 Common problems
-   - 24.8 Settings reference (Help, Log)
+    - 24.1 What this tab is for
+    - 24.2 Links and Help
+    - 24.3 How to ask for help
+    - 24.4 Log tab
+    - 24.5 About dialog
+    - 24.6 Common tasks
+    - 24.7 Common problems
+    - 24.8 Settings reference (Help, Log)
 
 **Part 4: Glossary** – The meaning of the words used in this manual.
 
 25. **Glossary of terms**
-   - 25.1 How to use this glossary
-   - 25.2 1–9
-   - 25.3 A
-   - 25.4 B
-   - 25.5 C
-   - 25.6 D
-   - 25.7 E
-   - 25.8 F
-   - 25.9 G
-   - 25.10 H
-   - 25.11 I
-   - 25.12 J
-   - 25.13 K
-   - 25.14 L
-   - 25.15 M
-   - 25.16 N
-   - 25.17 O
-   - 25.18 P
-   - 25.19 Q
-   - 25.20 R
-   - 25.21 S
-   - 25.22 T
-   - 25.23 U
-   - 25.24 V
-   - 25.25 W
-   - 25.26 X
-   - 25.27 Z
+    - 25.1 How to use this glossary
+    - 25.2 1–9
+    - 25.3 A
+    - 25.4 B
+    - 25.5 C
+    - 25.6 D
+    - 25.7 E
+    - 25.8 F
+    - 25.9 G
+    - 25.10 H
+    - 25.11 I
+    - 25.12 J
+    - 25.13 K
+    - 25.14 L
+    - 25.15 M
+    - 25.16 N
+    - 25.17 O
+    - 25.18 P
+    - 25.19 Q
+    - 25.20 R
+    - 25.21 S
+    - 25.22 T
+    - 25.23 U
+    - 25.24 V
+    - 25.25 W
+    - 25.26 X
+    - 25.27 Z
 
 
 # 1. About this manual
@@ -458,7 +458,7 @@ PTXprint has hundreds of settings, but most people need only a few. So PTXprint 
 settings you do not need. This is the **view level**. There are four: **Mini** (fewest settings),
 **Basic**, **Regular** and **Full** (every setting).
 
-To change the view level, click the **☰** button at the top-left of the window, point to
+To change the view level, click the **≡** button at the top-left of the window, point to
 **View Level**, and choose a level.
 
 A hidden setting still works. It keeps its value and still changes the PDF. So if the PDF does
@@ -502,11 +502,11 @@ Check these things before you open PTXprint:
 2. The main PTXprint window opens. It has:
    * **tabs** across the top (**Basic**, **Layout**, **Fonts+Script** and others). Each tab holds
      one group of settings;
-   * the **☰** button at the top-left, for the main menu;
+   * the **≡** button at the top-left, for the main menu;
    * a **bar at the bottom** with the **Save**, **Print (Make PDF)** and **Quit** buttons.
 
 The first time PTXprint starts, it uses the **Regular** view level, which shows most tabs and
-settings. If the window looks too full, click **☰**, point to **View Level**, and click
+settings. If the window looks too full, click **≡**, point to **View Level**, and click
 **Basic View** or **Mini View**. Hidden settings still work. See the chapter **The main window,
 menu and view levels**.
 
@@ -616,7 +616,7 @@ PTXprint changes the **Base Indent** for you when you change the number of colum
 
 ### Turn pictures on or off
 
-The **Pictures** tab is not shown in the **Mini** view. If you cannot see it, click **☰** ›
+The **Pictures** tab is not shown in the **Mini** view. If you cannot see it, click **≡** ›
 **View Level** › **Basic View** (or higher).
 
 1. Click the **Pictures** tab.
@@ -693,7 +693,7 @@ different name** in the PDF Preview window.
 * **Read the message.** PTXprint shows a message in a window, or in the status line above the
   bottom bar. It often tells you what to change.
 * **Check the view level.** If a tab or setting has disappeared, the view level may be too low.
-  Click **☰** › **View Level** › **Full View**. Or type the name of the setting in the
+  Click **≡** › **View Level** › **Full View**. Or type the name of the setting in the
   **Search for settings** box at the bottom-left of the window.
 * **Check the "Common problems" section** of the chapter about the tab you were using.
 * **Look in the chapter "Problems and solutions"** for problems that are not about one tab.
@@ -715,7 +715,7 @@ different name** in the PDF Preview window.
 The main window is where you do all your work in PTXprint. It has three parts:
 
 * **The tabs** across the top (**Basic**, **Layout**, **Fonts+Script**, **Body** and so on). Each tab holds one group of settings.
-* **The ☰ main menu** button at the top-left corner, before the first tab. It holds settings about PTXprint itself, not about your book: how to show the PDF, the **View Level**, the interface **Language**, and links to **Donate** and **Give Feedback**.
+* **The ≡ main menu** button at the top-left corner, before the first tab. It holds settings about PTXprint itself, not about your book: how to show the PDF, the **View Level**, the interface **Language**, and links to **Donate** and **Give Feedback**.
 * **The bar at the bottom of the window**, with the **Search for settings** box, the button to open the output folder, the **Quick Run** and **Layout Only** check boxes, and the **Save**, **Print (Make PDF)** and **Quit** buttons.
 
 This chapter also explains three ideas that you need everywhere in PTXprint: **configurations**, **view levels**, and how PTXprint **saves** your settings.
@@ -752,7 +752,7 @@ PTXprint has hundreds of settings. Most people need only a few. So PTXprint can 
 | **Regular** | Adds the **Diglot**, **Tabs+Borders**, **Styles**, **Advanced** and **View+Edit** tabs, and many more settings on all tabs. | Most typesetters. PTXprint uses this level the first time it starts. |
 | **Full** | Shows every setting, including the **Publications** and **Printers** tabs. | Experienced users who need special settings. |
 
-**How to change the view level:** click the **☰** button (top-left), point to **View Level**, and click **Mini View**, **Basic View**, **Regular View** or **Full View**. The current level is shown in blue and bold in that list. The change happens at once, without a restart.
+**How to change the view level:** click the **≡** button (top-left), point to **View Level**, and click **Mini View**, **Basic View**, **Regular View** or **Full View**. The current level is shown in blue and bold in that list. The change happens at once, without a restart.
 
 **Hidden settings still work.** A lower view level only *hides* settings. A hidden setting keeps its value, is still saved with the configuration, and still changes the PDF. For example, if you turned on pictures or a diglot in the **Regular** view and then change to the **Mini** view, the pictures or the diglot are still in the PDF, though you cannot see the tab. If the PDF looks different from what you expect, change to the **Full** view and check the settings again.
 
@@ -786,9 +786,9 @@ From left to right, the bar at the bottom of the window has:
 
 Above the bar, a **status line** sometimes shows a message from PTXprint (for example "No books to print"). Click **Dismiss** to hide it.
 
-When a newer version of PTXprint is available, a **Check for updates...** button can appear at the top-left, just to the right of the ☰ button. (PTXprint checks at most once a day, only on Windows, and only if Internet use is allowed on the **Advanced** tab.)
+When a newer version of PTXprint is available, a **Check for updates...** button can appear at the top-left, just to the right of the ≡ button. (PTXprint checks at most once a day, only on Windows, and only if Internet use is allowed on the **Advanced** tab.)
 
-## 3.7 The ☰ main menu
+## 3.7 The ≡ main menu
 
 * **Show PDF** – what happens with the PDF after printing:
   * **Preview Pane** – PTXprint shows the PDF in its own preview window. This is the usual choice. PTXprint can also use the preview for some editing tools.
@@ -802,7 +802,7 @@ When a newer version of PTXprint is available, a **Check for updates...** button
 
 ### See more (or fewer) settings
 
-Click **☰** › **View Level** › **Full View** to see every setting, or **Mini View** to see only the most important ones.
+Click **≡** › **View Level** › **Full View** to see every setting, or **Mini View** to see only the most important ones.
 
 ### Find a setting when you do not know which tab it is on
 
@@ -826,23 +826,23 @@ Click **☰** › **View Level** › **Full View** to see every setting, or **Mi
 
 ### Show the PDF in another program
 
-Click **☰** › **Show PDF** › **System Viewer**.
+Click **≡** › **Show PDF** › **System Viewer**.
 
 ### Find the PDF file on your computer
 
-Click the **Open folder containing the PDF** button at the bottom of the window (Regular and Full views), or choose **☰** › **Show PDF** › **Output Folder**. The folder with the PDF files for this project opens.
+Click the **Open folder containing the PDF** button at the bottom of the window (Regular and Full views), or choose **≡** › **Show PDF** › **Output Folder**. The folder with the PDF files for this project opens.
 
 ### Change the language of PTXprint
 
 1. Click **Save** first, so you do not lose changes.
-2. Click **☰** › **Language** and click a language.
+2. Click **≡** › **Language** and click a language.
 3. PTXprint closes its window and opens it again in the new language, with the same project and configuration.
 
 ## 3.9 Common problems
 
 ### A tab or setting that I used before has disappeared
 
-**Likely cause:** The view level is lower than before. **What to do:** Click **☰** › **View Level** › **Regular View** or **Full View**. Or type the name of the setting in **Search for settings**.
+**Likely cause:** The view level is lower than before. **What to do:** Click **≡** › **View Level** › **Regular View** or **Full View**. Or type the name of the setting in **Search for settings**.
 
 ### The PDF has pictures (or a diglot, borders, thumb tabs…) but I cannot find the setting
 
@@ -862,7 +862,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 
 ### PTXprint says "Cannot update PDF file while it is locked!"
 
-**Likely cause:** The old PDF is still open in another PDF program, so PTXprint cannot replace it. **What to do:** Close the PDF in the other program and click to try again. To avoid this, use **☰** › **Show PDF** › **Preview Pane**.
+**Likely cause:** The old PDF is still open in another PDF program, so PTXprint cannot replace it. **What to do:** Close the PDF in the other program and click to try again. To avoid this, use **≡** › **Show PDF** › **Preview Pane**.
 
 ### PTXprint says "No books to print"
 
@@ -886,7 +886,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 
 ## 3.10 Settings reference
 
-### Main menu (top-left ☰ button)
+### Main menu (top-left ≡ button)
 
 #### Show PDF
 
@@ -1098,7 +1098,7 @@ This tab is normally not shown in the main window.
 
 Menu button · Mini+ · `btn_menu`
 
-The **☰** button at the top-left of the window. It opens the main menu (**Show PDF**, **View Level**, **Language**, **Donate**, **Give Feedback**). Always visible.
+The **≡** button at the top-left of the window. It opens the main menu (**Show PDF**, **View Level**, **Language**, **Donate**, **Give Feedback**). Always visible.
 
 #### Check for updates...
 
@@ -1132,7 +1132,7 @@ Button · Regular+ · `btn_openFolder`
 
 > Open the folder which contains the PDF file(s) created for this project.
 
-Opens the folder in your file manager. In views where this button is hidden, use **☰** › **Show PDF** › **Output Folder**.
+Opens the folder in your file manager. In views where this button is hidden, use **≡** › **Show PDF** › **Output Folder**.
 
 #### Quick Run
 
@@ -1213,7 +1213,7 @@ This chapter gives short, step-by-step answers to the questions people ask most 
 For every task:
 
 * Most changes appear in the PDF only after you click **Print (Make PDF)** again.
-* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **☰** (top-left) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
+* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **≡** (top-left) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
 * Click **Save** before you change to another configuration. PTXprint does not save the current configuration when you choose another one.
 * "pt" means point. 1 pt is about 0.35 mm.
 
@@ -1272,7 +1272,7 @@ See also: Main window.
 
 ### How do I find the PDF file on my computer?
 
-Click **Open folder containing the PDF** at the bottom of the window (Regular and Full views), or **☰** › **Show PDF** › **Output Folder**. Or click the blue link next to **Output PDF Location** on the **Help** tab.
+Click **Open folder containing the PDF** at the bottom of the window (Regular and Full views), or **≡** › **Show PDF** › **Output Folder**. Or click the blue link next to **Output PDF Location** on the **Help** tab.
 
 The PDF name starts with the project name, then the configuration name and the books, for example `ABC_NT_A5_MAT-REV_ptxp.pdf`.
 
@@ -1280,7 +1280,7 @@ See also: Main window; Help tab.
 
 ### How do I open the PDF in my normal PDF program instead of the preview?
 
-Click **☰** › **Show PDF** › **System Viewer**. Or, in the **PDF Preview** window, click **Open the PDF in Default PDF Viewer**.
+Click **≡** › **Show PDF** › **System Viewer**. Or, in the **PDF Preview** window, click **Open the PDF in Default PDF Viewer**.
 
 Close the PDF in the other program before you print again. Otherwise PTXprint cannot replace the file.
 
@@ -2331,7 +2331,7 @@ See also: Main window.
 
 ### How do I see more (or fewer) settings?
 
-Click **☰** (top-left) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
+Click **≡** (top-left) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
 
 Hidden settings still work and still change the PDF.
 
@@ -2359,7 +2359,7 @@ See also: Help tab; PDF Preview window.
 
 ### How do I change the language of PTXprint's menus?
 
-Click **☰** › **Language** and choose a language. PTXprint saves the configuration and opens again in the new language, with the same project and configuration.
+Click **≡** › **Language** and choose a language. PTXprint saves the configuration and opens again in the new language, with the same project and configuration.
 
 See also: Main window.
 
@@ -2387,7 +2387,7 @@ This chapter lists common problems, grouped by kind, in the words users often us
 First try these three quick checks. They solve many problems:
 
 1. **Print again.** Most changes appear in the PDF only after you click **Print (Make PDF)**.
-2. **Check the view level.** A setting can be hidden but still turned on. Click **☰** › **View Level** › **Full View** to see every setting.
+2. **Check the view level.** A setting can be hidden but still turned on. Click **≡** › **View Level** › **Full View** to see every setting.
 3. **Check the configuration name.** Look at **Name** on the **Basic** tab. Is it the configuration you think it is?
 
 "pt" means point. 1 pt is about 0.35 mm.
@@ -2422,7 +2422,7 @@ First try these three quick checks. They solve many problems:
 **What to do:**
 
 1. Close the PDF in the other program and click **Yes** to try again.
-2. To avoid this, click **☰** › **Show PDF** › **Preview Pane**. The preview does not lock the file.
+2. To avoid this, click **≡** › **Show PDF** › **Preview Pane**. The preview does not lock the file.
 
 ### The Print (Make PDF) and Save buttons are greyed out
 
@@ -3194,7 +3194,7 @@ Extra pages at the end of the longer PDF always show as changed. This is correct
 
 **What to do:**
 
-1. Click **☰** › **View Level** › **Regular View** or **Full View**.
+1. Click **≡** › **View Level** › **Regular View** or **Full View**.
 2. Or type the name of the setting in **Search for settings** (bottom-left, or **Ctrl+F**). PTXprint raises the view level if the setting is hidden.
 
 ### The PDF has pictures (or a diglot, borders, thumb tabs …) but I cannot find the setting
@@ -3477,7 +3477,7 @@ A tutorial is a file with a list of steps (a .json file, or a recorded test in a
 
 ### Copyright & Licensing or Copy configuration are missing, or Reset is greyed out
 
-**Cause:** They are only available in the **Regular** and **Full** views. **What to do:** Click **☰** › **View Level** › **Regular View**.
+**Cause:** They are only available in the **Regular** and **Full** views. **What to do:** Click **≡** › **View Level** › **Regular View**.
 
 ### The Copy configuration to other projects button is greyed out
 
@@ -4915,7 +4915,7 @@ The other options are:
 
 ### Digit mapping (numbers in your own script)
 
-Many scripts have their own digits, for example Arabic-Indic ٠١٢٣, Devanagari ०१२३, Myanmar ၀၁၂၃ or Thai ๐๑๒๓. If your text uses the Western digits 0–9 but you want your script's digits, choose your script in **Digit mapping**. PTXprint then changes the digits when it prints, for numbers in that font (for example chapter and verse numbers).
+Many scripts have their own digits, for example Arabic-Indic, Devanagari, Myanmar or Thai. If your text uses the Western digits 0–9 but you want your script's digits, choose your script in **Digit mapping**. PTXprint then changes the digits when it prints, for numbers in that font (for example chapter and verse numbers).
 
 * Check that your font has these digits. If not, you will see empty boxes.
 * When you change **Text Script**, PTXprint also tries to choose the matching digit mapping. Check it.
@@ -5020,7 +5020,7 @@ These settings are shown in the **Regular** and **Full** views.
 
 ## 8.8 Add Tatweel (kashida) Rules dialog
 
-In Arabic script, a *tatweel* (also *kashida*, the character ـ) is a joining stroke that makes a word longer, to make lines look better or to fill a line. This dialog writes a *change rule* that adds tatweels to one word at one verse. The rule goes into the project's changes file (changes.txt), which PTXprint applies every time it prints.
+In Arabic script, a *tatweel* (also *kashida*) is a joining stroke that makes a word longer, to make lines look better or to fill a line. This dialog writes a *change rule* that adds tatweels to one word at one verse. The rule goes into the project's changes file (changes.txt), which PTXprint applies every time it prints.
 
 To open it (advanced): on the **View+Edit** tab, open the changes file. In the **Code Snippets** area at the side, click **Arabic**, then **Add Tatweels**.
 
@@ -11720,7 +11720,7 @@ Label · Mini+
 
 > You can say what you like here to describe the purpose of the style.
 
-#### ⚠️Marker – Add/Edit marker dialog: Marker (code)
+#### ▲Marker – Add/Edit marker dialog: Marker (code)
 
 Text box · Regular+ · `t_styMarker`
 
@@ -11758,7 +11758,7 @@ Text box · Regular+ · `t_styEndMarker`
 
 Usually leave it empty: for character and note markers PTXprint adds the marker followed by `*`. For a pair of milestone markers, type the closing milestone here.
 
-#### ⚠️Type – Add/Edit marker dialog: Marker type
+#### ▲Type – Add/Edit marker dialog: Marker type
 
 Drop-down · Regular+ · `fcb_styType`  
 Choices: Header | Title | Introduction | Introduction Character | Section Paragraph | Verse Paragraph | Character | List | List Character | Milestone | Standalone Milestone | Other Paragraph | Cross Reference | Cross Reference Character | Footnote | Footnote Character | Cell | Attribute | Identification | Internal
@@ -13821,11 +13821,12 @@ How hard the filler works on one page before it goes back to an earlier one (see
 Number · Regular+ · `s_pbexpcost` · cfg `texpert/pbexpcost`  
 Values: -5–5 (default 1)
 
-> Tells the page filler whether to shrink paragraphs or stretch them when both are possible.  
-> Positive numbers: penalise stretching (so the text prefers to shrink more).  
-> Negative numbers: penalise shrinking. (so the text prefers to stretch more).  
+> Tells the page filler whether to make the letters of a paragraph narrower or wider when both are possible.  
+> Positive numbers: penalise wider letters (so the text prefers narrower letters).  
+> Negative numbers: penalise narrower letters (so the text prefers wider letters).  
 > 0: no preference.  
 > A bigger number (+ or −) means a higher penalty.  
+> This setting only changes the width of the letters. It does not change how often the page filler asks a paragraph to take one line more or one line fewer.  
 > Affects: Quality.
 
 When a page can be filled either by shrinking some paragraphs or by stretching others, this sets which the filler prefers. Positive: stretching costs extra, so it prefers shrinking. Negative: shrinking costs extra, so it prefers stretching. 0: no preference. At the default 1, stretching a paragraph by 5% costs about as much as its whole word spacing, which is a strong preference. The extra cost grows with the size of the change, so a large stretch is much worse than a small one, and small stretches are still used. Use a negative value if your text is already tight (small type, narrow columns) and shrinking makes it look crowded; use 0 if stretched and shrunk text look equally good in your script.
@@ -16285,7 +16286,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 
 ## 22.2 Opening and closing the Preview window
 
-* The window opens after each **Print** if the main menu (☰) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
+* The window opens after each **Print** if the main menu (≡) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
 * Closing the window with its **X** button only hides it. It comes back the next time you print.
 * **Show main PTXprint settings** (**Alt+S**) brings the main window to the front.
 * The title bar shows the PDF file name and the date and time it was made. Check this to be sure you see the newest PDF.
@@ -16303,6 +16304,7 @@ The navigation controls are in the top bar.
 * Mouse: the wheel changes page; when zoomed in, it scrolls the page instead. Drag with the middle mouse button to move the page around.
 * Zoom: the **Zoom** box, **Ctrl+mouse wheel** (zooms at the mouse pointer), **Ctrl+Plus** and **Ctrl+Minus**. **Ctrl+F**, **Ctrl+0** or **Zoom Fit to Screen** fit the whole page (or spread) in the window.
 * For right-to-left books, the arrow buttons and keys are reversed to follow the book.
+* Links: click a link in the PDF (for example a cross-reference, or a contents entry in a PDF that has them) to go to the place it points to. The pointer becomes a hand over a link. A web address opens in your web browser.
 
 **Book View** (Ctrl+B) shows two facing pages side by side, as in a printed book. Page 1 is shown alone because it is a right-hand page; then 2+3, 4+5 and so on. Use it to check that facing pages look balanced.
 
@@ -16589,13 +16591,13 @@ Filling is slow, especially for long books such as Psalms. You can click **Stop!
 Make the range smaller: raise **Minimum Text Shrink** (for example to 97%) and lower **Maximum Text Expand** (for example to 103%). Lower **Widest word space allowed** for less space between words. Then run the fill again. You can also tick **Adjustments** to find paragraphs with large changes and reset them.
 
 **The Preview window has gone.**
-It was closed or hidden. Print again, or check that the main menu (☰) > **Show PDF** is set to **Preview Pane**.
+It was closed or hidden. Print again, or check that the main menu (≡) > **Show PDF** is set to **Preview Pane**.
 
 **The preview shows an old PDF.**
 Check the date and time in the title bar. If the last print failed, the old PDF is still shown. Read the message at the bottom of the main window.
 
 **Most of the controls described here are missing.**
-Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (☰).
+Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (≡).
 
 ## 22.13 Settings reference
 
@@ -17121,7 +17123,7 @@ There is no Undo. If you are not sure, import into a **new** configuration name 
 
 ### Everything was imported, but I ticked only one category
 
-**Cause:** **Everything** was still ticked. In the **Basic** view the **Everything** tab is hidden but still ticked (it is ticked by default). Also, when the target is a **new** configuration or an external folder, PTXprint ticks **Everything** itself and you cannot untick it. **What to do:** Import into an existing configuration. Change to the **Regular** view (**☰** › **View Level** › **Regular View**) and untick **Everything**.
+**Cause:** **Everything** was still ticked. In the **Basic** view the **Everything** tab is hidden but still ticked (it is ticked by default). Also, when the target is a **new** configuration or an external folder, PTXprint ticks **Everything** itself and you cannot untick it. **What to do:** Import into an existing configuration. Change to the **Regular** view (**≡** › **View Level** › **Regular View**) and untick **Everything**.
 
 ### The styles did not change
 
@@ -18135,7 +18137,7 @@ This glossary explains the technical words and PTXprint words used in this manua
 
 ## 25.13 K
 
-**Kashida (tatweel)** — A joining stroke (ـ) in Arabic script that makes a word longer. It can be used to make lines look better. See the **Fonts+Script** tab.
+**Kashida (tatweel)** — A joining stroke in Arabic script that makes a word longer. It can be used to make lines look better. See the **Fonts+Script** tab.
 
 ## 25.14 L
 
@@ -18315,7 +18317,7 @@ This glossary explains the technical words and PTXprint words used in this manua
 
 **Variable Line Spacing** — A layout choice where PTXprint may stretch the space between lines a little so that every column is filled to the bottom. Compare **Align Text to Baseline**.
 
-**View level** — How many settings PTXprint shows: **Mini**, **Basic**, **Regular** or **Full**. Hidden settings still work. Change it with **☰** › **View Level** (see the chapter **The main window, menu and view levels**).
+**View level** — How many settings PTXprint shows: **Mini**, **Basic**, **Regular** or **Full**. Hidden settings still work. Change it with **≡** › **View Level** (see the chapter **The main window, menu and view levels**).
 
 ## 25.25 W
 

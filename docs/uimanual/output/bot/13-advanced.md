@@ -1580,11 +1580,12 @@ How hard the filler works on one page before it goes back to an earlier one (see
 Number · Regular+ · `s_pbexpcost` · cfg `texpert/pbexpcost`  
 Values: -5–5 (default 1)
 
-> Tells the page filler whether to shrink paragraphs or stretch them when both are possible.  
-> Positive numbers: penalise stretching (so the text prefers to shrink more).  
-> Negative numbers: penalise shrinking. (so the text prefers to stretch more).  
+> Tells the page filler whether to make the letters of a paragraph narrower or wider when both are possible.  
+> Positive numbers: penalise wider letters (so the text prefers narrower letters).  
+> Negative numbers: penalise narrower letters (so the text prefers wider letters).  
 > 0: no preference.  
 > A bigger number (+ or −) means a higher penalty.  
+> This setting only changes the width of the letters. It does not change how often the page filler asks a paragraph to take one line more or one line fewer.  
 > Affects: Quality.
 
 When a page can be filled either by shrinking some paragraphs or by stretching others, this sets which the filler prefers. Positive: stretching costs extra, so it prefers shrinking. Negative: shrinking costs extra, so it prefers stretching. 0: no preference. At the default 1, stretching a paragraph by 5% costs about as much as its whole word spacing, which is a strong preference. The extra cost grows with the size of the change, so a large stretch is much worse than a small one, and small stretches are still used. Use a negative value if your text is already tight (small type, narrow columns) and shrinking makes it look crowded; use 0 if stretched and shrunk text look equally good in your script.

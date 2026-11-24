@@ -133,7 +133,7 @@ class PDFViewer:
                   onNavigatePageClicked onPgNumChanged onEditingPgNum onSavePDFasClicked
                   onAnchorKeyRelease onOpenItClicked showRulesClicked showGridClicked
                   showRulesOrGridClicked onZoomFitClicked onAnchorFocusOut
-                  set_preview_pages
+                  set_preview_pages onHistoryClicked
                """.split()
 
     def __init__(self, model, nbook, tv):
@@ -145,7 +145,12 @@ class PDFViewer:
         self.viewers = []
         for k in self.boxnames:
             w = model.builder.get_object(k)
-            self.viewers.append(PDFContentViewer(model, w, tv) if k == "bx_previewPDF" else PDFFileViewer(model, w))
+            if k == "bx_previewPDF":
+                self.viewers.append(PDFContentViewer(model, w, tv))
+            elif k == "bx_previewManual":
+                self.viewers.append(PDFFileViewer(model, w, tv=model.builder.get_object("tv_manualContents")))
+            else:
+                self.viewers.append(PDFFileViewer(model, w))
         self.hide_unused()
 
     def _currview(self):
@@ -193,6 +198,7 @@ class PDFViewer:
         self.model.set("s_pdfZoomLevel", str(z*100), mod=False)
         self.model.set_preview_pages(self.numpages, _("Pages:"))
         self.viewers[p].updatePageNavigation()
+        self.viewers[p].updateHistoryButtons()
 
     def onmaximized(self):
         c = self.nbook.get_current_page()
@@ -334,6 +340,17 @@ class PDFViewer:
         x = n.split("_")[-1]
         self.set_page(x)
 
+    def onHistoryClicked(self, btn):
+        """ The Back / Forward buttons and the lists of places beside them, for the current tab """
+        v = self._currview()
+        what = Gtk.Buildable.get_name(btn).split("_")[-1]
+        if what == "back":
+            v.goBack()
+        elif what == "forward":
+            v.goForward()
+        else:
+            v.showHistoryMenu(btn, what == "backlist")
+
     def onPgNumChanged(self, widget, *args):
         if widget is None:
             widget = self.model.builder.get_object("t_pgNum")
@@ -474,7 +491,7 @@ def linkInfo(mapping):
 
 
 class PDFFileViewer:
-    def __init__(self, model, widget, alloc=None): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
+    def __init__(self, model, widget, alloc=None, tv=None): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it); tv shows the PDF's contents
         self.hbox = widget
         self.model = model      # a view/gtkview
         self.sw = widget.get_parent()
@@ -507,7 +524,17 @@ class PDFFileViewer:
         self.timer = None
         self.is_dragging = False
         self.linkCache = {}         # page index -> the page's Poppler link mappings
+        self.history = []           # places (page index, scroll, zoom, height) to go back to after following links
+        self.future = []            # places to go forward to again, after going back
+        self.outline = None         # [(page index, -height on page, title)] of the PDF's bookmarks, in reading order
+        self.arrived = None         # the place a link or the history last went to
         self.onLink = False         # the pointer is over a link (and shows a hand)
+        self.toctv = tv
+        self.cr = Gtk.CellRendererText()
+        if tv is not None:
+            tv.append_column(Gtk.TreeViewColumn("Title", self.cr, text=0))
+            tv.set_activate_on_single_click(True)      # one click on a contents line goes there
+            tv.connect("row-activated", self.pickToc)
 
         # Enable focus and event handling
         self.hbox.set_can_focus(True)
@@ -570,6 +597,9 @@ class PDFFileViewer:
                 self.document = None
                 return False
             self.linkCache = {}
+            self.outline = None
+            if self.toctv is not None:
+                self.toctv.set_model(self.load_toc(self.document, self.toctv))
             self.hbox.show()
         else:
             self.hbox.hide()
@@ -785,6 +815,13 @@ class PDFFileViewer:
         # Check if Control key is pressed
         ctrl = (state & Gdk.ModifierType.CONTROL_MASK)
 
+        alt = (state & Gdk.ModifierType.MOD1_MASK)
+        if (alt and keyval == Gdk.KEY_Left) or keyval == Gdk.KEY_BackSpace:  # back to where a link was followed from
+            self.goBack()
+            return True
+        if alt and keyval == Gdk.KEY_Right:     # forward again
+            self.goForward()
+            return True
         if ctrl and keyval == Gdk.KEY_Home:  # Ctrl+Home (Go to first page)
             self.set_page(self.swap4rtl("first"))
             return True
@@ -870,7 +907,72 @@ class PDFFileViewer:
     def show_context_menu(self, widget, event):
         pass
 
-    # Links: a plain left click on a link follows it
+    def _add_toctree(self, tocts, toci, parent):
+        action = toci.get_action()
+        if action.type != Poppler.ActionType.GOTO_DEST:
+            return
+        title = action.any.title
+        dest = action.goto_dest.dest
+        if dest.type == Poppler.DestType.NAMED:
+            dest = self.document.find_dest(dest.named_dest)
+        pnum = dest.page_num
+        parent = tocts.append(parent, [title, pnum, dest.top if hasTop(dest) else -1.])
+        toci = toci.get_child()
+        havei = toci is not None
+        while havei:
+            self._add_toctree(tocts, toci, parent)
+            havei = toci.next()
+
+    def load_toc(self, document, treeview):
+        ''' Table of Contents: [name:str, pagenum:int, height on the page:float (-1 if not known)] '''
+        res = Gtk.TreeStore(str, int, float)
+        indexi = None
+        if document is not None:
+            try:
+                indexi = Poppler.IndexIter.new(document)
+            except TypeError:
+                return res
+        if indexi is not None:
+            havei = True
+            while havei:
+                self._add_toctree(res, indexi, None)
+                havei = indexi.next()
+
+        # Expand nodes conditionally based on top-level count
+        num_top_level_nodes = self._count_top_level_nodes(res)
+        if num_top_level_nodes == 1:
+            self._expand_all_nodes(treeview, res)
+
+        return res
+
+    def _count_top_level_nodes(self, treestore):
+        """Counts only the top-level nodes in the TreeStore."""
+        count = 0
+        iter = treestore.get_iter_first()  # Start with the first top-level node
+        while iter is not None:
+            count += 1
+            iter = treestore.iter_next(iter)  # Move to the next top-level node
+        return count
+
+    def _expand_all_nodes(self, treeview, treestore):
+        def expand_later():
+            def expand_recursive(model, path, iter, data):
+                treeview.expand_row(path, False)
+            treestore.foreach(expand_recursive, None)
+            return False
+
+        GLib.idle_add(expand_later)
+    
+    def pickToc(self, tv, path, col):
+        """ Goes to a contents entry, its heading at the top, as following a link does """
+        row = tv.get_model()[path]
+        pnum, top = row[1], row[2]
+        self.history.append(self.place())
+        self.future = []
+        scroll = max(0, (self.psize[1] - top) * self.zoomLevel - 20) if top >= 0 else 0
+        self.goTo((pnum, scroll, self.zoomLevel, top if top >= 0 else None))
+
+    # Links: a plain left click on a link follows it; Alt+Left or Backspace goes back
 
     def pageForWidget(self, widget):
         """ The page index (1 based) shown in widget, one of the page boxes """
@@ -914,11 +1016,114 @@ class PDFFileViewer:
             dest = self.document.find_dest(dest.named_dest)
         if dest is None or not 0 < dest.page_num <= self.numpages:
             return False
-        self.show_pdf(dest.page_num)
-        if hasTop(dest):        # scroll the place to the top, once the new page has its size
-            top = max(0, (self.psize[1] - dest.top) * self.zoomLevel - 20)
-            GLib.idle_add(lambda: self.swv.set_value(min(top, max(0, self.swv.get_upper() - self.swv.get_page_size()))) and False)
+        self.history.append(self.place())
+        self.future = []
+        top = max(0, (self.psize[1] - dest.top) * self.zoomLevel - 20) if hasTop(dest) else 0
+        self.goTo((dest.page_num, top, self.zoomLevel, dest.top if hasTop(dest) else None))
         return True
+
+    def place(self):
+        """ Where we are: (page index, vertical scroll, zoom, height on the page or None). The height is
+            known exactly after following a link; otherwise it is worked out from the scroll. """
+        if self.arrived is not None and self.arrived[:3] == (self.current_index, self.swv.get_value(), self.zoomLevel):
+            return self.arrived
+        return (self.current_index, self.swv.get_value(), self.zoomLevel, None)
+
+    def goTo(self, place):
+        """ Shows a place, scrolled to where it was, once the page has its size """
+        pnum, top = place[:2]
+        self.show_pdf(pnum)
+        self.arrived = place
+        def settle():       # the scroll GTK allows (a short view can't scroll); here is still that place
+            self.swv.set_value(min(top, max(0, self.swv.get_upper() - self.swv.get_page_size())))
+            self.arrived = (place[0], self.swv.get_value()) + tuple(place[2:])
+            return False
+        GLib.idle_add(settle)
+        self.updateHistoryButtons()
+
+    def goBack(self, steps=1):
+        """ Returns to where a link was followed from, steps links ago """
+        if len(self.history) < steps:
+            return False
+        self.future.append(self.place())
+        for _ in range(steps - 1):
+            self.future.append(self.history.pop())
+        self.goTo(self.history.pop())
+        return True
+
+    def goForward(self, steps=1):
+        """ Goes forward again, steps places, after going back """
+        if len(self.future) < steps:
+            return False
+        self.history.append(self.place())
+        for _ in range(steps - 1):
+            self.history.append(self.future.pop())
+        self.goTo(self.future.pop())
+        return True
+
+    def placeLabel(self, place):
+        """ How a place is named in the history lists: the bookmark it is in (the last one at or above
+            the top of the view), and its page number """
+        pnum, scroll, zoom, height = place
+        if self.outline is None:
+            self.outline = []
+            def walk(it):
+                while True:
+                    a = it.get_action()
+                    if a.type == Poppler.ActionType.GOTO_DEST:
+                        d = a.goto_dest.dest
+                        if d is not None and d.type == Poppler.DestType.NAMED:
+                            d = self.document.find_dest(d.named_dest)
+                        if d is not None:
+                            self.outline.append((d.page_num, -d.top if hasTop(d) else 0, a.any.title))
+                    child = it.get_child()
+                    if child is not None:
+                        walk(child)
+                    if not it.next():
+                        break
+            it = Poppler.IndexIter.new(self.document) if self.document is not None else None
+            if it is not None:
+                walk(it)
+            self.outline.sort(key=lambda x: x[:2])     # stable: at one height, the last bookmark wins
+        page = self.document.get_page(pnum - 1) if self.document is not None and 0 < pnum <= self.numpages else None
+        height = page.get_size()[1] if page is not None else 0
+        if place[3] is None:     # where the view's top was, give or take where a link puts its place
+            viewtop = -(height - (scroll + 20) / zoom)
+        else:
+            viewtop = -place[3]
+        title = None
+        for p, y, t in self.outline:
+            if (p, y) > (pnum, viewtop):
+                break
+            title = t
+        folio = (page.props.label if page is not None else None) or str(pnum)
+        return _("{} · p. {}").format(title, folio) if title else _("Page {}").format(folio)
+
+    def showHistoryMenu(self, btn, back):
+        """ The places Back (or Forward) can go to, nearest first; choosing one goes straight there """
+        places = list(reversed(self.history if back else self.future))[:15]
+        if not places:
+            return
+        menu = Gtk.Menu()
+        for i, place in enumerate(places):
+            item = Gtk.MenuItem(label=self.placeLabel(place))
+            item.connect("activate", lambda w, n=i + 1: self.goBack(n) if back else self.goForward(n))
+            menu.append(item)
+        menu.show_all()
+        menu.popup_at_widget(btn, Gdk.Gravity.SOUTH_WEST, Gdk.Gravity.NORTH_WEST, None)
+
+    def updateHistoryButtons(self):
+        """ Back and Forward (and their lists) are only usable when there is somewhere to go """
+        for name, places, tip, tipTo in (
+                ("back", self.history, _("Go back in the clicked link history"), _("Go back in the clicked link history, to {}")),
+                ("forward", self.future, _("Go forward in the clicked link history"), _("Go forward in the clicked link history, to {}"))):
+            for b in ("btn_history_" + name, "btn_history_" + name + "list"):
+                w = self.model.builder.get_object(b)
+                if w is not None:
+                    w.set_sensitive(bool(places))
+            w = self.model.builder.get_object("btn_history_" + name)
+            if w is not None:
+                w.set_tooltip_text(tipTo.format(self.placeLabel(places[-1])) if places else tip)
 
     def on_page_motion(self, widget, event):
         """ Shows a pointing hand over links """
@@ -1094,12 +1299,7 @@ class PDFFileViewer:
 class PDFContentViewer(PDFFileViewer):
 
     def __init__(self, model, widget, tv): # widget is bx_previewPDF (which will have 2x .hbox L/R pages inside it)
-        super().__init__(model, widget)
-        self.toctv = tv
-        self.cr = Gtk.CellRendererText()
-        tvc = Gtk.TreeViewColumn("Title", self.cr, text=0)
-        self.toctv.append_column(tvc)
-        self.toctv.connect("row-activated", self.pickToc)
+        super().__init__(model, widget, tv=tv)
         self.parlocfile = None
         self.parlocs = None
         self.widget = None
@@ -1224,7 +1424,8 @@ class PDFContentViewer(PDFFileViewer):
             self.model.doStatus(_("Error opening PDF: {}").format(e), warning=True)
             self.document = None
             return False
-        self.linkCache = {}         # the new PDF's links are read when first needed
+        self.linkCache = {}         # the new PDF's links and bookmarks are read when first needed
+        self.outline = None
 
         tocts = self.load_toc(self.document, self.toctv)
         self.toctv.set_model(tocts)
@@ -1234,66 +1435,6 @@ class PDFContentViewer(PDFFileViewer):
             self.cr.set_property("font-desc", font_desc)
         
         return True
-
-    def _add_toctree(self, tocts, toci, parent):
-        action = toci.get_action()
-        if action.type != Poppler.ActionType.GOTO_DEST:
-            return
-        title = action.any.title
-        dest = action.goto_dest.dest
-        if dest.type == Poppler.DestType.NAMED:
-            dest = self.document.find_dest(dest.named_dest)
-        pnum = dest.page_num
-        parent = tocts.append(parent, [title, pnum])
-        toci = toci.get_child()
-        havei = toci is not None
-        while havei:
-            self._add_toctree(tocts, toci, parent)
-            havei = toci.next()
-
-    def load_toc(self, document, treeview):
-        ''' Table of Contents: [name:str, pagenum:int] '''
-        res = Gtk.TreeStore(str, int)
-        indexi = None
-        if document is not None:
-            try:
-                indexi = Poppler.IndexIter.new(document)
-            except TypeError:
-                return res
-        if indexi is not None:
-            havei = True
-            while havei:
-                self._add_toctree(res, indexi, None)
-                havei = indexi.next()
-
-        # Expand nodes conditionally based on top-level count
-        num_top_level_nodes = self._count_top_level_nodes(res)
-        if num_top_level_nodes == 1:
-            self._expand_all_nodes(treeview, res)
-
-        return res
-
-    def _count_top_level_nodes(self, treestore):
-        """Counts only the top-level nodes in the TreeStore."""
-        count = 0
-        iter = treestore.get_iter_first()  # Start with the first top-level node
-        while iter is not None:
-            count += 1
-            iter = treestore.iter_next(iter)  # Move to the next top-level node
-        return count
-
-    def _expand_all_nodes(self, treeview, treestore):
-        def expand_later():
-            def expand_recursive(model, path, iter, data):
-                treeview.expand_row(path, False)
-            treestore.foreach(expand_recursive, None)
-            return False
-
-        GLib.idle_add(expand_later)
-    
-    def pickToc(self, tv, path, col):
-        pnum = tv.get_model()[path][1]
-        self.show_pdf(pnum)
 
     def _tocOnPage(self, model, it, cpage):
         ''' Returns the sibling entries starting at it that have content on pdf page cpage '''

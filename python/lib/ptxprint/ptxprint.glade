@@ -15807,36 +15807,209 @@ highlighted as an issue.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScrolledWindow" id="scr_previewManual">
-                    <property name="can-focus">True</property>
-                    <property name="hexpand">False</property>
-                    <property name="vexpand">False</property>
-                    <property name="shadow-type">in</property>
-                    <property name="propagate-natural-height">True</property>
+                  <object class="GtkBox" id="bx_manualPage">
+                    <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkViewport">
+                      <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="hexpand">False</property>
-                        <property name="vexpand">False</property>
+                        <property name="margin-end">4</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">2</property>
                         <child>
-                          <object class="GtkBox" id="bx_previewManual">
+                          <object class="GtkLabel" id="l_manualContents">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="halign">center</property>
-                            <property name="valign">center</property>
-                            <property name="hexpand">True</property>
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Contents:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow">
+                            <property name="width-request">200</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
                             <property name="vexpand">True</property>
-                            <property name="homogeneous">True</property>
+                            <property name="shadow-type">in</property>
                             <child>
-                              <placeholder/>
+                              <object class="GtkTreeView" id="tv_manualContents">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">The contents of the document shown. Click a line to go there.</property>
+                                <property name="headers-visible">False</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection"/>
+                                </child>
+                              </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
-                        <style>
-                          <class name="graybox"/>
-                        </style>
+                                        <child>
+                                          <object class="GtkBox" id="bx_history">
+                            <property name="halign">center</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Back and forward through the places you went to by clicking links.
+                        Shortcuts: Alt+Left (or Backspace) back, Alt+Right forward</property>
+                                            <child>
+                                              <object class="GtkButton" id="btn_history_backlist">
+                                                <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">List the places back in the clicked link history</property>
+                                                <property name="relief">none</property>
+                                                <signal name="clicked" handler="onHistoryClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">pan-up-symbolic</property>
+                                                    <property name="icon_size">1</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_history_back">
+                                                <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Go back in the clicked link history</property>
+                                                <property name="relief">none</property>
+                                                <signal name="clicked" handler="onHistoryClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">go-previous-symbolic</property>
+                                                    <property name="icon_size">2</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_history_forward">
+                                                <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Go forward in the clicked link history</property>
+                                                <property name="relief">none</property>
+                                                <signal name="clicked" handler="onHistoryClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">go-next-symbolic</property>
+                                                    <property name="icon_size">2</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_history_forwardlist">
+                                                <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">List the places forward in the clicked link history</property>
+                                                <property name="relief">none</property>
+                                                <signal name="clicked" handler="onHistoryClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">pan-down-symbolic</property>
+                                                    <property name="icon_size">1</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">3</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
                       </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow" id="scr_previewManual">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="shadow-type">in</property>
+                        <property name="propagate-natural-height">True</property>
+                        <child>
+                          <object class="GtkViewport">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="hexpand">False</property>
+                            <property name="vexpand">False</property>
+                            <child>
+                              <object class="GtkBox" id="bx_previewManual">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="homogeneous">True</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                            </child>
+                            <style>
+                              <class name="graybox"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -15848,7 +16021,7 @@ highlighted as an issue.</property>
                     <property name="can-focus">False</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
-                    <property name="label" translatable="yes">Reference</property>
+                    <property name="label" translatable="yes">Manual</property>
                     <property name="angle">270</property>
                   </object>
                   <packing>
@@ -40179,9 +40352,9 @@ version before reporting an issue.</property>
                                         <property name="can-focus">False</property>
                                         <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">Reference documents for PTXprint:
-the Ornaments Catalog, the Technical
-Reference (for advanced users) and,
-when online, the Advanced Tech Docs.</property>
+the User Manual, the Ornaments Catalog,
+the Technical Reference (for advanced
+users) and, when online, the Advanced Tech Docs.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Reference Documentation:</property>
                                         <property name="justify">right</property>
@@ -40206,9 +40379,9 @@ when online, the Advanced Tech Docs.</property>
                                         <property name="uri">https://github.com/sillsdev/ptx2pdf/tree/master/docs#readme</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">5</property>
+                                        <property name="left-attach">6</property>
                                         <property name="top-attach">10</property>
-                                        <property name="width">2</property>
+                                        <property name="width">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40531,6 +40704,26 @@ cover the latest available features.</property>
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkLinkButton" id="lb_userManual">
+                                        <property name="label" translatable="yes">User Manual</property>
+                                        <property name="name">Show the User Manual</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="focus-on-click">False</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Open the PTXprint User Manual in the Manual tab of the PDF Preview window.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">start</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to view the PTXprint User Manual</property>
+                                        <signal name="clicked" handler="onManualClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">10</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkLinkButton" id="lb_ornaments_cat">
                                         <property name="label">Ornaments Catalog</property>
                                         <property name="name">Show the Ornaments Catalog</property>
@@ -40548,7 +40741,7 @@ the Tabs+Borders settings).</property>
                                         <signal name="clicked" handler="onCatalogClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">3</property>
+                                        <property name="left-attach">4</property>
                                         <property name="top-attach">10</property>
                                       </packing>
                                     </child>
@@ -40569,7 +40762,7 @@ document. (For advanced users only). </property>
                                         <signal name="clicked" handler="onTechRefClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">4</property>
+                                        <property name="left-attach">5</property>
                                         <property name="top-attach">10</property>
                                       </packing>
                                     </child>

@@ -18,7 +18,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 * **Show main PTXprint settings** (**Alt+S**) brings the main window to the front.
 * The title bar shows the PDF file name and the date and time it was made. Check this to be sure you see the newest PDF.
 
-The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Reference** shows reference documents such as the Ornaments Catalogue. Tabs without a PDF are hidden.
+The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Manual** shows this User Manual (from **User Manual** on the **Help** tab) and other reference documents such as the Ornaments Catalogue, with their contents beside them. Tabs without a PDF are hidden.
 
 ## Moving around: pages, spreads and zoom
 
@@ -32,6 +32,8 @@ The navigation controls are in the top bar.
 * Zoom: the **Zoom** box, **Ctrl+mouse wheel** (zooms at the mouse pointer), **Ctrl+Plus** and **Ctrl+Minus**. **Ctrl+F**, **Ctrl+0** or **Zoom Fit to Screen** fit the whole page (or spread) in the window.
 * For right-to-left books, the arrow buttons and keys are reversed to follow the book.
 * Links: click a link in the PDF (for example a cross-reference, or a contents entry in a PDF that has them) to go to the place it points to. The pointer becomes a hand over a link. A web address opens in your web browser.
+* Contents lists: double-click a line to go to that heading. This counts as following a link.
+* Going back: **Alt+Left** (or **Backspace**) goes back to where you followed a link (or a contents line) from, and **Alt+Right** forward again. Each tab keeps its own list. In the **Manual** tab, the row of four small arrow buttons under the contents does the same. From left to right: **▲** lists the places to go back to (earlier), **◀** goes back, **▶** goes forward again, and **▼** lists the places to go forward to (later). Each place in a list is named by its heading and page.
 
 **Book View** (Ctrl+B) shows two facing pages side by side, as in a printed book. Page 1 is shown alone because it is a right-hand page; then 2+3, 4+5 and so on. Use it to check that facing pages look balanced.
 
@@ -352,8 +354,23 @@ Fits the whole spread in **Book View**.
 ### @l_pdfPgsSprds
 Only a label ("Pages:" before the page count). Its tooltip lists the page-moving shortcuts.
 
+### @btn_history_back
+Its tooltip names the place it goes back to. Greyed out until you have followed a link.
+
+### @btn_history_backlist
+Shows the places you can go back to, the most recent first, each named by its heading and page. Choose one to go straight there.
+
+### @btn_history_forwardlist
+Shows the places you can go forward to again. Following a new link clears this list.
+
+### @btn_history_forward
+Only usable after **Back**. Its tooltip names the place it goes to.
+
 ### @btn_page_first
 In a count like "(15)+52", the number in brackets is the pages before page 1 (for example title page and contents); the second number is the numbered pages.
+
+### @tv_manualContents
+The PDF's bookmarks (for this manual: chapters and sections). Going to a line can be undone with **◀** (Back) below.
 
 ### @btn_page_previous
 One spread in **Book View**. Same as **Left arrow** or **Page Up**. Reversed in a right-to-left book.

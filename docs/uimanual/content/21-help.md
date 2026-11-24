@@ -31,6 +31,7 @@ These links open web pages or documents:
 * **Documentation | FAQs | Gallery | Support | Download** – the PTXprint home page. PTXprint does not update itself, so check here for new versions and download them yourself.
 * **Learn: How to...** – short articles about common tasks.
 * **Training (Videos and Presentations)** – videos on the Paratext website and on Vimeo, and a **Training Presentation** (a large set of Google Slides that trainers can use).
+* **User Manual** – this manual. It opens in the **Manual** tab of the PDF Preview window, with its contents beside it; click a link to follow it. It comes with PTXprint, so it opens without internet.
 * **Ornaments Catalog** and **Technical Reference** (**Full** view only) – PDF documents that come with PTXprint. They open without internet.
 * **Advanced Tech Docs** (**Full** view only) – technical documents for advanced users.
 * **Support Agent** – an AI chatbot that answers questions about PTXprint.
@@ -177,7 +178,10 @@ Opens the PTXprint home page, with documentation, FAQs, a gallery of examples, s
 A heading for the home page link. Visit the home page from time to time to download the newest version.
 
 ### @l_techFAQ
-A heading for the reference documents. Only shown in the **Full** view.
+A heading for the reference documents. The **User Manual** is shown in every view; the other documents only in the **Full** view.
+
+### @lb_userManual
+Opens this manual in the **Manual** tab of the PDF Preview window. See "PDF Preview window" for moving around in it.
 
 ### @lb_techFAQ
 Opens the advanced technical documentation (on GitHub) in your web browser. It is for expert users and often describes things that cannot be set in the PTXprint window. Only shown in the **Full** view, and only when internet use is allowed.

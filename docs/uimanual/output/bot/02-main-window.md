@@ -5,7 +5,7 @@
 The main window is where you do all your work in PTXprint. It has three parts:
 
 * **The tabs** across the top (**Basic**, **Layout**, **Fonts+Script**, **Body** and so on). Each tab holds one group of settings.
-* **The ☰ main menu** button at the top-left corner, before the first tab. It holds settings about PTXprint itself, not about your book: how to show the PDF, the **View Level**, the interface **Language**, and links to **Donate** and **Give Feedback**.
+* **The ≡ main menu** button at the top-left corner, before the first tab. It holds settings about PTXprint itself, not about your book: how to show the PDF, the **View Level**, the interface **Language**, and links to **Donate** and **Give Feedback**.
 * **The bar at the bottom of the window**, with the **Search for settings** box, the button to open the output folder, the **Quick Run** and **Layout Only** check boxes, and the **Save**, **Print (Make PDF)** and **Quit** buttons.
 
 This chapter also explains three ideas that you need everywhere in PTXprint: **configurations**, **view levels**, and how PTXprint **saves** your settings.
@@ -42,7 +42,7 @@ PTXprint has hundreds of settings. Most people need only a few. So PTXprint can 
 | **Regular** | Adds the **Diglot**, **Tabs+Borders**, **Styles**, **Advanced** and **View+Edit** tabs, and many more settings on all tabs. | Most typesetters. PTXprint uses this level the first time it starts. |
 | **Full** | Shows every setting, including the **Publications** and **Printers** tabs. | Experienced users who need special settings. |
 
-**How to change the view level:** click the **☰** button (top-left), point to **View Level**, and click **Mini View**, **Basic View**, **Regular View** or **Full View**. The current level is shown in blue and bold in that list. The change happens at once, without a restart.
+**How to change the view level:** click the **≡** button (top-left), point to **View Level**, and click **Mini View**, **Basic View**, **Regular View** or **Full View**. The current level is shown in blue and bold in that list. The change happens at once, without a restart.
 
 **Hidden settings still work.** A lower view level only *hides* settings. A hidden setting keeps its value, is still saved with the configuration, and still changes the PDF. For example, if you turned on pictures or a diglot in the **Regular** view and then change to the **Mini** view, the pictures or the diglot are still in the PDF, though you cannot see the tab. If the PDF looks different from what you expect, change to the **Full** view and check the settings again.
 
@@ -76,9 +76,9 @@ From left to right, the bar at the bottom of the window has:
 
 Above the bar, a **status line** sometimes shows a message from PTXprint (for example "No books to print"). Click **Dismiss** to hide it.
 
-When a newer version of PTXprint is available, a **Check for updates...** button can appear at the top-left, just to the right of the ☰ button. (PTXprint checks at most once a day, only on Windows, and only if Internet use is allowed on the **Advanced** tab.)
+When a newer version of PTXprint is available, a **Check for updates...** button can appear at the top-left, just to the right of the ≡ button. (PTXprint checks at most once a day, only on Windows, and only if Internet use is allowed on the **Advanced** tab.)
 
-## 3.7 The ☰ main menu
+## 3.7 The ≡ main menu
 
 * **Show PDF** – what happens with the PDF after printing:
   * **Preview Pane** – PTXprint shows the PDF in its own preview window. This is the usual choice. PTXprint can also use the preview for some editing tools.
@@ -92,7 +92,7 @@ When a newer version of PTXprint is available, a **Check for updates...** button
 
 ### See more (or fewer) settings
 
-Click **☰** › **View Level** › **Full View** to see every setting, or **Mini View** to see only the most important ones.
+Click **≡** › **View Level** › **Full View** to see every setting, or **Mini View** to see only the most important ones.
 
 ### Find a setting when you do not know which tab it is on
 
@@ -116,23 +116,23 @@ Click **☰** › **View Level** › **Full View** to see every setting, or **Mi
 
 ### Show the PDF in another program
 
-Click **☰** › **Show PDF** › **System Viewer**.
+Click **≡** › **Show PDF** › **System Viewer**.
 
 ### Find the PDF file on your computer
 
-Click the **Open folder containing the PDF** button at the bottom of the window (Regular and Full views), or choose **☰** › **Show PDF** › **Output Folder**. The folder with the PDF files for this project opens.
+Click the **Open folder containing the PDF** button at the bottom of the window (Regular and Full views), or choose **≡** › **Show PDF** › **Output Folder**. The folder with the PDF files for this project opens.
 
 ### Change the language of PTXprint
 
 1. Click **Save** first, so you do not lose changes.
-2. Click **☰** › **Language** and click a language.
+2. Click **≡** › **Language** and click a language.
 3. PTXprint closes its window and opens it again in the new language, with the same project and configuration.
 
 ## 3.9 Common problems
 
 ### A tab or setting that I used before has disappeared
 
-**Likely cause:** The view level is lower than before. **What to do:** Click **☰** › **View Level** › **Regular View** or **Full View**. Or type the name of the setting in **Search for settings**.
+**Likely cause:** The view level is lower than before. **What to do:** Click **≡** › **View Level** › **Regular View** or **Full View**. Or type the name of the setting in **Search for settings**.
 
 ### The PDF has pictures (or a diglot, borders, thumb tabs…) but I cannot find the setting
 
@@ -152,7 +152,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 
 ### PTXprint says "Cannot update PDF file while it is locked!"
 
-**Likely cause:** The old PDF is still open in another PDF program, so PTXprint cannot replace it. **What to do:** Close the PDF in the other program and click to try again. To avoid this, use **☰** › **Show PDF** › **Preview Pane**.
+**Likely cause:** The old PDF is still open in another PDF program, so PTXprint cannot replace it. **What to do:** Close the PDF in the other program and click to try again. To avoid this, use **≡** › **Show PDF** › **Preview Pane**.
 
 ### PTXprint says "No books to print"
 
@@ -176,7 +176,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 
 ## 3.10 Settings reference
 
-### Main menu (top-left ☰ button)
+### Main menu (top-left ≡ button)
 
 #### Show PDF
 
@@ -388,7 +388,7 @@ This tab is normally not shown in the main window.
 
 Menu button · Mini+ · `btn_menu`
 
-The **☰** button at the top-left of the window. It opens the main menu (**Show PDF**, **View Level**, **Language**, **Donate**, **Give Feedback**). Always visible.
+The **≡** button at the top-left of the window. It opens the main menu (**Show PDF**, **View Level**, **Language**, **Donate**, **Give Feedback**). Always visible.
 
 #### Check for updates...
 
@@ -422,7 +422,7 @@ Button · Regular+ · `btn_openFolder`
 
 > Open the folder which contains the PDF file(s) created for this project.
 
-Opens the folder in your file manager. In views where this button is hidden, use **☰** › **Show PDF** › **Output Folder**.
+Opens the folder in your file manager. In views where this button is hidden, use **≡** › **Show PDF** › **Output Folder**.
 
 #### Quick Run
 

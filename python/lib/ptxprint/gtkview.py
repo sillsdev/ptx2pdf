@@ -191,7 +191,9 @@ r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
 l_artStatusLine
 s_pdfZoomLevel btn_page_first btn_page_previous t_pgNum btn_page_next btn_page_last
-b_reprint l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents
+bx_history btn_history_back btn_history_backlist btn_history_forwardlist btn_history_forward
+b_reprint l_pdfContents l_pdfPgCount l_pdfPgsSprds tv_pdfContents l_manualContents tv_manualContents
+l_techFAQ lb_userManual
 c_pdfadjoverlay c_pdfparabounds c_bkView scr_previewPDF scr_previewPDF bx_previewPDF
 btn_prvOpenFolder btn_prvSaveAs btn_prvOpen btn_prvPrint
 btn_showSettings
@@ -386,7 +388,7 @@ s_diffpages l_diffpages
 fr_pdfDetails fcb_outputFormat c_cropmarks s_keepVersions c_inclSettingsInPDF
 c_applyWatermark btn_selectWatermarkPDF lb_applyWatermark lb_Finishing
 l_prjdir l_settings_dir l_working_dir l_trainingVideos lb_trainingOnPTsite l_reportBugs
-lb_reportBugs rule_help l_techFAQ lb_techFAQ l_ptxprintdir lb_community l_community lb_working_dir
+lb_reportBugs rule_help lb_techFAQ l_ptxprintdir lb_community l_community lb_working_dir
 lb_prjdir lb_settings_dir lb_ptxprintdir l_giveFeedback lb_giveFeeback l_generateReport
 lb_trainingOnVimeo lb_ornaments_cat lb_tech_ref lb_learnHowTo l_techSupport1 btn_generateReport
 lb_chatBot l_projects_dir lb_projects_dir btn_changeProjectsDir lb_masterSlides
@@ -2308,8 +2310,10 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
         for w in ["lb_omitPics", "lb_techFAQ", "l_reportBugs", "lb_reportBugs"]:
             self.builder.get_object(w).set_visible(not newval and adv)
-        for w in ["l_techFAQ", "lb_ornaments_cat", "lb_tech_ref"]:
+        for w in ["lb_ornaments_cat", "lb_tech_ref"]:
             self.builder.get_object(w).set_visible(adv)
+        for w in ["l_techFAQ", "lb_userManual"]:     # the User Manual is for everyone
+            self.builder.get_object(w).set_visible(True)
         self.builder.get_object("lb_openBible").set_sensitive(not newval)
         self.builder.get_object("lb_DBLdownloads").set_sensitive(not newval)
         self.i18nizeURIs()
@@ -7439,6 +7443,21 @@ Thank you,
                 showref.present()
  
         logger.debug(f"{catpdf=}")
+
+    def onManualClicked(self, btn):
+        """ Opens the PTXprint User Manual in the Manual tab of the PDF Preview window """
+        manual = os.path.join(pycodedir(), "PDFassets", "reference", "PTXprint-User-Manual.pdf")
+        if not os.path.exists(manual):      # running from the source: the manual's build puts it here
+            manual = os.path.join(pycodedir(), "..", "..", "..", "docs", "uimanual", "output", "PTXprint-User-Manual.pdf")
+        if not os.path.exists(manual):
+            self.doStatus(_("The User Manual is not installed (make it with python/scripts/uimanual/build_manual.py)"), warning=True)
+            return True
+        showref = self.builder.get_object("dlg_preview")
+        self.pdf_viewer.loadnshow(os.path.normpath(manual), widget=showref, tab="manual")
+        self.set("c_bkView", False, mod=False)
+        self.pdf_viewer.set_zoom_fit_to_screen(None)
+        showref.present()
+        return True
 
     def onTechRefClicked(self, btn):
         techref = os.path.join(pycodedir(), "PDFassets", "reference", "PTXprintTechRef.pdf")

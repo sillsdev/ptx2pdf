@@ -8,12 +8,11 @@ Writes to docs/uimanual/output/:
     PTXprint-Manual-for-AI.md          one file containing everything (for the support bot)
     bot/<chapter>.md                   the same content, one file per chapter
     PTXprint-User-Manual.html          the human-readable manual
-    PTXprint-User-Manual.pdf           the same, as PDF: the linked Markdown typeset by PTXprint itself
-                                       (docs/uimanual/ptx; not kept in git)
+    PTXprint-User-Manual.md            the same, as one Markdown file, with the HTML edition's heading ids
+                                       ("Title {#id}") and cross-reference links, for typesetting
+    PTXprint-User-Manual.pdf           that Markdown typeset by PTXprint itself (docs/uimanual/ptx; not
+                                       kept in git: the release builds make it with the program they built)
     build-report.txt                   controls with no explanation, orphan notes, etc.
-
-and, not kept in git, data/PTXprint-User-Manual.md: the human edition as one Markdown file, with the HTML
-edition's heading ids ("Title {#id}") and cross-reference links, for typesetting.
 
 Content files: each docs/uimanual/content/<chapter-id>.md holds the prose for a chapter,
 starting at heading level 2 (the build adds the chapter title as level 1). An optional last
@@ -24,6 +23,7 @@ settings reference, so a renamed or deleted widget is reported rather than silen
 Usage:
     python python/scripts/uimanual/extract_ui.py
     python python/scripts/uimanual/build_manual.py [--nopdf] [--skeleton]
+    python python/scripts/uimanual/build_manual.py --pdf-only [--ptxprint PTXprint.exe] [--out dir]
 """
 
 import argparse
@@ -384,8 +384,7 @@ def build(repo, dopdf=True, skeleton=False):
         outf.write(pageHtml)
     print(f"HTML edition: {len(chapterInfos)} chapters, {linker.count} cross-reference links")
     linkedMd, mdLinks = makeLinkedMarkdown(humanParts[0], chapterInfos, ctrlKeys)
-    os.makedirs(os.path.join(base, "data"), exist_ok=True)
-    with open(os.path.join(base, "data", "PTXprint-User-Manual.md"), "w", encoding="utf-8") as outf:
+    with open(os.path.join(outdir, "PTXprint-User-Manual.md"), "w", encoding="utf-8") as outf:
         outf.write(linkedMd)
     print(f"Linked Markdown edition: {mdLinks} cross-reference links")
     if mdLinks != linker.count:
@@ -429,26 +428,36 @@ def linkedContents(chapters):
     return "\n".join(out) + "\n"
 
 
-def makePdf(repo, outpath):
-    """Typesets the linked Markdown edition with PTXprint, headless, using the project in
-    docs/uimanual/ptx (its module file is data/PTXprint-User-Manual.md), and copies the PDF to outpath."""
+def makePdf(repo, outpath, ptxprint=None):
+    """Typesets the linked Markdown edition (output/PTXprint-User-Manual.md) with PTXprint, headless, using
+    the project in docs/uimanual/ptx, and copies the PDF to outpath. ptxprint: the program to run, such as
+    a PTXprint.exe just built; by default this repository's PTXprint. Returns whether it made the PDF."""
     base = os.path.join(repo, "docs", "uimanual", "ptx")
     prjid = "PTXprintManual"
     env = {k: v for k, v in os.environ.items() if k not in ("DISPLAY", "WAYLAND_DISPLAY")}
-    paths = [os.path.join(repo, "python", "lib")]       # this repo's PTXprint, not an installed one
-    if env.get("PYTHONPATH"):
-        paths.append(env["PYTHONPATH"])
-    env["PYTHONPATH"] = os.pathsep.join(paths)
-    cmd = [sys.executable, os.path.join(repo, "python", "scripts", "ptxprint"), "-p", base, "-c", "Default", "-P", prjid,
-           "-f", os.path.join(repo, "fonts")]          # Charis, Source Code Pro, SymPub: no installed fonts needed
-    print("Typesetting the PDF: " + " ".join(cmd[1:]))
+    if ptxprint:
+        cmd = [ptxprint]
+    else:
+        paths = [os.path.join(repo, "python", "lib")]       # this repo's PTXprint, not an installed one
+        if env.get("PYTHONPATH"):
+            paths.append(env["PYTHONPATH"])
+        env["PYTHONPATH"] = os.pathsep.join(paths)
+        cmd = [sys.executable, os.path.join(repo, "python", "scripts", "ptxprint")]
+    cmd += ["-p", base, "-c", "Default", "-P", prjid,
+            "-f", os.path.join(repo, "fonts")]         # Charis, Source Code Pro, SymPub: no installed fonts needed
+    print("Typesetting the PDF: " + " ".join(cmd))
+    pdfglob = os.path.join(base, prjid, "local", "ptxprint", f"{prjid}_Default_*_ptxp.pdf")
+    for old in glob.glob(pdfglob):              # so an old PDF is never taken for a new one
+        os.remove(old)
     res = subprocess.run(cmd, env=env, capture_output=True, text=True)
-    pdfs = glob.glob(os.path.join(base, prjid, "local", "ptxprint", f"{prjid}_Default_*_ptxp.pdf"))
+    pdfs = glob.glob(pdfglob)
     if res.returncode or not pdfs:
         print(f"PTXprint could not make the PDF (exit {res.returncode}):\n" + "\n".join(res.stdout.splitlines()[-15:]))
-        return
-    shutil.copy2(max(pdfs, key=os.path.getmtime), outpath)
-
+        return False
+    os.makedirs(os.path.dirname(os.path.abspath(outpath)), exist_ok=True)
+    shutil.copy2(pdfs[0], outpath)
+    print(f"Wrote {outpath}")
+    return True
 
 
 def main():
@@ -458,7 +467,14 @@ def main():
     ap.add_argument("--repo", default=repo)
     ap.add_argument("--nopdf", action="store_true", help="Skip making the PDF")
     ap.add_argument("--skeleton", action="store_true", help="Also write per-chapter control listings to data/chapters/")
+    ap.add_argument("--pdf-only", action="store_true",
+                    help="Only typeset the PDF from output/PTXprint-User-Manual.md, as it is in git (for release builds)")
+    ap.add_argument("--ptxprint", help="With --pdf-only: the PTXprint program to typeset with, e.g. a PTXprint.exe just built")
+    ap.add_argument("--out", help="With --pdf-only: the folder to put the PDF in (default docs/uimanual/output)")
     args = ap.parse_args()
+    if args.pdf_only:
+        outdir = args.out or os.path.join(args.repo, "docs", "uimanual", "output")
+        sys.exit(0 if makePdf(args.repo, os.path.join(outdir, "PTXprint-User-Manual.pdf"), args.ptxprint) else 1)
     build(args.repo, dopdf=not args.nopdf, skeleton=args.skeleton)
 
 

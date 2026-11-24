@@ -15,7 +15,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 
 ## 22.2 Opening and closing the Preview window
 
-* The window opens after each **Print** if the main menu (☰) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
+* The window opens after each **Print** if the main menu (≡) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
 * Closing the window with its **X** button only hides it. It comes back the next time you print.
 * **Show main PTXprint settings** (**Alt+S**) brings the main window to the front.
 * The title bar shows the PDF file name and the date and time it was made. Check this to be sure you see the newest PDF.
@@ -33,6 +33,7 @@ The navigation controls are in the top bar.
 * Mouse: the wheel changes page; when zoomed in, it scrolls the page instead. Drag with the middle mouse button to move the page around.
 * Zoom: the **Zoom** box, **Ctrl+mouse wheel** (zooms at the mouse pointer), **Ctrl+Plus** and **Ctrl+Minus**. **Ctrl+F**, **Ctrl+0** or **Zoom Fit to Screen** fit the whole page (or spread) in the window.
 * For right-to-left books, the arrow buttons and keys are reversed to follow the book.
+* Links: click a link in the PDF (for example a cross-reference, or a contents entry in a PDF that has them) to go to the place it points to. The pointer becomes a hand over a link. A web address opens in your web browser.
 
 **Book View** (Ctrl+B) shows two facing pages side by side, as in a printed book. Page 1 is shown alone because it is a right-hand page; then 2+3, 4+5 and so on. Use it to check that facing pages look balanced.
 
@@ -319,13 +320,13 @@ Filling is slow, especially for long books such as Psalms. You can click **Stop!
 Make the range smaller: raise **Minimum Text Shrink** (for example to 97%) and lower **Maximum Text Expand** (for example to 103%). Lower **Widest word space allowed** for less space between words. Then run the fill again. You can also tick **Adjustments** to find paragraphs with large changes and reset them.
 
 **The Preview window has gone.**
-It was closed or hidden. Print again, or check that the main menu (☰) > **Show PDF** is set to **Preview Pane**.
+It was closed or hidden. Print again, or check that the main menu (≡) > **Show PDF** is set to **Preview Pane**.
 
 **The preview shows an old PDF.**
 Check the date and time in the title bar. If the last print failed, the old PDF is still shown. Read the message at the bottom of the main window.
 
 **Most of the controls described here are missing.**
-Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (☰).
+Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (≡).
 
 ## 22.13 Settings reference
 
