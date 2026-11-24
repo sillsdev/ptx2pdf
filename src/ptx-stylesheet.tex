@@ -958,7 +958,7 @@
 \def\addtobetweenhook#1#2#3{\addtohook{between-#1}{#2}{#3}}
 \def\addtobookhook#1#2#3{\addtohook{book#1}{#2}{#3}}
 \def\addtocvhook#1#2{\addtohook{cv}{#1}{#2}}
-\def\prefixhook#1#2#3{\x@\gdef\csname #1-#2\x@\x@\x@\endcsname\x@\x@\x@{\x@\x@\x@#3\csname #1-#2\endcsname}}
+\def\prefixhook#1#2#3{\bgroup\def\tmp{#3}\x@\let\x@\tmpb\csname #1-#2\endcsname\x@\gdef\csname #1-#2\x@\x@\x@\endcsname\x@\x@\x@{\x@\tmp\tmpb}\egroup}
 \def\prefixbetweenhook#1#2#3{\prefixhook{between-#1}{#2}{#3}}
 \def\prefixbookhook#1#2#3{\prefixhook{book#1}{#2}{#3}}
 \def\prefixcvhook#1#2{\prefixhook{cv}{#1}{#2}}
