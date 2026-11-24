@@ -1,7 +1,49 @@
-PTXprint 3.1.9 Release Notes
-16 Nov 2026
+PTXprint 3.1.10 Release Notes
+24 Nov 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.10 - (24 Nov 2026)
+
+  New features
+  * Headers and footers can show any polyglot column (L, R, A-G)
+  * Each glot now decides for itself whether to keep parallel refs
+    and show missing verses as an ellipsis
+  * Markdown modules much improved (used to make the new PDF manual)
+  * PDF viewer can show the width of spaces on each line
+  * Page Filler: polyglot pages are balanced better once one column
+    fills the page
+  * Page Filler: clearer tooltips, and a new plain-language guide to
+    every setting
+
+  Better messages
+  * Clearer reports of USFM syntax errors, including in FRTlocal.sfm
+  * Unknown or bad markers no longer crash TeX
+  * Clearer messages for missing fonts; CFF2 fonts are reported as not
+    yet supported
+  * A finished (e.g. 2-up) PDF that is open in another program now gives
+    a message instead of silently vanishing
+  * A warning (not a failure) if the last TeX run didn't settle
+  * A folder given where a file is expected is handled gracefully
+
+  Bug fixes
+  * Diglot: the Project drop-down would not open (newer PyGObject)
+  * Diglot: fonts with [] in their path broke the secondary's styles
+  * Style editor: values relative to font size (e.g. raise) were wrong
+  * The \textborder link opens the Border dialog again (#1296)
+  * Reset Adjustments now works for introduction paragraphs
+  * \k keyword paragraphs can now be adjusted properly
+  * Page Filler misread some paragraphs as justified
+  * A book with only an \id line crashed PTXprint
+  * \u and \rem markers are now understood (USFM 3.2)
+  * Font family "Normal" is treated as "Regular"
+  * NeedQuadPages fixed
+  * Work-arounds for errors in TSK cross-reference data
+  * Some highlights went missing in colour-converted PDFs
+  * Pretore orders: the upload zip could be left incomplete
+  * Support Agent link now points to the software.sil.org agent page
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.1.9 - (16 Nov 2026)
