@@ -276,6 +276,9 @@ class PolyglotSetup(Gtk.Box):
         return prjguid, cfgList
         
     def on_editing_started(self, cell, editable, path):
+        # Keep a reference: PyGObject 3.58+ otherwise frees the (floating) combo when this
+        # handler returns, so GTK never gets an editor and the Project drop-down won't open.
+        self._prjEditable = editable
         if isinstance(editable, Gtk.ComboBox):
             # Dynamically set wrap width based on the number of items
             num_projects = len(self.project_liststore) if hasattr(self, "project_liststore") else 0
