@@ -5,7 +5,7 @@ from typing import Dict, Tuple, Any, Iterator, List, Set, Deque, Optional, Union
 from collections import deque, defaultdict
 from configparser import ConfigParser
 import heapq, re, os, logging, random, itertools, argparse, threading, queue as _queue
-import statistics, math
+import statistics, math, sys
 from bisect import bisect
 import multiprocessing as mp
 from math import sqrt, log10
@@ -54,6 +54,17 @@ def bookletter(bk):
         return ""
     i = booknumbers.get(bk, 0) - 1
     return bkltrs[i] if 0 <= i < len(bkltrs) else "?"
+
+def consoleprint(s):
+    """ Print a console progress tag. A Windows console (cp1252 etc.) can't encode some of
+        them (e.g. the ✓ for an already filled book), which would otherwise crash the worker """
+    try:
+        print(s, flush=True, end="")
+    except UnicodeEncodeError:
+        enc = getattr(sys.stdout, "encoding", None) or "ascii"
+        print(s.encode(enc, errors="replace").decode(enc), flush=True, end="")
+    except (OSError, ValueError, AttributeError):
+        pass        # no usable console (e.g. a GUI worker): the tags are only for watching
 
 all_probes = [(1.0, -1), (1.0, 1), (0.98, -1), (0.97, -1), (0.96, -1), (1.0, 0)]
 
@@ -187,7 +198,7 @@ class Hooks:
             val = float(printer.view.get("s_"+a[1], default="1.0"))
             logger.debug(f"{a}, {val}")
             setattr(self, "badness_"+a[0], val)
-        self.badness_imbalance_narrow = max(0., float(printer.view.get("s_pbpolyimbnarrow", default="0.5")))
+        self.fill_budget = max(0, int(float(printer.view.get("s_pbpolybudget", default="20"))))    # 0: no limit
         self.fill_slices = bool(printer.view.get("c_pbpolyfillslices", False))
         # setattr(self, "strictness", printer.view.get("c_pbstrict", False))
         vals = {k: getattr(self, k) for k in dir(self) if k.startswith("badness")}
@@ -258,8 +269,11 @@ class Hooks:
             logging.log(15, f"page={pnum}, chapter={i}")
         return i
 
-    def get_previous(self, pid, page=None):
-        return self.printer.get_previous(pid, page=page)
+    def get_previous(self, pid):
+        return self.printer.get_previous(pid)
+
+    def get_next(self, pid):
+        return self.printer.get_next(pid)
 
     def covers_book(self, last_page):
         """ Is this last_page from a layout covering the whole book? """
@@ -375,11 +389,22 @@ class TypesetterSolver:
 
     def printbk(self, bk, page, extra="", progress=True, total=None):
         bkc = bookletter(bk)
-        print(bkc+str(page)+extra, flush=True, end="")
+        consoleprint(bkc+str(page)+extra)
         if progress:
             pe = ProgressEvent(bk, page, "page", "")
             pe.total = total or self.numpages
             self.hooks.progress(pe)
+
+    def _match_adjlist_ids(self, state):
+        """ The adjlist writes a paragraph without a parnum as [1], but its id here is [] """
+        known = set(self.paragraph_order)
+        def fix(pid):
+            if pid not in known and pid.endswith("[1]") and pid[:-3] + "[]" in known:
+                return pid[:-3] + "[]"
+            return pid
+        state.paragraph_params = {fix(k): v for k, v in state.paragraph_params.items()}
+        self.shape_cache = {(fix(k), d): v for (k, d), v in self.shape_cache.items()}
+        self.probe_cache = {fix(k): v for k, v in self.probe_cache.items()}
 
     def solve(self, state, start_page: int = -1, stop: bool = True, restart: bool = False, book=None):
         """Top-level entry point: set up base params from a possible
@@ -394,6 +419,8 @@ class TypesetterSolver:
         Returns final EngineState, or a HumanFixRequest.
         """
         self.bk = book
+        if restart:
+            self._match_adjlist_ids(state)
         self.init_state = state
         if self.hooks.tracing:
             logger.log(15, f"{state=} {state.layout.paragraph_pages=}")
@@ -411,7 +438,7 @@ class TypesetterSolver:
         if self.hooks.tracing:
             logger.log(15, f"{start_page=}, failing={state.layout.first_failing_page}")
         if start_page > 0 and (state.layout.first_failing_page is None or state.layout.first_failing_page >= start_page):
-            for i in range(state.layout.first_failing_page if state.layout.first_failing_page is None else state.numPages()):
+            for i in range(state.numPages() if state.layout.first_failing_page is None else state.layout.first_failing_page):
                 if not self.layout_checks(state, i-1):
                     start_page = i - 2
                     logging.log(17, f"Layout check failed at {i}")
@@ -605,7 +632,10 @@ class TypesetterSolver:
         if page >= state.numPages():
             state = self.run_layout(self.base_params, state, {}, page, start)
 
-        page_base_params = self.page_base_params.get(page, dict(self.base_params))
+        # One base for the whole visit, made now: next_combination's generator only runs once the
+        # loop below starts, so a base it made would be the one used by the next visit
+        page_base_params = dict(self.base_params)
+        self.page_base_params[page] = page_base_params
         self.printbk(self.bk, page)
         maxcombos = 200
         tried = set()
@@ -651,12 +681,14 @@ class TypesetterSolver:
                         continue
 
                 if not self.noprobe and (free is None or all(x == 0 for x in free)):
-                    lpars = state.layout.get_pars(page)
-                    straddler = lpars[-1]
-                    if self.hooks.get_first_page_for_para(straddler) <= page \
+                    lpars = new_state.layout.get_pars(page)
+                    straddler = lpars[-1] if len(lpars) else None     # none on a full page picture
+                    if straddler is not None and self.hooks.get_first_page_for_para(straddler) <= page \
                             and straddler in self.probe_params \
                             and self.probe_params[straddler] != page_base_params.get(straddler, self.neutral(straddler)):
                         page_base_params[straddler] = self.probe_params[straddler]
+                        # this run laid it out with its probe shape: what is committed must say so
+                        new_state.paragraph_params[straddler] = self.probe_params[straddler]
 
                 page_full = free is None or not len(free) or all(x == 0 for x in free)
                 if page == 0 and almostcombo is None and free is not None and len(free) and all(x == 1 for x in free):
@@ -820,20 +852,38 @@ class TypesetterSolver:
             else:
                 high = mid
 
-    def initial_probes(self, state, page, npages, restart=False, progress=True):
+    def fine_sweeps(self):
+        """ Analyse Only: the adaptive sweeps expected after the fixed ones. Each direction's
+            search halves its expansion range down to 1%, trying two looseness values at each
+            step (e.g. 100-105%: 3 steps x 2 = 6 sweeps each way) """
+        steps = lambda span: math.ceil(math.log2(span / 0.01)) if span > 0.01 else 0
+        ranges = {self.limits(p) for p in self.paragraph_order} or {(self.expand, self.minexp, self.maxexp)}
+        return max(2 * (steps(maxexp - expand) + steps(expand - minexp)) for expand, minexp, maxexp in ranges)
+
+    def initial_probes(self, state, page, npages, restart=False, progress=True, fine=False):
         """
         Executes vectorized full-document layout sweeps.
         Calls evaluate_paragraph_probe(pid) as a completely stateless helper.
+        fine (Analyse Only): also try looseness alone at the normal width, and keep refining
+            every paragraph's search down to 1% expansion (the AdjList's resolution) rather
+            than stopping once a fill has enough to work with. Ends without the final
+            neutral layout, returning None.
         """
+        expected = self.fine_sweeps() if fine else 0
+        total = 5 + expected if fine else 10
+        fineLimit = max(2 * expected, 8)      # in case a paragraph never settles
         def do_progress(sweep):
             if progress:
-                p = ProgressEvent(self.bk, sweep, "probe", "", self.numpages)
-                p.total = 10
+                p = ProgressEvent(self.bk, sweep, "probe", "analysing" if fine else "", self.numpages)
+                p.total = total
                 self.hooks.progress(p)
         sweep_count = 0
         all_pids = self.hooks.get_paragraphs_for_pages(page, page + npages)
         last_page = -1 if page + npages >= self.numpages else page + npages
-        for (lim, strch) in ((1, -1), (2, 1), (2, 2)):        # (minexp, -1), (maxexp, 1), (maxexp, 2)
+        fixed = ((1, -1), (2, 1), (2, 2))       # (minexp, -1), (maxexp, 1), (maxexp, 2)
+        if fine:
+            fixed += ((0, -1), (0, 1))          # (expand, -1), (expand, +1): looseness alone
+        for (lim, strch) in fixed:
             sweep_params = {pid: (self.limits(pid)[lim], strch) for pid in all_pids}
             layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
             self.collect_probes(layout, all_pids, sweep_params, page=page)
@@ -862,7 +912,11 @@ class TypesetterSolver:
                 logging.log(15, 
                     f"[Sweep #{sweep_count}] Priorities -> Pri2: {pri_counts[2]}, Pri1: {pri_counts[1]}, Pri0: {pri_counts[0]}, {requests=}"
                 )
-            if global_max_pri != 2:
+            if fine:
+                if global_max_pri == 0 or sweep_count > len(fixed) + fineLimit:
+                    logging.log(15, f"[Sweep #{sweep_count}] Analysis finished, {pri_counts=}")
+                    break
+            elif global_max_pri != 2:
                 if self.hooks.tracing:
                     logging.log(15, f"[Sweep #{sweep_count}] No Priority 2 probes remaining. Exiting sweep loop.")
                 break
@@ -876,6 +930,8 @@ class TypesetterSolver:
             self.collect_probes(layout, all_pids, sweep_params, page=page)
             do_progress(sweep_count)
 
+        if fine:
+            return None
         sweep_params = {pid: self.neutral(pid) for pid in all_pids}
         layout = self.hooks.run_layout(self, sweep_params, state.float_anchors, -1, last_page, prompt=",")
         do_progress(sweep_count)
@@ -932,11 +988,17 @@ class TypesetterSolver:
         res = EngineState(params, state.float_anchors, layout, self.hooks.printer.parlocs, page)
         return res
 
-    def collect_probes(self, layout, paragraphs, params, isbase=False, page=0):
+    def collect_probes(self, layout, paragraphs, params, isbase=False, page=0, force=()):
+        """ Record what each paragraph's line count and spacing came to with these params.
+            force: paragraphs whose setting becomes the shape for the line change it gives,
+                however bad (Analyse Only keeps the user's own settings this way, so the
+                preview's smart adjustments know which delta each one is) """
         def test_para(p, r):
             if not isinstance(p, ParInfo):      # e.g. a picture
                 return False
             pid = p.pid()
+            if pid in force:
+                return True
             e, s = params.get(pid, (None, None))
             d = self.probe_cache.get(pid, {}).get((e, s), None)
             if d is None:
@@ -988,6 +1050,11 @@ class TypesetterSolver:
                 self.shape_cache[(p,0)] = (e, s, badness)
                 self.forced_delta.discard(p)
             key = (p, delta)
+            if p in force:
+                self.shape_cache[key] = (e, s, badness)
+                self.forced_delta.discard(p)
+                changes.append((key, e, s, badness))
+                continue
             sc = self.shape_cache.get(key, None)
             if not isbase:
                 if parwhites < 0.01:
@@ -1015,7 +1082,6 @@ class TypesetterSolver:
         if key not in seen:
             seen.add(key)
             self.tried_combos[page] = set()
-        self.page_base_params[page] = dict(self.base_params)
         tried = self.tried_combos[page]
         paragraphs = self.get_candidate_paragraphs(state, page)
         for combo in self.generate_combos(paragraphs, state, page):
@@ -1133,10 +1199,7 @@ class TypesetterSolver:
                         else:
                             logger.log(12, "Can't find mask for {p}")
                             col_deltas[5] += d
-                        prev = self.hooks.get_previous(p)
-                        preve = self.shape_cache.get((p, combo.get(p, 0)), self.neutral(p))[0]
-                        pe = self.shape_cache[(p, d)][0]
-                        score += self.hooks.badness_contrast_factor * abs(pe - preve)
+                        score += self.hooks.badness_contrast_factor * self.contrast(p, combo)
                     else:
                         col1_net = col_deltas[0] + col_deltas[1] + col_deltas[3]
                         migration = 0
@@ -1175,6 +1238,26 @@ class TypesetterSolver:
         except ValueError:
             i = len(self.paragraph_order)
         return i
+
+    def width(self, pid, combo):
+        """ The width (expansion) paragraph pid is set at with combo applied: its shape in combo,
+            else its committed setting (an earlier page's or the user's), else normal """
+        if pid in combo:
+            return self.shape_cache[(pid, combo[pid])][0]
+        return self.base_params.get(pid, self.neutral(pid))[0]
+
+    def contrast(self, pid, combo):
+        """ How much paragraph pid, changed by combo, differs in width from the paragraphs either
+            side of it. A neighbour also in combo is left to count the pair itself. """
+        e = self.width(pid, combo)
+        res = 0.
+        prev = self.hooks.get_previous(pid)
+        if prev is not None:
+            res += abs(e - self.width(prev, combo))
+        nxt = self.hooks.get_next(pid)
+        if nxt is not None and nxt not in combo:
+            res += abs(e - self.width(nxt, combo))
+        return res
 
     def get_candidate_paragraphs(self, state, page):
         logger.debug(f"{state.layout.paragraph_pages=}")
@@ -1238,10 +1321,14 @@ class TypesetterSolver:
 
 
 class GrowList(list):
+    """ A list that grows to take any index set, and gives None for one past its end """
     def __setitem__(self, index, value):
-        self._ensure(index)
+        if not isinstance(index, slice):
+            self._ensure(index)
         super().__setitem__(index, value)
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            return [x or None for x in super().__getitem__(index)]
         if index >= len(self):
             return None
         return super().__getitem__(index) or None
@@ -1298,9 +1385,9 @@ class PTXFiller:
 
     def clear_book_files(self, bk):
         """ Delete the working files left from a previous run of this book only,
-            keeping other books' outputs in the shared worker directory. """
-        if self.nid is None:
-            return
+            keeping other books' outputs in the shared worker directory. Without a worker
+            (e.g. run from a script), that is the config's own print folder: a print's leftover
+            rerun files (.delayed, .picpages, ...) would otherwise change where filling starts. """
         d = self.view.project.printPath(self.view.cfgid)
         if not os.path.exists(d):
             return
@@ -1328,14 +1415,23 @@ class PTXFiller:
 
     def printbk(self, bk, page, progress=True):
         bkc = bookletter(bk)
-        print(bkc+str(page), flush=True, end="")
+        consoleprint(bkc+str(page))
         if progress:
             self.hooks.progress(ProgressEvent(bk, None, "page", ""))
 
-    def solve(self, bk, stop=False, restart=False, chapters=None):
+    def solve(self, bk, stop=False, restart=False, chapters=None, analyse=False):
+        """ Fill the pages of a book. analyse (Analyse Only): measure how each paragraph can
+            shrink or grow, keeping the user's own adjustments, without filling anything. """
         self.bk = bk        # needed by run()
         if bk not in self.view.getAllBooks().keys():
             return None
+        userAdjs = None
+        if analyse:
+            restart = False
+            # Every layout run rewrites the book's AdjList (TeX reads it from the config), so keep
+            # the user's own, to be written back with the results however the analysis ends
+            adj = self.view.get_adjlist(bk, save=False)
+            userAdjs = adj.copy() if adj is not None else None
         self.clear_book_files(bk)
         # suppress peripherals
         oldvals = {}
@@ -1358,6 +1454,7 @@ class PTXFiller:
         self.job = None
         self.hascash = False
         self.init_adjs = None       # the previous book's, which would be saved under its name
+        self.restarting = restart
         #print(f"Filling {bk}")
         if restart:
             adjlist = self.view.get_adjlist(bk, save=False)
@@ -1371,22 +1468,26 @@ class PTXFiller:
             init_layout = self.hooks.run_layout(None, parms, {}, -1, -1, genfiles=True)
         except TimeoutError:
             msg = "Stopped" if self.cancelled else "Timed out"
+            self._restoreUserAdjs(userAdjs)
             self.progress(ProgressEvent(bk, 0, "failed", msg=msg))
             self.printbk(bk, "T", progress=False)
             return (False, f"{msg}: {bk} before initial layout")
         self.init_adjs = self.adjs
+        # (ok, message): ok is True if filled, False if typeset but not filled, None if it couldn't be typeset
         if init_layout is None:
+            self._restoreUserAdjs(userAdjs)
             self.printbk(bk, "!")
-            return (False, f"Failed: {bk}")
+            return (None, f"Failed: {bk}")
         #print(f"Init laid out {bk}")
         np = self.parlocs.numPages()
         if np == 0:
             msg = "TeX error - see log" if self.job.res else "No page data"
             logger.warning(f"{bk}: initial layout produced no pages (xetex result {self.job.res}); "
                            f"see {self.job.outfname.replace('.tex', '.log')}")
+            self._restoreUserAdjs(userAdjs)
             self.progress(ProgressEvent(bk, 0, "failed", msg=msg))
             self.printbk(bk, "x", progress=False)
-            return (False, f"Failed: {bk} {msg}")
+            return (None, f"Failed: {bk} {msg}")
         if restart and init_layout.first_failing_page is None:
             self.progress(ProgressEvent(bk, np, "already_filled", total=np))
             self.printbk(bk, "\u2713", progress=False)
@@ -1398,6 +1499,8 @@ class PTXFiller:
         self.hooks.basestate = state
         self.hooks.chapters = self.parlocs.chapters
         starttime = time()
+        if analyse:
+            return self.analyseOnly(bk, solver, state, userAdjs)
         #print(f"Solving {bk}")
         if restart:
             solver.shape_cache, solver.probe_cache = adjlist.get_cache()
@@ -1408,6 +1511,13 @@ class PTXFiller:
         else:
             state = res
             page = state.page
+        # The PDF is made from the last XeTeX run, which may have been a probe that was turned
+        # down, or that stopped at a chapter: lay out the whole book with what was chosen
+        try:
+            if not getattr(state, 'wholebook', False):
+                self.hooks.run_layout(solver, state.paragraph_params, state.float_anchors, -1, -1)
+        except TimeoutError:
+            logger.warning(f"{bk}: timed out laying out the whole book at the end")
         #if self.filter_params(state.paragraph_params, solver, page):
         self.createAdjs(state.paragraph_params, solver)
         endtime = time()
@@ -1422,7 +1532,7 @@ class PTXFiller:
         logger.log(15, f"shape_cache={solver.shape_cache}")
         if isinstance(res, HumanFixRequest):
             retval = (False, f"{res.message} at {bk} page {res.page} after {endtime-starttime}s")
-            self.progress(ProgressEvent(bk, res.page, 'complete', res.message, -1))
+            self.progress(ProgressEvent(bk, res.page, 'failed', res.message, -1))      # timed out or stopped
             self.printbk(bk, "T", progress=False)
         else:
             retval = (res.failures is None or not len(res.failures),
@@ -1435,15 +1545,84 @@ class PTXFiller:
             print(f"\n{bk}: mean={statistics.mean(self.stats)}, median={statistics.median(self.stats)}, sd={statistics.stdev(self.stats)}, quantiles={statistics.quantiles(self.stats)}")
         return retval
         
+    def _restoreUserAdjs(self, userAdjs):
+        """ Analyse Only stopped early: put back the user's AdjList, which the layout runs overwrote """
+        if userAdjs is None:
+            return
+        userAdjs.copy().createAdjlist()     # a copy has no read time, so it is written, not reread
+
+    def analyseOnly(self, bk, solver, state, userAdjs):
+        """ Analyse Only: probe sweeps over the whole book, from its unadjusted layout, to find
+            for each paragraph the least distorting setting for each line change from -2 to +2
+            (written to the AdjList as orig= and m2..p2, for the preview's smart adjustments).
+            Nothing is filled: the user's own adjustments are kept, and each becomes the shape
+            for the line change it gives, so the preview knows where each paragraph stands. """
+        starttime = time()
+        self.restarting = False         # deltas are measured from the unadjusted layout: write orig=
+        solver.bk = bk
+        solver.init_state = state
+        solver.numpages = state.numPages()
+        solver.baseline_lines = dict(state.layout.paragraph_total_lines)
+        pids = solver.paragraph_order
+        known = set(pids)
+        def fix(pid):       # a polyglot paragraph without a parnum is [1] in the AdjList but [] here
+            if pid not in known and pid.endswith("[1]") and pid[:-3] + "[]" in known:
+                return pid[:-3] + "[]"
+            return pid
+        own = {} if userAdjs is None else {fix(k): v for k, v in userAdjs.get_params().items()}
+        own = {k: v for k, v in own.items() if k in known and v != solver.neutral(k)}
+        params = {p: solver.neutral(p) for p in pids}
+        params.update(own)
+        # Only paragraphs without a row of their own get one written: rewriting a row (setval)
+        # would lose its marker, comment and other values
+        inFile = set() if userAdjs is None else {p for p in pids if userAdjs.find(*self.adjKey(p))[1]}
+        newRows = {p: v for p, v in params.items() if p not in inFile}
+        msg = None
+        try:
+            solver.collect_probes(state.layout, pids, dict(state.paragraph_params), isbase=True, page=-1)
+            solver.initial_probes(state, -1, solver.numpages + 2, fine=True)
+            # lay out with the user's own settings (the AdjList TeX reads is now theirs again)
+            if userAdjs is not None:
+                self.init_adjs = userAdjs.copy()
+            layout = self.hooks.run_layout(solver, newRows, state.float_anchors, -1, -1)
+            if layout is None:
+                msg = "Failed"
+            elif own:
+                solver.collect_probes(layout, list(own), params, force=set(own))
+        except TimeoutError:
+            msg = "Stopped" if self.cancelled else "Timed out"
+        if userAdjs is not None:
+            self.init_adjs = userAdjs.copy()
+        self.createAdjs(newRows, solver)    # the user's AdjList, plus orig= and the shapes found
+        unlockme()
+        if self.cpu_q is not None and self.job is not None:
+            self.cpu_q.put((os.getpid(), self.job.cpu_seconds))
+        if msg is not None:
+            self.progress(ProgressEvent(bk, 0, "failed", msg, -1))
+            self.printbk(bk, "T", progress=False)
+            return (False, f"{msg}: analysing {bk} after {time()-starttime:.0f}s")
+        self.job.pdffile = os.path.join(re.sub(r"\.\./?", "", os.path.dirname(self.job.pdffile)),
+                os.path.basename(self.job.pdffile))
+        self.createAdjs(newRows, solver, file=self.job.pdffile.replace(".pdf", ".adjlist"))
+        self.job.xdvtopdf(self.job.outfname, self.job.pdffile)
+        changeable = sum(1 for p in pids if any((p, d) in solver.shape_cache for d in (-2, -1, 1, 2)))
+        self.progress(ProgressEvent(bk, changeable, "analysed", str(len(pids)), state.numPages()))
+        self.printbk(bk, "A", progress=False)
+        return (True, f"Analysed {bk}: {changeable} of {len(pids)} paragraphs can change, "
+                      f"in {time()-starttime:.0f}s")
+
+    def adjKey(self, s):
+        """ (book, c.v, para) of a paragraph id as its AdjList row has it """
+        (r, para) = self.pidkey(s)
+        if r[1] == 0 and r[5]:
+            key = f"{r[5]}"
+        else:
+            key = f"{r[1]}.{r[2]}{r[5]}"
+        para = para or 1        # a paragraph TeX didn't number is the first, k.word ones too
+        return self.bk + r[3], key, para       # r[3] is the polyglot column letter, if any
+
     def createAdjs(self, parparms, solver, lastchap=0, file=None):
-        def mkkey(s):
-            (r, para) = self.pidkey(s)
-            if r[1] == 0 and r[5]:
-                key = f"{r[5]}"
-            else:
-                key = f"{r[1]}.{r[2]}{r[5]}"
-                para = para or 1
-            return self.bk + r[3], key, para       # r[3] is the polyglot column letter, if any
+        mkkey = self.adjKey
         def getchap(key):
             c, _d = key.split('.', 1) if '.' in key else (key, None)
             try:
@@ -1455,17 +1634,22 @@ class PTXFiller:
         fname = self.view.getAdjListFilename(self.bk)
         adjfname = os.path.join(self.view.project.srcPath(self.view.cfgid), "AdjLists", fname)
         if getattr(self, 'init_adjs', None) is None:
-            self.adjs = AdjList(int(self.expand*100), int(self.minexp*100), int(self.maxexp*100), fname=adjfname, gtk=None)
+            self.adjs = AdjList(round(self.expand*100), round(self.minexp*100), round(self.maxexp*100), fname=adjfname, gtk=None)
             doappend = True
         else:
             self.adjs = self.init_adjs.copy()
             doappend = False
+        if doappend is False and getattr(self, 'restarting', False):
+            # On a restart the copy has every row the run started with. A paragraph the solver
+            # has let go of (from the first failing page on) is neutral as far as it knows: so
+            # it must be laid out that way, not with the stretch it had before.
+            self.adjs.resetAllBut([mkkey(s) for s in parparms], round(self.expand*100))
         logger.log(12, f"{self.bk}: {parparms=}")
         for s, p in parparms.items():
             bk, key, para = mkkey(s)
             c = getchap(key)
             if lastchap == 0 or lastchap > int(c):
-                self.adjs.setval(bk, key, para, p[1], None, expand=int(p[0]*100), append=doappend)
+                self.adjs.setval(bk, key, para, p[1], None, expand=round(p[0]*100), append=doappend)
         self.adjs.sort()
         if solver is not None:
             for s in solver.paragraph_order:
@@ -1474,6 +1658,12 @@ class PTXFiller:
                 if lastchap != 0 and lastchap <= int(c):
                     break
                 hasshapes = any((s, a) in solver.shape_cache for a in range(-2, 3))
+                # The unadjusted line count, against which the deltas are measured. On a restart
+                # the first layout already has adjustments in it, so keep what the full fill found.
+                orig = solver.baseline_lines.get(s)
+                if not getattr(self, 'restarting', False):
+                    self.adjs.setdb(f"{bk} {key}[{para}]", "base", None, insert=False)     # the earlier name
+                    self.adjs.setdb(f"{bk} {key}[{para}]", "orig", None if orig is None else str(orig), insert=False)
                 for a in range(-2, 3):
                     keyv = f"{'p' if a >= 0 else 'm'}{abs(a)}"
                     if a == 0 and s in solver.forced_delta:
@@ -1484,11 +1674,14 @@ class PTXFiller:
                         if badness is None or ((e, t) == solver.neutral(s) and not hasshapes):
                             v = None
                         else:
-                            v = f"{int(e*100)}{t:+d}@" + f"{badness:.3f}".rstrip("0").rstrip(".")
+                            v = f"{round(e*100)}{t:+d}@" + f"{badness:.3f}".rstrip("0").rstrip(".")
                     else:
                         v = None
                     if v is not None:
                         self.adjs.setdb(f"{bk} {key}[{para}]", keyv, v)
+                    elif not getattr(self, 'restarting', False):
+                        # orig= was just rewritten: a shape left from an earlier run doesn't belong with it
+                        self.adjs.setdb(f"{bk} {key}[{para}]", keyv, None, insert=False)
         self.adjs.createAdjlist(fname=file)
         if file is None:
             tname = self.view.getLocalTriggerFilename(self.bk)
@@ -1511,6 +1704,7 @@ class PTXFiller:
             self.job.nopdf = True
             self.job.notracing = True
             self.job.silent = True
+            self.job.stopcheck = lambda: self.timedout or self.cancelled
             self.job.doit(noview=True, noaction=not genfiles)
             self.job.maxRuns = 0
 
@@ -1535,8 +1729,10 @@ class PTXFiller:
         else:
             self.job.piclist = None
 
-        if not hasattr(self.job, 'outfname'):
-            raise FileNotFoundError(self.view.getBooks())
+        if getattr(self.job, 'outfname', None) is None:
+            # e.g. a polyglot book that one of its projects doesn't have (the job said which)
+            raise FileNotFoundError(f"Nothing to typeset for {' '.join(self.view.getBooks())}:"
+                                    " is a book missing from one of the projects?")
         self.job.run_xetex(self.job.outfname, self.job.pdffile)
         if self.cpu_q is not None:
             self.cpu_q.put((os.getpid(), self.job.cpu_seconds))
@@ -1556,7 +1752,7 @@ class PTXFiller:
         self.badnesses = {p.pid(): p.badness for p in self.parlocs if isinstance(p, ParInfo)}
         statusfile = self.job.outfname.replace(".tex", ".status")
         self.parsestatus(statusfile)
-        print(prompt, flush=True, end="")
+        consoleprint(prompt)
         return self.job.res
 
     def progress(self, pEvent):
@@ -1632,20 +1828,24 @@ class PTXFiller:
             return parlocs[pindex]
         return None
 
-    def get_previous(self, pid, page=None):
+    def get_previous(self, pid):
+        """ The paragraph before pid, or None """
+        return self._neighbour(pid, -1)
+
+    def get_next(self, pid):
+        """ The paragraph after pid, or None """
+        return self._neighbour(pid, 1)
+
+    def _neighbour(self, pid, step):
         pindex = self.pidmap.get(pid)
         if pindex is None:
             return None
-        while pindex > 0:
-            pindex -= 1
+        pindex += step
+        while 0 <= pindex < len(self.parlocs):
             p = self.parlocs[pindex]
             if isinstance(p, ParInfo):
-                if page is None:
-                    return p.pid()
-                elif page in self.pidmap[p.pid()]:
-                    return p.pid()
-                else:
-                    return None
+                return p.pid()
+            pindex += step
         return None
 
     def get_paragraph_start_page(self, pid):
@@ -1688,13 +1888,15 @@ class PTXFiller:
         return False
 
     def pid_isjustified(self, pid):
+        if not self.view.get("c_justify"):
+            return False        # \JustifyParsfalse: TeX rags every paragraph, whatever its style says
         pind = self.get_para_ind(pid)
         if pind is None or pind >= len(self.parlocs):
             return True
         mrk = self.parlocs[pind].mrk
         res = self.justified.get(mrk)
         if res is None:
-            just = self.view.styleEditor.getval(mrk, 'justification', None)
+            just = self.view.styleEditor.getval(mrk, 'justification', None, includebase=True)
             res = just is None or just.lower() == 'justified'
             self.justified[mrk] = res
         return res
@@ -1728,6 +1930,7 @@ class PTXFiller:
             logger.log(15, f"{pnum=} {self.underfills[pnum]}")
 
     def read_badnesses(self):
+        from ptxprint.xdv.spacing_oddities import SpacingOddities
         xdvname = self.job.outfname.replace(".tex", ".xdv")
         xdvreader = SpacingOddities(xdvname, parent=self.parlocs,
                                     fontsize=float(self.view.get("s_fontsize", 1)))
@@ -1751,7 +1954,8 @@ class PTXFiller:
 
     def analyse_bw(self, testfn, page, trackp=False):
         xdvname = self.job.outfname.replace(".tex", ".xdv")
-        xdv = XdvSpaceMeasure(xdvname, self.parlocs, testfn=testfn, page=max(page, 0), trackp=trackp)
+        # from the page before: a paragraph carried over onto the page is measured whole
+        xdv = XdvSpaceMeasure(xdvname, self.parlocs, testfn=testfn, page=max(page - 1, 0), trackp=trackp)
         for (opcode, data) in xdv.parse():
             pass
         

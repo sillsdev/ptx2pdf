@@ -185,7 +185,7 @@ def main():
 
     if len(sys.argv) < 3:
         print ("xdv.py infile outfile\nDoes full copy to an identical file")
-    proc(sys.argv[1], sys.argv[2])
+    procxdv(sys.argv[1], sys.argv[2])
 
 if __name__ == "__main__":
     main()

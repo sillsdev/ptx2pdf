@@ -1,0 +1,3 @@
+# Symbols Charis lacks but Source Code Pro has: the filled triangle (for the warning sign on some
+# labels), the arrow buttons of the preview, and the black circle (the current choice in some menus)
+"([▲▼◀▶●])" > "\\zcode \1\\zcode*"

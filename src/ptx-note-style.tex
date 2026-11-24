@@ -167,9 +167,17 @@
 
 %+cnote_startnote_start
 \def\b@lance{BALANCE}
+% A missing caller (\f \fr 1.3) would take the next marker as the caller and fail obscurely
+\newif\ifb@dc@ller
+\def\c@llercheck#1#2\E{\b@dc@llerfalse\ifx#1\c@llerend\else\ifcat\relax\noexpand#1\b@dc@llertrue\fi\fi}
+\def\c@llerend{\c@llerend}
 \lowercase{
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
   \ifinn@te \MSG{Note marker (\newn@testyle) found while still in note style, after \c@rref. End notes properly, notes may not nest.}\endn@testyle*\fi
+  \c@llercheck#1\c@llerend\E
+  \ifb@dc@ller \errmessage{Note marker (\newn@testyle) after \c@rref\space has no caller. Is it a nested or unclosed note?}%
+    \let\n@tec@ller\pl@s
+  \else \def\n@tec@ller{#1}\fi
   \trace{n}{startn@testyle \newn@testyle #1}%
   \traceifset{startnotestyle}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
@@ -188,7 +196,7 @@
     \advance\fmc@unt 1
     \getp@ram{notebase}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\edef\n@tebase{\newn@testyle}\else\edef\n@tebase{\p@ram}\fi
     \csname before-\newn@testyle\endcsname
-    \def\t@st{#1}%
+    \let\t@st\n@tec@ller
     \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
       \w@sautomarktrue
       \inc@utonum{\newn@testyle}%
@@ -196,7 +204,7 @@
     \else
       \w@sautomarkfalse
       \ifx\t@st\min@s \def\them@rk{}% if it is - then there is no caller
-    \else \trace{n}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\def\them@rk{#1}% otherwise the caller is the parameter
+    \else \trace{n}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\let\them@rk\n@tec@ller% otherwise the caller is the parameter
     \fi\fi
     \trace{n}{starn@testyle - create tmp}%
     \edef\fnt@mp{\string\@parnote{\newn@testyle}{\ifdiglot\dc@rref\else\c@rref\fi}{\the\fmc@unt}{\them@rk}}%

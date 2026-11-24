@@ -93,7 +93,6 @@ branches = get_branches()
 
 git("commit", "-a", "-m", "Releasing "+args.version)
 git("tag", tagopt, "-m", "Tagging "+args.version, args.version)
-git("push", "--tag")
 git("push")
 
 if 'origin/packaging' not in branches.values():
@@ -112,4 +111,4 @@ else:
 git("reset", "--hard", "master")
 git("push")
 git("checkout", "master")
-
+git("push", "--tag")

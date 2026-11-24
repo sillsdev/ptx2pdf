@@ -167,7 +167,7 @@
 
 %\def\LinkBorderstyle{}
 
-\def\pdfURL#1{\set@URLLinkBorderstyle\trace{A}{Appyling PDFurl}\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\@URLLinkBorderstyle\empty\else/BS<<\@URLLinkBorderstyle>>\fi/H/I\ifx\@GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
+\def\pdfURL#1{\set@URLLinkBorderstyle\trace{A}{Appyling PDFurl}\ifActions\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\@URLLinkBorderstyle\empty\else/BS<<\@URLLinkBorderstyle>>\fi/H/I\ifx\URLLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi/A<</S/URI/URI(#1)>>>>}\fi}% no link at all without actions (PDF/X)
 
 \edef\h@shcatcode{\the\catcode`\#}
 \catcode`\#=12
@@ -175,7 +175,7 @@
 \catcode`\#=\h@shcatcode
 
 \def\pdfG@T@#1#2 #3\E{\set@GOTOLinkBorderstyle\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#3}\ifx\tmp\empty\edef\tmp{#1#2}\else\edef\tmp{\zap@space #1#2.#3 \empty}\fi\fi
-  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\@GOTOLinkBorderstyle\empty\else/BS<<\@GOTOLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\GOTOLinkBorderCol]\fi\ifActions/A<</S/GoTo/D(\tmp)>>\fi>>}%
+  \ifActions\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\@GOTOLinkBorderstyle\empty\else/BS<<\@GOTOLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\GOTOLinkBorderCol]\fi/A<</S/GoTo/D(\tmp)>>>>}\fi%
   \trace{A}{link is GOTO to '\tmp'}%
 }
 \def\pdfGOTO#1{\x@\pdfG@T@#1 \E}
@@ -188,7 +188,8 @@
 
 \def\PDFposfromattr{\ifActions\dimen0=\baselineskip\raise\the\dimen0\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos 1.4]}}\fi}
 \SetSpeciallAttribs{link-id}{\noexpand\maybePDFp@sfromattr\noexpand\makelabelfromattr}{}
-\SetSpeciallAttribs{link-href}{\ifhrefLink\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi\fi}{\ifhrefLink\ifx\attr@b\empty\else\special{pdf:eann}\fi\fi}
+\SetSpeciallAttribs{link-href}{\ifhrefLink\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi\fi}{\ifhrefLink\ifx\attr@b\empty\else\ifActions\special{pdf:eann}\fi\fi\fi}
+\SetSpeciallAttribs{href}{\ifhrefLink\ifx\attr@b\empty\else\noexpand\trace{A}{Applying href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi\fi}{\ifhrefLink\ifx\attr@b\empty\else\ifActions\special{pdf:eann}\fi\fi\fi}% as link-href (the name HTML and Markdown use)
 \SetSpeciallAttribs{outline-entry}{\noexpand\m@keoutlinefromattr{\attr@b}}{}
 \SetSpeciallAttribs{link-title}{\noexpand\maybem@keoutlinefromattr{\attr@b}}{}
 \def\maybem@keoutlinefromattr#1{\testt@ttrn@me{link-href}\if@ttrexists\else\m@keoutlinefromattr{#1}}
@@ -200,7 +201,8 @@
     \PDFposfromattr
     \let\tmpattrb\attr@b
     \get@ttribute{outline-level}\ifx\attr@b\relax \def\attr@b{2}\fi% Outline level:0:book, 1:chapter
-    \special{pdf:outline \attr@b\space << /Title (#1) /A << /S /GoTo /D (\tmpattrb) >> >>}%
+    \ifActions\special{pdf:outline \attr@b\space << /Title (#1) /A << /S /GoTo /D (\tmpattrb) >> >>}%
+    \else\special{pdf:outline \attr@b\space << /Title (#1) /Dest [@thispage /Fit] >>}\fi% as \pdf@utline
   \fi
 }
 %%%%%%%%%
@@ -219,7 +221,9 @@
 }
 
 \def\setup@ttr@grab#1{%
-  \x@\xdef\csname \gr@bname\endcsname{\liter@lkerns\catcode`\/=12\relax % FIXME other active chars too?
+  % attribute values are text: / and the active characters (such as ( and [) are read as themselves
+  % (\proc@ttribs makes them active again), as for milestones
+  \x@\xdef\csname \gr@bname\endcsname{\liter@lkerns\catcode`\/=12\noexpand\deactiv@tecustomch@rs\relax
     \csname @@\gr@bname\endcsname}%Note this is grabbing atttributes, don't put anything after
   \x@\gdef\csname @@\gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}\sm@rtquotes#1}%
 }
@@ -471,7 +475,7 @@
   \ifRefLocLink
     \get@ttribute{loc}%
     \ifx\attr@b\relax\unhbox0\else
-      \pdfGOTO{\attr@b}\unhbox0\special{pdf:eann}%
+      \pdfGOTO{\attr@b}\unhbox0\ifActions\special{pdf:eann}\fi%
     \fi
   \fi
 }

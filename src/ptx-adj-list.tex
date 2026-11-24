@@ -63,7 +63,7 @@
 \def\parse@djline #1 #2 #3[#4]#5\end{%
  \uppercase{\xdef\@djref{\detokenize{#1}}}\xdef\@djref{\@djref\detokenize{#2}}%
  \gdef\@djustment{#3}%
-  \warnspace #1 \E\ifx\@djustment\tmp\else\MSG{** WARNING: adjustlist entries should not contain spaces at #1 #2. Value given: (#3)}\fi
+  \warnspace #3 \E\ifx\@djustment\tmp\else\MSG{** WARNING: adjustlist entries should not contain spaces at #1 #2. Value given: (#3)}\fi
  \x@\parse@djlinesub #4 ...\E %Check for extended format.
   \ifnum\@djparindex=0 \global\@djparindex=1 \fi
   \ifadjslurp
@@ -166,7 +166,7 @@
     \global\curr@djpar=\ifhmode 1 \else 0 \fi\fi
  \ifMarkAdjustPoints\trigg@rmark{AP}\fi %This makes the page hard to read
  \trace{b}{BALANCE paradj: ref=\adjc@rref: para=\the\curr@djpar: baselineskip=\the\baselineskip}%
- \trace{j}{checkadjustments: curref=\meaning\adjc@rref , prevref=\meaning\pr@vref,  curradjpar=\the\curr@djpar , \ifadjslurp\else adjref=\meaning\@djref , adjparindex=\the\@djparindex \else\ifx\adjc@rref\@djref MATCH FOUND\fi\fi}%
+ \trace{j}{checkadjustments: curref=\meaning\adjc@rref , prevref=\meaning\pr@vref,  curradjpar=\the\curr@djpar , \ifadjslurp\else adjref=\meaning\@djref , adjparindex=\the\@djparindex \ifx\adjc@rref\@djref MATCH FOUND\fi\fi}%
  \ifdiglot
    \x@\global\x@\let\csname\prevrefn@me\endcsname=\adjc@rref
  \else

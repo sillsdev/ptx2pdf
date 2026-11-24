@@ -5,7 +5,7 @@ from shutil import rmtree
 from zipfile import ZipFile, is_zipfile
 
 import ptxprint
-from ptxprint.utils import saferelpath, appdirs, bookcodes, parseBookList
+from ptxprint.utils import saferelpath, appdirs, booknumbers, parseBookList
 from ptxprint.runner import popen
 from pathlib import Path
 # import debugpy
@@ -175,6 +175,9 @@ def _runtest(prjTree, config, macrosdir, project, doit, args):
     if test_result['errors']:
         err_str = '\n\t'.join(['', *test_result['errors']])
         print(f"The following events could not be replayed:{err_str}")
+    if test_result['messages']:
+        msg_str = '\n\t'.join(['', *test_result['messages']])
+        print(f"PTXprint's messages differed from the test's:{msg_str}")
     if test_result['cfg']:
         cfg_str = '\n\t'.join(['', *test_result['cfg']])
         print(f"The following differences were found in the cfg:{cfg_str}")
@@ -186,6 +189,15 @@ def _runtest(prjTree, config, macrosdir, project, doit, args):
     if test_result['diff']:
         print(f"The following files were not identical: {', '.join(test_result['diff'])}")
     return 1
+
+def isGui(args):
+    """ Whether this run shows the GUI, rather than printing, running a command or a test. """
+    return not args.print and args.test is None and not args.cmd
+
+def giveUp(msg):
+    """ Stops a run without the GUI that has nothing to work on, saying why. """
+    print(msg)
+    sys.exit(1)
 
 commands = {
     'print': (),
@@ -199,7 +211,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
 
     # Positional Argument
     parser.add_argument('pid', nargs="?", help="Project ID or full path to a ptxprint.cfg file")
-    parser.add_argument('cmd', nargs="?", choices=list(commands.keys()), help="Non interactive command to execute")
+    parser.add_argument('cmd', nargs="?", choices=list(commands.keys()), help="Non interactive command to execute. "
+                        "Exit codes are in docs/documentation/exitcodes.md")
 
     # Commonly Used Arguments
     parser.add_argument('-b', '--books', help="List of books to print")
@@ -234,17 +247,20 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     # Performance & Debugging
     parser.add_argument("-j", "--jobs", type=int, default=1, help="Number of multiprocessing jobs to run")
     parser.add_argument("--restart", action="store_true", default=False, help="fill: start from the current adjustments")
+    parser.add_argument("--analyse", action="store_true", default=False, help="fill: only measure how paragraphs can shrink or grow (Analyse Only), keeping the current adjustments")
     parser.add_argument("--stop", action="store_true", default=False, help="fill: stop each book at its first unfixable page")
     parser.add_argument('-q', '--quiet', action='store_true', help="Suppress splash screen and limit output")
     parser.add_argument('-l', '--logging', help="Logging level [DEBUG, INFO, WARN, ERROR, number]")
     parser.add_argument('--logfile', default='ptxprint.log', help='Set log file (default: ptxprint.log) or "none"')
-    parser.add_argument('-to', '--timeout', type=int, default=1200, help="XeTeX runtime timeout (seconds)")
+    parser.add_argument('-to', '--timeout', type=int, default=None, help="Stop a XeTeX run that takes longer than this (seconds; default no limit)")
     parser.add_argument('--debug', action="store_true", help="Enable debug output")
 
     # Font Settings
     parser.add_argument('-f', '--fontpath', action='append', help="Specify directories containing fonts (repeatable)")
     parser.add_argument('--nofontcache', action="store_true", help="Disable font cache updates")
     parser.add_argument('--testsuite', action="store_true", help="Use only fonts from project and test suite")
+    parser.add_argument('--readonly', action="store_true", help="With -P: print without changing any of the project's shared "
+                                        "files (configuration, styles, picture lists, adjust lists)")
 
     # PDF & Output Settings
     parser.add_argument('-F', '--difffile', help="Generate difference PDF against another file")
@@ -275,10 +291,14 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
         argsfn(parser)
 
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        from ptxprint.gtkutils import HelpTextViewWindow
-        tv = HelpTextViewWindow()
+        # made only when there is something to show: importing Gtk opens the display, and a test
+        # (-t) must first choose its own (broadway)
+        helpwin = []
         def print_message(message, file=None):
-            tv.print_message(message)
+            if not helpwin:
+                from ptxprint.gtkutils import HelpTextViewWindow
+                helpwin.append(HelpTextViewWindow())
+            helpwin[0].print_message(message)
         parser._print_message = print_message
         os.environ['PATH'] += os.pathsep + sys._MEIPASS.replace("/","\\")
 
@@ -294,7 +314,14 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
     if argsline is not None:
         opts = shlex.split(argsline)
         args = parser.parse_args(opts, args)
+    linepos = (args.pid, args.cmd) if argsline is not None else (None, None)
     args = parser.parse_args(None, args)
+    # A positional missing from the command line is set to None, even if argsline gave it
+    if args.pid is None and args.cmd is None:
+        args.pid, args.cmd = linepos
+    if args.fontpath:
+        # from where ptxprint was started: a print job runs in another directory
+        args.fontpath = [os.path.abspath(f) for f in args.fontpath if f]
     if args.pid in commands and args.cmd is None:
         args.cmd = args.pid
         args.pid = None
@@ -303,6 +330,8 @@ def main(doitfn=None, argsline=None, retview=False, viewClass=None, argsfn=None)
             args.cmd = "print"
         elif args.action == "createArchive":
             args.cmd = "archive"
+        elif args.action:
+            args.cmd = "action"     # run headless: the action, then exit (not the GUI)
 
     testserver = None
     if args.test is not None and os.path.isfile(args.test) and not is_zipfile(args.test):
@@ -406,6 +435,7 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
         testtree = os.path.dirname(test_project.path)
         args.projects.append(testtree)
 
+    pidgiven = args.pid is not None     # not just the one used last time
     if (args.extras & 16) == 0 and os.path.exists(conffile):
         config.read(conffile, encoding="utf-8")
         if args.pid is None:
@@ -444,7 +474,7 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
             args.projects.append(candidates[0]['path'])
             print(f"Adding {candidates[0]['path']}")
         elif len(candidates) > 1:
-            if not args.print and args.test is None and not args.cmd:
+            if isGui(args):
                 from ptxprint.gtkview import chooseProjectsDir
                 chosen = chooseProjectsDir(candidates)
                 if chosen is None:
@@ -456,8 +486,11 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                     args.projects.append(c['path'])
                     print(f"Adding {c['path']}")
     elif not any(os.path.isdir(p) for p in args.projects):
-        print(f"Projects directories do not exist in {args.projects}. Quitting")
-        sys.exit(1)
+        msg = _("Can't find the projects folder: {}").format(", ".join(args.projects))
+        if not isGui(args):
+            giveUp(msg)
+        print(msg)
+        args.projects = []      # the GUI asks for one
 
     if args.lang is None:
         args.lang = getnsetlang(config)
@@ -465,14 +498,14 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
     if sys.platform.startswith("linux") and not args.nox11:
         os.environ['GDK_BACKEND'] = 'x11'
     if (args.extras & 8) != 0 or not len(args.projects):
-        if not args.print and args.test is None and not args.cmd:
+        if isGui(args):
             from ptxprint.gtkview import chooseProjectsDir
             chosen = chooseProjectsDir(find_pt_candidates())
             if chosen is None:
                 sys.exit(1)
             args.projects = [str(chosen)]
         else:
-            sys.exit(1)
+            giveUp(_("Can't find a projects folder. Give one with -p"))
     else:
         args.projects = [os.path.abspath(p.replace("\\", "/")) for p in args.projects if p is not None]
         args.projects = [p[:-1] if p.endswith("/") else p for p in args.projects]
@@ -578,12 +611,27 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
         prjTree.addTreedir(p)
         log.debug(f"Adding project tree: {p}")
 
+    if not len(prjTree.projects) and args.test is None:
+        msg = _("There are no projects in: {}").format(", ".join(args.projects))
+        if not isGui(args):
+            giveUp(msg)
+        print(msg)
+        from ptxprint.gtkview import chooseProjectsDir
+        chosen = chooseProjectsDir(find_pt_candidates())
+        if chosen is None:
+            sys.exit(1)
+        args.projects = [os.path.abspath(str(chosen))]
+        prjTree = ProjectList()
+        prjTree.addTreedir(args.projects[0])
     project = None
     if args.pid:
         project = prjTree.findProject(args.pid)
         if project is None:
-            print(f"Can't find project {args.pid} in {prjTree.treedirs}")
-            args.pid = None     # keep going anyway, just with no pid specified.
+            msg = _("Can't find project {} in: {}").format(args.pid, ", ".join(prjTree.treedirs))
+            if pidgiven and not isGui(args):
+                giveUp(msg)
+            print(msg)
+            args.pid = None     # the GUI opens as if no project was asked for
         if args.config:
             if project is None:
                 args.config = None
@@ -596,7 +644,7 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
         finally:
             if testtree is not None and not args.testing:
                 rmtree(testtree, ignore_errors=True)
-    elif args.print or args.cmd is not None or retview:
+    elif not isGui(args) or retview:
         mainw = viewClass(prjTree, config, macrosdir, args, odir=scriptsdir)
         mainw.setup_ini()
         if args.pid:
@@ -608,9 +656,8 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
         log.debug(f"Created viewmodel for {project} in {args.projects}")
         initFontCache(nofclist=args.nofontcache).wait()
         log.debug("Loaded fonts")
-        if not retview and mainw.project is None and (args.print or args.cmd is not None):
-            print("No project to work on. Quitting")
-            sys.exit(1)
+        if not retview and mainw.project is None and not isGui(args):
+            giveUp(_("No project to work on. Give a project id"))
         if args.print or retview or args.cmd in ("print", "fill"):
             if args.pub:
                 from ptxprint.publications import printSetup
@@ -642,8 +689,10 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                         setupargs = pvars,
                         pubid = pub)
                     mprint.submit_print_job(RefList(books), bparms)
-                mprint.wait()
-                sys.exit(0)
+                results = mprint.wait()
+                # each is (publication, worker, res, ...): res 0 is printed (False is a failed job, and False == 0)
+                ok = all(type(r[2]) is int and r[2] == 0 for r in results if len(r) > 2)
+                sys.exit(0 if ok else 1)
             if args.books is not None and len(args.books):
                 mainw.bookNoUpdate = True
                 mainw.set("ecb_booklist", args.books)
@@ -709,11 +758,30 @@ def _main(args, config, conffile, doitfn, retview, viewClass):
                 mprint.submit_fill_jobs(mainw.getBooks(), bparms, stop=args.stop, chapters=chapters)
                 results = mprint.wait()
                 mprint.teardown()
-                print("\n".join(str(r) for r in sorted(results, key=lambda a:(int(bookcodes.get(a[0], 100)),) + a)))
+                print("\n".join(str(r) for r in sorted(results, key=lambda a:(booknumbers.get(str(a[0]).split(" ")[0], 1000), str(a)))))
+                # each is (book, worker, filled?, message): filled? is True, False (typeset but not
+                # filled) or None (couldn't be typeset). An exception has no worker; a missing book
+                # gives just a message. Exit codes are listed in docs/documentation/exitcodes.md:
+                # 1 (bad) if nothing was filled or anything couldn't be typeset, else 6 (a warning)
+                # if a book was typeset but not filled.
+                res = 0 if len(results) else 1
+                if not len(results):
+                    print("Nothing to fill")
+                for r in results:
+                    if len(r) > 3 and r[2] is True:
+                        continue
+                    if len(r) > 3 and r[2] is False and r[1] is not None:
+                        res = max(res, 6)
+                    else:
+                        res = 1
+                        break
             else:
                 job = doit(mainw, noview=True, nothreads=True)
                 res = 0 if job is None else job.res
                 print(f"{res=}")
+                # see docs/documentation/exitcodes.md: XeTeX's own codes, or being killed, are just failures
+                if res not in (0, 3, 4, 5):
+                    res = 1
         if args.action:
             actionfn = getattr(mainw, args.action, None)
             if not callable(actionfn):

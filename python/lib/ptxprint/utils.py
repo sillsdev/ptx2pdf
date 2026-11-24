@@ -13,7 +13,7 @@ from inspect import currentframe
 from struct import unpack
 from dataclasses import dataclass, field
 from typing import Any, Optional, Callable, Literal
-import contextlib, pickle, gzip
+import contextlib, pickle, gzip, hashlib
 import regex
 import threading
 from subprocess import check_output, call
@@ -191,7 +191,7 @@ class BuildParams:
 class ProgressEvent:
     book:   str
     page:   int
-    mode:   Literal["probe", "complete", "failed", "badpage", "goodpage", "page", "already_filled"]
+    mode:   Literal["probe", "complete", "failed", "badpage", "goodpage", "page", "already_filled", "analysed"]
     msg:    Optional[str] = None
     total:  Optional[int] = None
 
@@ -238,6 +238,18 @@ def setup_i18n(i18nlang):
     if "_" in lang:
         lang = lang[:lang.find("_")].lower()
     
+def uiLangCode(uilang, known):
+    """ Which of the known language codes ('ar_SA', 'fr', ...) the UI language is: it may come with
+        an encoding or a region, e.g. 'ar_SA.UTF-8', 'fr_FR'. None if none of them. """
+    base = (uilang or "").split(".")[0].replace("-", "_")
+    if base in known:
+        return base
+    short = base.split("_")[0].lower()
+    for k in known:
+        if k.split("_")[0].lower() == short:
+            return k
+    return None
+
 def putenv(k, v):
     if sys.platform.startswith('win'):
         from ctypes import cdll
@@ -298,12 +310,14 @@ def coltotex(s):
 
 def coltoonemax(s):
     try:
+        # 0-255 channel values map onto 0-1 by dividing by 255 (not 256), so that converting back
+        # and forth (textocol) gives the same colour, rather than drifting a little each time.
         if "," in s:
-            return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
+            return [float(x)/255. for x in s[s.find("(")+1:-1].split(",")]
         elif " " in s:
             return [float(x) for x in s.split(" ")]
         elif s.startswith("#"):
-            return [float(int(s[i:i+2], 16))/256. for i in range(1, 6, 2)]
+            return [float(int(s[i:i+2], 16))/255. for i in range(1, 6, 2)]
         else:
             return [0.8, 0.8, 0.8]
     except (ValueError, TypeError):
@@ -318,7 +332,7 @@ def textocol(s):
         except (ValueError, TypeError):
             vals = [0, 0, 0]
     elif " " in s:
-        vals = [int(float(x) * 255) for x in s.split(" ")]
+        vals = [int(round(float(x) * 255)) for x in s.split(" ")]   # round, not truncate: see coltoonemax
     elif "rgb" in s:
         vals = [float(x) for x in s[s.find("(")+1:-1].split(",")]
     else:
@@ -631,6 +645,18 @@ headermappings = {
     "-empty-":                   r"\empty"
 }
 
+polyglotCodes = "LRABCDEFG"
+
+def hdrColumn(v):
+    """ The diglot/polyglot column (L, R, A-G) a header/footer item comes from.
+        Configs from before polyglot headers say Pri/Sec instead. """
+    v = (v or "").strip()
+    if v == "Sec":
+        return "R"
+    if len(v) == 1 and v in polyglotCodes:
+        return v
+    return "L"
+
 def localhdrmappings():
     return {
         _("First Reference"):           r"\firstref",
@@ -756,7 +782,7 @@ def texprotect(s):
 wfreg = "\\p{L}\\p{M}\\p{Sk}\\-\u200C\u200D"
 special_regexes = {
     'ba': f'(?=$|[^{wfreg}])',
-    'BA': f'(?=$|[{wfreg})',
+    'BA': f'(?=$|[{wfreg}])',
     'bb': f'(?<=^|[^{wfreg}])',
     'BB': f'(?<=^|[{wfreg}])',
     'w': f'[{wfreg}]',
@@ -770,7 +796,10 @@ def regex_localiser(r, script=None):
 def cachedData(filepath, fn):
     cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")
     os.makedirs(cfgdir, exist_ok=True)
-    cfgfilepath = os.path.join(cfgdir, os.path.basename("{}.pickle_{}.gz".format(filepath, DataVersion)))
+    # keyed on the whole path (same named files in two projects) and when it was changed (edits)
+    pathkey = hashlib.sha1(os.path.abspath(filepath).encode("utf-8")).hexdigest()[:10]
+    testbase = "{}.{}.pickle".format(os.path.basename(filepath), pathkey)
+    cfgfilepath = os.path.join(cfgdir, "{}_{}_{}.gz".format(testbase, DataVersion, int(os.stat(filepath).st_mtime)))
     logger.debug(f"Reading cache file {cfgfilepath}")
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
@@ -778,9 +807,9 @@ def cachedData(filepath, fn):
                 return pickle.load(inf)
             except:
                 pass        # if the pickle loading fails, rebuild the pickle file
-    testbase = os.path.basename("{}.pickle".format(filepath))
+    oldbase = os.path.basename("{}.pickle_".format(filepath))     # from before the path key
     for l in os.listdir(cfgdir):
-        if l.startswith(testbase):
+        if l.startswith((testbase, oldbase)):
             os.unlink(os.path.join(cfgdir, l))
     logger.debug(f"Writing cache file {filepath}")
     with open(filepath, "r", encoding="utf8") as inf:
@@ -878,7 +907,8 @@ def xdvigetfonts(xdv):
 
 varpaths = (
     ('prjdir', lambda p,v: p.path),
-    ('settingsdir', lambda p,v: p.path),
+    # the folder the projects are in: configs say ${settingsdir}/OtherPrj/... for a file in another project
+    ('settingsdir', lambda p,v: os.path.normpath(os.path.join(p.path, '..'))),
     ('workingdir', lambda p,v: p.printPath(v.cfgid)),
 )
 
@@ -899,14 +929,15 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
             return pathlib.Path.__new__(cls, txt)
         varlib = cls.create_varlib(args[0])
         k = txt[2:txt.find("}")]
-        return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:])
+        # a path saved on Windows has \ in it, which only Windows reads as a separator
+        return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:].replace("\\", "/"))
 
     def __init__(self, txt, *args):
         if sys.version_info.major > 3 or sys.version_info.minor >= 12:
             if len(args) and str(txt).startswith("${"):
                 varlib = self.create_varlib(args[0])
                 k = txt[2:txt.find("}")]
-                txt = str(varlib[k]) + "/" + txt[len(k)+4:]
+                txt = str(varlib[k]) + "/" + txt[len(k)+4:].replace("\\", "/")
             super().__init__(txt)
 
     def withvars(self, aView, relto=None):
@@ -914,6 +945,9 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
             base = self.as_posix()
         else:
             base = os.path.join(relto, self.as_posix())
+        if not os.path.isabs(base):
+            # e.g. a Windows C:/... path read on Linux: relative to nothing we know, so keep it
+            return self.as_posix()
         varlib = self.create_varlib(aView)
         bestr = base
         bestk = None
@@ -926,7 +960,7 @@ class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath
                 bestk = k
                 bestr = str(rpath)
         if bestk is not None:
-            return "${"+bestk+"}/"+bestr
+            return "${"+bestk+"}/"+bestr.replace("\\", "/")      # relpath gives \ on Windows
         else:
             return self.as_posix()
 
@@ -945,17 +979,16 @@ class UnzipDir:
         self.mode = mode
 
     def infolist(self):
+        """ As a ZipFile's: names relative to the folder, as open() and read() take them """
         res = []
-        for dp, dn, fn in os.walk(self.filename):
-            for f in fn:
-                fp = os.path.join(dp, f)
-                res.append(ZipInfo.from_file(os.path.join(self.filename, fp), arcname=fp))
+        for n in self.namelist():
+            res.append(zipfile.ZipInfo.from_file(os.path.join(self.filename, n), arcname=n))
         return res
 
     def namelist(self):
         res = []
         for dp, dn, fn in os.walk(self.filename):
-            res.extend([os.path.join(dp, f) for f in fn])
+            res.extend([os.path.relpath(os.path.join(dp, f), self.filename).replace("\\", "/") for f in fn])
         return res
 
     def open(self, name, mode='rb', encoding=None, **kw):
@@ -970,7 +1003,7 @@ class UnzipDir:
         return res
 
     def extract(self, member, path=None, pwd=None):
-        copy2(os.path.join(os.filename, member), os.path.join(path, member) if path is not None else member)
+        copy2(os.path.join(self.filename, member), os.path.join(path, member) if path is not None else member)
 
     def extractall(self, path=None, members=None, pwd=None):
         for dp, dn, fn in os.walk(self.filename):

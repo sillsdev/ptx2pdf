@@ -159,21 +159,22 @@ class PageCMYKState(PdfStreamParser):
         extras = []
         if self.currgs is not None:
             overprint = dict.get(self.gstates[self.currgs], "/OP", "false") == "true"
-            if overprint != (b >= self.threshold):
+            if overprint != overprintme:
                 newgs = (self.currgs[:-1] if self.currgs.endswith("a") else self.currgs+"a")[1:]
                 extras = ["/"+newgs, "gs"]
                 if newgs not in self.gstates:
-                    opval = "true" if b >= self.threshold else "false"
-                    opmval = 1 if b >= self.threshold else None
+                    opval = "true" if overprintme else "false"
+                    opmval = 1 if overprintme else None
                     self._addgstate(newgs, self.currgs, op=opval, OP=opval, OPM=opmval)
                 self.currgs = "/"+newgs
         return extras + operands + [op]
 
     def rg(self, op, operands, **kw):
         rgb = [float(x) for x in operands[-3:]]
-        diffs = sum([(rgb[0] - x) * (rgb[0] - x) for x in rgb[1:]])
-        if diffs < 0.05:
-            return ["{:.2f}".format(rgb[0]), ('g' if op.lower() == op else "G")]
+        # only a real grey becomes grey: a pale colour (pink, light blue) must stay a colour
+        if max(abs(rgb[0] - x) for x in rgb[1:]) < 0.01:
+            grey = 0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]
+            return ["{:.2f}".format(grey), ('g' if op.lower() == op else "G")]
         self.hascolor = True
         cmyk = self.rgb2cmyk(*rgb)
         newop = "k" if op.lower() == op else "K"
@@ -188,7 +189,7 @@ class PageCMYKState(PdfStreamParser):
 
     def overprinttest(self, operands):
         vals = list(map(float, operands))
-        if vals >= self.threshold:
+        if vals[3] >= self.threshold:       # (c, m, y, k): enough black to overprint
             return True
         if self.testnumcols:
             numcols = sum(1 for v in vals if v > 0.)
@@ -254,8 +255,8 @@ class PageDuoToneStateWrite(PdfStreamParser):
         tocase = (lambda s: s.lower()) if op.lower() == op else (lambda s:s)
         hsv = rgb_to_hsv(*rgb)
         if self.hashue and isclose(hsv[0], self.spothsv[0], abs_tol=self.hrange) and hsv[1] > 0.01:
-            spot = self.spothsv[1] / hsv[1]
-            black = (1 - hsv[2]) - (1 - self.spothsv[2])
+            spot = min(1., hsv[1] / self.spothsv[1])        # a paler colour is less of the spot ink
+            black = max(0., (1 - hsv[2]) - (1 - self.spothsv[2]))
             newops = ["/CS1", tocase("CS"), "{:.2f}".format(black), "{:.2f}".format(spot), tocase("SCN")]
             self.usesColour = True
         else:
@@ -465,7 +466,8 @@ def fixhighlights(trailer, parlocs=None):
         pres = []
         for k, vannots in newannots.items():
             if k is None:
-                page.Annots.extend(vannots)
+                annots.extend(vannots)
+                continue
             for v in vannots:
                 q = []
                 rect = []

@@ -7,6 +7,8 @@ from ptxprint.multiprint import MultiPrint
 
 def printSetup(view, args):
     for k, v in args.items():
+        if k.startswith("__"):
+            continue
         view.setvar(k, v)
 
 # TreeStore layout:
@@ -252,6 +254,29 @@ class PublicationsView:
         self.ts[titer][2] = new_val
         self._updateStatus()
 
+    def applyToView(self, view=None, pid=None):
+        if view is None:
+            view = self.view
+        if pid is None:
+            piter = self._currentParent()
+            if piter is None:       # no publication highlighted: print the view as it is
+                return
+        else:
+            for piter, r in enumerate(self.ts):
+                if r[6] == pid:
+                    break
+            else:
+                return
+        row = self.ts[piter] 
+        books = row[1].strip()
+        if self._isModule(books):
+            view.set("r_book", "module")
+            view.moduleFile = books
+        else:
+            view.set("r_book", "multiple")
+            view.set("ecb_booklist", books)
+        printSetup(view, {cr[5]: cr[1] for cr in row.iterchildren()})
+
     def onPubEdited(self, widget, path, new_text):
         titer = self.ts.get_iter(path)
         if widget is self.builder.get_object("cr_pub_field"):
@@ -281,7 +306,7 @@ class PublicationsView:
         for (i, r) in self.iter_selected():
             books = r[1].strip()
             if self._isModule(books):
-                jobs.append((r, [books]))
+                jobs.append((r, books))     # a module is printed from its file name
                 continue
             refs, err = parseBookList(books)
             if err is not None or not len(refs):
@@ -298,9 +323,10 @@ class PublicationsView:
                 return
         self.printing = True
         btn.set_sensitive(False)
-        if getattr(self.view, 'mprint', None) is None:
+        # not the page filler's pool: starting a fill would stop these, and their progress would mix
+        if getattr(self.view, 'pubprint', None) is None:
             numproc = int(self.view.get("s_maxproc"))
-            self.view.mprint = MultiPrint(numproc=numproc, progress=True)
+            self.view.pubprint = MultiPrint(numproc=numproc, progress=False)     # (nothing reads its progress)
         for (r, books) in jobs:
             pid = r[6]
             pvars = {}
@@ -319,17 +345,23 @@ class PublicationsView:
                 setupfn = printSetup,       # must be module global
                 setupargs = pvars,
                 pubid = pid)
-            self.view.mprint.submit_print_job(books, bparms)
+            self.view.pubprint.submit_print_job(books, bparms)
         w = self.builder.get_object("btn_pubPrint")
         w.get_style_context().add_class("active")
         self._progress_watch_id = GLib.timeout_add(1000, self._pollProgress)
 
     def _pollProgress(self):
-        if self.view.mprint.is_finished():
+        if self.view.pubprint.is_finished():
             self.printing = False
             pbutton = self.builder.get_object("btn_pubPrint")
             pbutton.get_style_context().remove_class("active")
             self._updateStatus()
+            # each is (books, worker, res, ...): res 0 is printed (False is a failed job, and False == 0)
+            results = self.view.pubprint.get_results()
+            failed = [str(r[0]) for r in results if not (len(r) > 2 and type(r[2]) is int and r[2] == 0)]
+            if len(failed):
+                self.view.doError(_("Some publications failed to print"),
+                                  secondary=_("Failed: {}").format(", ".join(failed)))
             # Show the user where the publication PDFs were created
             startfile(self.view.project.printPath(None))
             return GLib.SOURCE_REMOVE

@@ -103,7 +103,7 @@ Some settings always come from the primary configuration, whatever the secondary
 
 **Notes.** Whether a text has footnotes and cross-references depends on that text's own configuration (its **Notes+Refs** settings). The layout of the notes area (separate or together, rules) is set on this tab.
 
-**Headers and footers.** The headers and footers are set in the primary configuration, on the **Header+Footer** tab. When diglot is on, each header part has **Pri** and **Sec** buttons. Choose **Pri** to use the primary text (its references and its font) for that part, or **Sec** to use the secondary text. If **Mirror Pages** is ticked on the **Layout** tab, the texts also swap sides on even pages, so each text stays on the same side relative to the binding.
+**Headers and footers.** The headers and footers are set in the primary configuration, on the **Header+Footer** tab. When diglot is on, each header part (and the center footer) has a small drop-down with the code letter of one of the texts in the table above. Choose **L** to use the primary text (its references and its font) for that part, **R** for the secondary text, or, in a polyglot, any of the other letters. The list shows only the texts you have set up, with each letter's project. If **Mirror Pages** is ticked on the **Layout** tab, the texts also swap sides on even pages, so each text stays on the same side relative to the binding.
 
 **Front matter.** The **Generate Front Matter** dialog (Peripherals tab) offers a **DIGLOT** template when diglot is on.
 
@@ -223,7 +223,7 @@ Tick **Captions** in that text's row. Also check that both texts use the same pi
 The two texts probably have the same picture with a different file name or at a different verse. On the **Pictures** tab, make the entries match, or remove the picture from one text.
 
 **The header shows the references of only one text.**
-On the **Header+Footer** tab, choose **Pri** or **Sec** for each part of the header. For example, use **Pri** for the left part and **Sec** for the right part.
+On the **Header+Footer** tab, choose a text letter in the drop-down in front of each part of the header. For example, use **L** for the left part and **R** for the right part. If a polyglot text's part stays empty, check that its book has an `\h` line: the reference takes the book name from it.
 
 **The primary text is on the left on some pages and on the right on others.**
 **Mirror Pages** is ticked on the **Layout** tab. With it, the columns swap on even pages. Untick it if you want the primary text always on the left.
@@ -287,7 +287,7 @@ Also: Diglot: Use default header settings · Needs: “Diglot (or Polyglot)” �
 
 > Checking this option will override the header settings and place the Reference Ranges on the outer edges and Page Number in (or near) the middle.
 
-This checkbox is normally hidden. In this version it is saved with the configuration but it does not change the printed headers. Set the headers on the **Header+Footer** tab instead, using the **Pri** and **Sec** buttons for each part.
+This checkbox is normally hidden. In this version it is saved with the configuration but it does not change the printed headers. Set the headers on the **Header+Footer** tab instead, using the text letter drop-down in front of each part.
 
 ##### Adjust Center Header Based on Column Widths
 

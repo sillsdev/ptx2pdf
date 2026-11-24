@@ -213,6 +213,7 @@ class Finisher(Gtk.Application):
         spot_rgba = self.builder.get_object("col_spotColor").get_rgba()
         spottolerance = self.builder.get_object("s_spotColorTolerance").get_value()
         spotcolor = f"rgb({spot_rgba.red * 256}, {spot_rgba.green  * 256}, {spot_rgba.blue  * 256})"
+        scale_to_fit = self.builder.get_object("c_scaleToFit").get_active()     # (a local of the other method)
 
         # run procpdf - what does outfname do?
         procpdf(output_pdf_path, input_pdf_path, output_format, doError, None, cover=None, spottolerance=spottolerance, spotcolor=spotcolor, scaletofit=scale_to_fit, output_filepath=output_pdf_path)

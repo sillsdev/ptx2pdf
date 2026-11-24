@@ -1050,3 +1050,74 @@ with open(sys.argv[2], 'w', encoding='utf8') as outf:
         outf.write(t)
 ```
 
+# Miscellaneous
+
+These snippets are not about TeX or changes, but involve other areas of the
+system.
+
+## Align Polyglots on Sections Only
+
+How can I align my diglot only on section headings and not worry about
+paragraphs within the sections?
+
+There are different alignment settings in the Diglots tab in PTXprint. The one
+we will use is 'Scored' (not 'Scored (Chapter)' or 'Scored (Verse)'). This uses
+a configuration file in the config area which is found in _project
+directory_/shared/ptxprint/_config_/merge-normal.cfg. To create it, print the
+diglot once which will ensure the file exists.
+
+### How the scoring works
+
+Every place where a column could be split is a possible sync point: a
+chapter number, a heading, a paragraph start, and so on. Each text gets
+about 51 points at each point where it has one. The two scores are added
+up, and the columns are lined up at that spot only if the total reaches 100.
+
+In the [DEFAULT] section, each line is a type of sync point:
+
+- 1 means "this counts" (worth 51 per text).
+- 0 means "ignore this".
+
+So a sync point set to 1 only lines up when *both* texts have it at the
+same verse (51 + 51 = 102). One text on its own (51) isn't enough.
+
+
+### The change to make
+
+In the [DEFAULT] section, change these two lines from 1 to 0:
+
+```
+PREVERSEPAR = 0     # was 1: a paragraph that starts with a verse number
+MIDVERSEPAR = 0     # was 1: a paragraph that starts in the middle of a verse
+```
+
+Leave these at 1:
+
+```
+PREVERSEHEAD = 1    # the usual section heading before a verse paragraph
+HEADING = 1         # a section heading that falls mid-verse
+CHAPTERHEAD = 1     # a heading right after \c
+CHAPTER = 1         # chapter numbers (see note below)
+```
+
+Leave everything else as it is. Save the file and print again.
+
+### Notes
+
+- *A heading lines up only if both texts have one at the same
+  verse.* If the primary heading is before verse 5 and the secondary heading is
+  before verse 6, neither one lines up. That section just continues to the
+  next heading both texts share. This is probably what they want.
+- *To make a heading in either text force a line-up*, change PREVERSEHEAD
+  and HEADING to 2. Each text then scores 102 on its own. The downside is
+  that this can cut a paragraph in half in the other text, so I'd only do it
+  if headings often fall at different verses.
+- *Chapter numbers:* with CHAPTER = 1 the columns also line up at every
+  chapter. That's usually fine, because NT chapters nearly always start with
+  a heading. If they want a section to run across a chapter break without
+  lining up, set CHAPTER = 0
+- *To undo everything*, delete merge-normal.cfg. PTXprint writes a fresh
+  default one on the next diglot print.
+- The [L] and [R] sections in the file can set Nali and NIV separately.
+  That isn't needed here, because [DEFAULT] applies to both.
+

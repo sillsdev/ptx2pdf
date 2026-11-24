@@ -171,9 +171,10 @@ class PDFImage:
                 res[PdfName("Filter")] = PdfName("DCTDecode")
             logger.debug(f"{len(res.stream)=}, {type(res.stream)=}")
         else:
-            spotb = (self.spotb * 255).astype(np.uint8).tobytes()
-            spotc = (self.spotc * 255).astype(np.uint8).tobytes()
-            res.stream = b"".join(b"".join([bytes(x) for x in z]) for z in zip(spotb, spotc))
+            # one byte of each component per pixel: black, spot
+            spotb = np.rint(np.clip(self.spotb, 0., 1.) * 255).astype(np.uint8).ravel()
+            spotc = np.rint(np.clip(self.spotc, 0., 1.) * 255).astype(np.uint8).ravel()
+            res.stream = np.stack([spotb, spotc], axis=-1).tobytes()
             res.Binary = True
             #self.compressor([res])
         return res
@@ -203,18 +204,18 @@ class PDFImage:
             hashue = False
         #import pdb; pdb.set_trace()
         if hashue:
-            # calculate as if all in the hsv colour range
-            spotb = (1 - hsv[2]) - (1 - hsvimg[:,:,2])
+            # calculate as if all in the hsv colour range: black ink is how much darker than the spot colour
+            spotb = np.clip((1 - hsvimg[:,:,2]) - (1 - hsv[2]), 0., 1.)
             # replace out of range colours with grey
-            m = np.logical_not(np.isclose(hsvimg[...,0], hsv[0], hrange))
-        if not hashue or not np.any(m) or hsv[1] == 0.:
+            m = np.logical_not(np.isclose(hsvimg[...,0], hsv[0], rtol=0., atol=hrange))
+        if not hashue or np.all(m) or hsv[1] == 0.:       # (m: pixels not in the spot colour)
             self.spotb = hsvimg[...,2]
             self.spotc = None
             self.colorspace = blackcspace
             return False
         else:
-            spotb[m] = hsvimg[m, 2]  # black volume
-            spotv = hsvimg[:,:,1] / hsv[1]
+            spotb[m] = 1. - hsvimg[m, 2]  # black ink (the colour space's black is ink, not lightness)
+            spotv = np.clip(hsvimg[:,:,1] / hsv[1], 0., 1.)
             spotv[m] = 0.
             self.spotc = spotv
             self.spotb = spotb

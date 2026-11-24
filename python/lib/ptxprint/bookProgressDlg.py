@@ -6,7 +6,7 @@ delivered via the existing multiprocessing.Queue / GLib.io_add_watch infrastruct
 """
 
 import math, logging, time
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk, GLib
 from ptxprint.utils import _
 
 logger = logging.getLogger(__name__)
@@ -23,6 +23,7 @@ STATUS_WARNING       = "warning"
 STATUS_FAILED        = "failed"
 STATUS_ALREADY_FILLED = "already_filled"
 STATUS_SKIPPED        = "skipped"
+STATUS_ANALYSED       = "analysed"
 STATUS_PAGE          = "page"
 
 # Single source of truth: status → (hex_color, msgid).
@@ -30,14 +31,28 @@ STATUS_PAGE          = "page"
 _STATUS_DATA = {
     STATUS_PENDING:        ("#AAAAAA", "Not yet started"),
     STATUS_ALREADY_FILLED: ("#FFFF99", "Already filled — no action needed"),
-    STATUS_SKIPPED:        ("#FFDAB9", "No page data — skipped pages, may need attention"),
-    STATUS_PROBING:        ("#98BCCA", "Probing — initial analysis"),
+    STATUS_SKIPPED:        ("#FFDAB9", "Skipped pages — needs attention"),
+    STATUS_PROBING:        ("#98BCCA", "Analysing — shrink or grow potential"),
+    STATUS_ANALYSED:       ("#8FD8C8", "Analysed — ready for manual adjustments"),
     STATUS_RUNNING:        ("#87CEEB", "Filling in progress"),
     STATUS_RUNNINGFAILED:  ("#D8C291", "Filling with bad pages"),
     STATUS_GOOD:           ("#98FB98", "Complete — all pages filled"),
     STATUS_WARNING:        ("#FFA500", "Incomplete — page(s) could not be solved"),
     STATUS_FAILED:         ("#F08080", "Failed — fault or timeout"),
 }
+
+# The colour legend under the bars shows one chip per group, in this order, in the colour of
+# the group's chip status. The ⓘ key lists every status, grouped the same way, in the order given.
+_LEGEND_GROUPS = (      # (label, chip status, statuses)
+    ("Waiting",   STATUS_PENDING, (STATUS_PENDING,)),
+    ("Analysing", STATUS_PROBING, (STATUS_PROBING,)),
+    ("Filling",   STATUS_RUNNING, (STATUS_RUNNING, STATUS_RUNNINGFAILED)),
+    ("Done",      STATUS_GOOD,    (STATUS_ALREADY_FILLED, STATUS_ANALYSED, STATUS_GOOD)),
+    ("Check",     STATUS_WARNING, (STATUS_WARNING, STATUS_SKIPPED)),
+    ("Failed",    STATUS_FAILED,  (STATUS_FAILED,)),
+)
+_DONE_STATUSES  = (STATUS_GOOD, STATUS_ALREADY_FILLED, STATUS_ANALYSED)
+_CHECK_STATUSES = (STATUS_WARNING, STATUS_SKIPPED)
 
 stoplabel = _("Stop!")
 
@@ -60,6 +75,7 @@ class BookProgressCell:
     def __init__(self, bookCode: str, stylep=None):
         self.bookCode = bookCode
         self._hadBadPage = False
+        self.firstBadPage = None        # for the end-of-run summary
         self._status = STATUS_PENDING
         self._total = None
 
@@ -100,6 +116,7 @@ class BookProgressCell:
     def reset(self):
         """Return cell to pending/grey state for a new job."""
         self._hadBadPage = False
+        self.firstBadPage = None
         self._total = None
         self._bar.set_fraction(0.0)
         self._bar.set_text(self.bookCode)
@@ -118,8 +135,15 @@ class BookProgressCell:
             total = event.total
             frac = (page / total) if total else 0.0
             self._bar.set_fraction(min(frac, 1.0))
-            self._bar.set_text(self._barText(page, total, prefix="init"))
+            self._bar.set_text(self._barText(page, total, prefix=_("analysing") if event.msg == "analysing" else "init"))
             self._applyColor(STATUS_PROBING)
+
+        elif mode == "analysed":       # page: paragraphs that can change; msg: all paragraphs
+            self._bar.set_fraction(1.0)
+            self._bar.set_text(self._barStatusText(_("Analysed")))
+            self._bar.set_tooltip_text(_("{0} of {1} paragraphs can shrink or grow by a line or two.\n"
+                    "Right-click a paragraph in the preview to change it.").format(page, event.msg))
+            self._applyColor(STATUS_ANALYSED)
 
         elif mode == "goodpage" or mode == "page":
             frac = (page / self._total) if self._total else 0.0
@@ -129,6 +153,8 @@ class BookProgressCell:
 
         elif mode == "badpage":
             self._hadBadPage = True
+            if page and (self.firstBadPage is None or page < self.firstBadPage):
+                self.firstBadPage = page
             frac = (page / self._total) if self._total else 0.0
             self._bar.set_fraction(min(frac, 1.0))
             self._bar.set_text(self._barText(page, self._total))
@@ -138,8 +164,8 @@ class BookProgressCell:
             self._bar.set_fraction(1.0)
             if not self._total:
                 self._applyColor(STATUS_SKIPPED)
-            elif self._hadBadPage:
-                self._bar.set_text(self._barStatusText(event.msg) + f"({self._total})")
+            elif self._hadBadPage or event.total == -1:     # -1: the filler says some pages failed
+                self._bar.set_text(self._barStatusText(event.msg or _("Failed")) + f"({self._total})")
                 self._applyColor(STATUS_WARNING)
             else:
                 self._bar.set_text(self._barStatusText(_("Complete ({self._total})").format(self=self)))
@@ -157,7 +183,8 @@ class BookProgressCell:
             self._applyColor(STATUS_SKIPPED if not self._total else STATUS_ALREADY_FILLED)
 
     def finish(self):
-        if self._status not in (STATUS_GOOD, STATUS_WARNING, STATUS_FAILED, STATUS_ALREADY_FILLED, STATUS_SKIPPED):
+        if self._status not in (STATUS_GOOD, STATUS_WARNING, STATUS_FAILED, STATUS_ALREADY_FILLED, STATUS_SKIPPED,
+                                STATUS_ANALYSED):
             self._applyColor(STATUS_FAILED)
 
 
@@ -166,7 +193,7 @@ class BookProgressCell:
 # ---------------------------------------------------------------------------
 
 class BookProgressDialog:
-    """Non-modal, persistent window showing per-book page-fill progress."""
+    """Non-modal, persistent window: what Analyse & Fill does, and per-book progress while it runs."""
 
     COLUMNS = 4
 
@@ -174,23 +201,23 @@ class BookProgressDialog:
         self._cells = {}   # bookCode -> BookProgressCell
         self.view = view
         self.start_time = 0
+        self._stopped = False
 
-        self.window = Gtk.Window(title=_("PTXprint: Page Filler"))
+        self.window = Gtk.Window(title=_("PTXprint: Analyse & Fill"))
         self.window.set_transient_for(parentWindow)
         self.window.set_destroy_with_parent(False)
-        self.window.set_deletable(False)
-        self.window.connect("delete-event", lambda w, e: (w.hide(), True)[1])
+        # Closing only hides the window, as the Analyse & Fill button does: a run carries on
+        self.window.connect("delete-event", self._onClose)
 
         # Main vertical container
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        vbox.set_margin_top(8)
         self.window.add(vbox)
 
-        # Scrolled Window for the grid
+        # Scrolled Window for the grid of progress bars
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
-        
-        # Pack the scrolled window (expand=True, fill=True)
-        vbox.pack_start(scrolled, True, True, 0)
+        vbox.pack_start(scrolled, False, False, 0)
 
         self.grid = Gtk.Grid(column_spacing=8, row_spacing=4)
         self.grid.set_margin_start(8)
@@ -199,70 +226,147 @@ class BookProgressDialog:
         self.grid.set_margin_bottom(1)
         scrolled.add(self.grid)
 
-        self.infogrid = Gtk.Grid(column_spacing=8)
-        vbox.pack_start(self.infogrid, True, False, 0)
-        self.lb_cpu = Gtk.Label(label=_("CPU: ") + "---")
-        self.lb_time = Gtk.Label(label=_("Time: ") + "--:--:--")
-        self.infogrid.attach(self.lb_time, 0, 0, 1, 1)
-        self.infogrid.attach(self.lb_cpu, 1, 0, 1, 1)
+        # Colour legend: one chip per group, ⓘ for the full key
+        legend = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        legend.set_margin_start(8)
+        legend.set_margin_end(8)
+        for label, chipStatus, statuses in _LEGEND_GROUPS:
+            chip = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=4)
+            chip.pack_start(self._swatch(_STATUS_DATA[chipStatus][0], 12, 12), False, False, 0)
+            lbl = Gtk.Label(label=_(label))
+            chip.pack_start(lbl, False, False, 0)
+            chip.set_tooltip_text("\n".join(_(_STATUS_DATA[s][1]) for s in statuses))
+            legend.pack_start(chip, False, False, 0)
+        # The full key shows as the ⓘ's tooltip: a tooltip has a window of its own, so unlike
+        # a popover it is never cut off when this window is short
+        self._colorKey = self._makeColorKey()
+        key_lbl = Gtk.Label(label="ⓘ")
+        key_lbl.set_margin_end(4)
+        key_lbl.set_has_tooltip(True)
+        key_lbl.connect("query-tooltip", self._onColorKeyTooltip)
+        legend.pack_end(key_lbl, False, False, 0)
+        vbox.pack_start(legend, False, False, 0)
 
-        # Action area at the bottom
-        button_box = Gtk.ButtonBox(orientation=Gtk.Orientation.HORIZONTAL)
-        button_box.set_layout(Gtk.ButtonBoxStyle.CENTER)
-        button_box.set_spacing(8)
-        button_box.set_margin_start(8)
-        button_box.set_margin_end(8)
-        button_box.set_margin_bottom(8)
-        vbox.pack_start(button_box, False, False, 0)
+        vbox.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, False, 0)
 
-        # Start Fill, Resume Fill buttons
-        start_tip = _("Restart filling from the beginning of each book.\nAll existing adjustments, including manual ones, are thrown away.\n\nWarning: CPU-hungry. Go to lunch!")
-        resume_tip = _("Resume filling from the first underfilled page in each book.\n\nWarning: CPU-hungry. Go to lunch!")
-        self.restart_button = Gtk.Button(label=_("Start Fill"))
-        self.restart_button.set_tooltip_text(start_tip)
-        self.restart_button.connect("clicked", lambda btn: self.view.onRestartFillClicked(btn))
-        button_box.add(self.restart_button)
+        # Information area: only used for the summary of how a run went (the buttons' tooltips say what they do).
+        # Right aligned, over the buttons.
+        self.lb_info = Gtk.Label()
+        self.lb_info.set_halign(Gtk.Align.END)
+        self.lb_info.set_valign(Gtk.Align.START)
+        self.lb_info.set_xalign(1)
+        self.lb_info.set_justify(Gtk.Justification.RIGHT)
+        self.lb_info.set_line_wrap(True)
+        self.lb_info.set_max_width_chars(90)
+        self.lb_info.set_margin_start(8)
+        self.lb_info.set_margin_end(8)
+        self.lb_info.set_no_show_all(True)
+        vbox.pack_start(self.lb_info, False, False, 0)
 
-        self.resume_button = Gtk.Button(label=_("Resume Fill"))
-        self.resume_button.set_tooltip_text(resume_tip)
-        self.resume_button.connect("clicked", lambda btn: self.view.onResumeFillClicked(btn))
-        button_box.add(self.resume_button)
+        # Action area at the bottom: run times on the left, then the Settings link and the buttons (safest first)
+        actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        actions.set_margin_start(8)
+        actions.set_margin_end(8)
+        actions.set_margin_bottom(8)
+        vbox.pack_end(actions, False, False, 0)
 
-        self.color_key_button = Gtk.Button(label=_("Color Key"))
-        self.color_key_button.set_tooltip_text(_("Show what each bar colour means"))
-        self.color_key_button.connect("clicked", self._onColorKeyClicked)
-        button_box.add(self.color_key_button)
+        leftcol = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        leftcol.set_valign(Gtk.Align.END)
+        actions.pack_start(leftcol, False, False, 0)
 
-        # The Stop button (insensitive until a fill is running)
-        self.stop_button = Gtk.Button(label=stoplabel)
-        self.stop_button.set_sensitive(False)
-        self.stop_button.connect("clicked", self.on_stop_clicked)
-        self.stop_button.set_sensitive(False)
-        button_box.add(self.stop_button)
+        # Run status: elapsed (wall-clock) time and the processor time all the workers used
+        self.lb_status = Gtk.Label()
+        self.lb_status.set_xalign(0)
+        self.lb_status.get_style_context().add_class("dim-label")
+        leftcol.pack_start(self.lb_status, False, False, 0)
+        self._showStatus(None, None)
 
-        # Settings shortcut link — secondary child sits at the far left
+        # Settings shortcut link
         settings_ebox = Gtk.EventBox()
+        settings_ebox.set_halign(Gtk.Align.END)
+        settings_ebox.set_valign(Gtk.Align.CENTER)
         settings_lbl = Gtk.Label()
-        settings_lbl.set_markup('<span foreground="#1c71d8" underline="single">Settings</span>')
-        settings_lbl.set_margin_start(4)
-        settings_lbl.set_margin_end(4)
+        settings_lbl.set_markup('<span foreground="#1c71d8" underline="single">{}</span>'.format(
+                GLib.markup_escape_text(_("Settings"))))
         settings_lbl.set_tooltip_text(_("Open Advanced → Other settings for page filler options"))
         settings_ebox.add(settings_lbl)
         settings_ebox.connect("button-release-event", self._onSettingsClicked)
-        button_box.add(settings_ebox)
-        button_box.set_child_secondary(settings_ebox, True)
+        actions.pack_start(settings_ebox, True, True, 0)
+
+        button_box = Gtk.ButtonBox(orientation=Gtk.Orientation.HORIZONTAL)
+        button_box.set_layout(Gtk.ButtonBoxStyle.END)
+        button_box.set_spacing(8)
+        button_box.set_valign(Gtk.Align.CENTER)
+        actions.pack_end(button_box, False, False, 0)
+
+        busy = _("This can take a long time and keeps your processor busy.")
+        self.analyse_button = Gtk.Button(label=_("Analyse Only"))
+        self.analyse_button.set_tooltip_text(_("Measure how much each paragraph can shrink or grow, without changing anything.\n\n"
+                "Afterwards, right-click a paragraph in the preview to shrink or grow it, its column or "
+                "its page by a line, using the least noticeable change.\n"
+                "Your own adjustments are kept.") + "\n\n" + busy)
+        self.analyse_button.connect("clicked", lambda btn: self.view.onAnalyseOnlyClicked(btn))
+        button_box.add(self.analyse_button)
+
+        self.resume_button = Gtk.Button(label=_("Resume Fill"))
+        self.resume_button.set_tooltip_text(_("Fill from the first underfilled page in each book, "
+                "keeping the adjustments already made.") + "\n\n" + busy)
+        self.resume_button.connect("clicked", lambda btn: self.view.onResumeFillClicked(btn))
+        button_box.add(self.resume_button)
+
+        self.restart_button = Gtk.Button(label=_("Start Fill…"))
+        self.restart_button.set_tooltip_text(_("Fill each book again from its beginning.\n"
+                "All existing adjustments, including any you made by hand, are thrown away.") + "\n\n" + busy)
+        self.restart_button.connect("clicked", lambda btn: self.view.onRestartFillClicked(btn))
+        button_box.add(self.restart_button)
+
+        # The Stop button (insensitive until a run is under way)
+        self.stop_button = Gtk.Button(label=stoplabel)
+        self.stop_button.set_sensitive(False)
+        self.stop_button.set_tooltip_text(_("Stop after each book's current layout run. The adjustments found so far are kept."))
+        self.stop_button.connect("clicked", self.on_stop_clicked)
+        button_box.add(self.stop_button)
 
         self.stylep = Gtk.CssProvider()
         self.stylep.load_from_data(css)
 
-    def populate(self, bookList: list, stop_sensitive=True):
-        """Rebuild cells for a new job. bookList contains 3-letter book codes."""
+    @staticmethod
+    def _swatch(hexColor, width, height):
+        """ A small block of colour, for the legend and the colour key """
+        rgba = Gdk.RGBA()
+        rgba.parse(hexColor)
+        area = Gtk.DrawingArea()
+        area.set_size_request(width, height)
+        area.set_valign(Gtk.Align.CENTER)
+        def draw(w, cr):
+            cr.set_source_rgb(rgba.red, rgba.green, rgba.blue)
+            cr.rectangle(0, 0, w.get_allocated_width(), w.get_allocated_height())
+            cr.fill_preserve()
+            cr.set_source_rgba(0, 0, 0, 0.35)
+            cr.set_line_width(1)
+            cr.stroke()
+            return False
+        area.connect("draw", draw)
+        return area
+
+    def _setInfo(self, markup):
+        """ Show the summary text, or hide the area when there is none """
+        self.lb_info.set_markup(markup or "")
+        self.lb_info.set_visible(bool(markup))
+
+    def populate(self, bookList: list, running=True, mode="fill"):
+        """Rebuild cells, for a new run or because the books in What to Print have changed.
+           bookList contains 3-letter book codes. mode: "fill" or "analyse" (for the summary)."""
         # Remove existing children
         for child in self.grid.get_children():
             self.grid.remove(child)
         self._cells.clear()
+        self._stopped = False
+        self._mode = mode
+        self._showStatus(None, None)
 
         n = len(bookList)
+        self.setRunning(running and n > 0)
         if n == 0:
             return
 
@@ -277,8 +381,6 @@ class BookProgressDialog:
             self._cells[bk] = cell
 
         logging.log(16, f"populate with {len(self._cells)} cells")
-        self.stop_button.set_sensitive(stop_sensitive)
-        self.stop_button.set_label(stoplabel)
         self.grid.show_all()
         self.start_time = time.time()
 
@@ -287,25 +389,56 @@ class BookProgressDialog:
         min_h, nat_h = self.window.get_preferred_height()
         screen = self.window.get_screen()
         max_h = int(screen.get_height() * 0.85) if screen else 900
-        dw, dh = nat_w, max(360, min(nat_h, max_h))
-        self.window.resize(dw, dh)
-        self._position_with_size(dw, dh)
+        dw, dh = nat_w, min(nat_h, max_h)
+        if self.window.get_visible():
+            # refreshed while open (e.g. What to Print changed): grow if needed, but don't jump about
+            cw, ch = self.window.get_size()
+            self.window.resize(max(cw, dw), max(ch, dh))
+        else:
+            self.window.resize(dw, dh)
+            self._position_with_size(dw, dh)
         self.window.show_all()
 
-    def updateEvent(self, event, usage=0., elapsed=0.):
+    def setRunning(self, running):
+        """ While a run is under way only Stop is available """
+        for b in (self.analyse_button, self.resume_button, self.restart_button):
+            b.set_sensitive(not running)
+        self.stop_button.set_sensitive(running)
+        self.stop_button.set_label(stoplabel)
+        self._setInfo(None)
+
+    @staticmethod
+    def _hms(secs):
+        hours, remainder = divmod(int(secs), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+    def _showStatus(self, elapsed, cpuSecs):
+        """ Show the run's elapsed and CPU times in the footer, and the speed-up from running
+            books in parallel (CPU time / elapsed); None shows a placeholder """
+        none = "--:--:--"
+        e = GLib.markup_escape_text
+        speedup = ""
+        tip = _("Elapsed: how long this run has taken so far.\n"
+                "CPU time: the processor time used by all the parallel workers added together.")
+        if elapsed and cpuSecs and elapsed >= 2:
+            factor = cpuSecs / elapsed
+            speedup = "  <b>×{:.1f}</b>".format(factor)
+            tip = _("In sequence these books would have taken about {0} (CPU time).\n"
+                    "In parallel it has only taken {1}: ({2:.1f} times faster).").format(
+                    self._hms(cpuSecs), self._hms(elapsed), factor)
+        self.lb_status.set_markup(e(_("Elapsed {0}").format(none if elapsed is None else self._hms(elapsed)))
+                + speedup + "\n" + e(_("CPU time {0}").format(none if cpuSecs is None else self._hms(cpuSecs))))
+        self.lb_status.set_tooltip_text(tip)
+
+    def updateEvent(self, event, cpuSecs=0., elapsed=0.):
         """Route a ProgressEvent to the correct BookProgressCell."""
         if event is not None:
             cell = self._cells.get(event.book)
-        # print(f"{event.book=} {event.mode=} {event.page=} {event.total=}")
             if cell is not None:
                 cell.update(event)
-        if usage > 0.:
-            self.lb_cpu.set_text(_("CPU: ") + f"{int(usage)}")
         if elapsed > 0.:
-            hours, remainder = divmod(elapsed, 3600)
-            minutes, seconds = divmod(remainder, 60)
-            formatted_elapsed = f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
-            self.lb_time.set_text(_("Time: ") +  formatted_elapsed)
+            self._showStatus(elapsed, cpuSecs)
 
     def show(self):
         dw, dh = self.window.get_size()
@@ -342,41 +475,100 @@ class BookProgressDialog:
         self.view.highlightwidget('s_pbtimeout')
         self.view.mainapp.win.present()
 
-    def _onColorKeyClicked(self, button):
-        pop = Gtk.Popover.new(button)
-        pop.set_position(Gtk.PositionType.TOP)
-        grid = Gtk.Grid(column_spacing=10, row_spacing=6)
-        grid.set_margin_start(10)
-        grid.set_margin_end(10)
-        grid.set_margin_top(10)
-        grid.set_margin_bottom(10)
-        lcss = "progressbar trough, progressbar progress {{ background-color: {}; }}"
-        for row_i, (status, (color, msgid)) in enumerate(_STATUS_DATA.items()):
-            bar = Gtk.ProgressBar()
-            bar.set_show_text(False)
-            bar.set_fraction(1.0)
-            bar.set_size_request(50, -1)
-            bar.get_style_context().add_provider(self.stylep, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-            provider = Gtk.CssProvider()
-            provider.load_from_data(lcss.format(color).encode())
-            bar.get_style_context().add_provider(provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
-            lbl = Gtk.Label(label=_(msgid))
-            lbl.set_halign(Gtk.Align.START)
-            grid.attach(bar, 0, row_i, 1, 1)
-            grid.attach(lbl, 1, row_i, 1, 1)
+    def _onClose(self, window, event):
+        """ The window's X: hide it and turn the Analyse & Fill button off, as clicking that
+            button does. A run carries on; the button shows the window again. """
+        btn = self.view.builder.get_object("btn_prvAutoFill")
+        if btn is not None and btn.get_active():
+            btn.set_active(False)       # its handler hides the window
+        else:
+            window.hide()
+        return True                     # never destroy the window
+
+    def _makeColorKey(self):
+        """ The full colour key: every status, beside the name of the legend group it belongs to """
+        grid = Gtk.Grid(column_spacing=8, row_spacing=3)
+        grid.set_margin_start(4)
+        grid.set_margin_end(4)
+        grid.set_margin_top(4)
+        grid.set_margin_bottom(4)
+        row_i = 0
+        for label, chipStatus, statuses in _LEGEND_GROUPS:
+            head = Gtk.Label()
+            head.set_markup("<b>" + GLib.markup_escape_text(_(label)) + "</b>")
+            head.set_halign(Gtk.Align.START)
+            head.set_valign(Gtk.Align.START)
+            if row_i:
+                head.set_margin_top(4)
+            grid.attach(head, 0, row_i, 1, len(statuses))
+            for i, status in enumerate(statuses):
+                color, msgid = _STATUS_DATA[status]
+                sw = self._swatch(color, 32, 12)
+                lbl = Gtk.Label(label=_(msgid))
+                lbl.set_halign(Gtk.Align.START)
+                if row_i and i == 0:
+                    sw.set_margin_top(4)
+                    lbl.set_margin_top(4)
+                grid.attach(sw, 1, row_i, 1, 1)
+                grid.attach(lbl, 2, row_i, 1, 1)
+                row_i += 1
         grid.show_all()
-        pop.add(grid)
-        pop.popup()
+        return grid
+
+    def _onColorKeyTooltip(self, widget, x, y, keyboard, tooltip):
+        tooltip.set_custom(self._colorKey)
+        return True
 
     def on_stop_clicked(self, button):
         logger.debug("Stop button clicked")
+        self._stopped = True
         button.set_sensitive(False)
         button.set_label(_("Stopping..."))
         self.view.onFillCancelled()
 
     def finished(self):
-        self.stop_button.set_label(stoplabel)
-        self.stop_button.set_sensitive(False)
         for k, v in self._cells.items():
             v.finish()
-            
+        stopped = self._stopped
+        self.setRunning(False)
+        self._showSummary(stopped)
+
+    def _showSummary(self, stopped=False):
+        """ Replace the idle text with how the run went """
+        cells = list(self._cells.values())
+        if not cells:
+            return
+        e = GLib.markup_escape_text
+        done = [c for c in cells if c._status in _DONE_STATUSES]
+        check = [c for c in cells if c._status in _CHECK_STATUSES]
+        failed = [c for c in cells if c._status not in _DONE_STATUSES + _CHECK_STATUSES]
+        lines = []
+        if getattr(self, '_mode', "fill") == "analyse":
+            if stopped:
+                lines.append("<b>" + e(_("Stopped.")) + "</b> " + e(_("Your adjustments are unchanged; "
+                             "what was measured before stopping has been kept.")))
+            lines.append("<b>" + e(_("{0} of {1} books analysed.").format(len(done), len(cells))) + "</b> "
+                         + e(_("Right-click a paragraph in the preview to shrink or grow it.")) if done else
+                         "<b>" + e(_("No books were analysed.")) + "</b>")
+            if failed and not stopped:
+                lines.append(e(_("Failed: {0}").format(", ".join(c.bookCode for c in failed))))
+            self._setInfo("\n".join(lines))
+            return
+        if stopped:
+            lines.append("<b>" + e(_("Stopped.")) + "</b> " + e(_("The adjustments found so far have been kept; "
+                         "Resume Fill carries on from where each book got to.")))
+        if len(done) == len(cells):
+            lines.append("<b>" + e(_("All {0} books are done.").format(len(cells)) if len(cells) > 1
+                                   else _("The book is done.")) + "</b>")
+        else:
+            lines.append("<b>" + e(_("{0} of {1} books done.").format(len(done), len(cells))) + "</b>")
+        if check:
+            names = ", ".join(c.bookCode + ("" if c.firstBadPage is None else " " + _("(from p.{0})").format(c.firstBadPage))
+                              for c in check)
+            lines.append(e(_("To check: {0}").format(names)))
+        if failed and not stopped:
+            lines.append(e(_("Failed: {0}").format(", ".join(c.bookCode for c in failed))))
+        if check or (failed and not stopped):
+            lines.append(e(_("Use the previous/next page-with-issues buttons in the preview to find what needs "
+                             "attention, then Resume Fill or adjust those pages by hand.")))
+        self._setInfo("\n".join(lines))

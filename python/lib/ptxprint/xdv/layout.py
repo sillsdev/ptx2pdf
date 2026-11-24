@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from ptxprint.xdv.xdv import XDViReader
+from ptxprint.xdv.xdv import XDViReader, XDViPositionedReader
 import re, logging
 
 logger = logging.getLogger(__name__)
@@ -109,7 +109,7 @@ class Para(Block):
         return btype in ('Span', 'Note')
 
     def advance(self, shift):
-        if lspace in self.parms:
+        if 'lspace' in self.parms:
             if shift >= self.parms['lspace']:
                 self.linecount += 1
 

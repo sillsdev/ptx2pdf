@@ -1,4 +1,4 @@
-import re, os
+import re, os, uuid
 import regex
 from .texmodel import universalopen
 from .ptsettings import bookcodes
@@ -25,7 +25,7 @@ class PDFx1aOutput(Snippet):
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N {_iccnumcols}>>}}
 %\special{{pdf:close @OBJCVR}}
-\special{{pdf:stream @OBJCMR (<?xpacket begin="^^^^feff" id="W5M0MpCehiHzreSzNTczkc9d"?>
+\special{{pdf:stream @OBJCMR (<?xpacket begin="\string^^^^feff" id="W5M0MpCehiHzreSzNTczkc9d"?>
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
        xmlns:xmp="http://ns.adobe.com/xap/1.0/"
@@ -91,6 +91,15 @@ class PDFx1aOutput(Snippet):
                     <pdfaProperty:name>conformance</pdfaProperty:name>
                     <pdfaProperty:valueType>Text</pdfaProperty:valueType>
                   </rdf:li>
+                </rdf:Seq>
+              </pdfaSchema:property>
+            </rdf:li>
+            <rdf:li rdf:parseType="Resource">
+              <pdfaSchema:namespaceURI>http://www.npes.org/pdfx/ns/id/</pdfaSchema:namespaceURI>
+              <pdfaSchema:prefix>pdfxid</pdfaSchema:prefix>
+              <pdfaSchema:schema>PDF/X ID Schema</pdfaSchema:schema>
+              <pdfaSchema:property>
+                <rdf:Seq>
                   <rdf:li rdf:parseType="Resource">
                     <pdfaProperty:category>internal</pdfaProperty:category>
                     <pdfaProperty:description>PDF/X version</pdfaProperty:description>
@@ -104,30 +113,14 @@ class PDFx1aOutput(Snippet):
         </pdfaExtension:schemas>
       </rdf:Description>
       <rdf:Description rdf:about="">
-        <dc:creator>
-          <rdf:Seq>
-            <rdf:li>{_gtfauthor}</rdf:li>
-          </rdf:Seq>
-        </dc:creator>
-        <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
+{_xmpcreator}        <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
         <xmp:ModifyDate>{xmpdate_}</xmp:ModifyDate>
         <xmp:MetadataDate>{xmpdate_}</xmp:MetadataDate>
-        <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
-        <xmpMM:DocumentID>uuid:5589311-bbc3-4ac7-9aaf-fc8ab4739b3c</xmpMM:DocumentID>
+        <xmp:CreatorTool>PTXprint {/ptxprint_gitversion} ({config/name})</xmp:CreatorTool>
+        <xmpMM:DocumentID>uuid:{_docuuid}</xmpMM:DocumentID>
         <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
         <xmpMM:VersionID>1</xmpMM:VersionID>
-        <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>
-        <dc:title>
-          <rdf:Alt>
-            <rdf:li xml:lang="x-default">{_gtftitle}</rdf:li>
-          </rdf:Alt>
-        </dc:title>
-        <dc:description>
-          <rdf:Alt>
-            <rdf:li xml:lang="x-default">{_gtfsubject}</rdf:li>
-          </rdf:Alt>
-        </dc:description>
-        <pdf:Producer>XeTeX</pdf:Producer>
+{_xmppdfx}{_xmptitle}{_xmpsubject}        <pdf:Producer>XeTeX</pdf:Producer>
         <pdf:Trapped>False</pdf:Trapped>
 {_gtspdfaid}      </rdf:Description>
   </rdf:RDF>
@@ -136,52 +129,62 @@ class PDFx1aOutput(Snippet):
 \special{{pdf:put @OBJCMR <</Type /Metadata /Subtype /XML>>}}
 \special{{pdf:docview <<
 /Metadata @OBJCMR{rtlview}
-/OutputIntents [ <<
-/Type/OutputIntent
-/S/GTS_PDFX
-/OutputCondition (An Unknown print device)
-/OutputConditionIdentifier (Custom)
-/Info (Boilerplate null output intent)
-/DestOutputProfile @OBJCVR
-/RegistryName (http://www.color.org)
->> <<
-/Type/OutputIntent
-/S/GTS_PDFA1
-/OutputCondition (An Unknown print device)
-/OutputConditionIdentifier (Custom)
-/Info (Boilerplate null output intent)
-/DestOutputProfile @OBJCVR
-/RegistryName (http://www.color.org)
->> ]
+/OutputIntents [{_outintents}]
 >>}}
 \egroup
-\catcode`\#=6\catcode`\@=11 \activ@tecustomch@rs
+\catcode`\#=6\catcode`\@=11
 """
 # /MarkInfo <</Marked /False>>
 
-        extras = {'_gtspdfx': '', '_gtspdfaid': ''}
+        extras = {'_gtspdfx': '', '_gtspdfaid': '', '_xmppdfx': ''}
+        # the same for every print of this publication (a new one per print would be an InstanceID)
+        extras['_docuuid'] = str(uuid.uuid5(uuid.NAMESPACE_URL, "ptxprint:{}/{}".format(
+                                    model['project/id'], model['config/name'])))
         pdftype = model['snippets/pdfoutput'] or "Screen"
         libpath = pycodedir()
-        if pdftype in ("Screen", "Transparent", "Digital" ):
+        if pdftype == "Screen":
+            pass    # not PDF/X: its text is DeviceGray with an RGB output intent (Digital converts it)
+        elif pdftype in ("Transparent", "Digital"):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
+            extras['_xmppdfx'] = "        <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>\n"
+            # PDF/X: no actions, and so no links (annotations inside the page; a web link is a URI action)
+            res += "\\Actionsfalse\n"
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
-            res += "\\Actionsfalse\n"
+            res += "\\Actionsfalse\n\\NoTransparencytrue\n"     # PDF/X-1a: no actions, no transparency
         if pdftype in ("Screen", "Digital"):
             model.dict["/iccfpath"] = saferelpath(os.path.join(libpath, "sRGB.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "3"
-        if pdftype == "Gray":
-            model.dict['/iccfpath'] = saferelpath(os.path.join(libpath, "default_gray.icc"),docdir).replace("\\","/")
-            extras['_iccnumcols'] = "1"
         else:
+            # Gray too: PDF/X-1a needs a CMYK printing condition, and DeviceGray prints on the black plate.
+            # Set every time: model.dict outlives a print, so an earlier Screen print would leave sRGB here.
+            model.dict['/iccfpath'] = saferelpath(os.path.join(libpath, "default_cmyk.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "4"
+        # one output intent per standard claimed, PDF/A first (some checkers look only at the first)
+        intent = "<<\n/Type/OutputIntent\n/S/{}\n/OutputCondition (An Unknown print device)\n" \
+                 "/OutputConditionIdentifier (Custom)\n/Info (Boilerplate null output intent)\n" \
+                 "/DestOutputProfile @OBJCVR\n>>"
+        intents = ["GTS_PDFX"]
+        if model['document/printarchive']:
+            intents.insert(0, "GTS_PDFA1")
+        extras['_outintents'] = " ".join(intent.format(x) for x in intents)
         extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['cover/rtlbookbinding'] == "true" else ""
-        for a in ('author', 'title', 'subject'):
-            extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
+        # empty entries are left out, as xdvipdfmx leaves the empty Info ones out: octopdf can't
+        # even load a PDF/X-4 whose XMP has an empty author and whose Info has none
+        xmpitem = {'author': ("creator", "Seq", ""), 'title': ("title", "Alt", ' xml:lang="x-default"'),
+                   'subject': ("description", "Alt", ' xml:lang="x-default"')}
+        for a, (tag, kind, lang) in xmpitem.items():
+            v = htmlprotect(model.dict['document/'+a] or "")
+            extras['_xmp'+a.replace('author', 'creator')] = ("        <dc:{0}>\n          <rdf:{1}>\n"
+                    "            <rdf:li{2}>{3}</rdf:li>\n          </rdf:{1}>\n        </dc:{0}>\n").format(
+                    tag, kind, lang, v) if v.strip() else ""
         if model['document/printarchive']:
             extras['_gtspdfaid'] = "      <pdfaid:part>4</pdfaid:part>\n        <pdfaid:rev>2020</pdfaid:rev>\n"
             res += "\\XeTeXgenerateactualtext=1\n"
+            if pdftype == "Screen":     # PDF/X-6: no actions, as for the other PDF/X outputs
+                res += "\\Actionsfalse\n"
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-6)%\n"
+            extras['_xmppdfx'] = "        <pdfxid:GTS_PDFXVersion>PDF/X-6</pdfxid:GTS_PDFXVersion>\n"
             extras['_docinfo'] = r'\special{pdf:docinfo << >>}'
         else:
             extras['_docinfo'] = r"""\special{{pdf:docinfo<<
@@ -248,7 +251,7 @@ class Diglot(Snippet):
 \should@xist{{}}{{f{s_}}}
 \should@xist{{}}{{x{s_}}}
 \newlanguage\language{s_} \language\language{s_}
-{diglot[paragraph/ifhavehyphenate]}{diglot[paragraph/ifhyphenate]}\bgroup\liter@lspecials\input "{diglot[/cfgrpath]}/hyphen-{diglot[project/id]}.tex" \egroup
+{diglot[paragraph/ifhavehyphenate]}{diglot[paragraph/ifhyphenate]}\bgroup\liter@lspecials\input "{diglot[/ptxrpath]}/shared/ptxprint/hyphen-{diglot[project/id]}.tex" \egroup
 \catcode"FDEE=1 \catcode"FDEF=2
 \def\zcopyright{s_}﷮{diglot[project/copyright]}﷯
 \def\zlicense{s_}﷮{diglot[project/license]}﷯
@@ -290,6 +293,7 @@ class FancyBorders(Snippet):
 
 
 """
+        res = res.format(**texmodel.dict)      # each glot's part below is formatted with its own settings
         if texmodel.dict.get("_isDiglot", False):
             repeats = [("L", texmodel)] + list(texmodel.dict["diglots_"].items())
         else:
@@ -319,8 +323,8 @@ class FancyBorders(Snippet):
 {fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\plainv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
 {fancy/versedecoratorisayah}\catcode`@=12\catcode`=12
 {fancy/versedecoratorisayah}\def\AdornVerseNumber%D%#1{{\hbox{{\char"06DD #1}}}}
-""".replace("%D%", k)
-        return res.format(**v.dict)
+""".replace("%D%", k).format(**v.dict)
+        return res
 
     unusedStuff = r"""
 % Some code to allow us to kern chapter numbers
@@ -499,7 +503,6 @@ class ParaLabelling(Snippet):
 \deactiv@tecustomch@rs
 \input marginnotes.tex
 \addtoeveryparhooks{{\parmkr}}
-\activ@tecustomch@rs
 '''
 
 class MarginalNotes(Snippet):
@@ -516,7 +519,6 @@ class MarginalNotes(Snippet):
         if model.dict["paper/ifmarginnotes"] == "%":
             return ""
         mwidth = float(model.dict["paper/marginnoteswidth"])
-        print(f"{mwidth=}")
         if mwidth < 1:
             return ""
         res = [cls.texCode]

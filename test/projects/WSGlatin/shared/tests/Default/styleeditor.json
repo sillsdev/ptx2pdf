@@ -148,6 +148,14 @@
         ["s_stySpaceAfter", "set", "0.5"],
         ["btn_styleFilter", "signal", "clicked"],
 
+        ["", "note", "Change \\io1's space before, then click its label to set it back to the stylesheet's"],
+        ["s_stySpaceBefore", "set", "3"],
+        ["l_stySpaceBefore", "labelclick"],
+
+        ["", "note", "Search for \\qr: typing in the search box selects the first match, and changes go to it"],
+        ["t_styleSearch", "set", "qr"],
+        ["c_styFaceItalic", "set", true],
+
         ["", "note", "Save, which writes ptxprint.sty"],
         ["btn_saveConfig", "signal", "clicked"]
     ]

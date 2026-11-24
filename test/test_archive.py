@@ -75,6 +75,9 @@ class TestArchiveContents(unittest.TestCase):
 
         # front matter PDFs: one shipped with PTXprint, one in the project, one outside it
         shutil.copy(os.path.join(prj, "figures", "deco.pdf"), os.path.join(ext, "front.pdf"))
+        # and another with the same name from another folder: both must be kept
+        os.makedirs(os.path.join(ext, "other"))
+        shutil.copy(os.path.join(prj, "figures", "deco.pdf"), os.path.join(ext, "other", "front.pdf"))
         # and a custom cross reference list outside the project
         write(os.path.join(ext, "myxrefs.txt"), "JON 1:1 = RUT 1:1\n")
 
@@ -85,7 +88,7 @@ class TestArchiveContents(unittest.TestCase):
                      ("processscript", "True"), ("selectscript", f"{ext}/procscript.py"),
                      ("ifinclfrontpdf", "True"), ("selectxrfile", f"{ext}/myxrefs.txt"),
                      ("frontincludes", "${pdfassets}/watermarks/A5-Draft.pdf\n"
-                                       f"{ext}/front.pdf\n${{prjdir}}/figures/deco.pdf")):
+                                       f"{ext}/front.pdf\n${{prjdir}}/figures/deco.pdf\n{ext}/other/front.pdf")):
             config.set("project", k, v)
         with open(cfgfile, "w", encoding="utf-8") as outf:
             config.write(outf)
@@ -181,11 +184,12 @@ class TestArchiveContents(unittest.TestCase):
 
     def test_front_pdfs(self):
         vals = self.cfgpaths("frontincludes")
-        self.assertEqual(len(vals), 3, f"front PDFs are now {vals}")
+        self.assertEqual(len(vals), 4, f"front PDFs are now {vals}")
         self.assertEqual(vals[0], "${pdfassets}/watermarks/A5-Draft.pdf")
         for v in vals[1:]:
             self.assertTrue(v.startswith("${prjdir}/"), v)
             self.assertResolves(os.path.join(self.prj, v[10:]), "frontincludes")
+        self.assertEqual(len(set(vals)), 4, f"two front PDFs called front.pdf share a name: {vals}")
 
     def test_xref_file(self):
         vals = self.cfgpaths("selectxrfile")

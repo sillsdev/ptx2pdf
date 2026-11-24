@@ -106,7 +106,7 @@ class ParatextSettings:
                 for f in fonts:
                     if f.get('type', None) == t:
                         self.dict['DefaultFont'] = f.get('name', '')
-                        self.dict['DeafultFontSize'] = float(f.get('size', 1.0)) * 12
+                        self.dict['DefaultFontSize'] = float(f.get('size', 1.0)) * 12
             d = self.ldml.find(".//layout/orientation/characterOrder")
             if d is not None:
                 if d.text.lower() == "right-to-left":
@@ -174,7 +174,8 @@ class ParatextSettings:
 
     def inferValues(self, forced=False):
         if forced or 'FileNameBookNameForm' not in self.dict and os.path.exists(self.prjdir):
-            sfmfiles = [x for x in os.listdir(self.prjdir) if x.lower().endswith("sfm")]
+            sfmfiles = [x for x in os.listdir(self.prjdir) if x.lower().endswith("sfm")
+                            and os.path.isfile(os.path.join(self.prjdir, x))]
             for f in sfmfiles:
                 m = re.search(r"(\d{2})", f)
                 if not m:
@@ -233,9 +234,9 @@ class ParatextSettings:
                         fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
                         self.get('FileNamePostPart', "")
             for k, v in books.items():
-                fname = bknamefmt.format(bkid=k, bkcode=v+1)
-                if os.path.exists(os.path.join(self.prjdir, fname)):
-                    bookspresent[v-1] = 1
+                fname = bknamefmt.format(bkid=k, bkcode=bookcodes.get(k, ""))
+                if os.path.isfile(os.path.join(self.prjdir, fname)):
+                    bookspresent[v] = 1         # books[] is 0 based
                     self.bookmap[k] = fname
                     booksfound.add(fname)
             if not len(booksfound) and not forced:     # buggy Settings.xml that doesn't fit the directory tree
@@ -243,7 +244,8 @@ class ParatextSettings:
                 self.calcbookspresent(forced=True)
         else:
             for f in os.listdir(self.prjdir):
-                if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
+                if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup") \
+                        or not os.path.isfile(os.path.join(self.prjdir, f)):
                     continue
                 with open(os.path.join(self.prjdir, f), encoding="utf-8", errors="ignore") as inf:
                     l = inf.readline()
@@ -256,7 +258,7 @@ class ParatextSettings:
                             v = int(bookcodes.get(bkid, -1))
                         except ValueError:
                             v = -1
-                        if 0 <= v < len(allbooks):
+                        if 0 < v <= len(allbooks):     # bookcodes are 1 based
                             bookspresent[v-1] = 1
         self.dict['BooksPresent'] = "".join(str(x) for x in bookspresent)
 
@@ -345,7 +347,8 @@ class PTEnvironment(Environment):
 
     def setBookNames(self, booknames, bookstrings):
         self.booknames = booknames
-        self.bookstrings = bookstrings
+        # parsebook looks names up in lower case
+        self.bookstrings = {k.lower(): v for k, v in bookstrings.items()}
 
     def localbook(self, bk, level=-1):
         if level == -1:
@@ -358,7 +361,7 @@ class PTEnvironment(Environment):
 
     def parsebook(self, bk):
         res = self.bookstrings.get(bk.lower(), None)
-        if res is None:
+        if not res:                 # "" is a prefix of more than one book
             return super().parsebook(bk)
         return res
 
@@ -371,15 +374,16 @@ class PTEnvironment(Environment):
             self.addBookName(bkid, *strs)
 
     def addBookName(self, bkid, *strs):
-        self.booknames[bkid] = bkid
-        self.bookstrings[bkid] = strs
-        bkstrs = {}
+        # as setBookNames: booknames gives the local names, bookstrings the prefixes that parse
+        self.booknames[bkid] = strs
         for s in strs:
+            if s is None:
+                continue
             for i in range(len(s)):
-                if s[i] is None or s[i] == " ":
+                if s[i] == " ":
                     break
-                bkstrs[s[:i+1]] = "" if bkstrs.get(s[:i+1], bkid) != bkid else bkid
-                self.booknames.update({k:v for k,v in bkstrs.items() if v != ""})
+                k = s[:i+1].lower()
+                self.bookstrings[k] = "" if self.bookstrings.get(k, bkid) != bkid else bkid   # "" = ambiguous
 
 
     def copy(self, **kw):

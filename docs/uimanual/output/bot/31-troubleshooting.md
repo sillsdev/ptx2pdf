@@ -7,7 +7,7 @@ This chapter lists common problems, grouped by kind, in the words users often us
 First try these three quick checks. They solve many problems:
 
 1. **Print again.** Most changes appear in the PDF only after you click **Print (Make PDF)**.
-2. **Check the view level.** A setting can be hidden but still turned on. Click **☰** › **View Level** › **Full View** to see every setting.
+2. **Check the view level.** A setting can be hidden but still turned on. Click **≡** › **View Level** › **Full View** to see every setting.
 3. **Check the configuration name.** Look at **Name** on the **Basic** tab. Is it the configuration you think it is?
 
 "pt" means point. 1 pt is about 0.35 mm.
@@ -42,7 +42,7 @@ First try these three quick checks. They solve many problems:
 **What to do:**
 
 1. Close the PDF in the other program and click **Yes** to try again.
-2. To avoid this, click **☰** › **Show PDF** › **Preview Pane**. The preview does not lock the file.
+2. To avoid this, click **≡** › **Show PDF** › **Preview Pane**. The preview does not lock the file.
 
 ### The Print (Make PDF) and Save buttons are greyed out
 
@@ -207,7 +207,7 @@ First try these three quick checks. They solve many problems:
 
 1. On the **Styles** tab, find the marker. A bold **Font** label means the style has its own font. Click the bold label to go back to the main font.
 2. On the **Fonts+Script** tab, check **Use Fallback Font** and the characters in its list.
-3. In a diglot, on the **Header+Footer** tab, choose **Pri** or **Sec** for each part of the header.
+3. In a diglot or polyglot, on the **Header+Footer** tab, choose the text letter (**L**, **R**, **A** …) in the drop-down in front of each part of the header.
 4. If you chose a new **Regular** font, check **Bold**, **Italic** and **Bold Italic** again.
 
 ### My font is not in the list
@@ -814,7 +814,7 @@ Extra pages at the end of the longer PDF always show as changed. This is correct
 
 **What to do:**
 
-1. Click **☰** › **View Level** › **Regular View** or **Full View**.
+1. Click **≡** › **View Level** › **Regular View** or **Full View**.
 2. Or type the name of the setting in **Search for settings** (bottom-left, or **Ctrl+F**). PTXprint raises the view level if the setting is hidden.
 
 ### The PDF has pictures (or a diglot, borders, thumb tabs …) but I cannot find the setting
@@ -839,7 +839,6 @@ Extra pages at the end of the longer PDF always show as changed. This is correct
 | **Reset** (Basic tab) | Regular or Full view. |
 | **Two Column Layout** | Turn off the diglot. A diglot always uses columns. |
 | **Verse** (header references) | Tick **Chapter** first. |
-| **Pri** / **Sec** (header) | Turn on **Diglot (or Polyglot)**. |
 | **Parallel Passage Refs** | Tick **Headings** on the **Body** tab. |
 | **Hanging Poetry Verse Numbers** | Untick **Marginal Verses**. |
 | **Optimize Layout for Poetry Books** | Tick **Use Special Features for These Books** (**Body** tab). |

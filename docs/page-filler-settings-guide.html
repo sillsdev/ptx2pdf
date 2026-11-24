@@ -1,0 +1,681 @@
+<title>Page Filler Settings Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: one reading column; each setting is a "spec card" with a plain explanation, a picture, and turn-up / turn-down advice. */
+:root {
+  --bg: #F4F6F8;
+  --surface: #FFFFFF;
+  --ink: #18212C;
+  --muted: #586373;
+  --rule: #D8DEE6;
+  --accent: #1D6A86;
+  --accent-soft: #E1EEF3;
+  --gap: #C8413A;
+  --gap-soft: #F8E1DF;
+  --ok: #2B7E52;
+  --ok-soft: #DFF1E6;
+  --textline: #A3AEBB;
+  --page: #FFFFFF;
+  --mine: #8A5A00;
+  --mine-soft: #FBEFD6;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", Consolas, monospace;
+  --f-scripture: "Source Serif 4", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161C; --surface: #19202A; --ink: #E5EAF0; --muted: #9CA8B7; --rule: #2C3643;
+    --accent: #62B6D3; --accent-soft: #1A3440; --gap: #EE766C; --gap-soft: #3D2222;
+    --ok: #63C690; --ok-soft: #1B3326; --textline: #5D6A79; --page: #222B36;
+    --mine: #E7B65A; --mine-soft: #3A2E15; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161C; --surface: #19202A; --ink: #E5EAF0; --muted: #9CA8B7; --rule: #2C3643;
+  --accent: #62B6D3; --accent-soft: #1A3440; --gap: #EE766C; --gap-soft: #3D2222;
+  --ok: #63C690; --ok-soft: #1B3326; --textline: #5D6A79; --page: #222B36;
+  --mine: #E7B65A; --mine-soft: #3A2E15; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+}
+.wrap { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 2.9rem); letter-spacing: -0.01em; }
+h2 { font-size: 1.7rem; }
+h3 { font-size: 1.25rem; }
+p { margin: 0; max-width: 68ch; }
+a { color: var(--accent); }
+section { display: flex; flex-direction: column; gap: 18px; }
+.eyebrow { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 600; }
+.lede { font-size: 1.15rem; color: var(--muted); }
+.mono, code { font-family: var(--f-mono); font-size: 0.9em; }
+.ui { font-weight: 600; }
+.ui::before { content: "\201C"; } .ui::after { content: "\201D"; }
+figure { margin: 0; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+figcaption { font-size: 0.88rem; color: var(--muted); }
+.svgbox { overflow-x: auto; }
+.svgbox svg { display: block; width: 100%; height: auto; min-width: 460px; }
+svg text { font-family: var(--f-body); }
+.s-page { fill: var(--page); stroke: var(--rule); stroke-width: 1.5; }
+.s-line { fill: var(--textline); }
+.s-gap { fill: var(--gap-soft); stroke: var(--gap); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.s-gaptext { fill: var(--gap); font-size: 12px; font-weight: 600; }
+.s-ok { fill: var(--ok); font-size: 13px; font-weight: 600; }
+.s-label { fill: var(--muted); font-size: 12px; }
+.s-head { fill: var(--ink); font-size: 13px; font-weight: 600; }
+.s-arrow { fill: none; stroke: var(--accent); stroke-width: 2; }
+.s-accent { fill: var(--accent); }
+.s-accenttext { fill: var(--accent); font-size: 12px; font-weight: 600; }
+.s-rule { stroke: var(--rule); stroke-width: 1; }
+.s-slice { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.s-bad { fill: var(--gap); }
+.s-axis { stroke: var(--muted); stroke-width: 1; }
+
+/* Overview: groups */
+.groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.group { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.group b { font-family: var(--f-display); font-size: 1.05rem; }
+.group ul { margin: 0; padding-left: 18px; font-size: 0.92rem; color: var(--muted); }
+
+/* Setting cards */
+.setting { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+.setting > figure { background: var(--bg); border: none; }
+.sethead { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--f-mono); font-size: 0.78rem; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+.chip.mine { background: var(--mine-soft); color: var(--mine); }
+.plain { font-size: 1.02rem; }
+.turn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.turn > div { border-radius: 8px; padding: 12px 14px; font-size: 0.93rem; min-width: 0; }
+.turn .up { background: var(--ok-soft); }
+.turn .down { background: var(--accent-soft); }
+.turn b { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+.note { font-size: 0.92rem; color: var(--muted); border-left: 3px solid var(--rule); padding-left: 12px; }
+.yours { background: var(--mine-soft); border-radius: 8px; padding: 10px 14px; font-size: 0.93rem; }
+.yours b { color: var(--mine); }
+
+/* Demos */
+.demo-controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; font-size: 0.9rem; }
+.demo-controls input[type=range] { flex: 1 1 200px; accent-color: var(--accent); }
+.demo-controls output { font-family: var(--f-mono); font-weight: 500; min-width: 7ch; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.presets button { font: inherit; font-size: 0.82rem; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 6px; padding: 3px 10px; cursor: pointer; }
+.presets button:hover { border-color: var(--accent); }
+.presets button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.scripture { font-family: var(--f-scripture); font-size: 17px; line-height: 26px; color: var(--ink); }
+.squeezebox { width: 260px; max-width: 100%; overflow: hidden; border-left: 2px solid var(--rule); border-right: 2px solid var(--rule); padding: 0; background: var(--page); }
+.squeeze { transform-origin: left top; text-align: justify; hyphens: none; padding: 0 1px; }
+.result { font-size: 0.92rem; }
+.result b { font-family: var(--f-mono); }
+.spdemo { background: var(--page); padding: 12px 14px; border-radius: 6px; border: 1px solid var(--rule); }
+.spdemo .w { white-space: nowrap; }
+.spdemo .sp { display: inline-block; height: 0.9em; vertical-align: -0.1em; background: var(--accent-soft); border-bottom: 2px solid var(--accent); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pair > div { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.pair h4 { margin: 0; font-size: 0.9rem; }
+.stack { background: var(--page); border: 1px solid var(--rule); border-radius: 6px; padding: 10px; overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
+.stack .row { display: flex; gap: 8px; align-items: flex-start; }
+.stack .pct { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); width: 4.2ch; flex: none; padding-top: 3px; }
+.stack .cell { overflow: hidden; flex: 1; min-width: 0; }
+.stack .cell > div { transform-origin: left top; font-family: var(--f-scripture); font-size: 14px; line-height: 20px; text-align: justify; }
+.bad .pct { color: var(--gap); font-weight: 600; }
+
+/* Tables */
+.tablebox { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; min-width: 640px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: none; }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.recipes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.recipe { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.recipe h3 { font-size: 1.08rem; }
+.recipe ul { margin: 0; padding-left: 18px; font-size: 0.9rem; display: flex; flex-direction: column; gap: 4px; }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; }
+.toc a { font-size: 0.85rem; text-decoration: none; border: 1px solid var(--rule); background: var(--surface); border-radius: 999px; padding: 4px 12px; }
+.toc a:hover { border-color: var(--accent); }
+.divider { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+@media (max-width: 620px) {
+  .turn, .pair { grid-template-columns: 1fr; }
+  .setting { padding: 16px; }
+}
+@media (prefers-reduced-motion: no-preference) { .squeeze, .stack .cell > div { transition: transform .15s ease; } }
+</style>
+
+<div class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:16px">
+  <span class="eyebrow">PTXprint · Advanced › Automatic Page Filler</span>
+  <h1>The Page Filler settings, in plain words</h1>
+  <p class="lede">What each number in the Automatic Page Filler panel does, what you will see on the page when you change it, and which ones to leave alone.</p>
+  <nav class="toc" aria-label="Contents">
+    <a href="#what">What the filler does</a>
+    <a href="#points">How it chooses</a>
+    <a href="#speed">How hard it tries</a>
+    <a href="#quality">How good it must look</a>
+    <a href="#poly">Diglot &amp; polyglot</a>
+    <a href="#recipes">Recipes</a>
+    <a href="#ref">Quick reference</a>
+  </nav>
+</header>
+
+<section id="what">
+  <span class="eyebrow">Start here</span>
+  <h2>What the page filler is for</h2>
+  <p>When PTXprint lays out a book, some pages come out with one or two empty lines at the bottom of a column. The <b>page filler</b> goes through the book one page at a time and fixes those pages so that every column ends exactly at the bottom margin.</p>
+  <figure>
+    <div class="svgbox"><svg viewBox="0 0 640 250" role="img" aria-label="Two pages. On the left, the second column stops two lines short of the bottom. On the right, after the page filler, both columns reach the bottom.">
+      <g id="fig1"></g>
+    </svg></div>
+    <figcaption>Left: the right-hand column stops two lines short. Right: after the page filler has adjusted a few paragraphs, both columns reach the bottom.</figcaption>
+  </figure>
+  <p>It does <b>not</b> add extra space between lines or paragraphs. Instead it changes the paragraphs themselves, so that some of them take one line more or one line fewer. It has two ways of doing that:</p>
+  <div class="groups">
+    <div class="group"><b>1. Narrower or wider letters</b><span style="font-size:.93rem">It can set a paragraph's letters slightly narrower (for example 97%) or slightly wider (103%). Narrower letters fit more words on each line, so the paragraph may lose a line. Wider letters can make it gain one. Your limits are set elsewhere, usually 95% to 105%.</span></div>
+    <div class="group"><b>2. Asking for one line more or fewer</b><span style="font-size:.93rem">It can ask the typesetter to set a paragraph in one line more or fewer than normal, by spacing the words a little more loosely or tightly. This is TeX's "looseness".</span></div>
+  </div>
+  <p>In these settings, <b>shrink</b> means "make a paragraph take fewer lines" and <b>stretch</b> means "make it take more".</p>
+  <figure>
+    <div class="demo-controls">
+      <label for="wd">Letter width</label>
+      <input type="range" id="wd" min="94" max="106" step="0.5" value="100">
+      <output id="wdOut" for="wd">100%</output>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start">
+      <div class="squeezebox"><div class="squeeze scripture" id="squeeze"></div></div>
+      <p class="result" id="wdResult" style="flex:1 1 200px"></p>
+    </div>
+    <figcaption>Try it: drag the slider and watch the paragraph's line count change. This is the same text, made narrower or wider, in a fixed column width. Text: <a href="ptxref:JHN.1.1-5" target="_blank" rel="noopener">John 1:1–5</a> (WEB).</figcaption>
+  </figure>
+</section>
+
+<section id="points">
+  <span class="eyebrow">The one idea you need</span>
+  <h2>How it chooses: badness points</h2>
+  <p>For every possible change to every paragraph, the filler first measures how the result looks and gives it <b>badness points</b>. A change that hardly shows gets very few points. A change that looks ugly gets many points.</p>
+  <p>Then, for each short page, it looks for the <b>combination of changes with the fewest total points</b> that makes the page full. It tries that combination for real, checks the page, and if it does not work, tries the next cheapest.</p>
+  <p>Think of it as shopping on a budget: every change has a price, and the filler buys the cheapest set of changes that does the job. The settings fall into two kinds:</p>
+  <div class="groups">
+    <div class="group"><b>Speed settings</b><span style="font-size:.93rem">How long and how hard the filler searches. They don't change what a good page looks like. They change how often it finds one.</span>
+      <ul><li>Time limit for the whole job</li><li>Earlier pages to retry</li><li>Paragraphs to adjust on each page</li></ul></div>
+    <div class="group"><b>Quality settings</b><span style="font-size:.93rem">How the points are counted, so which changes the filler sees as cheap and which as expensive. One of them is a hard rule.</span>
+      <ul><li>Widest word space allowed <i>(the hard rule)</i></li><li>Keep paragraphs close to normal width</li><li>Penalise shrink or stretch</li><li>Keep neighbouring paragraphs alike</li></ul></div>
+    <div class="group"><b>Diglot &amp; polyglot only</b><span style="font-size:.93rem">Ignored for a single-language book. They control how the columns of different languages line up.</span>
+      <ul><li>The cost of imbalance in a polyglot slice</li><li>Effort to narrow a big imbalance</li><li>Most tries to fill a polyglot page</li><li>Fill polyglot slices regardless of 1 line gaps</li></ul></div>
+  </div>
+  <p class="note">In the PTXprint panel, a setting's label is shown in <b>bold</b> when you have changed it from its default value.</p>
+</section>
+
+<hr class="divider">
+
+<section id="speed">
+  <span class="eyebrow">Speed settings</span>
+  <h2>How hard it tries</h2>
+  <p>Every attempt is a real typesetting run of the book (or the part being worked on), so each attempt takes time. These three settings trade time for fewer failed pages.</p>
+
+  <article class="setting">
+    <div class="sethead"><h3>Time limit for the whole job (minutes)</h3><div class="facts"><span class="chip">default 180</span><span class="chip">range 0–1000</span></div></div>
+    <p class="plain">A stopwatch for the whole print job. The filler works on all the books at the same time. When the time runs out, it stops. Any book that isn't finished keeps the pages already filled, and the rest of that book is left as it was. Usually only the longest book is affected.</p>
+    <p class="note">Set it to <b>0</b> for no time limit.</p>
+    <div class="turn"><div class="up"><b>Turn it up</b>if your longest book (Psalms, Isaiah, Jeremiah…) is cut off before the end.</div><div class="down"><b>Turn it down</b>if you only want a quick draft and don't mind some unfilled pages.</div></div>
+  </article>
+
+  <article class="setting">
+    <div class="sethead"><h3>Earlier pages to retry</h3><div class="facts"><span class="chip">default 4</span><span class="chip">range 0–10</span></div></div>
+    <p class="plain">Sometimes a page simply can't be filled, because of where it starts. The filler can then go <b>back</b> to the page before, lay it out a different way so that the problem page starts at a different place, and try again. This setting is how many pages it may go back.</p>
+    <figure>
+      <div class="svgbox"><svg viewBox="0 0 620 190" role="img" aria-label="Five pages, 10 to 14. Page 13 cannot be filled. Arrows show the filler going back to retry page 12, then page 11.">
+        <g id="fig2"></g>
+      </svg></div>
+      <figcaption>Page 13 can't be filled. With this setting at 2, the filler may re-do page 12, and if that's not enough, page 11 too, so that page 13 begins somewhere else. Pages 11 and 12 must still come out full.</figcaption>
+    </figure>
+    <div class="turn"><div class="up"><b>Turn it up</b>if you get many failed pages. Fewer pages fail, but the job can become much slower.</div><div class="down"><b>Turn it down</b>for speed. <b>0</b> means never go back (fastest, most failures).</div></div>
+    <p class="note">In diglot and polyglot books the full number is used only until the first page that fails; after that the filler goes back just one page.</p>
+  </article>
+
+  <article class="setting">
+    <div class="sethead"><h3>Paragraphs to adjust on each page</h3><div class="facts"><span class="chip">default 6</span><span class="chip">range 1–10</span></div></div>
+    <p class="plain">The most paragraphs on one page that the filler may change at the same time. Each poetry line (<code>\q1</code>, <code>\q2</code>…) counts as a paragraph of its own, so poetry pages have many "paragraphs".</p>
+    <figure>
+      <div class="svgbox"><svg viewBox="0 0 620 230" role="img" aria-label="Bar chart: each extra paragraph doubles the number of layouts to consider, from 2 for one paragraph to 1024 for ten.">
+        <g id="fig3"></g>
+      </svg></div>
+      <figcaption>Each extra paragraph roughly doubles the number of possible combinations the filler has to consider. Going from 6 to 8 means about four times as many.</figcaption>
+    </figure>
+    <div class="turn"><div class="up"><b>Turn it up</b>if pages fail even though there seem to be plenty of paragraphs that could change. More pages can be filled, but each page takes longer.</div><div class="down"><b>Turn it down</b>to go faster, or to make the filler spread its changes over fewer paragraphs.</div></div>
+  </article>
+</section>
+
+<hr class="divider">
+
+<section id="quality">
+  <span class="eyebrow">Quality settings</span>
+  <h2>How good the text must look</h2>
+  <p>These settings decide what the filler is allowed to do, and which changes it prefers. The first is a hard rule. The other three only change the points, so they move the filler's preferences without forbidding anything.</p>
+
+  <article class="setting">
+    <div class="sethead"><h3>Widest word space allowed (× text size)</h3><div class="facts"><span class="chip">default 1.0</span><span class="chip">range 0–10</span></div></div>
+    <p class="plain">The one <b>hard rule</b>. After a change, the filler measures the average gap between words in the paragraph. If it's wider than this, the change is thrown away and never used, however useful it would be.</p>
+    <p>The number is a fraction of the text size. At 10&nbsp;pt text, <b>0.3</b> means an average word space of 3&nbsp;pt, and <b>1.0</b> means a space as wide as the letter "M". A normal word space is about <b>0.3 to 0.5</b>.</p>
+    <figure>
+      <div class="demo-controls">
+        <label for="sp">Word space</label>
+        <input type="range" id="sp" min="0.15" max="1.0" step="0.01" value="0.33">
+        <output id="spOut" for="sp">0.33</output>
+      </div>
+      <div class="presets" role="group" aria-label="Example word spaces">
+        <button type="button" data-sp="0.23">0.23 · very tight</button>
+        <button type="button" data-sp="0.33">0.33 · typical</button>
+        <button type="button" data-sp="0.5">0.5 · loose</button>
+        <button type="button" data-sp="0.75">0.75 · very loose</button>
+        <button type="button" data-sp="1.0">1.0 · default limit</button>
+      </div>
+      <div class="spdemo scripture" id="spdemo"></div>
+      <figcaption>Each blue box is one word space, drawn at exactly the chosen fraction of the text size. Any paragraph whose average space would be wider than your limit can't be used.</figcaption>
+    </figure>
+    <div class="turn"><div class="up"><b>Turn it up</b>if many pages fail. The filler gets more ways to fill pages, but the text may look spread out.</div><div class="down"><b>Turn it down</b>for tighter, more even text. Pages become harder to fill and the job takes longer.</div></div>
+    <p class="note">This is the setting most likely to cause failed pages. Too low and the filler is almost never allowed to stretch a paragraph, so the only remaining option is to shrink one.</p>
+  </article>
+
+  <article class="setting">
+    <div class="sethead"><h3>Keep paragraphs close to normal width</h3><div class="facts"><span class="chip">default 1.0</span><span class="chip">range 0–10</span></div></div>
+    <p class="plain">How strongly the filler prefers <b>small</b> changes in letter width over big ones. A paragraph at 99% hardly shows; one at 95% can look cramped. This setting adds points for distance from 100%, so a paragraph that can lose a line at 99% is chosen ahead of one that needs 95%.</p>
+    <figure>
+      <div class="svgbox"><svg viewBox="0 0 620 260" role="img" aria-label="Line chart of the extra badness added for moving letter width away from 100 percent, for setting values 0.5, 1 and 3. Higher values rise more steeply.">
+        <g id="fig4"></g>
+      </svg></div>
+      <figcaption>Extra points added to a paragraph's score as its letters move away from normal width, for three values of this setting. Most of the cost comes with the first small step away from 100%.</figcaption>
+    </figure>
+    <div class="turn"><div class="up"><b>Turn it up</b>if you see paragraphs that look obviously squashed or stretched. The filler will spread the work into many small changes.</div><div class="down"><b>Turn it down</b>if you'd rather have one paragraph change a lot than several paragraphs change a little.</div></div>
+  </article>
+
+  <article class="setting">
+    <div class="sethead"><h3>Penalise shrink or stretch</h3><div class="facts"><span class="chip">default 1.0</span><span class="chip">range −5 to +5</span></div></div>
+    <p class="plain">When the filler could either make letters <b>narrower</b> or make them <b>wider</b>, which should it prefer? This setting adds points to one direction only.</p>
+    <figure>
+      <div class="svgbox"><svg viewBox="0 0 620 120" role="img" aria-label="A scale from minus 5 to plus 5. Negative values penalise narrower letters, so the filler prefers wider letters. Positive values penalise wider letters, so it prefers narrower. Zero is no preference.">
+        <g id="fig5"></g>
+      </svg></div>
+      <figcaption>Positive values penalise wider letters, so the text prefers to get narrower. Negative values do the opposite. The further from 0, the stronger the push.</figcaption>
+    </figure>
+    <p>How strong is "strong"? A paragraph's normal score is roughly its average word space, about <b>0.3 points</b>. At the default of 1.0, letters at 105% add 0.5 points. At 3.5 they add about 1.75, roughly six times a normal paragraph's score. That makes wider letters a last resort.</p>
+    <div class="turn"><div class="up"><b>Move it up (positive)</b>if wider letters look worse in your script than narrower ones.</div><div class="down"><b>Move it down (negative)</b>if your font looks cramped when narrowed and you'd rather it spread out.</div></div>
+    <p class="note">Which one looks worse depends on the font and the script. Print a page with a few adjusted paragraphs and look at them.</p>
+  </article>
+
+  <article class="setting">
+    <div class="sethead"><h3>Keep neighbouring paragraphs alike</h3><div class="facts"><span class="chip">default 3</span><span class="chip">range 0–20</span></div></div>
+    <p class="plain">The filler compares each paragraph with the one just above it. A narrow paragraph sitting right next to a wide one is easy to spot, because one looks darker than the other. This setting adds points for the difference, so the page looks even.</p>
+    <figure>
+      <div class="pair">
+        <div class="bad"><h4 style="color:var(--gap)">Big jumps between neighbours</h4><div class="stack" id="stackBad"></div></div>
+        <div><h4 style="color:var(--ok)">Neighbours kept alike</h4><div class="stack" id="stackGood"></div></div>
+      </div>
+      <figcaption>The same four paragraphs. On the left, a paragraph at 95% sits right under one at 105%, and the difference in darkness shows. On the right, the changes are small and alike.</figcaption>
+    </figure>
+    <div class="turn"><div class="up"><b>Turn it up</b>if you see "light" and "dark" paragraphs next to each other.</div><div class="down"><b>Turn it down</b>if pages fail and you can accept less even colour.</div></div>
+  </article>
+</section>
+
+<hr class="divider">
+
+<section id="poly">
+  <span class="eyebrow">Diglot &amp; polyglot only</span>
+  <h2>Lining up the languages</h2>
+  <p>In a diglot or polyglot, each language (each <b>glot</b>) has its own column. The text is cut into <b>slices</b>, chunks such as a few verses, which start level across all the columns. The next slice starts below whichever language ran longest.</p>
+  <p>Since one language is usually longer than another, the shorter ones leave some white space at the end of each slice. That white space is the <b>imbalance</b>.</p>
+  <figure>
+    <div class="svgbox"><svg viewBox="0 0 620 300" role="img" aria-label="Three language columns. In slice 1, column A is longest. Column B ends one line short, which looks like a mistake. Column C ends three lines short. Slice 2 starts level below column A.">
+      <g id="fig6"></g>
+    </svg></div>
+    <figcaption>Slice 1 ends where Glot A ends. Glot B is one line short, which looks like a mistake. Glot C is three lines short. Slice 2 starts level across all three.</figcaption>
+  </figure>
+  <p>The filler can stretch or shrink the paragraphs of a short glot to close its gap. Normally it only does that if the glot then ends <b>exactly level</b> with the slice, and it never leaves a gap of exactly one line. You can change that with the last setting below.</p>
+
+  <article class="setting">
+    <div class="sethead"><h3>The cost of imbalance in a polyglot slice</h3><div class="facts"><span class="chip">default 1.0</span><span class="chip">range 0–10</span></div></div>
+    <p class="plain">How bad it is for a slice not to line up. With the default of 1.0, the first line of white space costs <b>10 points</b>. A good paragraph adjustment costs under about 2 points, so the filler will happily make several small adjustments to level one slice.</p>
+    <div class="turn"><div class="up"><b>Turn it up</b>if levelled slices matter more to you than perfectly even paragraphs.</div><div class="down"><b>Turn it down</b>if the filler is distorting paragraphs just to tidy up slice endings.</div></div>
+  </article>
+
+  <article class="setting">
+    <div class="sethead"><h3>Effort to narrow a big imbalance</h3><div class="facts"><span class="chip">default 0.5</span><span class="chip">range 0–10</span></div></div>
+    <p class="plain">The cost of each <b>extra</b> line of white space after the first. It decides how much worse a 5-line gap is than a 2-line gap. It doesn't narrow gaps by itself. It helps the filler choose between layouts that leave different amounts of white space in the glots that can't be made level.</p>
+    <figure>
+      <div class="demo-controls">
+        <label for="imw">Cost of imbalance</label><input type="range" id="imw" min="0" max="3" step="0.1" value="1"><output id="imwOut" for="imw">1.0</output>
+      </div>
+      <div class="demo-controls">
+        <label for="imn">Effort to narrow</label><input type="range" id="imn" min="0" max="2" step="0.1" value="0.5"><output id="imnOut" for="imn">0.5</output>
+      </div>
+      <div class="presets" role="group" aria-label="Example settings">
+        <button type="button" data-w="1" data-n="0.5">Defaults (1.0 / 0.5)</button>
+        <button type="button" data-w="1" data-n="0.1">Weak narrowing (1.0 / 0.1)</button>
+        <button type="button" data-w="1" data-n="1.5">Strong narrowing (1.0 / 1.5)</button>
+      </div>
+      <div class="svgbox"><svg viewBox="0 0 620 250" id="fig7svg" role="img" aria-label="Bar chart of the badness points charged for a gap of 2 to 6 lines at the end of a slice, using the chosen settings.">
+        <g id="fig7"></g>
+      </svg></div>
+      <figcaption>Points charged for the white space left at the end of a slice. The dashed line shows about 2 points, the cost of a good paragraph adjustment. With a low "effort to narrow", a 6-line gap costs hardly more than a 2-line gap, so the filler won't work hard to shorten big gaps.</figcaption>
+    </figure>
+    <div class="turn"><div class="up"><b>Turn it up</b>if you see large white holes in one language's column and want fewer of them, even at the cost of looser paragraphs.</div><div class="down"><b>Turn it down</b> (0 = any gap counts as one line) if you'd rather keep paragraphs untouched and accept big gaps.</div></div>
+  </article>
+
+  <article class="setting">
+    <div class="sethead"><h3>Most tries to fill a polyglot page</h3><div class="facts"><span class="chip">default 20</span><span class="chip">range 0–500</span></div></div>
+    <p class="plain">The most layout runs the filler spends on one page. When it goes back to re-do an earlier page for it, each earlier page gets half as many tries. A page that can be filled usually is within a few tries, so this mainly limits time wasted on pages that can't be.</p>
+    <p class="note">A page where at least one language reaches the bottom is kept as the best layout found, not counted as a failure. <b>0</b> means no limit.</p>
+    <div class="turn"><div class="up"><b>Turn it up</b>if a few pages are left short and you have time to spare.</div><div class="down"><b>Turn it down</b>to finish faster.</div></div>
+  </article>
+
+  <article class="setting">
+    <div class="sethead"><h3>Fill polyglot slices regardless of 1 line gaps</h3><div class="facts"><span class="chip">default off</span></div></div>
+    <p class="plain">Normally the filler changes a short glot only if that makes it end level with the slice, and it never leaves a gap of exactly one line, which looks like a mistake. Tick this box to let it narrow gaps part of the way, even down to one line.</p>
+    <figure>
+      <div class="svgbox"><svg viewBox="0 0 620 210" role="img" aria-label="Four options for a glot that ends three lines short: leave it, make it level, narrow to two lines, narrow to one line. The first two are always allowed. The last two only when the box is ticked.">
+        <g id="fig8"></g>
+      </svg></div>
+      <figcaption>A glot that ends 3 lines short. With the box unticked, only the first two are allowed. With it ticked, all four are. Headings are never made to wrap differently just to narrow a gap.</figcaption>
+    </figure>
+  </article>
+</section>
+
+<hr class="divider">
+
+<section id="recipes">
+  <span class="eyebrow">Recipes</span>
+  <h2>What to change for common problems</h2>
+  <p>Change one or two settings at a time, run the job again, and compare. Return to the defaults if things get confusing.</p>
+  <div class="recipes">
+    <div class="recipe"><h3>"Too many pages fail"</h3><ul>
+      <li>Raise <span class="ui">Widest word space allowed</span> to 0.5–0.6.</li>
+      <li>Raise <span class="ui">Earlier pages to retry</span> to 4–6.</li>
+      <li>Raise <span class="ui">Paragraphs to adjust</span> to 7–8.</li>
+      <li>Lower <span class="ui">Keep neighbouring paragraphs alike</span> a little.</li></ul></div>
+    <div class="recipe"><h3>"It takes far too long"</h3><ul>
+      <li>Lower <span class="ui">Earlier pages to retry</span> to 1–2.</li>
+      <li>Lower <span class="ui">Paragraphs to adjust</span> to 4–5.</li>
+      <li>Polyglot: lower <span class="ui">Most tries</span> to 10.</li>
+      <li>Set a sensible <span class="ui">Time limit</span>.</li></ul></div>
+    <div class="recipe"><h3>"Some paragraphs look squashed or gappy"</h3><ul>
+      <li>Lower <span class="ui">Widest word space allowed</span> to about 0.4.</li>
+      <li>Raise <span class="ui">Keep paragraphs close to normal width</span> to 2–3.</li>
+      <li>Raise <span class="ui">Keep neighbouring paragraphs alike</span>.</li>
+      <li>Expect more failed pages; you may need to retry more pages.</li></ul></div>
+    <div class="recipe"><h3>"Narrow letters look bad in my font"</h3><ul>
+      <li>Set <span class="ui">Penalise shrink or stretch</span> to 0 or a negative number such as −1.</li>
+      <li>Give stretching room: <span class="ui">Widest word space allowed</span> 0.5 or more.</li></ul></div>
+    <div class="recipe"><h3>"Big white holes in one language"</h3><ul>
+      <li>Raise <span class="ui">Effort to narrow a big imbalance</span> to 1 or more.</li>
+      <li>If you can live with partial gaps, tick <span class="ui">Fill polyglot slices regardless</span>.</li></ul></div>
+    <div class="recipe"><h3>"I don't know where to start"</h3><ul>
+      <li>Use the defaults.</li>
+      <li>Change only <span class="ui">Widest word space allowed</span> (quality versus failures) and <span class="ui">Earlier pages to retry</span> (speed).</li>
+      <li>The rest are fine-tuning.</li></ul></div>
+  </div>
+</section>
+
+<section id="ref">
+  <span class="eyebrow">Quick reference</span>
+  <h2>All settings at a glance</h2>
+  <div class="tablebox"><table>
+    <thead><tr><th>Setting</th><th>Default</th><th>Range</th><th>Kind</th><th>Higher means</th></tr></thead>
+    <tbody>
+      <tr><td>Time limit for the whole job (minutes)</td><td class="num">180</td><td class="num">0–1000</td><td>Speed</td><td>More time before stopping; 0 = no limit</td></tr>
+      <tr><td>Earlier pages to retry</td><td class="num">4</td><td class="num">0–10</td><td>Speed</td><td>Fewer failed pages, much slower</td></tr>
+      <tr><td>Paragraphs to adjust on each page</td><td class="num">6</td><td class="num">1–10</td><td>Speed</td><td>Fewer failed pages, slower per page</td></tr>
+      <tr><td>Widest word space allowed</td><td class="num">1.0</td><td class="num">0–10</td><td>Quality (hard rule)</td><td>Easier to fill, looser text allowed</td></tr>
+      <tr><td>Keep paragraphs close to normal width</td><td class="num">1.0</td><td class="num">0–10</td><td>Quality</td><td>Many small changes instead of a few big ones</td></tr>
+      <tr><td>Penalise shrink or stretch</td><td class="num">1.0</td><td class="num">−5 to 5</td><td>Quality</td><td>+ prefers narrower letters, − prefers wider</td></tr>
+      <tr><td>Keep neighbouring paragraphs alike</td><td class="num">3</td><td class="num">0–20</td><td>Quality</td><td>More even colour down the page</td></tr>
+      <tr><td>The cost of imbalance in a polyglot slice</td><td class="num">1.0</td><td class="num">0–10</td><td>Polyglot</td><td>Levelling slices matters more</td></tr>
+      <tr><td>Effort to narrow a big imbalance</td><td class="num">0.5</td><td class="num">0–10</td><td>Polyglot</td><td>Bigger gaps count as much worse</td></tr>
+      <tr><td>Most tries to fill a polyglot page</td><td class="num">20</td><td class="num">0–500</td><td>Polyglot speed</td><td>More tries per page; 0 = no limit</td></tr>
+      <tr><td>Fill polyglot slices regardless of 1 line gaps</td><td class="num">off</td><td class="num">on/off</td><td>Polyglot</td><td>On: gaps may be narrowed part way, even to 1 line</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">The letter-width limits themselves (normally 95% to 105%) are not in this panel; they are the shrink and stretch text limits set elsewhere in PTXprint.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  const NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, text){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; return e; }
+  function add(g, tag, attrs, text){ const e = el(tag, attrs, text); g.appendChild(e); return e; }
+  // Grey text lines in a column; the last line of each "paragraph" is shorter
+  function lines(g, x, y, w, n, pitch, shortEvery){
+    for (let i = 0; i < n; i++){
+      const short = shortEvery && (i % shortEvery === shortEvery - 1);
+      add(g, "rect", {x: x, y: y + i*pitch, width: short ? w*0.55 : w, height: 4, rx: 1.5, "class": "s-line"});
+    }
+  }
+
+  // Fig 1: short page vs full page
+  (function(){
+    const g = document.getElementById("fig1"); const P = 12;
+    [[20, 12, 10, "Before"], [340, 12, 12, "After"]].forEach(([x, n1, n2, lab], idx) => {
+      add(g, "rect", {x: x, y: 20, width: 280, height: 210, rx: 4, "class": "s-page"});
+      add(g, "text", {x: x + 140, y: 14, "text-anchor": "middle", "class": "s-head"}, lab);
+      lines(g, x + 24, 42, 108, n1, 14, 5);
+      lines(g, x + 148, 42, 108, n2, 14, 4);
+      const bottom = 42 + 11*14 + 4;
+      if (n2 < n1){
+        const top = 42 + n2*14 - 6;
+        add(g, "rect", {x: x + 144, y: top, width: 116, height: bottom - top + 4, rx: 3, "class": "s-gap"});
+        add(g, "text", {x: x + 202, y: bottom + 22, "text-anchor": "middle", "class": "s-gaptext"}, "2 lines empty");
+      } else {
+        add(g, "text", {x: x + 140, y: bottom + 22, "text-anchor": "middle", "class": "s-ok"}, "✓ both columns full");
+      }
+    });
+    add(g, "path", {d: "M 306 125 L 330 125", "class": "s-arrow", "marker-end": "url(#arr)"});
+  })();
+
+  // Arrow marker shared by all SVGs (each SVG needs its own defs)
+  document.querySelectorAll("svg").forEach(svg => {
+    const d = el("defs", {}); const m = el("marker", {id: "arr", viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse"});
+    m.appendChild(el("path", {d: "M0 0 L10 5 L0 10 z", "class": "s-accent"})); d.appendChild(m); svg.insertBefore(d, svg.firstChild);
+  });
+
+  // Fig 2: backtracking
+  (function(){
+    const g = document.getElementById("fig2");
+    for (let i = 0; i < 5; i++){
+      const x = 20 + i*120, pg = 10 + i;
+      add(g, "rect", {x: x, y: 70, width: 96, height: 100, rx: 3, "class": "s-page"});
+      const n2 = pg === 13 ? 5 : 7;
+      lines(g, x + 10, 82, 34, 7, 12, 4);
+      lines(g, x + 52, 82, 34, n2, 12, 3);
+      if (pg === 13){
+        add(g, "rect", {x: x + 49, y: 82 + 5*12 - 4, width: 40, height: 28, rx: 2, "class": "s-gap"});
+        add(g, "text", {x: x + 48, y: 186, "text-anchor": "middle", "class": "s-gaptext"}, "p." + pg + " can't fill");
+      } else {
+        add(g, "text", {x: x + 48, y: 186, "text-anchor": "middle", "class": "s-label"}, "p." + pg);
+      }
+    }
+    const c13 = 20 + 3*120 + 48, c12 = 20 + 2*120 + 48, c11 = 20 + 120 + 48;
+    add(g, "path", {d: `M ${c13} 66 C ${c13} 36, ${c12} 36, ${c12} 64`, "class": "s-arrow", "marker-end": "url(#arr)"});
+    add(g, "text", {x: (c13 + c12)/2, y: 34, "text-anchor": "middle", "class": "s-accenttext"}, "retry 1");
+    add(g, "path", {d: `M ${c13 - 8} 66 C ${c13 - 20} 4, ${c11 + 10} 4, ${c11} 64`, "class": "s-arrow", "marker-end": "url(#arr)"});
+    add(g, "text", {x: (c13 + c11)/2 - 10, y: 12, "text-anchor": "middle", "class": "s-accenttext"}, "retry 2");
+  })();
+
+  // Fig 3: combinations double
+  (function(){
+    const g = document.getElementById("fig3");
+    const x0 = 60, y0 = 190, H = 150, bw = 40, gap = 15, maxv = 1024;
+    add(g, "line", {x1: x0 - 6, y1: y0, x2: 600, y2: y0, "class": "s-axis"});
+    for (let n = 1; n <= 10; n++){
+      const v = Math.pow(2, n), h = Math.max(1.5, v / maxv * H), x = x0 + (n - 1)*(bw + gap);
+      add(g, "rect", {x: x, y: y0 - h, width: bw, height: h, rx: 2, "class": n === 6 ? "s-accent" : "s-line"});
+      add(g, "text", {x: x + bw/2, y: y0 - h - 6, "text-anchor": "middle", "class": n === 6 ? "s-accenttext" : "s-label"}, v);
+      add(g, "text", {x: x + bw/2, y: y0 + 16, "text-anchor": "middle", "class": "s-label"}, n);
+    }
+    add(g, "text", {x: x0 + 4.5*(bw+gap), y: y0 + 36, "text-anchor": "middle", "class": "s-label"}, "paragraphs adjusted on the page (6 = default)");
+    add(g, "text", {x: x0 - 8, y: 30, "class": "s-label"}, "possible layouts");
+  })();
+
+  // Fig 4: expansion badness curves: extra = factor * sqrt(|e-1|) (as a multiple of the paragraph's own score)
+  (function(){
+    const g = document.getElementById("fig4");
+    const X = e => 70 + (e - 95) / 10 * 500, maxY = 0.7, Y = v => 210 - v / maxY * 180;
+    for (let t = 0; t <= 0.7001; t += 0.1){
+      add(g, "line", {x1: 70, y1: Y(t), x2: 570, y2: Y(t), "class": "s-rule"});
+      add(g, "text", {x: 62, y: Y(t) + 4, "text-anchor": "end", "class": "s-label"}, "+" + Math.round(t*100) + "%");
+    }
+    for (let e = 95; e <= 105; e += 1){
+      add(g, "text", {x: X(e), y: 228, "text-anchor": "middle", "class": "s-label"}, e + "%");
+    }
+    add(g, "text", {x: 320, y: 252, "text-anchor": "middle", "class": "s-label"}, "letter width");
+    const series = [[3, "var(--gap)", "3"], [1, "var(--accent)", "1 (default)"], [0.5, "var(--mine)", "0.5"]];
+    series.forEach(([f, col, lab]) => {
+      let d = "";
+      for (let i = 0; i <= 200; i++){
+        const e = 95 + i * 0.05, v = f * Math.sqrt(Math.abs(e - 100) / 100);
+        d += (i ? " L " : "M ") + X(e).toFixed(1) + " " + Y(v).toFixed(1);
+      }
+      add(g, "path", {d: d, fill: "none", stroke: col, "stroke-width": 2.2});
+      const vEnd = f * Math.sqrt(0.05);
+      add(g, "text", {x: 576, y: Y(vEnd) + 4, fill: col, "font-size": 12, "font-weight": 600}, lab);
+    });
+    add(g, "text", {x: 70, y: 16, "class": "s-label"}, "extra points, as a share of the paragraph's own score");
+  })();
+
+  // Fig 5: penalise scale
+  (function(){
+    const g = document.getElementById("fig5");
+    const X = v => 60 + (v + 5) / 10 * 500;
+    add(g, "line", {x1: X(-5), y1: 50, x2: X(5), y2: 50, "class": "s-axis"});
+    for (let v = -5; v <= 5; v++){
+      add(g, "line", {x1: X(v), y1: 45, x2: X(v), y2: 55, "class": "s-axis"});
+      add(g, "text", {x: X(v), y: 72, "text-anchor": "middle", "class": "s-label"}, v > 0 ? "+" + v : v);
+    }
+    add(g, "text", {x: X(-2.5), y: 24, "text-anchor": "middle", "class": "s-head"}, "◀ prefers WIDER letters");
+    add(g, "text", {x: X(2.5), y: 24, "text-anchor": "middle", "class": "s-head"}, "prefers NARROWER letters ▶");
+    add(g, "text", {x: X(0), y: 98, "text-anchor": "middle", "class": "s-label"}, "0 = no preference");
+    [[1, "var(--accent)", "default"]].forEach(([v, col, lab]) => {
+      add(g, "circle", {cx: X(v), cy: 50, r: 7, fill: col});
+      add(g, "text", {x: X(v), y: 98, "text-anchor": "middle", fill: col, "font-size": 12, "font-weight": 600}, lab);
+    });
+  })();
+
+  // Fig 6: polyglot slices
+  (function(){
+    const g = document.getElementById("fig6");
+    const cols = [[40, "Glot A", 8], [225, "Glot B", 7], [410, "Glot C", 5]], P = 14, top = 44, w = 170;
+    cols.forEach(([x, lab, n]) => {
+      add(g, "text", {x: x + w/2, y: 22, "text-anchor": "middle", "class": "s-head"}, lab);
+      lines(g, x, top, w, n, P, 4);
+      lines(g, x, top + 8*P + 22, w, 8, P, 5);
+    });
+    const sliceEnd = top + 8*P;
+    add(g, "line", {x1: 20, y1: sliceEnd + 8, x2: 600, y2: sliceEnd + 8, "class": "s-slice"});
+    add(g, "text", {x: 600, y: sliceEnd + 2, "text-anchor": "end", "class": "s-accenttext"}, "end of slice 1");
+    add(g, "text", {x: 600, y: top - 8, "text-anchor": "end", "class": "s-accenttext"}, "slice 1");
+    add(g, "text", {x: 600, y: sliceEnd + 22, "text-anchor": "end", "class": "s-accenttext"}, "slice 2");
+    // gaps
+    add(g, "rect", {x: 222, y: top + 7*P - 6, width: w + 6, height: P + 2, rx: 2, "class": "s-gap"});
+    add(g, "text", {x: 225 + w/2, y: top + 7*P + 5, "text-anchor": "middle", "class": "s-gaptext"}, "1 line: looks like a mistake");
+    add(g, "rect", {x: 407, y: top + 5*P - 6, width: w + 6, height: 3*P + 2, rx: 2, "class": "s-gap"});
+    add(g, "text", {x: 410 + w/2, y: top + 6.5*P, "text-anchor": "middle", "class": "s-gaptext"}, "3 lines of imbalance");
+  })();
+
+  // Fig 8: fill slices options
+  (function(){
+    const g = document.getElementById("fig8");
+    const opts = [["Leave it as it was", 5, true], ["Make it level", 8, true], ["Narrow to 2 lines", 6, false], ["Narrow to 1 line", 7, false]];
+    const P = 12;
+    opts.forEach(([lab, n, always], i) => {
+      const x = 14 + i*152;
+      add(g, "rect", {x: x, y: 20, width: 136, height: 120, rx: 3, "class": "s-page"});
+      lines(g, x + 10, 32, 54, 8, P, 4);
+      lines(g, x + 72, 32, 54, n, P, 5);
+      if (n < 8) add(g, "rect", {x: x + 69, y: 32 + n*P - 4, width: 60, height: (8 - n)*P, rx: 2, "class": "s-gap"});
+      add(g, "line", {x1: x + 4, y1: 32 + 8*P - 2, x2: x + 132, y2: 32 + 8*P - 2, "class": "s-slice"});
+      add(g, "text", {x: x + 68, y: 160, "text-anchor": "middle", "class": "s-head"}, lab);
+      add(g, "text", {x: x + 68, y: 180, "text-anchor": "middle", "class": always ? "s-ok" : "s-gaptext"}, always ? "✓ always allowed" : "only when ticked");
+    });
+  })();
+
+  // Fig 7: imbalance cost chart (interactive)
+  const imw = document.getElementById("imw"), imn = document.getElementById("imn");
+  function drawImb(){
+    const w = parseFloat(imw.value), n = parseFloat(imn.value);
+    document.getElementById("imwOut").textContent = w.toFixed(1);
+    document.getElementById("imnOut").textContent = n.toFixed(1);
+    const g = document.getElementById("fig7"); g.replaceChildren();
+    const gaps = [2, 3, 4, 5, 6], costs = gaps.map(k => 10*w + 10*n*(k - 1));
+    const maxv = Math.max(20, ...costs) * 1.1, x0 = 70, y0 = 200, H = 170, bw = 70, gp = 34;
+    const Y = v => y0 - v / maxv * H;
+    add(g, "line", {x1: x0 - 6, y1: y0, x2: 600, y2: y0, "class": "s-axis"});
+    add(g, "line", {x1: x0 - 6, y1: Y(2), x2: 600, y2: Y(2), stroke: "var(--ok)", "stroke-width": 1.5, "stroke-dasharray": "5 4"});
+    add(g, "text", {x: 600, y: Y(2) - 5, "text-anchor": "end", "class": "s-ok", "font-size": 11}, "≈ a good paragraph adjustment");
+    gaps.forEach((k, i) => {
+      const x = x0 + i*(bw + gp), v = costs[i], h = Math.max(1, y0 - Y(v));
+      add(g, "rect", {x: x, y: y0 - h, width: bw, height: h, rx: 2, "class": "s-bad", opacity: 0.85});
+      add(g, "text", {x: x + bw/2, y: y0 - h - 6, "text-anchor": "middle", "class": "s-head"}, (Math.round(v*10)/10) + " pts");
+      add(g, "text", {x: x + bw/2, y: y0 + 16, "text-anchor": "middle", "class": "s-label"}, k + " lines");
+    });
+    add(g, "text", {x: 335, y: y0 + 40, "text-anchor": "middle", "class": "s-label"}, "white space left at the end of a slice");
+  }
+  imw.addEventListener("input", drawImb); imn.addEventListener("input", drawImb);
+  document.querySelectorAll("[data-w]").forEach(b => b.addEventListener("click", () => { imw.value = b.dataset.w; imn.value = b.dataset.n; drawImb(); }));
+  drawImb();
+
+  // Letter-width demo
+  const TEXT = "In the beginning was the Word, and the Word was with God, and the Word was God. The same was in the beginning with God. All things were made through him. Without him, nothing was made that has been made. In him was life, and the life was the light of men. The light shines in the darkness, and the darkness hasn’t overcome it.";
+  const sq = document.getElementById("squeeze"), wd = document.getElementById("wd");
+  sq.textContent = TEXT;
+  let baseLines = null;
+  function drawWidth(){
+    const s = parseFloat(wd.value) / 100;
+    sq.style.width = (100 / s) + "%";
+    sq.style.transform = "scaleX(" + s + ")";
+    document.getElementById("wdOut").textContent = wd.value + "%";
+    const lh = parseFloat(getComputedStyle(sq).lineHeight) || 26;
+    const n = Math.round(sq.offsetHeight / lh);
+    if (baseLines === null && s === 1) baseLines = n;
+    const diff = baseLines === null ? 0 : n - baseLines;
+    const msg = diff === 0 ? "the same number of lines as normal" : diff < 0 ? `${-diff} line${diff < -1 ? "s" : ""} fewer than normal (shrink)` : `${diff} line${diff > 1 ? "s" : ""} more than normal (stretch)`;
+    document.getElementById("wdResult").innerHTML = `At <b>${wd.value}%</b> this paragraph takes <b>${n} lines</b>: ${msg}.<br><span style="color:var(--muted)">A change of one line in one paragraph can be enough to fill a short column.</span>`;
+  }
+  wd.addEventListener("input", drawWidth);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { baseLines = null; const v = wd.value; wd.value = 100; drawWidth(); wd.value = v; drawWidth(); });
+  drawWidth();
+
+  // Word space demo
+  const spd = document.getElementById("spdemo"), sp = document.getElementById("sp");
+  spd.innerHTML = TEXT.split(" ").map(w => `<span class="w">${w}</span>`).join('<span class="sp"></span>​');
+  function drawSp(){
+    const v = parseFloat(sp.value);
+    document.getElementById("spOut").textContent = v.toFixed(2) + " ×";
+    spd.querySelectorAll(".sp").forEach(s => s.style.width = v + "em");
+  }
+  sp.addEventListener("input", drawSp);
+  document.querySelectorAll("[data-sp]").forEach(b => b.addEventListener("click", () => { sp.value = b.dataset.sp; drawSp(); }));
+  drawSp();
+
+  // Neighbour stacks
+  const PARAS = ["The light shines in the darkness, and the darkness hasn’t overcome it.",
+    "There came a man, sent from God, whose name was John. The same came as a witness, that he might testify about the light.",
+    "He was not the light, but was sent that he might testify about the light. The true light that enlightens everyone was coming into the world.",
+    "He was in the world, and the world was made through him, and the world didn’t recognize him."];
+  function stack(id, pcts){
+    const box = document.getElementById(id);
+    box.innerHTML = PARAS.map((t, i) => {
+      const s = pcts[i] / 100;
+      return `<div class="row"><span class="pct">${pcts[i]}%</span><div class="cell"><div style="width:${100/s}%;transform:scaleX(${s})">${t}</div></div></div>`;
+    }).join("");
+  }
+  stack("stackBad", [95, 105, 96, 104]);
+  stack("stackGood", [99, 100, 99, 100]);
+})();
+</script>

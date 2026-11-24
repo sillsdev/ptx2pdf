@@ -420,7 +420,9 @@ class Collector:
                         cs = list(c)
                         #Multi-component body paragraph
                         logger.log(8, f'Bodypar: {name}, {type(cs[0])}, {cs[0]}')
-                        if (len(cs[0]) > 1 and self.currChunk.verseText):
+                        if c.text and len(c.text.strip()) and self.currChunk.verseText:
+                            mode = midvmode     # the rest of a verse first, then the next verse starts
+                        elif (len(cs[0]) > 1 and self.currChunk.verseText):
                             mode = midvmode
                         elif cs[0].tag == "verse" or (len(cs) > 1 and cs[1].tag == "verse"):
                             mode = ChunkType.PREVERSEPAR
@@ -652,8 +654,8 @@ class Collector:
                     # c.extend(cn)
                     # cn.deleteme = True
                     logger.debug(f"Merged.6: {'deleteme' in c}, {c.position}")
-                elif c.type in (ChunkType.CHAPTER, ChunkType.BODY, ChunkType.PREVERSEPAR):
-                    pass
+                elif cn.type in (ChunkType.CHAPTER, ChunkType.BODY, ChunkType.PREVERSEPAR):
+                    pass        # (what follows decides: c is always a HEADING here)
                 else:
                     c.type = ChunkType.INTRO
         # Swap chapter and heading first
@@ -710,7 +712,8 @@ class Collector:
                 scval -= self.protect[self.acc[i][0].get("style", "")]
             self.acc[i].score = scval
             pos=self.acc[i].position
-            self.loc[pos] = i
+            if pos not in self.loc:     # e.g. 3a and 3b have the same position: break before the first
+                self.loc[pos] = i
             if pos in results:
                 results[pos] += scval
                 logger.debug("%s(%s)  + %d = %d" % (pos,self.acc[i][0].get('style', ''), scval, results[pos]))
@@ -894,11 +897,11 @@ def alignScores(*columns):
         if globalcl:
           chlist=('CHAPTERHEAD','CHAPTER')
         else:
-          chlist=('CHAPTERHEAD')
+          chlist=('CHAPTERHEAD',)       # (a tuple: a string would match 'CHAPTER' too)
         if positions[i][_headingidx] in ('HEADING','PREVERSEHEAD'):
             if merged[positions[i+1]] > 99:
                 a = 0
-                while positions[i-a-1][3] in ('HEADING','PREVERSEHEAD'):
+                while i-a-1 >= 0 and positions[i-a-1][_headingidx] in ('HEADING','PREVERSEHEAD'):
                     a += 1
                 logger.debug(f"Splitting between positions {positions[i-a]} and {positions[i+1]}")
                 merged[positions[i-a]] = 100
@@ -907,7 +910,7 @@ def alignScores(*columns):
                     logger.debug(f"Not splitting between positions {positions[i]} and {positions[i+1]} (score={merged[positions[i+1]]})")
         elif positions[i][_headingidx] in chlist:
             a = 1
-            while positions[i+a][_headingidx] in chlist:
+            while i+a < len(positions)-1 and positions[i+a][_headingidx] in chlist:
                 a += 1
             if MergeF.HeadWithText in settings:
                 logger.debug(f"Not splitting head from text between positions {positions[i]} and {positions[i+a]}")
@@ -1141,7 +1144,24 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
         
     return(SyncPoints[{synchronise}])
     
-def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
+def usfmerge2(*a, **kw):
+    """ The merge flags (settings) are changed by the mode and by custom merge configs: put them
+        back afterwards, so that they don't carry over into the next merge """
+    global settings
+    saved = settings
+    try:
+        return _usfmerge2(*a, **kw)
+    finally:
+        settings = saved
+
+def _confpaths(filepath):
+    """ (config name, project dir) for a folder of files being merged:
+        <project>/local/ptxprint/<config>[/pbuildX] """
+    if os.path.basename(filepath).startswith("pbuild"):     # a print worker's folder
+        filepath = os.path.dirname(filepath)
+    return (os.path.basename(filepath), os.path.dirname(os.path.dirname(os.path.dirname(filepath))))
+
+def _usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None, changes=[], book=None):
     global debugPrint, debstr,settings
     if debug:
       debugPrint = True
@@ -1227,8 +1247,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                 #Primary might be in a different place to other files, if run
                 # from command line. If so, that should take priority.
                 (prifilepath, filename) = os.path.split(os.path.abspath(infile))
-                priconfname = os.path.basename(prifilepath)
-                priptpath = os.path.dirname(os.path.dirname(os.path.dirname(prifilepath)))
+                priconfname, priptpath = _confpaths(prifilepath)
                 priconfpath = os.path.join(priptpath, "shared", "ptxprint", priconfname)
         for colkey,infile in zip(keyarr, infilearr):
                 #if (syncarr[colkey].startswith("custom")):
@@ -1241,8 +1260,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                     variety=syncarr[colkey][7:]
                     varfile = "merge-" + synchronise+variety + ".cfg"
                 (filepath,filename) = os.path.split(os.path.abspath(infile))
-                confname = os.path.basename(filepath)
-                ptpath = os.path.dirname(os.path.dirname(os.path.dirname(filepath)))
+                confname, ptpath = _confpaths(filepath)
                 confpath = os.path.join(ptpath, "shared", "ptxprint", confname)
                 searchlist = []
                 cfile="merge-" + synchronise + ".cfg"
@@ -1253,7 +1271,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets={}, fsecondary=False, mode
                     
                 searchlist.extend(((os.path.join(prifilepath,cfile),1),(os.path.join(priconfpath,cfile),1),(os.path.join(priptpath,cfile),0)))
                 if (colkey!='L' and prifilepath != filepath):
-                    searchlist.extend((os.path.join(ptpath,cfile),0))
+                    searchlist.append((os.path.join(ptpath,cfile),0))
                 done=0
                 for searchpair in searchlist:
                     (confpath,useLR)=searchpair

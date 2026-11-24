@@ -188,8 +188,8 @@ class Hyphenation:
 
 class Hunspell:
 
-    def __init_(self, infile):
-        from spylls.hunspell import Dictioanry
+    def __init__(self, infile):
+        from spylls.hunspell import Dictionary
         if infile.lower().endswith(".zip"):
             self.dict = Dictionary.from_zip(infile)
         else:

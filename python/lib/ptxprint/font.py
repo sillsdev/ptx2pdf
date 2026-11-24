@@ -163,10 +163,14 @@ def parseFeatString(featstring, defaults={}, langfeats={}):
     base = defaults
     if featstring is not None and featstring:
         logging.debug(f"Parsing feature string {featstring}")
-        words = list(re.split(r'\s*[,;:]\s*|\s+', featstring))
+        featstring = re.sub(r"\s*=\s*", "=", featstring.strip())     # "liga = 0" is "liga=0"
+        words = [w for w in re.split(r'\s*[,;:]\s*|\s+', featstring) if w]
         if '=' in featstring:
             for l in words:
-                k, v = l.split("=")
+                if "=" not in l:
+                    logging.debug(f"Ignoring feature setting {l} in {featstring}")
+                    continue
+                k, v = l.split("=", 1)
                 if k.lower() == "language":
                     lang = v.strip()
                     base = langfeats.get(lang, base)
@@ -200,6 +204,7 @@ class TTFontCache:
 
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
+        cff2 = self.cff2Files()
         primary = set()     # (family, style) set from a file whose own (first) style it is
         for f in files.split("\n"):
             logger.log(8, f"fc-list: {f}")
@@ -207,6 +212,8 @@ class TTFontCache:
                 continue
             try:
                 (path, full) = f.strip().split(": ")
+                if path in cff2:
+                    continue
                 if path[-4:].lower() not in (".ttf", ".otf", ".ttc"):
                     continue
                 if ":style=" in full:
@@ -226,6 +233,8 @@ class TTFontCache:
             except ValueError:
                 raise SyntaxError("Can't parse: {}".format(f).encode("unicode_escape"))
             styles = [x.strip() for x in self.stylefilter(styles)]
+            # some fonts call their regular face "Normal"; XeTeX knows it only by the family name
+            styles = ["Regular" if x.lower() == "normal" else x for x in styles]
             # The first style is the file's own. The others are translations, or the legacy style
             # that goes with a second family name: "Lato,Lato Hairline:style=Hairline,Regular" is
             # Lato Hairline and "Lato Hairline" Regular, not Lato Regular. So those only fill a
@@ -243,6 +252,16 @@ class TTFontCache:
             print("FClist failed:", files)
         self.fccache = {k: v.copy() for k,v in self.cache.items()}
         self.busy = False
+
+    def cff2Files(self):
+        """ The installed font files with CFF2 outlines, which can't be printed: xdvipdfmx can't
+            embed them. fontconfig calls them CFF fonts that are variable. """
+        res = set()
+        for l in checkoutput(["fc-list", ":fontformat=CFF:variable=true", "file"], path="xetex").split("\n"):
+            l = l.strip()
+            if l.endswith(":"):
+                res.add(l[:-1])
+        return res
 
     def stylefilter(self, styles):
         currweight = max(styles_order.get(s.title(), 0) for s in styles)
@@ -265,9 +284,11 @@ class TTFontCache:
             logger.debug(f"Add font path: {path}")
             self.fontpaths.append(path)
         for fname in os.listdir(path):
-            if fname.lower()[-4:] in (".ttf", ".ttc"):
+            if fname.lower()[-4:] in (".ttf", ".ttc", ".otf"):
                 fpath = os.path.join(path, fname)
                 f = TTFont(None, filename=fpath)
+                if 'CFF2' in f.dict:        # can't be printed: xdvipdfmx can't embed CFF2
+                    continue
                 f.usepath = True
                 self.cache.setdefault(f.family, {})[f.style] = fpath
 
@@ -690,7 +711,7 @@ class TTFont:
                 self.family = self.names.get(1, self.family)
                 self.style = self.names.get(2, self.style)
                 self.style = " ".join(x.title() for x in self.style.split())
-                if self.style.lower() == "regular":
+                if self.style.lower() in ("regular", "normal"):
                     self.style = ""
             else:                       # corrupted font so dump it
                 self.dict = {}
@@ -1061,8 +1082,9 @@ class FontRef:
                 bits.remove(a)
             else:
                 setattr(self, f"is{a}", False)
-        if "Regular" in bits:
-            bits.remove("Regular")
+        for a in ("Regular", "Normal"):     # "Normal" is what some fonts call Regular
+            if a in bits:
+                bits.remove(a)
         self.style = " ".join(bits)
         self.isGraphite = isGraphite
         self.isCtxtSpace = isCtxtSpace
@@ -1092,14 +1114,16 @@ class FontRef:
         return self._iseq(other)
 
     def to_dict(self):
-        return {'name': self.name, 'style': self.style, 'isGraphite': self.isGraphite, 'isCtxtSpace': self.isCtxtSpace, 'feats': self.lang}
+        return {'name': self.name, 'style': self.style, 'isGraphite': self.isGraphite, 'isCtxtSpace': self.isCtxtSpace,
+                'feats': self.feats, 'lang': self.lang}
 
     @classmethod
     def fromConfig(cls, txt):
         bits = txt.split("|")
         isCtxtSpace = "false"
+        featlist = []
         if len(bits) < 4:
-            (name, styles, isGraphite) = bits
+            (name, styles, isGraphite) = (bits + ["", ""])[:3]     # (name|style|graphite, perhaps shorter)
         else:
             (name, styles, isGraphite) = bits[:3]
             if bits[3] not in ('true', 'false'):
@@ -1112,7 +1136,7 @@ class FontRef:
         if len(featlist):
             for s in featlist:
                 if len(s) and '=' in s:
-                    k, v = s.split("=")
+                    k, v = s.split("=", 1)
                     if k == "language":
                         lang = v
                     else:
@@ -1156,7 +1180,7 @@ class FontRef:
         return res
 
     def copy(self, cls=None):
-        res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.isCtxtSpace, self.feats)
+        res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.isCtxtSpace, dict(self.feats or {}), self.lang)
         res.isItalic = self.isItalic
         res.isBold = self.isBold
         return res
@@ -1191,16 +1215,15 @@ class FontRef:
         if f is None:
             return
         for l in re.split(r"[,;:]", featstring):
-            if not len(l):
+            if not len(l.strip()) or "=" not in l:
                 continue
-            k, v = l.split("=")
+            k, v = l.split("=", 1)
             if k.strip().lower() == "language":
                 self.lang = v.strip()
                 continue
-            elif self.isGraphite:
-                self.readFeats()
-                key = f.featnames.get(k.strip(), k.strip())
-                val = f.featvalnames.get(key, {}).get(v.strip(), v.strip())
+            elif self.isGraphite:      # (the font's feature names were read with it)
+                key = getattr(f, 'featnames', {}).get(k.strip(), k.strip())
+                val = getattr(f, 'featvalnames', {}).get(key, {}).get(v.strip(), v.strip())
             else:
                 key = k.strip().lstrip("+")
                 val = v.strip()
@@ -1217,7 +1240,7 @@ class FontRef:
         s = " ".join(newstyle)
         f = fontcache.get(self.name, s)
         if f is not None:
-            return FontRef(self.name, s, self.isGraphite, self.isCtxtSpace, self.feats)
+            return FontRef(self.name, s, self.isGraphite, self.isCtxtSpace, dict(self.feats or {}), self.lang)
         res = self.copy()
         if bold:
             f = fontcache.get(self.name, "Bold")
@@ -1271,7 +1294,6 @@ class FontRef:
         f = self.getTtfont()
         self.isGraphite = self.isGraphite and f.isGraphite
         s = None
-        f.iscore = True
         if f.filename is not None and not f.iscore:
             if inarchive:
                 fname = f"../../../shared/fonts/{f.filename.name}"

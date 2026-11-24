@@ -15,9 +15,8 @@ classifiers = [
    "Topic :: Text Processing :: General"
    ]
 requires-python = ">=3.8"
-# commented out dynamic versioning for now
 # dynamic = ["version"]
-version = "3.1.6"
+version = "3.1.10"
 
 dependencies = [
 "usfmtc @ https://github.com/usfm-bible/usfmtc/archive/main.zip",
@@ -28,6 +27,7 @@ dependencies = [
 "Pillow",
 "numpy",
 "markdown_it-py",
+"mdit-py-plugins",
 "psutil"
 ]
 
@@ -61,6 +61,7 @@ universal = true
 
 [project.scripts]
 ptxprint = "ptxprint.main:main"
+ptxprint-manager = "ptxprint.manager.main:main"
 pdfdiff = "ptxprint.pdf.pdfdiff:main"
 xdvitype = "ptxprint.xdv.xdvtype:main"
 pdfinish = "ptxprint.pdf.pdfinish:main"

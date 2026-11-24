@@ -455,7 +455,7 @@
   \else
     \edef\@@shdw@x{\the\dimexpr #1\dimexpr \c@rrfontsize\FontSizeUnit\relax\relax}%
   \fi
-  \def\tmp{#2}\ifx\tmp\empty\let\shdw@y\shdw@x\else
+  \def\tmp{#2}\ifx\tmp\empty\let\@@shdw@y\@@shdw@x\else
     \edef\@@shdw@y{\the\dimexpr #2\dimexpr \c@rrfontsize\FontSizeUnit\relax\relax}%
   \fi
   \trace{Fe}{Shadow dims \@@shdw@x x \@@shdw@y}%

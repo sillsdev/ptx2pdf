@@ -1,6 +1,7 @@
 from ptxprint.utils import coltoonemax, asfloat, _
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdfrw import PdfReader, PdfWriter
+from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 _pdfmodes = {
     'rgb': ("Screen", "Digital"),
-    'cmyk': ("CMYK", "Transparency")
+    'cmyk': ("CMYK", "Transparent")
 }
 
 _unitpts = {
@@ -35,6 +36,22 @@ def safeRename(infile, outfile):
     except (FileNotFoundError, PermissionError):
         pass
 
+def writeOrWarn(writefn, fname, doError):
+    """ Runs writefn to (over)write fname. If fname is locked (e.g. open in Adobe Reader on
+        Windows) tells the user, rather than letting the exception die silently in the
+        print thread, and returns False. """
+    try:
+        writefn()
+        return True
+    except PermissionError as e:
+        logger.error(f"Unable to write {fname}: {e}")
+        doError(_("Could not create: {}").format(os.path.basename(fname)),
+                secondary=_("The file is probably open in another program (such as a PDF viewer), "
+                            "which is stopping PTXprint from replacing it.\n\n"
+                            "Please close it there and print again.\n\n{}").format(fname),
+                title=_("PDF file is locked"), threaded=True)
+        return False
+
 def stripInfo(trailer):
     """ PDF 2.0 deprecates the document information dictionary. The only entry
         that may remain is ModDate, and then only if the catalog has PieceInfo. """
@@ -43,6 +60,47 @@ def stripInfo(trailer):
         trailer.Info = PdfDict(ModDate=info.ModDate)
     else:
         trailer.Info = None
+
+def plainMetadata(trailer):
+    """ PDF/A wants the XMP metadata stream unfiltered. fixcol.compress leaves a stream whose
+        /Filter is an empty list uncompressed (as fixcol.outpdf does). """
+    meta = trailer.Root.Metadata
+    if meta is None:
+        return
+    if meta.Filter:
+        uncompress([meta])
+    if meta.Filter is None:
+        meta.Filter = []
+
+def finishPdf(trailer, pdf2=False):
+    stripCIDSets(trailer, procsets=pdf2)
+    plainMetadata(trailer)
+
+def stripCIDSets(trailer, procsets=False):
+    """ Removes the /CIDSet from each CID font's descriptor. It is optional in every PDF version;
+        PDF/A-2 and 3 want it complete (xdvipdfmx's isn't always) and PDF/A-4 and PDF/UA-2 forbid it.
+        With procsets, also each resource dictionary's /ProcSet, which PDF 2.0 deprecates. """
+    seen = set()
+    def doresources(res):
+        if res is None or id(res) in seen:
+            return
+        seen.add(id(res))
+        if procsets and res.ProcSet is not None:
+            res.ProcSet = None
+        for f in (res.Font or {}).values():
+            for d in (f.DescendantFonts or []):
+                if d.FontDescriptor is not None and d.FontDescriptor.CIDSet is not None:
+                    d.FontDescriptor.CIDSet = None
+        for x in (res.XObject or {}).values():     # an imposed page is the original as a form
+            doresources(x.Resources)
+    def dopages(node):         # the page tree (an imposed PDF's trailer isn't a PdfReader)
+        if node is None or id(node) in seen:
+            return
+        seen.add(id(node))
+        doresources(node.Resources)         # a page's, or inherited from the tree
+        for k in (node.Kids or []):
+            dopages(k)
+    dopages(trailer.Root.Pages)
 
 def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                 stripinfo=False, **kw):
@@ -54,7 +112,8 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
     coverfile = None
     if kw.get('burst', False) or kw.get('cover', False):
         inpdf = PdfReader(opath)
-        extras = split_pages(inpdf)
+        # with only the cover wanted, other inserts (e.g. maps) must stay in the PDF
+        extras = split_pages(inpdf, only=None if kw.get('burst', False) else ('cover',))
         logger.debug("Bursting: " + " ".join(extras.keys()))
         for k, eps in extras.items():
             bpdfname = pdffile.replace(".pdf", f"_{k}.pdf")
@@ -78,10 +137,11 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
             if stripinfo:
                 stripInfo(bpdf)
             if ispdfxa == "Screen":
-                outpdf(bpdf, bpdfname)
+                done = writeOrWarn(lambda: outpdf(bpdf, bpdfname), bpdfname, doError)
             else:
-                fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
-            res[k] = bpdfname
+                done = writeOrWarn(lambda: fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True), bpdfname, doError)
+            if done:
+                res[k] = bpdfname
         outpdfobj = PdfWriter(None, trailer=inpdf)
     colour = None
     params = {}
@@ -105,8 +165,10 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
             outpdfobj = fixpdffile((outpdfobj._trailer if outpdfobj else opath), None,
                         colour=colour,
                         parlocs = outfname.replace(".tex", ".parlocs"), **params)
-        except ValueError:
-            return {}
+        except ValueError as e:     # e.g. no colour profile: the PDF the user asked for wasn't made
+            logger.error(f"Unable to make the {colour} PDF: {e}")
+            doError(_("Unable to make the {} PDF").format(ispdfxa), secondary=str(e))
+            return None
 
     paper = []
     psize = (kw.get('sheetsize', None) or "210mm, 297mm (A4)").split(",")
@@ -135,7 +197,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
             print(e)
             doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                  title=_("Paper Size Error"), secondary=str(e), threaded=True)
-            return {}
+            return None         # failed: {} is a success with nothing to say
     else:  # nums is 1
         scale_to_fit = bool(kw.get("scaletofit", False))
         if scale_to_fit:
@@ -156,7 +218,9 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                     continue
                 tx = (target_w - pg_w * scale) / 2
                 ty = (target_h - pg_h * scale) / 2
-                matrix_op = "{} {} {} {} {} {} cm\n".format(*[round(v, 6) for v in [scale, 0, 0, scale, tx, ty]])
+                ox, oy = float(mb[0]), float(mb[1])     # the content is placed from the MediaBox's corner
+                matrix_op = "{} {} {} {} {} {} cm\n".format(*[round(v, 6) for v in
+                                                    [scale, 0, 0, scale, tx - scale * ox, ty - scale * oy]])
                 save  = make_stream("q\n" + matrix_op)
                 restore = make_stream("\nQ\n")
                 existing = page.Contents
@@ -170,6 +234,16 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                                         PdfObject(round(target_w, 4)),
                                         PdfObject(round(target_h, 4))])
                 page.CropBox = None
+                # the other boxes (every page has a TrimBox) go where their part of the page went
+                for k in ("TrimBox", "BleedBox", "ArtBox"):
+                    box = getattr(page, k)
+                    if box is None:
+                        continue
+                    b = [float(x) for x in box]
+                    nb = [scale * (b[0] - ox) + tx, scale * (b[1] - oy) + ty,
+                          scale * (b[2] - ox) + tx, scale * (b[3] - oy) + ty]
+                    nb = [min(max(v, 0.), m) for v, m in zip(nb, (target_w, target_h, target_w, target_h))]
+                    setattr(page, k, PdfArray([PdfObject(round(v, 4)) for v in nb]))
 
     if kw.get('inclsettings', False):
         if ext is None:
@@ -185,7 +259,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                 outpdfobj.trailer.Root.PieceInfo = p
             else:
                 p = outpdfobj.trailer.Root.PieceInfo
-            pdict = PdfDict(LastModified= "D:" + kw.get("pdfdate_", ""))
+            pdict = PdfDict(LastModified= "D:" + kw.get("date", ""))
             pdict.Private = PdfDict()
             pdict.Private.stream = zio.getvalue()
             pdict.Private.Binary = True
@@ -199,7 +273,7 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
                 else:
                     op = origobj.trailer.Root.PieceInfo
                 # Fresh dict — do NOT share pdict across writers
-                origpdict = PdfDict(LastModified= "D:" + kw.get("pdfdate_", ""))
+                origpdict = PdfDict(LastModified= "D:" + kw.get("date", ""))
                 origpdict.Private = PdfDict()
                 origpdict.Private.stream = zio.getvalue()
                 origpdict.Private.Binary = True
@@ -231,14 +305,18 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
         if kw.get("output_filepath"):
             pdffile = kw.get("output_filepath")
         outpdfobj.fname = pdffile
+        finishPdf(outpdfobj.trailer, pdf2=kw.get("pdf2", False))
         outpdfobj.compress = True
         outpdfobj.do_compress = compress
-        outpdfobj.write()
+        # A locked finished PDF mustn't stop the normal PDF being shown, so just say so
+        if not writeOrWarn(outpdfobj.write, pdffile, doError):
+            res.pop(' Finished', None)
 
-    # Write the settings-augmented 1-up *after* the 2-up has been serialised, so 
+    # Write the settings-augmented 1-up *after* the 2-up has been serialised, so
     # its lazy references into opath still resolve to the original xetex output.
     if origobj is not None:
-        origobj.write()
+        finishPdf(origobj.trailer, pdf2=kw.get("pdf2", False))
+        writeOrWarn(origobj.write, opath, doError)
 
     return res
 

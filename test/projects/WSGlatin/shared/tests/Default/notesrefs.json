@@ -1,0 +1,34 @@
+{
+    "title": "Notes and References: footnote callers and rule, cross-references from the standard list in a centre column",
+    "project": "WSGlatin",
+    "config": "Default",
+    "uilevel": 6,
+    "events": [
+        ["", "note", "Turn off updating the PDF after each change: we print at the end"],
+        ["c_updatePDF", "set", false],
+
+        ["", "note", "Footnotes: our own callers, carried on across pages, each note on its own line"],
+        ["t_fncallers", "set", "*,†,‡"],
+        ["c_fnpageresetcallers", "set", false],
+        ["c_fneachnewline", "set", true],
+
+        ["", "note", "A shorter, centred footnote rule with more space above it"],
+        ["s_fnAboveSpace", "set", "9"],
+        ["s_fnLength", "set", "40"],
+        ["fcb_fnHorizPosn", "set", "5"],
+
+        ["", "note", "Cross-references: RUT has none, so take them from the standard list, Old Testament only"],
+        ["c_useXrefList", "set", true],
+        ["fcb_xRefExtListSource", "set", "standard_4"],
+        ["fcb_filterXrefs", "set", "ot"],
+
+        ["", "note", "Put them in a narrower centre column between the two text columns, without its rule. That also puts the footnotes in the columns"],
+        ["r_xrpos_centre", "set", true],
+        ["s_centreColWidth", "set", "50"],
+        ["c_xrColumnRule", "set", false],
+
+        ["", "note", "Save, and print with the changes"],
+        ["btn_saveConfig", "signal", "clicked"],
+        ["b_print", "signal", "clicked"]
+    ]
+}

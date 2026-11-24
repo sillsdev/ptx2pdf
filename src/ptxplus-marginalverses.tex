@@ -8,7 +8,7 @@
 \def\vhyphenmode{bottom}
 \def\getverseboxwidth{\setbox2=\hbox{\cstyle{v}{\endash 000}}\global\VerseBoxWidth=\wd2}
 \newif\ifrsh@ft % Does AfterVerseSpaceFactor go right or left of the verse number -- too much happening after setting to use ift@mp
-\def\getnum#1#2{\setbox0=\hbox{\global #1=0#2}}
+\def\mv@getnum#1#2{\setbox0=\hbox{\global #1=0#2}}
 \def\mymarginpverse{%
   \ifdim\VerseBoxWidth=0pt \getverseboxwidth\fi
   \trace{v}{position is \colshiftmode, VerseBoxWidth=\the\VerseBoxWidth}%

@@ -2,7 +2,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.piclist import newBase, Picture
+from ptxprint.piclist import newBase, picCode, Picture
 from ptxprint.utils import refSort, getlang, _, f2s, pycodedir, \
     cleanParatextRef, sendRefToParatext
 from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
@@ -135,7 +135,6 @@ class PicList:
         self.curFpath = None
         self.bookfilters = None
         sel = self.view.get_selection()
-        sel.set_mode=Gtk.SelectionMode.SINGLE
         sel.connect("changed", self.row_select)
         self.view.connect("button-press-event", self._onRightClick)
         self.view.connect("drag-data-received", lambda *a: self.view.stop_emission_by_name("drag-data-received"))
@@ -228,9 +227,6 @@ class PicList:
 
     def _loadrow(self, pic):
         row = []
-        #defaultmedia = _picLimitDefault.get(v.get('src', '')[:2].lower(), ('paw', 'paw', 'Default'))
-        defaultmedia = self.parent.readCopyrights().get(pic.get('src', '')[:2].lower(),
-            { "default": "paw", "limit": "paw", "tip": {"en": "Default"}})
         for e in _piclistfields:
             if e == 'key':
                 val = pic.key
@@ -398,7 +394,7 @@ class PicList:
             elif k == 'copy': # If we already have the copyright information, then don't let them enter it unnecessarily
                 val = currow[j]
                 figname = currow[_pickeys['src']]
-                status = True if len(re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?", figname)) else False
+                status = self.parent.copyrightFor(picCode(figname or "")) is not None
                 self.builder.get_object('l_autoCopyAttrib').set_visible(status)
                 self.builder.get_object(v).set_visible(not status)
             elif k == 'size':
@@ -459,13 +455,14 @@ class PicList:
             self.row_select(self.selection, update=False)
 
     def mask_media(self, row):
-        src = row[_pickeys['src']][:2]
-        inf = self.parent.copyrightInfo['copyrights'].get(src.lower(), {"media": {"default": "paw", "limit": "paw", "tip": {"en": "Default"}}})["media"]
+        code = picCode(row[_pickeys['src']] or "")
+        info = self.parent.copyrightFor(code) or {}
+        inf = info.get("media", {"default": "paw", "limit": "paw", "tip": {"en": "Default"}})
         tip = inf["tip"].get(getlang()[0], inf["tip"]["en"])
         if inf["tip"]["en"] == 'Default':
             self.builder.get_object("l_plMedia").set_tooltip_text(_("Media permissions unknown\nfor this illustration"))
         else:
-            self.builder.get_object("l_plMedia").set_tooltip_text(_("Permission for {} series:\n{}").format(src.upper(), tip))
+            self.builder.get_object("l_plMedia").set_tooltip_text(_("Permission for {} series:\n{}").format(code[:2].upper(), tip))
         val = row[_pickeys['media']]
         for c in 'paw':
             w = _form_structure["med"+c.upper()]
@@ -654,15 +651,6 @@ class PicList:
             self.curFpath = fpath
             self.setPreview(pixbuf, tooltip=fpath)
 
-    def drawPreview(self, wid, cr):
-        if self.previewScales:
-            pixbuf = self.pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-        else:
-            pixbuf = self.pixbuf
-        cr.set_source_pixbuf(pixbuf, 0, 0)
-        cr.paint()
-        return False
-    
     def onRadioChanged(self):
         if self.loading or self.parent.loadingConfig:
             return
@@ -740,9 +728,6 @@ class PicList:
         if self.picinfo is not None:
             self.picinfo.clearSrcPaths()
 
-    def multiSelected(self, ismulti=False):
-        pass
-
     def _onRightClick(self, treeview, event):
         if event.button != 3:
             return False
@@ -756,24 +741,35 @@ class PicList:
                 self.selection.unselect_all()
                 self.selection.select_path(path)
             # else: multi-selection already in place — leave it for bulk action
+        menu = self.buildMenu()
+        menu.popup_at_pointer(event)
+        return True
+
+    def buildMenu(self):
+        """ The right-click menu. Its items are named so that tests can record and replay them. """
         menu = Gtk.Menu()
+        menu.attach_to_widget(self.view, None)
 
         item = Gtk.MenuItem(label=_('Copy \\fig String to Clipboard'))
+        item.set_name("mi_picCopyFig")
         item.connect('activate', self._copyFigToClipboard, True)
         menu.append(item)
 
         if sys.platform.startswith("win"):
             item = Gtk.MenuItem(label=_('Jump to Ref in Paratext'))
+            item.set_name("mi_picJumpToRef")
             item.connect('activate', self._jumpToAnchorInParatext)
             menu.append(item)
 
         menu.append(Gtk.SeparatorMenuItem())
 
         item = Gtk.MenuItem(label=_('Reveal in File Manager'))
+        item.set_name("mi_picReveal")
         item.connect('activate', self._revealInFileManager)
         menu.append(item)
 
         item = Gtk.MenuItem(label=_('Copy Image Filepath to Clipboard'))
+        item.set_name("mi_picCopyPath")
         item.connect('activate', self._copyImagePath)
         menu.append(item)
 
@@ -782,12 +778,12 @@ class PicList:
         count = len(self.currows)
         label = _('Delete Picture') if count <= 1 else _('Delete {} Pictures').format(count)
         item = Gtk.MenuItem(label=label)
+        item.set_name("mi_picDelete")
         item.connect('activate', self._deletePictures)
         menu.append(item)
 
         menu.show_all()
-        menu.popup_at_pointer(event)
-        return True
+        return menu
 
     def _deletePictures(self, menuitem):
         self.del_row()

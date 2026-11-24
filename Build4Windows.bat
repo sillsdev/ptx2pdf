@@ -12,7 +12,7 @@ rmdir /s /q build
 rmdir /s /q dist
 rmdir /s /q Output
 
-%PPATH%pip install usfmtc regex fonttools platformdirs Pillow numpy markdown-it-py WMI
+%PPATH%pip install usfmtc regex fonttools platformdirs Pillow numpy markdown-it-py mdit-py-plugins WMI
 REM Call PyInstaller to create the "dist" folder
 REM pyinstaller --log-level DEBUG --clean ptxprint.spec
 %PPATH%pyinstaller --clean ptxprint.spec

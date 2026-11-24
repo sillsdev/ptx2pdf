@@ -610,7 +610,8 @@
       \x@\edef\csname \v@lpfx @scale@ref\endcsname{text}%
     \else
       \trace{e}{Figure will be scaled relative to \cp@ram(\v@lpfx)}%
-      \lowercase{\x@\edef\csname \v@lpfx @scale@ref\endcsname{\cp@ram}}%
+      \edef\t@mpsc{\cp@ram}\x@\lowercase\x@{\x@\def\x@\t@mpsc\x@{\t@mpsc}}% (the value, lower case)
+      \x@\let\csname \v@lpfx @scale@ref\endcsname\t@mpsc
     \fi
     \p@rsef@gsc@le #1xx\E
   \else

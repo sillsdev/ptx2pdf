@@ -3,11 +3,12 @@ from shutil import copyfile
 from inspect import signature
 import regex
 from ptxprint.font import TTFont
+from ptxprint.piclist import picCodePattern
 from ptxprint.runner import checkoutput
 from ptxprint.usxutils import Usfm, Sheets
 from ptxprint.module import Module
 from ptxprint.markdown import MarkDown
-from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
+from ptxprint.utils import _, universalopen, localhdrmappings, hdrColumn, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
                             runChanges, booknumbers, Path, nonScriptureBooks, saferelpath, texprotect, spineWidthMm, asfloat
 from ptxprint.dimension import Dimension
@@ -177,6 +178,7 @@ class TexModel:
         self.imageCopyrightLangs = {}
         self.found_glosses = None
         self.frontperiphs = None
+        self.unknownmkrs = {}           # markers no stylesheet defines: {marker: kind}, see _reportUnknownMarkers
         self.xrefs = None
         self.inserts = {}
         self.usedfiles = {}
@@ -214,6 +216,10 @@ class TexModel:
         self.printer.setDate()  # Update date/time to now
         cpath = self.printer.project.srcPath(self.printer.cfgid)
         self.updatefields(ModelMap.keys())
+        for a in ('bold', 'italic', 'bolditalic'):
+            # a config with only a regular font: use it, rather than a font with no name
+            if not self.dict.get('document/font'+a) and self.dict.get('document/fontregular'):
+                self.dict['document/font'+a] = self.dict['document/fontregular']
         self.dict['project/id'] = self.printer.project.prjid
         docdir, base = self.docdir(base=diglotbinfo)
         self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
@@ -223,6 +229,8 @@ class TexModel:
         self.dict['config/name'] = self.printer.cfgid
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.dict['/cfgrpath'] = rel(cpath, docdir)
+        # the config's ptxprint.sty, unless this print has been given one of its own (a read only print)
+        self.dict['/styrpath'] = rel(getattr(self.printer, 'styleSheetDir', None) or cpath, docdir)
         self.dict['/ptxprint_version'] = self.VersionStr
         self.dict['/ptxprint_gitversion'] = self.GitVersionStr
         self.processHdrFtr(self.printer)
@@ -246,7 +254,7 @@ class TexModel:
         self.dict['paragraph/ifhavehyphenate'] = "" if os.path.exists(os.path.join(self.printer.project.srcPath(None), \
                                                        "hyphen-"+self.dict["project/id"]+".tex")) else "%"
         # forward cleanup. If ask for ptxprint-mods.tex but don't have it, copy PrintDraft-mods.tex
-        if self.dict["project/ifusemodssty"] == "":
+        if self.dict["project/ifusemodssty"] == "" and not getattr(self.printer, 'readOnly', False):
             modspath = os.path.join(cpath, "ptxprint-mods.sty")
             if not os.path.exists(modspath):
                 spath = os.path.join(docdir, "PrintDraft-mods.sty")
@@ -480,16 +488,28 @@ class TexModel:
             if not self.dict['document/font{}'.format(a)]:
                 reasons.append(_("Missing font ({})").format(a))
             break
+        if self.printer.get("c_diglot") and "/" in (self.printer.get("t_layout") or ""):
+            # layouts with / (glots one above another) need a TeX plugin that doesn't exist yet
+            sdir = self.printer.scriptsdir
+            places = (sdir, os.path.join(sdir, "..", "src"), os.path.join(os.path.dirname(__file__), "ptx2pdf"),
+                      os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
+            if not any(os.path.exists(os.path.join(d, "polyglot-complexpages.tex")) for d in places):
+                reasons.append(_("Polyglot layouts with / ({}) are not supported yet").format(
+                                        self.printer.get("t_layout")))
         return reasons
 
     def processHdrFtr(self, printer):
         """ Update model headers from model UI read values """
         diglot = True if self.dict["document/ifdiglot"] == "" else False
+        cols = set(getattr(printer, "polyglots", None) or ()) | {"L", "R"}
+        def hdrcol(v):      # a column that has since been removed from the Diglot page falls back to L
+            c = hdrColumn(v)
+            return c if c in cols else "L"
         v = self.dict["footer/ftrcenter"]
-        pri = self.dict["footer/ftrcenterside"] == "Pri" 
+        col = hdrcol(self.dict["footer/ftrcenterside"])
         t = self._hdrmappings.get(v, v)
         if diglot:
-            t = self._addLR(t, pri)
+            t = self._addCol(t, col)
             swap = False # FixMe! self.dict['document/diglotswapside'] == 'true'
             # ratio = float(self.dict['document/diglotprifraction']) # FixMe!
             ratio = 0.5
@@ -507,7 +527,8 @@ class TexModel:
         self.dict['footer/oddcenter'] = t
         self.dict['footer/evencenter'] = t
         if self.dict['footer/ifftrtitlepagenum'] == "":
-            self.dict['footer/titleevencenter'] = self.dict['footer/titleoddcenter'] = self._addLR('\\pagenumber', pri)
+            self.dict['footer/titleevencenter'] = self.dict['footer/titleoddcenter'] = \
+                    self._addCol('\\pagenumber', col if diglot else "L")
         elif self.dict['footer/ifprintconfigname'] == "":
             self.dict['footer/titleevencenter'] = self.dict['footer/titleoddcenter'] = self.dict['config/name']
         else:
@@ -517,30 +538,34 @@ class TexModel:
         mirror = self.asBool("header/mirrorlayout")
         for side in ('left', 'center', 'right'):
             v = self.dict["header/hdr"+side]
-            pri = self.dict["header/hdr"+side+"side"] == "Pri"
-            t = self._hdrmappings.get(v, v)
+            col = hdrcol(self.dict["header/hdr"+side+"side"])
+            base = self._hdrmappings.get(v, v)
+            # Mirror and test the plain macro, then add the column (\cstyle{hR}{...} etc. hid them before)
+            t = self._addCol(base, col) if diglot else base
+            mt = self.mirrorHeaders(base)
             if diglot:
-                t = self._addLR(t, pri)
+                mt = self._addCol(mt, col)
+            isref = base.startswith((r'\first', r'\last', r'\range'))
             self.dict['header/odd{}'.format(side)] = t
             if mirror:
-                self.dict['header/even{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
+                self.dict['header/even{}'.format(self._swapRL[side])] = mt
             else:
                 self.dict['header/even{}'.format(side)] = t
 
-            if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
+            if isref: # ensure noVodd + noVeven is \empty
                 self.dict['header/noVodd{}'.format(side)] = r'\empty'
             else:
                 self.dict['header/noVodd{}'.format(side)] = t  # copy the other header as is
             if mirror:
-                if t.startswith((r'\first', r'\last', r'\range')):
+                if isref:
                     self.dict['header/noVeven{}'.format(self._swapRL[side])] = r'\empty'
                 else:
-                    self.dict['header/noVeven{}'.format(self._swapRL[side])] = self.mirrorHeaders(t, diglot)
+                    self.dict['header/noVeven{}'.format(self._swapRL[side])] = mt
             else:
-                if t.startswith((r'\first', r'\last', r'\range')): # ensure noVodd + noVeven is \empty
+                if isref: # ensure noVodd + noVeven is \empty
                     self.dict['header/noVeven{}'.format(side)] = r'\empty'
                 else:
-                    self.dict['header/noVeven{}'.format(side)] = t 
+                    self.dict['header/noVeven{}'.format(side)] = t
 
             if side == "center" and diglot and self.dict["document/diglotadjcenter"]:
                 for a in ('header/odd', 'header/even', 'footer/odd', 'footer/even',
@@ -552,33 +577,25 @@ class TexModel:
                     else:
                         self.dict[b] = (rhfil if swap else lhfil) + self.dict[b] + (lhfil if swap else rhfil)
 
-    def _addLR(self, t, pri):
-        if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate" \
-                 r"\book", r"\bookalt"]:                
-            if pri:
-                t = t+'L'
+    def _addCol(self, t, col):
+        """ Make header/footer item t come from diglot/polyglot column col (L, R, A-G) """
+        # those with per-column forms (\header@defs in ptx-references.tex, run for every column);
+        # anything else goes in \headfoot<col>{...}
+        if t in [r"\firstref", r"\lastref", r"\rangeref", r"\pagenumber", r"\hrsmins", r"\isodate",
+                 r"\usdate", r"\ukdate", r"\timestamp"]:
+            if col == "R":
+                t = r'\cstyle{hR}{'+t+'R}'      # as before, so existing R headers are unchanged
             else:
-                t = r'\cstyle{hR}{'+t+'R}'
+                t = t+col
         elif t == r"\empty":
             pass
         else:
-            if pri:
-                t = r"\headfootL{{{}}}".format(t)
-            else:
-                t = r"\headfootR{{{}}}".format(t)
+            t = r"\headfoot {}{{{}}}".format(col, t)
         return t
 
-    def mirrorHeaders(self, h, dig=False):
-        if dig and h.endswith(("L", "R")):
-            try:
-                return self._mirrorRL[h[:-1]]+h[-1:]
-            except KeyError:
-                return h
-        else:
-            try:
-                return self._mirrorRL[h]
-            except KeyError:
-                return h
+    def mirrorHeaders(self, h):
+        """ Swap first/last ref for the facing page (h is the plain macro, before _addCol) """
+        return self._mirrorRL.get(h, h)
 
     def calculateMargins(self):
         (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms,
@@ -596,7 +613,7 @@ class TexModel:
         if m:
             pheight = float(m.group(1)) * unitConv.get(m.group(2), 1)
         else:
-            pheight = 210 / unitConv["mm"]
+            pheight = 210 * unitConv["mm"]
         top = pheight - float(self.dict["paper/topmargin"]) * unitConv["mm"]
         bottom = float(self.dict["paper/bottommargin"]) * unitConv["mm"]
         return (pheight, top, bottom)
@@ -624,7 +641,7 @@ class TexModel:
         outps = []
         for f in files:
             p = Path(f, self.printer)
-            outp = str(p).replace("/", "_")
+            outp = re.sub(r"[\\/:]", "_", str(p))      # a flat name, also for C:\... on Windows
             outpath = os.path.join(file_dir, outp)
             if not os.path.isfile(f):
                 logger.warning(f"Can't find PDF to include: {f}")
@@ -686,6 +703,7 @@ class TexModel:
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})",
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         self.updateStyles()
+        self.dict['project/unknownmarkers'] = self.unknownMarkersTeX()
         for a in (('FrontPDFs', 'c_inclFrontMatter', 'frontincludes_'),
                   ('BackPDFs', 'c_inclBackMatter', 'backincludes_')):
             files = getattr(self.printer, a[0], None)
@@ -778,7 +796,6 @@ class TexModel:
                         for a,b in c:
                             res.append(r"\def\@ctive{}{{\leavevmode{{\do@xtrafont {}{}}}}}".format(a, '^'*len(b), b))
                             res.append(r"\DefineActiveChar{{{}{}}}{{\@ctive{}}}".format( '^'*len(b), b, a))
-                        res.append(r"\activ@tecustomch@rs")
                         res.append(r"\catcode`\@=12")
                     else:
                         res.append(r"% No special/missing characters specified for fallback font")
@@ -888,11 +905,12 @@ class TexModel:
         logger.debug(f"Using front matter from {infpath}")
         bydir = os.path.join(pycodedir(), "images").replace("\\", "/")
         fmt = self.dict['snippets/pdfoutput']
-        cmyk = fmt in ('CMYK', 'PDF/X-1A', 'PDF/A-1')
+        cmyk = fmt in ('CMYK', 'Transparent', 'Spot')
         if os.path.exists(infpath):
             fcontent = []
+            srclines = []       # the line in infpath each line of the output comes from
             with open(infpath, encoding="utf-8") as inf:
-                for l in inf.readlines():
+                for i, l in enumerate(inf.readlines(), 1):
                     l = runChanges(self.changes.get('periph', self.changes.get('default', [])), "FRT", l)
                     if re.match(r"^\s*\\rem\s", l.lower()):
                         continue
@@ -903,9 +921,11 @@ class TexModel:
                                      + '.jpg" copy="None" ' + m.group(2)+ r'\fig*', l)
                     l = re.sub(r'(\\fig[ |].*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
                     fcontent.append(l.rstrip())
+                    srclines.extend([i] * (fcontent[-1].count("\n") + 1))
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
                 logger.log(7, "\n".join(fcontent))
+            self._checkFrontMatter("\n".join(fcontent), srclines)
 
     def addInt(self, outfname):
         intfile = self.printer.getBookSrcPath('INT')
@@ -1042,9 +1062,12 @@ class TexModel:
         else:
             self.dict["/nocustomsty"] = ""
         infpath = printer.getBookSrcPath(bk)
+        rulesbk = bk        # the book the text rules are made for: a module's own, if it says so
         if infpath is None:
             if re.match(".*?[/\\.]", bk):
                 infpath = os.path.join(prjdir, bk)  # assume module
+                if not os.path.exists(infpath):
+                    raise FileNotFoundError(_("Can't find the module file {}").format(infpath))
                 infpath = self.flattenModule(infpath, outdir)
                 if isinstance(infpath, tuple) and infpath[0] is None:
                     self.printer.doError("Failed to flatten module text (due to a Syntax Error?):",        
@@ -1052,6 +1075,11 @@ class TexModel:
                             title="PTXprint [{}] - Canonicalise Text Error!".format(self.VersionStr),
                             show=not self.printer.get("c_quickRun"))
                     return None
+                if isinstance(infpath, str) and os.path.exists(infpath):
+                    with open(infpath, encoding="utf-8") as inf:
+                        m = re.match(r"\s*\\id\s+(\S+)", inf.read(200))
+                    if m is not None and m.group(1) in nonScriptureBooks:     # e.g. a Markdown module's book
+                        rulesbk = m.group(1)
         if infpath is None:
             raise FileNotFoundError(f"Can't find file for {bk}")
         if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
@@ -1066,7 +1094,7 @@ class TexModel:
             outfname = outfname[:doti] + draft + outextra + outfname[doti:]
         outfpath = os.path.join(outdir, outfname)
         if not noaction or not os.path.exists(outfpath):
-            self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
+            self.makelocalChanges(printer, rulesbk, chaprange=(chaprange if isbk else None))
             os.makedirs(outdir, exist_ok=True)
             codepage = self.ptsettings.get('Encoding', 65001)
             with universalopen(infpath, cp=codepage) as inf:
@@ -1127,6 +1155,11 @@ class TexModel:
             if 'default' in self.changes:
                 (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
                 dat = runChanges(self.changes['default'], bk, dat, errorfn=self._changeError if bkindex == 0 else None)
+
+            # Check the markers once the user's changes.txt has had a chance to clean them up
+            (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Checking for unknown markers\n")
+            if doc is not None:
+                self._reportUnknownMarkers(doc, bk)
 
             if self.dict['project/canonicalise']:
                 (dat, doc) = self._getDoc(dat, doc, bk, logmsg="Canonicalising")
@@ -1219,13 +1252,79 @@ class TexModel:
         syntaxErrors = []
         doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar, informat="usfm")
         doc.xml.canonicalise(version="3.1")
-        if doc.xml.errors:      # (msg, pos, ref)
-            dlgtitle = _("PTXprint [{}] - USFM Text Error!").format(self.VersionStr)
-            errors = "\n".join([f"{msg} at line {pos.l} char {pos.c} in {ref}" for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
-            if len(errors):
-                secondary = errors + "\n\n" + _("These errors were triggered while internally parsing the USFM") + ((_(" for ")+reason) if reason else ".")
-                self.printer.doError(_("Parsing errors: "), secondary=secondary, title=dlgtitle, show=not self.printer.get("c_quickRun"))
-        return doc  
+        if self._reportParseErrors(doc, bk, _("Printing carries on, but text affected by these problems may be "
+                        "left out or misplaced.") + "\n" + _("Fix them in Paratext, or with a rule in changes.txt "
+                        "(rules in sections(\"initial\") always run before this check).")):
+            logger.debug(f"USFM parse errors in {bk} while {reason}")
+        return doc
+
+    def _reportParseErrors(self, doc, bk, advice, srclines=None):
+        """ Tells the user about problems the USFM parser found in a book, and what to do about them.
+            Unknown markers are left to _reportUnknownMarkers. srclines gives the line in the user's
+            file for each line parsed, when they differ. Returns whether there were any. """
+        def line(pos):          # pos.l counts from 0
+            return srclines[pos.l] if srclines is not None and 0 <= pos.l < len(srclines) else pos.l + 1
+        errors = "\n".join([_("{} (line {}): {}").format(str(ref).rstrip(":").strip(), line(pos), msg)
+                            for msg, pos, ref in doc.xml.errors if not msg.startswith('Unknown tag')])
+        if not len(errors):
+            return False
+        self.printer.doError(_("Problems in the USFM of {}").format(bk), secondary=errors + "\n\n" + advice,
+                             title=_("PTXprint [{}] - USFM Text Error!").format(self.VersionStr),
+                             show=not self.printer.get("c_quickRun"))
+        return True
+
+    def _checkFrontMatter(self, txt, srclines=None):
+        """ The front matter goes to TeX as written, so problems in it (such as a stray \\fig*) would
+            stop the print with an obscure TeX error. Says what they are first. Unknown markers aren't
+            reported: front matter may use TeX commands directly. """
+        try:
+            doc = Usfm.readfile(txt + "\n", grammar=self.printer.get_usfms().grammar, informat="usfm")
+        except Exception as e:      # the check must never stop the print
+            logger.warning(f"Couldn't check the front matter: {e}")
+            return
+        self._reportParseErrors(doc, "FRT", _("The front matter is printed as written, so these problems may "
+                        "stop the print.") + "\n" + _("Fix them on the Front Matter tab (View+Edit)."), srclines=srclines)
+
+    # Plain TeX commands that are not USFM markers. In USFM they are almost certainly typos
+    # (e.g. \t for \it) and do odd things, such as asking for the cmmi10 math font.
+    _texnotmarkers = set("t u d H i j l L o O P S aa AA ae AE oe OE ss bf rm sl tt".split())
+
+    def unknownMarkersTeX(self):
+        """ TeX that gives the markers no stylesheet defines a plain meaning, so the job prints
+            instead of stopping at them. Includes the other sides of a diglot. """
+        mkrs = dict(self.unknownmkrs)
+        for d in (self.dict.get('diglots_') or {}).values():
+            for m, k in getattr(d, 'unknownmkrs', {}).items():
+                if mkrs.get(m, "bare") == "bare":
+                    mkrs[m] = k
+        return "".join(f"\\defunk{k}{{{m}}}\n" for m, k in sorted(mkrs.items()))
+
+    def _reportUnknownMarkers(self, doc, bk):
+        """ Warn about markers left after the changes.txt rules that are not in any
+            stylesheet, so that changes.txt can be used to clean them up """
+        found = doc.unknownMarkers(bk)
+        if not len(found):
+            return
+        for m, (k, refs) in found.items():
+            if self.unknownmkrs.get(m, "bare") == "bare":
+                self.unknownmkrs[m] = k
+        res = [_("Unknown markers (not in any stylesheet, and not defined in ptxprint-mods.tex):")]
+        for tag, (kind, refs) in sorted(found.items()):
+            where = ", ".join(dict.fromkeys(refs))
+            if len(where) > 60:
+                where = where[:60].rsplit(",", 1)[0] + ", ..."
+            line = f"  \\{tag}  ({len(refs)}x: {where})"
+            if tag in self._texnotmarkers:
+                line += "  " + _("- a TeX command, not a USFM marker; probably a typo (e.g. \\t for \\it)")
+            res.append(line)
+        maxshown = 15
+        if len(res) > maxshown + 1:
+            res[maxshown+1:] = ["  " + _("... and {} more").format(len(res) - maxshown - 1)]
+        res.append("\n" + _("Until then they are printed as plain text. Fix these in the text, define them in a "
+                             "stylesheet, or correct them with changes.txt."))
+        self.printer.doError(_("Unknown USFM markers in {}").format(bk), secondary="\n".join(res),
+                             title=_("PTXprint [{}] - USFM Text Error!").format(self.VersionStr),
+                             show=not self.printer.get("c_quickRun"))
 
     def makelocalChanges(self, printer, bk, chaprange=None):
         import ptxprint.scriptsnippets as scriptsnippets
@@ -1311,7 +1410,8 @@ class TexModel:
         ############ Temporary (to be removed later) ########%%%%
         # Throw out \esb ... \esbe blocks if Study Bible Sidebars are not wanted
         if not self.asBool("studynotes/includesidebar"):
-            self.localChanges.append(makeChange(r"\\esb.+?\\esbe", "", flags=regex.S))
+            # not \\esb, which is the text "\esb" (as in a manual that talks about sidebars)
+            self.localChanges.append(makeChange(r"(?<!\\)\\esb\b.+?(?<!\\)\\esbe\b", "", flags=regex.S))
         ############ Temporary (to be removed later) ########%%%%
         
         if self.asBool("studynotes/includextfn"):
@@ -1501,24 +1601,6 @@ class TexModel:
                 # print(report)
         return self.localChanges
 
-    def base(self, fpath):
-        doti = fpath.rfind(".")
-        return os.path.basename(fpath[:doti])
-
-    def codeLower(self, fpath):
-        cl = re.match(self.printer.getPicRe()+"$", self.base(fpath), re.I)
-        if cl:
-            return cl[0].lower()
-        else:
-            return ""
-
-    def newBase(self, fpath):
-        clwr = self.codeLower(fpath)
-        if len(clwr):
-            return clwr
-        else:
-            return re.sub('[()&+,.;: ]', '_', self.base(fpath).lower())
-
     def makeGlossaryFootnotes(self, printer, bk):
         # Glossary entries for the key terms appearing like footnotes
         prjid = printer.project.prjid
@@ -1587,6 +1669,13 @@ class TexModel:
             new_glosses.clear()
             count -= 1
         logger.debug(f"Found glossary keys: {self.found_glosses}")
+        if not self.found_glosses:
+            self.printer.doError(_("The glossary will have no entries"),
+                    secondary=_("None of the books being printed mark any glossary words (\\w ...\\w*), so " +
+                                "'Filter Glossary to Only Include Entries Used in the Text' (Body tab) leaves " +
+                                "nothing in it.\n\nTurn that option off, or mark the glossary words in the text."),
+                    title=_("PTXprint [{}] - Glossary").format(self.VersionStr),
+                    show=not self.printer.get("c_quickRun"))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":
@@ -1615,8 +1704,7 @@ class TexModel:
         are stored in self.printer.artpgs (coded artists store under their code,
         others under the '' key).
         """
-        coded = set("ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"))
-        key = art_code if art_code in coded else ''
+        key = art_code if art_code in self.printer.copyrightInfo['copyrights'] else ''
         return len(pgs_for_artist.get(key, []))
 
     def generateImageCopyrightText(self):
@@ -1638,18 +1726,19 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{./tmpPics/cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:[^}]*\/)?(?:" + self.printer.getPicRe() + r"|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:[^}]*\/)?(?:_?" + picCodePattern + r"|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []
             if len(m):
                 for f in m:
-                    # print(f"{f[0]=} {f[1]=} {f[2]=} {f[3]=} {f[4]=} {f[5]=} ")
-                    if not len(f) or not f[0] or f[5] == "None":
+                    # f: page, code prefix, code number, other filename, credit text
+                    if not len(f) or not f[0] or f[4] == "None":
                         continue
-                    a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
-                    if a == '' and f[5] != '':
-                        p = f[5]
+                    a = self.printer.copyrightKey(f[1]) if f[1] else ''    # '' if not a known publisher
+                    a = 'co' if a == 'cn' else a    # merge Cook's OT & NT illustrations together
+                    if a == '' and f[4] != '':
+                        p = f[4]
                     elif a == '':
                         p = "zz"
                         msngPgs += [f[0]]
@@ -1687,7 +1776,7 @@ class TexModel:
                         continue
 
                     if len(pgs):
-                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[kno][a-z]".split("|"):
+                        if art in cinfo['copyrights']:
                             pages = [x[0] for x in pgs[art]]
                         else:
                             pages = [x[0] for x in pgs.get('zz', pgs.get('', [[]])) if x is not None and len(x)]
@@ -1720,7 +1809,7 @@ class TexModel:
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
                         # print(f"{art=} {artistWithMost=} {self.printer.artpgs=}")
-                        if artistWithMost in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                        if artistWithMost in cinfo['copyrights']:
                             pages = [x[0] for x in self.printer.artpgs[artistWithMost][artistWithMost]]
                         else:
                             pages = [x[0] for x in self.printer.artpgs[artistWithMost]['']]
@@ -1742,7 +1831,9 @@ class TexModel:
                     msg = "\\{} {}".format(mkr, cinfo['templates']['openbible.info'].get(lang,
                                 cinfo['templates']['openbible.info']['en']).replace("_", "\u00A0"))
                 else:
-                    msg = getattr(self, 'xrefcopyright', None)
+                    xrefs = getattr(self.xrefs, 'xrefs', None)    # the books are converted (making self.xrefs) before this
+                    cpy = getattr(xrefs, 'xrefcopyright', None)
+                    msg = "\\{} {}".format(mkr, cpy) if cpy else None
                 if msg is not None:
                     crdts.append(msg)
             crdts.append("}")

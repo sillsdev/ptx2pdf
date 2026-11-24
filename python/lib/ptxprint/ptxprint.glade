@@ -1167,6 +1167,7 @@ to block hyphenation.</property>
     <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_styCallerRaise">
+    <property name="lower">-20</property>
     <property name="upper">20</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
@@ -1203,6 +1204,7 @@ to block hyphenation.</property>
     <property name="page-increment">0.05</property>
   </object>
   <object class="GtkAdjustment" id="a_styNoteCallerRaise">
+    <property name="lower">-20</property>
     <property name="upper">20</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
@@ -2100,7 +2102,7 @@ General section of the Advanced tab.&lt;/span&gt;</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 3.1.6</property>
+    <property name="version">Version 3.1.10</property>
     <property name="copyright">© 2020-2026, SIL Global</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -5800,7 +5802,7 @@ line, or an ornamental pattern.</property>
                     <property name="model">ls_borderStyle</property>
                     <property name="active">0</property>
                     <property name="id-column">1</property>
-                    <property name="active-id">1</property>
+                    <property name="active-id">none</property>
                     <signal name="changed" handler="onSBborderSettingsChanged" swapped="no"/>
                   </object>
                   <packing>
@@ -6826,6 +6828,24 @@ how the border settings affect the final outcome.</property>
       <row>
         <col id="0" translatable="yes">Burmese</col>
         <col id="1">myanmar</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_hdrColumns">
+    <columns>
+      <!-- column-name display -->
+      <column type="gchararray"/>
+      <!-- column-name code -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">L</col>
+        <col id="1">L</col>
+      </row>
+      <row>
+        <col id="0">R</col>
+        <col id="1">R</col>
       </row>
     </data>
   </object>
@@ -8623,7 +8643,7 @@ in the Windows system.</property>
                     <property name="model">ls_fontFaces</property>
                     <property name="active">0</property>
                     <property name="id-column">0</property>
-                    <property name="active-id">1</property>
+                    <property name="active-id">Regular</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -8969,7 +8989,7 @@ are using supports these digits too.)</property>
                     <property name="active">0</property>
                     <property name="popup-fixed-width">False</property>
                     <property name="id-column">0</property>
-                    <property name="active-id">0</property>
+                    <property name="active-id">Default</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
@@ -9613,7 +9633,7 @@ Inches as the major units.</property>
                         <property name="active">1</property>
                         <property name="entry-text-column">0</property>
                         <property name="id-column">1</property>
-                        <property name="active-id">1</property>
+                        <property name="active-id">in</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -9635,7 +9655,7 @@ of the Page, or at the top-left Margin.</property>
                         <property name="active">0</property>
                         <property name="entry-text-column">0</property>
                         <property name="id-column">1</property>
-                        <property name="active-id">1</property>
+                        <property name="active-id">page</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -10295,7 +10315,6 @@ Position:</property>
                     <property name="has-entry">True</property>
                     <property name="entry-text-column">0</property>
                     <property name="id-column">1</property>
-                    <property name="active-id">0</property>
                     <child internal-child="entry">
                       <object class="GtkEntry">
                         <property name="visible">True</property>
@@ -10336,7 +10355,6 @@ Position:</property>
                     <property name="has-entry">True</property>
                     <property name="entry-text-column">0</property>
                     <property name="id-column">1</property>
-                    <property name="active-id">0</property>
                     <child internal-child="entry">
                       <object class="GtkEntry">
                         <property name="visible">True</property>
@@ -11915,7 +11933,7 @@ counts are invalid.</property>
         <col id="1" translatable="yes">distort</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Crop (unimplemented)</col>
+        <col id="0" translatable="yes">Crop (fills frame)</col>
         <col id="1" translatable="yes">crop</col>
       </row>
     </data>
@@ -12750,7 +12768,11 @@ as .JPG images do not have transparency.</property>
 the background image size is specified
 with a single dimension (height or width)
 and the unspecified dimension ends up
-being too large for a given sidebar.</property>
+being too large for a given sidebar.
+
+Crop scales the image to fill the whole
+frame and trims what sticks out; use
+Crop Offset to choose which part is kept.</property>
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">If Image Is
 Oversized:</property>
@@ -12770,7 +12792,11 @@ Oversized:</property>
 the background image size is specified
 with a single dimension (height or width)
 and the unspecified dimension ends up
-being too large for a given sidebar.</property>
+being too large for a given sidebar.
+
+Crop scales the image to fill the whole
+frame and trims what sticks out; use
+Crop Offset to choose which part is kept.</property>
                             <property name="halign">start</property>
                             <property name="model">ls_sbiOversize</property>
                             <property name="wrap-width">1</property>
@@ -12808,14 +12834,14 @@ being too large for a given sidebar.</property>
                           <object class="GtkEntry" id="t_sbiBgCropOfs">
                             <property name="name">Sidebar background image: Crop offset (XxY)</property>
                             <property name="visible">True</property>
-                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
-                            <property name="tooltip-text" translatable="yes">(Not available yet: cropping is still to be implemented.)
-
-Crop offset in the format XxY (e.g. 10x20).
+                            <property name="tooltip-text" translatable="yes">Crop offset in the format XxY (e.g. 0.5x0.5).
 Only used when Oversize is set to Crop.
-Shifts the cropped region by X points horizontally
-and Y points vertically.</property>
+Chooses which part of the image stays visible.
+Each number runs from 0 to 1:
+0x0 keeps the bottom-left corner,
+1x1 keeps the top-right corner,
+0.5x0.5 keeps the centre.</property>
                             <property name="halign">start</property>
                             <property name="width-chars">10</property>
                             <property name="placeholder-text">e.g. 10x20</property>
@@ -13518,7 +13544,6 @@ which do not have a local rendering.</property>
                             <property name="has-entry">True</property>
                             <property name="entry-text-column">0</property>
                             <property name="id-column">0</property>
-                            <property name="active-id">0</property>
                             <child internal-child="entry">
                               <object class="GtkEntry">
                                 <property name="can-focus">False</property>
@@ -13744,7 +13769,7 @@ to be displayed, select an appropriate option.</property>
                         <property name="active">0</property>
                         <property name="entry-text-column">0</property>
                         <property name="id-column">1</property>
-                        <property name="active-id">0</property>
+                        <property name="active-id">keep</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -15113,19 +15138,43 @@ Shortcut: Ctrl-P</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Show/hide the Page Filler
-with progress monitor</property>
+                <property name="tooltip-text" translatable="yes">Analyse &amp; Fill: adjusts paragraph spacing so that
+every page ends full, for all selected books at once.
+
+Click to Show/Hide the progress dialog.</property>
                 <property name="halign">end</property>
                 <property name="valign">center</property>
                 <signal name="toggled" handler="onProgressMonitorToggle" swapped="no"/>
                 <child>
-                  <object class="GtkImage" id="icon_prvAutoFill2">
+                  <object class="GtkBox" id="bx_prvAutoFill">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Show/hide the Page Filler
-with progress monitor</property>
-                    <property name="icon-name">thunderbolt-symbolic</property>
-                    <property name="icon_size">3</property>
+                    <property name="spacing">4</property>
+                    <child>
+                      <object class="GtkImage" id="icon_prvAutoFill2">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">thunderbolt-symbolic</property>
+                        <property name="icon_size">3</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_prvAutoFill">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Analyse &amp; Fill</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -15758,36 +15807,209 @@ highlighted as an issue.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkScrolledWindow" id="scr_previewManual">
-                    <property name="can-focus">True</property>
-                    <property name="hexpand">False</property>
-                    <property name="vexpand">False</property>
-                    <property name="shadow-type">in</property>
-                    <property name="propagate-natural-height">True</property>
+                  <object class="GtkBox" id="bx_manualPage">
+                    <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkViewport">
+                      <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="hexpand">False</property>
-                        <property name="vexpand">False</property>
+                        <property name="margin-end">4</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">2</property>
                         <child>
-                          <object class="GtkBox" id="bx_previewManual">
+                          <object class="GtkLabel" id="l_manualContents">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="halign">center</property>
-                            <property name="valign">center</property>
-                            <property name="hexpand">True</property>
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Contents:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow">
+                            <property name="width-request">200</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
                             <property name="vexpand">True</property>
-                            <property name="homogeneous">True</property>
+                            <property name="shadow-type">in</property>
                             <child>
-                              <placeholder/>
+                              <object class="GtkTreeView" id="tv_manualContents">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">The contents of the document shown. Click a line to go there.</property>
+                                <property name="headers-visible">False</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection"/>
+                                </child>
+                              </object>
                             </child>
                           </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
-                        <style>
-                          <class name="graybox"/>
-                        </style>
+                                        <child>
+                                          <object class="GtkBox" id="bx_history">
+                            <property name="halign">center</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Back and forward through the places you went to by clicking links.
+                        Shortcuts: Alt+Left (or Backspace) back, Alt+Right forward</property>
+                                            <child>
+                                              <object class="GtkButton" id="btn_history_backlist">
+                                                <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">List the places back in the clicked link history</property>
+                                                <property name="relief">none</property>
+                                                <signal name="clicked" handler="onHistoryClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">pan-up-symbolic</property>
+                                                    <property name="icon_size">1</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_history_back">
+                                                <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Go back in the clicked link history</property>
+                                                <property name="relief">none</property>
+                                                <signal name="clicked" handler="onHistoryClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">go-previous-symbolic</property>
+                                                    <property name="icon_size">2</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_history_forward">
+                                                <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Go forward in the clicked link history</property>
+                                                <property name="relief">none</property>
+                                                <signal name="clicked" handler="onHistoryClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">go-next-symbolic</property>
+                                                    <property name="icon_size">2</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_history_forwardlist">
+                                                <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">List the places forward in the clicked link history</property>
+                                                <property name="relief">none</property>
+                                                <signal name="clicked" handler="onHistoryClicked" swapped="no"/>
+                                                <child>
+                                                  <object class="GtkImage">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">pan-down-symbolic</property>
+                                                    <property name="icon_size">1</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="fill">False</property>
+                                                <property name="position">3</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
                       </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow" id="scr_previewManual">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="shadow-type">in</property>
+                        <property name="propagate-natural-height">True</property>
+                        <child>
+                          <object class="GtkViewport">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="hexpand">False</property>
+                            <property name="vexpand">False</property>
+                            <child>
+                              <object class="GtkBox" id="bx_previewManual">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="homogeneous">True</property>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                            </child>
+                            <style>
+                              <class name="graybox"/>
+                            </style>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -15799,7 +16021,7 @@ highlighted as an issue.</property>
                     <property name="can-focus">False</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
-                    <property name="label" translatable="yes">Reference</property>
+                    <property name="label" translatable="yes">Manual</property>
                     <property name="angle">270</property>
                   </object>
                   <packing>
@@ -16678,7 +16900,7 @@ marker this is.</property>
                 <property name="has-entry">True</property>
                 <property name="entry-text-column">0</property>
                 <property name="id-column">1</property>
-                <property name="active-id">1</property>
+                <property name="active-id">title</property>
                 <child internal-child="entry">
                   <object class="GtkEntry">
                     <property name="visible">True</property>
@@ -20827,7 +21049,7 @@ lays out the vertical lines left to right.</property>
                                             <property name="model">ls_textDirection</property>
                                             <property name="active">0</property>
                                             <property name="id-column">1</property>
-                                            <property name="active-id">1</property>
+                                            <property name="active-id">ltr</property>
                                             <signal name="changed" handler="onDirectionChanged" swapped="no"/>
                                           </object>
                                           <packing>
@@ -20872,7 +21094,7 @@ the script when the project is opened.</property>
                                             <property name="active">0</property>
                                             <property name="popup-fixed-width">False</property>
                                             <property name="id-column">1</property>
-                                            <property name="active-id">0</property>
+                                            <property name="active-id">Latn</property>
                                             <signal name="changed" handler="onScriptChanged" swapped="no"/>
                                           </object>
                                           <packing>
@@ -22145,7 +22367,7 @@ such as Strong's numbers.</property>
                                         <property name="model">ls_glossaryMarkupStyle</property>
                                         <property name="active">0</property>
                                         <property name="id-column">1</property>
-                                        <property name="active-id">1</property>
+                                        <property name="active-id">no</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -22919,7 +23141,7 @@ This only matters when the Length is less than 100%.</property>
                                                             <property name="active">0</property>
                                                             <property name="entry-text-column">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">all</property>
+                                                            <property name="active-id">1</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left-attach">1</property>
@@ -24167,7 +24389,7 @@ references from the same prioritized list
                                                     <property name="active">1</property>
                                                     <property name="entry-text-column">0</property>
                                                     <property name="id-column">1</property>
-                                                    <property name="active-id">all</property>
+                                                    <property name="active-id">standard_2</property>
                                                     <signal name="changed" handler="onExtListSourceChanges" swapped="no"/>
                                                   </object>
                                                   <packing>
@@ -25100,7 +25322,7 @@ rule settings apply.)</property>
                                                         <property name="active">0</property>
                                                         <property name="entry-text-column">0</property>
                                                         <property name="id-column">1</property>
-                                                        <property name="active-id">all</property>
+                                                        <property name="active-id">1</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left-attach">1</property>
@@ -25652,7 +25874,7 @@ This only matters when the Length is less than 100%.</property>
                                                             <property name="active">0</property>
                                                             <property name="entry-text-column">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">all</property>
+                                                            <property name="active-id">1</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">1</property>
@@ -26525,26 +26747,26 @@ Study Notes and Questions should appear.</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">4</property>
                                 <child>
-                                  <!-- n-columns=6 n-rows=3 -->
+                                  <!-- n-columns=3 n-rows=2 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="halign">center</property>
+                                    <property name="hexpand">True</property>
                                     <property name="row-spacing">4</property>
-                                    <property name="column-spacing">2</property>
+                                    <property name="column-spacing">12</property>
+                                    <property name="column-homogeneous">True</property>
                                     <child>
                                       <object class="GtkLabel" id="l_hdrleft">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="halign">start</property>
-                                        <property name="margin-start">4</property>
+                                        <property name="halign">center</property>
                                         <property name="label" translatable="yes">Inner (Left)</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">1</property>
+                                        <property name="left-attach">0</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
@@ -26553,14 +26775,13 @@ Study Notes and Questions should appear.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-end">14</property>
                                         <property name="label" translatable="yes">Center</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">3</property>
+                                        <property name="left-attach">1</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
@@ -26568,385 +26789,303 @@ Study Notes and Questions should appear.</property>
                                       <object class="GtkLabel" id="l_hdrright">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin-end">45</property>
+                                        <property name="halign">center</property>
                                         <property name="label" translatable="yes">Outer (Right)</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                         </attributes>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">5</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBoxText" id="ecb_hdrcenter">
-                                        <property name="name">Center page header settings</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
-and/or reference(s) in various forms. Select a preset option,
-or type in a keyword with additional adornments as needed. 
-
-For example:
-\bookalt\ \rangeref   uses the book name from the \h1 alt book header
-[\pagenumber]    places square brackets around the page number
-DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
--empty-     places nothing in that location
-
-With Mirror Pages on, First Reference and Last
-Reference are swapped on left-hand (even) pages.
-
-Note that a space and the following certain special 
-characters require a slash '\' to be typed before them:
-    # % &amp; ^ ~ and \ itself.
-For example, to get this output: 
-     This is page #1
-you would need to enter:
-     This\ is\ page\ \#\pagenumber</property>
-                                        <property name="margin-end">3</property>
-                                        <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="active">1</property>
-                                        <property name="has-entry">True</property>
-                                        <items>
-                                          <item id="\empty" translatable="yes">-empty-</item>
-                                          <item id="\pagenumber" translatable="yes">Page Number</item>
-                                          <item id="\firstref" translatable="yes">First Reference</item>
-                                          <item id="\lastref" translatable="yes">Last Reference</item>
-                                          <item id="\rangeref" translatable="yes">Reference Range</item>
-                                          <item id="\book" translatable="yes">Book (\h)</item>
-                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
-                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
-                                          <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
-                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
-                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
-                                        </items>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="width-chars">10</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">1</property>
-                                        <property name="height">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBoxText" id="ecb_hdrright">
-                                        <property name="name">Outer (right) page header settings</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
-and/or reference(s) in various forms. Select a preset option,
-or type in a keyword with additional adornments as needed. 
-
-For example:
-\bookalt\ \rangeref   uses the book name from the \h1 alt book header
-[\pagenumber]    places square brackets around the page number
-DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
--empty-     places nothing in that location
-
-With Mirror Pages on, First Reference and Last
-Reference are swapped on left-hand (even) pages.
-
-Note that a space and the following certain special 
-characters require a slash '\' to be typed before them:
-    # % &amp; ^ ~ and \ itself.
-For example, to get this output: 
-     This is page #1
-you would need to enter:
-     This\ is\ page\ \#\pagenumber</property>
-                                        <property name="margin-end">6</property>
-                                        <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="active">4</property>
-                                        <property name="has-entry">True</property>
-                                        <items>
-                                          <item id="\empty" translatable="yes">-empty-</item>
-                                          <item id="\pagenumber" translatable="yes">Page Number</item>
-                                          <item id="\firstref" translatable="yes">First Reference</item>
-                                          <item id="\lastref" translatable="yes">Last Reference</item>
-                                          <item id="\rangeref" translatable="yes">Reference Range</item>
-                                          <item id="\book" translatable="yes">Book (\h)</item>
-                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
-                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
-                                          <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
-                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
-                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
-                                        </items>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="width-chars">10</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">5</property>
-                                        <property name="top-attach">1</property>
-                                        <property name="height">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkComboBoxText" id="ecb_hdrleft">
-                                        <property name="name">Inner (left) page header settings</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
-and/or reference(s) in various forms. Select a preset option,
-or type in a keyword with additional adornments as needed. 
-
-For example:
-\bookalt\ \rangeref   uses the book name from the \h1 alt book header
-[\pagenumber]    places square brackets around the page number
-DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
--empty-     places nothing in that location
-
-With Mirror Pages on, First Reference and Last
-Reference are swapped on left-hand (even) pages.
-
-Note that a space and the following certain special 
-characters require a slash '\' to be typed before them:
-    # % &amp; ^ ~ and \ itself.
-For example, to get this output: 
-     This is page #1
-you would need to enter:
-     This\ is\ page\ \#\pagenumber</property>
-                                        <property name="margin-end">3</property>
-                                        <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="active">0</property>
-                                        <property name="has-entry">True</property>
-                                        <items>
-                                          <item id="\empty" translatable="yes">-empty-</item>
-                                          <item id="\pagenumber" translatable="yes">Page Number</item>
-                                          <item id="\firstref" translatable="yes">First Reference</item>
-                                          <item id="\lastref" translatable="yes">Last Reference</item>
-                                          <item id="\rangeref" translatable="yes">Reference Range</item>
-                                          <item id="\book" translatable="yes">Book (\h)</item>
-                                          <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
-                                          <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
-                                          <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
-                                          <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
-                                          <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
-                                        </items>
-                                        <child internal-child="entry">
-                                          <object class="GtkEntry">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="width-chars">10</property>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">1</property>
-                                        <property name="height">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrLeft_Pri">
-                                        <property name="label" translatable="yes">Pri</property>
-                                        <property name="name">Use formatting from primary project (inner header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrLeft_Sec</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrLeft_Sec">
-                                        <property name="label" translatable="yes">Sec</property>
-                                        <property name="name">Use formatting from secondary project (inner header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrLeft_Pri</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrCenter_Pri">
-                                        <property name="label" translatable="yes">Pri</property>
-                                        <property name="name">Use formatting from primary project (center header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrCenter_Sec</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrRight_Pri">
-                                        <property name="label" translatable="yes">Pri</property>
-                                        <property name="name">Use formatting from primary project (outer header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrRight_Sec</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">4</property>
-                                        <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrCenter_Sec">
-                                        <property name="label" translatable="yes">Sec</property>
-                                        <property name="name">Use formatting from secondary project (center header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrCenter_Pri</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_hdrRight_Sec">
-                                        <property name="label" translatable="yes">Sec</property>
-                                        <property name="name">Use formatting from secondary project (outer header)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">If setting the header for a diglot
-you will need to specify whether
-this part of the header (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.
-
-Note: To activate or change this 
-setting, you must first enable Diglot.</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="active">True</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_hdrRight_Pri</property>
-                                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">4</property>
-                                        <property name="top-attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="width-request">40</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">start</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="width-request">40</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">start</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">4</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
                                     </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_hdrLeftSide">
+                                            <property name="name">Column for the inner header</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Which text (column) of the diglot or polyglot this part of the inner header&#10;comes from: its text and formatting are taken from that project.&#10;The letters match the codes on the Diglot page.</property>
+                                            <property name="valign">center</property>
+                                            <property name="model">ls_hdrColumns</property>
+                                            <property name="id-column">1</property>
+                                            <signal name="changed" handler="onHdrColumnChanged" swapped="no"/>
+                                            <child>
+                                              <object class="GtkCellRendererText"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_hdrleft">
+                                            <property name="name">Inner (left) page header settings</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
+    and/or reference(s) in various forms. Select a preset option,
+    or type in a keyword with additional adornments as needed. 
+
+    For example:
+    \bookalt\ \rangeref   uses the book name from the \h1 alt book header
+    [\pagenumber]    places square brackets around the page number
+    DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
+    -empty-     places nothing in that location
+
+    With Mirror Pages on, First Reference and Last
+    Reference are swapped on left-hand (even) pages.
+
+    Note that a space and the following certain special 
+    characters require a slash '\' to be typed before them:
+        # % &amp; ^ ~ and \ itself.
+    For example, to get this output: 
+         This is page #1
+    you would need to enter:
+         This\ is\ page\ \#\pagenumber</property>
+                                            <property name="margin-end">3</property>
+                                            <property name="margin-top">4</property>
+                                            <property name="margin-bottom">4</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active">0</property>
+                                            <property name="has-entry">True</property>
+                                            <items>
+                                              <item id="\empty" translatable="yes">-empty-</item>
+                                              <item id="\pagenumber" translatable="yes">Page Number</item>
+                                              <item id="\firstref" translatable="yes">First Reference</item>
+                                              <item id="\lastref" translatable="yes">Last Reference</item>
+                                              <item id="\rangeref" translatable="yes">Reference Range</item>
+                                              <item id="\book" translatable="yes">Book (\h)</item>
+                                              <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                              <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                              <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                              <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                              <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="width-chars">10</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_hdrCenterSide">
+                                            <property name="name">Column for the center header</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Which text (column) of the diglot or polyglot this part of the center header&#10;comes from: its text and formatting are taken from that project.&#10;The letters match the codes on the Diglot page.</property>
+                                            <property name="valign">center</property>
+                                            <property name="model">ls_hdrColumns</property>
+                                            <property name="id-column">1</property>
+                                            <signal name="changed" handler="onHdrColumnChanged" swapped="no"/>
+                                            <child>
+                                              <object class="GtkCellRendererText"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_hdrcenter">
+                                            <property name="name">Center page header settings</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
+    and/or reference(s) in various forms. Select a preset option,
+    or type in a keyword with additional adornments as needed. 
+
+    For example:
+    \bookalt\ \rangeref   uses the book name from the \h1 alt book header
+    [\pagenumber]    places square brackets around the page number
+    DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
+    -empty-     places nothing in that location
+
+    With Mirror Pages on, First Reference and Last
+    Reference are swapped on left-hand (even) pages.
+
+    Note that a space and the following certain special 
+    characters require a slash '\' to be typed before them:
+        # % &amp; ^ ~ and \ itself.
+    For example, to get this output: 
+         This is page #1
+    you would need to enter:
+         This\ is\ page\ \#\pagenumber</property>
+                                            <property name="margin-end">3</property>
+                                            <property name="margin-top">4</property>
+                                            <property name="margin-bottom">4</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active">1</property>
+                                            <property name="has-entry">True</property>
+                                            <items>
+                                              <item id="\empty" translatable="yes">-empty-</item>
+                                              <item id="\pagenumber" translatable="yes">Page Number</item>
+                                              <item id="\firstref" translatable="yes">First Reference</item>
+                                              <item id="\lastref" translatable="yes">Last Reference</item>
+                                              <item id="\rangeref" translatable="yes">Reference Range</item>
+                                              <item id="\book" translatable="yes">Book (\h)</item>
+                                              <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                              <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                              <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                              <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                              <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="width-chars">10</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="spacing">2</property>
+                                        <child>
+                                          <object class="GtkComboBox" id="fcb_hdrRightSide">
+                                            <property name="name">Column for the outer header</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Which text (column) of the diglot or polyglot this part of the outer header&#10;comes from: its text and formatting are taken from that project.&#10;The letters match the codes on the Diglot page.</property>
+                                            <property name="valign">center</property>
+                                            <property name="model">ls_hdrColumns</property>
+                                            <property name="id-column">1</property>
+                                            <signal name="changed" handler="onHdrColumnChanged" swapped="no"/>
+                                            <child>
+                                              <object class="GtkCellRendererText"/>
+                                              <attributes>
+                                                <attribute name="text">0</attribute>
+                                              </attributes>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="ecb_hdrright">
+                                            <property name="name">Outer (right) page header settings</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">The header line on each page can contain the page number, 
+    and/or reference(s) in various forms. Select a preset option,
+    or type in a keyword with additional adornments as needed. 
+
+    For example:
+    \bookalt\ \rangeref   uses the book name from the \h1 alt book header
+    [\pagenumber]    places square brackets around the page number
+    DRAFT\ \isodate\ \hrsmins    gives "DRAFT YYYY-MM-DD HH:MM"
+    -empty-     places nothing in that location
+
+    With Mirror Pages on, First Reference and Last
+    Reference are swapped on left-hand (even) pages.
+
+    Note that a space and the following certain special 
+    characters require a slash '\' to be typed before them:
+        # % &amp; ^ ~ and \ itself.
+    For example, to get this output: 
+         This is page #1
+    you would need to enter:
+         This\ is\ page\ \#\pagenumber</property>
+                                            <property name="margin-end">6</property>
+                                            <property name="margin-top">4</property>
+                                            <property name="margin-bottom">4</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active">4</property>
+                                            <property name="has-entry">True</property>
+                                            <items>
+                                              <item id="\empty" translatable="yes">-empty-</item>
+                                              <item id="\pagenumber" translatable="yes">Page Number</item>
+                                              <item id="\firstref" translatable="yes">First Reference</item>
+                                              <item id="\lastref" translatable="yes">Last Reference</item>
+                                              <item id="\rangeref" translatable="yes">Reference Range</item>
+                                              <item id="\book" translatable="yes">Book (\h)</item>
+                                              <item id="\bookalt" translatable="yes">Book Alt (\h1)</item>
+                                              <item id="\hrsmins" translatable="yes">Time (HH:MM)</item>
+                                              <item id="\isodate" translatable="yes">Date (YYYY-MM-DD)</item>
+                                              <item id="\isodate\ \hrsmins" translatable="yes">Date and Time</item>
+                                              <item id="Printed\ on\ \isodate" translatable="yes">Printed on YYYY-MM-DD</item>
+                                            </items>
+                                            <child internal-child="entry">
+                                              <object class="GtkEntry">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="width-chars">10</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -27399,52 +27538,26 @@ these can be set in the ptxprint-mods.tex file.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkRadioButton" id="r_ftrCenter_Sec">
-                                    <property name="label" translatable="yes">Sec</property>
-                                    <property name="name">Use formatting from secondary project (center footer)</property>
+                                  <object class="GtkComboBox" id="fcb_ftrCenterSide">
+                                    <property name="name">Column for the center footer</property>
                                     <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">If setting the footer for a diglot
-you will need to specify whether
-this part of the footer (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.</property>
-                                    <property name="halign">start</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Which text (column) of the diglot or polyglot this part of the footer&#10;comes from: its text and formatting are taken from that project.&#10;The letters match the codes on the Diglot page.</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">10</property>
-                                    <property name="active">True</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_ftrCenter_Pri</property>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="r_ftrCenter_Pri">
-                                    <property name="label" translatable="yes">Pri</property>
-                                    <property name="name">Use formatting from primary project (center footer)</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">If setting the footer for a diglot
-you will need to specify whether
-this part of the footer (its text and
-formatting) should come from the Primary
-(Left) or the Secondary text.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">10</property>
-                                    <property name="draw-indicator">True</property>
-                                    <property name="group">r_ftrCenter_Sec</property>
-                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <property name="model">ls_hdrColumns</property>
+                                    <property name="id-column">1</property>
+                                    <signal name="changed" handler="onHdrColumnChanged" swapped="no"/>
+                                    <child>
+                                      <object class="GtkCellRendererText"/>
+                                      <attributes>
+                                        <attribute name="text">0</attribute>
+                                      </attributes>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
+                                    <property name="height">2</property>
                                   </packing>
                                 </child>
                               </object>
@@ -29887,7 +30000,7 @@ is acceptable in the receptor culture.</property>
                                                             <property name="model">ls_pic_accept</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">-1</property>
+                                                            <property name="active-id">Unknown</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">2</property>
@@ -29974,7 +30087,7 @@ illustration in this particular publication.</property>
                                                             <property name="model">ls_pub_usage</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">-1</property>
+                                                            <property name="active-id">Unknown</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">2</property>
@@ -30085,7 +30198,7 @@ illustration within this publication.</property>
                                                             <property name="model">ls_pub_accept</property>
                                                             <property name="active">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">1</property>
+                                                            <property name="active-id">Unknown</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">2</property>
@@ -30881,7 +30994,7 @@ Note that for polyglots, only the Scored options are available to be used.</prop
                                         <property name="has-entry">True</property>
                                         <property name="entry-text-column">0</property>
                                         <property name="id-column">1</property>
-                                        <property name="active-id">1</property>
+                                        <property name="active-id">simple</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can-focus">False</property>
@@ -33313,7 +33426,6 @@ Factor:</property>
                                                             <property name="label" translatable="yes">Raise:</property>
                                                             <property name="justify">right</property>
                                                             <property name="xalign">1</property>
-                                                            <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                                             </object>
                                                             </child>
                                                           </object>
@@ -34312,7 +34424,7 @@ on whole lines.</property>
                                                             <property name="active">0</property>
                                                             <property name="entry-text-column">0</property>
                                                             <property name="id-column">1</property>
-                                                            <property name="active-id">1</property>
+                                                            <property name="active-id">t</property>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">1</property>
@@ -39186,7 +39298,7 @@ the archive standard PDF/A-4.</property>
                                     <property name="active">0</property>
                                     <property name="entry-text-column">0</property>
                                     <property name="id-column">1</property>
-                                    <property name="active-id">None</property>
+                                    <property name="active-id">Screen</property>
                                     <signal name="changed" handler="outputFormatChanged" swapped="no"/>
                                     <signal name="grab-notify" handler="grab_notify_event" swapped="no"/>
                                   </object>
@@ -40240,9 +40352,9 @@ version before reporting an issue.</property>
                                         <property name="can-focus">False</property>
                                         <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">Reference documents for PTXprint:
-the Ornaments Catalog, the Technical
-Reference (for advanced users) and,
-when online, the Advanced Tech Docs.</property>
+the User Manual, the Ornaments Catalog,
+the Technical Reference (for advanced
+users) and, when online, the Advanced Tech Docs.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">Reference Documentation:</property>
                                         <property name="justify">right</property>
@@ -40267,9 +40379,9 @@ when online, the Advanced Tech Docs.</property>
                                         <property name="uri">https://github.com/sillsdev/ptx2pdf/tree/master/docs#readme</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">5</property>
+                                        <property name="left-attach">6</property>
                                         <property name="top-attach">10</property>
-                                        <property name="width">2</property>
+                                        <property name="width">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -40592,6 +40704,26 @@ cover the latest available features.</property>
                                       </packing>
                                     </child>
                                     <child>
+                                      <object class="GtkLinkButton" id="lb_userManual">
+                                        <property name="label" translatable="yes">User Manual</property>
+                                        <property name="name">Show the User Manual</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="focus-on-click">False</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Open the PTXprint User Manual in the Manual tab of the PDF Preview window.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">start</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to view the PTXprint User Manual</property>
+                                        <signal name="clicked" handler="onManualClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">10</property>
+                                      </packing>
+                                    </child>
+                                    <child>
                                       <object class="GtkLinkButton" id="lb_ornaments_cat">
                                         <property name="label">Ornaments Catalog</property>
                                         <property name="name">Show the Ornaments Catalog</property>
@@ -40609,7 +40741,7 @@ the Tabs+Borders settings).</property>
                                         <signal name="clicked" handler="onCatalogClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">3</property>
+                                        <property name="left-attach">4</property>
                                         <property name="top-attach">10</property>
                                       </packing>
                                     </child>
@@ -40630,7 +40762,7 @@ document. (For advanced users only). </property>
                                         <signal name="clicked" handler="onTechRefClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">4</property>
+                                        <property name="left-attach">5</property>
                                         <property name="top-attach">10</property>
                                       </packing>
                                     </child>
@@ -40709,7 +40841,7 @@ so on.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
-                                        <property name="uri">https://ptxprintsupport-55742.chipp.ai/w/chat/</property>
+                                        <property name="uri">https://software.sil.org/ptxprint/help/agent/</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>

@@ -25,14 +25,43 @@ _parmCategories = {
 
 _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 
-def newBase(fpath):
+# Illustration library names, e.g. cn01617.jpg or ab12345c.tif: a publisher letter, a set letter
+# and a 5 digit number. Different set letters are always different files (even if the publisher
+# drew the same picture in another style). The optional trailing a/b/c only marks the resolution
+# of that copy, so it is not part of the code.
+# https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
+picCodePattern = r"([a-z]{2})(\d{5})[abc]?"
+picCodeRe = re.compile(r"(?i)_?" + picCodePattern + "$")
+
+def picCode(fpath):
+    ''' The lower case library code (e.g. ab12345) of an illustration file, or "" if its name
+        is not in the library form. '''
     doti = fpath.rfind(".")
     f = os.path.basename(fpath[:doti] if doti >= 0 else fpath)
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib|[onk][a-z])..\d{5})[abcABC]?$", f)
-    if cl:
-        return cl[0].lower()
-    else:
-        return re.sub(r'[()&+,.;: \-]', '_', f.lower())
+    m = picCodeRe.search(f)
+    return (m.group(1) + m.group(2)).lower() if m else ""
+
+def copyrightKey(copyrights, code):
+    ''' The entry in the copyrights table for an illustration code (or its 2 letter prefix): the
+        publisher's set if it has its own entry, else the publisher. "" if neither is known. '''
+    prefix = (code or "")[:2].lower()
+    if len(prefix) < 2:
+        return ""
+    if prefix in copyrights:
+        return prefix
+    if prefix[0] in copyrights:
+        return prefix[0]
+    return ""
+
+def newBase(fpath):
+    ''' The key used to match an illustration reference to its files: the library code if
+        it has one, so every resolution of it matches, or else a tidied version of its name. '''
+    code = picCode(fpath)
+    if code:
+        return code
+    doti = fpath.rfind(".")
+    f = os.path.basename(fpath[:doti] if doti >= 0 else fpath)
+    return re.sub(r'[()&+,.;: \-]', '_', f.lower())
 
 
 _checks = {
@@ -206,11 +235,11 @@ class PicChecks:
         # return set(list(self.cfgShared.keys()) + list(self.cfgProject.keys()))
         
     def setMultiCreditOverlays(self, srcs, crdtxt, crdtbox, copysrc):
-        srcseries = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?", copysrc)
-        if len(srcseries):
+        srcseries = picCode(copysrc)
+        if srcseries:
             for k in srcs:
-                kseries = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?", k)
-                if len(kseries) and kseries[0][:3].lower() == srcseries[0][:3].lower():
+                kseries = picCode(k)
+                if kseries and kseries[:2] == srcseries[:2]:
                     k = newBase(k)
                     if self.parent.get('c_plCreditOverwrite') or not self.cfgShared.get(k, 'piccredit', fallback=''):
                         if not self.cfgShared.has_section(k):
@@ -331,7 +360,7 @@ class Picture:
                 self['pgpos'] = random.choice(self.picposns[suffix]['span'])
             else:
                 self['pgpos'] = "t"
-        elif getattr(self, 'pgpos', None) is None:
+        elif self.get('pgpos', None) is None:      # (the fields aren't attributes)
             posns = self.picposns[suffix].get(self.get('size', 'col'), self.picposns[suffix]["col"])
             if randomize:
                 self['pgpos'] = random.choice(posns)
@@ -351,7 +380,12 @@ class Picture:
         fpath = self['srcpath']
         # print(fpath)
         origExt = os.path.splitext(fpath)[1]
-        self['destfile'] = fn(self, self['srcpath'], nB+origExt.lower())
+        dest = fn(self, self['srcpath'], nB+origExt.lower())
+        if dest is None:            # couldn't be copied or converted: it's missing
+            if 'destfile' in self:
+                del self['destfile']
+            return
+        self['destfile'] = dest
         self[' crop'] = cropme
         if 'media' in self and len(self['media']) and 'p' not in self['media']:
             self['disabled'] = True
@@ -367,7 +401,7 @@ class Picture:
                 self['loc'] = p
                 del self['pgpos']
         if (p := self.get('size', None)) is not None:
-            m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
+            m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)?|\.\d+))?$", p)    # col*2, col*0.5, col*.5
             if m:
                 self['size'] = m[1]
                 if m[2] is not None and len(m[2]):
@@ -381,6 +415,7 @@ class Piclist:
 
     def __init__(self, model=None, diglot=False):
         self.pics: Dict[str, Picture] = {}
+        self.unreadable = []    # lines of the .piclist that couldn't be read, kept when it is written
         self.model = model
         self.clear(model)
         self.inthread = False
@@ -398,6 +433,7 @@ class Piclist:
             c = p.copy()
             res.pics[c.key] = c
         res.keycounter = self.keycounter
+        res.unreadable = self.unreadable[:]
         res.mode = self.mode
         res.suffix = self.suffix
         return res
@@ -491,12 +527,16 @@ class Piclist:
             inf = fname
         # logger.debug("".join(traceback.format_stack()))
         for l in (x.strip() for x in inf.readlines()):
-            if not len(l) or l.startswith("%"):
+            if l.startswith(self.unreadablePrefix):
+                l = l[len(self.unreadablePrefix):]      # written back last time: maybe readable now
+            elif not len(l) or l.startswith("%"):
                 continue
             m = l.split("|")
             r = m[0].split(" ", 2)
             if len(r) < 2:
                 logger.warning(f"Skipping bad piclist line in {fname}: {l}")
+                if l not in self.unreadable:
+                    self.unreadable.append(l)
                 continue
             pic = {'anchor': "{} {}".format(r[0] if self.isdiglot else r[0][:3], r[1]), 'caption': r[2] if len(r) > 2 else ""}
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
@@ -517,7 +557,7 @@ class Piclist:
     def threadUsfms(self, parent, nosave=False):
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
-            if os.path.exists(bkp):
+            if os.path.isfile(bkp):
                 self.read_sfm(bk, bkp, parent)
         # as generating the list from the Pictures tab does
         self.set_positions(cols=2 if self.model.get("c_doublecolumn") else 1,
@@ -564,23 +604,16 @@ class Piclist:
                         if bk == 'GLO':
                             pic.update(pgpos="p", scale="0.7")
                         if b[1]:    # usfm 3
-                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
-                            for l in labelParams:
-                                try:
-                                    k,v = l.split("=")
-                                    pic[k.strip()] = v.strip('"')
-                                except ValueError:
-                                    logger.debug(f"Invalid Picture parameter: {l} in {pic} found in {bk}")
-                            if 'media' not in pic:
-                                default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
-                                pic['media'] = 'paw' if default is None else default
-                            picture = Picture(**pic)
+                            picture = self._fig3picture(pic, f.group(2), parent)
                         else:       # usfm 2
                             for j, v in enumerate(f.groups()):
                                 if v is not None:
                                     pic[posparms[j]] = v
                             picture = Picture(**pic)
                             picture._fixPicinfo()
+                        if not picture.get('src', ''):
+                            logger.warning(f"Skipping \\fig with no image file at {r}: {f.group(0)[:60]}")
+                            continue
                         if fn is not None:
                             fn(picture)
                         else:
@@ -593,25 +626,84 @@ class Piclist:
                         koffset = parcount
                         currentk = a[0]
 
+    def _fig3picture(self, pic, attribs, parent):
+        """ A Picture of pic (anchor, caption ...) and the attributes of a USFM 3 \\fig """
+        # names may have hyphens (x-credit, x-xetex) and values may have = in them
+        for k, v in re.findall(r'([A-Za-z][\w-]*)\s*=\s*"([^"\\]*)"', attribs):
+            pic[k] = v
+        if 'media' not in pic:
+            default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
+            pic['media'] = 'paw' if default is None else default
+        return Picture(**pic)
+
+    def _readmdpics(self, txt, bk, parent, sync=False, fn=None):
+        """ The pictures of a Markdown module (txt is its USFM). Each is anchored "md" and its id
+            attribute, which \\zfiga then names. A picture without an id keeps the number of the
+            listed picture with the same file, so its settings stay with it; a new one gets the next
+            number (md001, md002 ...). Listed pictures no longer in the text are dropped. """
+        prefix = bk + " md"
+        known = {}          # file -> anchor of the pictures already listed for this module
+        highest = 0
+        for p in list(self.pics.values()):
+            a = p['anchor']
+            if not a.startswith(prefix):
+                continue
+            known.setdefault(p.get('src', ''), a)
+            if a[len(prefix):].isdigit():
+                highest = max(highest, int(a[len(prefix):]))
+        seen = set()
+        for f in regex.finditer(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', txt):
+            m = re.search(r'\bid\s*=\s*"([^"\\]+)"', f.group(2))
+            src = re.search(r'\bsrc\s*=\s*"([^"\\]*)"', f.group(2))
+            if m is not None:
+                r = prefix + re.sub(r"\s+", "", m.group(1))
+            elif src is not None and known.get(src.group(1)) not in (None, *seen):
+                r = known[src.group(1)]
+            else:
+                highest += 1
+                r = "{}{:03d}".format(prefix, highest)
+            seen.add(r)
+            attribs = re.sub(r'\bid\s*=\s*"[^"\\]*"', '', f.group(2))      # the id is in the anchor
+            picture = self._fig3picture({'anchor': r, 'caption': f.group(1).strip(), 'srcref': r}, attribs, parent)
+            if not picture.get('src', ''):
+                logger.warning(f"Skipping \\fig with no image file at {r}: {f.group(0)[:60]}")
+            elif fn is not None:
+                fn(picture)
+            else:
+                self.add_picture(picture, sync=sync)
+        for p in list(self.pics.values()):
+            if p['anchor'].startswith(prefix) and p['anchor'] not in seen:
+                self.remove(p)
+
     def read_sfm(self, bk, fname, parent, media=None, sync=False, fn=None):
         isperiph = bk in nonScriptureBooks
-        with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
-                            if self.model is not None else 65001) as inf:
-            dat = inf.read()
-            if isperiph:
-                self._readpics(dat, bk, 0, None, isperiph, parent, sync=sync, fn=fn)
-            else:
-                blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
-                for c, t in zip(blocks[0::2], blocks[1::2]):
-                    m = re.match("(.*?)\\v ", t, re.S)
-                    if m is not None:
-                        s = m.group(1)
-                        self._readpics(s, bk, c, 0, isperiph, parent, sync=sync, fn=fn)
-                    for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
-                        lastv = v[0]
-                        s = v[1]
-                        key = None
-                        self._readpics(s, bk, c, lastv, isperiph, parent, sync=sync, fn=fn)
+        try:
+            with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
+                                if self.model is not None else 65001) as inf:
+                dat = inf.read()
+        except OSError as e:
+            logger.warning(f"Can't read the pictures in {bk} from {fname}: {e}")
+            return
+        if str(fname).lower().endswith(".md"):   # a Markdown module: its pictures are its images, in its own book
+            from ptxprint.markdown import MarkDown, documentBook
+            self._readmdpics(MarkDown(dat).outUsfm(version=[3, 1]), documentBook(dat), parent, sync=sync, fn=fn)
+            return
+        if isperiph:
+            self._readpics(dat, bk, 0, None, isperiph, parent, sync=sync, fn=fn)
+        else:
+            blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
+            for c, t in zip(blocks[0::2], blocks[1::2]):
+                # pictures before the first verse: TeX places a picture just before a verse number
+                # (BKc.v-preverse), so these are anchored at the verse that follows them. (The intro,
+                # before \c 1, has no verse to anchor to, so its pictures can't be listed.)
+                m = re.match(r"(.*?)\\v (\d+[abc]?)", t, re.S)
+                if m is not None:
+                    self._readpics(m.group(1), bk, c, m.group(2), isperiph, parent, sync=sync, fn=fn)
+                for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
+                    lastv = v[0]
+                    s = v[1]
+                    key = None
+                    self._readpics(s, bk, c, lastv, isperiph, parent, sync=sync, fn=fn)
 
     def add_from_fig(self, bk, anchor, fige):
         pic = {"anchor": f"{bk} {anchor}"}
@@ -736,6 +828,8 @@ class Piclist:
         self.mode = mode
         return data
 
+    unreadablePrefix = "% Unreadable: "
+
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None, hiderefs=False):
         ''' Generate a picinfo file, with given date.
                 bks is a list of 3 letter bkids only to include. If empty, include all.
@@ -744,7 +838,7 @@ class Piclist:
         self.rmdups()
         lines = []
         pMedia = self.model.picMedia if self.model else None
-        for p in sorted(self.pics.values(), key=lambda x:refSort(x['anchor'], info=['anchor'][3:4])):
+        for p in sorted(self.pics.values(), key=lambda x:refSort(x['anchor'], info=x['anchor'][3:4])):
             (k, caption, vals) = p.outstr(bks=bks, skipkey=skipkey, usedest=usedest, media=media,
                                           checks=checks, hiderefs=hiderefs, picMedia=pMedia)
             if k:
@@ -752,7 +846,9 @@ class Piclist:
 
         if fpath is None:
             return lines
-        elif len(lines):
+        # so a line PTXprint can't read is not lost when the list is saved
+        lines = [self.unreadablePrefix + l for l in self.unreadable] + lines
+        if len(lines):
             logger.debug(f"Saving pics to {fpath} with {len(lines)} lines")
             dat = "\n".join(lines)+"\n"
             if os.path.dirname(fpath):
@@ -892,7 +988,9 @@ class Piclist:
                     best = lk
             if best is not None:
                 anchored[v['anchor']].remove(best)
-                self.pics[best].update({f: v[f] for f in fields if f in v})
+                for f in fields:        # (a Picture isn't a dict: no update())
+                    if f in v:
+                        self.pics[best][f] = v[f]
                 for a in ("scale", "mirror", "x-xetex"):
                     if a in fields and a not in v and a in self.pics[best]:
                         del self.pics[best][a]
@@ -921,7 +1019,7 @@ class Piclist:
 
         for bk in bks:
             bkf = allbooks.get(bk, None)
-            if bkf is None or not os.path.exists(bkf):
+            if bkf is None or not os.path.isfile(bkf):
                 continue
             self.read_sfm(bk, bkf, self.model, sync=sync, fn=addpic)
 

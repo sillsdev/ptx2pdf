@@ -136,6 +136,29 @@ class Linker:
         self.seen = set()
         self.count = 0
 
+    # --- where we are ---
+    def startChapter(self, ch):
+        """Links are made once per section: the chapter's text before its first heading is one."""
+        self.cur = ch.cid
+        self.seen = set()
+        self.curHeading = ch.id
+
+    def startHeading(self, h):
+        self.seen = set()
+        self.curHeading = h["id"]
+
+    def linkChapter(self, ch):
+        """Adds the links to a chapter's tokens (in place). Heading text is never linked."""
+        self.startChapter(ch)
+        byIdx = {h["idx"]: h for h in ch.headings}
+        toks = ch.tokens
+        for idx, t in enumerate(toks):
+            if t.type == "heading_open":
+                self.startHeading(byIdx[idx])
+            elif t.type == "inline" and not (idx > 0 and toks[idx - 1].type == "heading_open"):
+                t.children = self.link(t.children)
+        return toks
+
     # --- resolving ---
     def _chapterTop(self, cid):
         return "#" + self.byCid[cid].id
@@ -299,9 +322,7 @@ def decorate(ch, linker, chapters, parts, taskIndex):
     prevCh = chapters[ci - 1] if ci > 0 else None
     nextCh = chapters[ci + 1] if ci + 1 < len(chapters) else None
     out = []
-    linker.cur = ch.cid
-    linker.seen = set()
-    linker.curHeading = ch.id
+    linker.startChapter(ch)
     curH2 = curH3 = None
     inRef = False
     state = None
@@ -345,8 +366,7 @@ def decorate(ch, linker, chapters, parts, taskIndex):
                 curH2, inRef = h, h["text"].rstrip().lower().endswith("settings reference")
             if level == 3:
                 curH3 = h
-            linker.seen = set()
-            linker.curHeading = h["id"]
+            linker.startHeading(h)
             if h["setting"]:
                 t.attrSet("data-kind", "setting")
             out.append(t)
@@ -592,8 +612,8 @@ document.addEventListener('keydown',function(e){
 """
 
 
-def build(chapterInfos, ctrlKeys, parts, title, today, taskIndex=("30-howto", "31-troubleshooting")):
-    """chapterInfos: [{cid, num, title, part, text}], ctrlKeys: [{anchor, keys}], parts: chapters.parts"""
+def parseChapters(chapterInfos, ctrlKeys):
+    """The chapters parsed, their headings given ids, and the Linker that knows them all."""
     md = MarkdownIt("commonmark").enable("table").enable("strikethrough")
     used = {"top", "contents"}
     chapters = []
@@ -601,7 +621,21 @@ def build(chapterInfos, ctrlKeys, parts, title, today, taskIndex=("30-howto", "3
         ch = Chapter(info, md.parse(info["text"]))
         prepare(ch, used)
         chapters.append(ch)
-    linker = Linker(chapters, ctrlKeys, used)
+    return md, chapters, Linker(chapters, ctrlKeys, used)
+
+
+def linkedChapters(chapterInfos, ctrlKeys):
+    """The chapters' tokens with the same ids and links as the HTML edition, but none of its navigation.
+    Every heading has an "id" attribute. Returns (chapters, linker); each chapter's tokens are in .tokens"""
+    md, chapters, linker = parseChapters(chapterInfos, ctrlKeys)
+    for ch in chapters:
+        linker.linkChapter(ch)
+    return chapters, linker
+
+
+def build(chapterInfos, ctrlKeys, parts, title, today, taskIndex=("30-howto", "31-troubleshooting")):
+    """chapterInfos: [{cid, num, title, part, text}], ctrlKeys: [{anchor, keys}], parts: chapters.parts"""
+    md, chapters, linker = parseChapters(chapterInfos, ctrlKeys)
     body, lastPart = [], None
     for ch in chapters:
         if ch.part != lastPart:

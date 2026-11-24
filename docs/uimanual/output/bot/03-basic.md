@@ -214,7 +214,7 @@ A tutorial is a file with a list of steps (a .json file, or a recorded test in a
 
 ### Copyright & Licensing or Copy configuration are missing, or Reset is greyed out
 
-**Cause:** They are only available in the **Regular** and **Full** views. **What to do:** Click **☰** › **View Level** › **Regular View**.
+**Cause:** They are only available in the **Regular** and **Full** views. **What to do:** Click **≡** › **View Level** › **Regular View**.
 
 ### The Copy configuration to other projects button is greyed out
 

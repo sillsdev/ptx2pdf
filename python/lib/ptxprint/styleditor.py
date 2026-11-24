@@ -121,12 +121,17 @@ def asFloatPts(self, s, mrk=None, model=None):
             return v * 72.27
         elif units == "mm":
             return v * 72.27 / 25.4
+        block = getattr(self, '_readblock', None)
+        if block is not None:
+            # Reading a stylesheet: the marker's own FontSize there, else from the sheets read
+            # before it (getval can't see them yet), else the body font size
+            fsize = block.get('fontsize', self.basesheet.get(mrk, {}).get('fontsize', 1.))
+        else:
+            fsize = self.getval(mrk, "FontSize", 1., includebase=True)
         try:
-            fsize = float(self.getval(mrk, "FontSize"))
-        except TypeError:
-            return v
-        if fsize is None:
-            return v
+            fsize = float(fsize)
+        except (TypeError, ValueError):
+            fsize = 1.
         try:
             bfsize = float(self.model.get("s_fontsize"))
         except TypeError:
@@ -309,7 +314,8 @@ _fieldmap = {
 
 class StyleEditor:
 
-    identityKeys = ('name', 'description', 'endmarker', 'mrktype', 'styletype', 'texttype')
+    identityKeys = ('name', 'description', 'endmarker', 'mrktype', 'styletype', 'texttype',
+                    'occursunder', 'textproperties')
 
     def __init__(self, model, basepath=None, copy=False):
         self.model = model
@@ -329,15 +335,15 @@ class StyleEditor:
         return res
 
     def reset(self, basepath=None):
-        if basepath is None:
-            self.basesheet = {}
-        else:
+        self.basesheet = {}     # cleared first: reading looks up FontSizes in it
+        if basepath is not None:
             self.basesheet = self._read_styfile(basepath)
 
     def _read_styfh(self, fh, sheet=None):
         fieldre = re.compile(r"^\s*\\(\S+)\s*(.*?)\s*$")
         res = sheet if sheet is not None else {}
         curr = {}
+        pending = {}
         mrk = None
         for l in fh.readlines():
             m = fieldre.match(l)
@@ -345,23 +351,38 @@ class StyleEditor:
                 mk = m.group(1)
                 v = m.group(2)
                 if mk.lower() == "marker":
-                    if len(curr) and mrk:
-                        f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
-                        if f is not None:
-                            curr['font'] = f
+                    self._endblock(curr, mrk, pending)
                     curr = res.get(v, {})
                     res[v] = curr
                     mrk = v
+                    pending = {}
                     continue
                 elif mk.lower() in _fieldmap:
+                    if _fieldmap[mk.lower()][0] is asFloatPts:
+                        pending[mk.lower()] = v     # em/ex need the FontSize, which may come later
+                        continue
                     v = _fieldmap[mk.lower()][0](self, v, mrk=mrk, model=self.model)
                 logger.log(6, f"{mrk}/{mk.lower()} -> {v}")
                 curr[mk.lower()] = v
-        if len(curr) and mrk:
+        self._endblock(curr, mrk, pending)
+        return res
+
+    def _endblock(self, curr, mrk, pending):
+        """ Finish reading marker mrk's values (curr): convert the lengths held back in
+            pending, now that the block's FontSize is known, and work out its font """
+        if not mrk:
+            return
+        self._readblock = curr
+        try:
+            for k, v in pending.items():
+                curr[k] = asFloatPts(self, v, mrk=mrk, model=self.model)
+                logger.log(6, f"{mrk}/{k} -> {curr[k]}")
+        finally:
+            self._readblock = None
+        if len(curr):
             f = _fieldmap['font'][0](self, None, mrk=mrk, model=self.model)
             if f is not None:
                 curr['font'] = f
-        return res
 
     def _read_styfile(self, fname, sheet=None):
         if not os.path.exists(fname):
@@ -410,6 +431,8 @@ class StyleEditor:
             val = _fieldmap[key.lower()][0](self, val, mrk=mrk, model=self.model)
         # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
         oldval = self.basesheet[mrk].get(key.lower(), None) if mrk in self.basesheet else None
+        if isinstance(val, str) and val == "-" and oldval is None and _fieldmap.get(key.lower(), (None,))[0] is fromBool:
+            val = None      # unticking what the stylesheets don't set goes back to them, not \Bold -
         if mrk in self.sheet and key.lower() in self.sheet[mrk] and (val is None or val == oldval):
             logger.log(7, f"{mrk}/{key} {val} == {oldval}")
             del self.sheet[mrk][key.lower()]
@@ -467,7 +490,7 @@ class StyleEditor:
     def copyMarkerValues(self, src, dest):
         ''' Copy the formatting of style src (base and user sheets merged) into the user's style dest,
             including settings that have no widget in the editor, such as Border and Padding.
-            What identifies the style (name, description, type, end marker) belongs to the new style
+            What identifies the style (name, description, type, end marker, where it occurs) belongs to the new style
             and is set from the dialog, so it is not copied. '''
         for k, v in self.asStyle(src).items():
             if k.startswith(" ") or k in self.identityKeys:
@@ -588,8 +611,6 @@ class StyleEditor:
             else:
                 sm = sheet.get(m, {})
             om = basesheet.get(m, {})
-            if 'zderived' in om or 'zderived' in sm:
-                continue
             if 'font' in sm:
                 v = _fieldmap['font'][1](self, sm['font'], am, model=self.model, parm=None)
             for k, v in sm.items():

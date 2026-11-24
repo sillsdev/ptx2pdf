@@ -7,7 +7,7 @@ from ptxprint.page_filler import PTXFiller, TypesetterSolver, Hooks, GrowList, E
                                  HumanFixRequest, expansion_limits
 from ptxprint.parlocs import ParInfo
 from ptxprint.texlog import readUnderfills
-from ptxprint.utils import refSort
+from ptxprint.utils import refSort, ProgressEvent
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
@@ -49,19 +49,9 @@ class PolySolver(TypesetterSolver):
 
     balance_change_cost = 0.1   # cost of changing a paragraph at all, to prefer fewer changes
 
-    # The first failing page matters most (the user fixes it, and maybe all that follows, by
-    # hand), so pages before any failure get more effort than pages after one.
-    page_budget = 24            # most layout runs spent filling one page (after a failure)
-    backtrack_budget = 12       # most layout runs spent on each earlier page when backtracking
-    refill_budget = 8           # most runs filling a page again from a start a backtrack gave it
-    early_max_budget = 80       # before any page has failed: most runs for a page,
-    early_backtrack_budget = 16 # per earlier page when backtracking,
-    early_refill_budget = 10    # and to refill from a new start
     relax_caps = (2, 4)         # if a page runs out of candidates, try again allowing looser shapes
     per_net = 3                 # combos kept for each net height change of a page's slices
     per_dh = 3                  # outcomes kept for each height change of one slice (differing in which glots change)
-    budget_per_par = 2          # extra layout runs a page gets for each paragraph on it that can change
-    max_budget = 60
     max_candidates = 2000       # most candidates listed for a page
     pull_lines = 2              # lines of space the next slice needs to start on a page
     crossing_budget = 1         # most layout runs spent evening the ends of a slice crossing a page
@@ -70,25 +60,22 @@ class PolySolver(TypesetterSolver):
 
     def solve(self, state, start_page=-1, stop=True, restart=False, book=None):
         self.restarting = restart
-        if restart:
-            self._match_adjlist_ids(state)
         return super().solve(state, start_page=start_page, stop=stop, restart=restart, book=book)
-
-    def _match_adjlist_ids(self, state):
-        """ The adjlist writes a paragraph without a parnum as [1], but its id here is [] """
-        known = set(self.paragraph_order)
-        def fix(pid):
-            if pid not in known and pid.endswith("[1]") and pid[:-3] + "[]" in known:
-                return pid[:-3] + "[]"
-            return pid
-        state.paragraph_params = {fix(k): v for k, v in state.paragraph_params.items()}
-        self.shape_cache = {(fix(k), d): v for (k, d), v in self.shape_cache.items()}
-        self.probe_cache = {fix(k): v for k, v in self.probe_cache.items()}
 
     @property
     def early(self):
         """ Before the first failed page """
         return not self.failed_pages
+
+    def page_budget(self, backtracking=False):
+        """ Most layout runs to spend filling a page (the user's setting, 0 for no limit), or on
+            each earlier page and each refill when backtracking for it (half that). A page that
+            can be filled usually is within a few runs, so this mostly limits the time lost on
+            pages that cannot be. """
+        budget = self.hooks.fill_budget
+        if budget <= 0:
+            return math.inf
+        return max(1, budget // 2) if backtracking else budget
 
     def run_forward(self, state, page, start_page, stop):
         """ Fill pages in order (design section 4). Each page is tried with candidate combos,
@@ -134,6 +121,8 @@ class PolySolver(TypesetterSolver):
             evened = self.balance_crossing(cur, p)
             if evened is not None:
                 cur = evened
+            self.hooks.progress(ProgressEvent(self.bk, p + 1, "badpage" if p in self.failed_pages else "goodpage",
+                                              "", len(cur.layout.pages)))
             p += 1
             if self.hooks.cancelled:
                 return HumanFixRequest(cur, p, "Stopped")
@@ -160,6 +149,7 @@ class PolySolver(TypesetterSolver):
         final = self._layout(cur.paragraph_params, cur, -1)
         if final is not None:
             final.failures = self.failed_pages
+            final.wholebook = True      # so the filler needn't lay it out again
             cur = final
         printer.report(cur)
         return cur
@@ -355,16 +345,13 @@ class PolySolver(TypesetterSolver):
         return (round(min(grow, shrink) * 2) / 2 + self._slicetries.get(slicedesc, 0), dbad)
 
     def fill_page(self, state, page):
-        """ Try combos on page until it is full or its budget is spent; commit the result """
+        """ Try combos on page until it is full or its budget is spent; commit the best layout
+            found. The page has failed only if every glot is still short: if one reaches the
+            foot, what the others lack is the balance of the last slice. """
         self.prepare_slices(state.parlocs)
         # foreach slice on the page count the paragraphs in it that can change shape
-        movable = sum(1 for sl, pg in self.sliceheights.items() if page in pg
-                      for g in self.hooks.printer.glots for p in self.slicepars.get(sl, {}).get(g, [])
-                      if page in self.parpages.get(p, ()) and self.shape_deltas.get(p))
-        budget = min(self.early_max_budget if self.early else self.max_budget,
-                     self.page_budget + self.budget_per_par * movable)
-        gap, dbad, new, desc = self.try_fill(state, page, budget)
-        if gap > 0:
+        gap, dbad, new, desc = self.try_fill(state, page, self.page_budget())
+        if gap > 0 and all(x > 0 for x in self._gap(new, page) or [1]):
             self.failed_pages.append(page)
         return new
 
@@ -382,6 +369,8 @@ class PolySolver(TypesetterSolver):
         response = [1.] * len(glots)
         observed = [[] for g in glots]
         best = (sum(gap0), 0., state, "none")
+        # best layout: a full glot first (the page has not failed), then fewest lines short
+        bestkey = (all(x > 0 for x in gap0), sum(gap0), 0.)
         tried = 0
         logger.log(15, f"p{page+1}: gap {gap0}, {len(cands)} candidates ({len(memo)} tried before from this start)")
         relax = list(self.relax_caps)
@@ -416,12 +405,14 @@ class PolySolver(TypesetterSolver):
                 if abs(effects[i]) >= 1:
                     observed[i].append((gap0[i] - gap[i]) * self.baselines[g] / effects[i])
                     response[i] = max(0., min(2., sum(observed[i]) / len(observed[i])))
-            score = (sum(gap), dbad)
-            if score < best[:2]:
+            key = (all(x > 0 for x in gap), sum(gap), dbad)
+            if key < bestkey:
+                bestkey = key
                 best = (sum(gap), dbad, new, desc)
             if sum(gap) == 0:
                 break
-        logger.log(15, f"p{page+1}: {'filled' if best[0] == 0 else 'failed, best gap %d' % best[0]} by {best[3]} after {tried} runs")
+        outcome = 'filled' if best[0] == 0 else ('failed' if bestkey[0] else 'a glot full') + f', best gap {best[0]}'
+        logger.log(15, f"p{page+1}: {outcome} by {best[3]} after {tried} of {budget} runs")
         return best
 
     def backtrack(self, state, page):
@@ -447,7 +438,7 @@ class PolySolver(TypesetterSolver):
                 # growth pushes material on towards the short page: try it first, nearest the need
                 return (c[1] in samestart, c[1] < 0, abs(abs(c[1]) - need), c[2])
             n = 0
-            while cands and n < (self.early_backtrack_budget if self.early else self.backtrack_budget):
+            while cands and n < self.page_budget(backtracking=True):
                 cands.sort(key=order)
                 effects, net, dbad, combo, desc, slicedesc = cands.pop(0)
                 params = dict(state.paragraph_params)
@@ -473,8 +464,7 @@ class PolySolver(TypesetterSolver):
                 if sum(gap) > 0:
                     # a new start for page: try filling it from there
                     before = self.itercount
-                    rgap, rdbad, rnew, rdesc = self.try_fill(new, page,
-                                    self.early_refill_budget if self.early else self.refill_budget)
+                    rgap, rdbad, rnew, rdesc = self.try_fill(new, page, self.page_budget(backtracking=True))
                     tried += self.itercount - before
                     if rgap < sum(gap):
                         gap, new = [0] * len(glots) if rgap == 0 else self._gap(rnew, page), rnew
@@ -687,6 +677,7 @@ class PolySolver(TypesetterSolver):
 
     maxbad_scale = 20           # shape badness: most usable shapes are under 2, loose ones over 20
     imbalance_scale = 10        # badness of a line of imbalance, well above what good shapes cost
+    narrow_share = 0.5          # each line of imbalance after the first, as a share of the first
 
     def maxbad(self):
         """ Paragraph shapes worse than this are not used to change a slice """
@@ -754,8 +745,7 @@ class PolySolver(TypesetterSolver):
 
     def imbalance_cost(self, imb, sl):
         """ Badness of imb lines of imbalance where slice sl ends. A gap costs imbalance_weight
-            for its first line and its own smaller amount for each further one: less whitespace
-            is better. A 1 line gap that looks like a mistake (see single_gap) costs twice
+            for its first line and half that for each further one: less whitespace is better. A 1 line gap that looks like a mistake (see single_gap) costs twice
             imbalance_weight, and at least the loosest shape that may level it (see balance_page),
             so any shape that can level it does. A 1 line gap in a slice of headings, or above
             one, costs nothing: it is better than making a heading wrap differently. """
@@ -764,7 +754,7 @@ class PolySolver(TypesetterSolver):
         if self.single_gap(sl, imb):
             cap = max(self.hooks.badness_balance_maxbad * self.maxbad_scale, self.imbalance_weight())
             return max(2 * self.imbalance_weight(), self.relax_caps[0] * cap)
-        return self.imbalance_weight() + self.hooks.badness_imbalance_narrow * self.imbalance_scale * max(0, imb - 1)
+        return self.imbalance_weight() * (1 + self.narrow_share * max(0, imb - 1))
 
     def shape_cost(self, pid, d):
         """ Badness of paragraph pid at line delta d above its unadjusted shape, or None if unusable """
@@ -894,10 +884,10 @@ class PolyFiller(PTXFiller):
         """ glot letter -> (expand, minexp, maxexp) """
         return {g: expansion_limits(v) for g, v in self.glotviews().items()}
 
-    def solve(self, bk, stop=False, restart=False, chapters=None):
+    def solve(self, bk, stop=False, restart=False, chapters=None, analyse=False):
         self.glots = list(self.glotviews().keys())
         logger.log(15, f"{bk}: glot settings {self.glot_settings()}")
-        return super().solve(bk, stop=stop, restart=restart, chapters=chapters)
+        return super().solve(bk, stop=stop, restart=restart, chapters=chapters, analyse=analyse)
 
     def run_layout(self, *a, **kw):
         res = super().run_layout(*a, **kw)

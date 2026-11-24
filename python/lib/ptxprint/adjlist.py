@@ -24,6 +24,11 @@ class Liststore(list):
             r.iter = j
         return rl.iter
 
+    def delrow(self, i):
+        del self[i]
+        for j, r in enumerate(self[i:], i):
+            r.iter = j
+
     def append(self, row):
         rl = UserList(row)
         rl.iter = len(self)
@@ -32,7 +37,7 @@ class Liststore(list):
         
 
 adjre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)\s+([+-]?\d+)(?:\[(\d+)\])?")
-refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|\S+)(?:\[(\d+)\])?")
+refre = re.compile(r"^(\S{3})([A-Z]?)\s*(\d+[.:]\d+(?:[+-]*\d+)?|[^\s\[]+)(?:\[(\d+)\])?")    # [n] is the paragraph, even after k.word
 restre = re.compile(r"^\s*(?:(?:mrk=|\\)(\S+)\s*)?(?:(?:expand=)?(\d+))?(.*?)$")
 
 
@@ -54,6 +59,7 @@ class AdjList:
         logger.log(15, f"{self.adjfile} ({self.centre}, +{self.highdiff}, -{self.lowdiff})")
         self.ftime = None
         self.db = []
+        self.savedVals = {}     # (bk, c:v, para) -> (stretch, expand) as last read or saved (i.e. printed)
 
     def copy(self, gtk=None):
         res = self.__class__(self.centre, self.lowdiff, self.highdiff, 
@@ -61,22 +67,54 @@ class AdjList:
         for row in self.liststore:
             res.liststore.append(list(row))
         res.db = [d.copy() for d in self.db]
+        res.savedVals = dict(self.savedVals)
         return res
+
+    def adjustedCount(self):
+        """ How many paragraphs have an adjustment (a line change or a non-default expansion) """
+        n = 0
+        for r in self.liststore:
+            try:
+                stretch = int(r[3] or 0)
+            except ValueError:
+                stretch = 1     # unexpected text: count it rather than risk losing it
+            if stretch != 0 or r[5] != self.centre:
+                n += 1
+        return n
 
     def clear(self):
         self.liststore.clear()
         self.db = []
+        self.savedVals = {}
+
+    def _snapshot(self):
+        self.savedVals = {(r[0], r[1], r[2]): (r[3], r[5]) for r in self.liststore}
 
     def __len__(self):
         return len(self.liststore)
 
-    def find(self, *k):
+    def find(self, bk, cv, para):
+        """ Returns (index, found): the row for this paragraph, or where to insert it (-1 = at the end) """
+        key = None
         for i, r in enumerate(self.liststore):
-            if r[:len(k)] == k:
-                return r
-            elif r[1] > k[1] or r[1] == k[1] and r[2] > k[2]:
-                return i
-        return -1
+            if r[0] == bk and r[1] == cv and r[2] == para:
+                return (i, True)
+            if key is None:
+                key = self.calckey([bk, cv, para])
+            if self.calckey(r) > key:
+                return (i, False)
+        return (-1, False)
+
+    def resetAllBut(self, keep, expand):
+        """ Gives every paragraph not in keep no line change, at the given expansion.
+            keep: (book, c.v, para) of each paragraph to leave alone, as setval takes them """
+        def key(bk, cv, para):
+            return (bk, cv.replace(":", "."), int(para or 1))
+        keys = {key(*k) for k in keep}
+        for r in self.liststore:
+            if key(r[0], r[1], r[2]) not in keys:
+                r[3] = "0"
+                r[5] = expand
 
     def sort(self):
         allvals = [[*r] for r in self.liststore]
@@ -94,25 +132,26 @@ class AdjList:
             self.liststore.append(row)
             self.db.append(kw)
             return
-        i = self.find(bk, cv, para)
-        if isinstance(i, int):
+        i, found = self.find(bk, cv, para)
+        if not found:
             if i >= 0:
                 self.liststore.insert(i, row=row)
                 self.db.insert(i, kw)
             else:
                 self.liststore.append(row)
                 self.db.append(kw)
-        elif not force:       # got an iterator
-            for j, k in enumerate(i):
-                if row[j] != k:
-                    self.liststore.set_value(i.iter, j, row[j])
-        else:
-            self.liststore[i.iter] = row
-            self.db[i.iter] = comment
+            return
+        old = self.liststore[i]
+        for j, v in enumerate(row):
+            if force or old[j] != v:
+                old[j] = v
+        self.db[i] = kw
 
     def calckey(self, row):
         k = refKey("{0} {1}".format(*row))
-        res = k[:3] + (k[5], row[2], k[3], k[4])
+        # refKey puts a keyword (k.word) in its extras, k[6]: without it every keyword in a book
+        # would be the same paragraph.
+        res = k[:3] + (k[5], k[6].strip(), row[2], k[3], k[4])
         return res
 
     def parseline(self, l, lineno=0):
@@ -142,6 +181,8 @@ class AdjList:
                         elif k == "mrk":
                             val[4] = v
                         else:
+                            if k == "base":     # the earlier name for orig
+                                k = "orig"
                             dbval[k] = v
                     val[6] = " ".join(f"{k}={v}" for k, v in dbval.items())
             logger.log(7, f"{lineno}: {val}, {dbval}")
@@ -164,13 +205,16 @@ class AdjList:
             self.db.append(dbvals[a])
         self.ftime = os.stat(fname).st_mtime
         self.changed = False
+        self._snapshot()
 
     def genline(self, i):
         r = self.liststore[i]
         d = self.db[i]
         if r[3] in (0, "0") and r[5] == self.centre and not len(d) and not (r[7] or "").strip():   # nothing to adjust
             return None
-        cv = r[1].replace(":", ".").replace(" ", "")
+        cv = r[1].replace(" ", "")
+        if not cv.startswith("k."):     # TeX matches a keyword as it is, : and all
+            cv = cv.replace(":", ".")
         if r[2] > 1:
             line = "{0[0]} {1} {0[3]}[{0[2]}]".format(r, cv)
         else:
@@ -214,16 +258,18 @@ class AdjList:
         self.ftime = os.stat(fname).st_mtime
 
     def cleanup(self):
-        lastk = [None] * 3
-        i = 0
+        """ Of rows for the same paragraph, keep the later one (sort is stable) """
+        self.sort()
+        i = 1
         while i < len(self.liststore):
-            r = self.liststore[i]
-            if lastk[:3] == r[:3]:
-                self.liststore.remove(lastk)
+            if list(self.liststore[i][:3]) == list(self.liststore[i-1][:3]):
+                if self.gtk is None:
+                    self.liststore.delrow(i-1)
+                else:
+                    self.liststore.remove(self.liststore[i-1].iter)
                 self.db.pop(i-1)
             else:
                 i += 1
-            last = r
 
     def _createUIExtensionLines(self, i):
         r = self.liststore[i]
@@ -266,7 +312,7 @@ class AdjList:
         except FileNotFoundError:
             pass  # File does not exist, no action needed
         except PermissionError:
-            self.model.statusMsg(_("Warning! File: {fname} is locked. Could not be deleted.").format(fname=fname))
+            logger.warning(f"File {fname} is locked. Could not be deleted.")
 
     def reloadIfChanged(self):
         """ Re-reads the file if it was changed (or deleted) outside PTXprint since it was last read or written,
@@ -293,6 +339,7 @@ class AdjList:
         self.cleanup()
         self.createAdjlist()
         self.createTriggerlist()
+        self._snapshot()
         # possibly loop through the poly-glot configs here and then call createChanges with 
         # the right diglot letter, L,R,A,B,C and appropriate chfile for the other config.
         chfile = self.adjfile.replace(".adj", "_changes.txt")
@@ -317,7 +364,7 @@ class AdjList:
                 doit(self.liststore[i], i)
         elif insert:
         # book, c:v, para, stretch, mkr, expand, comment%
-            r = [cp[0], cp[1], cp[2], "0", "", 100, "", ""]
+            r = [cp[0], cp[1], cp[2], "0", "", self.centre, "", ""]
             self.liststore.insert(i, r)
             self.db.insert(i, {})
             r = self.liststore[i]         # since the row is turned into something else
@@ -333,7 +380,7 @@ class AdjList:
             if v < 0:
                 mult = -1
             v += offset
-            if (v < 0 or v > 0) and hasplus:
+            if v > 0 and hasplus:
                 f = "+" + str(v)
             elif v == 0 and mult:
                 f = ("+" if hasplus else "") + ("-" if mult < 0 else "") + "0"
@@ -390,6 +437,62 @@ class AdjList:
                 shapes[(rk, d)] = (e, s, float(n.group(3)) if n.group(3) else None)
                 probes.setdefault(rk, {})[(e, s)] = d
         return shapes, probes
+
+    shapeKeyRe = re.compile(r"^([pm])([0-2])$")
+    shapeValRe = re.compile(r"^(\d+)([+-]\d+)?(?:@(-?[\d.]+))?$")
+
+    def getSmartRow(self, parref):
+        """ Page filler results for a paragraph, for making the least distorting change.
+            Returns (row index, original lines, {delta: (expand:int, stretch:int, badness:float|None)},
+            current delta, saved delta) or None if there is no usable data. Delta 0 is always present
+            (the neutral setting, unless the filler found a better one). A delta is None if that
+            setting is not one the filler found (e.g. hand edited). The saved delta is that of the
+            setting when last read or saved, which is what the current PDF was made with. """
+        res = []
+        def mydoit(r, i):
+            d = self.db[i]
+            try:
+                orig = int(d.get("orig", ""))
+            except ValueError:
+                return
+            shapes = {}
+            for k, v in d.items():
+                m = self.shapeKeyRe.match(k)
+                n = self.shapeValRe.match(str(v)) if m else None
+                if n is None:
+                    continue
+                delta = int(m.group(2)) * (1 if m.group(1) == "p" else -1)
+                shapes[delta] = (int(n.group(1)), int(n.group(2) or 0),
+                                 float(n.group(3)) if n.group(3) else None)
+            if 0 not in shapes:
+                shapes[0] = (self.centre, 0, None)
+            def findDelta(stretch, expand):
+                try:
+                    vals = (int(expand), int(str(stretch).replace("+", "") or 0))
+                except ValueError:
+                    return None
+                if vals == (self.centre, 0):
+                    return 0
+                for delta, s in shapes.items():
+                    if s[:2] == vals:
+                        return delta
+                return None
+            currDelta = findDelta(r[3], r[5])
+            saved = self.savedVals.get((r[0], r[1], r[2]))
+            savedDelta = currDelta if saved is None else findDelta(*saved)
+            res.append((i, orig, shapes, currDelta, savedDelta))
+        self.changeval(parref, mydoit, insert=False)
+        return res[0] if res else None
+
+    def applyShape(self, rowIndex, expand, stretch, mrk=None):
+        """ Sets a row's expand and stretch to the given (absolute) values """
+        def mydoit(r, i):
+            self.liststore.set_value(r.iter, 5, int(expand))
+            self.liststore.set_value(r.iter, 3, f"{stretch:+d}" if stretch else "0")
+            if mrk is not None and not self.liststore.get_value(r.iter, 4):
+                self.liststore.set_value(r.iter, 4, mrk)
+            self.changed = True
+        self.changeval(rowIndex, mydoit)
 
     def _setTriggersInComment(self, key, comment, triggers):
 

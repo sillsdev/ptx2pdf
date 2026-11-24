@@ -18,7 +18,9 @@ def ensure_contents(trailer):
             p.Contents = c
     return changed
 
-def split_pages(trailer):
+def split_pages(trailer, only=None):
+    """ Takes out the pages tagged as inserts, returning {category: [pages]}.
+        only: if given, the categories to take out; the rest stay where they are """
     res = {}
     for p in list(trailer.pages):
         if p.PieceInfo is None:
@@ -30,7 +32,7 @@ def split_pages(trailer):
         if pr is None:
             continue
         category  = pr.Insertion
-        if category is None:
+        if category is None or (only is not None and category.lstrip("/") not in only):
             continue
         res.setdefault(category.lstrip("/"), []).append(p)
         trailer.pages.remove(p)

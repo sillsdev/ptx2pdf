@@ -24,7 +24,7 @@ _map = {
     "ifusediglotmodsty_":       ("_diglotmodsty", "diglot", lambda w,v: "%" if not v else ""),
     "ifdiglotincludefootnotes_":("_diglotincludefn", "diglot", lambda w,v: "%" if v else ""),
     "ifdiglotincludexrefs_":    ("_diglotincludexr", "diglot", lambda w,v: "%" if v else ""),
-    "transparency_":            ("fcb_outputFormat", "finish", lambda w,v: "false" if v in (None, "None", "PDF/X-4") else "true"),
+    "transparency_":            ("fcb_outputFormat", "finish", lambda w,v: "false" if v in (None, "None", "Screen", "Digital", "Transparent") else "true"),  # PDF/X-4 allows transparency
 
     "config/notes":             ("t_configNotes", "pubinfo", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", "meta", lambda w,v: v or ""),
@@ -349,15 +349,15 @@ _map = {
     "header/ifshowverse":       ("c_rangeShowVerse", "headfoot", lambda w,v :"true" if v else "false"),
     "header/chvseparator":      ("r_CVsep", "headfoot", lambda w,v : ":" if v == "colon" else "."),
     "header/ifrhrule":          ("c_rhrule", "headfoot", lambda w,v: "" if v else "%"),
-    "header/hdrleftside":       ("r_hdrLeft", "headfoot", None),
+    "header/hdrleftside":       ("fcb_hdrLeftSide", "headfoot", None),     # column letter (L R A-G); "Pri"/"Sec" in old cfgs
     "header/hdrleft":           ("ecb_hdrleft", "headfoot", lambda w,v: v or "-empty-"),
-    "header/hdrcenterside":     ("r_hdrCenter", "headfoot", None),
+    "header/hdrcenterside":     ("fcb_hdrCenterSide", "headfoot", None),
     "header/hdrcenter":         ("ecb_hdrcenter", "headfoot", lambda w,v: v or "-empty-"),
-    "header/hdrrightside":      ("r_hdrRight", "headfoot", None),
+    "header/hdrrightside":      ("fcb_hdrRightSide", "headfoot", None),
     "header/hdrright":          ("ecb_hdrright", "headfoot", lambda w,v: v or "-empty-"),
     "header/mirrorlayout":      ("c_mirrorpages", "headfoot", lambda w,v: "true" if v else "false"),
     
-    "footer/ftrcenterside":     ("r_ftrCenter", "headfoot", None),
+    "footer/ftrcenterside":     ("fcb_ftrCenterSide", "headfoot", None),
     "footer/ftrcenter":         ("ecb_ftrcenter", "headfoot", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", "headfoot", lambda w,v: "" if v else "%"),
     "footer/ifprintconfigname": ("c_printConfigName", "headfoot", lambda w,v: "" if v else "%"),

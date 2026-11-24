@@ -168,22 +168,26 @@ class UnicodeSet(set):
         self.isclass = state
 
 
-def _expand(p, vals, ind, indval):
+def _expand(p, vals, ind, indval, indices):
     if vals[ind][indval].startswith("\\"):
         g = p.group(int(vals[ind][indval][1]))
-        return "".join(_expand(p, vals, i, indices[i]) for i in range(g[0], g[1]))
+        return "".join(_expand(p, vals, i, indices[i], indices) for i in range(g[0], g[1]))
     else:
         return vals[ind][indval]
 
 
 def flatten(s, normal=None):
+    """ Every string the set describes. The first index changes fastest. """
     p = parse(s, normal=normal)
     vals = list(map(sorted, p))
     lens = list(map(len, vals))
     num = len(vals)
+    if any(l == 0 for l in lens):
+        return
     indices = [0] * num
     while True:
-        for i in range(num):
+        yield u"".join(_expand(p, vals, i, x, indices) for i, x in enumerate(indices))
+        for i in range(num):        # move on to the next combination, as an odometer
             if indices[i] == lens[i] - 1:
                 indices[i] = 0
             else:
@@ -191,8 +195,6 @@ def flatten(s, normal=None):
                 break
         else:
             return
-        res = []
-        yield u"".join(_expand(p, vals, i, x) for i, x in enumerate(indices))
 
 
 def struni(s, groups=None):
@@ -295,7 +297,7 @@ def parseitem(s, ind, lastitem, end, usegroups=False):
                     lastitem = None
                 # char range
                 elif lastitem and item and len(lastitem) == 1 and len(item) == 1:
-                    for x in range(ord(lastitem.pop()), ord(item.pop())):
+                    for x in range(ord(lastitem.pop()), ord(item.pop()) + 1):      # [a-c] includes c
                         res.add(chr(x))
                     lastitem = None
                 else:

@@ -43,7 +43,7 @@ def mergedict(base, new):
             continue
         if isinstance(v, PdfDict):
             mergedict(base[k], v)
-        elif isinstnace(v, PdfArray):
+        elif isinstance(v, PdfArray):
             base[k].extend([x for x in v if x not in base[k]])
         else:
             raise ValueError(f"Dictionary collision at {k} of {base[k]} and {v}")

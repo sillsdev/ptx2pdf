@@ -14,8 +14,11 @@ m = IntEnum('m', [(x, i) for i, x in enumerate(_modelfields)])
 class PolyglotSetup(Gtk.Box):
 
     _methods = """onDiglotClicked loadPolyglotSettings onDiglotAutoAdjust update_diglot_polyglot_UI
-                  switchToDiglot
+                  switchToDiglot updateHdrColumns onHdrColumnChanged
                """.split()
+
+    # Header/Footer page: which column (L, R, A-G) each header/footer item comes from
+    hdrColumnWidgets = ("fcb_hdrLeftSide", "fcb_hdrCenterSide", "fcb_hdrRightSide", "fcb_ftrCenterSide")
 
     def __init__(self, builder, view, tv):
         self.builder = builder
@@ -52,10 +55,16 @@ class PolyglotSetup(Gtk.Box):
 
         self.ensure_right_click_handler()
 
-        # Connect tooltips
-        for col_id in range(0, m.tooltip):
-            self.treeview.set_has_tooltip(True)  # Enable tooltips
-            self.treeview.connect("query-tooltip", self.on_query_tooltip)  # Connect event
+        # Header/Footer column drop-downs: just the letter when closed (narrow), "L · WSG" in the open list
+        for w in self.hdrColumnWidgets:
+            combo = self.builder.get_object(w)
+            cell = combo.get_cells()[0]
+            combo.clear_attributes(cell)
+            combo.set_cell_data_func(cell, self._hdrColumnCellText, combo)
+
+        # Connect tooltips (once: the handler works out the column itself)
+        self.treeview.set_has_tooltip(True)
+        self.treeview.connect("query-tooltip", self.on_query_tooltip)
         self.validate_page_widths() # Make sure % Width gets colored red if invalid (even on loading)
 
         # Safely reparent the treeview
@@ -116,6 +125,7 @@ class PolyglotSetup(Gtk.Box):
                 except ValueError:
                     listiter = self.ls_treeview.get_iter(row_index)
                     self.ls_treeview.remove(listiter)
+                    self._dropConfigStore(row_index)
                     continue
             if polyview is not None:
                 if self.ls_treeview[row_index][m.fontsize] == 0:
@@ -137,14 +147,14 @@ class PolyglotSetup(Gtk.Box):
         self.view.update_diglot_polyglot_UI()
 
     def find_or_create_row(self, sfx, save=False):
-        if len(self.ls_treeview) >= 9:
-            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.", warning=True)
-            return -1  # Indicate failure to add a row
-
         # Check if row already exists
         for i, row in enumerate(self.ls_treeview):
             if row[m.code] == sfx:
                 return i  # Return existing row index
+
+        if len(self.ls_treeview) >= 9:
+            self.view.doStatus("Maximum of 9 rows reached. Cannot add more.", warning=True)
+            return -1  # Indicate failure to add a row
 
         # First row logic: Locked with primary project settings # FixMe!
         if len(self.ls_treeview) == 0 and sfx == "L":
@@ -266,6 +276,9 @@ class PolyglotSetup(Gtk.Box):
         return prjguid, cfgList
         
     def on_editing_started(self, cell, editable, path):
+        # Keep a reference: PyGObject 3.58+ otherwise frees the (floating) combo when this
+        # handler returns, so GTK never gets an editor and the Project drop-down won't open.
+        self._prjEditable = editable
         if isinstance(editable, Gtk.ComboBox):
             # Dynamically set wrap width based on the number of items
             num_projects = len(self.project_liststore) if hasattr(self, "project_liststore") else 0
@@ -373,6 +386,16 @@ class PolyglotSetup(Gtk.Box):
             if text in {row[m.code] for row in self.ls_treeview if row[m.code]}:
                 self.view.doStatus(_("Duplicate Code not allowed"), warning=True)
                 return
+            # Move what the row has (if anything yet) to the new code before the row says it
+            oldcode = self.ls_treeview[row_index][m.code]
+            if oldcode and oldcode != text:
+                self.view.moveDiglot(oldcode, text)
+            self.ls_treeview[path][col_id] = text
+            self.updateRow(row_index)
+            self.refresh_code_dropdowns()
+            self.updateHdrColumns()
+            self.view.updateDialogTitle()
+            return
 
 
         prjguid = None
@@ -384,18 +407,13 @@ class PolyglotSetup(Gtk.Box):
             self.ls_treeview[row_index][m.prjguid] = prjguid
 
             # Update the ListStore for this specific row
+            new_cfg = old_cfg if old_cfg in available_configs else (available_configs[0] if available_configs else "")
             if row_index < len(self.ls_config):  # Ensure row is valid
                 lsc = self.ls_config[row_index]
                 lsc.clear()
-                if available_configs:
-                    for c in available_configs:
-                        lsc.append([c])   
-                    # Determine the new config to select
-                    new_cfg = old_cfg if old_cfg in available_configs else available_configs[0]
-                    tree_iter = self.ls_config[row_index].get_iter_first()
-                    if tree_iter:
-                        self.ls_config[row_index].set_value(tree_iter, 0, new_cfg)                
-                # Set the selected config
+                for c in available_configs or []:
+                    lsc.append([c])
+            # Select the config (the drop-down's list itself must stay as it is)
             self.ls_treeview[row_index][m.cfg] = new_cfg
             self.treeview.queue_draw()  # Refresh UI
         else:
@@ -443,16 +461,14 @@ class PolyglotSetup(Gtk.Box):
             self.ls_treeview[row_index][m.color] = c
            
         # Refresh dropdowns and other dependencies after updating the combo box
-        if col_id == m.code:    # Unique code changed
-            if text != polyglot.code:
-                self.view.moveDiglot(polyglot.code, text)
-                self.refresh_code_dropdowns()
-        elif col_id == m.pg:  # Page 1 or 2 changed
+        if col_id == m.pg:  # Page 1 or 2 changed
             self.validate_page_widths()
             self.update_layout_string(force=True)
             self.treeview.queue_draw()  # Refresh UI
+        if col_id in (m.prj, m.cfg):
+            self.updateHdrColumns()     # the Header/Footer column drop-downs show the project
         self.view.updateDialogTitle()
-            
+
     def changeConfigName(self, config):
         if len(self.ls_treeview):
             self.ls_treeview[0][m.cfg] = config
@@ -614,12 +630,19 @@ class PolyglotSetup(Gtk.Box):
             sfx = self.ls_treeview[row_index][m.code]
             self.view.removeDiglotView(sfx)
             model.remove(iter)
+            self._dropConfigStore(row_index)
             self.update_layout_string(force=True)
             self.refresh_code_dropdowns()  # Refresh available codes
             self.update_context_menu()     # Refresh menu state
             self.view.update_diglot_polyglot_UI()
             self.validate_page_widths()    # Refresh color of % width
         self.view.updateDialogTitle()
+
+    def _dropConfigStore(self, row_index):
+        """ The rows after a removed one move up: so must the config list each offers """
+        if 0 <= row_index < len(self.ls_config):
+            self.ls_config.pop(row_index)
+            self.ls_config.append(Gtk.ListStore(str))
 
     def update_context_menu(self):
         if not len(self.ls_treeview):
@@ -682,6 +705,8 @@ class PolyglotSetup(Gtk.Box):
                 row_data = list(model[iter])
                 model.remove(iter)
                 new_iter = model.insert(new_index, row_data)
+                if index < len(self.ls_config) and new_index < len(self.ls_config):
+                    self.ls_config.insert(new_index, self.ls_config.pop(index))     # its configs go with it
 
                 # Update selection to new position
                 selection = self.treeview.get_selection()
@@ -1265,7 +1290,66 @@ class PolyglotSetup(Gtk.Box):
             btn.set_active(False)
         self.view.callback(self.view)
 
+    def updateHdrColumns(self):
+        """ Fill the Header/Footer column drop-downs from the rows on the Diglot page
+            ("L · WSG"), and show them only for a diglot/polyglot """
+        diglot = bool(self.view.get("c_diglot"))
+        rows = [(r[m.code], r[m.prj], r[m.cfg]) for r in self.ls_treeview if r[m.code]] if diglot else []
+        if not rows:
+            rows = [("L", "", ""), ("R", "", "")]
+        prjcount = {}
+        for c, p, f in rows:
+            prjcount[p] = prjcount.get(p, 0) + 1
+        newrows = []
+        for c, p, f in sorted(rows, key=lambda x: self.codes.index(x[0]) if x[0] in self.codes else 99):
+            if not p or p == "(Select)":
+                desc = c
+            elif prjcount[p] > 1 and f:     # same project twice: the config tells them apart
+                desc = "{} · {} ({})".format(c, p, f)
+            else:
+                desc = "{} · {}".format(c, p)
+            newrows.append([desc, c])
+        ls = self.builder.get_object("ls_hdrColumns")
+        if [list(r) for r in ls] != newrows:
+            self._hdrColRefilling = True
+            try:
+                ls.clear()
+                for r in newrows:
+                    ls.append(r)
+                # Show what each wants; one whose column is gone (or not loaded yet) shows L
+                for w in self.hdrColumnWidgets:
+                    want = self.view.hdrColWanted.get(w, "L")
+                    combo = self.builder.get_object(w)
+                    if not combo.set_active_id(want):
+                        combo.set_active_id("L")
+            finally:
+                self._hdrColRefilling = False
+        for w in self.hdrColumnWidgets:
+            combo = self.builder.get_object(w)
+            combo.set_visible(diglot)
+            self._hdrColumnTooltip(combo)
+
+    def _hdrColumnTooltip(self, combo):
+        it = combo.get_active_iter()
+        desc = combo.get_model()[it][0] if it is not None else ""
+        combo.set_tooltip_text(_("This item comes from column: {}").format(desc) + "\n\n"
+                + _("The letters match the codes on the Diglot page; its text and formatting come from that project."))
+
+    def _hdrColumnCellText(self, layout, cell, model, it, combo):
+        # Sized (closed) with letters only, so the button stays narrow; the open list shows the project too
+        cell.set_property("text", model[it][0] if combo.get_property("popup-shown") else model[it][1])
+
+    def onHdrColumnChanged(self, combo):
+        if getattr(self, "_hdrColRefilling", False):
+            return
+        cid = combo.get_active_id()
+        self._hdrColumnTooltip(combo)
+        if cid:
+            self.view.hdrColWanted[Gtk.Buildable.get_name(combo)] = cid
+            self.view.changed()
+
     def update_diglot_polyglot_UI(self):
+        self.updateHdrColumns()
         dglt = True if len(self.ls_treeview) < 3 else False
         self.builder.get_object("btn_adjust_diglot").set_sensitive(dglt)
         orig = self.view.get("fcb_diglotMerge", "scores")

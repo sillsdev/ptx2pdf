@@ -1,0 +1,6 @@
+# made by every print
+local/
+*.pdf
+shared/ptxprint/*/AdjLists/
+# the manual's stylesheet is kept (the top-level .gitignore ignores ptxprint.sty)
+!shared/ptxprint/Default/ptxprint.sty

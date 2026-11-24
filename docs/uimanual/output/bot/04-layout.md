@@ -582,7 +582,7 @@ Make it wide enough for a few short words per line. The main text becomes narrow
 
 ##### Margin Notes on Left/Inner
 
-Checkbox, off · Regular+ · `c_marginNotesInner` · cfg `document/marginnotesinner`  
+Checkbox, off · Regular+ · `c_marginNotesInner` · cfg `paper/marginnotespos`, `document/marginnotesinner`  
 Also: Place Margin Notes on Left/Inner edge of page · Needs: “Margin Notes Col Width (mm)”
 
 > Margin Notes are normally placed on the Right/Outer edge of the page. But this can be changed for single column layouts to appear on the Left/Inner edge if needed. (Not available for two-column layouts.)

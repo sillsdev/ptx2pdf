@@ -59,7 +59,9 @@ class ParRect:
         return self.__str__()
 
     def __contains__(self, p):
-        if self.ystart >= p[1] >= self.yend:
+        # positions from the xdv and from the parlocs file reach points by different sums, so a
+        # paragraph's last line on a page, whose baseline is the bottom, can come out a hair below it
+        if self.ystart >= p[1] >= self.yend - 0.001:
             return self.xstart <= p[0] <= self.xend
         return False
 
@@ -120,13 +122,29 @@ class ParInfo:
     def pid(self):
         return f"{self.ref}[{getattr(self, 'parnum', '')}]"
 
+    def ident(self):
+        """ How tests name the paragraph: its reference, with its number if it isn't the first
+            paragraph of the verse (e.g. RUT1.3, RUT1.3[2]) """
+        parnum = getattr(self, 'parnum', 0) or 0
+        return self.ref + (f"[{parnum}]" if parnum > 1 else "")
+
     def sortKey(self):
         return (self.rects[-1].pagenum if self.rects is not None and len(self.rects) else 10000,
                 refSort(self.ref), getattr(self, 'parnum', 0))
 
     def book(self):
-        res = re.sub(r"^(.*?\D)\s*\d.*$", r"\1", self.ref)
-        return res
+        """ The book code and any diglot letter: JOL1.2 -> JOL, JOLR1.2 -> JOLR, and for the
+            introduction JOL0.1 and JOLk.word: -> JOL (a keyword has no digit to stop at) """
+        if (m := re.match(r"^(\d\D\D|\D{3})([A-Z]?)(?=\s*(?:\d|k\.))", self.ref)):
+            return m.group(1) + m.group(2)
+        return re.sub(r"^(.*?\D)\s*\d.*$", r"\1", self.ref)
+
+    def avgspace(self):
+        """ How loose the paragraph is set: the mean width of its interword spaces in ems, the
+            measure the page filler compares with its spacing tolerance. None if it has no
+            spaces or they have not been measured (see Paragraphs.measure_spaces). """
+        n = sum(r.nspaces for r in self.rects or [])
+        return sum(r.white for r in self.rects) / n if n else None
 
 
 @dataclass
@@ -143,6 +161,14 @@ class FigInfo:
 
     def __str__(self):
         return f"Pic({self.ref})[{self.src}]({self.size[0]}x{self.size[1]}) {self.rects}"
+
+    def pid(self):
+        """ For logging alongside ParInfo.pid() """
+        return f"Pic({self.ref})[{self.src}]"
+
+    def ident(self):
+        """ How tests name the picture: fig and its anchor (e.g. fig RUT1.5) """
+        return "fig " + re.sub(r"-preverse$", "", self.ref)
 
     def __repr__(self):
         return self.__str__()
@@ -250,9 +276,11 @@ class Paragraphs(list):
         self.dests = {}
         self.chapters = [0]
         self.rect_cache = (None, None)
+        self._pagerects = None  # page index: [(paragraph index, paragraph, rect)], built when first needed
         self.colcount = {}
         self.polycols = []      # (pnum, glot, ColInfo) for each polyglot column start (page slice)
         self.lostdata = []      # (ref, glot, where, pnum) for each place TeX lost text
+        self.xdvname = None if fname is None else fname.replace(".parlocs", ".xdv")
         if fname is None:
             return
         currp = None
@@ -465,7 +493,7 @@ class Paragraphs(list):
                     currps[polycol] = None
                 if currps[polycol] is not None:
                     if currps[polycol].slice != cinfo.slice:
-                        logger.warning(f"Paragraph {currps[polycol].ref} ({polycol}) starts in slice {currps[polycol].slice} but continues in slice {cinfo.slice}")
+                        logger.debug(f"Paragraph {currps[polycol].ref} ({polycol}) starts in slice {currps[polycol].slice} but continues in slice {cinfo.slice}")
                     currr = ParRect(pnum, colcount[polycol], cinfo.topx, cinfo.topy)
                     currps[polycol].rects.append(currr)
             elif c == "parpicstart":     # ref, src (filename or type), x, y
@@ -489,13 +517,14 @@ class Paragraphs(list):
                     continue
                 currr.xend = currr.xstart + readpts(p[2])
                 currr.yend = currr.ystart - readpts(p[3])
-                if currp is not None:
+                openp = currps.get(polycol, None)      # the paragraph the picture interrupts, if one is still open
+                if openp is not None:
                     currpr = currr
-                    if not len(currp.rects) or currp.rects[-1].xend > 0:
+                    if not len(openp.rects) or openp.rects[-1].xend > 0:
                         currr = ParRect(pnum, colcount[polycol], currpr.xstart, currpr.yend)
-                        currp.rects.append(currr)
+                        openp.rects.append(currr)
                     else:
-                        currr = currp.rects[-1]
+                        currr = openp.rects[-1]
                         currr.xstart = currpr.xstart
                         currr.ystart = currpr.yend
                 else:
@@ -561,25 +590,40 @@ class Paragraphs(list):
             kept.append(kept[-1] + (not d))
         self.pindex = [kept[i] for i in self.pindex]
         self[:] = [p for p, d in zip(self, drop) if not d]
+        self.rect_cache = (None, None)
+        self._pagerects = None
 
     def numPages(self):
         return len(self.pindex)
         
+    def _pageRects(self, pnum):
+        """ [(paragraph index, paragraph, rect)] for each rect on page pnum, in paragraph order.
+            A paragraph continuing onto a page may start well before the page's first paragraph
+            (in a diglot the other glot's can be several paragraphs back), so look them all up. """
+        if self._pagerects is None:
+            self._pagerects = {}
+            for i, p in enumerate(self):
+                for r in getattr(p, "rects", []):
+                    self._pagerects.setdefault(r.pagenum, []).append((i, p, r))
+        return self._pagerects.get(pnum, [])
+
     def _getRectsPage(self, pnum):
         if self.rect_cache[0] == pnum:
             return self.rect_cache[1]
         if pnum > len(self.pindex): # need some other test here 
             return None
         self._last_state = None
-        e = self.pindex[pnum] if pnum < len(self.pindex) else len(self)
-        res = []
-        for p in self[max(self.pindex[pnum-1]-2, 0):e+2]:       # expand by number of glots
-            for i, r in enumerate(p.rects):
-                if r.pagenum != pnum:
-                    continue
-                res.append((p, r))
+        res = [(p, r) for i, p, r in self._pageRects(pnum)]
         self.rect_cache = (pnum, res)
         return res
+
+    def findIdent(self, ident):
+        """ The paragraph or picture a test names (see ParInfo.ident), or None """
+        return next((p for p in self if getattr(p, 'rects', None) and p.ident() == ident), None)
+
+    def identsOnPage(self, pnum):
+        """ What a test can name on a page (page index), to help someone whose name isn't there """
+        return [p.ident() for p, r in self._getRectsPage(pnum) or []]
 
     def findPos(self, pnum, x, y, endx = None, xdv=False, rtl=False):
         """ Given page index (not folio) returns (ParDest, ParRect) covering the given x, y """
@@ -619,13 +663,11 @@ class Paragraphs(list):
         ''' Iterates all ParDest, ParRect on page with given index '''
         if pnum > len(self.pindex) or pnum < 1:
             return
-        e = self.pindex[pnum] if not inclafter and pnum < len(self.pindex) else len(self)
-
         start = max(self.pindex[pnum-1], 0)
         #logger.info(f"{pnum=}, {start=}, {e=}, max={len(self)}, {self.pindex=}")
         if inclast and pnum > 1:        # pnum is 1 based
             done = False
-            for p in self[start:-1:-1]:
+            for p in reversed(self[:start]):     # back from the paragraphs before this page
                 if not isinstance(p, ParInfo):
                     continue
                 for r in reversed(p.rects):
@@ -636,13 +678,17 @@ class Paragraphs(list):
                         break
                 if done:
                     break
-        start = max(start - 2, 0)
-        for p in self[start:e+2]:
+        if not inclafter:
+            for i, p, r in self._pageRects(pnum):
+                if isinstance(p, ParInfo):
+                    yield (p, r)
+            return
+        start = min([i for i, p, r in self._pageRects(pnum)] + [start])
+        for p in self[start:]:
             if not isinstance(p, ParInfo):
                 continue
             for r in p.rects:
-                if (not inclafter and r.pagenum == pnum) \
-                        or (inclafter and r.pagenum >= pnum):
+                if r.pagenum >= pnum:
                     yield (p, r)
 
     def getRects(self):
@@ -659,7 +705,7 @@ class Paragraphs(list):
                 return
             pnum = parref.rects[0].pagenum
 
-        if not pnum or pnum >= len(self.pindex):
+        if not pnum or pnum > len(self.pindex):     # pages are 1 to len(pindex)
             return
         x_values = [r.xstart for p, r in self.getParas(pnum)]
         
@@ -682,15 +728,16 @@ class Paragraphs(list):
             return self.pnumorder[pindex - 1]
 
     def setFigPids(self):
-        pnum = 0
-        for i, p in self:
-            while i >= self.pindex[pnum]:
+        pnum = 1        # pages are 1 based: page n starts at self[self.pindex[n-1]]
+        for i, p in enumerate(self):
+            while pnum < len(self.pindex) and i >= self.pindex[pnum]:
                 pnum += 1
             if isinstance(p, FigInfo):
                 lastpa = None
-                for pa in self.getParas(pnum, inclast=True):
-                    if pa.ref > p.ref:
-                        p.anchor_pid = lastpa.pid()
+                for pa, r in self.getParas(pnum, inclast=True):
+                    if refSort(pa.ref)[:3] > refSort(p.ref)[:3]:     # not as strings: MRK10.1 < MRK9.38
+                        if lastpa is not None:
+                            p.anchor_pid = lastpa.pid()
                         break
                     lastpa = pa
 
@@ -715,7 +762,9 @@ class Paragraphs(list):
                 opg = doc.get_page(r.pagenum)
                 if r.dests is None and opg is not None:
                     self.load_page(doc, opg, r.pagenum)
-                currlast = max(r.dests)
+                # r.dests holds (name, (x, y)) tuples; the last in reading order is the one carried onto this page
+                if r.dests:
+                    currlast = max(ParDest(n, r.pagenum, x, y) for n, (x, y) in r.dests)
                 continue
             if r.dests is None:
                 r.dests = [(currlast.name, (r.xstart, r.ystart))] if currlast is not None else []
@@ -758,20 +807,30 @@ class Paragraphs(list):
         for l, p, r in self.allxdvlines():
             # [[pnum, pos(x,y), width]]
             spaces = []
-            for b, nspaces, tspaces in l.has_badspace(curr):
+            bads, nspaces, tspaces = l.has_badspace(curr)
+            for b in bads:
                 spaces.append(BadSpace(r.pagenum, l, *b))
-                r.tspace += tspaces
-                r.nspace += nspace
-            spaces.sort(key=lambda s:s.width, reverse=True)
-            for s in spaces:
-                if not len(res):
-                    res.append(s)
+            r.tspace += tspaces
+            r.nspace += nspaces
+            for s in spaces:        # keep the n widest
+                if len(res) < n:
+                    heapq.heappush(res, s)
                 elif res[0] < s:
-                    if len(res) >= n:
-                        heapq.heapreplace(res, s)
-                    else:
-                        heapq.heappush(res, s)
+                    heapq.heapreplace(res, s)
         return res
+
+    def measure_spaces(self):
+        """ Measure the interword spaces of every paragraph from the typeset output, so that
+            its avgspace() can say how loose it is. """
+        if self.xdvname is None or not os.path.exists(self.xdvname):
+            return
+        from ptxprint.xdv.xdvspaces import XdvSpaceMeasure
+        reader = XdvSpaceMeasure(self.xdvname, self, testfn=lambda p, r: isinstance(p, ParInfo))
+        try:
+            for _ in reader.parse():
+                pass
+        except Exception as e:      # e.g. output left from an older run: the measure is only advice
+            logger.warning(f"Could not measure the spaces in {self.xdvname}: {e}")
 
     def _getlines(self, pnum):
         for p, r in self.getParas(pnum):
@@ -781,7 +840,7 @@ class Paragraphs(list):
 
     def getbadspaces(self, pnum, threshold, char_threshold):
         for l in self._getlines(pnum):
-            spaces, tspaces, nspaces = l.has_badspace(threshold, char_threshold)
+            spaces, nspaces, tspaces = l.has_badspace(threshold, char_threshold)
             for s in spaces:
                 yield BadSpace(pnum, l, *s)
 
@@ -811,7 +870,7 @@ class Paragraphs(list):
         spaces = set()
         rivers = set()
         badglyphs = set()
-        for pnum in range(len(self.pindex)):
+        for pnum in range(1, len(self.pindex) + 1):     # pages are 1 based
             for l in self._getlines(pnum):
                 if (wanted & 1) == 1 and pnum not in spaces:
                     s, t, n = l.has_badspace(threshold, char_threshold)

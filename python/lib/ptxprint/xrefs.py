@@ -34,12 +34,14 @@ class WordForm:
                     (self.prefices is not None and prefix in self.prefices)
         matchsuff = (suffix is None and self.suffices is None) or \
                     (self.suffices is not None and suffix in self.suffices)
+        # Adding to a form with no suffix (or prefix) would make one required, losing the bare
+        # form: that needs a form of its own
         if matchpref and not matchsuff:
-            if suffix is not None:
+            if suffix is not None and self.suffices is not None:
                 self.suffices.add(suffix)
                 return True
         elif not matchpref and matchsuff:
-            if prefix is not None:
+            if prefix is not None and self.prefices is not None:
                 self.prefices.add(prefix)
                 return True
         elif matchpref and matchsuff:
@@ -65,9 +67,18 @@ class WordForms:
 
 
 class NoBook:
+    """ The context (book names, collation) when there's no project's ParatextSettings """
     @classmethod
     def getLocalBook(cls, s, level=0):
         return ""
+
+    @classmethod
+    def getCollation(cls):
+        return None
+
+    @classmethod
+    def getIndexList(cls):
+        return None
 
 def usfmmark(ref, txt):
     if ref.mark == "+":
@@ -119,20 +130,24 @@ class XrefFileXrefs(BaseXrefs):
         self.filters = filters
         self.xrlistsize = listsize
         self.xrefdat = cachedData(xrfile, self.readdat)
+        # kept in the (cached) data, since readdat isn't called when the cache is used
+        self.xrefcopyright = self.xrefdat.get(" copyright", None)
 
     def readdat(self, inf):
         xrefdat = {}
         for l in inf.readlines():
             if '=' in l:
                 (k, v) = l.split("=", maxsplit=1)
-                if k.strip().lower in ("attribution", "copyright"):
-                    self.xrefcopyright = v.strip()
+                if k.strip().lstrip("\ufeff").lower() in ("attribution", "copyright"):     # (a BOM before the first line)
+                    xrefdat[" copyright"] = v.strip()     # can't clash with a book code
                 continue
             v = RefList()
             for d in re.sub(r"[{}]+", "", l).split():
                 if not d.strip():
                     continue
                 v.extend(RefList(d.replace(" ", ";").replace(".", " "), marks="+", strict=False))
+            if not len(v):          # a blank line
+                continue
             k = v.pop(0)
             xrefdat.setdefault(k.first.book, {})[k] = v
         return xrefdat
@@ -187,6 +202,29 @@ class StandardXrefs(XrefFileXrefs):
         return results
 
 
+def lenientRefList(text, where, **kw):
+    """ The references in a cross-reference list entry, leaving out any part that isn't a
+        reference, so that one mistake in a long list doesn't stop every print that uses it. """
+    try:
+        return RefList(text, strict=False, **kw)
+    except (SyntaxError, ValueError):
+        pass
+    res = RefList()
+    context = None
+    for piece in text.split(";"):
+        piece = piece.strip()       # RefList can't parse a leading space
+        if not piece:
+            continue
+        try:
+            refs = RefList(piece, context=context, strict=False, **kw)
+        except (SyntaxError, ValueError) as e:
+            logger.warning(f"Cross-references for {where}: leaving out '{piece}' from '{text}': {e}")
+            continue
+        if len(refs):
+            res.extend(refs)
+            context = refs[-1].last
+    return res
+
 class RefGroup(list):
     pass
 
@@ -195,20 +233,24 @@ class XMLXrefs(BaseXrefs):
                  context=None, listsize=None, shownums=True, rtl=False, shortrefs=False):
         super().__init__(env, rtl=rtl, shortrefs=shortrefs)
         self.filters = filters
-        self.context = context or BaseBooks
+        self.context = context or NoBook
+        self.strongsfilter = None       # only Strong's lists restrict which entries to show
         self.shownums = shownums
         self.xmldat = cachedData(xrfile, self.readxml)
         self.ptsettings = ptsettings
 
-    def _unpackxml(self, xr):
+    def _unpackxml(self, xr, where):
         a = []
         for e in xr:
             st = e.get('strongs', None)
             if e.tag == "ref" and e.text is not None:
-                r = RefList(e.text, marks=("+", "\u203A"), strict=False)
-                a.append((st, e.get('style', None), r))
+                r = lenientRefList(e.text, where, marks=("+", "\u203A"))
+                if len(r):
+                    a.append((st, e.get('style', None), r))
             elif e.tag == "refgroup":
-                a.append((st, None, RefGroup(self._unpackxml(e))))
+                g = RefGroup(self._unpackxml(e, where))
+                if len(g):
+                    a.append((st, None, g))
         return a
 
     def simplify(self, groups):
@@ -226,7 +268,7 @@ class XMLXrefs(BaseXrefs):
         xmldat = {}
         for xr in doc.findall('.//xref'):
             k = RefList(xr.get('ref'))[0]
-            a = self._unpackxml(xr)
+            a = self._unpackxml(xr, xr.get('ref'))
             if len(a):
                 xmldat.setdefault(k.first.book, {})[k.first] = self.simplify(a)
         return xmldat
@@ -378,13 +420,13 @@ class StrongsXrefs(XMLXrefs):
             for l in e.findall("Lexeme"):
                 (t, v) = l.text.split(":")
                 d.setdefault(t, []).append(v)
-            stem = "".join(d['Stem']) or None
-            prefix = "".join(d['Prefix']) or None
-            suffix = "".join(d['Suffix']) or None
+            stem = "".join(d.get('Stem', [])) or None
+            prefix = "".join(d.get('Prefix', [])) or None
+            suffix = "".join(d.get('Suffix', [])) or None
             if stem is not None:
                 if stem not in self.wfi:
                     self.wfi[stem] = WordForms(stem)
-                self.wfi[stem].merge(stem, suffix, prefix)
+                self.wfi[stem].merge(stem, prefix, suffix)
 
     def _readTermRenderings(self, localfile, strongs, revwds, btmap, key, nkey="notes", addfilter=False):
         if addfilter:
@@ -420,49 +462,52 @@ class StrongsXrefs(XMLXrefs):
         if self.strongs is None:
             return ""
         wds = self.strongs.get(st,{}).get('local', [])
+
+        def wordre(t, first):
+            """ the regex for one word of a rendering: *x and x* allow anything before / after it
+                (else it must be a whole word); the first word may have known word forms """
+            r = ""
+            p = ""
+            if not t.startswith("*"):
+                r = r"\bb"
+            else:
+                t = t[1:]
+            if not t.endswith("*"):
+                p = r"\ba"
+            else:
+                t = t[:-1]
+            if script in nonSpacingScripts and "\u200B" not in t:
+                y = regex.split(r"((?=\p{{sc={}}})\p{{L}}\p{{M}}*)".format(script), t)
+                for j in range(2, len(y)-2, 2):
+                    if y[j] == "":
+                        y[j] = "[\u200B]?"
+                t = "".join(y)
+            if first and t in self.wfi:  # test for word forms
+                s = str(self.wfi[t])
+            else:
+                s = t.replace("*", r"\w*")
+            return r + s + p
+
         reg = []
         for w in wds:
             pending = ""
-            for i, b in enumerate(re.sub(r"\(.*?\)", "", w).split()):
+            nwords = 0
+            for b in re.sub(r"\(.*?\)", "", w).split():
                 t = b.strip()
-                p = ""
-                r = ""
-                s = ""
-                if t == "**":
+                if t == "**":           # any number of words (each brings its own space)
                     pending += r"(?:\s+\w+)*"
                     continue
-                elif t == "*":
+                elif t == "*":          # perhaps a word
                     pending += r"(?:\s+\w+)?"
                     continue
-                if not t.startswith("*"):
-                    r = r"\bb"
+                if "/" in t:            # two words in either order
+                    (a, c) = t.split("/", 1)
+                    wa, wc = wordre(a, nwords == 0), wordre(c, False)
+                    part = r"(?:{0}\s+{1}|{1}\s+{0})".format(wa, wc)
                 else:
-                    t = t[1:]
-                if not t.endswith("*"):
-                    p = r"\ba"
-                else:
-                    t = t[:-1]
-                if script in nonSpacingScripts and "\u200B" not in t:
-                    y = regex.split(r"((?=\p{{sc={}}})\p{{L}}\p{{M}}*)".format(script), t)
-                    for i in range(2, len(y)-2, 2):
-                        if y[i] == "":
-                            y[i] = "[\u200B]?"
-                    t = "".join(y)
-                if "/" in t:            # allows two words in either order
-                    (a, b) = t.split("/")
-                    t = a
-                else:
-                    a = None
-                if i == 0 and t in self.wfi:  # test for word forms
-                    s = str(self.wfi[t])
-                else:
-                    s = t.replace("*", r"\w*")
-                if a is not None:
-                    a = s
-                    s += r"\s+" + b
-                    b = s + r"\s+" + a
-                    pending += r + b + p + "|"
-                pending += r + s + p
+                    part = wordre(t, nwords == 0)
+                pending += (r"\s+" if nwords else "") + part
+                nwords += 1
             reg.append(pending)
         res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
         res = regex_localiser(res, script=script)
@@ -553,9 +598,12 @@ class Xrefs:
         if not parent.ptsettings.hasLocalBookNames:
             usfms = parent.printer.get_usfms()
             usfms.makeBookNames()
-            parent.ptsettings.bookStrs = usfms.booknames.bookstrings
-            parent.ptsettings.bookNames = usfms.booknames.booknames
-            parent.hasLocalBookNames = True
+            pts = parent.ptsettings
+            pts.bookStrs = dict(usfms.booknames.booknames)     # book -> its names (as read_bookNames)
+            pts.bkNames = {k: v for k, v in usfms.booknames.bookstrings.items() if v}    # name prefix -> book
+            pts.hasLocalBookNames = True        # so this is only done once
+            if getattr(pts, 'refenv', False):   # already made from the old names
+                pts.refenv.setBookNames(pts.bookStrs, pts.bkNames)
         rtl = parent['document/ifrtl'] == 'true'
         logger.debug(f"Source: {source}, {rtl=}")
         self.env = parent.printer.getRefEnv().copy()

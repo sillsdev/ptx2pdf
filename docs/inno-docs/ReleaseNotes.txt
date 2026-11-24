@@ -1,7 +1,141 @@
-PTXprint 3.1.6 Release Notes
-6 Nov 2026
+PTXprint 3.1.10 Release Notes
+24 Nov 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.10 - (24 Nov 2026)
+
+  New features
+  * Headers and footers can show any polyglot column (L, R, A-G)
+  * Each glot now decides for itself whether to keep parallel refs
+    and show missing verses as an ellipsis
+  * Markdown modules much improved (used to make the new PDF manual)
+  * PDF viewer can show the width of spaces on each line
+  * Page Filler: polyglot pages are balanced better once one column
+    fills the page
+  * Page Filler: clearer tooltips, and a new plain-language guide to
+    every setting
+
+  Better messages
+  * Clearer reports of USFM syntax errors, including in FRTlocal.sfm
+  * Unknown or bad markers no longer crash TeX
+  * Clearer messages for missing fonts; CFF2 fonts are reported as not
+    yet supported
+  * A finished (e.g. 2-up) PDF that is open in another program now gives
+    a message instead of silently vanishing
+  * A warning (not a failure) if the last TeX run didn't settle
+  * A folder given where a file is expected is handled gracefully
+
+  Bug fixes
+  * Diglot: the Project drop-down would not open (newer PyGObject)
+  * Diglot: fonts with [] in their path broke the secondary's styles
+  * Style editor: values relative to font size (e.g. raise) were wrong
+  * The \textborder link opens the Border dialog again (#1296)
+  * Reset Adjustments now works for introduction paragraphs
+  * \k keyword paragraphs can now be adjusted properly
+  * Page Filler misread some paragraphs as justified
+  * A book with only an \id line crashed PTXprint
+  * \u and \rem markers are now understood (USFM 3.2)
+  * Font family "Normal" is treated as "Regular"
+  * NeedQuadPages fixed
+  * Work-arounds for errors in TSK cross-reference data
+  * Some highlights went missing in colour-converted PDFs
+  * Pretore orders: the upload zip could be left incomplete
+  * Support Agent link now points to the software.sil.org agent page
+
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.9 - (16 Nov 2026)
+
+  PDF standards
+  * PDF/X and PDF/A output now passes far more conformance checks
+  * Each output claims only the standard it meets; Screen claims none
+  * PDF/X output no longer contains links or actions (Screen keeps them)
+  * Gray output now uses a CMYK output intent, as PDF/X-1a requires
+  * Shaded (feint) boxes no longer use transparency in CMYK/Gray/Spot
+  * "Transparent" output was left in RGB; it is now properly CMYK
+
+  Bug fixes
+  * Map pages disappeared when printing with a cover
+  * Scale to Fit left the TrimBox in the wrong place
+  * Spot colour and CMYK conversion of pictures and text corrected
+  * Every print with a table of contents ran XeTeX one extra time
+  * Settings from the previous config (borders, watermarks, custom
+    script, cover image...) leaked into the next config
+  * Unticking Diglot and saving deleted the diglot settings
+  * Override files blanked the colophon and reset custom note callers
+  * Override files saved with a BOM (e.g. from Notepad) were ignored
+  * Paths saved on Windows were not found on Linux or macOS
+  * Copy Config > Merge stopped part way when a file was missing
+  * --readonly still changed some shared project files
+  * Module publications could not be printed
+  * Starting Analyse & Fill stopped any publications being printed
+  * Analyse & Fill printed the wrong project if you switched meanwhile
+  * Unsaved picture list edits were lost when switching project
+  * Viewer edits could be saved to the wrong tab, and lost
+  * Polyglot: rows showed the wrong configs after a project change,
+    delete or move
+  * PDF viewer: spread Next/Previous and RTL page order fixed
+  * Diglot: subverses (3a, 3b) and headings before \c now line up
+  * Diglot: a paragraph that runs on into the next verse is aligned
+  * Changes with two nested contexts duplicated text
+  * Custom note markers' text spilled into the verse
+  * Pictures with size="Span" stopped TeX with an error
+  * Diglot: a second top picture could let too much text on the page
+  * Enhanced paragraphed footnotes shaved the wrong amount
+  * Page Filler: "Shrink both" on a +1 row broke the AdjList
+  * Page Filler: resuming a fill dropped earlier adjustments
+  * Page Filler: several smaller fixes for more reliable filling
+  * Manager: books with Strong's markup or poetry reported as empty
+  * Manager: Stop did not stop a test print that was just starting
+  * After one failed print, later jobs could silently do nothing
+
+  For developers
+  * Manager: regression tests against standard PDFs (--testing)
+  * Windows and macOS release builds now upload from GitHub Actions
+
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.7 - (13 Nov 2026)
+
+  New features
+  * Multi-Project Manager (ptxprint-manager) for configs across projects
+  * Manager: validate and repair configs, diglot texts, paths and ISBNs
+  * Manager: test print a book in every project that has the config
+  * Manager: edit publications and compare/copy settings and styles
+  * Page Filler: "Analyse Only" measures paragraphs without filling
+  * Preview: Smart Shrink/Grow uses filler data to change a single line
+  * Page Filler: clearer Analyse & Fill window, showing parallel speed-up
+  * Cover Wizard: optional title, for when it is part of the artwork
+  * Cover Wizard: new "Gap from spine or edge" setting for the ISBN box
+  * Cover Wizard: "Open Anyway" reopens a cover that has since changed
+  * Copying a config to another project now adapts its diglot texts
+  * New --readonly option prints without changing shared project files
+  * PDF viewer highlights the current page in the outline
+  * Breakable sidebars much improved, though still experimental (#1290)
+
+  Bug fixes
+  * Publications taking over a second to typeset failed to print
+  * A separate back cover image was only shown in the preview
+  * Cropped cover images in the PDF did not match the preview
+  * Cover spine overlap and bleed settings never reached TeX
+  * "Margin Notes on Left/Inner" had no effect
+  * Colours drifted slightly each time a config was saved
+  * A missing diglot secondary project now gives a clear message
+  * ${settingsdir} paths saved by 3.1 pointed at the wrong folder
+  * An old cover PDF was still shown after turning the cover off
+  * A missing module file gave a misleading .parlocs error
+  * Reset Adjustments > End of Book stopped at chapter 10
+  * Guides and grid were misplaced when printing 2-up with crop marks
+  * Page filling was poor for contextually spaced text such as Awami
+  * Page Filler crashed on some Windows consoles
+  * The PageFullFactor setting was always read as 1
+  * Last-line spacing in RTL table cells was wrong
+  * Printing a selected publication didn't show its settings
+  * Fixes in the style editor, picture list editor and PDF viewer
+  * Many smaller fixes in configs, TeX macros, cross references and fonts
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.1.6 - (6 Nov 2026)

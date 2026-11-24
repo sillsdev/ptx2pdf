@@ -15,7 +15,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 
 ## 22.2 Opening and closing the Preview window
 
-* The window opens after each **Print** if the main menu (☰) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
+* The window opens after each **Print** if the main menu (≡) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
 * Closing the window with its **X** button only hides it. It comes back the next time you print.
 * **Show main PTXprint settings** (**Alt+S**) brings the main window to the front.
 * The title bar shows the PDF file name and the date and time it was made. Check this to be sure you see the newest PDF.
@@ -33,6 +33,7 @@ The navigation controls are in the top bar.
 * Mouse: the wheel changes page; when zoomed in, it scrolls the page instead. Drag with the middle mouse button to move the page around.
 * Zoom: the **Zoom** box, **Ctrl+mouse wheel** (zooms at the mouse pointer), **Ctrl+Plus** and **Ctrl+Minus**. **Ctrl+F**, **Ctrl+0** or **Zoom Fit to Screen** fit the whole page (or spread) in the window.
 * For right-to-left books, the arrow buttons and keys are reversed to follow the book.
+* Links: click a link in the PDF (for example a cross-reference, or a contents entry in a PDF that has them) to go to the place it points to. The pointer becomes a hand over a link. A web address opens in your web browser.
 
 **Book View** (Ctrl+B) shows two facing pages side by side, as in a printed book. Page 1 is shown alone because it is a right-hand page; then 2+3, 4+5 and so on. Use it to check that facing pages look balanced.
 
@@ -204,13 +205,15 @@ The bottom of the window shows the time used and how busy the processor is (CPU)
 
 When all books have finished, PTXprint makes a new PDF and the preview shows it. Then use **Locate the next issue** (with **Underfilled Pages** ticked) to find the pages the tool could not fill, and fix them by hand.
 
-The **Automatic Page Filler** settings decide how hard the tool tries (speed) and how good the text must look (quality):
+### Choosing the filler settings
 
-* **Time limit for the whole job (minutes)** – normally 180.
-* **Earlier pages to retry** – if a page cannot be filled, the tool goes back this many pages and tries a different layout there (normally 4). Higher = fewer failed pages, but slower. 0 = fastest.
-* **Paragraphs to adjust on each page** – normally 6. Higher = more pages filled, but each page takes longer.
-* **Widest word space allowed (× text size)** – normally 1.0. Lower = better-looking text, but more pages may fail.
-* **Keep paragraphs close to normal width**, **Penalise shrink or stretch** and **Keep neighbouring paragraphs alike** – fine control of which changes the tool prefers.
+The settings are on the main window: **Advanced** tab > **Other** > **Automatic Page Filler**. They are listed with the ones you are most likely to change first. Each one is explained in the Advanced tab chapter.
+
+1. **Time limit for the whole job (minutes)** – the job takes about as long as its longest book. Allow several hours for a whole Bible.
+2. **Widest word space allowed (× text size)** – the main quality control. Right-click a few ordinary paragraphs in the preview: the grey first line of the menu ends with the average word space, for example `␣=0.32 em`. Set this to 1.5 to 2 times that.
+3. **Earlier pages to retry** and **Paragraphs to adjust on each page** – how hard the tool works on a page that is difficult to fill. Higher values fill more pages; they cost time only on the hard pages.
+4. **Penalise shrink or stretch**, **Keep paragraphs close to normal width** and **Keep neighbouring paragraphs alike** – which changes the tool prefers when there is a choice. Change them only if the filled text looks wrong to you.
+5. Diglot and polyglot only: **The cost of imbalance in a polyglot slice** (how important it is that the columns end level), **Fill polyglot slices regardless of 1 line gaps** and **Most tries to fill a polyglot page**.
 
 The text width limits come from **Minimum Text Shrink** and **Maximum Text Expand** (normally 95% and 105%). The number of books worked on at the same time comes from **Maximum parallel processes** (**Advanced** > **Other** > **Page Layout and Spacing**).
 
@@ -317,13 +320,13 @@ Filling is slow, especially for long books such as Psalms. You can click **Stop!
 Make the range smaller: raise **Minimum Text Shrink** (for example to 97%) and lower **Maximum Text Expand** (for example to 103%). Lower **Widest word space allowed** for less space between words. Then run the fill again. You can also tick **Adjustments** to find paragraphs with large changes and reset them.
 
 **The Preview window has gone.**
-It was closed or hidden. Print again, or check that the main menu (☰) > **Show PDF** is set to **Preview Pane**.
+It was closed or hidden. Print again, or check that the main menu (≡) > **Show PDF** is set to **Preview Pane**.
 
 **The preview shows an old PDF.**
 Check the date and time in the title bar. If the last print failed, the old PDF is still shown. Read the message at the bottom of the main window.
 
 **Most of the controls described here are missing.**
-Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (☰).
+Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (≡).
 
 ## 22.13 Settings reference
 
@@ -473,11 +476,13 @@ Button · Mini+ · `b_reprint`
 
 Same as **Print** on the main window. Needed when **Auto-update** is off, or after you change settings on the main window.
 
-#### Show/hide the Page Filler with progress monitor
+#### Analyse & Fill
 
 Toggle, off · Regular+ · `btn_prvAutoFill`
 
-> Show/hide the Page Filler with progress monitor
+> Analyse & Fill: adjusts paragraph spacing so that every page ends full, for all selected books at once.
+>
+> Click to Show/Hide the progress dialog.
 
 Opening the **PTXprint: Page Filler** window starts nothing; use **Start Fill** or **Resume Fill** there. The job can take a long time and uses a lot of processor power.
 

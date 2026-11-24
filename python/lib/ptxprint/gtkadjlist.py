@@ -32,6 +32,15 @@ class AdjListView:
     def edit(self, widget, path, value, col):
         """Handles cell editing."""
         self.view.get_model()[path][col] = int(value) if col in (2, 5) else value
+        if self.adjlist is None:
+            return
+        self.adjlist.changed = True
+        if col == 6:        # the parameters are saved from adjlist.db, so put them there
+            i = Gtk.TreePath(path).get_indices()[0]
+            self.adjlist.db[i] = dict((k.strip(), v.strip()) for k, v in
+                                      (b.split("=", 1) for b in value.split() if "=" in b))
+        elif col in (0, 1, 2):     # the rows must stay in order (changeval looks them up by bisection)
+            self.adjlist.sort()
 
     def set_model(self, adjlist, save=True):
         """Sets the model for the TreeView."""
@@ -60,10 +69,13 @@ class AdjListView:
         selection = self.view.get_selection()
         model, paths = selection.get_selected_rows()
 
-        # Convert paths to iters, then delete in reverse order to avoid index shifting
-        iters_to_remove = [model.get_iter(path) for path in reversed(paths)]
-        for tree_iter in iters_to_remove:
-            model.remove(tree_iter)
+        # Delete from the end, so earlier indices don't shift; adjlist.db runs alongside the rows
+        for i in sorted((p.get_indices()[0] for p in paths), reverse=True):
+            model.remove(model.get_iter(Gtk.TreePath(i)))
+            if self.adjlist is not None and i < len(self.adjlist.db):
+                self.adjlist.db.pop(i)
+        if self.adjlist is not None:
+            self.adjlist.changed = True
 
     def on_key_press(self, widget, event):
         """Handles keypress events to delete selected rows when DEL is pressed."""

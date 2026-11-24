@@ -7,7 +7,7 @@ This chapter gives short, step-by-step answers to the questions people ask most 
 For every task:
 
 * Most changes appear in the PDF only after you click **Print (Make PDF)** again.
-* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **☰** (top-left) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
+* Lower **view levels** hide many settings. If you cannot see a tab or setting, click **≡** (top-left) › **View Level** › **Full View**, or type its name in the **Search for settings** box (bottom-left).
 * Click **Save** before you change to another configuration. PTXprint does not save the current configuration when you choose another one.
 * "pt" means point. 1 pt is about 0.35 mm.
 
@@ -66,7 +66,7 @@ See also: Main window.
 
 ### How do I find the PDF file on my computer?
 
-Click **Open folder containing the PDF** at the bottom of the window (Regular and Full views), or **☰** › **Show PDF** › **Output Folder**. Or click the blue link next to **Output PDF Location** on the **Help** tab.
+Click **Open folder containing the PDF** at the bottom of the window (Regular and Full views), or **≡** › **Show PDF** › **Output Folder**. Or click the blue link next to **Output PDF Location** on the **Help** tab.
 
 The PDF name starts with the project name, then the configuration name and the books, for example `ABC_NT_A5_MAT-REV_ptxp.pdf`.
 
@@ -74,7 +74,7 @@ See also: Main window; Help tab.
 
 ### How do I open the PDF in my normal PDF program instead of the preview?
 
-Click **☰** › **Show PDF** › **System Viewer**. Or, in the **PDF Preview** window, click **Open the PDF in Default PDF Viewer**.
+Click **≡** › **Show PDF** › **System Viewer**. Or, in the **PDF Preview** window, click **Open the PDF in Default PDF Viewer**.
 
 Close the PDF in the other program before you print again. Otherwise PTXprint cannot replace the file.
 
@@ -1125,7 +1125,7 @@ See also: Main window.
 
 ### How do I see more (or fewer) settings?
 
-Click **☰** (top-left) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
+Click **≡** (top-left) › **View Level** › **Mini View**, **Basic View**, **Regular View** or **Full View**.
 
 Hidden settings still work and still change the PDF.
 
@@ -1153,7 +1153,7 @@ See also: Help tab; PDF Preview window.
 
 ### How do I change the language of PTXprint's menus?
 
-Click **☰** › **Language** and choose a language. PTXprint saves the configuration and opens again in the new language, with the same project and configuration.
+Click **≡** › **Language** and choose a language. PTXprint saves the configuration and opens again in the new language, with the same project and configuration.
 
 See also: Main window.
 

@@ -29,7 +29,7 @@ if '_uuid' not in sys.modules:
 
 import usfmtc           # so we can find its data files
 
-version="3.1.6"
+version="3.1.10"
 logger = logging.getLogger(__name__)
 
 #if 'Analysis' not in dir():
@@ -118,6 +118,26 @@ def process_icons(icons, src, dest):
 
         if not foundit:
             print(f"Failed to find source for {i}")
+
+def add_manual(exe, root):
+    """Puts the user manual PDF, for the Help tab's User Manual link, in the build in root, beside the other
+    reference PDFs. It is typeset by the program just built, from the Markdown edition in git. If it cannot
+    be made the build goes on without it, and the program says the manual is missing."""
+    outdir = os.path.join(DISTPATH, "manual")
+    pdfname = "PTXprint-User-Manual.pdf"
+    res = run([sys.executable, "python/scripts/uimanual/build_manual.py", "--pdf-only", "--ptxprint", exe, "--out", outdir])
+    pdf = os.path.join(outdir, pdfname)
+    if res.returncode or not os.path.exists(pdf):
+        print("WARNING: the user manual PDF could not be made, so this build does not have it")
+        return
+    for ref in glob(os.path.join(root, "**", "OrnamentsCatalogue.pdf"), recursive=True):
+        dest = os.path.join(os.path.dirname(ref), pdfname)
+        if os.path.lexists(dest):
+            continue
+        if os.path.islink(ref):     # a macOS bundle links Contents/Frameworks to the files in Contents/Resources
+            os.symlink(os.path.join(os.path.dirname(os.readlink(ref)), pdfname), dest)
+        else:
+            shutil.copy2(pdf, dest)
 
 # mac build functions
 def create_dmg_staging(app_name):
@@ -403,11 +423,17 @@ hiddenimports += ['gi.repository.fontconfig', 'gi.repository.Poppler', 'numpy._c
 
 jobs = {
     "runsplash": {"py": "python/lib/ptxprint/runsplash.py", "datas": [('python/lib/ptxprint/splash.glade', 'ptxprint')]},
-    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]}
+    "pdfinish":  {"py": "python/scripts/pdfinish", "datas": [('python/lib/ptxprint/pdfinish.glade', 'ptxprint')]},
+    # The multi-project manager: a program of its own, that runs ptxprint.exe (beside it) for test prints
+    "ptxprint-manager": {"py": "python/scripts/ptxprint-manager",
+                         "datas": [('python/lib/ptxprint/ptxprint-manager.png', 'ptxprint')],
+                         "hiddenimports": hiddenimports,
+                         "icon": "icon/ptxprint-manager.ico"}
 }
 tcolls = []
 for k, v in jobs.items():
     s = v.pop('py')
+    jobicon = v.pop('icon', None)
     a = Analysis([s],
              pathex = ['python/lib'],
              binaries = binaries,
@@ -431,7 +457,8 @@ for k, v in jobs.items():
           runtime_tmpdir = None,
           contents_directory = '.',
           windowed=True,
-          console = False)
+          console = False,
+          **({"icon": jobicon} if jobicon else {}))
     a.binaries = stripbinaries(a.binaries, f'xetex/bin/{bindir}')
     tcolls.append([e, a.binaries, a.zipfiles, a.datas])
 
@@ -488,6 +515,7 @@ if sys.platform in ("win32", "cygwin"):
         shutil.copytree(f"{srcdir}/{a}", f"dist/ptxprint/share/{a}", dirs_exist_ok=True)
     process_icons(icons, f"{srcdir}/icons", "dist/PTXprint/share/icons")
     shutil.copy(f"{srcdir}/icons/Adwaita/index.theme", "dist/PTXprint/share/icons/Adwaita/index.theme")
+    add_manual(os.path.join(DISTPATH, app_name, f"{app_name}.exe"), os.path.join(DISTPATH, app_name))
     innosetup_path_raw = os.getenv("INNOSETUP_PATH", "C:/Program Files (x86)/Inno Setup 6")
     innosetup_path = Path(innosetup_path_raw.strip('"'))
     print(repr(innosetup_path), innosetup_path.exists(), innosetup_path.is_file())
@@ -503,7 +531,7 @@ elif sys.platform == "darwin":
                     'NSAppleScriptEnabled':False,
                     'CFBundleExecutable':f"{app_name}-app"
                 })
-
+    add_manual(os.path.join(DISTPATH, app_name, f"{app_name}-app"), os.path.join(DISTPATH, f"{app_name}.app"))
 
     dmg_staging = create_dmg_staging(app_name)
     if not os.environ.get("SKIP_CODESIGN") == "1":

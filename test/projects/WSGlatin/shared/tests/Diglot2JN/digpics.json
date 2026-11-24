@@ -1,0 +1,37 @@
+{
+    "title": "Pictures in a diglot: the -diglot.piclist and the config's own .piclist",
+    "project": "WSGlatin",
+    "config": "Diglot2JN",
+    "projects": ["OGNT"],
+    "uilevel": 6,
+    "events": [
+        ["", "note", "Turn pictures on: there is no piclist yet, so it is made from the text"],
+        ["c_includeillustrations", "set", true],
+
+        ["", "note", "Add a picture for either side, one for the left and one for the right"],
+        ["", "choose", "figures/oi00170.jpg"],
+        ["btn_plAdd", "signal", "clicked"],
+        ["t_plAnchor", "set", "2JN 1.1"],
+        ["t_plCaption", "set", "Either side"],
+        ["", "choose", "figures/oi00180.jpg"],
+        ["btn_plAdd", "signal", "clicked"],
+        ["t_plAnchor", "set", "2jnl 1:3"],
+        ["t_plCaption", "set", "Left side"],
+        ["", "choose", "figures/oi00185.jpg"],
+        ["btn_plAdd", "signal", "clicked"],
+        ["t_plAnchor", "set", "2JNR 1.4"],
+        ["t_plCaption", "set", "Right side"],
+
+        ["", "note", "Refresh List: these pictures aren't in the text, so they stay as they are"],
+        ["btn_refreshCaptions", "signal", "clicked"],
+
+        ["", "note", "Save: the -diglot.piclist has every side, the config's own .piclist just the left side"],
+        ["btn_saveConfig", "signal", "clicked"],
+
+        ["", "note", "Untick Diglot: PTXprint offers to save a monoglot copy. The copy keeps the left side's pictures"],
+        ["c_diglot", "set", false],
+        ["t_newMonoglotConfigName", "set", "Mono2JN"],
+        ["btn_disableDiglot_ok", "signal", "clicked"],
+        ["btn_saveConfig", "signal", "clicked"]
+    ]
+}

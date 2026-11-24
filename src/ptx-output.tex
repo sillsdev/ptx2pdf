@@ -471,8 +471,7 @@
       \advance\count255 by -1
       \ifnum\count255=0 \tempfalse\fi
     \iftemp
-      \multiply\dimen5 by 32
-      \divide\dimen5 by \hsize\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
+      \dimen5=\numexpr\dimen5*\XrefNotesWidth/\hsize\relax sp % (\numexpr scales in 64 bits: *32 overflowed over 512pt)
       \ifdim\dimen5<\baselineskip \dimen5=\baselineskip\fi
       \advance\bestavailht by \dimen5
       \@REPEAT
@@ -1069,7 +1068,7 @@
   \trace{fp}{findsh@venotes #2 \the\ht#1}%
   \ifversion{6}{\skip0=\csname bls-#2\c@rrdstat\endcsname}{\skip0=\l@stnotebls}%
   \dimen0=\skip0
-  \ifdim\ht0=0pt \dimen0=0pt \fi
+  \ifdim\ht#1=0pt \dimen0=0pt \fi % (the notes box being shaved, not scratch box 0)
   %\ifnum\pageno=-6 \showbox\n@tesbox \fi
   \bgroup
   \ifdim\dimen0=0pt \else
@@ -1081,7 +1080,7 @@
     \dimen0=\dimexpr  \skip0 * \NoteShaveMin \relax 
     \dimen1=\dimexpr \skip0 * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
     \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minumum shave amount
-    \trace{fp}{Initial note length \the\ht\n@tesbox, first shave to: \the\sh@vedim, stay: \the\dimen1 (\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
+    \trace{fp}{Initial note length \the\ht#1, first shave to: \the\sh@vedim, stay: \the\dimen1 (\skip0*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
     \def\@sh@venotebox{#1}\def\@sh@venoteid{#1}%
     \@findsh@venotes
   \fi
@@ -1109,7 +1108,7 @@
       \else % Something trimmed off
         %\showbox0 \showbox1
         \trace{fp}{note \@sh@venoteid can be shaved from \the\ht\@sh@venotebox to \the\sh@vedim / \the\ht0/\the\ht1}%
-        {\dimen0=\dimexpr \ht\n@tesbox - \sh@vedim \relax
+        {\dimen0=\dimexpr \ht\@sh@venotebox - \sh@vedim \relax % (\n@tesbox is still the last trial's box)
         \edef\p@ram{{\the\dimen0}{\@sh@venoteid}}%
         \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\p@ram}}%
         \setbox0=\box1
@@ -1509,8 +1508,8 @@
       \setbox\th@cl@ss=\copy#1
       \dimen3=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
       \bestavailht=\dimen3
-      \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3 \multiply\dimen5 by 32
-      \divide\dimen5 by \colwidth\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
+      \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3
+      \dimen5=\numexpr\dimen5*\XrefNotesWidth/\colwidth\relax sp % (\numexpr scales in 64 bits: *32 overflowed over 512pt)
       \advance\bestavailht by \dimen5
       \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip\tempfalse\fi\fi
       \iftemp
@@ -2360,7 +2359,7 @@
     \s@tpage
     \resetvsize % reset size of next page since it will not have any 1 column material
     \global\holdinginserts=1
-    \ifrerunsavepartialpaged
+    \ifrerunsavepartialpaget % (the three column flag, as \savepartialpaget sets it)
       \ifvoid\s@vedpage
         \trace{o}{Not rerunning void box}%
         %\showlists
@@ -2368,7 +2367,7 @@
         \penalty0
       \else
         \trace{o}{Rerunning \the\ht\s@vedpage+\the\dp\s@vedpage \space through savepartialpaget}%
-        \global\output={\savepartialpagetounce}\global\rerunsavepartialpagetfalse\unvbox\s@vedpage
+        \global\output={\savepartialpagetbounce}\global\rerunsavepartialpagetfalse\unvbox\s@vedpage
       \fi
     \else
       \global\output={\threecols}%

@@ -184,7 +184,7 @@ class Module:
                         self.removes = set(exclusionmap.values())
                     elif not self.testexclude(einfo):
                         self.removes.discard(einfo)
-                print(f"{self.removes=}")
+                logger.debug(f"{self.removes=}")
             elif s == 'mod':
                 dirname = os.path.dirname(self.fname)
                 infpath = os.path.join(dirname, eloc.text.strip())

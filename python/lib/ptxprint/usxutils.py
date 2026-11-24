@@ -4,7 +4,7 @@ from usfmtc import _filetypes
 from usfmtc.reference import Ref, RefList, RefRange
 from usfmtc.usfmparser import Grammar, Tag
 from usfmtc.usfmgenerate import Emitter
-from ptxprint.utils import universalopen, runChanges
+from ptxprint.utils import universalopen, runChanges, allbooks
 from usfmtc.xmlutils import ParentElement, hastext, isempty
 from usfmtc.usxmodel import iterusx, addesids, iterusxref
 from ptxprint.changes import readChanges
@@ -31,7 +31,7 @@ _occurstypes = {
 }
 
 _typetypes = {      # type: (type, StyleType, TextType, startswith)
-    'footnote': ('char', 'note', 'NoteText', None),
+    'footnote': (None, 'note', 'NoteText', None),     # any note (\StyleType Note), wherever it occurs
     'introduction': ('header', 'paragraph', 'other', "i"),
     'list': ('versepara', 'paragraph', 'VerseText', "l"),
     'milestone': (None, 'milestone', None, None),
@@ -158,7 +158,10 @@ def mrktype(sheet, mrk):
     mtype = sheet.get('mrktype', None)
     if mtype is not None:
         return mtype
-    occurs = set(sheet.get('occursunder', {}))
+    occurs = sheet.get('occursunder', None) or set()
+    if isinstance(occurs, str):         # "c p q1": markers, not characters
+        occurs = occurs.split()
+    occurs = set(occurs)
     stype = sheet.get('styletype', "").lower()
     ttype = sheet.get('texttype', "").lower()
     for k, v in _occurstypes.items():
@@ -172,7 +175,7 @@ def mrktype(sheet, mrk):
     for k, v in _typetypes.items():
         matched = True
         for i, a in enumerate((mtype, stype, ttype)):
-            if v[i] is not None and v[i] != a:
+            if v[i] is not None and (v[i].lower() if i else v[i]) != a:      # (stype, ttype are lower case)
                 matched = False
                 break
         if v[3] is not None and not mrk.startswith(v[3]):
@@ -203,13 +206,39 @@ def typesFromMrk(mtype):
         return ('Note', 'NoteText')
     return (None, None)
 
-texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody zBottomRag"""
+# TeX macros (not stylesheet markers) that may legitimately appear in USFM text
+texcmds = """doublecolumns NoXrefNotes onebody singlecolumn threebody twobody polyglotcolumn
+    zap zapres zautoBookEndDecoration zBookEndDecoration zBottomRag zccimg zcolophon zcopyright
+    zEmptyPage zendheadings zendnoterule zendperiph zendtable zexp zfalsetext zglot zimagecopyrights
+    zlicence zlicense zMarkVerseAgain zNeedEvenPage zNeedOddPage zNeedQuadPage zpdf zplaceallnotes
+    zpostendnoterule zSEQ zt ztablecategory zthumbtab ztmoff ztmon ztocafter ztocbefore ztruetext
+    ztvaloff ztvalon zv"""
 
-def createGrammar(sheets):
+# Language or polyglot column suffixed forms of the above, e.g. \zimagecopyrightsfr, \zcopyrightR
+texcmdsuffixed = re.compile(r"^(?:zimagecopyrights[a-z]{2,3}|zcopyright[A-Z]|zlicen[cs]e[A-Z])$")
+
+def texDefinedCmds(fpaths):
+    r""" Names \def'd or \let in the given TeX files (e.g. ptxprint-mods.tex) that
+        contain no @, so may be used as instructions in the USFM """
+    res = set()
+    for fpath in fpaths:
+        try:
+            with open(fpath, encoding="utf-8", errors="ignore") as inf:
+                dat = inf.read()
+        except OSError:
+            continue
+        for l in dat.splitlines():
+            l = re.sub(r"(?<!\\)%.*$", "", l)
+            res.update(re.findall(r"\\(?:[gex]?def|let)\s*\\([A-Za-z]+)(?![A-Za-z@])", l))
+    return res
+
+def createGrammar(sheets, extracmds=None):
     grammar = Grammar()
     for k in sheets:
         if k not in grammar.marker_categories:
             v = sheets.mrktype(k)
+            if v == "barems":           # ptx2pdf.sty's bare milestones, e.g. \nopagenums
+                v = "standalone"
             if v is not None:
                 grammar.marker_categories[k] = v
         a = sheets[k].get("attributes", None)
@@ -218,14 +247,18 @@ def createGrammar(sheets):
             grammar.attribmap[k] = attrib
     for k in texcmds.split():
         grammar.marker_categories[k] = "standalone"
+    for k in (extracmds or []):
+        if k not in grammar.marker_categories:
+            grammar.marker_categories[k] = "standalone"
     return grammar
 
 
 class UsfmCollection:
-    def __init__(self, bkmapper, basedir, sheets, changes=None):
+    def __init__(self, bkmapper, basedir, sheets, changes=None, texfiles=None):
         self.bkmapper = bkmapper
         self.basedir = basedir
         self.sheets = sheets
+        self.texfiles = texfiles or []
         self.books = {}
         self.times = {}
         self.tocs = []
@@ -244,7 +277,7 @@ class UsfmCollection:
             self.times = {}
 
     def setgrammar(self):
-        self.grammar = createGrammar(self.sheets)
+        self.grammar = createGrammar(self.sheets, extracmds=texDefinedCmds(self.texfiles))
 
     def get(self, bk):
         bkfile = self.bkmapper(bk)
@@ -274,15 +307,17 @@ class UsfmCollection:
            self.booknames.readBookNames(bknamesp)
         else:
             tocre = re.compile(r"^\\toc(\d)\s+(.*)\s*$")
-            for bk in list(self.booknames.bookstrings.keys()):
+            for bk in allbooks:     # (booknames has none yet) those the project has
                 tocs = [""] * 3
                 bkfile = self.bkmapper(bk)
-                if bkfile is None or not len(bkfile):
+                if bkfile is None or not len(bkfile) or not os.path.exists(bkfile):
                     continue
                 nochap = True
-                with open(bkfile, encoding="utf-8") as inf:
+                with universalopen(bkfile) as inf:     # in the project's encoding, as get()
                     while nochap:
                         l = inf.readline()
+                        if not l:       # a book with no \c
+                            break
                         m = tocre.match(l)
                         if m:
                             r = int(m.group(1))
@@ -381,6 +416,8 @@ class Usfm:
             (_, ext) = os.path.splitext(fname)
             if ext not in _filetypes:
                 informat = "usfm"
+        if informat == "usfm":
+            kw.setdefault("parseas", "3.2")     # e.g. \rem is plain text, \u00e9 is a character; output stays as declared
         usxdoc = usfmtc.readFile(fname, keepparser=True, grammar=grammar, elfactory=elfactory, informat=informat, tagger=PTXTag, **kw)
         if usxdoc is None:
             return None
@@ -597,6 +634,7 @@ class Usfm:
 
     def normalise(self):
         ''' Normalise USFM in place '''
+        from usfmtc.usxmodel import canonicalise
         canonicalise(self.getroot())
 
     def transform_text(self, *regs, parts=[]):
@@ -913,6 +951,25 @@ class Usfm:
     def reversify(self, srcvrs, tgtvrs, vpvrse, vpchap):
         if tgtvrs is not None or srcvrs is not None:
             self.xml.reversify(srcvrs, tgtvrs, keep=vpvrse, chnums=vpchap)
+
+    def unknownMarkers(self, bk=None):
+        """ Markers the parser marked as unknown (not in a stylesheet, texcmds or
+            ptxprint-mods.tex), with how each is used: "char" (\\zfoo text\\zfoo*), "ms"
+            (\\zfoo|attribs\\*) or "bare" (\\zfoo on its own); a fuller use wins.
+            Returns {marker: (kind, [refs])} """
+        res = {}
+        for eloc, isin, cref in iterusxref(self.getroot(), book=bk):
+            if not isin or not getattr(eloc, "unknown", False):
+                continue
+            style = eloc.get("style", "")
+            if texcmdsuffixed.match(style):
+                continue
+            kind = "char" if eloc.tag == "char" else ("bare" if eloc.get("x-bare", "false") == "true" else "ms")
+            oldkind, refs = res.get(style, ("bare", []))
+            r = getattr(cref, "first", cref)
+            refs.append(f"{r.book} {r.chapter}:{r.verse}" if r is not None else "?")
+            res[style] = (kind if oldkind == "bare" else oldkind, refs)
+        return res
 
     def runchecks(self):
         root = self.getroot()

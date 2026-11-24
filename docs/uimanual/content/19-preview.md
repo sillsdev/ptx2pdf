@@ -13,12 +13,12 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 
 ## Opening and closing the Preview window
 
-* The window opens after each **Print** if the main menu (☰) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
+* The window opens after each **Print** if the main menu (≡) > **Show PDF** is set to **Preview Pane** (the normal setting). With **System Viewer** the PDF opens in your normal PDF program instead; with **Output Folder**, PTXprint opens the folder that holds the PDF.
 * Closing the window with its **X** button only hides it. It comes back the next time you print.
 * **Show main PTXprint settings** (**Alt+S**) brings the main window to the front.
 * The title bar shows the PDF file name and the date and time it was made. Check this to be sure you see the newest PDF.
 
-The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Reference** shows reference documents such as the Ornaments Catalogue. Tabs without a PDF are hidden.
+The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Manual** shows this User Manual (from **User Manual** on the **Help** tab) and other reference documents such as the Ornaments Catalogue, with their contents beside them. Tabs without a PDF are hidden.
 
 ## Moving around: pages, spreads and zoom
 
@@ -31,6 +31,9 @@ The navigation controls are in the top bar.
 * Mouse: the wheel changes page; when zoomed in, it scrolls the page instead. Drag with the middle mouse button to move the page around.
 * Zoom: the **Zoom** box, **Ctrl+mouse wheel** (zooms at the mouse pointer), **Ctrl+Plus** and **Ctrl+Minus**. **Ctrl+F**, **Ctrl+0** or **Zoom Fit to Screen** fit the whole page (or spread) in the window.
 * For right-to-left books, the arrow buttons and keys are reversed to follow the book.
+* Links: click a link in the PDF (for example a cross-reference, or a contents entry in a PDF that has them) to go to the place it points to. The pointer becomes a hand over a link. A web address opens in your web browser.
+* Contents lists: double-click a line to go to that heading. This counts as following a link.
+* Going back: **Alt+Left** (or **Backspace**) goes back to where you followed a link (or a contents line) from, and **Alt+Right** forward again. Each tab keeps its own list. In the **Manual** tab, the row of four small arrow buttons under the contents does the same. From left to right: **▲** lists the places to go back to (earlier), **◀** goes back, **▶** goes forward again, and **▼** lists the places to go forward to (later). Each place in a list is named by its heading and page.
 
 **Book View** (Ctrl+B) shows two facing pages side by side, as in a printed book. Page 1 is shown alone because it is a right-hand page; then 2+3, 4+5 and so on. Use it to check that facing pages look balanced.
 
@@ -202,13 +205,15 @@ The bottom of the window shows the time used and how busy the processor is (CPU)
 
 When all books have finished, PTXprint makes a new PDF and the preview shows it. Then use **Locate the next issue** (with **Underfilled Pages** ticked) to find the pages the tool could not fill, and fix them by hand.
 
-The **Automatic Page Filler** settings decide how hard the tool tries (speed) and how good the text must look (quality):
+### Choosing the filler settings
 
-* **Time limit for the whole job (minutes)** – normally 180.
-* **Earlier pages to retry** – if a page cannot be filled, the tool goes back this many pages and tries a different layout there (normally 4). Higher = fewer failed pages, but slower. 0 = fastest.
-* **Paragraphs to adjust on each page** – normally 6. Higher = more pages filled, but each page takes longer.
-* **Widest word space allowed (× text size)** – normally 1.0. Lower = better-looking text, but more pages may fail.
-* **Keep paragraphs close to normal width**, **Penalise shrink or stretch** and **Keep neighbouring paragraphs alike** – fine control of which changes the tool prefers.
+The settings are on the main window: **Advanced** tab > **Other** > **Automatic Page Filler**. They are listed with the ones you are most likely to change first. Each one is explained in the Advanced tab chapter.
+
+1. **Time limit for the whole job (minutes)** – the job takes about as long as its longest book. Allow several hours for a whole Bible.
+2. **Widest word space allowed (× text size)** – the main quality control. Right-click a few ordinary paragraphs in the preview: the grey first line of the menu ends with the average word space, for example `␣=0.32 em`. Set this to 1.5 to 2 times that.
+3. **Earlier pages to retry** and **Paragraphs to adjust on each page** – how hard the tool works on a page that is difficult to fill. Higher values fill more pages; they cost time only on the hard pages.
+4. **Penalise shrink or stretch**, **Keep paragraphs close to normal width** and **Keep neighbouring paragraphs alike** – which changes the tool prefers when there is a choice. Change them only if the filled text looks wrong to you.
+5. Diglot and polyglot only: **The cost of imbalance in a polyglot slice** (how important it is that the columns end level), **Fill polyglot slices regardless of 1 line gaps** and **Most tries to fill a polyglot page**.
 
 The text width limits come from **Minimum Text Shrink** and **Maximum Text Expand** (normally 95% and 105%). The number of books worked on at the same time comes from **Maximum parallel processes** (**Advanced** > **Other** > **Page Layout and Spacing**).
 
@@ -315,13 +320,13 @@ Filling is slow, especially for long books such as Psalms. You can click **Stop!
 Make the range smaller: raise **Minimum Text Shrink** (for example to 97%) and lower **Maximum Text Expand** (for example to 103%). Lower **Widest word space allowed** for less space between words. Then run the fill again. You can also tick **Adjustments** to find paragraphs with large changes and reset them.
 
 **The Preview window has gone.**
-It was closed or hidden. Print again, or check that the main menu (☰) > **Show PDF** is set to **Preview Pane**.
+It was closed or hidden. Print again, or check that the main menu (≡) > **Show PDF** is set to **Preview Pane**.
 
 **The preview shows an old PDF.**
 Check the date and time in the title bar. If the last print failed, the old PDF is still shown. Read the message at the bottom of the main window.
 
 **Most of the controls described here are missing.**
-Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (☰).
+Many of them (**Layout Analysis**, **Locate...**, the issue arrows, **Auto-update**, the Auto Page Fill button) only appear in the **Regular** and **Full** views. Change the view level in the main menu (≡).
 
 ## Control notes
 
@@ -349,8 +354,23 @@ Fits the whole spread in **Book View**.
 ### @l_pdfPgsSprds
 Only a label ("Pages:" before the page count). Its tooltip lists the page-moving shortcuts.
 
+### @btn_history_back
+Its tooltip names the place it goes back to. Greyed out until you have followed a link.
+
+### @btn_history_backlist
+Shows the places you can go back to, the most recent first, each named by its heading and page. Choose one to go straight there.
+
+### @btn_history_forwardlist
+Shows the places you can go forward to again. Following a new link clears this list.
+
+### @btn_history_forward
+Only usable after **Back**. Its tooltip names the place it goes to.
+
 ### @btn_page_first
 In a count like "(15)+52", the number in brackets is the pages before page 1 (for example title page and contents); the second number is the numbered pages.
+
+### @tv_manualContents
+The PDF's bookmarks (for this manual: chapters and sections). Going to a line can be undone with **◀** (Back) below.
 
 ### @btn_page_previous
 One spread in **Book View**. Same as **Left arrow** or **Page Up**. Reversed in a right-to-left book.

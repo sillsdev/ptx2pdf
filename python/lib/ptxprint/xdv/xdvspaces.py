@@ -39,6 +39,10 @@ def spacegids(font):
 class XdvSpaceMeasure(XDViPositionedReader):
 
     def __init__(self, fname, parllocs, testfn=None, page=0, trackp=False):
+        """ Measure the ink and space of the paragraphs in parllocs from the typeset output
+            fname, starting page pages in. Pages are numbered by their position in the
+            output, as parlocs number them, not by their folio (roman numbered pages are
+            negative). """
         super().__init__(fname, page=page)
         self.parllocs = parllocs
         self.testfn = testfn
@@ -50,8 +54,12 @@ class XdvSpaceMeasure(XDViPositionedReader):
         self.trackp = trackp
         logging.log(15, "Init new xdvspace")
 
+    def readpost(self):
+        super().readpost()
+        self.pindex = self.pageindex
+
     def bop(self, opcode, parm, data):
-        self.pindex = data[0]
+        self.pindex += 1
         return super().bop(opcode, parm, data)
 
     def _skip_xglyphs(self, opcode, parm, data):

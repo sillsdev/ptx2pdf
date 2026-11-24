@@ -96,6 +96,15 @@
   \fi
   \expandafter\let\csname font<\m@rker>\endcsname\relax}
   %\expandafter\let\csname extrafont<#1>\endcsname\relax}
+
+% Markers in the text that no stylesheet defines (PTXprint finds and reports them), so that their
+% text prints plainly rather than TeX stopping. One that TeX already knows (e.g. \vfill) is left alone.
+\def\defunkchar#1{\ifcsname #1\endcsname\else       % \zfoo text\zfoo*
+  \Marker #1\relax\Endmarker #1*\relax\StyleType Character\relax\TextType Other\relax\fi}
+\def\defunkms#1{\ifcsname #1\endcsname\else         % \zfoo|attribs\*
+  \Marker #1\relax\StyleType Milestone\relax\fi}
+\def\defunkbare#1{\ifcsname #1\endcsname\else       % \zfoo on its own: nothing to do
+  \expandafter\def\csname #1\endcsname{}\fi}
 %-csty_definition_setup
 
 %+csty_definitions
@@ -140,7 +149,11 @@
 \let \Rightmargin\RightMargin
 \def \Italic         #1\relax{\defbinp@ram{italic}{#1}}
 \def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
-\def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{fontfactor}{1}}}
+\def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{fontfactor}{1}\unsuperr@ise}}
+% \Superscript - also drops the raise that \Superscript gave, but not one set with \Raise
+\def\s@perraise{\SuperscriptRaise}
+\def\unsuperr@ise{\ifcsname\c@tprefix\@mkr:raise\endcsname
+  \x@\ifx\csname\c@tprefix\@mkr:raise\endcsname\s@perraise\defp@ram{raise}{0pt}\fi\fi}
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
 \def \Underline      #1\relax{\deftrip@ram{underline}{#1}}
 \let \underline\Underline
@@ -2174,7 +2187,8 @@
    \trace{d}{\meaning\atn@xtptxfile}%
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
-     \else \closein\t@stread \def\n@xt{\atn@xtptxfile \input "\the\PtxFilePath#1"\relax}\fi
+     \else \closein\t@stread % \relax at the end of the book ends anything still collecting text, e.g. \h with nothing after it
+       \def\n@xt{\atn@xtptxfile \p@sheof\everyeof{\relax}\input "\the\PtxFilePath#1"\relax\p@peof}\fi
    \traceifset{ptxfile-contents}%
    \n@xt\relax
    \traceifcheck{ptxfile-contents}%
@@ -2230,7 +2244,7 @@
  \tempfalse
  \iffilehasverses\temptrue\fi
  \ifnum\pageno=\ptxst@rtp@ge
-    \ifnum\pagetotal>0pt \temptrue\fi
+    \ifdim\pagetotal>0pt \temptrue\fi
  \else
     \temptrue
  \fi

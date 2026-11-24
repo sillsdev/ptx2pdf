@@ -120,6 +120,25 @@ class TestPiclistParsing(unittest.TestCase):
                                     "JON 1.3 Caption|src=\"a.jpg\" size=\"col\" pgpos=\"t\" ref=\"1.3\"\n"))
         self.assertEqual(["JON 1.3"], [p['anchor'] for p in pl.get_pics()])
 
+    def test_bad_lines_kept(self):
+        ''' Saving the list keeps lines it couldn't read, as comments, and reading them back
+            doesn't add them again '''
+        with tempfile.TemporaryDirectory() as tmp:
+            fpath = os.path.join(tmp, "x.piclist")
+            pl = Piclist(None)
+            pl.read_piclist(io.StringIO("JON|src=\"a.jpg\"\n"
+                                        "JON 1.3 Caption|src=\"a.jpg\" size=\"col\" pgpos=\"t\" ref=\"1.3\"\n"))
+            pl.out(fpath)
+            for i in range(2):
+                pl = Piclist(None)
+                pl.read_piclist(fpath)
+                pl.out(fpath)
+            with open(fpath, encoding="utf-8") as inf:
+                lines = inf.read().splitlines()
+            self.assertEqual(lines[0], '% Unreadable: JON|src="a.jpg"')
+            self.assertEqual(len(lines), 2)
+            self.assertEqual(["JON 1.3"], [p['anchor'] for p in pl.get_pics()])
+
     def test_usfm2_line(self):
         pl = Piclist(None)
         pl.read_piclist(io.StringIO("JON 3.6 Caption|a.jpg|col|tl||copy|caption|3.6\n"))
@@ -225,6 +244,25 @@ class TestUIDefaults(unittest.TestCase):
             if w.startswith("fcb_") and vals.get(w):
                 self.assertIn(v, vals[w], w)
 
+    def test_glade_active_ids(self):
+        ''' Every combo box's active-id in the glade file is an id in its model '''
+        import xml.etree.ElementTree as et
+        root = et.parse(os.path.join(testsdir, "..", "python", "lib", "ptxprint", "ptxprint.glade")).getroot()
+        models = {}
+        for m in root.iter("object"):
+            if m.get("class") == "GtkListStore":
+                models[m.get("id")] = [[c.text for c in r.findall("col")] for r in m.iter("row")]
+        bad = []
+        for o in root.iter("object"):
+            props = {p.get("name"): p.text for p in o.findall("property")}
+            if "active-id" not in props or props.get("model") not in models:
+                continue
+            col = int(props.get("id-column", -1))
+            ids = [r[col] for r in models[props["model"]] if col < len(r)]
+            if props["active-id"] not in ids:
+                bad.append(f"{o.get('id')}: {props['active-id']} not in {ids}")
+        self.assertEqual(bad, [])
+
     def test_spin_clamped(self):
         view = loadview(os.path.join(testsdir, "projects"), "WSGlatin", "Default")
         view.set("s_margins", 0)
@@ -320,8 +358,8 @@ class TestConfigUpgrade(_ProjectCopy):
                 if not c.has_section(sect):
                     c.add_section(sect)
                 c.set(sect, opt, v)
-            os.makedirs(os.path.join(cfgsdir, name, "adjLists"))
-            with open(os.path.join(cfgsdir, name, "adjLists", "bogus.adj"), "w", encoding="utf-8") as outf:
+            os.makedirs(os.path.join(cfgsdir, name, "AdjLists"))
+            with open(os.path.join(cfgsdir, name, "AdjLists", "bogus.adj"), "w", encoding="utf-8") as outf:
                 outf.write("This file doesn't exist yet.\n")
             with open(os.path.join(cfgsdir, name, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
                 c.write(outf)
@@ -332,12 +370,180 @@ class TestConfigUpgrade(_ProjectCopy):
             except Exception as e:
                 fails.append(f"{name}: {type(e).__name__} {str(e)[:100]} at {failsite(e)}")
         self.assertFalse(fails, "\n".join(fails))
+        # 2.18 settings move to texpert (2.19); empty .adj files made in error are cleaned up (2.21)
+        from ptxprint.texpert import texpertOptions, widgetName
+        view = self.view("v2_18")
+        self.assertEqual(float(view.get(widgetName(texpertOptions["PageFullFactor"]))), 0.9)
+        self.assertFalse(os.path.exists(os.path.join(cfgsdir, "v2_18", "AdjLists", "bogus.adj")))
+        self.assertTrue(os.path.exists(os.path.join(cfgsdir, "v3_00", "AdjLists", "bogus.adj")))
 
 def _edit(path, fn):
     with open(path, encoding="utf-8") as inf:
         dat = inf.read()
     with open(path, "w", encoding="utf-8") as outf:
         outf.write(fn(dat))
+
+class TestPolyglotLayout(_ProjectCopy):
+    others = ("OGNT", )
+
+    def test_complex_layout(self):
+        ''' A layout with / (not supported yet) is reported before TeX runs, not left to TeX '''
+        view = self.view("Diglot2JN")
+        view.set("t_layout", "L/R")
+        msgs = []
+        view.doStatus = lambda txt, **kw: msgs.append(txt)
+        job = maketex(view)
+        self.assertTrue(any("not supported" in m for m in msgs), msgs)
+
+
+class TestCopyDiglotConfig(_ProjectCopy):
+    ''' A diglot config copied to another project is that project's: its primary (L) text,
+        its own publications, and files that only the source project has are still found '''
+    others = ("OGNT", "WSG")
+
+    def test_copy_to_project(self):
+        view = self.view("Diglot2JN")
+        script = os.path.join(view.project.path, "shared", "myscript.py")
+        with open(script, "w", encoding="utf-8") as outf:
+            outf.write("pass\n")
+        from ptxprint.utils import Path
+        view.customScript = Path(script)
+        view.set("c_processScript", True)
+        view.publications = {"pubA": {"__books": "2JN", "maintitle": "Latin title"}}
+        view.writeConfig()
+        with open(os.path.join(view.project.srcPath("Diglot2JN"), "ptxprint.cfg"), encoding="utf-8") as inf:
+            self.assertIn("selectscript = ${prjdir}/", inf.read())
+        tgt = view.prjTree.findProject("WSG")
+        # the target already has this config, with a publication of its own
+        tgtcfg = os.path.join(tgt.createConfigDir("Diglot2JN"), "ptxprint.cfg")
+        with open(tgtcfg, "w", encoding="utf-8") as outf:
+            outf.write("[vars]\nmaintitle = Target title\n\n[publication.pubT]\n__books = 3JN\n")
+        view.applyConfig("Diglot2JN", "Diglot2JN", action=0, newprj=tgt, skipvars=True)
+        cfg = configparser.ConfigParser(interpolation=None)
+        cfg.read(tgtcfg, encoding="utf-8")
+        self.assertEqual(cfg.get("diglot_L", "projectid"), "WSG")
+        self.assertEqual(cfg.get("diglot_L", "projectguid"), tgt.guid)
+        self.assertEqual(cfg.get("diglot_R", "projectid"), "OGNT")
+        self.assertEqual(cfg.get("vars", "maintitle"), "Target title")
+        self.assertEqual([s for s in cfg.sections() if s.startswith("publication.")], ["publication.pubT"])
+        tview = loadview(self.tmpdir.name, "WSG", "Diglot2JN")
+        self.assertEqual(tview.polyglots["L"].prj, "WSG")
+        self.assertIsNotNone(tview.customScript)
+        self.assertTrue(os.path.samefile(str(tview.customScript), script))
+
+    def test_heal_primary(self):
+        ''' A config that names another project as its primary (copied by an older version) '''
+        view = self.view("Diglot2JN")
+        cfgpath = os.path.join(view.project.srcPath("Diglot2JN"), "ptxprint.cfg")
+        cfg = configparser.ConfigParser(interpolation=None)
+        cfg.read(cfgpath, encoding="utf-8")
+        cfg.set("diglot_L", "projectid", "WSG")
+        cfg.set("diglot_L", "projectguid", view.prjTree.findProject("WSG").guid)
+        with open(cfgpath, "w", encoding="utf-8") as outf:
+            cfg.write(outf)
+        view = self.view("Diglot2JN")
+        self.assertEqual((view.polyglots["L"].prj, view.polyglots["L"].prjguid),
+                         (view.project.prjid, view.project.guid))
+
+    def test_missing_secondary(self):
+        ''' A diglot whose other project isn't there says so, rather than printing something else '''
+        view = self.view("Diglot2JN")
+        cfgpath = os.path.join(view.project.srcPath("Diglot2JN"), "ptxprint.cfg")
+        with open(cfgpath, encoding="utf-8") as inf:
+            orig = inf.read()
+        cfg = configparser.ConfigParser(interpolation=None)
+        cfg.read(cfgpath, encoding="utf-8")
+        cfg.set("diglot_R", "projectid", "NoSuchBT")
+        cfg.set("diglot_R", "projectguid", "0" * 40)
+        with open(cfgpath, "w", encoding="utf-8") as outf:
+            cfg.write(outf)
+        try:
+            view = self.view("Diglot2JN")
+            errors = []
+            view.doError = lambda *a, **kw: errors.append(str(a) + str(kw.get("secondary", "")))
+            job = maketex(view)
+        finally:
+            with open(cfgpath, "w", encoding="utf-8") as outf:
+                outf.write(orig)
+        self.assertNotEqual(job.res, 0)
+        self.assertTrue(any("NoSuchBT" in e for e in errors), errors)
+
+    def test_heal_other_project_path(self):
+        ''' ${prjdir}/OtherPrj/file, as 3.1 wrote ${settingsdir}/OtherPrj/file, finds the file there '''
+        view = self.view("Default")
+        other = os.path.join(self.tmpdir.name, "WSG", "shared", "healme.py")
+        with open(other, "w", encoding="utf-8") as outf:
+            outf.write("pass\n")
+        self.assertEqual(view._healPath("${prjdir}/WSG\\shared\\healme.py"), "${settingsdir}/WSG/shared/healme.py")
+        self.assertEqual(view._healPath("${prjdir}/shared/nosuch.py"), "${prjdir}/shared/nosuch.py")
+
+    def test_settingsdir(self):
+        ''' ${settingsdir} is the folder the projects are in, as configs have always used it '''
+        from ptxprint.utils import Path
+        view = self.view("Default")
+        other = os.path.join(self.tmpdir.name, "WSG", "Settings.xml")
+        self.assertTrue(os.path.samefile(str(Path("${settingsdir}/WSG/Settings.xml", view)), other))
+        self.assertEqual(Path(other).withvars(view).replace("\\", "/"), "${settingsdir}/WSG/Settings.xml")
+
+    def test_archive_restores(self):
+        ''' Making an archive leaves the script (etc.) as it was, not as the archive names it '''
+        view = self.view("Default")
+        script = os.path.join(view.project.path, "shared", "myscript2.py")
+        with open(script, "w", encoding="utf-8") as outf:
+            outf.write("pass\n")
+        from ptxprint.utils import Path
+        view.customScript = Path(script)
+        view.set("btn_selectScript", script)
+        view.set("c_processScript", True)
+        with contextlib.redirect_stdout(io.StringIO()):
+            view.createArchive(os.path.join(self.tmpdir.name, "restore.zip"), nobuild=True)
+        self.assertEqual(view.get("btn_selectScript"), script)
+        self.assertEqual(str(view.customScript), str(Path(script)))
+
+class TestWorkerTimeout(unittest.TestCase):
+
+    def test_no_limit_unless_given(self):
+        ''' A print job that isn't given a time limit (a publication's) isn't stopped as soon as it starts '''
+        import time
+        from types import SimpleNamespace
+        from ptxprint.multiprint import WorkerContext, Job
+        from ptxprint.utils import BuildParams
+        class SlowPrinter:
+            timedout = False
+            def solve(self, books):
+                time.sleep(0.4)
+                return 1 if self.timedout else 0
+        books = SimpleNamespace(first=SimpleNamespace(book="JAS"), last=SimpleNamespace(book="JAS"))
+        for timeout, expected in ((None, 0), (0.1, 1)):
+            kw = {} if timeout is None else {"timeout": timeout}
+            params = BuildParams(prjtree=None, config=None, macrosdir="", args=None, restart=False, pid="X", guid="",
+                                 cfgid="C", scriptsdir="", **kw)
+            ctx = WorkerContext("1", None, None, None)
+            printer = SlowPrinter()
+            ctx.get_printer = lambda job: printer
+            res = ctx.execute_job(Job("print", books, params))
+            self.assertEqual(res[2], expected, f"{timeout=}")
+
+class TestPolyglotProjects(unittest.TestCase):
+    ''' Finding the other projects of a polyglot '''
+
+    def test_ptxprint_folder(self):
+        ''' A project in a _PTXprint folder finds its partner beside that folder '''
+        with tempfile.TemporaryDirectory() as tmp:
+            copyproject(os.path.join(tmp, "_PTXprint"), "WSGlatin")
+            copyproject(tmp, "OGNT")
+            view = loadview(os.path.join(tmp, "_PTXprint"), "WSGlatin", "Diglot2JN")
+            self.assertEqual({k: v.project.prjid for k, v in view.diglotViews.items()}, {"R": "OGNT"})
+
+    def test_missing_partner(self):
+        ''' A polyglot whose other project can't be found says so '''
+        with tempfile.TemporaryDirectory() as tmp:
+            copyproject(tmp, "WSGlatin")
+            with self.assertLogs("ptxprint.view", level="WARNING") as logs:
+                view = loadview(tmp, "WSGlatin", "Diglot2JN")
+            self.assertEqual(view.diglotViews, {})
+            self.assertTrue(any("OGNT" in m for m in logs.output), logs.output)
+
 
 class TestBrokenProject(unittest.TestCase):
     """ Project and config files that are missing, corrupt or odd """
@@ -436,10 +642,59 @@ class TestPrintMethods(_ProjectCopy):
 
     def test_archive(self):
         view = self.view("FrontPHM")
-        outf = os.path.join(self.tmpdir.name, "test.zip")
+        outf = os.path.join(self.tmpdir.name, "newfolder", "test.zip")      # a folder that isn't there yet
         with contextlib.redirect_stdout(io.StringIO()):
             view.createArchive(outf, nobuild=True)
         self.assertTrue(os.path.exists(outf))
+
+    def test_copyconfig(self):
+        ''' Save As copies the config's pictures and their approvals '''
+        view = self.view("PicsJON")
+        cfgdir = view.project.srcPath("PicsJON")
+        with open(os.path.join(cfgdir, "picChecks.txt"), "w", encoding="utf-8") as outf:
+            outf.write("[pic_one.jpg]\napproved = true\n")
+        view.applyConfig("PicsJON", "PicsCopy")
+        newdir = view.project.srcPath("PicsCopy")
+        for f in ("WSGlatin-PicsCopy.piclist", "picChecks.txt"):
+            self.assertTrue(os.path.exists(os.path.join(newdir, f)), f)
+
+    def test_switch_config(self):
+        ''' Switching config: a setting the new config doesn't have takes the UI default, not the
+            value from the config before '''
+        view = self.view("Default")
+        cfg = configparser.ConfigParser(interpolation=None, strict=False)
+        cfg.read(os.path.join(view.project.srcPath("CoverJON"), "ptxprint.cfg"), encoding="utf-8")
+        present = {ModelMap[f"{s}/{o}"].widget for s in cfg.sections() for o in cfg.options(s) if f"{s}/{o}" in ModelMap}
+        defaults = ptxview.gladeDefaults()
+        missing = sorted(v.widget for v in ModelMap.values() if v.widget and v.widget.startswith("c_")
+                            and v.widget not in present and defaults.get(v.widget) is False)
+        self.assertTrue(missing)
+        for w in missing:
+            view.set(w, True)
+        view.setConfigId("CoverJON")
+        self.assertEqual([w for w in missing if view.get(w)], [])
+
+    def test_argsline(self):
+        ''' Options given as argsline (as mkguitest and saved commandargs do) keep the project '''
+        oldargv = sys.argv
+        sys.argv = ["ptxprint"]
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                view = main(retview=True, argsline=" ".join(["-p", self.tmpdir.name, "--testsuite",
+                        "--nofontcache", "-f", os.path.relpath(os.path.join(testsdir, "fonts")), "-l", "critical",
+                        "--logfile=none", "-P", "-c", "PicsJON", self.project]))
+        finally:
+            sys.argv = oldargv
+        self.assertEqual((view.project.prjid, view.cfgid), (self.project, "PicsJON"))
+        # a relative font path is taken from where ptxprint started, not from where a job runs
+        self.assertEqual(view.args.fontpath, [os.path.join(testsdir, "fonts")])
+
+    def test_foreign_path(self):
+        ''' A path from another OS (C:/... on Linux) is written back as it is, not under ${prjdir} '''
+        from ptxprint.utils import Path
+        view = self.view("Default")
+        p = "C:/WSG/local/figures" if os.name != "nt" else "/usr/share/figures"
+        self.assertEqual(Path(p).withvars(view), p)
 
     def test_books(self):
         view = self.view("Default")
@@ -483,9 +738,12 @@ class TestConfigZoo(_ProjectCopy):
 def runptxprint(prjsdir, prj, cfg, *opts, cmd=None):
     ''' Run ptxprint headless as the test suite does. Returns (returncode, output) '''
     import subprocess
+    logsdir = os.path.join(testsdir, "logs")
+    os.makedirs(logsdir, exist_ok=True)
+    worker = os.environ.get("PYTEST_XDIST_WORKER", "main")     # parallel runs mustn't share a log
     args = [sys.executable, os.path.join(testsdir, "..", "python", "scripts", "ptxprint"), "-p", prjsdir, "-S",
             "--testsuite", "--nofontcache", "-f", os.path.join(testsdir, "fonts"), "-l", "info",
-            "--logfile=" + os.path.join(prjsdir, "ptxprint.log"), "-c", cfg] + list(opts) + [prj]
+            "--logfile=" + os.path.join(logsdir, f"headless_{prj}_{cfg}_{worker}.log"), "-c", cfg] + list(opts) + [prj]
     if cmd is not None:
         args.append(cmd)
     res = subprocess.run(args, cwd=prjsdir, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=1200)
@@ -521,6 +779,24 @@ class TestFill(_Run):
         self.run_ok("WSGlatin", "Default", "-j", "1", "-b", "2JN", cmd="fill")
         self.run_ok("WSGlatin", "Default", "-j", "1", "-b", "2JN", "--restart", "--stop", cmd="fill")
 
+    def test_analyse_keeps_adjustments(self):
+        ''' Analyse Only writes orig= and shapes, and keeps the user's own adjustments and comments '''
+        adjdir = os.path.join(self.tmpdir.name, "WSGlatin", "shared", "ptxprint", "Default", "AdjLists")
+        os.makedirs(adjdir, exist_ok=True)
+        adjfile = os.path.join(adjdir, "653JNWSGlatin-Default.SFM.adj")
+        with open(adjfile, "w", encoding="utf-8") as outf:
+            outf.write("3JN 1.5 -1 % keep this note\n")
+        out = self.run_ok("WSGlatin", "Default", "-j", "1", "-b", "3JN", "--analyse", cmd="fill")
+        self.assertIn("Analysed 3JN", out)
+        with open(adjfile, encoding="utf-8") as inf:
+            lines = inf.read().splitlines()
+        mine = [l for l in lines if l.startswith("3JN 1.5 ")]
+        self.assertEqual(1, len(mine), lines)
+        self.assertIn(" -1 ", mine[0])
+        self.assertIn("keep this note", mine[0])
+        self.assertIn("orig=", mine[0])
+        self.assertTrue(any("orig=" in l and l.startswith("3JN 1.1") for l in lines), lines)
+
 @pytest.mark.slow
 class TestPolyFill(_Run):
     ''' The polyglot filler '''
@@ -529,6 +805,10 @@ class TestPolyFill(_Run):
     def test_diglot_fill(self):
         out = self.run_ok("WSGlatin", "Diglot2JN", "-j", "1", cmd="fill")
         self.assertIn("Complete 2JN", out)
+
+    def test_diglot_analyse(self):
+        out = self.run_ok("WSGlatin", "Diglot2JN", "-j", "1", "--analyse", cmd="fill")
+        self.assertIn("Analysed 2JN", out)
 
     def test_diglot_fill_jas(self):
         shutil.copytree(os.path.join(testsdir, "projects", "aArp", "local", "figures"),
@@ -547,6 +827,48 @@ class TestCommandLine(_Run):
         ''' PDF 2.0 output (print archive) with a cover to split off '''
         self.run_ok("WSGlatin", "CoverJON", "-P", "-D", "c_printArchive=True")
         self.assertTrue(os.path.exists(os.path.join(self.tmpdir.name, "WSGlatin", "local", "ptxprint", "WSGlatin_CoverJON_JON_ptxp_cover.pdf")))
+
+    def test_readonly_print(self):
+        ''' --readonly prints without changing any of the project's files outside its output folder,
+            even when the print has styles of its own (-D) that the config's file doesn't '''
+        import hashlib
+        prjdir = os.path.join(self.tmpdir.name, "WSGlatin")
+        def snapshot():
+            res = {}
+            for d, dirs, files in os.walk(prjdir):
+                if os.path.relpath(d, prjdir).split(os.sep)[0] == "local":
+                    dirs[:] = []
+                    continue
+                for f in files:
+                    with open(os.path.join(d, f), "rb") as inf:
+                        res[os.path.join(d, f)] = hashlib.md5(inf.read()).hexdigest()
+            return res
+        cfgdir = os.path.join(prjdir, "shared", "ptxprint", "Default")
+        with open(os.path.join(cfgdir, "ptxprint.sty"), "a", encoding="utf-8") as outf:
+            outf.write("\n\\Marker p\n\\Fontsize 11\n")        # as an older version wrote it: a normal print tidies this
+        before = snapshot()
+        self.run_ok("WSGlatin", "Default", "-P", "-b", "2JN", "--readonly", "-D", "c_marginalverses=True")
+        self.assertTrue(os.path.exists(os.path.join(prjdir, "local", "ptxprint", "WSGlatin_Default_2JN_ptxp.pdf")))
+        after = snapshot()
+        self.assertEqual(sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k)), [])
+        # the print's own style sheet has what the config's does, and is the one TeX was given
+        wdir = os.path.join(prjdir, "local", "ptxprint", "Default")
+        with open(os.path.join(wdir, "ptxprint.sty"), encoding="utf-8") as inf:
+            self.assertIn("\\FontSize 11", inf.read())
+        with open(os.path.join(wdir, "WSGlatin_Default_2JN_ptxp.tex"), encoding="utf-8") as inf:
+            tex = inf.read()
+        self.assertRegex(tex, r"\\stylesheet\{\./ptxprint\.sty\}|\\stylesheet\{ptxprint\.sty\}|\\stylesheet\{[^}]*local[^}]*ptxprint\.sty\}")
+
+    def test_old_cover_removed(self):
+        ''' A print without a cover doesn't leave an earlier print's cover for the preview to show '''
+        outdir = os.path.join(self.tmpdir.name, "WSGlatin", "local", "ptxprint")
+        os.makedirs(outdir, exist_ok=True)
+        oldcover = os.path.join(outdir, "WSGlatin_Default_2JN_ptxp_cover.pdf")
+        with open(oldcover, "wb") as outf:
+            outf.write(b"%PDF-1.4\n")
+        self.run_ok("WSGlatin", "Default", "-P", "-b", "2JN")
+        self.assertTrue(os.path.exists(os.path.join(outdir, "WSGlatin_Default_2JN_ptxp.pdf")))
+        self.assertFalse(os.path.exists(oldcover))
 
     def test_missing(self):
         ''' A config or project that doesn't exist '''
@@ -576,5 +898,10 @@ class TestCommandLine(_Run):
                 "[publication.pubB]\n__books = 3JN XYZ\nsubtitle = B\n\n[publication.pubC]\n__books = \n")
         with open(os.path.join(cfgdir, "ptxprint.cfg"), "w", encoding="utf-8") as outf:
             outf.write(dat)
-        self.run_ok("WSGlatin", "Pubs", "-j", "2", "-P", "-B", "pubA", "-B", "pubB", "-B", "pubC", "-B", "nosuch")
+        # empty and missing publications are skipped with a message
+        self.run_ok("WSGlatin", "Pubs", "-j", "2", "-P", "-B", "pubA", "-B", "pubC", "-B", "nosuch")
         self.assertTrue(os.path.exists(os.path.join(self.tmpdir.name, "WSGlatin", "local", "ptxprint", "WSGlatin_Pubs_pubA_ptxp.pdf")))
+        # one that fails to print (a bad book in its list) is reported in the exit status
+        rc, out = runptxprint(self.tmpdir.name, "WSGlatin", "Pubs", "-j", "2", "-P", "-B", "pubB")
+        self.assertNotIn("Traceback", out, out[-3000:])
+        self.assertEqual(1, rc, out[-3000:])

@@ -39,6 +39,7 @@
 \newif\ifReenterIntroOK\ReenterIntroOKtrue % If true, then a chapter number does not set intr@done
 \newif\ifinextended \inextendedfalse % Test for sidebars (ptx extended)
 \newcount\l@stparbadness
+\newcount\p@rendnum % numbers each paragraph end recorded in the .parlocs
 \def\EndTitle#1{\x@\let\csname at@end-#1\endcsname\tr@e} % There are a few end-titles that shouldn't trigger a penalty1000 after their titleblock
 \EndTitle{mte} \EndTitle{mte1} \EndTitle{mte2} \EndTitle{mte3}
 \EndTitle{imte} \EndTitle{imte1} \EndTitle{imte2} \EndTitle{imte3}
@@ -431,11 +432,16 @@
  \let\p@r=\par % end the paragraph
  \ifhmode\unskip % remove any trailing space
    \beginL\pdfsavepos\t@gendfull{P}{id="\adjc@rref[\the\curr@djpar]"}%
-   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parend\x@{\the\l@stparbadness}{\the\pdflastxpos}{\the\pdflastypos}{\the\lastdepth}}\endL       %(1)
+   % The last line's depth is only known once the paragraph has ended (\prevdepth after \p@r), and a
+   % \write is expanded at shipout, so it is given the name of a macro that is defined below
+   \global\advance\p@rendnum 1
+   \edef\p@rendwr{\write\p@rlocs{\noexpand\noexpand\noexpand\@parend{\the\l@stparbadness}{\noexpand\the\noexpand\pdflastxpos}%
+      {\noexpand\the\noexpand\pdflastypos}{\noexpand\csname p@rlastdepth-\the\p@rendnum\noexpand\endcsname}}}\p@rendwr\endL       %(1)
    \global\l@stparbadness=-1
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
    \p@r
+   \x@\xdef\csname p@rlastdepth-\the\p@rendnum\endcsname{\ifvmode\ifdim\prevdepth>0pt \the\prevdepth\else 0pt\fi\else 0pt\fi}%
    \ifvmode
     %\ifdim\prevdepth>0pt \lastdepth=\prevdepth\else\lastdepth=-1pt \fi
    \else
@@ -635,8 +641,8 @@
  \trace{H}{Starting par style #1 and ending the previous}%
  \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
-  \ifx\thisp@rcl@ss\undefined\else
-    \let\lastp@rclass\thisp@rcl@ss
+  \ifx\thisp@rclass\undefined\else
+    \let\lastp@rclass\thisp@rclass
   \fi
   \op@ninghooks{between-\m@rker}{#1}{\styst@k}% OR: #1\ifx\styst@k\empty\else+\styst@k\fi}??% Run any between old par an current
   \traceifset{p@rstyle}%

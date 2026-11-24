@@ -62,13 +62,22 @@ html_template = """
 """
 
 class Report:
-    def __init__(self):
+    def __init__(self, collect=True):
+        """ collect: gather log messages (the runtime section) until close() """
         self.sections = {}
-        self.reporthandler =  ReportLoggingHandler(self)
-        logging.getLogger().addHandler(self.reporthandler)
+        self.reporthandler = None
+        if collect:
+            self.reporthandler = ReportLoggingHandler(self)
+            logging.getLogger().addHandler(self.reporthandler)
 
     def clear(self):
         self.sections = {}
+
+    def close(self):
+        """ Stop collecting log messages: each report adds a root logging handler """
+        if self.reporthandler is not None:
+            logging.getLogger().removeHandler(self.reporthandler)
+            self.reporthandler = None
 
     def add(self, section, msg, **kw):
         """ section is a hierarchy of sections separated by / in the string """

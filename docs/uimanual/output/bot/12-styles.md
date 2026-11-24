@@ -469,21 +469,23 @@ In front: good for PDF line art. Behind: better for .jpg photos.
 ###### If Image Is Oversized – Sidebar background image: Oversize management
 
 Drop-down · Regular+ · `fcb_sbiOversize`  
-Choices: Ignore (overflows frame) | Shrink (maintains ratio) | Squash (distorts ratio) | Crop (unimplemented)
+Choices: Ignore (overflows frame) | Shrink (maintains ratio) | Squash (distorts ratio) | Crop (fills frame)
 
 > Select what action should be taken if the background image size is specified with a single dimension (height or width) and the unspecified dimension ends up being too large for a given sidebar.
+>
+> Crop scales the image to fill the whole frame and trims what sticks out; use Crop Offset to choose which part is kept.
 
-**Ignore** lets the image stick out of the box. **Shrink** keeps its shape. **Squash** may change its shape. **Crop** is not working yet.
+**Ignore** lets the image stick out of the box. **Shrink** keeps its shape. **Squash** may change its shape. **Crop** keeps its shape and fills the box; the parts that stick out are cut off. Use **Crop Offset** to choose which part you keep.
 
 ###### Crop Offset – Sidebar background image: Crop offset (XxY)
 
 Text box · Regular+ · `t_sbiBgCropOfs`
 
-> (Not available yet: cropping is still to be implemented.)
->
-> Crop offset in the format XxY (e.g. 10x20). Only used when Oversize is set to Crop. Shifts the cropped region by X points horizontally and Y points vertically.
+> Crop offset in the format XxY (e.g. 0.5x0.5). Only used when Oversize is set to Crop. Chooses which part of the image stays visible. Each number runs from 0 to 1:  
+> 0x0 keeps the bottom-left corner, 1x1 keeps the top-right corner,  
+> 0.5x0.5 keeps the centre.
 
-Crop is not working yet. Leave it empty.
+Only used when **If Image Is Oversized** is **Crop**. Type two numbers from 0 to 1 with an "x" between them: first across, then up. **0x0** keeps the bottom-left corner, **1x1** keeps the top-right corner, **0.5x0.5** keeps the middle. For example, **0.5x1** keeps the top centre of the picture. If you leave it empty, the bottom-left corner is kept.
 
 ###### Scale To – Sidebar background image: Scale Image to Inner/Outer/Bleed area
 
@@ -514,7 +516,7 @@ Label · Mini+
 
 > You can say what you like here to describe the purpose of the style.
 
-#### ⚠️Marker – Add/Edit marker dialog: Marker (code)
+#### ▲Marker – Add/Edit marker dialog: Marker (code)
 
 Text box · Regular+ · `t_styMarker`
 
@@ -552,7 +554,7 @@ Text box · Regular+ · `t_styEndMarker`
 
 Usually leave it empty: for character and note markers PTXprint adds the marker followed by `*`. For a pair of milestone markers, type the closing milestone here.
 
-#### ⚠️Type – Add/Edit marker dialog: Marker type
+#### ▲Type – Add/Edit marker dialog: Marker type
 
 Drop-down · Regular+ · `fcb_styType`  
 Choices: Header | Title | Introduction | Introduction Character | Section Paragraph | Verse Paragraph | Character | List | List Character | Milestone | Standalone Milestone | Other Paragraph | Cross Reference | Cross Reference Character | Footnote | Footnote Character | Cell | Attribute | Identification | Internal
@@ -899,7 +901,7 @@ Default 0.25 (a quarter of the line). Larger values allow more uneven lines; sma
 ###### Caller Raise – Note settings: Caller raise
 
 Number · Regular+ · `s_styCallerRaise`  
-Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
+Values: -20–20 · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Raise the caller in the main text by this number of points.
 
@@ -908,7 +910,7 @@ Leave it at 0 unless the caller sits too high or too low.
 ###### Note Caller Raise – Note settings: Note caller raise
 
 Number · Regular+ · `s_styNoteCallerRaise`  
-Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
+Values: -20–20 · Needs: “Include Contents of Marker” · Greyed out by: “Lock UI Layout Settings”
 
 > Raise the caller in the note by this number of points.
 

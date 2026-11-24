@@ -32,11 +32,11 @@ Check these things before you open PTXprint:
 2. The main PTXprint window opens. It has:
    * **tabs** across the top (**Basic**, **Layout**, **Fonts+Script** and others). Each tab holds
      one group of settings;
-   * the **☰** button at the top-left, for the main menu;
+   * the **≡** button at the top-left, for the main menu;
    * a **bar at the bottom** with the **Save**, **Print (Make PDF)** and **Quit** buttons.
 
 The first time PTXprint starts, it uses the **Regular** view level, which shows most tabs and
-settings. If the window looks too full, click **☰**, point to **View Level**, and click
+settings. If the window looks too full, click **≡**, point to **View Level**, and click
 **Basic View** or **Mini View**. Hidden settings still work. See the chapter **The main window,
 menu and view levels**.
 
@@ -146,7 +146,7 @@ PTXprint changes the **Base Indent** for you when you change the number of colum
 
 ### Turn pictures on or off
 
-The **Pictures** tab is not shown in the **Mini** view. If you cannot see it, click **☰** ›
+The **Pictures** tab is not shown in the **Mini** view. If you cannot see it, click **≡** ›
 **View Level** › **Basic View** (or higher).
 
 1. Click the **Pictures** tab.
@@ -223,7 +223,7 @@ different name** in the PDF Preview window.
 * **Read the message.** PTXprint shows a message in a window, or in the status line above the
   bottom bar. It often tells you what to change.
 * **Check the view level.** If a tab or setting has disappeared, the view level may be too low.
-  Click **☰** › **View Level** › **Full View**. Or type the name of the setting in the
+  Click **≡** › **View Level** › **Full View**. Or type the name of the setting in the
   **Search for settings** box at the bottom-left of the window.
 * **Check the "Common problems" section** of the chapter about the tab you were using.
 * **Look in the chapter "Problems and solutions"** for problems that are not about one tab.
