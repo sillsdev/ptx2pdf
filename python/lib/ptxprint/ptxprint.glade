@@ -40648,7 +40648,7 @@ so on.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">end</property>
                                         <property name="relief">none</property>
-                                        <property name="uri">https://ptxprintsupport-55742.chipp.ai/w/chat/</property>
+                                        <property name="uri">https://software.sil.org/ptxprint/help/agent/</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
