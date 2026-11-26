@@ -171,27 +171,30 @@ class BorderStyle:
         builder.get_object("xL").set_size_request(self.xL, -1)
         builder.get_object("xR").set_size_request(self.xR, -1)
 
-        builder.get_object("e_box").set_property("height-request", self.iL + (self.oT / 2))
-        builder.get_object("e_box").set_property("width-request", self.iT + (self.oL / 2))
+        # The padding can be negative (text overlapping the border), but GTK sizes and margins cannot:
+        # the preview shows such padding as none
+        px = lambda v: max(0, int(v))
+        builder.get_object("e_box").set_property("height-request", px(self.iL + (self.oT / 2)))
+        builder.get_object("e_box").set_property("width-request", px(self.iT + (self.oL / 2)))
 
-        builder.get_object("tT").set_size_request(-1, self.oT)
-        builder.get_object("tB").set_size_request(-1, self.oB)
-        builder.get_object("tL").set_size_request(self.oL, -1)
-        builder.get_object("tR").set_size_request(self.oR, -1)
+        builder.get_object("tT").set_size_request(-1, px(self.oT))
+        builder.get_object("tB").set_size_request(-1, px(self.oB))
+        builder.get_object("tL").set_size_request(px(self.oL), -1)
+        builder.get_object("tR").set_size_request(px(self.oR), -1)
 
         for w in "TLR":
             builder.get_object(f"o{w}").set_property("margin-top", 0) # self.oT)
-            builder.get_object(f"i{w}").set_property("margin-top", self.iT)
+            builder.get_object(f"i{w}").set_property("margin-top", px(self.iT))
 
         for w in "BLR":
             builder.get_object(f"o{w}").set_property("margin-bottom", 0) # self.oB)
-            builder.get_object(f"i{w}").set_property("margin-bottom", self.iB)
+            builder.get_object(f"i{w}").set_property("margin-bottom", px(self.iB))
         
         builder.get_object("oL").set_property("margin-left", 0) # self.oL)
         builder.get_object("oR").set_property("margin-right", 0) # self.oR)
 
-        builder.get_object("iL").set_property("margin-left", self.iL)
-        builder.get_object("iR").set_property("margin-right", self.iR)
+        builder.get_object("iL").set_property("margin-left", px(self.iL))
+        builder.get_object("iR").set_property("margin-right", px(self.iR))
 
     def boxPaddingUniformClicked(self):
         status = self.view.sensiVisible("c_boxPadSymmetrical")
