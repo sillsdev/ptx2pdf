@@ -1,3 +1,9 @@
 # Symbols Charis lacks but Source Code Pro has: the filled triangle (for the warning sign on some
 # labels), the arrow buttons of the preview, and the black circle (the current choice in some menus)
 "([▲▼◀▶●])" > "\\zcode \1\\zcode*"
+
+# Settings (widgets): a heading followed by a "Radio button · shown in: ..." line is a setting. It gets
+# one look (\zw) at every depth, with that line in small print on the same line (\zwk), and the
+# "Values/Also/Needs/..." line under it in small print too (\zwm)
+'\\s[2345] ([^\n]*?)\s*\n\\p ([^\n]*· shown in: [^\n]*?)\s*(?=\n)' > '\\zw \1 \\zwk \2\\zwk*'
+'(\\zw [^\n]*\n)\\p (?=(?:Values|Choices|Also|Beside|Needs|Greyed out by|Hidden until): )' > '\1\\zwm '
