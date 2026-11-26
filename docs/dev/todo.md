@@ -916,3 +916,16 @@ done: patches/unknown-markers-warning.patch.
   `::: name` containers (container_plugin) for sidebars (`\esb … \esbe`) or other boxes; definition
   lists (deflist_plugin), e.g. for the manual's glossary: each entry as `\p \k term\k* definition` or
   `\p \pl term\pl* definition`.
+
+## Two-column page builder and unsplittable blocks (Nov 2026)
+
+* Two-column pages (`\twocoltrial` → `\balanced`, `src/ptx-output.tex`) cope badly with endnotes that
+  can't be split (popup notes with `\interlinepenalty=10000`, kept apart by a `\penalty0`). The
+  columns end with large gaps, and some notes are printed twice: 4:10 and 6:8 in the scratch test
+  `popupnotes/test3` (two columns, 40 endnotes). Without the `\penalty0` there are no duplicates,
+  but the pages are mostly empty (11 pages against 8). The plain layout has neither problem. My guess
+  (not checked) is that the "drastic" fallbacks shrink `\vsize` (`\vsize=0.8\vsize`,
+  `\divide\vsize 2`), and that `\abortpage`/`\shipout\s@vedpage` re-ship material. Anything else
+  that is large and unsplittable in two columns may hit the same problem.
+* Popup notes no longer need this: they now split like any other note (2026-11-25). To reproduce,
+  give a two-column endnote class `\interlinepenalty=10000` and put a `\penalty0` between notes.
