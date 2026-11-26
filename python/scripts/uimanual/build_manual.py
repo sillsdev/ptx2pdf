@@ -12,6 +12,8 @@ Writes to docs/uimanual/output/:
                                        ("Title {#id}") and cross-reference links, for typesetting
     PTXprint-User-Manual.pdf           that Markdown typeset by PTXprint itself (docs/uimanual/ptx; not
                                        kept in git: the release builds make it with the program they built)
+    PTXprint-User-Manual-help.json     where the program's help (F1, Ctrl+click on a tab) goes in the PDF for
+                                       each tab, dialog and group of settings (Glade id -> heading id)
     build-report.txt                   controls with no explanation, orphan notes, etc.
 
 Content files: each docs/uimanual/content/<chapter-id>.md holds the prose for a chapter,
@@ -383,10 +385,14 @@ def build(repo, dopdf=True, skeleton=False):
     with open(os.path.join(outdir, "PTXprint-User-Manual.html"), "w", encoding="utf-8") as outf:
         outf.write(pageHtml)
     print(f"HTML edition: {len(chapterInfos)} chapters, {linker.count} cross-reference links")
-    linkedMd, mdLinks = makeLinkedMarkdown(humanParts[0], chapterInfos, ctrlKeys)
+    linkedMd, mdLinks, linkedChs = makeLinkedMarkdown(humanParts[0], chapterInfos, ctrlKeys)
     with open(os.path.join(outdir, "PTXprint-User-Manual.md"), "w", encoding="utf-8") as outf:
         outf.write(linkedMd)
     print(f"Linked Markdown edition: {mdLinks} cross-reference links")
+    hmap = helpMap(linkedChs, data)
+    with open(os.path.join(outdir, helpMapName), "w", encoding="utf-8") as outf:
+        json.dump(hmap, outf, indent=1, sort_keys=True)
+    print(f"Help map: {len(hmap)} tabs, dialogs and groups of settings")
     if mdLinks != linker.count:
         print(f"Warning: the Markdown edition has {mdLinks} links but the HTML edition {linker.count}")
     if dopdf:
@@ -401,7 +407,78 @@ def makeLinkedMarkdown(preamble, chapterInfos, ctrlKeys):
     chapters, linker = htmlmanual.linkedChapters(chapterInfos, ctrlKeys)
     parts = [typesetSettings, preamble.rstrip("\n") + "\n", linkedContents(chapters)]
     parts += [mdwriter.tokensToMarkdown(ch.tokens) for ch in chapters]
-    return "\n".join(parts), linker.count
+    return "\n".join(parts), linker.count, chapters
+
+
+# Beside the PDF: where the program's help (F1, Ctrl+click on a tab) goes for each tab, dialog and group of settings
+helpMapName = "PTXprint-User-Manual-help.json"
+
+
+def helpMap(linkedChs, data):
+    """Glade id of a tab, dialog, frame... -> the id of the manual's heading for it (a named destination in the
+    PDF). A tab or dialog that a chapter is about goes to the start of the chapter; another dialog to the
+    section about it, if there is one, else to its part of the settings reference; anything smaller to its
+    heading in the settings reference. Settings themselves have their own anchors (htmlmanual.ctrlAnchor)."""
+    norm = htmlmanual.norm
+    byCid = {ch.cid: ch for ch in linkedChs}
+    refs = {}           # (chapter id, normalised heading titles down from the tab/dialog...) -> heading id
+    prose = {}          # chapter id -> [(normalised title, heading id)] outside the settings reference
+    for ch in linkedChs:
+        path, inref = [], False
+        for h in ch.headings:
+            if h["level"] == 2:
+                inref = norm(h["title"]) == "settings reference"
+            if h["setting"] or h["level"] < 2:
+                continue
+            if not inref:
+                prose.setdefault(ch.cid, []).append((norm(h["title"]), h["id"]))
+            elif h["level"] >= 3:
+                del path[h["level"] - 3:]
+                path.append(norm(h["title"]))
+                refs.setdefault((ch.cid,) + tuple(path), h["id"])
+
+    def refPath(crumbs):            # as renderReference() makes the headings
+        path = list(crumbs)
+        if len(path) > 3:
+            path = path[:2] + [" › ".join(path[2:])]
+        return tuple(norm(stripTab(p)) for p in path)
+
+    res = {}
+    places = [(c.get("breadcrumbIds") or [], c.get("breadcrumbs") or []) for c in data["controls"]]
+    places += [([None] * (len(t["breadcrumbs"]) - 1) + [t["id"]], t["breadcrumbs"]) for t in data["tabs"]]
+    for ids, crumbs in places:     # (a tab's own heading is the last of its breadcrumbs)
+        cid = chapterFor(crumbs)
+        if cid not in byCid:
+            continue
+        path = refPath(crumbs)
+        for i, gid in enumerate(ids[:len(path)]):
+            if gid and gid not in res and (cid,) + path[:i + 1] in refs:
+                res[gid] = refs[(cid,) + path[:i + 1]]
+    for t in data["tabs"]:          # a (sub-)tab with a section of its own, e.g. "Footnotes": go there instead
+        cid = chapterFor(t["breadcrumbs"])
+        want = norm(stripTab(t["breadcrumbs"][-1]))
+        sect = next((hid for title, hid in prose.get(cid, []) if title == want), None)
+        if t["id"] and sect is not None:
+            res[t["id"]] = sect
+
+    tops =[(t["id"], t["breadcrumbs"][0]) for t in data["tabs"] if len(t["breadcrumbs"]) == 1]
+    tops += [(d["id"], d["title"]) for d in data["dialogs"] if d["id"]]
+    tops += [(c["breadcrumbIds"][0], c["breadcrumbs"][0]) for c in data["controls"]
+             if c.get("breadcrumbIds") and c["breadcrumbIds"][0] and c["breadcrumbs"]]
+    for gid, crumb in tops:
+        cid = chapterFor([crumb])
+        if cid not in byCid:
+            continue
+        if crumb == next(p for k, t, p in chapters if k == cid)[0]:                  # what the chapter is about
+            res[gid] = byCid[cid].id
+            continue
+        core = norm(re.sub(r"\(dialog\)|\bdialog\b|\.\.\.|…", " ", crumb))
+        sect = next((hid for t, hid in prose.get(cid, []) if core in t and "dialog" in t), None)
+        if sect is not None:
+            res[gid] = sect
+        elif gid not in res:
+            res[gid] = byCid[cid].id
+    return res
 
 
 # How PTXprint (markdown.py) typesets the linked edition: h1 (chapter) is \ms1, h2 \s1, h3 \s2 ... and

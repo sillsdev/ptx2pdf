@@ -18,6 +18,10 @@ It produces, in `output/`:
   Charis lacks. A character none of them has is silently left out of the PDF, so keep to those.
   The Windows and macOS release builds (`ptxprint.spec`) typeset it with the program they have just
   built (`build_manual.py --pdf-only`), so commit `PTXprint-User-Manual.md` whenever you build.
+* `PTXprint-User-Manual-help.json` – where the program's context help goes in the PDF: F1 opens the
+  manual at the entry for the setting under the mouse (its `s-<id>` anchor), else at the group of
+  settings, dialog or tab it is in, found in this map; Ctrl+click on a tab opens it at that tab. Commit
+  it with `PTXprint-User-Manual.md`, as the release builds put it beside the PDF.
 
 ## What is in git, and what is not
 

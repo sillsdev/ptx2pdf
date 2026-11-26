@@ -51,6 +51,7 @@ from ptxprint.hyphen import Hyphenation
 from ptxprint.accelerate import onTextEditKeypress
 from ptxprint.gtkadjlist import AdjListView
 from ptxprint.pdf_viewer import PDFViewer, Paragraphs
+from ptxprint.manualhelp import ManualHelp
 from ptxprint.tatweel import TatweelDialog
 from ptxprint.gtkpolyglot import PolyglotSetup
 from ptxprint.gtkfont import setupGtkFonts
@@ -1282,6 +1283,7 @@ class GtkViewModel(ViewModel):
         setupGtkFonts(self)
 
         self.builder.connect_signals_full(self.connect_signal, self)
+        self.manualHelp = ManualHelp(self)      # F1, and Ctrl+click on a tab, open the User Manual there
         self.mw = self.builder.get_object("ptxprint")
         logger.debug("Glade loaded in gtkview")
 
@@ -7438,25 +7440,14 @@ Thank you,
             else:
                 showref = self.builder.get_object("dlg_preview")
                 self.pdf_viewer.loadnshow(catpdf, widget=showref, tab="manual")
-                self.set("c_bkView", False, mod=False)
-                self.pdf_viewer.set_zoom_fit_to_screen(None)
                 showref.present()
- 
+                self.pdf_viewer.fitWhenSized()
+
         logger.debug(f"{catpdf=}")
 
     def onManualClicked(self, btn):
         """ Opens the PTXprint User Manual in the Manual tab of the PDF Preview window """
-        manual = os.path.join(pycodedir(), "PDFassets", "reference", "PTXprint-User-Manual.pdf")
-        if not os.path.exists(manual):      # running from the source: the manual's build puts it here
-            manual = os.path.join(pycodedir(), "..", "..", "..", "docs", "uimanual", "output", "PTXprint-User-Manual.pdf")
-        if not os.path.exists(manual):
-            self.doStatus(_("The User Manual is not installed (make it with python/scripts/uimanual/build_manual.py)"), warning=True)
-            return True
-        showref = self.builder.get_object("dlg_preview")
-        self.pdf_viewer.loadnshow(os.path.normpath(manual), widget=showref, tab="manual")
-        self.set("c_bkView", False, mod=False)
-        self.pdf_viewer.set_zoom_fit_to_screen(None)
-        showref.present()
+        self.manualHelp.openManual()
         return True
 
     def onTechRefClicked(self, btn):

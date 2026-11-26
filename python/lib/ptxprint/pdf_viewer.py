@@ -298,11 +298,15 @@ class PDFViewer:
                 lpcount.set_label(f"{str(pgmax)}")
 
     def onBookViewClicked(self, widget):
-        bkview = self.model.get("c_bkView", True)
-        step_increment = 2 if bkview else 1
-        if hasattr(self, 'pdf_viewer'):
-            self.set_zoom_fit_to_screen(None)
-            self.onPgNumChanged(None, None)
+        """ Book view (spreads) only applies to the main PDF: redraw it at once, fitted to the window """
+        v = self.viewers[0]
+        if v.document is None or v.current_index is None:
+            return
+        v.spread_mode = self.model.get("c_bkView", False)      # the fit depends on it
+        oldzoom = v.zoomLevel
+        v.set_zoom_fit_to_screen(self._currview() is v)
+        if v.zoomLevel == oldzoom:          # set_zoom only redraws when the zoom changes
+            v.show_pdf(v.current_index)
 
     def onPdfAdjOverlayChanged(self, widget):
         self.setShowAdjOverlay(self.model.get("c_pdfadjoverlay"))
@@ -1014,9 +1018,20 @@ class PDFFileViewer:
             return True
         if dest is not None and dest.type == Poppler.DestType.NAMED:
             dest = self.document.find_dest(dest.named_dest)
+        return self.gotoDest(dest)
+
+    def gotoNamedDest(self, name):
+        """ Goes to a named destination (an anchor) in this PDF, as a link to it does. Returns whether it is there. """
+        if self.document is None:
+            return False
+        return self.gotoDest(self.document.find_dest(name))
+
+    def gotoDest(self, dest):
+        """ Goes to a place in this PDF (a Poppler.Dest), remembering where we were for Back """
         if dest is None or not 0 < dest.page_num <= self.numpages:
             return False
-        self.history.append(self.place())
+        if self.current_index is not None:
+            self.history.append(self.place())
         self.future = []
         top = max(0, (self.psize[1] - dest.top) * self.zoomLevel - 20) if hasTop(dest) else 0
         self.goTo((dest.page_num, top, self.zoomLevel, dest.top if hasTop(dest) else None))
@@ -1190,6 +1205,23 @@ class PDFFileViewer:
         fit = self.get_fit_zoom()
         if fit is not None:
             self.set_zoom(fit, setz=iscurrent)
+
+    def fitWhenSized(self):
+        """ Fits the page to the window once the view has its real size. A tab that has just been shown
+            (or a window just opened) has not been laid out yet, so fitting at once uses a stale size. """
+        view = self.hbox.get_parent()
+        if view is None:
+            return
+        if getattr(self, "fitHandler", None) is not None:
+            view.disconnect(self.fitHandler)
+        def onSized(w, alloc):
+            if alloc.width <= 1 or alloc.height <= 1:   # not laid out yet: wait for the next one
+                return
+            w.disconnect(self.fitHandler)
+            self.fitHandler = None
+            GLib.idle_add(lambda: self.set_zoom_fit_to_screen(True) and False)    # not while being laid out
+        self.fitHandler = view.connect("size-allocate", onSized)
+        view.queue_resize()
 
     def set_page(self, action):
         if self.current_index is None or not self.numpages:

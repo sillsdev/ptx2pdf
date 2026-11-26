@@ -130,14 +130,17 @@ def add_manual(exe, root):
     if res.returncode or not os.path.exists(pdf):
         print("WARNING: the user manual PDF could not be made, so this build does not have it")
         return
+    # where F1 and Ctrl+click on a tab go in the manual; made with the Markdown edition and kept in git with it
+    helpmap = os.path.join("docs", "uimanual", "output", "PTXprint-User-Manual-help.json")
     for ref in glob(os.path.join(root, "**", "OrnamentsCatalogue.pdf"), recursive=True):
-        dest = os.path.join(os.path.dirname(ref), pdfname)
-        if os.path.lexists(dest):
-            continue
-        if os.path.islink(ref):     # a macOS bundle links Contents/Frameworks to the files in Contents/Resources
-            os.symlink(os.path.join(os.path.dirname(os.readlink(ref)), pdfname), dest)
-        else:
-            shutil.copy2(pdf, dest)
+        for name, src in ((pdfname, pdf), (os.path.basename(helpmap), helpmap)):
+            dest = os.path.join(os.path.dirname(ref), name)
+            if os.path.lexists(dest) or not os.path.exists(src):
+                continue
+            if os.path.islink(ref):     # a macOS bundle links Contents/Frameworks to the files in Contents/Resources
+                os.symlink(os.path.join(os.path.dirname(os.readlink(ref)), name), dest)
+            else:
+                shutil.copy2(src, dest)
 
 # mac build functions
 def create_dmg_staging(app_name):
