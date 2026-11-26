@@ -33,6 +33,7 @@ These links open web pages or documents:
 * **Documentation | FAQs | Gallery | Support | Download** – the PTXprint home page. PTXprint does not update itself, so check here for new versions and download them yourself.
 * **Learn: How to...** – short articles about common tasks.
 * **Training (Videos and Presentations)** – videos on the Paratext website and on Vimeo, and a **Training Presentation** (a large set of Google Slides that trainers can use).
+* **User Manual** – this manual. It opens in the **Manual** tab of the PDF Preview window, with its contents beside it; click a link to follow it. It comes with PTXprint, so it opens without internet.
 * **Ornaments Catalog** and **Technical Reference** (**Full** view only) – PDF documents that come with PTXprint. They open without internet.
 * **Advanced Tech Docs** (**Full** view only) – technical documents for advanced users.
 * **Support Agent** – an AI chatbot that answers questions about PTXprint.
@@ -222,12 +223,12 @@ A heading for the home page link. Visit the home page from time to time to downl
 
 ##### Reference Documentation
 
-Label · Regular+ · `l_techFAQ`
+Label · Mini+ · `l_techFAQ`
 
 > Reference documents for PTXprint:  
-> the Ornaments Catalog, the Technical Reference (for advanced users) and, when online, the Advanced Tech Docs.
+> the User Manual, the Ornaments Catalog, the Technical Reference (for advanced users) and, when online, the Advanced Tech Docs.
 
-A heading for the reference documents. Only shown in the **Full** view.
+A heading for the reference documents. The **User Manual** is shown in every view; the other documents only in the **Full** view.
 
 ##### Advanced Tech Docs
 
@@ -322,6 +323,15 @@ Also: Link to training videos on the Vimeo platform
 > The videos on Vimeo tend to be longer and more detailed, but less polished. However, these videos cover the latest available features.
 
 Opens the videos in your web browser. Only shown when internet use is allowed.
+
+##### User Manual
+
+Link · Mini+ · `lb_userManual`  
+Also: Show the User Manual
+
+> Open the PTXprint User Manual in the Manual tab of the PDF Preview window.
+
+Opens this manual in the **Manual** tab of the PDF Preview window. See "PDF Preview window" for moving around in it.
 
 ##### Ornaments Catalog
 

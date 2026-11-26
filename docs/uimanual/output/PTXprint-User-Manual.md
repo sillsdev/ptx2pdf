@@ -6,7 +6,7 @@ outline: 3
 
 # PTXprint User Manual
 
-Generated 2026-11-24.
+Generated 2026-11-26.
 
 ## Contents {#contents}
 
@@ -392,6 +392,10 @@ Most tab chapters have the same parts:
 * **Common tasks** – numbered steps for the things people do most often.
 * **Common problems** – what you see, why it happens, and what to change.
 * **Settings reference** – every setting on the tab (see below).
+
+You don't have to look things up yourself: in PTXprint, press **F1** with the mouse over any setting
+to open this manual at its entry, or **Ctrl+click** the name of a tab to open it at the chapter about
+that tab.
 
 ## 1.4 How to read a settings-reference entry {#00-introduction--how-to-read-a-settings-reference-entry}
 

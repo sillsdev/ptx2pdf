@@ -80,6 +80,10 @@ Most tab chapters have the same parts:
 * **Common problems** – what you see, why it happens, and what to change.
 * **Settings reference** – every setting on the tab (see below).
 
+You don't have to look things up yourself: in PTXprint, press **F1** with the mouse over any setting
+to open this manual at its entry, or **Ctrl+click** the name of a tab to open it at the chapter about
+that tab.
+
 ## 1.4 How to read a settings-reference entry
 
 At the end of each tab chapter, the **Settings reference** lists every setting (check box, list,

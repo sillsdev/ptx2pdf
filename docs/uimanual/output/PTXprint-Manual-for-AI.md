@@ -1,6 +1,6 @@
 # PTXprint User Interface Manual (AI support edition)
 
-Generated 2026-11-24 from the PTXprint source code and the explanations in docs/uimanual/content.
+Generated 2026-11-26 from the PTXprint source code and the explanations in docs/uimanual/content.
 
 ## Notes for the AI support assistant
 
@@ -421,6 +421,10 @@ Most tab chapters have the same parts:
 * **Common tasks** – numbered steps for the things people do most often.
 * **Common problems** – what you see, why it happens, and what to change.
 * **Settings reference** – every setting on the tab (see below).
+
+You don't have to look things up yourself: in PTXprint, press **F1** with the mouse over any setting
+to open this manual at its entry, or **Ctrl+click** the name of a tab to open it at the chapter about
+that tab.
 
 ## 1.4 How to read a settings-reference entry
 
@@ -16291,7 +16295,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 * **Show main PTXprint settings** (**Alt+S**) brings the main window to the front.
 * The title bar shows the PDF file name and the date and time it was made. Check this to be sure you see the newest PDF.
 
-The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Reference** shows reference documents such as the Ornaments Catalogue. Tabs without a PDF are hidden.
+The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Manual** shows this User Manual (from **User Manual** on the **Help** tab) and other reference documents such as the Ornaments Catalogue, with their contents beside them. Tabs without a PDF are hidden.
 
 ## 22.3 Moving around: pages, spreads and zoom
 
@@ -16305,6 +16309,8 @@ The navigation controls are in the top bar.
 * Zoom: the **Zoom** box, **Ctrl+mouse wheel** (zooms at the mouse pointer), **Ctrl+Plus** and **Ctrl+Minus**. **Ctrl+F**, **Ctrl+0** or **Zoom Fit to Screen** fit the whole page (or spread) in the window.
 * For right-to-left books, the arrow buttons and keys are reversed to follow the book.
 * Links: click a link in the PDF (for example a cross-reference, or a contents entry in a PDF that has them) to go to the place it points to. The pointer becomes a hand over a link. A web address opens in your web browser.
+* Contents lists: double-click a line to go to that heading. This counts as following a link.
+* Going back: **Alt+Left** (or **Backspace**) goes back to where you followed a link (or a contents line) from, and **Alt+Right** forward again. Each tab keeps its own list. In the **Manual** tab, the row of four small arrow buttons under the contents does the same. From left to right: **▲** lists the places to go back to (earlier), **◀** goes back, **▶** goes forward again, and **▼** lists the places to go forward to (later). Each place in a list is named by its heading and page.
 
 **Book View** (Ctrl+B) shows two facing pages side by side, as in a printed book. Page 1 is shown alone because it is a right-hand page; then 2+3, 4+5 and so on. Use it to check that facing pages look balanced.
 
@@ -16924,6 +16930,48 @@ There you set the limits for what is marked, for example **Bad Space minimum wid
 Table · Mini+ · `tv_pdfContents`
 
 Double-click a line to jump to that page. With only one book, its list is opened out automatically.
+
+#### Manual
+
+##### Contents
+
+Table · Full · `tv_manualContents`
+
+> The contents of the document shown. Click a line to go there.
+
+The PDF's bookmarks (for this manual: chapters and sections). Going to a line can be undone with **◀** (Back) below.
+
+##### List the places back in the clicked link history
+
+Button · Full · `btn_history_backlist`
+
+> List the places back in the clicked link history
+
+Shows the places you can go back to, the most recent first, each named by its heading and page. Choose one to go straight there.
+
+##### Go back in the clicked link history
+
+Button · Full · `btn_history_back`
+
+> Go back in the clicked link history
+
+Its tooltip names the place it goes back to. Greyed out until you have followed a link.
+
+##### Go forward in the clicked link history
+
+Button · Full · `btn_history_forward`
+
+> Go forward in the clicked link history
+
+Only usable after **Back**. Its tooltip names the place it goes to.
+
+##### List the places forward in the clicked link history
+
+Button · Full · `btn_history_forwardlist`
+
+> List the places forward in the clicked link history
+
+Shows the places you can go forward to again. Following a new link clears this list.
 
 ### Enter new anchor verse ref (dialog)
 
@@ -17576,6 +17624,7 @@ These links open web pages or documents:
 * **Documentation | FAQs | Gallery | Support | Download** – the PTXprint home page. PTXprint does not update itself, so check here for new versions and download them yourself.
 * **Learn: How to...** – short articles about common tasks.
 * **Training (Videos and Presentations)** – videos on the Paratext website and on Vimeo, and a **Training Presentation** (a large set of Google Slides that trainers can use).
+* **User Manual** – this manual. It opens in the **Manual** tab of the PDF Preview window, with its contents beside it; click a link to follow it. It comes with PTXprint, so it opens without internet.
 * **Ornaments Catalog** and **Technical Reference** (**Full** view only) – PDF documents that come with PTXprint. They open without internet.
 * **Advanced Tech Docs** (**Full** view only) – technical documents for advanced users.
 * **Support Agent** – an AI chatbot that answers questions about PTXprint.
@@ -17765,12 +17814,12 @@ A heading for the home page link. Visit the home page from time to time to downl
 
 ##### Reference Documentation
 
-Label · Regular+ · `l_techFAQ`
+Label · Mini+ · `l_techFAQ`
 
 > Reference documents for PTXprint:  
-> the Ornaments Catalog, the Technical Reference (for advanced users) and, when online, the Advanced Tech Docs.
+> the User Manual, the Ornaments Catalog, the Technical Reference (for advanced users) and, when online, the Advanced Tech Docs.
 
-A heading for the reference documents. Only shown in the **Full** view.
+A heading for the reference documents. The **User Manual** is shown in every view; the other documents only in the **Full** view.
 
 ##### Advanced Tech Docs
 
@@ -17865,6 +17914,15 @@ Also: Link to training videos on the Vimeo platform
 > The videos on Vimeo tend to be longer and more detailed, but less polished. However, these videos cover the latest available features.
 
 Opens the videos in your web browser. Only shown when internet use is allowed.
+
+##### User Manual
+
+Link · Mini+ · `lb_userManual`  
+Also: Show the User Manual
+
+> Open the PTXprint User Manual in the Manual tab of the PDF Preview window.
+
+Opens this manual in the **Manual** tab of the PDF Preview window. See "PDF Preview window" for moving around in it.
 
 ##### Ornaments Catalog
 

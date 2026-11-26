@@ -55,6 +55,15 @@ cd to/where/you/have/the/ptxprint/repository
 pip3 install -e .
 ```
 
+This installs the Python packages listed under `dependencies` in `pyproject.toml`, such as
+`markdown-it-py` and `mdit-py-plugins` (needed to typeset Markdown, including the User Manual PDF
+made by `python/scripts/uimanual/build_manual.py`). When new dependencies are added there, an existing
+setup does not get them by itself: run `pip3 install -e .` again after pulling. To add just one that
+is missing (with option b above):
+```
+pip3 install mdit-py-plugins
+```
+
 Done! You are ready to build the .exe
 
 ```
