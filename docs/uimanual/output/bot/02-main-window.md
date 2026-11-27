@@ -64,7 +64,20 @@ PTXprint uses colour and bold text to show what is turned on or changed:
   * **Tabs+Borders** – "Tabs" or "Borders" is blue when thumb tabs or decorative borders are turned on.
 * Some number settings (mostly on the **Layout** tab: font size, line spacing, margins, column gutter, header and footer positions and similar) have a label that becomes **bold** when the value is different from the PTXprint default. So you can see quickly which values you have changed.
 
-## 3.6 The bottom bar
+## 3.6 Help on any setting: F1 and Ctrl+click
+
+This manual is always at hand while you work:
+
+* Press **F1** with the mouse over a setting to open the manual at that setting's entry. If the setting
+  has no entry of its own, the manual opens at the part about the group of settings, dialog or tab it
+  is in. This works in dialogs too.
+* **Ctrl+click** the name of a tab (also the smaller tabs inside some tabs, such as **Footnotes**) to open
+  the manual at the part about that tab. The tab's tooltip reminds you of this.
+
+The manual opens in the **Manual** tab of the PDF Preview window, fitted to the window. Use **Alt+Left**
+(or the **◀** button under the contents) to go back to where you were reading before.
+
+## 3.7 The bottom bar
 
 From left to right, the bar at the bottom of the window has:
 
@@ -78,7 +91,7 @@ Above the bar, a **status line** sometimes shows a message from PTXprint (for ex
 
 When a newer version of PTXprint is available, a **Check for updates...** button can appear at the top-left, just to the right of the ≡ button. (PTXprint checks at most once a day, only on Windows, and only if Internet use is allowed on the **Advanced** tab.)
 
-## 3.7 The ≡ main menu
+## 3.8 The ≡ main menu
 
 * **Show PDF** – what happens with the PDF after printing:
   * **Preview Pane** – PTXprint shows the PDF in its own preview window. This is the usual choice. PTXprint can also use the preview for some editing tools.
@@ -88,7 +101,7 @@ When a newer version of PTXprint is available, a **Check for updates...** button
 * **Language** – the language of the PTXprint menus and labels.
 * **Donate** and **Give Feedback** – open a web page.
 
-## 3.8 Common tasks
+## 3.9 Common tasks
 
 ### See more (or fewer) settings
 
@@ -128,7 +141,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 2. Click **≡** › **Language** and click a language.
 3. PTXprint closes its window and opens it again in the new language, with the same project and configuration.
 
-## 3.9 Common problems
+## 3.10 Common problems
 
 ### A tab or setting that I used before has disappeared
 
@@ -174,7 +187,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 
 **Likely cause:** The configuration is locked with a password, so it is not saved. **What to do:** On the **Basic** tab, click the lock button and enter the password to unlock it. Or use **Save As** to make a new configuration.
 
-## 3.10 Settings reference
+## 3.11 Settings reference
 
 ### Main menu (top-left ≡ button)
 

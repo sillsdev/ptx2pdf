@@ -62,6 +62,19 @@ PTXprint uses colour and bold text to show what is turned on or changed:
   * **Tabs+Borders** – "Tabs" or "Borders" is blue when thumb tabs or decorative borders are turned on.
 * Some number settings (mostly on the **Layout** tab: font size, line spacing, margins, column gutter, header and footer positions and similar) have a label that becomes **bold** when the value is different from the PTXprint default. So you can see quickly which values you have changed.
 
+## Help on any setting: F1 and Ctrl+click
+
+This manual is always at hand while you work:
+
+* Press **F1** with the mouse over a setting to open the manual at that setting's entry. If the setting
+  has no entry of its own, the manual opens at the part about the group of settings, dialog or tab it
+  is in. This works in dialogs too.
+* **Ctrl+click** the name of a tab (also the smaller tabs inside some tabs, such as **Footnotes**) to open
+  the manual at the part about that tab. The tab's tooltip reminds you of this.
+
+The manual opens in the **Manual** tab of the PDF Preview window, fitted to the window. Use **Alt+Left**
+(or the **◀** button under the contents) to go back to where you were reading before.
+
 ## The bottom bar
 
 From left to right, the bar at the bottom of the window has:

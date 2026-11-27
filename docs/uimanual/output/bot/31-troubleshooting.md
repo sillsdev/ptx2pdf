@@ -23,7 +23,7 @@ First try these three quick checks. They solve many problems:
 1. On the **Basic** tab, in **What to Print**, click **Single Book** and choose a book. Or click **Select Multiple Books...**, choose books and click **OK**.
 2. Print again.
 
-### The status line says "One of more fonts have not been set yet"
+### The status line says "One or more fonts have not been set yet"
 
 **Why this happens:** No font has been chosen for the main text.
 
@@ -88,17 +88,6 @@ First try these three quick checks. They solve many problems:
 | "Bad xdvi file, probably failed to load a picture or font" | A picture or font could not be loaded when the PDF was written. | Check missing pictures on **Pictures** and the fonts on **Fonts+Script**. |
 | "Possibly a faulty installation" | Files that come with PTXprint are missing. | Install PTXprint again. |
 | "Oops! Something unexpected happened…" or "Probably a TeX macro problem" | PTXprint does not recognise the error. | Click **Tidy Up** (**Help** tab) and print again. If it still fails, send an archive to support and say which setting you changed last. |
-
-### PTXprint says "PDF was created BUT… Layout problems were encountered on page(s)…"
-
-**Why this happens:** The PDF was made, but on the listed pages the typesetter had to break its own rules. Text may run over the bottom margin, or a picture may be lost.
-
-**What to do:**
-
-1. Look at the listed pages in the PDF.
-2. If there is a large picture on or near that page, make it smaller (**Scale** on the **Pictures** tab) or move it (change the **Anchor Ref**).
-3. If you adjusted paragraphs on those pages, reset them: in the **PDF Preview** window, right-click a paragraph › **Reset Adjustments** › **Page**.
-4. Print again.
 
 ### The status line says "Rerun to fix: …"
 

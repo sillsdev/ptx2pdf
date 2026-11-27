@@ -9,7 +9,8 @@ python python/scripts/uimanual/build_manual.py          # ui_map.json + docs/uim
 python python/scripts/uimanual/build_manual.py --skeleton --nopdf   # also refresh data/chapters/*.md, skip the PDF
 ```
 
-Requires PyMuPDF (`fitz`) and `markdown-it-py` (both already used by PTXprint).
+Requires PyMuPDF (`fitz`), `markdown-it-py` and `mdit-py-plugins` (all used by PTXprint, and installed
+by `pip3 install -e .`; the PDF is typeset by PTXprint itself, which needs `mdit-py-plugins` for Markdown).
 
 * `extract_ui.py` – reads `ptxprint.glade`, `gtkview.py` (view levels, sensitivities),
   `modelmap.py` (config keys) and `texpert.py` (Advanced › Other settings). No GTK needed.

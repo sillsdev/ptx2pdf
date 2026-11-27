@@ -6,7 +6,7 @@ outline: 3
 
 # PTXprint User Manual
 
-Generated 2026-11-26.
+Generated 2026-11-27.
 
 ## Contents {#contents}
 
@@ -39,11 +39,12 @@ Generated 2026-11-26.
     - [3.3 How PTXprint saves your settings](#02-main-window--how-ptxprint-saves-your-settings)
     - [3.4 View levels](#02-main-window--view-levels)
     - [3.5 Tab labels and highlighted settings](#02-main-window--tab-labels-and-highlighted-settings)
-    - [3.6 The bottom bar](#02-main-window--the-bottom-bar)
-    - [3.7 The ≡ main menu](#02-main-window--the-main-menu)
-    - [3.8 Common tasks](#02-main-window--common-tasks)
-    - [3.9 Common problems](#02-main-window--common-problems)
-    - [3.10 Settings reference](#02-main-window--settings-reference)
+    - [3.6 Help on any setting: F1 and Ctrl+click](#02-main-window--help-on-any-setting-f1-and-ctrl-click)
+    - [3.7 The bottom bar](#02-main-window--the-bottom-bar)
+    - [3.8 The ≡ main menu](#02-main-window--the-main-menu)
+    - [3.9 Common tasks](#02-main-window--common-tasks)
+    - [3.10 Common problems](#02-main-window--common-problems)
+    - [3.11 Settings reference](#02-main-window--settings-reference)
 
 **Part 2: Find an answer** – Step-by-step tasks, and what to do when something goes wrong.
 
@@ -747,7 +748,20 @@ PTXprint uses colour and bold text to show what is turned on or changed:
   * [**Tabs+Borders**](#s-lb-TabsBorders) – "Tabs" or ["Borders"](#s-btn-sbBorders) is blue when thumb tabs or decorative borders are turned on.
 * Some number settings (mostly on the [**Layout**](#ch-04-layout) tab: font size, line spacing, margins, column gutter, header and footer positions and similar) have a label that becomes [**bold**](#s-c-styFaceBold) when the value is different from the PTXprint default. So you can see quickly which values you have changed.
 
-## 3.6 The bottom bar {#02-main-window--the-bottom-bar}
+## 3.6 Help on any setting: F1 and Ctrl+click {#02-main-window--help-on-any-setting-f1-and-ctrl-click}
+
+This manual is always at hand while you work:
+
+* Press **F1** with the mouse over a setting to open the manual at that setting's entry. If the setting
+  has no entry of its own, the manual opens at the part about the group of settings, dialog or tab it
+  is in. This works in dialogs too.
+* **Ctrl+click** the name of a tab (also the smaller tabs inside some tabs, such as **Footnotes**) to open
+  the manual at the part about that tab. The tab's tooltip reminds you of this.
+
+The manual opens in the **Manual** tab of the PDF Preview window, fitted to the window. Use **Alt+Left**
+(or the **◀** button under the contents) to go back to where you were reading before.
+
+## 3.7 The bottom bar {#02-main-window--the-bottom-bar}
 
 From left to right, the bar at the bottom of the window has:
 
@@ -761,7 +775,7 @@ Above the bar, a **status line** sometimes shows a message from PTXprint (for ex
 
 When a newer version of PTXprint is available, a **Check for updates...** button can appear at the top-left, just to the right of the ≡ button. (PTXprint checks at most once a day, only on Windows, and only if Internet use is allowed on the [**Advanced**](#ch-13-advanced) tab.)
 
-## 3.7 The ≡ main menu {#02-main-window--the-main-menu}
+## 3.8 The ≡ main menu {#02-main-window--the-main-menu}
 
 * [**Show PDF**](#s-btn-menu-showPDF) – what happens with the PDF after printing:
   * **Preview Pane** – PTXprint shows the PDF in its own preview window. This is the usual choice. PTXprint can also use the preview for some editing tools.
@@ -771,7 +785,7 @@ When a newer version of PTXprint is available, a **Check for updates...** button
 * **Language** – the language of the PTXprint menus and labels.
 * [**Donate**](#s-btn-menu-donate) and [**Give Feedback**](#s-btn-menu-feedback) – open a web page.
 
-## 3.8 Common tasks {#02-main-window--common-tasks}
+## 3.9 Common tasks {#02-main-window--common-tasks}
 
 ### See more (or fewer) settings {#02-main-window--see-more-or-fewer-settings}
 
@@ -811,7 +825,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 2. Click **≡** › **Language** and click a language.
 3. PTXprint closes its window and opens it again in the new language, with the same project and configuration.
 
-## 3.9 Common problems {#02-main-window--common-problems}
+## 3.10 Common problems {#02-main-window--common-problems}
 
 ### A tab or setting that I used before has disappeared {#02-main-window--a-tab-or-setting-that-i-used-before-has-disappeared}
 
@@ -857,7 +871,7 @@ Click the **Open folder containing the PDF** button at the bottom of the window 
 
 **Likely cause:** The configuration is locked with a password, so it is not saved. **What to do:** On the [**Basic**](#ch-03-basic) tab, click the lock button and enter the password to unlock it. Or use **Save As** to make a new configuration.
 
-## 3.10 Settings reference {#02-main-window--settings-reference}
+## 3.11 Settings reference {#02-main-window--settings-reference}
 
 ### Main menu (top-left ≡ button) {#02-main-window--main-menu-top-left-button}
 
@@ -2342,7 +2356,7 @@ First try these three quick checks. They solve many problems:
 1. On the [**Basic**](#ch-03-basic) tab, in **What to Print**, click [**Single Book**](#s-r-book-single) and choose a book. Or click [**Select Multiple Books...**](#s-btn-chooseBooks), choose books and click **OK**.
 2. Print again.
 
-### The status line says "One of more fonts have not been set yet" {#31-troubleshooting--the-status-line-says-one-of-more-fonts-have-not-been-set-yet}
+### The status line says "One or more fonts have not been set yet" {#31-troubleshooting--the-status-line-says-one-or-more-fonts-have-not-been-set-yet}
 
 **Why this happens:** No font has been chosen for the main text.
 
@@ -2407,17 +2421,6 @@ First try these three quick checks. They solve many problems:
 | "Bad xdvi file, probably failed to load a picture or font" | A picture or font could not be loaded when the PDF was written. | Check missing pictures on **Pictures** and the fonts on **Fonts+Script**. |
 | "Possibly a faulty installation" | Files that come with PTXprint are missing. | Install PTXprint again. |
 | "Oops! Something unexpected happened…" or "Probably a TeX macro problem" | PTXprint does not recognise the error. | Click **Tidy Up** (**Help** tab) and print again. If it still fails, send an archive to support and say which setting you changed last. |
-
-### PTXprint says "PDF was created BUT… Layout problems were encountered on page(s)…" {#31-troubleshooting--ptxprint-says-pdf-was-created-but-layout-problems-were-encountered-on-page-s}
-
-**Why this happens:** The PDF was made, but on the listed pages the typesetter had to break its own rules. Text may run over the bottom margin, or a picture may be lost.
-
-**What to do:**
-
-1. Look at the listed pages in the PDF.
-2. If there is a large picture on or near that page, make it smaller (**Scale** on the [**Pictures**](#ch-09-pictures) tab) or move it (change the **Anchor Ref**).
-3. If you adjusted paragraphs on those pages, reset them: in the **PDF Preview** window, right-click a paragraph › **Reset Adjustments** › **Page**.
-4. Print again.
 
 ### The status line says "Rerun to fix: …" {#31-troubleshooting--the-status-line-says-rerun-to-fix}
 
@@ -16184,7 +16187,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 * **Show main PTXprint settings** (**Alt+S**) brings the main window to the front.
 * The title bar shows the PDF file name and the date and time it was made. Check this to be sure you see the newest PDF.
 
-The preview has tabs down the left side. **Content** shows your main PDF. [**Cover**](#15-peripherals--cover) shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used [**Compare PDFs**](#s-c-createDiff) (on the [**Finishing**](#ch-17-finishing) tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Manual** shows this User Manual (from [**User Manual**](#s-lb-userManual) on the [**Help**](#ch-21-help) tab) and other reference documents such as the Ornaments Catalogue, with their contents beside them. Tabs without a PDF are hidden.
+The preview has tabs down the left side. **Content** shows your main PDF. [**Cover**](#15-peripherals--cover) shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used [**Compare PDFs**](#s-c-createDiff) (on the [**Finishing**](#ch-17-finishing) tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Manual** shows this User Manual (from [**User Manual**](#s-lb-userManual) on the [**Help**](#ch-21-help) tab, or **F1** over any setting) and other reference documents such as the Ornaments Catalogue, with their contents beside them. Tabs without a PDF are hidden.
 
 ## 22.3 Moving around: pages, spreads and zoom {#19-preview--moving-around-pages-spreads-and-zoom}
 
@@ -17511,7 +17514,7 @@ These links open web pages or documents:
 * **Documentation | FAQs | Gallery | Support | Download** – the PTXprint home page. PTXprint does not update itself, so check here for new versions and download them yourself.
 * **Learn: How to...** – short articles about common tasks.
 * **Training (Videos and Presentations)** – videos on the Paratext website and on Vimeo, and a **Training Presentation** (a large set of Google Slides that trainers can use).
-* [**User Manual**](#s-lb-userManual) – this manual. It opens in the **Manual** tab of the PDF Preview window, with its contents beside it; click a link to follow it. It comes with PTXprint, so it opens without internet.
+* [**User Manual**](#s-lb-userManual) – this manual. It opens in the **Manual** tab of the PDF Preview window, with its contents beside it; click a link to follow it. It comes with PTXprint, so it opens without internet. You can also press **F1** over any setting, or **Ctrl+click** a tab's name, to open the manual at the part about it.
 * [**Ornaments Catalog**](#s-lb-ornaments-cat) and [**Technical Reference**](#s-lb-tech-ref) (**Full** view only) – PDF documents that come with PTXprint. They open without internet.
 * **Advanced Tech Docs** (**Full** view only) – technical documents for advanced users.
 * **Support Agent** – an AI chatbot that answers questions about PTXprint.
@@ -17699,7 +17702,7 @@ Also: Show the User Manual
 
 > Open the PTXprint User Manual in the Manual tab of the PDF Preview window.
 
-Opens this manual in the **Manual** tab of the PDF Preview window. See "PDF Preview window" for moving around in it.
+Opens this manual in the **Manual** tab of the PDF Preview window. See "PDF Preview window" for moving around in it. To go straight to the part about a setting, press **F1** with the mouse over it instead; **Ctrl+click** on a tab's name does the same for the tab.
 
 ##### Ornaments Catalog {#s-lb-ornaments-cat}
 

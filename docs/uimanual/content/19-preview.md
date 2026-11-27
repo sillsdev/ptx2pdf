@@ -18,7 +18,7 @@ In this chapter, "pt" means point (about 0.35 mm). "em" is a width equal to the 
 * **Show main PTXprint settings** (**Alt+S**) brings the main window to the front.
 * The title bar shows the PDF file name and the date and time it was made. Check this to be sure you see the newest PDF.
 
-The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Manual** shows this User Manual (from **User Manual** on the **Help** tab) and other reference documents such as the Ornaments Catalogue, with their contents beside them. Tabs without a PDF are hidden.
+The preview has tabs down the left side. **Content** shows your main PDF. **Cover** shows the cover PDF, if you made one. **Diff** shows the comparison PDF, if you used **Compare PDFs** (on the **Finishing** tab) and differences were found. If there was nothing to compare with, or no differences, there is no **Diff** tab: the preview shows the new PDF, and the status line in the main window says why. **Manual** shows this User Manual (from **User Manual** on the **Help** tab, or **F1** over any setting) and other reference documents such as the Ornaments Catalogue, with their contents beside them. Tabs without a PDF are hidden.
 
 ## Moving around: pages, spreads and zoom
 
