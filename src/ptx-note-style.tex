@@ -186,7 +186,9 @@
     %\implicitcl@setrue % Char styles in notes may implicitly close other ones.  We don't care here.
     \let\aftern@te\relax
     %\ifhe@dings\bgroup\fi
-    \setbox0=\vbox\bgroup \skipn@testyletrue \inn@tetrue
+    % Neutralise paragraph hooks: if the discarded text started a paragraph with the real
+    % \everypar/\par, it would consume a pending drop-cap chapter cutout (e.g. hidden \x at v1).
+    \setbox0=\vbox\bgroup \everypar={}\let\par\endgraf \skipn@testyletrue \inn@tetrue
     \global\n@tenesting=1\relax
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
     %-cnote_startnote_start
