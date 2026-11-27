@@ -1033,7 +1033,9 @@
     \else
       \hsize=\p@cinswid
     \fi
-    \ifdim\sp@cebefore pt =0pt \else\vskip \sp@cebefore\onel@neunit\fi
+    % A top or bottom picture is unpacked into a page insert, which TeX may split. Each \nobreak
+    % below removes a place where it could split, so a caption never parts from its picture.
+    \ifdim\sp@cebefore pt =0pt \else\nobreak\vskip \sp@cebefore\onel@neunit\fi
     \tempfalse
     %\ifpicUsesIns\temptrue\fi
     \ifx\picl@c\loc@Inl\temptrue\fi
@@ -1049,7 +1051,7 @@
     %      \vskip0.3\baselineskip
         \kern -\ht0
       \fi
-      \unvbox0
+      \box0 \prevdepth=-1000pt % kept as one box so it can't be split; no interline glue, as with \unvbox
     \else
       \iftemp
         \vskip0.3\baselineskip
@@ -1169,7 +1171,7 @@
       % The adjustment goes between the picture and the caption box, not inside the caption box:
       % \pl@cefigure re-wraps the caption box with interline glue, which would cancel it out.
       \ifdim\dimexpr \FigCaptionAdjust+ \sp@cebetween\onel@neunit\relax =0pt\else
-        \vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
+        \nobreak\vskip \dimexpr \FigCaptionAdjust+\sp@cebetween\onel@neunit\relax
       \fi
       \setbox0\vbox{\d@caption}\trace{g}{caption box is \the\ht0 high}%
       \dimen0=0pt\ifdim\ht0<0pt \dimen0=-\ht0\fi
@@ -1232,7 +1234,7 @@
       \skip1=\z@ \relax%ensure it doesn't do look-ahead.
       \unpenalty\setbox1=\lastbox
       \ifvbox1 
-        \unvbox1 \setbox1=\lastbox \ifvbox1 \vbox{\unvbox1 \global\skip1=\lastskip\unskip}\fi%
+        \unvbox1 \setbox1=\lastbox \ifvbox1 \nobreak\vbox{\unvbox1 \global\skip1=\lastskip\unskip}\fi% \nobreak: the interline glue before the caption must not be a place to split
       \fi
       \pdfsavepos
       \x@\write\x@\p@rlocs\x@{\t@mp{\the\pdflastxpos}{\the\pdflastypos}}%
