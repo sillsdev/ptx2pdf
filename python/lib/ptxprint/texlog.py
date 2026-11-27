@@ -1,4 +1,4 @@
-import os, re, datetime
+import os, re, datetime, unicodedata
 
 categories = {"I": "Info", "W": "Warning", "E": "Error"}
 
@@ -198,6 +198,53 @@ def summarizeTexLog(logText, underfills=None):
         messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {shorten_ranges(unique_page_numbers)}")
 
     return category_counts, messageSummary, unique_page_numbers
+
+# XeTeX writes this for every character the font it is using has no glyph for, and then leaves
+# the character out (or the PDF shows a box). The run itself still succeeds. Older XeTeX versions
+# leave out the (U+XXXX).
+re_missingchar = re.compile(r"^Missing character: There is no (.+?)(?: \(U\+([0-9A-Fa-f]{4,6})\))? in font (.*)!\s*$", re.M)
+re_ptxfile = re.compile(r"ptxfile (\S+)")
+re_bookinfile = re.compile(r"_([A-Z0-9]{3})\.\w+$|^\d\d([A-Z0-9]{3})")
+
+def cleanFontName(name):
+    """ "Faruma:script=thaa:color=222A98" -> "Faruma", "Annapurna SIL/GR" -> "Annapurna SIL",
+        "[C:/fonts/abc.ttf]:mapping=x" -> "abc" """
+    if name.startswith("["):
+        name = os.path.splitext(os.path.basename(name[1:name.find("]")]))[0]
+    else:
+        name = name.split(":")[0]
+    return re.sub(r"(?:/[A-Z]+)+$", "", name).strip()
+
+def scriptOfChar(c):
+    """ The Unicode script a character's name begins with (e.g. "SYRIAC LETTER SHIN" -> "Syriac"),
+        or None for symbols and punctuation, whose names don't say. """
+    m = re.match(r"([A-Z][A-Z ]*?) (?:CAPITAL |SMALL )?(?:LETTER|LIGATURE|SIGN|VOWEL|DIGIT|POINT|ACCENT|MARK|PUNCTUATION|SYLLABLE|IDEOGRAPH)\b",
+                 unicodedata.name(c, ""))
+    if m is None:
+        return None
+    return "CJK" if m.group(1).startswith("CJK") else m.group(1).title()
+
+def findMissingChars(logText):
+    """ Returns {font: {char: [count, [books]]}} for characters XeTeX could not find in a font.
+        Invisible control and format characters (U+200F RLM, ZWJ, soft hyphen, ...) are left out:
+        that a font lacks them makes no visible difference. """
+    res = {}
+    filematches = [(m.start(), m.group(1)) for m in re_ptxfile.finditer(logText)]
+    fi = 0
+    book = None
+    for m in re_missingchar.finditer(logText):
+        while fi < len(filematches) and filematches[fi][0] < m.start():
+            b = re_bookinfile.search(filematches[fi][1])
+            book = (b.group(1) or b.group(2)) if b else None
+            fi += 1
+        c = chr(int(m.group(2), 16)) if m.group(2) else m.group(1)
+        if len(c) != 1 or unicodedata.category(c) in ("Cc", "Cf", "Zl", "Zp"):
+            continue
+        entry = res.setdefault(cleanFontName(m.group(3)), {}).setdefault(c, [0, []])
+        entry[0] += 1
+        if book is not None and book not in entry[1]:
+            entry[1].append(book)
+    return res
 
 def shorten_ranges(numbers):
     if not numbers:

@@ -11,7 +11,7 @@ from ptxprint.version import VersionStr
 from ptxprint.view import ViewModel
 from ptxprint.font import TTFont, getfontcache, fontconfig_template_nofc, fontsconf_dirs, fontsconf_text
 from ptxprint.usfmerge import usfmerge2
-from ptxprint.texlog import summarizeTexLog, readUnderfills
+from ptxprint.texlog import summarizeTexLog, readUnderfills, findMissingChars, scriptOfChar
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, \
         saferelpath, runChanges, convert2mm, pycodedir, _outputPDFtypes, startfile, pt_bindir, \
         runChanges, swapext, refKey
@@ -945,12 +945,16 @@ class RunJob:
             logger.debug(f"Testing log file {fname}")
             if os.path.exists(fname) and not self.notracing:
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                    p = logfile.seek(0, 2)
-                    p = max(p - 60000, 0)
-                    logfile.seek(p, 0)
-                    log = logfile.read(60000)
+                    fulllog = logfile.read()
+                log = fulllog[-60000:]
                 statusfname = os.path.join(self.tmpdir, swapext(os.path.basename(outfname), ext=".tex", withext=".status"))
                 smry, msgList, ufPages = summarizeTexLog(log, readUnderfills(statusfname))
+                # Missing characters never stop the run, so they are looked for on every run; the PDF
+                # just has gaps or boxes where they should be. They can be anywhere in the log.
+                missingMsg, missingDetails = self.describeMissingChars(findMissingChars(fulllog))
+                if missingMsg is not None:
+                    smry["W"] += 1
+                    msgList = missingDetails + msgList
                 if not self.noview and not self.args.print:
                     self.printer.ufCurrIndex = 0
                     self.printer.ufPages = ufPages
@@ -958,14 +962,22 @@ class RunJob:
                 if smry["E"] + smry["W"] > 0:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
-                    print("{}\n{}".format(summaryLine, msgs))
+                    try:
+                        print("{}\n{}".format(summaryLine, msgs))
+                    except UnicodeEncodeError:      # e.g. a cp1252 console and Syriac missing characters
+                        print("{}\n{}".format(summaryLine, msgs).encode("ascii", "backslashreplace").decode("ascii"))
                     if comparing and smry["E"] == 0:
                         # Don't replace what the comparison said ("No differences found", ...) with advice
                         # about underfilled pages or warnings. Real errors are still shown.
                         logger.debug("Not showing the XeTeX log summary in the status line while comparing")
                     elif not self.noview and not self.args.print:
                         severity = "error" if smry["E"] > 0 else "warn"
-                        if len(msgList) == 1 and "underfilled" in msgs:
+                        if missingMsg is not None and smry["E"] == 0:
+                            # Say plainly what is wrong; the other warnings are in the tooltip
+                            self.printer.onIdle(self.printer.doStatus, missingMsg, warning=True)
+                            self.printer.onIdle(sl.set_tooltip_text, msgs)
+                            self.printer.onIdle(self.printer._setPrvReportStatus, missingMsg, msgs, severity)
+                        elif len(msgList) == 1 and "underfilled" in msgs:
                             if "," not in msgs and "-" not in msgs:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
                             chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
@@ -1149,6 +1161,79 @@ class RunJob:
                      "font for that style.").format(name, where)
         return _("The font {} set on the Fonts+Scripts tab (here used by the style for {}) could not be found. "
                  "Install it, or choose another font.").format(name, where)
+
+    def describeMissingChars(self, missing):
+        """ Turns findMissingChars() output into a one-line status message, and detail lines saying
+            which font lacks which characters, which styles use that font, and in which books.
+            Returns (None, []) when nothing is missing. """
+        if not len(missing):
+            return (None, [])
+        def family(n):
+            return re.sub(r"(?i)(?:\s+(?:bold|italic|oblique|regular|normal))+$", "", n or "").strip().lower()
+        styleFonts = {}
+        se = getattr(self.printer, "styleEditor", None)
+        if se is not None:
+            for m in se.allStyles():
+                f = se.getval(m, 'fontname', None, includebase=True)
+                if f:
+                    styleFonts.setdefault(family(f), []).append(m)
+        bodyfont = self.printer.get("bl_fontR") if self.printer is not None else None
+        bodyfamily = family(getattr(bodyfont, "name", None))
+
+        # "Code2000" and "Code2000 Bold" are the same problem, so report them together
+        merged = {}
+        for font, chars in missing.items():
+            fname, fchars = merged.setdefault(family(font), [font, {}])
+            if len(font) < len(fname):
+                merged[family(font)][0] = font
+            for c, (n, bks) in chars.items():
+                e = fchars.setdefault(c, [0, []])
+                e[0] += n
+                e[1].extend(b for b in bks if b not in e[1])
+        missing = dict(merged.values())
+
+        details = []
+        summaries = []
+        for font, chars in sorted(missing.items(), key=lambda x: -sum(v[0] for v in x[1].values())):
+            users = []
+            if family(font) == bodyfamily:
+                users.append(_("Body Text"))
+            mkrs = sorted(styleFonts.get(family(font), []))
+            if len(mkrs):
+                users.append(", ".join("\\" + m for m in mkrs[:6]) + (" ..." if len(mkrs) > 6 else ""))
+            scripts = {}
+            for c, (n, _bks) in chars.items():
+                s = scriptOfChar(c)
+                if s is not None:
+                    scripts[s] = scripts.get(s, 0) + n
+            scriptnames = sorted(scripts, key=lambda s: -scripts[s])
+            books = []
+            for n, bks in chars.values():
+                books.extend(b for b in bks if b not in books)
+            commonest = sorted(chars, key=lambda c: -chars[c][0])
+            charlist = ", ".join("{} (U+{:04X})".format(c, ord(c)) for c in commonest[:12]) + \
+                       (" ..." if len(commonest) > 12 else "")
+
+            what = _("{} characters").format("/".join(scriptnames[:3])) if len(scriptnames) else _("characters")
+            details.append(_("Warning: The font {} doesn't have these {}, so they are missing from the PDF: {}").format(font, what, charlist))
+            if len(users):
+                details.append("  " + _("Font used for: {}").format("; ".join(users)))
+            if len(books):
+                details.append("  " + _("Found in: {}").format(" ".join(books)))
+            details.append("  " + _("Try 1. Choose a font that has these characters (on the Fonts+Script tab, or for the style in the Styles tab)."))
+            if len(scriptnames):
+                details.append("  " + _("Try 2. For a few words in another script, mark them with a character style (e.g. \\wg, \\wh, \\wa) and give that style a suitable font."))
+            summaries.append((font, what, users))
+
+        if len(summaries) == 1:
+            font, what, users = summaries[0]
+            msg = _("Some {} are missing from the PDF: the font {} doesn't have them").format(what, font)
+            if len(users):
+                msg += " (" + _("used for {}").format(users[0]) + ")"
+        else:
+            msg = _("Some characters are missing from the PDF: the fonts {} don't have them").format(", ".join(s[0] for s in summaries[:3]))
+        msg += ". " + _("Hover for details.")
+        return (msg, details)
 
     def parseLogLines(self):
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
