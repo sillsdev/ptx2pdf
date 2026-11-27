@@ -24,6 +24,32 @@ def printSetup(view, args):
 # 9: tooltip (str)     -> markup explaining a problem, if any
 NORMALCOL = "#000000"
 ERRORCOL = "#FF0000"
+MAINCOL = "#808080"
+MAINKEY = "⁠main⁠"   # row_key of the read-only "main" row (invisible marks, so no pid clashes)
+
+class ButtonCellRenderer(Gtk.CellRendererText):
+    """ Draws a cell like a (small) GtkButton, using a real button's theme styling """
+
+    def __init__(self, button):
+        super().__init__()
+        self.button = button
+        self.set_property("xalign", 0.5)
+        self.set_property("xpad", 10)
+        self.set_property("ypad", 3)
+        self.set_property("scale", 0.85)
+
+    def do_render(self, cr, widget, bg_area, cell_area, flags):
+        ctx = self.button.get_style_context()
+        x, y = cell_area.x + 2, cell_area.y + 1
+        w, h = cell_area.width - 4, cell_area.height - 2
+        Gtk.render_background(ctx, cr, x, y, w, h)
+        Gtk.render_frame(ctx, cr, x, y, w, h)
+        layout = widget.create_pango_layout(self.get_property("text"))
+        font = ctx.get_font(Gtk.StateFlags.NORMAL).copy()
+        font.set_size(int(font.get_size() * 0.85))
+        layout.set_font_description(font)
+        tw, th = layout.get_pixel_size()
+        Gtk.render_layout(ctx, cr, x + (w - tw) / 2, y + (h - th) / 2, layout)
 
 class PublicationsView:
 
@@ -39,7 +65,149 @@ class PublicationsView:
         self.ts = self.builder.get_object("ts_publications")
         self.tv = self.builder.get_object("tv_publications")
         self._setupSelectAllHeader()
+        self._setupMainRowAndButtons()
         self._updateStatus()
+
+    def _setupMainRowAndButtons(self):
+        """ Grey out the main row, and add 'to main' / 'from main' button columns """
+        self.tv.set_tooltip_column(-1)
+        self.tv.set_has_tooltip(True)
+        self.tv.connect("query-tooltip", self._onQueryTooltip)
+        self.tv.connect("button-press-event", self._onButtonPress)
+        self.fcr = self.builder.get_object("cr_pub_field")
+        self.builder.get_object("col_pub_field").set_cell_data_func(self.fcr, self._greyMain)
+        self.vcr = self.builder.get_object("cr_pub_value")
+        self.builder.get_object("col_pub_value").set_cell_data_func(self.vcr, self._greyMain)
+        self.btncols = {}
+        for key, label in (("tomain", _("to main")), ("frommain", _("from main"))):
+            cr = ButtonCellRenderer(self.builder.get_object("btn_pubAdd"))
+            cr.set_property("text", label)
+            col = Gtk.TreeViewColumn("", cr)
+            col.set_cell_data_func(cr, self._showButton)
+            self.tv.append_column(col)
+            self.btncols[col] = key
+        self.btntips = {
+            "tomain": _("This will copy the book and variables from this publication "
+                        "into the main areas on the Basic and Peripheral tabs"),
+            "frommain": _("This will copy the book and variables from the main areas "
+                          "on the Basic and Peripheral tabs into this publication")}
+        self.maintip = _("To edit these values, either load them from a specific publication "
+                         "or change them in the Basic and Peripheral tabs")
+
+    def _isMainIter(self, model, titer):
+        return model[titer][6] == MAINKEY
+
+    def _greyMain(self, col, cr, model, titer, *a):
+        ismain = self._isMainIter(model, titer)
+        if ismain:
+            cr.set_property("foreground", MAINCOL)
+        elif cr is self.vcr:
+            cr.set_property("foreground", model[titer][8] or NORMALCOL)
+        else:
+            cr.set_property("foreground", NORMALCOL)
+        if cr is self.vcr:
+            cr.set_property("editable", not ismain)
+
+    def _showButton(self, col, cr, model, titer, *a):
+        cr.set_property("visible", model[titer][3] and not self._isMainIter(model, titer))
+
+    def _onQueryTooltip(self, tv, x, y, keyboard, tooltip):
+        ok, x, y, model, path, titer = tv.get_tooltip_context(x, y, keyboard)
+        if not ok:
+            return False
+        res = tv.get_path_at_pos(x, y) if not keyboard else None
+        col = res[1] if res else None
+        if self._isMainIter(model, titer):
+            tip = GLib.markup_escape_text(self.maintip)
+        elif col in self.btncols and model[titer][3]:
+            tip = GLib.markup_escape_text(self.btntips[self.btncols[col]])
+        else:
+            tip = model[titer][9]
+        if not tip:
+            return False
+        tooltip.set_markup(tip)
+        tv.set_tooltip_row(tooltip, path)
+        return True
+
+    def _onButtonPress(self, tv, event):
+        if event.button != 1:
+            return False
+        res = tv.get_path_at_pos(int(event.x), int(event.y))
+        if res is None:
+            return False
+        path, col = res[0], res[1]
+        if col not in self.btncols:
+            return False
+        titer = self.ts.get_iter(path)
+        r = self.ts[titer]
+        if not r[3] or r[6] == MAINKEY:
+            return False
+        if self.btncols[col] == "tomain":
+            self.toMain(r[6])
+        else:
+            self.fromMain(titer)
+        return True
+
+    def _mainValues(self):
+        """ Returns (books, {key: value}) from the Basic and Peripheral tabs """
+        return (self._currentBooks(), {k: str(self._defaultValue(k)) for k in self._publishableKeys()})
+
+    def _mainIter(self):
+        titer = self.ts.get_iter_first()
+        if titer is not None and self.ts[titer][6] == MAINKEY:
+            return titer
+        return None
+
+    def refreshMain(self):
+        """ (Re)builds the grey 'main' row at the top from the Basic and Peripheral tabs """
+        books, vals = self._mainValues()
+        titer = self._mainIter()
+        expanded = False
+        if titer is not None:
+            expanded = self.tv.row_expanded(self.ts.get_path(titer))
+            self.ts.remove(titer)
+        titer = self.ts.prepend(None, [_("main"), books, False, False, False, "__books", MAINKEY,
+                                       Pango.Weight.BOLD, MAINCOL, None])
+        for k, v in vals.items():
+            self.ts.append(titer, [k, v, False, False, False, k, MAINKEY, Pango.Weight.NORMAL, MAINCOL, None])
+        if expanded:
+            self.tv.expand_row(self.ts.get_path(titer), False)
+
+    def _pubRows(self):
+        """ The publication rows, without the main row """
+        return [r for r in self.ts if r[6] != MAINKEY]
+
+    def toMain(self, pid):
+        """ Copies a publication's books and variables to the Basic and Peripheral tabs """
+        self.applyToView(pid=pid)
+        self.refreshMain()
+        self.view.doStatus(_("Copied '{}' into the Basic and Peripheral tabs").format(pid))
+
+    def fromMain(self, titer):
+        """ Copies the books and variables on the Basic and Peripheral tabs into a publication """
+        row = self.ts[titer]
+        books, vals = self._mainValues()
+        changes = []
+        if row[1].strip() and row[1].strip() != books.strip():
+            changes.append(_("books: '{}' \u2192 '{}'").format(row[1], books))
+        existing = {cr[5]: cr[1] for cr in row.iterchildren()}
+        for k, v in vals.items():
+            old = existing.get(k, "")
+            if old and old != v:
+                changes.append("{}: '{}' \u2192 '{}'".format(k, old, v))
+        if changes and not self.view.msgQuestion(_("Overwrite publication '{}'?").format(row[0]),
+                    _("Copying from main will change:") + "\n\n" + "\n".join(changes)):
+            return
+        row[1] = books
+        row[8], row[9] = self._checkBooks(books)
+        children = {cr[5]: cr.iter for cr in row.iterchildren()}
+        for k, v in vals.items():
+            if k in children:
+                self.ts[children[k]][1] = v
+            else:
+                self.ts.append(titer, self._childRow(k, v, row[6]))
+        self._updateStatus()
+        self.view.doStatus(_("Copied the Basic and Peripheral tab values into '{}'").format(row[0]))
 
     def _setupSelectAllHeader(self):
         """ Put a checkbox in the Print column header that ticks/unticks everything """
@@ -86,13 +254,14 @@ class PublicationsView:
                 self.ts.append(parent_iter, self._childRow(col, val, pid))
         if len(self.ts) < 6:
             self.tv.expand_all()
+        self.refreshMain()
         self._updateStatus()
 
     def save(self):
         """ Returns a new publications dictionary from the self.ts """
         self.ts = self.builder.get_object("ts_publications")
         res = {}
-        for row in self.ts:
+        for row in self._pubRows():
             currpid = row[0]
             res.setdefault(currpid, {})['__books'] = row[1]
             res[currpid]['__select'] = 'true' if row[2] else 'false'
@@ -103,7 +272,7 @@ class PublicationsView:
 
     def iter_selected(self):
         for i, r in enumerate(self.ts):
-            if r[2]:
+            if r[2] and r[6] != MAINKEY:
                 yield (i, r)
 
     def _checkBooks(self, books):
@@ -127,7 +296,7 @@ class PublicationsView:
         return prjpath is not None and os.path.isfile(os.path.join(prjpath, books))
 
     def _uniquePid(self, base):
-        existing = set(r[0] for r in self.ts)
+        existing = set(r[0] for r in self._pubRows())
         if base not in existing:
             return base
         i = 2
@@ -141,7 +310,8 @@ class PublicationsView:
         if titer is None:
             return None
         parent = model.iter_parent(titer)
-        return parent if parent is not None else titer
+        res = parent if parent is not None else titer
+        return None if model[res][6] == MAINKEY else res
 
     def _selectAndShow(self, titer):
         path = self.ts.get_path(titer)
@@ -150,13 +320,14 @@ class PublicationsView:
         self.tv.scroll_to_cell(path, None, False, 0, 0)
 
     def _updateStatus(self):
-        total = len(self.ts)
-        chosen = sum(1 for r in self.ts if r[2])
+        pubs = self._pubRows()
+        total = len(pubs)
+        chosen = sum(1 for r in pubs if r[2])
         if total == 0:
             msg = _("No publications yet. Click 'Add' to create one.")
         else:
             msg = _("{} of {} publications selected for printing").format(chosen, total)
-            nbad = sum(1 for r in self.ts if r[8] == ERRORCOL)
+            nbad = sum(1 for r in pubs if r[8] == ERRORCOL)
             if nbad:
                 msg += "  " + _("({} with invalid books)").format(nbad)
         self.builder.get_object("l_pubStatus").set_text(msg)
@@ -227,8 +398,9 @@ class PublicationsView:
         self._updateStatus()
 
     def onPubToggleAll(self, col):
-        newval = not all(r[2] for r in self.ts)
-        for r in self.ts:
+        pubs = self._pubRows()
+        newval = not all(r[2] for r in pubs)
+        for r in pubs:
             r[2] = newval
         self._updateStatus()
 
@@ -250,6 +422,8 @@ class PublicationsView:
 
     def onPubSelect(self, btn, path):
         titer = self.ts.get_iter(path)
+        if self.ts[titer][6] == MAINKEY:
+            return
         new_val = not self.ts[titer][2]
         self.ts[titer][2] = new_val
         self._updateStatus()
@@ -263,7 +437,7 @@ class PublicationsView:
                 return
         else:
             for piter, r in enumerate(self.ts):
-                if r[6] == pid:
+                if r[6] == pid and pid != MAINKEY:
                     break
             else:
                 return
@@ -279,11 +453,13 @@ class PublicationsView:
 
     def onPubEdited(self, widget, path, new_text):
         titer = self.ts.get_iter(path)
+        if self.ts[titer][6] == MAINKEY:
+            return
         if widget is self.builder.get_object("cr_pub_field"):
             new_text = new_text.strip()
             if not new_text or new_text == self.ts[titer][0]:
                 return
-            if any(r[0] == new_text for r in self.ts):
+            if any(r[0] == new_text for r in self._pubRows()):
                 self.view.doError(_("A publication called '{}' already exists.").format(new_text))
                 return
             self.ts[titer][0] = new_text
