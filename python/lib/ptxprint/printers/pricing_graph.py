@@ -23,6 +23,11 @@ defaultColors = [
     (0.2, 0.8, 0.2),    # Green
     (0.8, 0.8, 0.2),    # Yellow
     (0.8, 0.4, 0.2),    # Orange
+    (0.6, 0.3, 0.7),    # Purple
+    (0.1, 0.7, 0.7),    # Teal
+    (0.8, 0.3, 0.6),    # Pink
+    (0.5, 0.35, 0.2),   # Brown
+    (0.4, 0.4, 0.4),    # Grey
 ]
 
 
@@ -47,6 +52,7 @@ class PricingGraphViewer:
             currencySymbol: Currency symbol to use in labels/tooltips
         """
         self.dataDict = dataDict
+        self.colorMap = self._assignPrinterColors(dataDict.keys())
         self.parentWindow = parentWindow
         self.currencySymbol = currencySymbol
         
@@ -130,11 +136,23 @@ class PricingGraphViewer:
             self.minPrice = 0
             self.maxPrice = 10
     
-    def _getPrinterColor(self, printerName, index):
-        """Get fixed color for a printer."""
-        if printerName in printerColors:
-            return printerColors[printerName]
-        return defaultColors[index % len(defaultColors)]
+    @staticmethod
+    def _assignPrinterColors(printerNames):
+        """Give every printer a distinct color: known printers keep their fixed
+        color, others take the first palette color not already in use."""
+        names = list(printerNames)
+        colorMap = {n: printerColors[n] for n in names if n in printerColors}
+        used = set(colorMap.values())
+        free = [c for c in defaultColors if c not in used]
+        for i, n in enumerate(n for n in names if n not in colorMap):
+            colorMap[n] = free[i] if i < len(free) else defaultColors[i % len(defaultColors)]
+        return colorMap
+
+    def _getPrinterColor(self, printerName, index=0):
+        """Get the color assigned to a printer."""
+        if printerName not in self.colorMap:
+            self.colorMap = self._assignPrinterColors(list(self.colorMap) + [printerName])
+        return self.colorMap[printerName]
     
     def _onPriceModeChanged(self, radioButton):
         """Handle price mode toggle between per-copy and total."""
