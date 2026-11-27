@@ -303,7 +303,10 @@ class RunJob:
             try:
                 out = self.info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1], bkindex=i, noaction=self.noaction)
             except FileNotFoundError as e:
-                self.printer.doError(str(e))
+                # Some FileNotFoundErrors carry no message (str(e) == ""), which gave a blank dialog
+                msg = str(e) or _("Can't find a file needed to process {} ({})").format(b, type(e).__name__)
+                logger.debug(f"FileNotFoundError converting {b}: {e!r}\n" + "".join(traceback.format_exception(e)))
+                self.printer.doError(msg)
                 out = None
             donebooks.append(out)
             if out is None:

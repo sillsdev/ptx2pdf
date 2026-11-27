@@ -1,4 +1,4 @@
-import configparser, re, os, traceback, sys
+import configparser, re, os, io, traceback, sys
 from shutil import copyfile
 from inspect import signature
 import regex
@@ -1250,7 +1250,10 @@ class TexModel:
             
     def _makeUSFM(self, txt, bk, reason=""):
         syntaxErrors = []
-        doc = Usfm.readfile(txt, grammar=self.printer.get_usfms().grammar, informat="usfm")
+        # Hand over a stream: a bare string that is short and has no newline (e.g. "\p ~" from a
+        # custom script) is taken by usfmtc as a filename, giving a FileNotFoundError with no message.
+        src = io.StringIO(txt) if isinstance(txt, str) else txt
+        doc = Usfm.readfile(src, grammar=self.printer.get_usfms().grammar, informat="usfm")
         doc.xml.canonicalise(version="3.1")
         if self._reportParseErrors(doc, bk, _("Printing carries on, but text affected by these problems may be "
                         "left out or misplaced.") + "\n" + _("Fix them in Paratext, or with a rule in changes.txt "
