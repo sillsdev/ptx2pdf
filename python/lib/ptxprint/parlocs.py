@@ -755,13 +755,28 @@ class Paragraphs(list):
         return True
 
     def load_page(self, doc, page, pindex):
+        """ Work out the dests for each rect on page pindex. A page needs the dests of the
+            paragraph carried over from the page before it, which needs the page before that...
+            Walk back to the first page that's already loaded, then load forwards. (This used
+            to recurse a page at a time, and blew the recursion limit when jumping straight to
+            page ~1000 of a long book.) """
+        todo = [pindex]
+        k = pindex
+        while k > 1:
+            carried = next((r for p, r in self.getParas(k, inclast=True) if r.pagenum < k), None)
+            if carried is None or carried.dests is not None or doc.get_page(carried.pagenum) is None:
+                break
+            k = carried.pagenum
+            todo.append(k)
+        for k in reversed(todo):
+            self._loadOnePage(doc, k)
+
+    def _loadOnePage(self, doc, pindex):
+        """ load_page for one page, assuming any earlier page it depends on is already loaded """
         currlast = None
         for p, r in self.getParas(pindex, inclast=True):
             logger.log(5, f"load_page processing {p=} {r=}")
             if r.pagenum < pindex:
-                opg = doc.get_page(r.pagenum)
-                if r.dests is None and opg is not None:
-                    self.load_page(doc, opg, r.pagenum)
                 # r.dests holds (name, (x, y)) tuples; the last in reading order is the one carried onto this page
                 if r.dests:
                     currlast = max(ParDest(n, r.pagenum, x, y) for n, (x, y) in r.dests)
