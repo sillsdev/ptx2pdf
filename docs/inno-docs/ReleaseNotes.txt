@@ -1,7 +1,47 @@
-PTXprint 3.1.10 Release Notes
-24 Nov 2026
+PTXprint 3.1.11 Release Notes
+27 Nov 2026
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_____________________________________________________________
+
+Bug fixes and Improvements in 3.1.11 - (27 Nov 2026)
+
+  New features
+  * A User Manual is now built in, covering every setting. Open it
+    from the Help tab, or press F1 over any setting (also in dialogs)
+    to go straight to its entry. Ctrl+click a tab's name to read
+    about that tab
+  * The manual opens in a new Manual tab of the PDF Preview, with its
+    contents beside it, clickable links, and Back/Forward buttons
+  * A warning names the font, script, styles and books when characters
+    are missing from the PDF because the font has no glyph for them
+  * Pretore: quotes updated for the current papers and options,
+    including end papers, Soft touch lamination and paperbacks
+
+  Pictures
+  * A caption can no longer end up on a different page from its picture
+  * Space between picture & caption now really moves the caption
+  * A picture that has to wait for the next page keeps its grid spacing
+
+  Better messages
+  * Pretore: clear messages instead of tracebacks when getting a quote
+    or creating an order; orders now use the PDF actually printed
+  * Diglot merge errors are reported again, listing every failing book
+  * Help text for more TeX errors (e.g. a note with no caller)
+  * A processing script that writes very short USFM no longer gives an
+    empty error message
+
+  Bug fixes
+  * Toggling Book View updates the preview at once again
+  * Sidebars: text around them stays on the line grid, and their line
+    spacing no longer leaks into the text that follows
+  * Hidden notes (e.g. cross-references turned off) no longer take the
+    space cut out for a drop-cap chapter number
+  * PDF viewer: jumping to a page far into a long book no longer fails
+  * Multi-Quote Comparison: each printer now has its own colour
+  * Border Settings: no more warnings when padding is negative
+  * Technical Reference: \prefixhook and related hooks corrected
+
 _____________________________________________________________
 
 Bug fixes and Improvements in 3.1.10 - (24 Nov 2026)
