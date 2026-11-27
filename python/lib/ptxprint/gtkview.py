@@ -2621,7 +2621,7 @@ class GtkViewModel(ViewModel):
             self.doStatus(_("No books to print"), warning=True)
             return
         if self.checkFontsMissing():
-            self.doStatus(_("One of more fonts have not been set yet"), warning=True)
+            self.doStatus(_("One or more fonts have not been set yet"), warning=True)
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_Viewer":

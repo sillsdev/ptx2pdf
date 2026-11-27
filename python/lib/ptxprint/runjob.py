@@ -58,7 +58,7 @@ _errmsghelp = {
 "! Illegal unit of measure (pt inserted).":    _("One of the settings in the Stylesheet may be missing the units.\n" +\
                                            "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                            "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."),
-"! File ended while scanning use of \\parse@djline.":  ("Check for errors in the Adjust List (see View+Edit tab)."),
+"! File ended while scanning use of \\parse@djline.":  _("Check for errors in the Adjust List (see View+Edit tab)."),
 "! File ended while scanning use of \\ptx@fig.":  _("A picture (\\fig ... \\fig*) isn't complete, or there is a \\fig* " +\
                                           "with no \\fig. Check the front matter and the book named below."),
 "! File ended while scanning use of":    _("Something in the text was started but not finished, such as a footnote or " +\
@@ -85,6 +85,13 @@ _errmsghelp = {
 "! This can't happen (page)":            _("Possibly a TeX macro issue - contact support, or post a bug report"),
 "! I can't find file `paratext2.tex'.":  _("Possibly a faulty installation."),
 "! I can't find file `ptx-tracing.tex'.": _("Possibly a faulty installation."),
+"has no caller. Is it a nested or unclosed note?":  _("A footnote or cross reference starts inside another one, or an earlier one has no\n" +\
+                                           "end marker (such as \\f* or \\x*). Look near the reference in the message above."),
+"Reached end of book without finding \\esbe.":  _("A sidebar (\\esb) has no end marker. Add \\esbe where the sidebar should finish."),
+"which is much too small":               _("A diglot column is too narrow for any text. Check the '% Width' values\n" +\
+                                           "for the diglot texts, which should add up to 100%."),
+"is thinner than the supplied limit":    _("A border line is thinner than can be printed reliably. Make it thicker\n" +\
+                                           "in the border settings of the style named in the message above."),
 "Runaway argument?":                     _("Unknown issue. Possibly related to Right-aligned tabbed leaders. " +\
                                            "Try turning off various settings on the Advanced Tab."),
 "Unknown":                               _("Oops! Something unexpected happened causing this unhandled error.\n" +\
@@ -360,6 +367,7 @@ class RunJob:
             self.outfname = self.info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         self.info.dict.setdefault("diglots_", {})
         texfiles = []
+        syntaxErrors = []
         bookids = [r[0][0].first.book if r[1] else "MOD" for r in jobs]     # as dojob: one per job, like books
         for k, diginfo in diginfos.items():
             digdonebooks = [None] * len(jobs)
@@ -374,7 +382,6 @@ class RunJob:
             docdir = self.info["/ptxdocpath"]
             for s in _digSecSettings:
                 diginfo[s]=self.info[s]
-            syntaxErrors = []
 
             # create differential ptxprint.sty
             cfgname = self.info['config/name']
@@ -462,19 +469,28 @@ class RunJob:
                 # Do we ask the merge process to write verification files? (use diff -Bws to confirm they are they same as the input)
                 debugmerge = logger.getEffectiveLevel() <= 5 
                 if not self.noaction:
-                    usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, scorearr=scorearr, changes=self.info.changes.get("merged", []), book=b)
+                    # A text that can't be parsed stops the merge of that book. Collect them all so
+                    # the user sees every book that needs fixing in one message, not a traceback.
+                    try:
+                        usfmerge2(inputfiles, keyarr, outFile, stylesheets=sheets, mode=mode, synchronise=sync, debug=debugmerge, scorearr=scorearr, changes=self.info.changes.get("merged", []), book=b)
+                    except SyntaxError as e:
+                        syntaxErrors.append("{}: {}".format(b, e))
+                        continue
                 texfiles += [outFile, logFile]
-        
-        if not any(donebooks): # or not len(digdonebooks):
-            unlockme()
-            return []
 
         if len(syntaxErrors):
             prtDrft = _("And check if a faulty rule in PrintDraftChanges.txt has caused the error(s).") if self.info["project/usechangesfile"] else ""
             self.printer.doError(_("Failed to merge texts due to a Syntax Error:"),
                 secondary="\n".join(syntaxErrors)+"\n\n"+_("Run the Basic Checks in Paratext to ensure there are no Marker errors "+ \
                 "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
-                title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True)
+                title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True,
+                show=not self.printer.get("c_quickRun"))
+            self.fail(_("The diglot texts could not be merged"))
+            return []
+
+        if not any(donebooks): # or not len(digdonebooks):
+            unlockme()
+            return []
 
         self.info["project/bookids"] = bookids
         self.info["project/books"] = donebooks
@@ -997,16 +1013,6 @@ class RunJob:
                             self.printer.onIdle(self.printer._setPrvReportStatus, summaryLine, msgs, severity)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
-            
-                if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
-                    badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
-                    if len(badpgs):
-                        print(_("Layout problems were encountered on page(s): ") + ", ".join(badpgs))
-                        self.printer.doError(_("PDF was created BUT..."),
-                            secondary=_("Layout problems were encountered on page(s): ") + ",".join(badpgs) + \
-                                  _("\n\nTry changing the PicList and/or AdjList settings to solve issues."), \
-                            title=_("PTXprint [{}] - Warning!").format(VersionStr),
-                            threaded=True)
             logger.debug(f"display {startname}")
             if not self.noview and startname is not None:
                 if self.printer.get("c_layoutAnalysis"):
