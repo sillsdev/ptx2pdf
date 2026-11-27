@@ -1,6 +1,6 @@
 r"""Pretore (Netherlands) — live quotations and ordering via their API."""
 
-import os, json, threading, urllib, logging
+import os, json, threading, socket, urllib.request, urllib.error, logging
 
 logger = logging.getLogger(__name__)
 from shutil import copy
@@ -42,11 +42,23 @@ def labelWidget(txt, widget, grid, x, y):
     grid.attach(widget, x+1, y, 1, 1)
 
 
-def message(text):
-    dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.INFO,
+def message(text, error=False, secondary=None):
+    dialog = Gtk.MessageDialog(parent=None,
+            message_type=Gtk.MessageType.ERROR if error else Gtk.MessageType.INFO,
             buttons=Gtk.ButtonsType.OK, text=text)
+    if secondary:
+        dialog.format_secondary_text(secondary)
     dialog.run()
     dialog.destroy()
+
+
+def _errorText(result):
+    """The reason a server call failed, or None if it didn't."""
+    if result is None:
+        return _("No response was received from Pretore.")
+    if isinstance(result, dict) and "_error" in result:
+        return result["_error"]
+    return None
 
 
 class Pretore(PrinterBase):
@@ -201,16 +213,16 @@ class Pretore(PrinterBase):
         callback({qty: perCopyEUR} or None) runs on the GTK main loop.
         """
         self.prepare()
-        if self.user is None or not self.get("t_prnl_bookID") or not self.get("t_prnl_description"):
+        if self._accountProblem() or not self.get("t_prnl_bookID") or not self.get("t_prnl_description"):
             callback(None)
             return
         self._pendingKey = job.key()
         def _cb(result):
-            if result is None or 'cost' not in result:
-                print("Failed quote")
+            if _errorText(result) or 'cost' not in result:
+                logger.warning(f"Pretore quote failed: {_errorText(result) or result}")
                 callback(None)
                 return
-            data = {int(k): v / int(k) for k, v in result['cost'].items()}
+            data = {int(k): v / int(k) for k, v in result['cost'].items() if int(k) > 0}
             self._quoteKey = self._pendingKey
             self._quoteCache = dict(data)
             callback(data)
@@ -283,8 +295,12 @@ class Pretore(PrinterBase):
                 w.set_sensitive(ok)
 
     def read_account(self, fname):
-        with open(fname, encoding="utf-8") as inf:
-            data = json.load(inf)
+        try:
+            with open(fname, encoding="utf-8") as inf:
+                data = json.load(inf)
+        except (OSError, ValueError) as e:
+            logger.warning(f"Unreadable Pretore account file {fname}: {e}")
+            return None
         if not isinstance(data, dict) or 'email' not in data:
             return None
         k = data['email']
@@ -331,7 +347,13 @@ class Pretore(PrinterBase):
                     count += 1
                     skey = os.path.join(self.configdir, f"key_{count}.json")
                 copy(fname, skey)
-                self.user = self.read_account(skey)
+                user = self.read_account(skey)
+                if user is None:
+                    os.remove(skey)
+                    message(_("That file is not a Pretore account key."), error=True,
+                            secondary=_("Download the account key (.json) from pretore.com and import that file."))
+                else:
+                    self.user = user
             else:
                 self.user = combo.get_active_text()
             self.set("l_prnl_userid", self.user)
@@ -363,97 +385,194 @@ class Pretore(PrinterBase):
         return booktype, qinfo
 
     def submit_quote(self, qinfo, endpoint, cb=None):
+        """Run the request on a worker thread; cb(result) runs on the GTK main loop.
+
+        Never blocks the UI. If a request is already in flight, cb gets an error
+        result rather than the request being silently dropped.
+        """
         if cb is None:
             cb = self.updatequote
-        if self.thread is None or not self.thread.is_alive():
-            self.thread = threading.Thread(target=self.url_query, args=(cb, endpoint, qinfo))
-            self.thread.daemon = True
-            self.thread.start()
-        self.thread.join(30)
-        if not self.thread.is_alive():
-            self.thread = None
+        if self.thread is not None and self.thread.is_alive():
+            GLib.idle_add(cb, {"_error": _("Still waiting for Pretore to answer an earlier request. "
+                                           "Please try again in a moment.")})
+            return
+        self.thread = threading.Thread(target=self.url_query, args=(cb, endpoint, qinfo))
+        self.thread.daemon = True
+        self.thread.start()
 
     def updatequote(self, result):
         logger.debug(f"{result=}")
-        if result is None or 'cost' not in result:
-            print("Failed quote")
+        self._updateButtonSensitivity()
+        err = _errorText(result)
+        if err is None and 'cost' not in result:
+            err = _("Pretore's reply did not include a price.")
+        if err:
+            message(_("Could not get a quotation from Pretore"), error=True, secondary=err)
             return
         copies = self.jobCopies()
+        if copies <= 0:
+            message(_("Set the number of copies to get a quotation."))
+            return
         amount = result['cost'].get(str(copies), None)
         if amount is None:
+            message(_("Pretore did not quote for {} copies.").format(copies), error=True,
+                    secondary=_("Quantities quoted: {}").format(", ".join(result['cost'].keys()) or "-"))
             return
         self._quoteKey = self._pendingKey
         self._quoteCache = {copies: amount / copies}
         tab = getattr(self.view, 'printerTab', None)
         if tab is not None:
             tab.updateAll()
+        try:
+            message(_("Pretore quotation for {} copies: €{:,.2f} (€{:,.2f} per copy)").format(
+                        copies, float(amount), float(amount) / copies))
+        except (TypeError, ValueError):
+            message(_("Pretore quotation for {} copies: {}").format(copies, amount))
 
     def showCreateResults(self, result):
-        if result is None:
-            logger.debug("showCreateResults: no result returned")
+        self._updateButtonSensitivity()
+        err = _errorText(result)
+        if err is None and not result.get("number"):
+            err = _("Pretore's reply did not include an order number.")
+        if err:
+            self.set("l_prnl_orderStatus", _("(order not created)"))
+            message(_("The order could not be created at Pretore"), error=True, secondary=err)
             return
-        quoteid = result.get("number", _("Unknown"))
-        self.set("l_prnl_orderRef", quoteid)
+        self.set("l_prnl_orderRef", result["number"])
         self.set("l_prnl_zipFilename", os.path.basename(self.zipname))
         self.set("l_prnl_orderStatus", _("(awaiting payment)"))
 
     def url_query(self, callback, endpoint, *a):
-        auth = self.accounts[self.user]['api_key']
-        headers = {'User-Agent': "Mozilla/5.0 (Windows NT 11.0; Win64; x64)",
-                   'Content-Type': 'application/json',
-                   'Authorization': f'Bearer {auth}'}
-        if len(a):
-            data = json.dumps(a[0], ensure_ascii=False).encode("utf-8")
-        else:
-            data = None
+        """Worker-thread side of submit_quote. Always calls back exactly once."""
         result = None
-        logger.debug(f"{headers=}, {endpoint=}, {data=}")
         try:
+            auth = self.accounts[self.user]['api_key']
+            headers = {'User-Agent': "Mozilla/5.0 (Windows NT 11.0; Win64; x64)",
+                       'Content-Type': 'application/json',
+                       'Authorization': f'Bearer {auth}'}
+            data = json.dumps(a[0], ensure_ascii=False).encode("utf-8") if len(a) else None
+            logger.debug(f"{endpoint=}, {data=}")
             req = urllib.request.Request(endpoint, data=data, headers=headers)
-            with urllib.request.urlopen(req) as response:
+            with urllib.request.urlopen(req, timeout=60) as response:
                 if response.getcode() == 200:
                     result = json.loads(response.read().decode("utf-8"))
                 else:
-                    print (f"Response code: {response.getcode()}")
+                    result = {"_error": _("Pretore replied with status {}.").format(response.getcode())}
         except urllib.error.HTTPError as e:
-            print(f"Error: {e}\nHeaders: {e.headers}\nBody: {e.read().decode('utf-8')}")
+            body = ""
+            try:
+                body = e.read().decode('utf-8', errors='replace')
+                detail = json.loads(body).get("message", "")    # WordPress REST errors carry a message
+            except Exception:
+                detail = body[:300]
+            logger.warning(f"Pretore HTTP {e.code}: {body}")
+            if e.code in (401, 403):
+                msg = _("Pretore did not accept your account key. Re-download it from pretore.com and import it again.")
+            else:
+                msg = _("Pretore reported an error ({}).").format(e.code)
+            result = {"_error": msg + ("\n\n" + detail if detail else "")}
+        except (urllib.error.URLError, socket.timeout, TimeoutError, ConnectionError) as e:
+            logger.warning(f"Pretore connection failed: {e}")
+            result = {"_error": _("Could not connect to Pretore. Check your internet connection and try again.")
+                                + f"\n\n({getattr(e, 'reason', e)})"}
+        except ValueError as e:     # bad JSON in the reply
+            result = {"_error": _("Pretore sent a reply that could not be read.") + f"\n\n({e})"}
+        except Exception as e:
+            logger.exception("Pretore request failed")
+            result = {"_error": f"{type(e).__name__}: {e}"}
         GLib.idle_add(callback, result)
+
+    def _accountProblem(self):
+        """A user-facing reason the current account can't be used, or None if it's fine."""
+        if self.user is None or self.user not in getattr(self, 'accounts', {}):
+            return _("Select or import a Pretore account first (Account... button).")
+        acct = self.accounts[self.user]
+        missing = [k for k in ('UUID', 'api_key') if not acct.get(k)]
+        if missing:
+            return _("The account key file for {} is incomplete (missing {}). "
+                     "Re-download it from pretore.com and import it again.").format(self.user, ", ".join(missing))
+        return None
 
     def do_quote(self, command, cb=None, quantities=None, job=None):
         if cb is None:
             cb = self.updatequote
-        booktype, qinfo = self.prepare_quote(quantities=quantities, job=job)
+        try:
+            booktype, qinfo = self.prepare_quote(quantities=quantities, job=job)
+        except (ValueError, TypeError) as e:
+            GLib.idle_add(cb, {"_error": _("One of the printing options has an invalid value.")
+                                         + f"\n\n({e})"})
+            return
         uuid = self.accounts[self.user]['UUID']
         endpoint = f"https://ptxprint.pretore.com/wp-json/emily/v1/calculation/{uuid}/{booktype}/{command}"
         self.submit_quote(qinfo, endpoint, cb=cb)
 
     def quote(self, btn, *a):
-        btn.set_sensitive(False)
         self.prepare()
-        if self.user is not None:
-            tab = getattr(self.view, 'printerTab', None)
-            self._pendingKey = tab.jobSpec().key() if tab is not None else None
-            self.do_quote("calculate")
-        else:
-            message(_("Select or import a Pretore account first"))
-        btn.set_sensitive(True)
-
-    def createOrder(self, btn, *a):
-        if getattr(self.view, 'pdfFiles', None) is None or not len(self.view.pdfFiles):
-            message(_("Print the job to create the files to upload"))
+        problem = self._accountProblem()
+        if problem:
+            message(problem)
             return
-        self.zipname = self.view.getPDFname(noext=True) + "_pretore.zip"
-        z = ZipFile(self.zipname, "w", compression=ZIP_DEFLATED)
-        for k, v in self.view.pdfFiles.items():
+        btn.set_sensitive(False)        # re-enabled by updatequote
+        tab = getattr(self.view, 'printerTab', None)
+        self._pendingKey = tab.jobSpec().key() if tab is not None else None
+        self.do_quote("calculate")
+
+    def _orderFiles(self):
+        """[(path, nameInZip)] for the last print, or raise ValueError with a user-facing reason."""
+        pdfFiles = getattr(self.view, 'pdfFiles', None)
+        if not pdfFiles:
+            raise ValueError(_("Print the job first to create the PDF files to upload."))
+        # Everything the print produced goes: the finished PDF as Final.pdf, the prepress PDF
+        # (all pages, in order, before inserts were pulled out) as Original.pdf, the cover
+        # and any extracted inserts (e.g. maps) under their own names.
+        # TODO: confirm with Martin which of these Pretore actually needs.
+        res = []
+        for k, v in pdfFiles.items():
+            if k == " Original" and ' Finished' in pdfFiles and not (v and os.path.exists(v)):
+                continue        # a by-product that couldn't be saved; don't block the order for it
             outkey = k.strip()
-            if k == " Original" and ' Finished' not in self.view.pdfFiles:
+            if k == " Original" and ' Finished' not in pdfFiles:
                 outkey = "Final"
             elif outkey == "Finished":
                 outkey = "Final"
-            z.write(v, outkey+".pdf")
-        z.close()
+            res.append((v, outkey + ".pdf"))
+        missing = [p for p, _n in res if not p or not os.path.exists(p)]
+        if missing:
+            raise ValueError(_("These PDF files from the last print can no longer be found:")
+                             + "\n" + "\n".join(str(p) for p in missing)
+                             + "\n\n" + _("Print the job again, then click Create Order."))
+        return res
 
-        # also make the zip, create a dialog to present the results
+    def createOrder(self, btn, *a):
+        self.prepare()
+        problem = self._accountProblem()
+        if problem:
+            message(problem)
+            return
+        try:
+            files = self._orderFiles()
+        except ValueError as e:
+            message(_("Cannot create the order yet"), error=True, secondary=str(e))
+            return
+        zipname = self.view.getPDFname(noext=True) + "_pretore.zip"
+        tmpname = zipname + ".tmp"
+        try:        # build to a temp file so a failure never leaves a half-written zip behind
+            with ZipFile(tmpname, "w", compression=ZIP_DEFLATED) as z:
+                for path, arcname in files:
+                    z.write(path, arcname)
+            os.replace(tmpname, zipname)
+        except OSError as e:
+            try:
+                os.remove(tmpname)
+            except OSError:
+                pass
+            message(_("Could not create the upload file"), error=True,
+                    secondary=f"{zipname}\n\n{e.strerror or e}")
+            return
+        self.zipname = zipname
+        self.set("l_prnl_zipFilename", os.path.basename(zipname))
+        self.set("l_prnl_orderStatus", _("(creating order…)"))
+        btn.set_sensitive(False)        # re-enabled by showCreateResults
         self.do_quote("create", cb=self.showCreateResults)
 
     def configure(self, btn, *a):
@@ -461,6 +580,8 @@ class Pretore(PrinterBase):
         return
 
     def copy_zipfname(self, btn, *a):
+        if not getattr(self, 'zipname', None):
+            return
         zname = os.path.abspath(self.zipname)
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(zname, -1)

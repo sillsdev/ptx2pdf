@@ -871,9 +871,14 @@ class RunJob:
             if not self.procpdf(outfname, pdffile, burst=self.info['finishing/extractinserts'],
                                 cover=self.info['cover/makecoverpage'] != '%'):
                 self.res = 3
-            self.printer.pdfFiles = self.extrafiles.copy()
-            if ' Original' not in self.printer.pdfFiles:
-                self.printer.pdfFiles[' Original'] = pdffile
+            # What this print produced, for sending to a printer: ' Finished' is the PDF to
+            # print (the one shown), ' Original' xetex's output before any post-processing
+            pdfFiles = self.extrafiles.copy()
+            if ' Finished' not in pdfFiles:
+                pdfFiles[' Finished'] = pdffile
+            elif ' Original' not in pdfFiles:
+                pdfFiles[' Original'] = pdffile
+            self.printer.pdfFiles = pdfFiles
 
     def done_job(self, outfname, pdfname):
         # Work out what the resulting PDF was called

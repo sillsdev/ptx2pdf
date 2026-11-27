@@ -7,6 +7,7 @@ from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from io import BytesIO as cStringIO
 import os, re, time
+from shutil import copy2
 import logging
 
 logger = logging.getLogger(__name__)
@@ -29,12 +30,23 @@ def make_stream(content):
     return s
 
 def safeRename(infile, outfile):
+    """ Moves infile to outfile; True if outfile now holds infile's contents.
+        On Windows a rename fails while another program (or our own previewer, which is
+        cleared asynchronously) has infile open, so fall back to copying it. """
     try:
         if os.path.exists(outfile):
             os.remove(outfile)
         os.rename(infile, outfile)
-    except (FileNotFoundError, PermissionError):
-        pass
+        return True
+    except FileNotFoundError:
+        return False
+    except PermissionError as e:
+        try:
+            copy2(infile, outfile)
+            return True
+        except OSError as e2:
+            logger.warning(f"Could not move {infile} to {outfile}: {e}; nor copy it: {e2}")
+            return False
 
 def writeOrWarn(writefn, fname, doError):
     """ Runs writefn to (over)write fname. If fname is locked (e.g. open in Adobe Reader on
@@ -299,9 +311,10 @@ def procpdf(outfname, pdffile, ispdfxa, doError, createSettingsZip,
             pdffile = pdffile.replace(".pdf", ext+".pdf")
             res[' Finished'] = pdffile
         elif opath == pdffile:
+            # The finished PDF keeps the normal name; xetex's raw output is kept as .prepress
             opath = os.path.normpath(pdffile).replace(".pdf", ".prepress.pdf")
-            safeRename(pdffile, opath)
-            res[' Original'] = opath
+            if safeRename(pdffile, opath):
+                res[' Original'] = opath
         if kw.get("output_filepath"):
             pdffile = kw.get("output_filepath")
         outpdfobj.fname = pdffile
