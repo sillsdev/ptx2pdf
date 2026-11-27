@@ -277,7 +277,12 @@
       \ifnum\ifsquashgridbox 1\else\ifgridp@c 1\else 0\fi\fi =1%
         \ifdiglot\kern\else\vskip\fi\dimen2
       \else\t@mptrue\vbox\bgroup\topskip=0pt\vskip\dimen2\fi
-        \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
+        % For a floating picture this box gets unpacked into a page insert, which TeX may split when the
+        % picture has to wait for the next page. A split discards a leading \kern, so the pad becomes a rule.
+        % The \kern0pt\vskip0pt is the place to split; \pdfsavepos stops the split pruning back to the rule,
+        % so the \splittopskip glue TeX adds before the rule gives the next split somewhere to break too.
+        \vbox{\ifgridp@c\kern0pt\vskip0pt\pdfsavepos\hrule height\dimen0 depth0pt width0pt\relax\nobreak
+          \else\kern\dimen0\fi\vskip-\headingtopspace\unvbox0}%
       \ift@mp\egroup\fi
       \ifrotate\prevdepth=\baselineskip\fi
       \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
