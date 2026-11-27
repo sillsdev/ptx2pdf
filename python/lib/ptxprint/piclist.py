@@ -289,7 +289,8 @@ class Picture:
 
     def sync(self, other, suffix=None):
         ''' are they the same picture, if so update caption and return True '''
-        if self.get('srcref', self['anchor']) == other.get('srcref', other['anchor']) \
+        # a picture just added in the list has no fields until the list is saved, so no anchor yet
+        if self.get('srcref', self.get('anchor', '')) == other.get('srcref', other.get('anchor', '')) \
                     and self.get('src', '') == other.get('src', ''):
             if suffix:
                 caption = other.get('caption'+suffix, other.get('caption', None))

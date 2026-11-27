@@ -686,7 +686,7 @@ class PicList:
         #else:
         if pic is None:
             # file it under the Picture's own key, which Piclist.remove (used by rmdups and merge) looks for
-            pic = Picture()
+            pic = Picture(anchor='')     # its fields come from the row when the list is saved
             row = self.get_row_from_items()
         else:
             row = self._loadrow(pic)

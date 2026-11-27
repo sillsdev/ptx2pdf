@@ -7468,6 +7468,9 @@ Thank you,
         self.thumbnails = ThumbnailDialog(dialog, self, gridbox)
         res = self.thumbnails.run()
         if res:
+            if self.picinfos is not None:
+                # keep what has been changed in the list, since it is reloaded below
+                self.picListView.updateinfo(self.picinfos)
             for p in res:
                 ref = p[1]
                 if ref is None:
